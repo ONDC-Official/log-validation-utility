@@ -1,5 +1,5 @@
 {
-  "name": "wil-hire-backend",
+  "name": "retail-logs-validation",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -19,14 +19,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://oauth2:glpat-sJarDFfhM3H9yzzZ-2wt@gitlab.com/wil-internal-projects/wil-hire-backend.git"
+    "url": "https://github.com/sharmasahil0331/retail-logs-validation.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://gitlab.com/wil-internal-projects/wil-hire-backend/issues"
+    "url": "https://github.com/sharmasahil0331/retail-logs-validation/issues"
   },
-  "homepage": "https://gitlab.com/wil-internal-projects/wil-hire-backend#readme",
+  "homepage": "https://github.com/sharmasahil0331/retail-logs-validation",
   "dependencies": {
     "body-parser": "^1.19.1",
     "dotenv": "^14.2.0",

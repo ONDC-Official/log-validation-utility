@@ -1,5 +1,5 @@
-import express, { Application, Request, Response } from 'express'
-import testRoutes from './routes/test'
+import express, { Application } from 'express'
+import healthRoutes from './routes/healthCheck'
 
 const createServer = (): express.Application => {
   const app: Application = express()
@@ -8,14 +8,7 @@ const createServer = (): express.Application => {
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
 
-  app.use('/test', testRoutes)
-
-  app.get('/', async (req: Request, res: Response): Promise<Response> => {
-    console.log(req)
-    return res.status(200).send({
-      message: 'Hello World!',
-    })
-  })
+  app.use('/', healthRoutes)
 
   return app
 }

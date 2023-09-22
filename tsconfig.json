@@ -27,7 +27,6 @@
     "moduleResolution": "node",
     "baseUrl": ".",
     "esModuleInterop": true,
-
     /* Experimental Options */
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,

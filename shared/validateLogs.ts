@@ -21,11 +21,11 @@ export const validateLogs = (data: any, domain: string) => {
     const searchIncrementalRefreshResp = checkSearchIncremental(data[ApiSequence.INC_SEARCH], msgIdSet)
 
     if (!_.isEmpty(searchFullCatalogRefreshResp)) {
-      logReport = { ...logReport, search: searchFullCatalogRefreshResp }
+      logReport = { ...logReport, [ApiSequence.SEARCH]: searchFullCatalogRefreshResp }
     }
 
     if (!_.isEmpty(searchIncrementalRefreshResp)) {
-      logReport = { ...logReport, search_inc: searchIncrementalRefreshResp }
+      logReport = { ...logReport, [ApiSequence.INC_SEARCH]: searchIncrementalRefreshResp }
     }
 
     logger.info(logReport, 'Report Generated Successfully!!')

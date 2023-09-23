@@ -118,6 +118,7 @@ module.exports = {
                     properties: {
                       label: {
                         type: 'string',
+                        enum: ['enable', 'disable'],
                       },
                       timestamp: {
                         type: 'string',

@@ -14,8 +14,18 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
   try {
     const srchObj: any = { intent: { tags: [] } }
 
-    if (!data.message || !data.context || isObjectEmpty(data.message) || isObjectEmpty(data.message.intent)) {
-      throw new Error('/context, /message, or /message/intent is missing or empty')
+    if (!data || isObjectEmpty(data)) {
+      throw new Error(`${ApiSequence.INC_SEARCH} Json cannot be empty`)
+    }
+
+    if (
+      !data.message ||
+      !data.context ||
+      !data.message.intent ||
+      isObjectEmpty(data.message) ||
+      isObjectEmpty(data.message.intent)
+    ) {
+      throw new Error('/context, /message, /intent or /message/intent is missing or empty')
     }
 
     const contextRes: any = checkContext(data.context, constants.RET_SEARCH)

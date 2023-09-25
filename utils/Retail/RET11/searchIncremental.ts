@@ -2,76 +2,77 @@ import { logger } from '../../../shared/logger'
 import { setValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
 import {
-  checkContext,
   validateSchema,
   checkGpsPrecision,
   checkTagConditions,
   isObjectEmpty,
   hasProperty,
+  checkContext,
 } from '../../../utils'
 
 export const checkSearchIncremental = (data: any, msgIdSet: any) => {
   try {
-    const srchObj: any = { intent: { tags: [] } }
-
     if (!data || isObjectEmpty(data)) {
-      throw new Error(`${ApiSequence.INC_SEARCH} Json cannot be empty`)
+      return { [ApiSequence.INC_SEARCH]: 'Json cannot be empty' }
     }
 
-    if (
-      !data.message ||
-      !data.context ||
-      !data.message.intent ||
-      isObjectEmpty(data.message) ||
-      isObjectEmpty(data.message.intent)
-    ) {
-      throw new Error('/context, /message, /intent or /message/intent is missing or empty')
+    const { message, context } = data
+
+    if (!message || !context || !message.intent || isObjectEmpty(message) || isObjectEmpty(message.intent)) {
+      return { missingFields: '/context, /message, /intent or /message/intent is missing or empty' }
     }
 
-    const contextRes: any = checkContext(data.context, constants.RET_SEARCH)
-    setValue(ApiSequence.SEARCH, data.context)
-    msgIdSet.add(data.context.message_id)
+    setValue(ApiSequence.SEARCH, context)
+    msgIdSet.add(context.message_id)
+
+    const schemaValidation = validateSchema('RET11', constants.RET_SEARCH, data)
+
+    const contextRes: any = checkContext(context, constants.RET_SEARCH)
+    setValue(ApiSequence.SEARCH, context)
+    msgIdSet.add(context.message_id)
+
+    const errorObj: any = {}
+
+    if (schemaValidation !== 'error') {
+      Object.assign(errorObj, schemaValidation)
+    }
 
     if (!contextRes?.valid) {
-      Object.assign(srchObj, contextRes.ERRORS)
+      Object.assign(errorObj, contextRes.ERRORS)
+    }
+
+    const buyerFF = parseFloat(message.intent?.payment?.['@ondc/org/buyer_app_finder_fee_amount'])
+
+    if (isNaN(buyerFF)) {
+      errorObj.payment = 'payment should have a key @ondc/org/buyer_app_finder_fee_amount'
     } else {
-      const schemaValidation = validateSchema('RET11', constants.RET_SEARCH, data)
+      setValue('buyerFF', buyerFF)
+    }
 
-      if (schemaValidation !== 'error') {
-        Object.assign(srchObj, schemaValidation)
-      }
+    const fulfillment = message.intent && message.intent.fulfillment
 
-      const buyerFF = parseFloat(data.message.intent?.payment?.['@ondc/org/buyer_app_finder_fee_amount'])
+    if (fulfillment && fulfillment.end) {
+      const gps = fulfillment.end.location?.gps
 
-      if (!isNaN(buyerFF)) {
-        setValue('buyerFF', buyerFF)
-      } else {
-        throw new Error('payment should have a key @ondc/org/buyer_app_finder_fee_amount')
-      }
-
-      const fulfillment = data.message.intent?.fulfillment
-      if (fulfillment) {
-        if (fulfillment.end) {
-          const gps = fulfillment.end?.location?.gps
-
-          if (gps) {
-            if (!checkGpsPrecision(gps)) {
-              srchObj.gpsPrecision =
-                'fulfillment/end/location/gps coordinates must be specified with at least six decimal places of precision.'
-            }
-          } else {
-            throw new Error('fulfillment/end/location should have a required property gps')
-          }
-        }
-      }
-
-      if (hasProperty(data.message.intent, 'item') && hasProperty(data.message.intent, 'category')) {
-        srchObj.intent.category_or_item = '/message/intent cannot have both properties item and category'
+      if (gps && !checkGpsPrecision(gps)) {
+        errorObj.gpsPrecision =
+          'fulfillment/end/location/gps coordinates must be specified with at least six decimal places of precision.'
+      } else if (!gps) {
+        errorObj.fulfillmentLocation = 'fulfillment/end/location should have a required property gps'
       }
     }
 
-    if (data.message.intent?.tags) checkTagConditions(data.message, data.context, srchObj)
-    return srchObj
+    if (hasProperty(message.intent, 'item') && hasProperty(message.intent, 'category')) {
+      errorObj.intent = { category_or_item: '/message/intent cannot have both properties item and category' }
+    }
+
+    if (message.intent?.tags) {
+      errorObj.intent = { ...errorObj.intent, tags: checkTagConditions(message, context) }
+    } else {
+      errorObj.intent = '/message/intent should have a required property tags'
+    }
+
+    return Object.keys(errorObj).length > 0 && errorObj
   } catch (error: any) {
     logger.error(error.message)
     return { error: error.message }

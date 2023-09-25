@@ -5,14 +5,13 @@ import schemaValidator from '../shared/schemaValidator'
 
 export const getObjValues = (obj: any) => {
   let values = ''
-  console.log('obj', obj)
   Object.values(obj).forEach((value) => {
     values += `- ${value}\n`
   })
   return values
 }
 
-const timestampCheck = (date: string): any => {
+export const timestampCheck = (date: string): any => {
   const dateParsed: any = new Date(Date.parse(date))
   if (!isNaN(dateParsed)) {
     if (dateParsed.toISOString() != date) {
@@ -118,43 +117,50 @@ export const checkGpsPrecision = (coordinates: string) => {
   }
 }
 
-export const checkTagConditions = (message: any, context: any, srchObj: any) => {
-  const catalogIncTags = message.intent.tags.find((tag: { code: string; value: string }) => tag.code === 'catalog_inc')
+export const checkTagConditions = (message: any, context: any) => {
+  const tags = []
+  if (message.intent?.tags) {
+    const catalogIncTags = message.intent.tags.find(
+      (tag: { code: string; value: string }) => tag.code === 'catalog_inc',
+    )
 
-  if (catalogIncTags) {
-    const startTimeTag = catalogIncTags.list.find((tag: { code: string; value: string }) => tag.code === 'start_time')
-    const endTimeTag = catalogIncTags.list.find((tag: { code: string; value: string }) => tag.code === 'end_time')
+    if (catalogIncTags) {
+      const startTimeTag = catalogIncTags.list.find((tag: { code: string; value: string }) => tag.code === 'start_time')
+      const endTimeTag = catalogIncTags.list.find((tag: { code: string; value: string }) => tag.code === 'end_time')
 
-    const modeTag = catalogIncTags.list.find((tag: { code: string; value: string }) => tag.code === 'mode')
+      const modeTag = catalogIncTags.list.find((tag: { code: string; value: string }) => tag.code === 'mode')
 
-    if (modeTag && modeTag.value !== 'start' && modeTag.value !== 'stop') {
-      srchObj.intent.tags.push('/message/intent/tags/list/value should be one of start or stop')
-    }
-
-    if (startTimeTag && endTimeTag) {
-      const startTime = new Date(startTimeTag.value).getTime()
-      const endTime = new Date(endTimeTag.value).getTime()
-      const contextTime = new Date(context.timestamp).getTime()
-
-      if (startTime >= contextTime) {
-        srchObj.intent.tags.push(
-          '/message/intent/tags/list/start_time/value cannot be greater than or equal to /context/timestamp',
-        )
+      if (modeTag && modeTag.value !== 'start' && modeTag.value !== 'stop') {
+        tags.push('/message/intent/tags/list/value should be one of start or stop')
       }
 
-      if (endTime > contextTime) {
-        srchObj.intent.tags.push('/message/intent/tags/list/end_time/value cannot be greater than /context/timestamp')
-      }
+      if (startTimeTag && endTimeTag) {
+        const startTime = new Date(startTimeTag.value).getTime()
+        const endTime = new Date(endTimeTag.value).getTime()
+        const contextTime = new Date(context.timestamp).getTime()
 
-      if (endTime <= startTime) {
-        srchObj.intent.tags.push(
-          '/message/intent/tags/list/end_time/value cannot be less or equal to than /message/intent/tags/list/start_time/value',
-        )
+        if (startTime >= contextTime) {
+          tags.push('/message/intent/tags/list/start_time/value cannot be greater than or equal to /context/timestamp')
+        }
+
+        if (endTime > contextTime) {
+          tags.push('/message/intent/tags/list/end_time/value cannot be greater than /context/timestamp')
+        }
+
+        if (endTime <= startTime) {
+          tags.push(
+            '/message/intent/tags/list/end_time/value cannot be less or equal to than /message/intent/tags/list/start_time/value',
+          )
+        }
       }
+    } else {
+      tags.push(`/message/intent/tags[0]/code should be 'catalog_inc'`)
     }
   } else {
-    srchObj.intent.tags.push(`/message/intent/tags[0]/code should be 'catalog_inc'`)
+    tags.push('/message/intent should have a required property tags')
   }
+
+  return tags
 }
 
 export const hasProperty = (object: any, propetyName: string) => {

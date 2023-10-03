@@ -5,7 +5,7 @@ const controller = {
   healthCheck: async (req: Request, res: Response): Promise<void> => {
     logger.info(req)
     const responseMessage = {
-      status: true,
+      success: true,
       message: 'The server is up and running. Keep up the great work, developers!',
       timestamp: new Date().toISOString(),
       uptime: process.uptime(),

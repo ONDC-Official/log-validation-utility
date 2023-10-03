@@ -1,4 +1,6 @@
-module.exports = {
+import { fnbCategories } from '../../../utils/enum'
+
+export const FnBonSearchSchema = {
   type: 'object',
   properties: {
     context: {
@@ -14,6 +16,7 @@ module.exports = {
         },
         country: {
           type: 'string',
+          const: 'IND',
         },
         city: {
           type: 'string',
@@ -27,6 +30,7 @@ module.exports = {
         },
         bap_uri: {
           type: 'string',
+          format: 'url',
         },
         transaction_id: {
           type: 'string',
@@ -41,6 +45,13 @@ module.exports = {
         ttl: {
           type: 'string',
           format: 'duration',
+        },
+        bpp_id: {
+          type: 'string',
+        },
+        bpp_uri: {
+          type: 'string',
+          format: 'url',
         },
       },
       required: [
@@ -71,9 +82,11 @@ module.exports = {
                 properties: {
                   id: {
                     type: 'string',
+                    maxLength: 12,
                   },
                   type: {
                     type: 'string',
+                    enum: ['Delivery', 'Self-Pickup', 'Delivery and Self-Pickup'],
                   },
                 },
                 required: ['id', 'type'],
@@ -87,6 +100,7 @@ module.exports = {
                 },
                 symbol: {
                   type: 'string',
+                  format: 'url',
                 },
                 short_desc: {
                   type: 'string',
@@ -98,8 +112,7 @@ module.exports = {
                   type: 'array',
                   items: {
                     type: 'string',
-                    pattern:
-                      '/(https://www.|http://www.|https://|http://)?[a-zA-Z0-9]{2,}(.[a-zA-Z0-9]{2,})(.[a-zA-Z0-9]{2,})?/',
+                    format: 'url',
                   },
                 },
               },
@@ -112,6 +125,7 @@ module.exports = {
                 properties: {
                   id: {
                     type: 'string',
+                    maxLength: 12,
                   },
                   time: {
                     type: 'object',
@@ -122,6 +136,7 @@ module.exports = {
                       },
                       timestamp: {
                         type: 'string',
+                        format: 'date-time',
                       },
                     },
                     required: ['label', 'timestamp'],
@@ -136,9 +151,12 @@ module.exports = {
                           properties: {
                             phone: {
                               type: 'string',
+                              minLength: 10,
+                              maxLength: 11,
                             },
                             email: {
                               type: 'string',
+                              format: 'email',
                             },
                           },
                           required: ['phone', 'email'],
@@ -155,6 +173,7 @@ module.exports = {
                       },
                       symbol: {
                         type: 'string',
+                        format: 'url',
                       },
                       short_desc: {
                         type: 'string',
@@ -166,8 +185,7 @@ module.exports = {
                         type: 'array',
                         items: {
                           type: 'string',
-                          pattern:
-                            '/(https://www.|http://www.|https://|http://)?[a-zA-Z0-9]{2,}(.[a-zA-Z0-9]{2,})(.[a-zA-Z0-9]{2,})?/',
+                          format: 'url',
                         },
                       },
                     },
@@ -175,9 +193,12 @@ module.exports = {
                   },
                   '@ondc/org/fssai_license_no': {
                     type: 'string',
+                    minLength: 14,
+                    maxLength: 14,
                   },
                   ttl: {
                     type: 'string',
+                    format: 'duration',
                   },
                   locations: {
                     type: 'array',
@@ -186,15 +207,18 @@ module.exports = {
                       properties: {
                         id: {
                           type: 'string',
+                          maxLength: 12,
                         },
                         time: {
                           type: 'object',
                           properties: {
                             label: {
                               type: 'string',
+                              enum: ['enable', 'disable'],
                             },
                             timestamp: {
                               type: 'string',
+                              format: 'date-time',
                             },
                             days: {
                               type: 'string',
@@ -204,28 +228,26 @@ module.exports = {
                               properties: {
                                 holidays: {
                                   type: 'array',
-                                  items: [
-                                    {
-                                      type: 'string',
-                                    },
-                                  ],
+                                  items: {
+                                    type: 'string',
+                                    format: 'date',
+                                  },
                                 },
                                 frequency: {
                                   type: 'string',
+                                  format: 'duration',
                                 },
                                 times: {
                                   type: 'array',
-                                  items: [
-                                    {
-                                      type: 'string',
-                                    },
-                                    {
-                                      type: 'string',
-                                    },
-                                  ],
+                                  minItems: 1,
+                                  items: {
+                                    type: 'string',
+                                    minLength: 4,
+                                    maxLength: 4,
+                                  },
                                 },
                               },
-                              required: ['holidays', 'frequency', 'times'],
+                              required: ['holidays'],
                             },
                             range: {
                               type: 'object',
@@ -240,7 +262,7 @@ module.exports = {
                               required: ['start', 'end'],
                             },
                           },
-                          required: ['timestamp'],
+                          required: ['label', 'timestamp', 'days'],
                         },
                         gps: {
                           type: 'string',
@@ -259,6 +281,8 @@ module.exports = {
                             },
                             area_code: {
                               type: 'string',
+                              minLength: 6,
+                              maxLength: 6,
                             },
                             state: {
                               type: 'string',
@@ -277,6 +301,7 @@ module.exports = {
                               properties: {
                                 unit: {
                                   type: 'string',
+                                  const: 'km',
                                 },
                                 value: {
                                   type: 'string',
@@ -288,7 +313,7 @@ module.exports = {
                           required: ['gps', 'radius'],
                         },
                       },
-                      required: ['id', 'time'],
+                      required: ['id', 'time', 'gps', 'address', 'circle'],
                     },
                   },
                   categories: {
@@ -298,9 +323,11 @@ module.exports = {
                       properties: {
                         id: {
                           type: 'string',
+                          maxLength: 12,
                         },
                         parent_category_id: {
                           type: 'string',
+                          maxLength: 12,
                         },
                         descriptor: {
                           type: 'object',
@@ -318,8 +345,7 @@ module.exports = {
                               type: 'array',
                               items: {
                                 type: 'string',
-                                pattern:
-                                  '/(https://www.|http://www.|https://|http://)?[a-zA-Z0-9]{2,}(.[a-zA-Z0-9]{2,})(.[a-zA-Z0-9]{2,})?/',
+                                format: 'url',
                               },
                             },
                           },
@@ -327,125 +353,33 @@ module.exports = {
                         },
                         tags: {
                           type: 'array',
-                          items: [
-                            {
-                              type: 'object',
-                              properties: {
-                                code: {
-                                  type: 'string',
-                                },
-                                list: {
-                                  type: 'array',
-                                  items: [
-                                    {
-                                      type: 'object',
-                                      properties: {
-                                        code: {
-                                          type: 'string',
-                                        },
-                                        value: {
-                                          type: 'string',
-                                        },
-                                      },
-                                      required: ['code', 'value'],
+                          items: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                              },
+                              list: {
+                                type: 'array',
+                                items: {
+                                  type: 'object',
+                                  properties: {
+                                    code: {
+                                      type: 'string',
                                     },
-                                  ],
+                                    value: {
+                                      type: 'string',
+                                    },
+                                  },
+                                  required: ['code', 'value'],
                                 },
                               },
-                              required: ['code', 'list'],
                             },
-                            {
-                              type: 'object',
-                              properties: {
-                                code: {
-                                  type: 'string',
-                                },
-                                list: {
-                                  type: 'array',
-                                  items: [
-                                    {
-                                      type: 'object',
-                                      properties: {
-                                        code: {
-                                          type: 'string',
-                                        },
-                                        value: {
-                                          type: 'string',
-                                        },
-                                      },
-                                      required: ['code', 'value'],
-                                    },
-                                    {
-                                      type: 'object',
-                                      properties: {
-                                        code: {
-                                          type: 'string',
-                                        },
-                                        value: {
-                                          type: 'string',
-                                        },
-                                      },
-                                      required: ['code', 'value'],
-                                    },
-                                    {
-                                      type: 'object',
-                                      properties: {
-                                        code: {
-                                          type: 'string',
-                                        },
-                                        value: {
-                                          type: 'string',
-                                        },
-                                      },
-                                      required: ['code', 'value'],
-                                    },
-                                    {
-                                      type: 'object',
-                                      properties: {
-                                        code: {
-                                          type: 'string',
-                                        },
-                                        value: {
-                                          type: 'string',
-                                        },
-                                      },
-                                      required: ['code', 'value'],
-                                    },
-                                  ],
-                                },
-                              },
-                              required: ['code', 'list'],
-                            },
-                            {
-                              type: 'object',
-                              properties: {
-                                code: {
-                                  type: 'string',
-                                },
-                                list: {
-                                  type: 'array',
-                                  items: [
-                                    {
-                                      type: 'object',
-                                      properties: {
-                                        code: {
-                                          type: 'string',
-                                        },
-                                        value: {
-                                          type: 'string',
-                                        },
-                                      },
-                                      required: ['code', 'value'],
-                                    },
-                                  ],
-                                },
-                              },
-                              required: ['code', 'list'],
-                            },
-                          ],
+                            required: ['code', 'list'],
+                          },
                         },
                       },
-                      required: ['id', 'descriptor', 'tags'],
+                      required: ['id', 'tags'],
                     },
                   },
                   items: {
@@ -455,15 +389,18 @@ module.exports = {
                       properties: {
                         id: {
                           type: 'string',
+                          maxLength: 12,
                         },
                         time: {
                           type: 'object',
                           properties: {
                             label: {
                               type: 'string',
+                              enum: ['enable', 'disable'],
                             },
                             timestamp: {
                               type: 'string',
+                              format: 'date-time',
                             },
                           },
                           required: ['label', 'timestamp'],
@@ -476,6 +413,7 @@ module.exports = {
                             },
                             symbol: {
                               type: 'string',
+                              format: 'url',
                             },
                             short_desc: {
                               type: 'string',
@@ -487,12 +425,11 @@ module.exports = {
                               type: 'array',
                               items: {
                                 type: 'string',
-                                pattern:
-                                  '/(https://www.|http://www.|https://|http://)?[a-zA-Z0-9]{2,}(.[a-zA-Z0-9]{2,})(.[a-zA-Z0-9]{2,})?/',
+                                format: 'url',
                               },
                             },
                           },
-                          required: ['name', 'symbol', 'short_desc', 'long_desc', 'images'],
+                          required: ['name'],
                         },
                         quantity: {
                           type: 'object',
@@ -505,9 +442,11 @@ module.exports = {
                                   properties: {
                                     unit: {
                                       type: 'string',
+                                      enum: ['unit', 'dozen', 'gram', 'kilogram', 'tonne', 'litre', 'millilitre'],
                                     },
                                     value: {
                                       type: 'string',
+                                      pattern: '^[0-9]+$',
                                     },
                                   },
                                   required: ['unit', 'value'],
@@ -520,6 +459,7 @@ module.exports = {
                               properties: {
                                 count: {
                                   type: 'string',
+                                  pattern: '^[0-9]+$',
                                 },
                               },
                               required: ['count'],
@@ -529,18 +469,20 @@ module.exports = {
                               properties: {
                                 count: {
                                   type: 'string',
+                                  pattern: '^[0-9]+$',
                                 },
                               },
                               required: ['count'],
                             },
                           },
-                          required: ['unitized', 'available', 'maximum'],
+                          required: ['available', 'maximum'],
                         },
                         price: {
                           type: 'object',
                           properties: {
                             currency: {
                               type: 'string',
+                              const: 'INR',
                             },
                             value: {
                               type: 'string',
@@ -553,11 +495,13 @@ module.exports = {
                         },
                         category_id: {
                           type: 'string',
+                          enum: fnbCategories,
                         },
                         category_ids: {
                           type: 'array',
                           items: {
                             type: 'string',
+                            pattern: '^[a-zA-Z0-9]{1,12}:[a-zA-Z0-9]{1,12}$',
                           },
                         },
                         fulfillment_id: {
@@ -621,27 +565,7 @@ module.exports = {
                           },
                         },
                       },
-                      required: [
-                        'id',
-                        'time',
-                        'descriptor',
-                        'quantity',
-                        'price',
-                        'category_id',
-                        'category_ids',
-                        'fulfillment_id',
-                        'location_id',
-                        'related',
-                        'recommended',
-                        '@ondc/org/returnable',
-                        '@ondc/org/cancellable',
-                        '@ondc/org/return_window',
-                        '@ondc/org/seller_pickup_return',
-                        '@ondc/org/time_to_ship',
-                        '@ondc/org/available_on_cod',
-                        '@ondc/org/contact_details_consumer_care',
-                        'tags',
-                      ],
+                      required: ['id', 'descriptor', 'quantity', 'price', 'category_id', 'related', 'tags'],
                     },
                   },
                   tags: {
@@ -672,11 +596,22 @@ module.exports = {
                     },
                   },
                 },
-                required: ['id'],
+                required: [
+                  'id',
+                  'time',
+                  'fulfillments',
+                  'descriptor',
+                  '@ondc/org/fssai_license_no',
+                  'ttl',
+                  'locations',
+                  'categories',
+                  'items',
+                  'tags',
+                ],
               },
             },
           },
-          required: ['bpp/providers'],
+          required: ['bpp/providers', 'bpp/fulfillments', 'bpp/descriptor'],
         },
       },
       required: ['catalog'],

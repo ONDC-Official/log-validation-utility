@@ -18,7 +18,7 @@ export const setValue = (key: string, value: any): void => {
 
 export const getValue = (key: string): string | null => {
   const myDB = getConnection()
-  const value = myDB.get(key)
+  const value: any = myDB.get(key)
   myDB.close()
   return value
 }

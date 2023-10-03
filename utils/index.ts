@@ -160,7 +160,20 @@ export const checkTagConditions = (message: any, context: any) => {
     tags.push('/message/intent should have a required property tags')
   }
 
-  return tags
+  return tags.length ? tags : null
+}
+
+export const timeDiff = (time1: any, time2: any) => {
+  const dtime1: any = new Date(time1)
+  const dtime2: any = new Date(time2)
+
+  if (isNaN(dtime1 - dtime2)) return 0
+  else return dtime1 - dtime2
+}
+
+export const emailRegex = (email: string) => {
+  const emailRE = /^\S+@\S+\.\S+$/
+  return emailRE.test(email)
 }
 
 export const hasProperty = (object: any, propetyName: string) => {

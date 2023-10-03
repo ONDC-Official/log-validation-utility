@@ -29,3 +29,18 @@ export const ApiSequence = {
   INC_SEARCH: 'search_inc_refresh',
   INC_ONSEARCH: 'on_search_inc_refresh',
 }
+
+export const actionsArray = [
+  'search',
+  'on_search',
+  'select',
+  'on_select',
+  'init',
+  'on_init',
+  'confirm',
+  'on_confirm',
+  'update',
+  'on_update',
+  'support',
+  'on_support',
+]

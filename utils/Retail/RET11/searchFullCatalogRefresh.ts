@@ -1,7 +1,14 @@
 import { logger } from '../../../shared/logger'
 import { setValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
-import { validateSchema, checkGpsPrecision, isObjectEmpty, hasProperty, checkContext } from '../../../utils'
+import {
+  validateSchema,
+  checkGpsPrecision,
+  isObjectEmpty,
+  hasProperty,
+  checkContext,
+  checkTagConditions,
+} from '../../../utils'
 
 export const checkSearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
@@ -69,6 +76,11 @@ export const checkSearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
       }
 
       errorObj.intent.category_or_item = '/message/intent cannot have both properties item and category'
+    }
+
+    if (data.message.intent?.tags) {
+      const tagErrors = checkTagConditions(data.message, data.context)
+      tagErrors?.length ? (errorObj.intent = { ...errorObj.intent, tags: tagErrors }) : null
     }
 
     return Object.keys(errorObj).length > 0 && errorObj

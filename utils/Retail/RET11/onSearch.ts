@@ -19,7 +19,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
   const schemaValidation = validateSchema('RET11', constants.RET_ONSEARCH, data)
 
   const contextRes: any = checkContext(context, constants.RET_ONSEARCH)
-  setValue(ApiSequence.ON_SEARCH, context)
+  setValue(`${ApiSequence.ON_SEARCH}_context`, context)
   msgIdSet.add(context.message_id)
 
   const errorObj: any = {}
@@ -32,7 +32,9 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     Object.assign(errorObj, contextRes.ERRORS)
   }
 
-  const searchContext: any = getValue(ApiSequence.SEARCH)
+  setValue(`${ApiSequence.ON_SEARCH}`, data)
+
+  const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
 
   try {
     logger.info(`Storing BAP_ID and BPP_ID in /${constants.RET_ONSEARCH}`)
@@ -53,8 +55,6 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
         errorObj.timestamp = `context/timestamp difference between /${constants.RET_ONSEARCH} and /${constants.RET_SEARCH} should be smaller than 5 sec`
       }
     }
-
-    setValue('on_searchTimeStamp', context.timestamp)
   } catch (error) {
     logger.info(`Error while comparing timestamp for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api`)
   }
@@ -75,8 +75,6 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     if (!_.isEqual(searchContext.message_id, context.message_id)) {
       errorObj.message_id = `Message Id for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api should be same`
     }
-
-    msgIdSet.add(context.message_id)
   } catch (error: any) {
     logger.info(
       `Error while comparing message ids for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api, ${error.stack}`,
@@ -110,8 +108,10 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     while (i < len) {
       const itemsId = new Set()
       const prvdrLocId = new Set()
-      const ctgryId = new Set()
       const categoriesId = new Set()
+      const customGrpId = new Set()
+      const seqSet = new Set()
+      const itemCategory_id = new Set()
 
       logger.info(`Validating uniqueness for provider id in bpp/providers[${i}]...`)
       const prvdr = bppPrvdrs[i]
@@ -197,6 +197,146 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
       })
 
       try {
+        logger.info(`Checking categories for provider (${prvdr.id}) in bpp/providers[${i}]`)
+        let j = 0
+        const categories = onSearchCatalog['bpp/providers'][i]['categories']
+        const iLen = categories.length
+        while (j < iLen) {
+          logger.info(`Validating uniqueness for categories id in bpp/providers[${i}].items[${j}]...`)
+          const category = categories[j]
+
+          if (categoriesId.has(category.id)) {
+            const key = `prvdr${i}category${j}`
+            errorObj[key] = `duplicate category id: ${category.id} in bpp/providers[${i}]`
+          } else {
+            categoriesId.add(category.id)
+          }
+
+          try {
+            category.tags.map((tag: { code: any; list: any[] }, index: number) => {
+              switch (tag.code) {
+                case 'type':
+                  const codeList = tag.list.find((item) => item.code === 'type')
+                  if (
+                    !(
+                      codeList.value === 'custom_menu' ||
+                      codeList.value === 'custom_group' ||
+                      codeList.value === 'variant_group'
+                    )
+                  ) {
+                    const key = `prvdr${i}category${j}tags${index}`
+                    errorObj[
+                      key
+                    ] = `list.code == type then value should be one of 'custom_menu','custom_group' and 'variant_group' in bpp/providers[${i}]`
+                  }
+
+                  if (codeList.value === 'custom_group') {
+                    customGrpId.add(category.id)
+                  }
+
+                  break
+                case 'timing':
+                  for (const item of tag.list) {
+                    switch (item.code) {
+                      case 'day_from':
+                      case 'day_to':
+                        const dayValue = parseInt(item.value)
+                        if (isNaN(dayValue) || dayValue < 1 || dayValue > 7 || !/^-?\d+(\.\d+)?$/.test(item.value)) {
+                          errorObj.custom_menu_timing_tag = `Invalid value for '${item.code}': ${item.value}`
+                        }
+
+                        break
+                      case 'time_from':
+                      case 'time_to':
+                        if (!/^([01]\d|2[0-3])[0-5]\d$/.test(item.value)) {
+                          errorObj.time_to = `Invalid time format for '${item.code}': ${item.value}`
+                        }
+
+                        break
+                      default:
+                        errorObj.Tagtiming = `Invalid list.code for 'timing': ${item.code}`
+                    }
+                  }
+
+                  const dayFromItem = tag.list.find((item: any) => item.code === 'day_from')
+                  const dayToItem = tag.list.find((item: any) => item.code === 'day_to')
+                  const timeFromItem = tag.list.find((item: any) => item.code === 'time_from')
+                  const timeToItem = tag.list.find((item: any) => item.code === 'time_to')
+
+                  if (dayFromItem && dayToItem && timeFromItem && timeToItem) {
+                    const dayFrom = parseInt(dayFromItem.value, 10)
+                    const dayTo = parseInt(dayToItem.value, 10)
+                    const timeFrom = parseInt(timeFromItem.value, 10)
+                    const timeTo = parseInt(timeToItem.value, 10)
+
+                    if (dayTo < dayFrom) {
+                      errorObj.day_from = "'day_to' must be greater than or equal to 'day_from'"
+                    }
+
+                    if (timeTo <= timeFrom) {
+                      errorObj.time_from = "'time_to' must be greater than 'time_from'"
+                    }
+                  }
+
+                  break
+                case 'display':
+                  for (const item of tag.list) {
+                    if (item.code !== 'rank' || !/^-?\d+(\.\d+)?$/.test(item.value)) {
+                      errorObj.rank = `Invalid value for 'display': ${item.value}`
+                    }
+                  }
+
+                  break
+                case 'config':
+                  const minItem: any = tag.list.find((item: { code: string }) => item.code === 'min')
+                  const maxItem: any = tag.list.find((item: { code: string }) => item.code === 'max')
+                  const inputItem: any = tag.list.find((item: { code: string }) => item.code === 'input')
+                  const seqItem: any = tag.list.find((item: { code: string }) => item.code === 'seq')
+
+                  if (!minItem || !maxItem) {
+                    errorObj[
+                      `customization_config_${j}`
+                    ] = `Both 'min' and 'max' values are required in 'config' at index: ${j}`
+                  }
+
+                  if (!/^-?\d+(\.\d+)?$/.test(minItem.value)) {
+                    errorObj[
+                      `customization_config_min_${j}`
+                    ] = `Invalid value for ${minItem.code}: ${minItem.value} at index: ${j}`
+                  }
+
+                  if (!/^-?\d+(\.\d+)?$/.test(maxItem.value)) {
+                    errorObj[
+                      `customization_config_max_${j}`
+                    ] = `Invalid value for ${maxItem.code}: ${maxItem.value}at index: ${j}`
+                  }
+
+                  if (!/^-?\d+(\.\d+)?$/.test(seqItem.value)) {
+                    errorObj[`config_seq_${j}`] = `Invalid value for ${seqItem.code}: ${seqItem.value} at index: ${j}`
+                  }
+
+                  const inputEnum = ['select', 'text']
+                  if (!inputEnum.includes(inputItem.value)) {
+                    errorObj[
+                      `config_input_${j}`
+                    ] = `Invalid value for 'input': ${inputItem.value}, it should be one of ${inputEnum} at index: ${j}`
+                  }
+
+                  break
+              }
+            })
+            logger.info(`Category '${category.descriptor.name}' is valid.`)
+          } catch (error: any) {
+            logger.error(`Validation error for category '${category.descriptor.name}': ${error.message}`)
+          }
+
+          j++
+        }
+      } catch (error: any) {
+        logger.error(`!!Errors while checking categories in bpp/providers[${i}], ${error.stack}`)
+      }
+
+      try {
         logger.info(`Checking items for provider (${prvdr.id}) in bpp/providers[${i}]`)
         let j = 0
         const items = onSearchCatalog['bpp/providers'][i]['items']
@@ -212,17 +352,27 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
             itemsId.add(item.id)
           }
 
-          logger.info(`Checking available and maximum count for item id: ${item.id}`)
-          if ('available' in item.quantity && 'maximum' in item.quantity) {
-            const avlblCnt = parseInt(item.quantity.available.count)
-            const mxCnt = parseInt(item.quantity.maximum.count)
+          if ('category_id' in item) {
+            itemCategory_id.add(item.category_id)
+          }
 
-            if (avlblCnt > mxCnt) {
-              const key = `prvdr${i}item${j}Cnt`
-              errorObj[
-                key
-              ] = `available count of item should be smaller or equal to the maximum count (/bpp/providers[${i}]/items[${j}]/quantity)`
-            }
+          if ('category_ids' in item) {
+            item[`category_ids`].map((category: string, index: number) => {
+              const categoryId = category.split(':')[0]
+              const seq = category.split(':')[1]
+
+              if (seqSet.has(seq)) {
+                const key = `prvdr${i}item${j}ctgryseq${index}`
+                errorObj[key] = `duplicate seq : ${seq} in category_ids in prvdr${i}item${j}`
+              } else {
+                seqSet.add(seq)
+              }
+
+              if (!categoriesId.has(categoryId)) {
+                const key = `prvdr${i}item${j}ctgryId${index}`
+                errorObj[key] = `item${j} should have category_ids one of the Catalog/categories/id`
+              }
+            })
           }
 
           logger.info(`Checking selling price and maximum price for item id: ${item.id}`)
@@ -236,44 +386,6 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
               errorObj[
                 key
               ] = `selling price of item /price/value with id: (${item.id}) can't be greater than the maximum price /price/maximum_value in /bpp/providers[${i}]/items[${j}]/`
-            }
-          }
-
-          logger.info(`Checking category_id for item id: ${item.id}`)
-          if ('category_id' in item) {
-            ctgryId.add(item.category_id)
-            const categoryList = [
-              'F&B',
-              'Continental',
-              'Middle Eastern',
-              'North Indian',
-              'Pan-Asian',
-              'Regional Indian',
-              'South Indian',
-              'Tex-Mexican',
-              'World Cuisines',
-              'Healthy Food',
-              'Fast Food',
-              'Desserts',
-              'Bakes & Cakes',
-              'Beverages (MTO)',
-              'Gourmet & World Foods',
-              'Beverages',
-              'Bakery, Cakes & Dairy',
-              'Snacks & Branded Foods',
-            ]
-            try {
-              if (categoryList.includes(item.category_id)) {
-                if (!prvdr['@ondc/org/fssai_license_no']) {
-                  errorObj.fssaiLiceNo = `@ondc/org/fssai_license_no is mandatory for category_id ${item.category_id}`
-                } else if (prvdr.hasOwnProperty('@ondc/org/fssai_license_no')) {
-                  if (prvdr['@ondc/org/fssai_license_no'].length != 14) {
-                    errorObj.fssaiLiceNo = `@ondc/org/fssai_license_no must contain a valid 14 digit FSSAI No.`
-                  }
-                }
-              }
-            } catch (error) {
-              logger.info(`!!Error occurred while checking fssai license no for provider ${prvdr.id}`)
             }
           }
 
@@ -315,12 +427,144 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
             }
           }
 
+          item.tags.map((tag: { code: any; list: any[] }, index: number) => {
+            switch (tag.code) {
+              case 'type':
+                if (
+                  tag.list &&
+                  Array.isArray(tag.list) &&
+                  tag.list.some(
+                    (listItem: { code: string; value: string }) =>
+                      listItem.code === 'type' && listItem.value === 'item',
+                  )
+                ) {
+                  if (!item.time) {
+                    const key = `prvdr${i}item${j}time`
+                    errorObj[key] = `item_id: ${item.id} should contain time object in bpp/providers[${i}]`
+                  }
+
+                  if (!item.category_ids) {
+                    const key = `prvdr${i}item${j}ctgry_ids`
+                    errorObj[key] = `item_id: ${item.id} should contain category_ids in bpp/providers[${i}]`
+                  }
+                }
+
+                break
+
+              case 'custom_group':
+                tag.list.map((it: { code: string; value: string }, index: number) => {
+                  if (!customGrpId.has(it.value)) {
+                    const key = `prvdr${i}item${j}tag${index}cstmgrp_id`
+                    errorObj[
+                      key
+                    ] = `item_id: ${item.id} should have custom_group_id one of the ids passed in categories bpp/providers[${i}]`
+                  }
+                })
+
+                break
+
+              case 'config':
+                const idList: any = tag.list.find((item: { code: string }) => item.code === 'id')
+                const minList: any = tag.list.find((item: { code: string }) => item.code === 'min')
+                const maxList: any = tag.list.find((item: { code: string }) => item.code === 'max')
+                const seqList: any = tag.list.find((item: { code: string }) => item.code === 'seq')
+
+                if (!categoriesId.has(idList.value)) {
+                  const key = `prvdr${i}item${j}tags${index}config_list`
+                  errorObj[
+                    key
+                  ] = `value in catalog/items${j}/tags${index}/config/list/ should be one of the catalog/category/ids`
+                }
+
+                if (!/^-?\d+(\.\d+)?$/.test(minList.value)) {
+                  const key = `prvdr${i}item${j}tags${index}config_min`
+                  errorObj[key] = `Invalid value for ${minList.code}: ${minList.value}`
+                }
+
+                if (!/^-?\d+(\.\d+)?$/.test(maxList.value)) {
+                  const key = `prvdr${i}item${j}tags${index}config_max`
+                  errorObj[key] = `Invalid value for ${maxList.code}: ${maxList.value}`
+                }
+
+                if (!/^-?\d+(\.\d+)?$/.test(seqList.value)) {
+                  const key = `prvdr${i}item${j}tags${index}config_seq`
+                  errorObj[key] = `Invalid value for ${seqList.code}: ${seqList.value}`
+                }
+
+                break
+
+              case 'timing':
+                for (const item of tag.list) {
+                  switch (item.code) {
+                    case 'day_from':
+                    case 'day_to':
+                      const dayValue = parseInt(item.value)
+                      if (isNaN(dayValue) || dayValue < 1 || dayValue > 7 || !/^-?\d+(\.\d+)?$/.test(item.value)) {
+                        const key = `prvdr${i}item${j}tags${index}timing_day`
+                        errorObj[key] = `Invalid value for '${item.code}': ${item.value}`
+                      }
+
+                      break
+                    case 'time_from':
+                    case 'time_to':
+                      if (!/^([01]\d|2[0-3])[0-5]\d$/.test(item.value)) {
+                        const key = `prvdr${i}item${j}tags${index}timing_time`
+                        errorObj[key] = `Invalid time format for '${item.code}': ${item.value}`
+                      }
+
+                      break
+                    default:
+                      errorObj.Tagtiming = `Invalid list.code for 'timing': ${item.code}`
+                  }
+                }
+
+                const dayFromItem = tag.list.find((item: any) => item.code === 'day_from')
+                const dayToItem = tag.list.find((item: any) => item.code === 'day_to')
+                const timeFromItem = tag.list.find((item: any) => item.code === 'time_from')
+                const timeToItem = tag.list.find((item: any) => item.code === 'time_to')
+
+                if (dayFromItem && dayToItem && timeFromItem && timeToItem) {
+                  const dayFrom = parseInt(dayFromItem.value, 10)
+                  const dayTo = parseInt(dayToItem.value, 10)
+                  const timeFrom = parseInt(timeFromItem.value, 10)
+                  const timeTo = parseInt(timeToItem.value, 10)
+
+                  if (dayTo < dayFrom) {
+                    const key = `prvdr${i}item${j}tags${index}timing_dayfrom`
+                    errorObj[key] = "'day_to' must be greater than or equal to 'day_from'"
+                  }
+
+                  if (timeTo <= timeFrom) {
+                    const key = `prvdr${i}item${j}tags${index}timing_timefrom`
+                    errorObj[key] = "'time_to' must be greater than 'time_from'"
+                  }
+                }
+
+                break
+
+              case 'veg_nonveg':
+                const allowedCodes = ['veg', 'non_veg', 'egg']
+
+                for (const it of tag.list) {
+                  if (it.code && !allowedCodes.includes(it.code)) {
+                    const key = `prvdr${i}item${j}tag${index}veg_nonveg`
+                    errorObj[
+                      key
+                    ] = `item_id: ${item.id} should have veg_nonveg one of the 'veg', 'non_veg', 'egg' in bpp/providers[${i}]`
+                  }
+                }
+
+                break
+            }
+          })
+
           j++
         }
       } catch (error: any) {
         logger.error(`!!Errors while checking items in bpp/providers[${i}], ${error.stack}`)
       }
 
+      // servicability Construct
       try {
         logger.info(`Checking serviceability construct for bpp/providers[${i}]`)
 
@@ -367,7 +611,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
               ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (category is missing)`
             } else {
               if ('value' in ctgry) {
-                if (!ctgryId.has(ctgry.value)) {
+                if (!itemCategory_id.has(ctgry.value)) {
                   const key = `prvdr${i}tags${t}ctgry`
                   errorObj[
                     key
@@ -526,126 +770,6 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
         })
       } catch (error: any) {
         logger.error(`!!Error while checking serviceability construct for bpp/providers[${i}], ${error.stack}`)
-      }
-
-      try {
-        logger.info(`Checking categories for provider (${prvdr.id}) in bpp/providers[${i}]`)
-        let j = 0
-        const categories = onSearchCatalog['bpp/providers'][i]['categories']
-        const iLen = categories.length
-        while (j < iLen) {
-          logger.info(`Validating uniqueness for item id in bpp/providers[${i}].items[${j}]...`)
-          const category = categories[j]
-
-          if (categoriesId.has(category.id)) {
-            const key = `prvdr${i}category${j}`
-            errorObj[key] = `duplicate category id: ${category.id} in bpp/providers[${i}]`
-          } else {
-            categoriesId.add(category.id)
-          }
-
-          try {
-            category.tags.map((tag: { code: any; list: any[] }) => {
-              switch (tag.code) {
-                case 'timing':
-                  for (const item of tag.list) {
-                    switch (item.code) {
-                      case 'day_from':
-                      case 'day_to':
-                        const dayValue = parseInt(item.value)
-                        if (isNaN(dayValue) || dayValue < 1 || dayValue > 7 || !/^-?\d+(\.\d+)?$/.test(item.value)) {
-                          errorObj.custom_menu_timing_tag = `Invalid value for '${item.code}': ${item.value}`
-                        }
-
-                        break
-                      case 'time_from':
-                      case 'time_to':
-                        if (!/^([01]\d|2[0-3])[0-5]\d$/.test(item.value)) {
-                          errorObj.time_to = `Invalid time format for '${item.code}': ${item.value}`
-                        }
-
-                        break
-                      default:
-                        errorObj.Tagtiming = `Invalid list.code for 'timing': ${item.code}`
-                    }
-                  }
-
-                  const dayFromItem = tag.list.find((item: any) => item.code === 'day_from')
-                  const dayToItem = tag.list.find((item: any) => item.code === 'day_to')
-                  const timeFromItem = tag.list.find((item: any) => item.code === 'time_from')
-                  const timeToItem = tag.list.find((item: any) => item.code === 'time_to')
-
-                  if (dayFromItem && dayToItem && timeFromItem && timeToItem) {
-                    const dayFrom = parseInt(dayFromItem.value, 10)
-                    const dayTo = parseInt(dayToItem.value, 10)
-                    const timeFrom = parseInt(timeFromItem.value, 10)
-                    const timeTo = parseInt(timeToItem.value, 10)
-
-                    if (dayTo < dayFrom) {
-                      errorObj.day_from = "'day_to' must be greater than or equal to 'day_from'"
-                    }
-
-                    if (timeTo <= timeFrom) {
-                      errorObj.time_from = "'time_to' must be greater than 'time_from'"
-                    }
-                  }
-
-                  break
-                case 'display':
-                  for (const item of tag.list) {
-                    if (item.code !== 'rank' || !/^-?\d+(\.\d+)?$/.test(item.value)) {
-                      errorObj.rank = `Invalid value for 'display': ${item.value}`
-                    }
-                  }
-
-                  break
-                case 'config':
-                  const minItem: any = tag.list.find((item: { code: string }) => item.code === 'min')
-                  const maxItem: any = tag.list.find((item: { code: string }) => item.code === 'max')
-                  const inputItem: any = tag.list.find((item: { code: string }) => item.code === 'input')
-                  const seqItem: any = tag.list.find((item: { code: string }) => item.code === 'seq')
-
-                  if (!minItem || !maxItem) {
-                    errorObj[
-                      `customization_config_${j}`
-                    ] = `Both 'min' and 'max' values are required in 'config' at index: ${j}`
-                  }
-
-                  if (!/^-?\d+(\.\d+)?$/.test(minItem.value)) {
-                    errorObj[
-                      `customization_config_min_${j}`
-                    ] = `Invalid value for ${minItem.code}: ${minItem.value} at index: ${j}`
-                  }
-
-                  if (!/^-?\d+(\.\d+)?$/.test(maxItem.value)) {
-                    errorObj[
-                      `customization_config_max_${j}`
-                    ] = `Invalid value for ${maxItem.code}: ${maxItem.value}at index: ${j}`
-                  }
-
-                  if (!/^-?\d+(\.\d+)?$/.test(seqItem.value)) {
-                    errorObj[`config_seq_${j}`] = `Invalid value for ${seqItem.code}: ${seqItem.value} at index: ${j}`
-                  }
-
-                  const inputEnum = ['select', 'text']
-                  if (!inputEnum.includes(inputItem.value)) {
-                    errorObj[
-                      `config_input_${j}`
-                    ] = `Invalid value for 'input': ${inputItem.value}, it should be one of ${inputEnum} at index: ${j}`
-                  }
-
-                  break
-              }
-            })
-            logger.info(`Category '${category.descriptor.name}' is valid.`)
-          } catch (error: any) {
-            logger.error(`Validation error for category '${category.descriptor.name}': ${error.message}`)
-          }
-
-          j++
-        }
-      } catch (error: any) {
-        logger.error(`!!Errors while checking categories in bpp/providers[${i}], ${error.stack}`)
       }
 
       i++

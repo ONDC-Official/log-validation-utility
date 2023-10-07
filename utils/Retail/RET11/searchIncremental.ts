@@ -24,7 +24,7 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
 
     const schemaValidation = validateSchema('RET11', constants.RET_SEARCH, data)
     const contextRes: any = checkContext(context, constants.RET_SEARCH)
-    setValue(ApiSequence.SEARCH, context)
+    setValue(`${ApiSequence.INC_SEARCH}_context`, context)
     msgIdSet.add(context.message_id)
 
     const errorObj: any = {}
@@ -42,7 +42,7 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
     if (isNaN(buyerFF)) {
       errorObj.payment = 'payment should have a key @ondc/org/buyer_app_finder_fee_amount'
     } else {
-      setValue('buyerFF', buyerFF)
+      setValue(`${ApiSequence.INC_SEARCH}_buyerFF`, buyerFF)
     }
 
     const fulfillment = data.message.intent && data.message.intent?.fulfillment

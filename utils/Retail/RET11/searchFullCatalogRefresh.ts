@@ -29,7 +29,6 @@ export const checkSearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
       return Object.keys(errorObj).length > 0 && errorObj
     }
 
-    setValue(ApiSequence.SEARCH, data.context)
     msgIdSet.add(data.context.message_id)
 
     const schemaValidation = validateSchema('RET11', constants.RET_SEARCH, data)
@@ -39,7 +38,7 @@ export const checkSearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     }
 
     const contextRes: any = checkContext(data.context, constants.RET_SEARCH)
-    setValue(ApiSequence.SEARCH, data.context)
+    setValue(`${ApiSequence.SEARCH}_context`, data.context)
     msgIdSet.add(data.context.message_id)
 
     if (!contextRes?.valid) {
@@ -49,7 +48,7 @@ export const checkSearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     const buyerFF = parseFloat(data.message.intent?.payment?.['@ondc/org/buyer_app_finder_fee_amount'])
 
     if (!isNaN(buyerFF)) {
-      setValue('buyerFF', buyerFF)
+      setValue(`${ApiSequence.SEARCH}_buyerFF`, buyerFF)
     } else {
       errorObj['payment'] = 'payment should have a key @ondc/org/buyer_app_finder_fee_amount'
     }

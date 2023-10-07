@@ -6,8 +6,7 @@ const createServer = (): express.Application => {
   const app: Application = express()
 
   // Body parsing Middleware
-  app.use(express.json())
-  app.use(express.urlencoded({ extended: true }))
+  app.use(express.json({ limit: '50mb' }))
 
   app.use('/', healthRoutes)
   app.use('/api', validateRoutes)

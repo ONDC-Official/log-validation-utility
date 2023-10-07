@@ -183,3 +183,25 @@ export const hasProperty = (object: any, propetyName: string) => {
 export const isObjectEmpty = (obj: any) => {
   return Object.keys(obj).length === 0
 }
+
+export const isoDurToSec = (duration: string) => {
+  const durRE = /P((\d+)Y)?((\d+)M)?((\d+)W)?((\d+)D)?T?((\d+)H)?((\d+)M)?((\d+)S)?/
+
+  const splitTime = durRE.exec(duration)
+  if (!splitTime) {
+    return 0
+  }
+
+  const years = Number(splitTime?.[2]) || 0
+  const months = Number(splitTime?.[4]) || 0
+  const weeks = Number(splitTime?.[6]) || 0
+  const days = Number(splitTime?.[8]) || 0
+  const hours = Number(splitTime?.[10]) || 0
+  const minutes = Number(splitTime?.[12]) || 0
+  const seconds = Number(splitTime?.[14]) || 0
+
+  const result =
+    years * 31536000 + months * 2628288 + weeks * 604800 + days * 86400 + hours * 3600 + minutes * 60 + seconds
+
+  return result
+}

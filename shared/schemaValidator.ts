@@ -4,6 +4,10 @@ import { FnBselectSchema } from '../schema/Retail/RET11/select'
 import { FnBsearchSchema } from '../schema/Retail/RET11/search'
 import { FnBonSearchSchema } from '../schema/Retail/RET11/on_search'
 import { FnBonSelectSchema } from '../schema/Retail/RET11/on_select'
+import { FnBinitSchema } from '../schema/Retail/RET11/init'
+import { FnBonInitSchema } from '../schema/Retail/RET11/on_init'
+import { FnBconfirmSchema } from '../schema/Retail/RET11/confirm'
+import { FnBonConfirmSchema } from '../schema/Retail/RET11/on_confirm'
 
 const ajv = new Ajv({
   allErrors: true,
@@ -62,9 +66,31 @@ const validate_schema_on_select_RET11_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+const validate_schema_init_RET11_for_json = (data: any) => {
+  const error_list = validate_schema(data, FnBinitSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_init_RET11_for_json = (data: any) => {
+  const error_list = validate_schema(data, FnBonInitSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_confirm_RET11_for_json = (data: any) => {
+  const error_list = validate_schema(data, FnBconfirmSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_confirm_RET11_for_json = (data: any) => {
+  const error_list = validate_schema(data, FnBonConfirmSchema)
+  return formatted_error(error_list)
+}
+
 export default {
   validate_schema_search_RET11_for_json,
   validate_schema_select_RET11_for_json,
   validate_schema_on_search_RET11_for_json,
   validate_schema_on_select_RET11_for_json,
+  validate_schema_init_RET11_for_json,
+  validate_schema_on_init_RET11_for_json,
+  validate_schema_confirm_RET11_for_json,
+  validate_schema_on_confirm_RET11_for_json,
 }

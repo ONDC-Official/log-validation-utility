@@ -28,6 +28,12 @@ export const ApiSequence = {
   ON_SEARCH: 'on_search_full_catalog_refresh',
   INC_SEARCH: 'search_inc_refresh',
   INC_ONSEARCH: 'on_search_inc_refresh',
+  SELECT: 'select',
+  ON_SELECT: 'on_select',
+  INIT: 'init',
+  ON_INIT: 'on_init',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
 }
 
 export const actionsArray = [

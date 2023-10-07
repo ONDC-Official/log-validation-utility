@@ -6,6 +6,8 @@ import { ApiSequence } from '../constants'
 import { checkSearchIncremental } from '../utils/Retail/RET11/searchIncremental'
 import { validateSchema, isObjectEmpty } from '../utils'
 import { checkOnsearchFullCatalogRefresh } from '../utils/Retail/RET11/onSearch'
+import { checkSelect } from '../utils/Retail/RET11/select'
+import { checkOnSelect } from '../utils/Retail/RET11/onSelect'
 
 export const validateLogs = (data: any, domain: string) => {
   const msgIdSet = new Set()
@@ -39,6 +41,29 @@ export const validateLogs = (data: any, domain: string) => {
 
         if (!_.isEmpty(searchIncrementalRefreshResp)) {
           logReport = { ...logReport, [ApiSequence.ON_SEARCH]: searchIncrementalRefreshResp }
+        }
+      }
+
+      if (data[ApiSequence.INC_ONSEARCH]) {
+        // const onSearchIncrementalRefreshResp = checkOnsearchFullCatalogRefresh(data[ApiSequence.INC_ONSEARCH], msgIdSet)
+        // if (!_.isEmpty(onSearchIncrementalRefreshResp)) {
+        //   logReport = { ...logReport, [ApiSequence.INC_ONSEARCH]: onSearchIncrementalRefreshResp }
+        // }
+      }
+
+      if (data[ApiSequence.SELECT]) {
+        const selectResp = checkSelect(data[ApiSequence.SELECT], msgIdSet)
+
+        if (!_.isEmpty(selectResp)) {
+          logReport = { ...logReport, [ApiSequence.SELECT]: selectResp }
+        }
+      }
+
+      if (data[ApiSequence.ON_SELECT]) {
+        const selectResp = checkOnSelect(data[ApiSequence.ON_SELECT])
+
+        if (!_.isEmpty(selectResp)) {
+          logReport = { ...logReport, [ApiSequence.ON_SELECT]: selectResp }
         }
       }
 

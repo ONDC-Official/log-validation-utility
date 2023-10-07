@@ -82,7 +82,6 @@ export const FnBonSearchSchema = {
                 properties: {
                   id: {
                     type: 'string',
-                    maxLength: 12,
                   },
                   type: {
                     type: 'string',
@@ -100,7 +99,6 @@ export const FnBonSearchSchema = {
                 },
                 symbol: {
                   type: 'string',
-                  format: 'url',
                 },
                 short_desc: {
                   type: 'string',
@@ -112,7 +110,6 @@ export const FnBonSearchSchema = {
                   type: 'array',
                   items: {
                     type: 'string',
-                    format: 'url',
                   },
                 },
               },
@@ -125,7 +122,6 @@ export const FnBonSearchSchema = {
                 properties: {
                   id: {
                     type: 'string',
-                    maxLength: 12,
                   },
                   time: {
                     type: 'object',
@@ -173,7 +169,6 @@ export const FnBonSearchSchema = {
                       },
                       symbol: {
                         type: 'string',
-                        format: 'url',
                       },
                       short_desc: {
                         type: 'string',
@@ -185,7 +180,6 @@ export const FnBonSearchSchema = {
                         type: 'array',
                         items: {
                           type: 'string',
-                          format: 'url',
                         },
                       },
                     },
@@ -207,7 +201,6 @@ export const FnBonSearchSchema = {
                       properties: {
                         id: {
                           type: 'string',
-                          maxLength: 12,
                         },
                         time: {
                           type: 'object',
@@ -323,11 +316,9 @@ export const FnBonSearchSchema = {
                       properties: {
                         id: {
                           type: 'string',
-                          maxLength: 12,
                         },
                         parent_category_id: {
                           type: 'string',
-                          maxLength: 12,
                         },
                         descriptor: {
                           type: 'object',
@@ -345,7 +336,6 @@ export const FnBonSearchSchema = {
                               type: 'array',
                               items: {
                                 type: 'string',
-                                format: 'url',
                               },
                             },
                           },
@@ -389,7 +379,6 @@ export const FnBonSearchSchema = {
                       properties: {
                         id: {
                           type: 'string',
-                          maxLength: 12,
                         },
                         time: {
                           type: 'object',
@@ -413,7 +402,6 @@ export const FnBonSearchSchema = {
                             },
                             symbol: {
                               type: 'string',
-                              format: 'url',
                             },
                             short_desc: {
                               type: 'string',
@@ -425,7 +413,6 @@ export const FnBonSearchSchema = {
                               type: 'array',
                               items: {
                                 type: 'string',
-                                format: 'url',
                               },
                             },
                           },
@@ -565,7 +552,7 @@ export const FnBonSearchSchema = {
                           },
                         },
                       },
-                      required: ['id', 'descriptor', 'quantity', 'price', 'category_id', 'related', 'tags'],
+                      required: ['id', 'descriptor', 'quantity', 'price', 'category_id', 'tags'],
                     },
                   },
                   tags: {

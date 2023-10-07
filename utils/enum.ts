@@ -73,3 +73,13 @@ export const fnbCategories = [
   'Yogurt',
   'F&B',
 ]
+
+export const retailPymntTtl = {
+  'delivery charges': 'delivery',
+  'packing charges': 'packing',
+  tax: 'tax',
+  discount: 'discount',
+  'convenience fee': 'misc',
+}
+
+export const taxNotInlcusive = [...fnbCategories]

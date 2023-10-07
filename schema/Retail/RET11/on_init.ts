@@ -1,4 +1,4 @@
-export const FnBonSelectSchema = {
+export const FnBonInitSchema = {
   type: 'object',
   properties: {
     context: {
@@ -9,7 +9,7 @@ export const FnBonSelectSchema = {
         },
         action: {
           type: 'string',
-          const: 'on_select',
+          const: 'on_init',
         },
         core_version: {
           type: 'string',
@@ -20,12 +20,14 @@ export const FnBonSelectSchema = {
         },
         bap_uri: {
           type: 'string',
+          format: 'url',
         },
         bpp_id: {
           type: 'string',
         },
         bpp_uri: {
           type: 'string',
+          format: 'url',
         },
         transaction_id: {
           type: 'string',
@@ -78,6 +80,15 @@ export const FnBonSelectSchema = {
               },
               required: ['id'],
             },
+            provider_location: {
+              type: 'object',
+              properties: {
+                id: {
+                  type: 'string',
+                },
+              },
+              required: ['id'],
+            },
             items: {
               type: 'array',
               items: {
@@ -88,6 +99,15 @@ export const FnBonSelectSchema = {
                   },
                   fulfillment_id: {
                     type: 'string',
+                  },
+                  quantity: {
+                    type: 'object',
+                    properties: {
+                      count: {
+                        type: 'integer',
+                      },
+                    },
+                    required: ['count'],
                   },
                   parent_item_id: {
                     type: 'string',
@@ -120,8 +140,64 @@ export const FnBonSelectSchema = {
                     },
                   },
                 },
-                required: ['id', 'fulfillment_id'],
+                required: ['id', 'fulfillment_id', 'quantity', 'parent_item_id', 'tags'],
               },
+            },
+            billing: {
+              type: 'object',
+              properties: {
+                name: {
+                  type: 'string',
+                },
+                address: {
+                  type: 'object',
+                  properties: {
+                    name: {
+                      type: 'string',
+                    },
+                    building: {
+                      type: 'string',
+                    },
+                    locality: {
+                      type: 'string',
+                    },
+                    city: {
+                      type: 'string',
+                    },
+                    state: {
+                      type: 'string',
+                    },
+                    country: {
+                      type: 'string',
+                    },
+                    area_code: {
+                      type: 'string',
+                    },
+                  },
+                  required: ['name', 'building', 'locality', 'city', 'state', 'country', 'area_code'],
+                },
+                tax_number: {
+                  type: 'string',
+                },
+                email: {
+                  type: 'string',
+                  format: 'email',
+                },
+                phone: {
+                  type: 'string',
+                  minLength: 10,
+                  maxLength: 11,
+                },
+                created_at: {
+                  type: 'string',
+                  format: 'date-time',
+                },
+                updated_at: {
+                  type: 'string',
+                  format: 'date-time',
+                },
+              },
+              required: ['name', 'address', 'tax_number', 'email', 'phone', 'created_at', 'updated_at'],
             },
             fulfillments: {
               type: 'array',
@@ -131,36 +207,68 @@ export const FnBonSelectSchema = {
                   id: {
                     type: 'string',
                   },
-                  '@ondc/org/provider_name': {
+                  type: {
                     type: 'string',
+                    const: 'Delivery',
                   },
                   tracking: {
                     type: 'boolean',
                   },
-                  '@ondc/org/category': {
-                    type: 'string',
-                  },
-                  '@ondc/org/TAT': {
-                    type: 'string',
-                  },
-                  state: {
+                  end: {
                     type: 'object',
                     properties: {
-                      descriptor: {
+                      location: {
                         type: 'object',
                         properties: {
-                          code: {
+                          gps: {
                             type: 'string',
-                            enum: ['Serviceable', 'Non-serviceable'],
+                          },
+                          address: {
+                            type: 'object',
+                            properties: {
+                              name: {
+                                type: 'string',
+                              },
+                              building: {
+                                type: 'string',
+                              },
+                              locality: {
+                                type: 'string',
+                              },
+                              city: {
+                                type: 'string',
+                              },
+                              state: {
+                                type: 'string',
+                              },
+                              country: {
+                                type: 'string',
+                              },
+                              area_code: {
+                                type: 'string',
+                              },
+                            },
+                            required: ['name', 'building', 'locality', 'city', 'state', 'country', 'area_code'],
                           },
                         },
-                        required: ['code'],
+                        required: ['gps', 'address'],
+                      },
+                      contact: {
+                        type: 'object',
+                        properties: {
+                          phone: {
+                            type: 'string',
+                            minLength: 10,
+                            maxLength: 11,
+                          },
+                        },
+                        required: ['phone'],
                       },
                     },
-                    required: ['descriptor'],
+                    required: ['location', 'contact'],
                   },
                 },
-                required: ['id', '@ondc/org/provider_name', 'tracking', '@ondc/org/category', '@ondc/org/TAT', 'state'],
+                required: ['id', 'type', 'tracking', 'end'],
               },
             },
             quote: {
@@ -171,9 +279,11 @@ export const FnBonSelectSchema = {
                   properties: {
                     currency: {
                       type: 'string',
+                      pattern: '^(?!s*$).+',
                     },
                     value: {
                       type: 'string',
+                      minLength: 1,
                     },
                   },
                   required: ['currency', 'value'],
@@ -206,9 +316,11 @@ export const FnBonSelectSchema = {
                         properties: {
                           currency: {
                             type: 'string',
+                            pattern: '^(?!s*$).+',
                           },
                           value: {
                             type: 'string',
+                            minLength: 1,
                           },
                         },
                         required: ['currency', 'value'],
@@ -248,9 +360,11 @@ export const FnBonSelectSchema = {
                             properties: {
                               currency: {
                                 type: 'string',
+                                pattern: '^(?!s*$).+',
                               },
                               value: {
                                 type: 'string',
+                                minLength: 1,
                               },
                             },
                             required: ['currency', 'value'],
@@ -283,6 +397,7 @@ export const FnBonSelectSchema = {
                             },
                           },
                         },
+                        required: ['parent_item_id', 'tags'],
                       },
                     },
                     required: ['@ondc/org/item_id', 'title', '@ondc/org/title_type', 'price'],
@@ -290,31 +405,106 @@ export const FnBonSelectSchema = {
                 },
                 ttl: {
                   type: 'string',
-                  format: 'duration',
                 },
               },
               required: ['price', 'breakup', 'ttl'],
             },
+            payment: {
+              type: 'object',
+              properties: {
+                '@ondc/org/buyer_app_finder_fee_type': {
+                  type: 'string',
+                  enum: ['percent', 'amount'],
+                },
+                '@ondc/org/buyer_app_finder_fee_amount': {
+                  type: 'string',
+                  pattern: '^(\\d*.?\\d{1,2})$',
+                },
+                '@ondc/org/settlement_details': {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      settlement_counterparty: {
+                        type: 'string',
+                      },
+                      settlement_phase: {
+                        type: 'string',
+                        const: 'sale-amount',
+                      },
+                      settlement_type: {
+                        type: 'string',
+                        enum: ['upi', 'neft', 'rtgs'],
+                      },
+                      upi_address: { type: 'string' },
+                      settlement_bank_account_no: {
+                        type: 'string',
+                      },
+                      settlement_ifsc_code: {
+                        type: 'string',
+                      },
+                      bank_name: { type: 'string' },
+                      beneficiary_name: {
+                        type: 'string',
+                      },
+                      branch_name: { type: 'string' },
+                    },
+                    allOf: [
+                      {
+                        if: {
+                          properties: {
+                            settlement_type: {
+                              const: 'upi',
+                            },
+                          },
+                        },
+                        then: {
+                          properties: {
+                            upi_address: {
+                              type: 'string',
+                            },
+                          },
+                          required: ['upi_address'],
+                        },
+                      },
+                      {
+                        if: {
+                          properties: {
+                            settlement_type: {
+                              enum: ['rtgs', 'neft'],
+                            },
+                          },
+                        },
+                        then: {
+                          properties: {
+                            settlement_bank_account_no: {
+                              type: 'string',
+                            },
+                            settlement_ifsc_code: {
+                              type: 'string',
+                            },
+                            bank_name: { type: 'string' },
+                            branch_name: { type: 'string' },
+                          },
+                          required: ['settlement_ifsc_code', 'settlement_bank_account_no', 'bank_name', 'branch_name'],
+                        },
+                      },
+                    ],
+                    required: ['settlement_counterparty', 'settlement_phase', 'settlement_type'],
+                  },
+                },
+              },
+              required: [
+                '@ondc/org/buyer_app_finder_fee_type',
+                '@ondc/org/buyer_app_finder_fee_amount',
+                '@ondc/org/settlement_details',
+              ],
+            },
           },
-          required: ['provider', 'items', 'fulfillments', 'quote'],
+          required: ['provider', 'provider_location', 'items', 'billing', 'fulfillments', 'quote', 'payment'],
         },
       },
       required: ['order'],
-    },
-    error: {
-      type: 'object',
-      properties: {
-        type: {
-          type: 'string',
-        },
-        code: {
-          type: 'string',
-        },
-        message: {
-          type: 'string',
-        },
-      },
-      required: ['type', 'code', 'message'],
     },
   },
   required: ['context', 'message'],

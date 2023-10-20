@@ -6,19 +6,6 @@ import _ from 'lodash'
 import { logger } from '../../../shared/logger'
 import { taxNotInlcusive } from '../../../utils/enum'
 
-// const tagFinder = (item: { tags: any[] }, value: string): any => {
-//   const res = item.tags.find((tag: any) => {
-//     return (
-//       tag.code === 'type' &&
-//       tag.list &&
-//       tag.list.find((listItem: any) => {
-//         return listItem.code === 'type' && listItem.value == value
-//       })
-//     )
-//   })
-//   return res
-// }
-
 interface BreakupElement {
   '@ondc/org/title_type': string
   item?: {
@@ -26,23 +13,13 @@ interface BreakupElement {
   }
 }
 
-const retailPymntTtl: {
-  [key: string]: string
-  'delivery charges': string
-  'packing charges': string
-  tax: string
-  discount: string
-  'convenience fee': string
-  misc: string
-} = {
-  'delivery charges': 'type1',
-  'packing charges': 'type2',
-  tax: 'type3',
-  discount: 'type4',
-  'convenience fee': 'type5',
-  misc: 'type6',
+const retailPymntTtl: { [key: string]: string } = {
+  'delivery charges': 'delivery',
+  'packing charges': 'packing',
+  tax: 'tax',
+  discount: 'discount',
+  'convenience fee': 'misc',
 }
-
 export const checkOnSelect = (data: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.ON_SELECT]: 'Json cannot be empty' }
@@ -232,7 +209,7 @@ export const checkOnSelect = (data: any) => {
   try {
     logger.info(`Comparing count of items in ${constants.RET_SELECT} and ${constants.RET_ONSELECT}`)
     const itemsIdList: any = getValue('itemsIdList') || {}
-    logger.info(itemsIdList)
+    logger.info('itemsIdList', itemsIdList)
     on_select.quote.breakup.forEach((item: { [x: string]: any }) => {
       if (item['@ondc/org/item_id'] in itemsIdList && item['@ondc/org/title_type'] === 'item') {
         if (
@@ -244,8 +221,6 @@ export const checkOnSelect = (data: any) => {
             cntkey
           ] = `Count of item with id: ${item['@ondc/org/item_id']} does not match in ${constants.RET_SELECT} & ${constants.RET_ONSELECT} (suitable domain error should be provided)`
         }
-      } else if (item['@ondc/org/title_type'] === 'item' && !(item['@ondc/org/item_id'] in itemsIdList)) {
-        errorObj.itmBrkup = `item with id: ${item['@ondc/org/item_id']} is not present in /${constants.RET_ONSEARCH}`
       }
     })
   } catch (error: any) {
@@ -317,12 +292,13 @@ export const checkOnSelect = (data: any) => {
         }
       }
 
-      if (['tax', 'discount', 'packing', 'misc'].includes(titleType)) {
-        if (parseFloat(element.price.value) == 0) {
-          const key = `breakupItem${titleType}`
-          errorObj[key] = `${titleType} line item should not be present if price=0`
-        }
-      }
+      // TODO:
+      // if (['tax', 'discount', 'packing', 'misc'].includes(titleType)) {
+      //   if (parseFloat(element.price.value) == 0) {
+      //     const key = `breakupItem${titleType}`
+      //     errorObj[key] = `${titleType} line item should not be present if price=0`
+      //   }
+      // }
 
       if (titleType === 'packing' || titleType === 'delivery' || titleType === 'misc') {
         if (!Object.values(itemFlfllmnts).includes(element['@ondc/org/item_id'])) {

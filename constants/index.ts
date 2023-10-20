@@ -34,6 +34,14 @@ export const ApiSequence = {
   ON_INIT: 'on_init',
   CONFIRM: 'confirm',
   ON_CONFIRM: 'on_confirm',
+  CANCEL: 'cancel',
+  ON_CANCEL: 'on_cancel',
+  TRACK: 'track',
+  ON_TRACK: 'on_track',
+  STATUS: 'status',
+  ON_STATUS: 'on_status',
+  UPDATE: 'update',
+  ON_UPDATE: 'on_update',
 }
 
 export const actionsArray = [
@@ -47,6 +55,12 @@ export const actionsArray = [
   'on_confirm',
   'update',
   'on_update',
-  'support',
-  'on_support',
+  'cancel',
+  'on_cancel',
+  'track',
+  'on_track',
+  'status',
+  'on_status',
 ]
+
+export const buyerCancellationRid = new Set(['001', '003', '006', '009', '010'])

@@ -27,6 +27,7 @@ const controller = {
       res.status(500).send({ success: false, error: error })
     }
   },
+
   validateAction: async (req: Request, res: Response): Promise<any> => {
     try {
       let error

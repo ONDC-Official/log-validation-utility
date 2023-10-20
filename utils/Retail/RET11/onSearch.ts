@@ -3,7 +3,7 @@
 import { logger } from '../../../shared/logger'
 import { setValue, getValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
-import { validateSchema, isObjectEmpty, checkContext, timeDiff, checkGpsPrecision, emailRegex } from '../../../utils'
+import { validateSchema, isObjectEmpty, checkContext, checkGpsPrecision, emailRegex } from '../../../utils'
 import _ from 'lodash'
 
 export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
@@ -42,21 +42,6 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     setValue('bppId', context.bpp_id)
   } catch (error: any) {
     logger.error(`!!Error while storing BAP and BPP Ids in /${constants.RET_ONSEARCH}, ${error.stack}`)
-  }
-
-  try {
-    logger.info(`Comparing timestamp of /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH}`)
-    if (_.gte(searchContext?.timestamp, context.timestamp)) {
-      errorObj.timestamp = `Context timestamp for /${constants.RET_SEARCH} api cannot be greater than or equal to /${constants.RET_ONSEARCH} api`
-    } else {
-      const timeDifference: any = timeDiff(context.timestamp, searchContext?.timestamp)
-      logger.info(timeDiff)
-      if (timeDifference > 5000) {
-        errorObj.timestamp = `context/timestamp difference between /${constants.RET_ONSEARCH} and /${constants.RET_SEARCH} should be smaller than 5 sec`
-      }
-    }
-  } catch (error) {
-    logger.info(`Error while comparing timestamp for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api`)
   }
 
   try {

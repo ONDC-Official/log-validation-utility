@@ -8,6 +8,12 @@ import { FnBinitSchema } from '../schema/Retail/RET11/init'
 import { FnBonInitSchema } from '../schema/Retail/RET11/on_init'
 import { FnBconfirmSchema } from '../schema/Retail/RET11/confirm'
 import { FnBonConfirmSchema } from '../schema/Retail/RET11/on_confirm'
+import { cancelSchema } from '../schema/Retail/Cancel/cancel'
+import { onCancelSchema } from '../schema/Retail/Cancel/onCancel'
+import { statusSchema } from '../schema/Retail/Status/status'
+import { onStatusSchema } from '../schema/Retail/Status/on_status'
+import { onTrackSchema } from '../schema/Retail/Track/on_track'
+import { trackSchema } from '../schema/Retail/Track/track'
 
 const ajv = new Ajv({
   allErrors: true,
@@ -79,8 +85,35 @@ const validate_schema_confirm_RET11_for_json = (data: any) => {
   const error_list = validate_schema(data, FnBconfirmSchema)
   return formatted_error(error_list)
 }
+
 const validate_schema_on_confirm_RET11_for_json = (data: any) => {
   const error_list = validate_schema(data, FnBonConfirmSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_cancel_RET11_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancelSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_RET11_for_json = (data: any) => {
+  const error_list = validate_schema(data, onCancelSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_track_RET11_for_json = (data: any) => {
+  const error_list = validate_schema(data, trackSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_track_RET11_for_json = (data: any) => {
+  const error_list = validate_schema(data, onTrackSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_status_RET11_for_json = (data: any) => {
+  const error_list = validate_schema(data, statusSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_status_RET11_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusSchema)
   return formatted_error(error_list)
 }
 
@@ -93,4 +126,10 @@ export default {
   validate_schema_on_init_RET11_for_json,
   validate_schema_confirm_RET11_for_json,
   validate_schema_on_confirm_RET11_for_json,
+  validate_schema_cancel_RET11_for_json,
+  validate_schema_on_cancel_RET11_for_json,
+  validate_schema_track_RET11_for_json,
+  validate_schema_on_track_RET11_for_json,
+  validate_schema_status_RET11_for_json,
+  validate_schema_on_status_RET11_for_json,
 }

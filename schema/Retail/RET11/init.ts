@@ -6,6 +6,8 @@ export const FnBinitSchema = {
       properties: {
         domain: {
           type: 'string',
+          minLength: 1,
+          const: 'ONDC:RET11',
         },
         action: {
           type: 'string',
@@ -17,6 +19,7 @@ export const FnBinitSchema = {
         },
         bap_id: {
           type: 'string',
+          minLength: 1,
         },
         bap_uri: {
           type: 'string',
@@ -24,6 +27,7 @@ export const FnBinitSchema = {
         },
         bpp_id: {
           type: 'string',
+          minLength: 1,
         },
         bpp_uri: {
           type: 'string',
@@ -34,12 +38,16 @@ export const FnBinitSchema = {
         },
         message_id: {
           type: 'string',
+          minLength: 1,
         },
         city: {
           type: 'string',
+          minLength: 1,
         },
         country: {
           type: 'string',
+          minLength: 1,
+          const: 'IND',
         },
         timestamp: {
           type: 'string',
@@ -102,21 +110,25 @@ export const FnBinitSchema = {
                 properties: {
                   id: {
                     type: 'string',
+                    minLength: 1,
                   },
                   fulfillment_id: {
                     type: 'string',
+                    minLength: 1,
                   },
                   quantity: {
                     type: 'object',
                     properties: {
                       count: {
                         type: 'integer',
+                        minLength: 1,
                       },
                     },
                     required: ['count'],
                   },
                   parent_item_id: {
                     type: 'string',
+                    minLength: 1,
                   },
                   tags: {
                     type: 'array',
@@ -160,6 +172,7 @@ export const FnBinitSchema = {
                   properties: {
                     name: {
                       type: 'string',
+                      minLength: 1,
                     },
                     building: {
                       type: 'string',
@@ -169,15 +182,20 @@ export const FnBinitSchema = {
                     },
                     city: {
                       type: 'string',
+                      minLength: 1,
                     },
                     state: {
                       type: 'string',
+                      minLength: 1,
                     },
                     country: {
                       type: 'string',
+                      minLength: 1,
                     },
                     area_code: {
                       type: 'string',
+                      maxLength: 6,
+                      minLength: 1,
                     },
                   },
                   required: ['name', 'building', 'locality', 'city', 'state', 'country', 'area_code'],
@@ -212,6 +230,7 @@ export const FnBinitSchema = {
                 properties: {
                   id: {
                     type: 'string',
+                    minLength: 1,
                   },
                   type: {
                     type: 'string',
@@ -225,6 +244,7 @@ export const FnBinitSchema = {
                         properties: {
                           gps: {
                             type: 'string',
+                            minLength: 1,
                           },
                           address: {
                             type: 'object',
@@ -245,12 +265,15 @@ export const FnBinitSchema = {
                               },
                               state: {
                                 type: 'string',
+                                minLength: 1,
                               },
                               country: {
                                 type: 'string',
+                                minLength: 1,
                               },
                               area_code: {
                                 type: 'string',
+                                minLength: 1,
                               },
                             },
                             required: ['name', 'building', 'locality', 'city', 'state', 'country', 'area_code'],

@@ -6,6 +6,7 @@ export const FnBselectSchema = {
       properties: {
         domain: {
           type: 'string',
+          const: 'ONDC:RET11',
         },
         action: {
           type: 'string',
@@ -38,6 +39,7 @@ export const FnBselectSchema = {
         },
         country: {
           type: 'string',
+          const: 'IND',
         },
         timestamp: {
           type: 'string',

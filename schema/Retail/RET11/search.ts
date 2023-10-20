@@ -142,7 +142,7 @@ export const FnBsearchSchema = {
                 properties: {
                   code: {
                     type: 'string',
-                    const: ['catalog_inc'],
+                    const: 'catalog_inc',
                   },
                   list: {
                     type: 'array',

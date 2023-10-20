@@ -6,6 +6,8 @@ export const FnBonInitSchema = {
       properties: {
         domain: {
           type: 'string',
+          minLength: 1,
+          const: 'ONDC:RET11',
         },
         action: {
           type: 'string',
@@ -17,6 +19,7 @@ export const FnBonInitSchema = {
         },
         bap_id: {
           type: 'string',
+          minLength: 1,
         },
         bap_uri: {
           type: 'string',
@@ -24,6 +27,7 @@ export const FnBonInitSchema = {
         },
         bpp_id: {
           type: 'string',
+          minLength: 1,
         },
         bpp_uri: {
           type: 'string',
@@ -31,15 +35,20 @@ export const FnBonInitSchema = {
         },
         transaction_id: {
           type: 'string',
+          minLength: 1,
         },
         message_id: {
           type: 'string',
+          minLength: 1,
         },
         city: {
           type: 'string',
+          minLength: 1,
         },
         country: {
           type: 'string',
+          minLength: 1,
+          const: 'IND',
         },
         timestamp: {
           type: 'string',
@@ -76,6 +85,7 @@ export const FnBonInitSchema = {
               properties: {
                 id: {
                   type: 'string',
+                  minLength: 1,
                 },
               },
               required: ['id'],
@@ -85,6 +95,7 @@ export const FnBonInitSchema = {
               properties: {
                 id: {
                   type: 'string',
+                  minLength: 1,
                 },
               },
               required: ['id'],
@@ -96,21 +107,25 @@ export const FnBonInitSchema = {
                 properties: {
                   id: {
                     type: 'string',
+                    minLength: 1,
                   },
                   fulfillment_id: {
                     type: 'string',
+                    minLength: 1,
                   },
                   quantity: {
                     type: 'object',
                     properties: {
                       count: {
                         type: 'integer',
+                        minLength: 1,
                       },
                     },
                     required: ['count'],
                   },
                   parent_item_id: {
                     type: 'string',
+                    minLength: 1,
                   },
                   tags: {
                     type: 'array',
@@ -148,6 +163,7 @@ export const FnBonInitSchema = {
               properties: {
                 name: {
                   type: 'string',
+                  minLength: 1,
                 },
                 address: {
                   type: 'object',
@@ -163,15 +179,18 @@ export const FnBonInitSchema = {
                     },
                     city: {
                       type: 'string',
+                      minLength: 1,
                     },
                     state: {
                       type: 'string',
                     },
                     country: {
                       type: 'string',
+                      minLength: 1,
                     },
                     area_code: {
                       type: 'string',
+                      minLength: 1,
                     },
                   },
                   required: ['name', 'building', 'locality', 'city', 'state', 'country', 'area_code'],
@@ -206,6 +225,7 @@ export const FnBonInitSchema = {
                 properties: {
                   id: {
                     type: 'string',
+                    minLength: 1,
                   },
                   type: {
                     type: 'string',
@@ -246,6 +266,8 @@ export const FnBonInitSchema = {
                               },
                               area_code: {
                                 type: 'string',
+                                minLength: 1,
+                                maxLength: 6,
                               },
                             },
                             required: ['name', 'building', 'locality', 'city', 'state', 'country', 'area_code'],
@@ -295,12 +317,14 @@ export const FnBonInitSchema = {
                     properties: {
                       '@ondc/org/item_id': {
                         type: 'string',
+                        minLength: 1,
                       },
                       '@ondc/org/item_quantity': {
                         type: 'object',
                         properties: {
                           count: {
                             type: 'integer',
+                            minLength: 1,
                           },
                         },
                         required: ['count'],
@@ -310,6 +334,7 @@ export const FnBonInitSchema = {
                       },
                       '@ondc/org/title_type': {
                         type: 'string',
+                        enum: ['item', 'delivery', 'packing', 'tax', 'misc', 'discount'],
                       },
                       price: {
                         type: 'object',
@@ -330,6 +355,7 @@ export const FnBonInitSchema = {
                         properties: {
                           parent_item_id: {
                             type: 'string',
+                            minLength: 1,
                           },
                           quantity: {
                             type: 'object',
@@ -339,6 +365,7 @@ export const FnBonInitSchema = {
                                 properties: {
                                   count: {
                                     type: 'string',
+                                    minLength: 1,
                                   },
                                 },
                                 required: ['count'],
@@ -348,6 +375,7 @@ export const FnBonInitSchema = {
                                 properties: {
                                   count: {
                                     type: 'string',
+                                    minLength: 1,
                                   },
                                 },
                                 required: ['count'],
@@ -405,6 +433,7 @@ export const FnBonInitSchema = {
                 },
                 ttl: {
                   type: 'string',
+                  format: 'duration',
                 },
               },
               required: ['price', 'breakup', 'ttl'],

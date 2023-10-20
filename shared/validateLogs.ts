@@ -8,6 +8,16 @@ import { validateSchema, isObjectEmpty } from '../utils'
 import { checkOnsearchFullCatalogRefresh } from '../utils/Retail/RET11/onSearch'
 import { checkSelect } from '../utils/Retail/RET11/select'
 import { checkOnSelect } from '../utils/Retail/RET11/onSelect'
+import { checkInit } from '../utils/Retail/RET11/init'
+import { checkOnInit } from '../utils/Retail/RET11/onInit'
+import { checkConfirm } from '../utils/Retail/RET11/confirm'
+import { checkOnConfirm } from '../utils/Retail/RET11/onConfirm'
+import { checkCancel } from '../utils/Retail/Cancel/cancel'
+import { checkOnCancel } from '../utils/Retail/Cancel/onCancel'
+import { checkOnTrack } from '../utils/Retail/Track/onTrack'
+import { checkTrack } from '../utils/Retail/Track/track'
+import { checkOnStatus } from '../utils/Retail/Status/onStatus'
+import { checkStatus } from '../utils/Retail/Status/status'
 
 export const validateLogs = (data: any, domain: string) => {
   const msgIdSet = new Set()
@@ -37,10 +47,10 @@ export const validateLogs = (data: any, domain: string) => {
       }
 
       if (data[ApiSequence.ON_SEARCH]) {
-        const searchIncrementalRefreshResp = checkOnsearchFullCatalogRefresh(data[ApiSequence.ON_SEARCH], msgIdSet)
+        const onSearchFullCatalogRefreshResp = checkOnsearchFullCatalogRefresh(data[ApiSequence.ON_SEARCH], msgIdSet)
 
-        if (!_.isEmpty(searchIncrementalRefreshResp)) {
-          logReport = { ...logReport, [ApiSequence.ON_SEARCH]: searchIncrementalRefreshResp }
+        if (!_.isEmpty(onSearchFullCatalogRefreshResp)) {
+          logReport = { ...logReport, [ApiSequence.ON_SEARCH]: onSearchFullCatalogRefreshResp }
         }
       }
 
@@ -60,10 +70,90 @@ export const validateLogs = (data: any, domain: string) => {
       }
 
       if (data[ApiSequence.ON_SELECT]) {
-        const selectResp = checkOnSelect(data[ApiSequence.ON_SELECT])
+        const on_selectResp = checkOnSelect(data[ApiSequence.ON_SELECT])
 
-        if (!_.isEmpty(selectResp)) {
-          logReport = { ...logReport, [ApiSequence.ON_SELECT]: selectResp }
+        if (!_.isEmpty(on_selectResp)) {
+          logReport = { ...logReport, [ApiSequence.ON_SELECT]: on_selectResp }
+        }
+      }
+
+      if (data[ApiSequence.INIT]) {
+        const initResp = checkInit(data[ApiSequence.INIT])
+
+        if (!_.isEmpty(initResp)) {
+          logReport = { ...logReport, [ApiSequence.INIT]: initResp }
+        }
+      }
+
+      if (data[ApiSequence.ON_INIT]) {
+        const on_initResp = checkOnInit(data[ApiSequence.ON_INIT], msgIdSet)
+
+        if (!_.isEmpty(on_initResp)) {
+          logReport = { ...logReport, [ApiSequence.ON_INIT]: on_initResp }
+        }
+      }
+
+      if (data[ApiSequence.CONFIRM]) {
+        const confirmResps = checkConfirm(data[ApiSequence.CONFIRM])
+
+        if (!_.isEmpty(confirmResps)) {
+          logReport = { ...logReport, [ApiSequence.CONFIRM]: confirmResps }
+        }
+      }
+
+      if (data[ApiSequence.ON_CONFIRM]) {
+        const on_confirmResps = checkOnConfirm(data[ApiSequence.ON_CONFIRM])
+
+        if (!_.isEmpty(on_confirmResps)) {
+          logReport = { ...logReport, [ApiSequence.ON_CONFIRM]: on_confirmResps }
+        }
+      }
+
+      if (data[ApiSequence.CANCEL]) {
+        const cancelResp = checkCancel(data[ApiSequence.CANCEL])
+
+        if (!_.isEmpty(cancelResp)) {
+          logReport = { ...logReport, [ApiSequence.CANCEL]: cancelResp }
+        }
+      }
+
+      if (data[ApiSequence.ON_CANCEL]) {
+        const onCancelResp = checkOnCancel(data[ApiSequence.ON_CANCEL])
+
+        if (!_.isEmpty(onCancelResp)) {
+          logReport = { ...logReport, [ApiSequence.ON_CANCEL]: onCancelResp }
+        }
+      }
+
+      if (data[ApiSequence.STATUS]) {
+        const statusResp = checkStatus(data[ApiSequence.STATUS])
+
+        if (!_.isEmpty(statusResp)) {
+          logReport = { ...logReport, [ApiSequence.STATUS]: statusResp }
+        }
+      }
+
+      if (data[ApiSequence.ON_STATUS]) {
+        const onStatusResp = checkOnStatus(data[ApiSequence.ON_STATUS])
+
+        if (!_.isEmpty(onStatusResp)) {
+          logReport = { ...logReport, [ApiSequence.ON_STATUS]: onStatusResp }
+        }
+      }
+
+      if (data[ApiSequence.TRACK]) {
+        const TrackResp = checkTrack(data[ApiSequence.TRACK])
+
+        if (!_.isEmpty(TrackResp)) {
+          logReport = { ...logReport, [ApiSequence.TRACK]: TrackResp }
+        }
+      }
+
+      if (data[ApiSequence.ON_TRACK]) {
+        const onTrackResp = checkOnTrack(data[ApiSequence.ON_TRACK])
+
+        if (!_.isEmpty(onTrackResp)) {
+          logReport = { ...logReport, [ApiSequence.ON_TRACK]: onTrackResp }
         }
       }
 

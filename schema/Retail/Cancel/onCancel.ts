@@ -1,4 +1,4 @@
-export const FnBonConfirmSchema = {
+export const onCancelSchema = {
   type: 'object',
   properties: {
     context: {
@@ -6,11 +6,19 @@ export const FnBonConfirmSchema = {
       properties: {
         domain: {
           type: 'string',
-          const: 'ONDC:RET11',
+          minLength: 1,
+        },
+        country: {
+          type: 'string',
+          const: 'IND',
+        },
+        city: {
+          type: 'string',
+          minLength: 1,
         },
         action: {
           type: 'string',
-          const: 'on_confirm',
+          const: 'on_cancel',
         },
         core_version: {
           type: 'string',
@@ -22,7 +30,6 @@ export const FnBonConfirmSchema = {
         },
         bap_uri: {
           type: 'string',
-          minLength: 1,
           format: 'url',
         },
         bpp_id: {
@@ -31,7 +38,6 @@ export const FnBonConfirmSchema = {
         },
         bpp_uri: {
           type: 'string',
-          minLength: 1,
           format: 'url',
         },
         transaction_id: {
@@ -41,14 +47,6 @@ export const FnBonConfirmSchema = {
         message_id: {
           type: 'string',
           minLength: 1,
-        },
-        city: {
-          type: 'string',
-          minLength: 1,
-        },
-        country: {
-          type: 'string',
-          const: 'IND',
         },
         timestamp: {
           type: 'string',
@@ -61,6 +59,8 @@ export const FnBonConfirmSchema = {
       },
       required: [
         'domain',
+        'country',
+        'city',
         'action',
         'core_version',
         'bap_id',
@@ -69,9 +69,8 @@ export const FnBonConfirmSchema = {
         'bpp_uri',
         'transaction_id',
         'message_id',
-        'city',
-        'country',
         'timestamp',
+        'ttl',
       ],
     },
     message: {
@@ -82,16 +81,18 @@ export const FnBonConfirmSchema = {
           properties: {
             id: {
               type: 'string',
+              minLength: 1,
             },
             state: {
               type: 'string',
-              enum: ['Created', 'Accepted', 'Cancelled'],
+              const: 'Cancelled',
             },
             provider: {
               type: 'object',
               properties: {
                 id: {
                   type: 'string',
+                  minLength: 1,
                 },
                 locations: {
                   type: 'array',
@@ -100,6 +101,7 @@ export const FnBonConfirmSchema = {
                     properties: {
                       id: {
                         type: 'string',
+                        minLength: 1,
                       },
                     },
                     required: ['id'],
@@ -115,52 +117,24 @@ export const FnBonConfirmSchema = {
                 properties: {
                   id: {
                     type: 'string',
+                    minLength: 1,
                   },
                   fulfillment_id: {
                     type: 'string',
+                    minLength: 1,
                   },
                   quantity: {
                     type: 'object',
                     properties: {
                       count: {
                         type: 'integer',
+                        minLength: 1,
                       },
                     },
                     required: ['count'],
                   },
-                  parent_item_id: {
-                    type: 'string',
-                  },
-                  tags: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        code: {
-                          type: 'string',
-                        },
-                        list: {
-                          type: 'array',
-                          items: {
-                            type: 'object',
-                            properties: {
-                              code: {
-                                type: 'string',
-                              },
-                              value: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                            },
-                            required: ['code', 'value'],
-                          },
-                        },
-                      },
-                      required: ['code', 'list'],
-                    },
-                  },
                 },
-                required: ['id', 'fulfillment_id', 'quantity', 'parent_item_id', 'tags'],
+                required: ['id', 'fulfillment_id', 'quantity'],
               },
             },
             billing: {
@@ -168,6 +142,7 @@ export const FnBonConfirmSchema = {
               properties: {
                 name: {
                   type: 'string',
+                  minLength: 1,
                 },
                 address: {
                   type: 'object',
@@ -223,6 +198,27 @@ export const FnBonConfirmSchema = {
               },
               required: ['name', 'address', 'email', 'phone', 'created_at', 'updated_at'],
             },
+            cancellation: {
+              type: 'object',
+              properties: {
+                cancelled_by: {
+                  type: 'string',
+                  minLength: 1,
+                },
+                reason: {
+                  type: 'object',
+                  properties: {
+                    id: {
+                      type: 'string',
+                      minLength: 3,
+                      maxLength: 3,
+                    },
+                  },
+                  required: ['id'],
+                },
+              },
+              required: ['cancelled_by', 'reason'],
+            },
             fulfillments: {
               type: 'array',
               items: {
@@ -244,7 +240,8 @@ export const FnBonConfirmSchema = {
                         properties: {
                           code: {
                             type: 'string',
-                            const: 'Pending',
+                            minLength: 1,
+                            const: 'Cancelled',
                           },
                         },
                         required: ['code'],
@@ -254,10 +251,11 @@ export const FnBonConfirmSchema = {
                   },
                   type: {
                     type: 'string',
-                    const: 'Delivery',
+                    minLength: 1,
                   },
                   tracking: {
                     type: 'boolean',
+                    minLength: 1,
                   },
                   start: {
                     type: 'object',
@@ -267,7 +265,6 @@ export const FnBonConfirmSchema = {
                         properties: {
                           id: {
                             type: 'string',
-                            minLength: 1,
                           },
                           descriptor: {
                             type: 'object',
@@ -315,39 +312,17 @@ export const FnBonConfirmSchema = {
                             properties: {
                               start: {
                                 type: 'string',
-                                minLength: 1,
+                                format: 'date-time',
                               },
                               end: {
                                 type: 'string',
-                                minLength: 1,
+                                format: 'date-time',
                               },
                             },
                             required: ['start', 'end'],
                           },
                         },
                         required: ['range'],
-                      },
-                      instructions: {
-                        type: 'object',
-                        properties: {
-                          code: {
-                            type: 'string',
-                            minLength: 1,
-                          },
-                          name: {
-                            type: 'string',
-                            minLength: 1,
-                          },
-                          short_desc: {
-                            type: 'string',
-                            minLength: 1,
-                          },
-                          long_desc: {
-                            type: 'string',
-                            minLength: 1,
-                          },
-                        },
-                        required: ['code', 'name', 'short_desc', 'long_desc'],
                       },
                       contact: {
                         type: 'object',
@@ -365,7 +340,7 @@ export const FnBonConfirmSchema = {
                         required: ['phone', 'email'],
                       },
                     },
-                    required: ['location', 'time', 'instructions', 'contact'],
+                    required: ['location', 'time', 'contact'],
                   },
                   end: {
                     type: 'object',
@@ -375,6 +350,7 @@ export const FnBonConfirmSchema = {
                         properties: {
                           gps: {
                             type: 'string',
+                            minLength: 1,
                           },
                           address: {
                             type: 'object',
@@ -406,7 +382,6 @@ export const FnBonConfirmSchema = {
                               area_code: {
                                 type: 'string',
                                 minLength: 1,
-                                maxLength: 6,
                               },
                             },
                             required: ['name', 'building', 'locality', 'city', 'state', 'country', 'area_code'],
@@ -422,11 +397,11 @@ export const FnBonConfirmSchema = {
                             properties: {
                               start: {
                                 type: 'string',
-                                minLength: 1,
+                                format: 'date-time',
                               },
                               end: {
                                 type: 'string',
-                                minLength: 1,
+                                format: 'date-time',
                               },
                             },
                             required: ['start', 'end'],
@@ -462,8 +437,49 @@ export const FnBonConfirmSchema = {
                     },
                     required: ['location', 'time', 'person', 'contact'],
                   },
+                  tags: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        code: {
+                          type: 'string',
+                        },
+                        list: {
+                          type: 'array',
+                          items: [
+                            {
+                              type: 'object',
+                              properties: {
+                                code: {
+                                  type: 'string',
+                                },
+                                value: {
+                                  type: 'string',
+                                },
+                              },
+                              required: ['code', 'value'],
+                            },
+                            {
+                              type: 'object',
+                              properties: {
+                                code: {
+                                  type: 'string',
+                                },
+                                value: {
+                                  type: 'string',
+                                },
+                              },
+                              required: ['code', 'value'],
+                            },
+                          ],
+                        },
+                      },
+                      required: ['code', 'list'],
+                    },
+                  },
                 },
-                required: ['id', '@ondc/org/provider_name', 'state', 'type', 'tracking', 'start', 'end'],
+                required: ['id', '@ondc/org/provider_name', 'state', 'type', 'tracking', 'start', 'end', 'tags'],
               },
             },
             quote: {
@@ -474,11 +490,9 @@ export const FnBonConfirmSchema = {
                   properties: {
                     currency: {
                       type: 'string',
-                      pattern: '^(?!s*$).+',
                     },
                     value: {
                       type: 'string',
-                      minLength: 1,
                     },
                   },
                   required: ['currency', 'value'],
@@ -502,22 +516,18 @@ export const FnBonConfirmSchema = {
                       },
                       title: {
                         type: 'string',
-                        minLength: 1,
                       },
                       '@ondc/org/title_type': {
                         type: 'string',
-                        enum: ['item', 'delivery', 'packing', 'tax', 'misc', 'discount'],
                       },
                       price: {
                         type: 'object',
                         properties: {
                           currency: {
                             type: 'string',
-                            pattern: '^(?!s*$).+',
                           },
                           value: {
                             type: 'string',
-                            minLength: 1,
                           },
                         },
                         required: ['currency', 'value'],
@@ -525,53 +535,20 @@ export const FnBonConfirmSchema = {
                       item: {
                         type: 'object',
                         properties: {
-                          parent_item_id: {
-                            type: 'string',
-                          },
                           price: {
                             type: 'object',
                             properties: {
                               currency: {
                                 type: 'string',
-                                pattern: '^(?!s*$).+',
                               },
                               value: {
                                 type: 'string',
-                                minLength: 1,
                               },
                             },
                             required: ['currency', 'value'],
                           },
-                          tags: {
-                            type: 'array',
-                            items: {
-                              type: 'object',
-                              properties: {
-                                code: {
-                                  type: 'string',
-                                },
-                                list: {
-                                  type: 'array',
-                                  items: {
-                                    type: 'object',
-                                    properties: {
-                                      code: {
-                                        type: 'string',
-                                      },
-                                      value: {
-                                        type: 'string',
-                                        minLength: 1,
-                                      },
-                                    },
-                                    required: ['code', 'value'],
-                                  },
-                                },
-                              },
-                              required: ['code', 'list'],
-                            },
-                          },
                         },
-                        required: ['parent_item_id', 'tags'],
+                        required: ['price'],
                       },
                     },
                     required: ['@ondc/org/item_id', 'title', '@ondc/org/title_type', 'price'],
@@ -598,7 +575,6 @@ export const FnBonConfirmSchema = {
                   properties: {
                     currency: {
                       type: 'string',
-                      pattern: '^(?!s*$).+',
                     },
                     transaction_id: {
                       type: 'string',
@@ -622,15 +598,6 @@ export const FnBonConfirmSchema = {
                   type: 'string',
                 },
                 '@ondc/org/buyer_app_finder_fee_amount': {
-                  type: 'string',
-                },
-                '@ondc/org/settlement_basis': {
-                  type: 'string',
-                },
-                '@ondc/org/settlement_window': {
-                  type: 'string',
-                },
-                '@ondc/org/withholding_amount': {
                   type: 'string',
                 },
                 '@ondc/org/settlement_details': {
@@ -689,39 +656,8 @@ export const FnBonConfirmSchema = {
                 'collected_by',
                 '@ondc/org/buyer_app_finder_fee_type',
                 '@ondc/org/buyer_app_finder_fee_amount',
-                '@ondc/org/settlement_basis',
-                '@ondc/org/settlement_window',
-                '@ondc/org/withholding_amount',
                 '@ondc/org/settlement_details',
               ],
-            },
-            tags: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  code: {
-                    type: 'string',
-                  },
-                  list: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        code: {
-                          type: 'string',
-                        },
-                        value: {
-                          type: 'string',
-                          minLength: 1,
-                        },
-                      },
-                      required: ['code', 'value'],
-                    },
-                  },
-                },
-                required: ['code', 'list'],
-              },
             },
             created_at: {
               type: 'string',
@@ -738,10 +674,10 @@ export const FnBonConfirmSchema = {
             'provider',
             'items',
             'billing',
+            'cancellation',
             'fulfillments',
             'quote',
             'payment',
-            'tags',
             'created_at',
             'updated_at',
           ],

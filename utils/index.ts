@@ -1,3 +1,4 @@
+/* eslint-disable no-prototype-builtins */
 import _ from 'lodash'
 import { logger } from '../shared/logger'
 import constants from '../constants'
@@ -204,4 +205,105 @@ export const isoDurToSec = (duration: string) => {
     years * 31536000 + months * 2628288 + weeks * 604800 + days * 86400 + hours * 3600 + minutes * 60 + seconds
 
   return result
+}
+
+export const isObjectEqual = (obj1: any, obj2: any, parentKey: string = ''): string[] => {
+  const typeOfObj1 = typeof obj1
+  const typeOfObj2 = typeof obj2
+
+  if (typeOfObj1 !== typeOfObj2) {
+    return [parentKey]
+  }
+
+  if (typeOfObj1 !== 'object' || obj1 === null || obj2 === null) {
+    return obj1 === obj2 ? [] : [parentKey]
+  }
+
+  if (Array.isArray(obj1) && Array.isArray(obj2)) {
+    if (obj1.length !== obj2.length) {
+      return [parentKey]
+    }
+
+    const sortedObj1 = [...obj1].sort()
+    const sortedObj2 = [...obj2].sort()
+
+    for (let i = 0; i < sortedObj1.length; i++) {
+      const nestedKeys = isObjectEqual(sortedObj1[i], sortedObj2[i], `${parentKey}[${i}]`)
+      if (nestedKeys.length > 0) {
+        return nestedKeys
+      }
+    }
+
+    return []
+  }
+
+  const obj1Keys = Object.keys(obj1)
+  const obj2Keys = Object.keys(obj2)
+
+  const allKeys = [...new Set([...obj1Keys, ...obj2Keys])]
+
+  const notEqualKeys: string[] = []
+
+  for (const key of allKeys) {
+    if (!obj2.hasOwnProperty(key) || !obj1.hasOwnProperty(key)) {
+      notEqualKeys.push(parentKey ? `${parentKey}/${key}` : key)
+      continue
+    }
+
+    const nestedKeys = isObjectEqual(obj1[key], obj2[key], parentKey ? `${parentKey}/${key}` : key)
+
+    if (nestedKeys.length > 0) {
+      notEqualKeys.push(...nestedKeys)
+    }
+  }
+
+  return notEqualKeys
+}
+
+export function checkItemTag(item: any, itemArray: any[]) {
+  for (const tag of item.tags) {
+    if (tag.code === 'parent') {
+      for (const list of tag.list) {
+        if (list.code === 'id' && !itemArray.includes(list.value)) {
+          return true
+        }
+      }
+    }
+  }
+
+  return false
+}
+
+export function deepEqual(obj1: any, obj2: any): boolean {
+  if (obj1 === obj2) {
+    return true
+  }
+
+  if (typeof obj1 !== 'object' || obj1 === null || typeof obj2 !== 'object' || obj2 === null) {
+    return false
+  }
+
+  const keys1 = Object.keys(obj1)
+  const keys2 = Object.keys(obj2)
+
+  if (keys1.length !== keys2.length) {
+    return false
+  }
+
+  for (const key of keys1) {
+    if (!keys2.includes(key) || !deepEqual(obj1[key], obj2[key])) {
+      return false
+    }
+  }
+
+  return true
+}
+
+export const compareCoordinates = (coord1: any, coord2: any) => {
+  // Remove all spaces from the coordinates
+  const cleanCoord1 = coord1.replace(/\s/g, '')
+  const cleanCoord2 = coord2.replace(/\s/g, '')
+
+  // Compare the cleaned coordinates
+  return cleanCoord1 === cleanCoord2
 }

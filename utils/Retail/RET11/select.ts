@@ -1,6 +1,6 @@
 import { getValue, setValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
-import { validateSchema, isObjectEmpty, checkContext, isoDurToSec } from '../..'
+import { validateSchema, isObjectEmpty, checkContext, isoDurToSec } from '../../../utils'
 import _ from 'lodash'
 import { logger } from '../../../shared/logger'
 
@@ -97,6 +97,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     }
 
     setValue('msgId', context.message_id)
+    setValue('txnId', context.transaction_id)
   } catch (error: any) {
     logger.info(
       `Error while comparing message ids for /${constants.RET_ONSEARCH} and /${constants.RET_SELECT} api, ${error.stack}`,
@@ -116,6 +117,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     provider[0].items.map((item: { id: string }) => {
       itemIdArray.push(item.id)
     })
+
     provider[0].categories.map((item: { id: string }) => {
       customIdArray.push(item.id)
     })
@@ -245,6 +247,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
         setValue('itemsIdList', itemsIdList)
         setValue('itemsCtgrs', itemsCtgrs)
         setValue('selectedPrice', selectedPrice)
+        setValue('parentItemIdSet', parentItemIdSet)
 
         logger.info(`Provider Id in /${constants.RET_ONSEARCH} and /${constants.RET_SELECT} matched`)
       } catch (error: any) {
@@ -257,6 +260,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
       errorObj.prvdrIdMatch = `Provider Id ${select.provider.id} in /${constants.RET_SELECT} does not exist in /${constants.RET_ONSEARCH}`
     }
 
+    setValue('select_customIdArray', customIdArray)
     try {
       select.fulfillments.forEach((ff: any) => {
         logger.info(`Checking GPS Precision in /${constants.RET_SELECT}`)

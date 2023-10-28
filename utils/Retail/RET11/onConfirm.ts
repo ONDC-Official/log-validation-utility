@@ -10,6 +10,7 @@ import {
   isObjectEqual,
   compareCoordinates,
   checkItemTag,
+  checkBppIdOrBapId,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -32,6 +33,12 @@ export const checkOnConfirm = (data: any) => {
     const schemaValidation = validateSchema('RET11', constants.RET_ONCONFIRM, data)
 
     const contextRes: any = checkContext(context, constants.RET_ONCONFIRM)
+
+    const checkBap = checkBppIdOrBapId(context.bap_id)
+    const checkBpp = checkBppIdOrBapId(context.bpp_id)
+
+    if (checkBap) Object.assign(onCnfrmObj, { bap_id: 'context/bap_id should not be a url' })
+    if (checkBpp) Object.assign(onCnfrmObj, { bpp_id: 'context/bpp_id should not be a url' })
 
     if (schemaValidation !== 'error') {
       Object.assign(onCnfrmObj, schemaValidation)
@@ -325,6 +332,6 @@ export const checkOnConfirm = (data: any) => {
 
     return onCnfrmObj
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.RET_ONCONFIRM} API`, err)
+    logger.error(`!!Some error occurred while checking /${constants.RET_ONCONFIRM} API`, JSON.stringify(err.stack))
   }
 }

@@ -134,7 +134,6 @@ export const FnBconfirmSchema = {
                     properties: {
                       count: {
                         type: 'integer',
-                        minLength: 1,
                       },
                     },
                     required: ['count'],
@@ -544,8 +543,6 @@ export const FnBconfirmSchema = {
                 },
               },
               required: [
-                'uri',
-                'tl_method',
                 'params',
                 'status',
                 'type',

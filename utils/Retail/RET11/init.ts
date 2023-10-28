@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, checkContext, checkItemTag } from '../../../utils'
+import { validateSchema, isObjectEmpty, checkContext, checkItemTag, checkBppIdOrBapId } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const checkInit = (data: any) => {
@@ -23,6 +23,12 @@ export const checkInit = (data: any) => {
     const schemaValidation = validateSchema('RET11', constants.RET_INIT, data)
 
     const contextRes: any = checkContext(context, constants.RET_INIT)
+
+    const checkBap = checkBppIdOrBapId(context.bap_id)
+    const checkBpp = checkBppIdOrBapId(context.bpp_id)
+
+    if (checkBap) Object.assign(initObj, { bap_id: 'context/bap_id should not be a url' })
+    if (checkBpp) Object.assign(initObj, { bpp_id: 'context/bpp_id should not be a url' })
 
     if (schemaValidation !== 'error') {
       Object.assign(initObj, schemaValidation)

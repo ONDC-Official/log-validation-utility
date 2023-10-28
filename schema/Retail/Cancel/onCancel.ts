@@ -128,7 +128,6 @@ export const onCancelSchema = {
                     properties: {
                       count: {
                         type: 'integer',
-                        minLength: 1,
                       },
                     },
                     required: ['count'],
@@ -255,7 +254,6 @@ export const onCancelSchema = {
                   },
                   tracking: {
                     type: 'boolean',
-                    minLength: 1,
                   },
                   start: {
                     type: 'object',
@@ -447,32 +445,18 @@ export const onCancelSchema = {
                         },
                         list: {
                           type: 'array',
-                          items: [
-                            {
-                              type: 'object',
-                              properties: {
-                                code: {
-                                  type: 'string',
-                                },
-                                value: {
-                                  type: 'string',
-                                },
+                          items: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
                               },
-                              required: ['code', 'value'],
-                            },
-                            {
-                              type: 'object',
-                              properties: {
-                                code: {
-                                  type: 'string',
-                                },
-                                value: {
-                                  type: 'string',
-                                },
+                              value: {
+                                type: 'string',
                               },
-                              required: ['code', 'value'],
                             },
-                          ],
+                            required: ['code', 'value'],
+                          },
                         },
                       },
                       required: ['code', 'list'],
@@ -648,8 +632,6 @@ export const onCancelSchema = {
                 },
               },
               required: [
-                'uri',
-                'tl_method',
                 'params',
                 'status',
                 'type',

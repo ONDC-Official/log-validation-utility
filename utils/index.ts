@@ -307,3 +307,97 @@ export const compareCoordinates = (coord1: any, coord2: any) => {
   // Compare the cleaned coordinates
   return cleanCoord1 === cleanCoord2
 }
+
+export const checkBppIdOrBapId = (input: string) => {
+  return input.includes('https://') || input.includes('www') || input.includes('https:') || input.includes('http')
+}
+
+export function checkServiceabilityType(tags: any[]) {
+  for (let i = 0; i < tags.length; i++) {
+    if (tags[i].code === 'serviceability') {
+      for (let j = 0; j < tags[i].list.length; j++) {
+        if (tags[i].list[j].code === 'type' && tags[i].list[j].value === '10') {
+          return true
+        }
+      }
+    }
+  }
+
+  return false
+}
+
+export function validateLocations(locations: any[], tags: any[]) {
+  const errorObj = {}
+  const validNumberRegex = /^[0-9]+$/
+  for (let i = 0; i < locations.length; i++) {
+    const location = locations[i]
+    if (!location.circle) {
+      Object.assign(errorObj, { locationErr: `"circle" not present in location with ID ${location.id}` })
+    }
+
+    const gps = location?.circle.gps
+    const radius = location?.circle.radius
+
+    if (gps && !gps.match(/^\d+\.\d{6},\d+\.\d{6}$/)) {
+      Object.assign(errorObj, { gpsErr: `Invalid GPS format in location with ID ${location.id}` })
+    }
+
+    if (radius && (radius?.unit !== 'km' || !validNumberRegex.test(radius.value))) {
+      Object.assign(errorObj, { locationRadiusErr: `Invalid radius in location with ID ${location.id}` })
+    }
+
+    for (let i = 0; i < tags.length; i++) {
+      if (tags[i].code === 'serviceability') {
+        for (let j = 0; j < tags[i].list.length; j++) {
+          if (tags[i].list[j].code === 'val' && tags[i].list[j].value !== radius.value) {
+            Object.assign(errorObj, {
+              srvcabilityValErr: `value passed in serviceability tags should be same as passed in location/circle`,
+            })
+          }
+        }
+      }
+    }
+  }
+
+  return errorObj
+}
+
+export function isSequenceValid(set: any) {
+  const numbers: any = Array.from(set)
+
+  if (numbers.length < 2) {
+    return
+  }
+
+  numbers.sort((a: number, b: number) => a - b) // Sort the numbers in ascending order.
+
+  for (let i = 1; i < numbers.length; i++) {
+    const current = parseInt(numbers[i])
+    const previous = parseInt(numbers[i - 1])
+
+    if (current !== previous + 1) {
+      return false
+    }
+  }
+
+  return true
+}
+
+export function findItemByItemType(item: any) {
+  const tags = item.tags
+  if (tags) {
+    for (let j = 0; j < tags.length; j++) {
+      if (
+        tags[j].code === 'type' &&
+        tags[j].list &&
+        tags[j].list.length === 1 &&
+        tags[j].list[0].code === 'type' &&
+        tags[j].list[0].value === 'item'
+      ) {
+        return item
+      }
+    }
+  }
+
+  return null
+}

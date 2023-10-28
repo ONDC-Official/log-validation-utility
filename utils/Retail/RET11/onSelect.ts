@@ -1,7 +1,7 @@
 /* eslint-disable no-prototype-builtins */
 import { getValue, setValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
-import { validateSchema, isObjectEmpty, checkContext, timeDiff, isoDurToSec } from '../../../utils'
+import { validateSchema, isObjectEmpty, checkContext, timeDiff, isoDurToSec, checkBppIdOrBapId } from '../../../utils'
 import _ from 'lodash'
 import { logger } from '../../../shared/logger'
 import { taxNotInlcusive } from '../../../utils/enum'
@@ -35,6 +35,12 @@ export const checkOnSelect = (data: any) => {
   const contextRes: any = checkContext(context, constants.RET_ONSELECT)
 
   const errorObj: any = {}
+
+  const checkBap = checkBppIdOrBapId(context.bap_id)
+  const checkBpp = checkBppIdOrBapId(context.bpp_id)
+
+  if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
+  if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
 
   if (schemaValidation !== 'error') {
     Object.assign(errorObj, schemaValidation)

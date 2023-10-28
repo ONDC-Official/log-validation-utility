@@ -95,7 +95,6 @@ export const FnBsearchSchema = {
                   required: ['location'],
                 },
               },
-              required: ['type'],
             },
             item: {
               type: 'object',

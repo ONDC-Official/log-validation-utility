@@ -1,6 +1,13 @@
 import { getValue, setValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
-import { validateSchema, isObjectEmpty, checkContext, isoDurToSec } from '../../../utils'
+import {
+  validateSchema,
+  isObjectEmpty,
+  checkContext,
+  isoDurToSec,
+  checkBppIdOrBapId,
+  findItemByItemType,
+} from '../../../utils'
 import _ from 'lodash'
 import { logger } from '../../../shared/logger'
 
@@ -37,6 +44,12 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   const itemsIdList: any = {}
   const itemsCtgrs: any = {}
   const itemsTat: any[] = []
+
+  const checkBap = checkBppIdOrBapId(context.bap_id)
+  const checkBpp = checkBppIdOrBapId(context.bpp_id)
+
+  if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
+  if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
 
   if (schemaValidation !== 'error') {
     Object.assign(errorObj, schemaValidation)
@@ -113,17 +126,21 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     let provider = onSearch?.message?.catalog['bpp/providers'].filter(
       (provider: { id: any }) => provider.id === select.provider.id,
     )
+    if (provider[0].time.label === 'disable') {
+      errorObj.disbledProvider = `provider with provider.id: ${provider[0].id} was disabled in on_search `
+    }
 
     provider[0].items.map((item: { id: string }) => {
       itemIdArray.push(item.id)
     })
 
-    provider[0].categories.map((item: { id: string }) => {
+    provider[0]?.categories?.map((item: { id: string }) => {
       customIdArray.push(item.id)
     })
 
     if (provider[0]) {
       provider = provider[0]
+
       setValue('providerId', provider.id)
       setValue('providerLoc', provider.locations[0].id)
       setValue('providerGps', provider.locations[0].gps)
@@ -162,8 +179,15 @@ export const checkSelect = (data: any, msgIdSet: any) => {
           ) => {
             const itemOnSearch = provider.items.find((it: { id: any }) => it.id === item.id)
 
-            const itemTag = tagFinder(item, 'item')
+            const baseItem = findItemByItemType(item)
+            if (baseItem) {
+              const searchBaseItem = provider.items.find((it: { id: any }) => it.id === baseItem.id)
+              if (searchBaseItem && searchBaseItem.time.label === 'disable') {
+                errorObj.itemDisabled = `disabled item with id ${baseItem.id} cannot be selected`
+              }
+            }
 
+            const itemTag = tagFinder(item, 'item')
             if (itemTag) {
               if (!itemMap[item.parent_item_id]) {
                 itemMap[item.parent_item_id] = {

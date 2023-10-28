@@ -3,7 +3,17 @@
 import { logger } from '../../../shared/logger'
 import { setValue, getValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
-import { validateSchema, isObjectEmpty, checkContext, checkGpsPrecision, emailRegex } from '../../../utils'
+import {
+  validateSchema,
+  isObjectEmpty,
+  checkContext,
+  checkGpsPrecision,
+  emailRegex,
+  checkBppIdOrBapId,
+  checkServiceabilityType,
+  validateLocations,
+  isSequenceValid,
+} from '../../../utils'
 import _ from 'lodash'
 
 export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
@@ -22,12 +32,17 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
   setValue(`${ApiSequence.ON_SEARCH}_context`, context)
   msgIdSet.add(context.message_id)
 
-  const errorObj: any = {}
+  let errorObj: any = {}
 
   if (schemaValidation !== 'error') {
     Object.assign(errorObj, schemaValidation)
   }
 
+  const checkBap = checkBppIdOrBapId(context.bap_id)
+  const checkBpp = checkBppIdOrBapId(context.bpp_id)
+
+  if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
+  if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
   if (!contextRes?.valid) {
     Object.assign(errorObj, contextRes.ERRORS)
   }
@@ -97,6 +112,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
       const customGrpId = new Set()
       const seqSet = new Set()
       const itemCategory_id = new Set()
+      const categoryRankSet = new Set()
 
       logger.info(`Validating uniqueness for provider id in bpp/providers[${i}]...`)
       const prvdr = bppPrvdrs[i]
@@ -226,7 +242,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
                       case 'day_from':
                       case 'day_to':
                         const dayValue = parseInt(item.value)
-                        if (isNaN(dayValue) || dayValue < 1 || dayValue > 7 || !/^-?\d+(\.\d+)?$/.test(item.value)) {
+                        if (isNaN(dayValue) || dayValue < 1 || dayValue > 5 || !/^-?\d+(\.\d+)?$/.test(item.value)) {
                           errorObj.custom_menu_timing_tag = `Invalid value for '${item.code}': ${item.value}`
                         }
 
@@ -268,6 +284,13 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
                   for (const item of tag.list) {
                     if (item.code !== 'rank' || !/^-?\d+(\.\d+)?$/.test(item.value)) {
                       errorObj.rank = `Invalid value for 'display': ${item.value}`
+                    } else {
+                      if (categoryRankSet.has(category.id)) {
+                        const key = `prvdr${i}category${j}rank`
+                        errorObj[key] = `duplicate rank in category id: ${category.id} in bpp/providers[${i}]`
+                      } else {
+                        categoryRankSet.add(category.id)
+                      }
                     }
                   }
 
@@ -484,7 +507,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
                     case 'day_from':
                     case 'day_to':
                       const dayValue = parseInt(item.value)
-                      if (isNaN(dayValue) || dayValue < 1 || dayValue > 7 || !/^-?\d+(\.\d+)?$/.test(item.value)) {
+                      if (isNaN(dayValue) || dayValue < 1 || dayValue > 5 || !/^-?\d+(\.\d+)?$/.test(item.value)) {
                         const key = `prvdr${i}item${j}tags${index}timing_day`
                         errorObj[key] = `Invalid value for '${item.code}': ${item.value}`
                       }
@@ -549,11 +572,30 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
         logger.error(`!!Errors while checking items in bpp/providers[${i}], ${error.stack}`)
       }
 
+      try {
+        logger.info(`checking rank in bpp/providers[${i}].category.tags`)
+        const rankSeq = isSequenceValid(seqSet)
+        if (rankSeq === false) {
+          const key = `prvdr${i}ctgry_tags`
+          errorObj[key] = `rank should be in sequence provided in bpp/providers[${i}]/categories/tags/display`
+        }
+      } catch (error: any) {
+        logger.error(`!!Errors while checking rank in bpp/providers[${i}].category.tags, ${error.stack}`)
+      }
+
       // servicability Construct
       try {
         logger.info(`Checking serviceability construct for bpp/providers[${i}]`)
 
         const tags = onSearchCatalog['bpp/providers'][i]['tags']
+        if (tags) {
+          const circleRequired = checkServiceabilityType(tags)
+          if (circleRequired) {
+            const errors = validateLocations(message.catalog['bpp/providers'][i].locations, tags)
+            errorObj = { ...errorObj, ...errors }
+          }
+        }
+
         //checking for each serviceability construct
         tags.forEach((sc: any, t: any) => {
           if ('list' in sc) {

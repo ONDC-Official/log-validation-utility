@@ -44,6 +44,7 @@ const formatted_error = (errors: any) => {
 
 const validate_schema = (data: any, schema: any) => {
   let error_list: any = []
+
   const validate = ajv.compile(schema)
   const valid = validate(data)
   if (!valid) {

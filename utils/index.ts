@@ -307,3 +307,14 @@ export const compareCoordinates = (coord1: any, coord2: any) => {
   // Compare the cleaned coordinates
   return cleanCoord1 === cleanCoord2
 }
+
+export const compareQuote = (quote1: any, quote2: any): boolean => {
+  const quoteString1 = JSON.stringify(quote1, replaceValueType)
+  const quoteString2 = JSON.stringify(quote2, replaceValueType)
+  return quoteString1 === quoteString2
+}
+
+const replaceValueType = (key: any, value: any): number => {
+  if (key == 'value') return parseInt(value)
+  else return value
+}

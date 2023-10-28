@@ -30,6 +30,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
 
   const contextRes: any = checkContext(context, constants.RET_ONSEARCH)
   setValue(`${ApiSequence.ON_SEARCH}_context`, context)
+  setValue(`${ApiSequence.ON_SEARCH}_message`, message)
   msgIdSet.add(context.message_id)
 
   let errorObj: any = {}
@@ -84,6 +85,8 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
   const onSearchCatalog: any = message.catalog
   const onSearchFFIds = new Set()
   const prvdrsId = new Set()
+  const prvdrLocId = new Set()
+  const itemsId = new Set()
 
   try {
     logger.info(`Saving static fulfillment ids in /${constants.RET_ONSEARCH}`)
@@ -106,8 +109,6 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     const len = bppPrvdrs.length
     const tmpstmp = context.timestamp
     while (i < len) {
-      const itemsId = new Set()
-      const prvdrLocId = new Set()
       const categoriesId = new Set()
       const customGrpId = new Set()
       const seqSet = new Set()
@@ -801,6 +802,10 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
 
       i++
     }
+
+    setValue(`${ApiSequence.ON_SEARCH}prvdrsId`, prvdrsId)
+    setValue(`${ApiSequence.ON_SEARCH}prvdrLocId`, prvdrLocId)
+    setValue(`${ApiSequence.ON_SEARCH}itemsId`, itemsId)
   } catch (error: any) {
     logger.error(`!!Error while checking Providers info in /${constants.RET_ONSEARCH}, ${error.stack}`)
   }

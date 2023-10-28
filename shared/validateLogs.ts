@@ -6,6 +6,7 @@ import { ApiSequence } from '../constants'
 import { checkSearchIncremental } from '../utils/Retail/RET11/searchIncremental'
 import { validateSchema, isObjectEmpty } from '../utils'
 import { checkOnsearchFullCatalogRefresh } from '../utils/Retail/RET11/onSearch'
+import { checkOnsearchIncremental } from '../utils/Retail/RET11/onSearchIncremental'
 import { checkSelect } from '../utils/Retail/RET11/select'
 import { checkOnSelect } from '../utils/Retail/RET11/onSelect'
 import { checkInit } from '../utils/Retail/RET11/init'
@@ -55,10 +56,10 @@ export const validateLogs = (data: any, domain: string) => {
       }
 
       if (data[ApiSequence.INC_ONSEARCH]) {
-        // const onSearchIncrementalRefreshResp = checkOnsearchFullCatalogRefresh(data[ApiSequence.INC_ONSEARCH], msgIdSet)
-        // if (!_.isEmpty(onSearchIncrementalRefreshResp)) {
-        //   logReport = { ...logReport, [ApiSequence.INC_ONSEARCH]: onSearchIncrementalRefreshResp }
-        // }
+        const onSearchIncrementalRefreshResp = checkOnsearchIncremental(data[ApiSequence.INC_ONSEARCH], msgIdSet)
+        if (!_.isEmpty(onSearchIncrementalRefreshResp)) {
+          logReport = { ...logReport, [ApiSequence.INC_ONSEARCH]: onSearchIncrementalRefreshResp }
+        }
       }
 
       if (data[ApiSequence.SELECT]) {

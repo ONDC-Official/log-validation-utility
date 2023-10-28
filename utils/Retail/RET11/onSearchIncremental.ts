@@ -3,7 +3,14 @@
 import { logger } from '../../../shared/logger'
 import { setValue, getValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
-import { validateSchema, isObjectEmpty, checkContext, checkGpsPrecision, emailRegex } from '../../../utils'
+import {
+  validateSchema,
+  isObjectEmpty,
+  checkContext,
+  checkGpsPrecision,
+  emailRegex,
+  checkBppIdOrBapId,
+} from '../../../utils'
 import _, { isEmpty } from 'lodash'
 
 export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
@@ -16,7 +23,7 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
   }
 
-  const schemaValidation = validateSchema('RET11', constants.RET_ONSEARCH, data)
+  const schemaValidation = validateSchema('RET11', constants.RET_ONSEARCHINC, data)
 
   const contextRes: any = checkContext(context, constants.RET_ONSEARCH)
   setValue(`${ApiSequence.INC_ONSEARCH}_context`, context)
@@ -24,8 +31,11 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
 
   const errorObj: any = {}
 
-  errorObj.test = 'test error'
+  const checkBap = checkBppIdOrBapId(context.bap_id)
+  const checkBpp = checkBppIdOrBapId(context.bpp_id)
 
+  if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
+  if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
   if (schemaValidation !== 'error') {
     Object.assign(errorObj, schemaValidation)
   }
@@ -59,17 +69,6 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
   }
 
   try {
-    logger.info(`Comparing Message Ids of /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH}`)
-    if (!_.isEqual(searchContext.message_id, context.message_id)) {
-      errorObj.message_id = `Message Id for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api should be same`
-    }
-  } catch (error: any) {
-    logger.info(
-      `Error while comparing message ids for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api, ${error.stack}`,
-    )
-  }
-
-  try {
     logger.info(`Comparing message for /${ApiSequence.ON_SEARCH} & /${ApiSequence.INC_ONSEARCH}`)
     if (JSON.stringify(message) === JSON.stringify(onSearchMessage)) {
       // return if message is same as on_search_full_catalog_refresh
@@ -82,7 +81,6 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
   }
 
   const onSearchCatalog: any = message.catalog
-  const onSearchFFIds = new Set()
   const prvdrsId = new Set()
 
   try {
@@ -265,24 +263,6 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
                     key
                   ] = `selling price of item /price/value with id: (${item.id}) can't be greater than the maximum price /price/maximum_value in /bpp/providers[${i}]/items[${j}]/`
                 }
-              }
-
-              logger.info(`Checking fulfillment_id for item id: ${item.id}`)
-
-              if (item.fulfillment_id && !onSearchFFIds.has(item.fulfillment_id)) {
-                const key = `prvdr${i}item${j}ff`
-                errorObj[
-                  key
-                ] = `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/fulfillments`
-              }
-
-              logger.info(`Checking location_id for item id: ${item.id}`)
-
-              if (item.location_id && !prvdrLocId.has(item.location_id)) {
-                const key = `prvdr${i}item${j}loc`
-                errorObj[
-                  key
-                ] = `location_id in /bpp/providers[${i}]/items[${j}] should be one of the locations id in /bpp/providers[${i}]/locations`
               }
 
               logger.info(`Checking consumer care details for item id: ${item.id}`)

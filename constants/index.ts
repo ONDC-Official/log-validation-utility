@@ -4,6 +4,7 @@ export default Object.freeze({
   DB_PATH: 'dbfiles',
   RET_SEARCH: 'search',
   RET_ONSEARCH: 'on_search',
+  RET_ONSEARCHINC: 'on_search_inc',
   RET_SELECT: 'select',
   RET_ONSELECT: 'on_select',
   RET_INIT: 'init',

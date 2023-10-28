@@ -14,6 +14,7 @@ import { statusSchema } from '../schema/Retail/Status/status'
 import { onStatusSchema } from '../schema/Retail/Status/on_status'
 import { onTrackSchema } from '../schema/Retail/Track/on_track'
 import { trackSchema } from '../schema/Retail/Track/track'
+import { FnBonSearchIncSchema } from '../schema/Retail/RET11/on_search_inc'
 
 const ajv = new Ajv({
   allErrors: true,
@@ -60,6 +61,11 @@ const validate_schema_search_RET11_for_json = (data: any) => {
 }
 const validate_schema_on_search_RET11_for_json = (data: any) => {
   const error_list = validate_schema(data, FnBonSearchSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_search_inc_RET11_for_json = (data: any) => {
+  const error_list = validate_schema(data, FnBonSearchIncSchema)
   return formatted_error(error_list)
 }
 
@@ -133,4 +139,5 @@ export default {
   validate_schema_on_track_RET11_for_json,
   validate_schema_status_RET11_for_json,
   validate_schema_on_status_RET11_for_json,
+  validate_schema_on_search_inc_RET11_for_json,
 }

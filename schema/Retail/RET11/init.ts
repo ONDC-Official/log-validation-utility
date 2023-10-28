@@ -121,7 +121,6 @@ export const FnBinitSchema = {
                     properties: {
                       count: {
                         type: 'integer',
-                        minLength: 1,
                       },
                     },
                     required: ['count'],

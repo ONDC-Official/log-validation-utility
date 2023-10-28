@@ -365,7 +365,7 @@ export const FnBonConfirmSchema = {
                         required: ['phone', 'email'],
                       },
                     },
-                    required: ['location', 'time', 'instructions', 'contact'],
+                    required: ['location', 'time', 'contact'],
                   },
                   end: {
                     type: 'object',
@@ -681,8 +681,6 @@ export const FnBonConfirmSchema = {
                 },
               },
               required: [
-                'uri',
-                'tl_method',
                 'params',
                 'status',
                 'type',

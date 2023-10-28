@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, checkContext, isObjectEqual } from '../../../utils'
+import { validateSchema, isObjectEmpty, checkContext, isObjectEqual, checkBppIdOrBapId } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const checkOnCancel = (data: any) => {
@@ -22,6 +22,11 @@ export const checkOnCancel = (data: any) => {
     const select: any = getValue(`${ApiSequence.SELECT}`)
     const contextRes: any = checkContext(context, constants.RET_ONCANCEL)
 
+    const checkBap = checkBppIdOrBapId(context.bap_id)
+    const checkBpp = checkBppIdOrBapId(context.bpp_id)
+
+    if (checkBap) Object.assign(onCnclObj, { bap_id: 'context/bap_id should not be a url' })
+    if (checkBpp) Object.assign(onCnclObj, { bpp_id: 'context/bpp_id should not be a url' })
     if (schemaValidation !== 'error') {
       Object.assign(onCnclObj, schemaValidation)
     }

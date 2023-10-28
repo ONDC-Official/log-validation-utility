@@ -118,7 +118,6 @@ export const FnBonInitSchema = {
                     properties: {
                       count: {
                         type: 'integer',
-                        minLength: 1,
                       },
                     },
                     required: ['count'],
@@ -216,7 +215,7 @@ export const FnBonInitSchema = {
                   format: 'date-time',
                 },
               },
-              required: ['name', 'address', 'tax_number', 'email', 'phone', 'created_at', 'updated_at'],
+              required: ['name', 'address', 'email', 'phone', 'created_at', 'updated_at'],
             },
             fulfillments: {
               type: 'array',
@@ -324,7 +323,6 @@ export const FnBonInitSchema = {
                         properties: {
                           count: {
                             type: 'integer',
-                            minLength: 1,
                           },
                         },
                         required: ['count'],

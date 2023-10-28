@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, checkContext } from '../../../utils'
+import { validateSchema, isObjectEmpty, checkContext, checkBppIdOrBapId } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const checkOnTrack = (data: any) => {
@@ -22,6 +22,11 @@ export const checkOnTrack = (data: any) => {
     const select: any = getValue(`${ApiSequence.SELECT}`)
     const contextRes: any = checkContext(context, constants.RET_ONTRACK)
 
+    const checkBap = checkBppIdOrBapId(context.bap_id)
+    const checkBpp = checkBppIdOrBapId(context.bpp_id)
+
+    if (checkBap) Object.assign(onTrckObj, { bap_id: 'context/bap_id should not be a url' })
+    if (checkBpp) Object.assign(onTrckObj, { bpp_id: 'context/bpp_id should not be a url' })
     if (schemaValidation !== 'error') {
       Object.assign(onTrckObj, schemaValidation)
     }

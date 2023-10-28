@@ -37,6 +37,10 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
       Object.assign(errorObj, contextRes.ERRORS)
     }
 
+    if (context.city !== '*') {
+      errorObj.contextCityError = 'context/city should be "*" while sending search_inc_catalog request'
+    }
+
     const buyerFF = parseFloat(message.intent?.payment?.['@ondc/org/buyer_app_finder_fee_amount'])
 
     if (isNaN(buyerFF)) {

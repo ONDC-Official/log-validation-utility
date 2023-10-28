@@ -151,7 +151,6 @@ export const onStatusSchema = {
                     properties: {
                       count: {
                         type: 'integer',
-                        minLength: 1,
                       },
                     },
                     required: ['count'],
@@ -275,7 +274,6 @@ export const onStatusSchema = {
                   },
                   tracking: {
                     type: 'boolean',
-                    minLength: 1,
                   },
                   '@ondc/org/TAT': {
                     type: 'string',
@@ -309,14 +307,8 @@ export const onStatusSchema = {
                               name: {
                                 type: 'string',
                               },
-                              images: {
-                                type: 'array',
-                                items: {
-                                  type: 'string',
-                                },
-                              },
                             },
-                            required: ['name', 'images'],
+                            required: ['name'],
                           },
                           gps: {
                             type: 'string',
@@ -399,7 +391,7 @@ export const onStatusSchema = {
                         required: ['phone', 'email'],
                       },
                     },
-                    required: ['location', 'time', 'instructions', 'contact'],
+                    required: ['location', 'time', 'contact'],
                   },
                   end: {
                     type: 'object',
@@ -501,7 +493,7 @@ export const onStatusSchema = {
                         required: ['phone'],
                       },
                     },
-                    required: ['location', 'time', 'instructions', 'contact'],
+                    required: ['location', 'time', 'contact'],
                   },
                   agent: {
                     type: 'object',
@@ -755,8 +747,6 @@ export const onStatusSchema = {
                 },
               },
               required: [
-                'uri',
-                'tl_method',
                 'params',
                 'status',
                 'type',
@@ -796,7 +786,6 @@ export const onStatusSchema = {
           required: [
             'id',
             'state',
-            'cancellation',
             'provider',
             'items',
             'billing',

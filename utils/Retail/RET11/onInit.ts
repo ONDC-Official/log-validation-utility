@@ -9,6 +9,7 @@ import {
   timeDiff as timeDifference,
   isObjectEqual,
   checkItemTag,
+  checkBppIdOrBapId,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -29,6 +30,12 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     const contextRes: any = checkContext(context, constants.RET_ONINIT)
     const parentItemIdSet: any = getValue(`parentItemIdSet`)
     const select_customIdArray: any = getValue(`select_customIdArray`)
+
+    const checkBap = checkBppIdOrBapId(context.bap_id)
+    const checkBpp = checkBppIdOrBapId(context.bpp_id)
+
+    if (checkBap) Object.assign(onInitObj, { bap_id: 'context/bap_id should not be a url' })
+    if (checkBpp) Object.assign(onInitObj, { bpp_id: 'context/bpp_id should not be a url' })
     if (schemaValidation !== 'error') {
       Object.assign(onInitObj, schemaValidation)
     }

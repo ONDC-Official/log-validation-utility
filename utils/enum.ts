@@ -83,3 +83,81 @@ export const retailPymntTtl = {
 }
 
 export const taxNotInlcusive = [...fnbCategories]
+
+export const groceryStatutory = [
+  {
+    'category id': 'Fruits and Vegetables',
+    'Protocol key mapping': null,
+    parent_category_id: 'Grocery',
+  },
+  {
+    'category id': 'Masala & Seasoning',
+    'Protocol key mapping': '@ondc/org/statutory_reqs_packaged_commodities',
+    parent_category_id: 'Grocery',
+  },
+  {
+    'category id': 'Oil & Ghee',
+    'Protocol key mapping': '@ondc/org/statutory_reqs_packaged_commodities',
+    parent_category_id: 'Grocery',
+  },
+  {
+    'category id': 'Gourmet & World Foods',
+    'Protocol key mapping': '@ondc/org/statutory_reqs_prepackaged_food',
+    parent_category_id: 'Grocery',
+  },
+  {
+    'category id': 'Foodgrains',
+    'Protocol key mapping': '@ondc/org/statutory_reqs_packaged_commodities',
+    parent_category_id: 'Grocery',
+  },
+  {
+    'category id': 'Eggs, Meat & Fish',
+    'Protocol key mapping': '@ondc/org/statutory_reqs_packaged_commodities',
+    parent_category_id: 'Grocery',
+  },
+  {
+    'category id': 'Cleaning & Household',
+    'Protocol key mapping': '@ondc/org/statutory_reqs_packaged_commodities',
+    parent_category_id: 'Grocery',
+  },
+  {
+    'category id': 'Beverages',
+    'Protocol key mapping': '@ondc/org/statutory_reqs_prepackaged_food',
+    parent_category_id: 'Grocery',
+  },
+  {
+    'category id': 'Beauty & Hygiene',
+    'Protocol key mapping': '@ondc/org/statutory_reqs_packaged_commodities',
+    parent_category_id: 'Grocery',
+  },
+  {
+    'category id': 'Bakery, Cakes & Dairy',
+    'Protocol key mapping': '@ondc/org/statutory_reqs_prepackaged_food',
+    parent_category_id: 'Grocery',
+  },
+  {
+    'category id': 'Kitchen Accessories',
+    'Protocol key mapping': '@ondc/org/statutory_reqs_packaged_commodities',
+    parent_category_id: 'Grocery',
+  },
+  {
+    'category id': 'Baby Care',
+    'Protocol key mapping': '@ondc/org/statutory_reqs_packaged_commodities',
+    parent_category_id: 'Grocery',
+  },
+  {
+    'category id': 'Snacks & Branded Foods',
+    'Protocol key mapping': '@ondc/org/statutory_reqs_prepackaged_food',
+    parent_category_id: 'Grocery',
+  },
+  {
+    'category id': 'Pet Care',
+    'Protocol key mapping': '@ondc/org/statutory_reqs_packaged_commodities',
+    parent_category_id: 'Grocery',
+  },
+  {
+    'category id': 'Stationery',
+    'Protocol key mapping': '@ondc/org/statutory_reqs_packaged_commodities',
+    parent_category_id: 'Grocery',
+  },
+]

@@ -88,6 +88,14 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
   try {
     logger.info(`Checking Providers info (bpp/providers) in /${constants.RET_ONSEARCH}`)
     let i = 0
+    if (!_.isEmpty(onSearchCatalog['bpp/fulfillments'])) {
+      errorObj.bppFulfillments = `bpp/fulfillments sent in payload shoulnd't be part of /${ApiSequence.INC_ONSEARCH} api`
+    }
+
+    if (!_.isEmpty(onSearchCatalog['bpp/descriptor'])) {
+      errorObj.bppDescriptor = `bpp/descriptor sent in payload shoulnd't be part of /${ApiSequence.INC_ONSEARCH} api`
+    }
+
     const bppPrvdrs = onSearchCatalog['bpp/providers']
     const len = bppPrvdrs.length
     const tmpstmp = context.timestamp

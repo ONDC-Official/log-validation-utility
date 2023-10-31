@@ -63,4 +63,14 @@ export const actionsArray = [
   'on_status',
 ]
 
+export const statusArray = [
+  'Pending',
+  'Packed',
+  'Agent-assigned',
+  'Order-picked-up',
+  'Out-for-delivery',
+  'Order-delivered',
+  'Cancelled',
+]
+
 export const buyerCancellationRid = new Set(['001', '003', '006', '009', '010'])

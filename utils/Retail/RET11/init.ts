@@ -20,7 +20,7 @@ export const checkInit = (data: any) => {
     const select: any = getValue(`${ApiSequence.SELECT}`)
     const parentItemIdSet: any = getValue(`parentItemIdSet`)
     const select_customIdArray: any = getValue(`select_customIdArray`)
-    const schemaValidation = validateSchema('RET11', constants.RET_INIT, data)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.RET_INIT, data)
 
     const contextRes: any = checkContext(context, constants.RET_INIT)
 

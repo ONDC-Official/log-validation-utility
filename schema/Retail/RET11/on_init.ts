@@ -527,8 +527,36 @@ export const FnBonInitSchema = {
                 '@ondc/org/settlement_details',
               ],
             },
+
+            tags: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  code: {
+                    type: 'string',
+                  },
+                  list: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        code: {
+                          type: 'string',
+                        },
+                        value: {
+                          type: 'string',
+                        },
+                      },
+                      required: ['code', 'value'],
+                    },
+                  },
+                },
+                required: ['code', 'list'],
+              },
+            },
           },
-          required: ['provider', 'provider_location', 'items', 'billing', 'fulfillments', 'quote', 'payment'],
+          required: ['provider', 'provider_location', 'items', 'billing', 'fulfillments', 'quote', 'payment', 'tags'],
         },
       },
       required: ['order'],

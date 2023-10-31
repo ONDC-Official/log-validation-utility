@@ -1,4 +1,4 @@
-export const FnBselectSchema = {
+export const initSchema = {
   type: 'object',
   properties: {
     context: {
@@ -6,11 +6,11 @@ export const FnBselectSchema = {
       properties: {
         domain: {
           type: 'string',
-          const: 'ONDC:RET11',
+          minLength: 1,
         },
         action: {
           type: 'string',
-          const: 'select',
+          const: 'init',
         },
         core_version: {
           type: 'string',
@@ -18,6 +18,7 @@ export const FnBselectSchema = {
         },
         bap_id: {
           type: 'string',
+          minLength: 1,
         },
         bap_uri: {
           type: 'string',
@@ -25,21 +26,26 @@ export const FnBselectSchema = {
         },
         bpp_id: {
           type: 'string',
+          minLength: 1,
         },
         bpp_uri: {
           type: 'string',
+          format: 'url',
         },
         transaction_id: {
           type: 'string',
         },
         message_id: {
           type: 'string',
+          minLength: 1,
         },
         city: {
           type: 'string',
+          minLength: 1,
         },
         country: {
           type: 'string',
+          minLength: 1,
           const: 'IND',
         },
         timestamp: {
@@ -78,6 +84,7 @@ export const FnBselectSchema = {
               properties: {
                 id: {
                   type: 'string',
+                  minLength: 1,
                 },
                 locations: {
                   type: 'array',
@@ -86,6 +93,7 @@ export const FnBselectSchema = {
                     properties: {
                       id: {
                         type: 'string',
+                        minLength: 1,
                       },
                     },
                     required: ['id'],
@@ -101,12 +109,11 @@ export const FnBselectSchema = {
                 properties: {
                   id: {
                     type: 'string',
+                    minLength: 1,
                   },
-                  parent_item_id: {
+                  fulfillment_id: {
                     type: 'string',
-                  },
-                  location_id: {
-                    type: 'string',
+                    minLength: 1,
                   },
                   quantity: {
                     type: 'object',
@@ -116,6 +123,10 @@ export const FnBselectSchema = {
                       },
                     },
                     required: ['count'],
+                  },
+                  parent_item_id: {
+                    type: 'string',
+                    minLength: 1,
                   },
                   tags: {
                     type: 'array',
@@ -145,14 +156,84 @@ export const FnBselectSchema = {
                     },
                   },
                 },
-                required: ['id', 'location_id', 'quantity'],
+                required: ['id', 'fulfillment_id', 'quantity'],
               },
+            },
+            billing: {
+              type: 'object',
+              properties: {
+                name: {
+                  type: 'string',
+                },
+                address: {
+                  type: 'object',
+                  properties: {
+                    name: {
+                      type: 'string',
+                      minLength: 1,
+                    },
+                    building: {
+                      type: 'string',
+                    },
+                    locality: {
+                      type: 'string',
+                    },
+                    city: {
+                      type: 'string',
+                      minLength: 1,
+                    },
+                    state: {
+                      type: 'string',
+                      minLength: 1,
+                    },
+                    country: {
+                      type: 'string',
+                      minLength: 1,
+                    },
+                    area_code: {
+                      type: 'string',
+                      maxLength: 6,
+                      minLength: 1,
+                    },
+                  },
+                  required: ['name', 'building', 'locality', 'city', 'state', 'country', 'area_code'],
+                },
+                tax_number: {
+                  type: 'string',
+                },
+                email: {
+                  type: 'string',
+                  format: 'email',
+                },
+                phone: {
+                  type: 'string',
+                  minLength: 10,
+                  maxLength: 11,
+                },
+                created_at: {
+                  type: 'string',
+                  format: 'date-time',
+                },
+                updated_at: {
+                  type: 'string',
+                  format: 'date-time',
+                },
+              },
+              required: ['name', 'address', 'phone', 'created_at', 'updated_at'],
             },
             fulfillments: {
               type: 'array',
               items: {
                 type: 'object',
                 properties: {
+                  id: {
+                    type: 'string',
+                    minLength: 1,
+                  },
+                  type: {
+                    type: 'string',
+                    const: 'Delivery',
+                  },
                   end: {
                     type: 'object',
                     properties: {
@@ -161,28 +242,63 @@ export const FnBselectSchema = {
                         properties: {
                           gps: {
                             type: 'string',
+                            minLength: 1,
                           },
                           address: {
                             type: 'object',
                             properties: {
-                              area_code: {
+                              name: {
+                                type: 'string',
+                                minLength: 3,
+                              },
+                              building: {
+                                type: 'string',
+                                minLength: 3,
+                              },
+                              locality: {
                                 type: 'string',
                               },
+                              city: {
+                                type: 'string',
+                              },
+                              state: {
+                                type: 'string',
+                                minLength: 1,
+                              },
+                              country: {
+                                type: 'string',
+                                minLength: 1,
+                              },
+                              area_code: {
+                                type: 'string',
+                                minLength: 1,
+                              },
                             },
-                            required: ['area_code'],
+                            required: ['name', 'building', 'locality', 'city', 'state', 'country', 'area_code'],
                           },
                         },
                         required: ['gps', 'address'],
                       },
+                      contact: {
+                        type: 'object',
+                        properties: {
+                          phone: {
+                            type: 'string',
+                            minLength: 10,
+                            maxLength: 11,
+                          },
+                        },
+                        required: ['phone'],
+                      },
                     },
-                    required: ['location'],
+                    required: ['location', 'contact'],
                   },
                 },
-                required: ['end'],
+                required: ['id', 'type', 'end'],
               },
             },
           },
-          required: ['provider', 'items', 'fulfillments'],
+          required: ['provider', 'items', 'billing', 'fulfillments'],
         },
       },
       required: ['order'],

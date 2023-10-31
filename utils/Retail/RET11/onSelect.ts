@@ -30,7 +30,7 @@ export const checkOnSelect = (data: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema('RET11', constants.RET_ONSELECT, data)
+  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.RET_ONSELECT, data)
 
   const contextRes: any = checkContext(context, constants.RET_ONSELECT)
 

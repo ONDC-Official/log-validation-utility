@@ -10,6 +10,7 @@ import {
   isObjectEqual,
   checkItemTag,
   checkBppIdOrBapId,
+  isTagsValid,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -25,7 +26,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema('RET11', constants.RET_ONINIT, data)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.RET_ONINIT, data)
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const contextRes: any = checkContext(context, constants.RET_ONINIT)
     const parentItemIdSet: any = getValue(`parentItemIdSet`)
@@ -313,6 +314,19 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while storing payment settlement details in /${constants.RET_ONINIT}`)
+    }
+
+    try {
+      if (on_init.tags) {
+        const isValid = isTagsValid(on_init.tags, 'bpp_terms')
+        if (isValid === false) {
+          onInitObj.onInitTags = `Tags should have valid gst number and fields in /${constants.RET_ONINIT}`
+        }
+
+        setValue('on_init_tags', on_init.tags)
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking tags in /${constants.RET_ONINIT} ${error.stack}`)
     }
 
     return onInitObj

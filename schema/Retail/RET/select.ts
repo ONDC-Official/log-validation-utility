@@ -1,4 +1,4 @@
-export const FnBselectSchema = {
+export const selectSchema = {
   type: 'object',
   properties: {
     context: {
@@ -6,7 +6,6 @@ export const FnBselectSchema = {
       properties: {
         domain: {
           type: 'string',
-          const: 'ONDC:RET11',
         },
         action: {
           type: 'string',
@@ -28,6 +27,7 @@ export const FnBselectSchema = {
         },
         bpp_uri: {
           type: 'string',
+          format: 'url',
         },
         transaction_id: {
           type: 'string',

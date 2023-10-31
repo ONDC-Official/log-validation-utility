@@ -9,6 +9,9 @@ import {
   isObjectEqual,
   checkItemTag,
   checkBppIdOrBapId,
+  areGSTNumbersMatching,
+  isTagsValid,
+  areGSTNumbersDifferent,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -28,7 +31,7 @@ export const checkConfirm = (data: any) => {
     const select: any = getValue(`${ApiSequence.SELECT}`)
     const parentItemIdSet: any = getValue(`parentItemIdSet`)
     const select_customIdArray: any = getValue(`select_customIdArray`)
-    const schemaValidation = validateSchema('RET11', constants.RET_CONFIRM, data)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.RET_CONFIRM, data)
 
     const contextRes: any = checkContext(context, constants.RET_CONFIRM)
 
@@ -300,6 +303,35 @@ export const checkConfirm = (data: any) => {
     } catch (error: any) {
       logger.error(
         `!!Error while comparing order price value in /${constants.RET_ONSELECT} and /${constants.RET_CONFIRM}`,
+      )
+    }
+
+    try {
+      logger.info(`Comparing tags in /${constants.RET_ONINIT} and /${constants.RET_CONFIRM}`)
+      const on_init_tags: any[] | any = getValue('on_init_tags')
+      if (confirm.tags) {
+        const isValid = areGSTNumbersMatching(on_init_tags, confirm.tags, 'bpp_terms')
+        if (isValid === false) {
+          cnfrmObj.confirmTags = `Tags should have same and valid gst_number as passed in /${constants.RET_ONINIT}`
+        }
+
+        const isValidBap = isTagsValid(confirm.tags, 'bap_terms')
+        if (isValidBap === false) {
+          cnfrmObj.bapGstTags = `Tags/bap_terms should have valid gst number and fields in /${constants.RET_CONFIRM}`
+        }
+
+        const areGstDiff = areGSTNumbersDifferent(confirm.tags)
+
+        console.log('areGstDiff', areGstDiff)
+        if (areGstDiff === true) {
+          cnfrmObj.sameGstNumber = `Tags/bap_terms and Tags/bpp_terms should have different gst number in /${constants.RET_CONFIRM}`
+        }
+
+        setValue('confirm_tags', confirm.tags)
+      }
+    } catch (error: any) {
+      logger.error(
+        `!!Error while Comparing tags in /${constants.RET_ONINIT} and /${constants.RET_CONFIRM} ${error.stack}`,
       )
     }
 

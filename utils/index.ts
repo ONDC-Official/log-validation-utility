@@ -75,6 +75,7 @@ export const validateSchema = (domain: string, api: string, data: any) => {
   logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
   const errObj: any = {}
 
+  console.log('domain, api', domain, api)
   const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
 
   const datavld = schmaVldtr
@@ -154,8 +155,6 @@ export const checkTagConditions = (message: any, context: any) => {
           )
         }
       }
-    } else {
-      tags.push(`/message/intent/tags[0]/code should be 'catalog_inc'`)
     }
   } else {
     tags.push('/message/intent should have a required property tags')
@@ -346,12 +345,7 @@ export function validateLocations(locations: any[], tags: any[]) {
       Object.assign(errorObj, { locationErr: `"circle" not present in location with ID ${location.id}` })
     }
 
-    const gps = location?.circle.gps
     const radius = location?.circle.radius
-
-    if (gps && !gps.match(/^\d+\.\d{6},\d+\.\d{6}$/)) {
-      Object.assign(errorObj, { gpsErr: `Invalid GPS format in location with ID ${location.id}` })
-    }
 
     if (radius && (radius?.unit !== 'km' || !validNumberRegex.test(radius.value))) {
       Object.assign(errorObj, { locationRadiusErr: `Invalid radius in location with ID ${location.id}` })
@@ -411,4 +405,89 @@ export function findItemByItemType(item: any) {
   }
 
   return null
+}
+
+export function isTagsValid(tags: any[], entity: string): boolean {
+  const termsObject = tags.find((tag: { code: string }) => tag.code === entity)
+
+  // If termsObject is found, check the list
+  if (termsObject) {
+    const taxNumberObject = termsObject.list.find((item: { code: string }) => item.code === 'tax_number')
+
+    // If taxNumberObject is found, validate the value
+    if (taxNumberObject) {
+      const value = taxNumberObject.value
+
+      if (typeof value === 'string' && value.length <= 15) {
+        return true // Value is valid
+      }
+    }
+  }
+
+  return false
+}
+
+export function areGSTNumbersMatching(tags1: any[], tags2: any[], termToMatch: string): boolean {
+  // Find the GST number in the first tags array based on the specified term
+  const gstNumber1 = findGSTNumber(tags1, termToMatch)
+
+  // Find the GST number in the second tags array based on the specified term
+  const gstNumber2 = findGSTNumber(tags2, termToMatch)
+
+  // Check if both GST numbers are the same
+
+  if (typeof gstNumber2 === 'string' && typeof gstNumber1 === 'string') return gstNumber1 === gstNumber2
+  else return false
+}
+
+export function areGSTNumbersDifferent(tags: any[]): boolean {
+  // Find the "tax_number" in "bpp_terms"
+  const bppTermsObject = tags.find((tag) => tag.code === 'bpp_terms')
+  const bppTaxNumber = findTaxNumber(bppTermsObject)
+
+  console.log('bppTaxNumber', bppTaxNumber)
+  // Find the "tax_number" in "bap_terms"
+  const bapTermsObject = tags.find((tag) => tag.code === 'bap_terms')
+  const bapTaxNumber = findTaxNumber(bapTermsObject)
+
+  // Check if both "tax_number" values are different
+  if (typeof bppTaxNumber === 'string' && typeof bapTaxNumber === 'string') return bppTaxNumber === bapTaxNumber
+  else return false
+}
+
+function findTaxNumber(termObject: any): string | undefined {
+  if (termObject) {
+    const taxNumberObject = termObject.list.find((item: { code: string }) => item.code === 'tax_number')
+
+    if (taxNumberObject) {
+      const value = taxNumberObject.value
+
+      if (typeof value === 'string') {
+        return value
+      }
+    }
+  }
+
+  return undefined
+}
+
+function findGSTNumber(tags: any[], termToMatch: string): string | undefined {
+  // Find the object with the specified term
+  const termObject = tags.find((tag) => tag.code === termToMatch)
+
+  // If termObject is found, check the list for the GST number
+  if (termObject) {
+    const taxNumberObject = termObject.list.find((item: { code: string }) => item.code === 'tax_number')
+
+    // If taxNumberObject is found, return the GST number
+    if (taxNumberObject) {
+      const value = taxNumberObject.value
+
+      if (typeof value === 'string' && value.length <= 15) {
+        return value // Return the GST number
+      }
+    }
+  }
+
+  return undefined // GST number not found or not valid
 }

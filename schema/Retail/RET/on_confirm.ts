@@ -1,4 +1,4 @@
-export const FnBonConfirmSchema = {
+export const onConfirmSchema = {
   type: 'object',
   properties: {
     context: {
@@ -6,7 +6,7 @@ export const FnBonConfirmSchema = {
       properties: {
         domain: {
           type: 'string',
-          const: 'ONDC:RET11',
+          minLength: 1,
         },
         action: {
           type: 'string',
@@ -571,7 +571,6 @@ export const FnBonConfirmSchema = {
                             },
                           },
                         },
-                        required: ['parent_item_id', 'tags'],
                       },
                     },
                     required: ['@ondc/org/item_id', 'title', '@ondc/org/title_type', 'price'],

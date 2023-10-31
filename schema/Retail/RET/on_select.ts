@@ -1,4 +1,4 @@
-export const FnBonSelectSchema = {
+export const onSelectSchema = {
   type: 'object',
   properties: {
     context: {
@@ -6,7 +6,7 @@ export const FnBonSelectSchema = {
       properties: {
         domain: {
           type: 'string',
-          const: 'ONDC:RET11',
+          minLength: 1,
         },
         action: {
           type: 'string',
@@ -18,6 +18,7 @@ export const FnBonSelectSchema = {
         },
         bap_id: {
           type: 'string',
+          minLength: 1,
         },
         bap_uri: {
           type: 'string',
@@ -25,6 +26,7 @@ export const FnBonSelectSchema = {
         },
         bpp_id: {
           type: 'string',
+          minLength: 1,
         },
         bpp_uri: {
           type: 'string',
@@ -32,12 +34,15 @@ export const FnBonSelectSchema = {
         },
         transaction_id: {
           type: 'string',
+          minLength: 1,
         },
         message_id: {
           type: 'string',
+          minLength: 1,
         },
         city: {
           type: 'string',
+          minLength: 1,
         },
         country: {
           type: 'string',
@@ -78,6 +83,7 @@ export const FnBonSelectSchema = {
               properties: {
                 id: {
                   type: 'string',
+                  minLength: 1,
                 },
               },
               required: ['id'],
@@ -89,9 +95,11 @@ export const FnBonSelectSchema = {
                 properties: {
                   id: {
                     type: 'string',
+                    minLength: 1,
                   },
                   fulfillment_id: {
                     type: 'string',
+                    minLength: 1,
                   },
                   parent_item_id: {
                     type: 'string',

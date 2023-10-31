@@ -1,4 +1,4 @@
-export const FnBsearchSchema = {
+export const searchSchema = {
   type: 'object',
   properties: {
     context: {
@@ -6,7 +6,7 @@ export const FnBsearchSchema = {
       properties: {
         domain: {
           type: 'string',
-          const: 'ONDC:RET11',
+          minLength: 1,
         },
         action: {
           type: 'string',
@@ -14,9 +14,11 @@ export const FnBsearchSchema = {
         },
         country: {
           type: 'string',
+          minLength: 1,
         },
         city: {
           type: 'string',
+          minLength: 1,
         },
         core_version: {
           type: 'string',
@@ -24,16 +26,20 @@ export const FnBsearchSchema = {
         },
         bap_id: {
           type: 'string',
+          minLength: 1,
         },
         bap_uri: {
           type: 'string',
+          minLength: 1,
           format: 'url',
         },
         transaction_id: {
           type: 'string',
+          minLength: 1,
         },
         message_id: {
           type: 'string',
+          minLength: 1,
         },
         timestamp: {
           type: 'string',
@@ -142,7 +148,7 @@ export const FnBsearchSchema = {
                 properties: {
                   code: {
                     type: 'string',
-                    const: 'catalog_inc',
+                    enum: ['catalog_inc', 'bap_terms'],
                   },
                   list: {
                     type: 'array',
@@ -162,7 +168,6 @@ export const FnBsearchSchema = {
                         },
                         value: {
                           type: 'string',
-                          format: 'date-time',
                         },
                       },
                       required: ['code', 'value'],

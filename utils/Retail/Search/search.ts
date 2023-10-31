@@ -4,55 +4,60 @@ import constants, { ApiSequence } from '../../../constants'
 import {
   validateSchema,
   checkGpsPrecision,
-  checkTagConditions,
   isObjectEmpty,
   hasProperty,
   checkContext,
+  checkTagConditions,
 } from '../../../utils'
 
-export const checkSearchIncremental = (data: any, msgIdSet: any) => {
+export const checkSearch = (data: any, msgIdSet: any) => {
+  const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.INC_SEARCH]: 'Json cannot be empty' }
+      errorObj[ApiSequence.SEARCH] = 'Json cannot be empty'
+      return
     }
 
-    const { message, context } = data
-
-    if (!message || !context || !message.intent || isObjectEmpty(message) || isObjectEmpty(message.intent)) {
-      return { missingFields: '/context, /message, /intent or /message/intent is missing or empty' }
+    if (
+      !data.message ||
+      !data.context ||
+      !data.message.intent ||
+      isObjectEmpty(data.message) ||
+      isObjectEmpty(data.message.intent)
+    ) {
+      errorObj['missingFields'] = '/context, /message, /intent or /message/intent is missing or empty'
+      return Object.keys(errorObj).length > 0 && errorObj
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.RET_SEARCH, data)
-    const contextRes: any = checkContext(context, constants.RET_SEARCH)
-    setValue(`${ApiSequence.INC_SEARCH}_context`, context)
-    msgIdSet.add(context.message_id)
+    msgIdSet.add(data.context.message_id)
 
-    const errorObj: any = {}
+    const schemaValidation = validateSchema(data.context.domain.split(':')[1], constants.RET_SEARCH, data)
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
     }
 
+    const contextRes: any = checkContext(data.context, constants.RET_SEARCH)
+    setValue(`${ApiSequence.SEARCH}_context`, data.context)
+    msgIdSet.add(data.context.message_id)
+
     if (!contextRes?.valid) {
       Object.assign(errorObj, contextRes.ERRORS)
     }
 
-    if (context.city !== '*') {
-      errorObj.contextCityError = 'context/city should be "*" while sending search_inc_catalog request'
-    }
+    const buyerFF = parseFloat(data.message.intent?.payment?.['@ondc/org/buyer_app_finder_fee_amount'])
 
-    const buyerFF = parseFloat(message.intent?.payment?.['@ondc/org/buyer_app_finder_fee_amount'])
-
-    if (isNaN(buyerFF)) {
-      errorObj.payment = 'payment should have a key @ondc/org/buyer_app_finder_fee_amount'
+    if (!isNaN(buyerFF)) {
+      setValue(`${ApiSequence.SEARCH}_buyerFF`, buyerFF)
     } else {
-      setValue(`${ApiSequence.INC_SEARCH}_buyerFF`, buyerFF)
+      errorObj['payment'] = 'payment should have a key @ondc/org/buyer_app_finder_fee_amount'
     }
 
     const fulfillment = data.message.intent && data.message.intent?.fulfillment
     if (fulfillment) {
       if (fulfillment.end) {
         const gps = fulfillment.end?.location?.gps
+
         if (gps) {
           if (!checkGpsPrecision(gps)) {
             errorObj['gpsPrecision'] =
@@ -72,10 +77,9 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
       errorObj.intent.category_or_item = '/message/intent cannot have both properties item and category'
     }
 
-    if (message.intent?.tags) {
-      errorObj.intent = { ...errorObj.intent, tags: checkTagConditions(message, context) }
-    } else {
-      errorObj.intent = '/message/intent should have a required property tags'
+    if (data.message.intent?.tags) {
+      const tagErrors = checkTagConditions(data.message, data.context)
+      tagErrors?.length ? (errorObj.intent = { ...errorObj.intent, tags: tagErrors }) : null
     }
 
     return Object.keys(errorObj).length > 0 && errorObj

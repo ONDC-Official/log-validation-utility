@@ -11,6 +11,7 @@ import {
   compareCoordinates,
   checkItemTag,
   checkBppIdOrBapId,
+  areGSTNumbersMatching,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -30,7 +31,7 @@ export const checkOnConfirm = (data: any) => {
     const parentItemIdSet: any = getValue(`parentItemIdSet`)
     const select_customIdArray: any = getValue(`select_customIdArray`)
 
-    const schemaValidation = validateSchema('RET11', constants.RET_ONCONFIRM, data)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.RET_ONCONFIRM, data)
 
     const contextRes: any = checkContext(context, constants.RET_ONCONFIRM)
 
@@ -328,6 +329,28 @@ export const checkOnConfirm = (data: any) => {
       }
     } catch (error: any) {
       logger.info(`!Error while comparing buyer app finder fee in /${constants.RET_ONCONFIRM}, ${error.stack}`)
+    }
+
+    try {
+      logger.info(`Comparing tags in /${constants.RET_CONFIRM} and /${constants.RET_ONCONFIRM}`)
+      const confirm_tags: any[] | any = getValue('confirm_tags')
+      if (on_confirm.tags) {
+        const bap_terms = areGSTNumbersMatching(confirm_tags, on_confirm.tags, 'bap_terms')
+
+        if (bap_terms === false) {
+          onCnfrmObj.tags_bap_terms = `Tags should have same and valid gst_number as passed in /${constants.RET_CONFIRM}`
+        }
+
+        const bpp_terms = areGSTNumbersMatching(confirm_tags, on_confirm.tags, 'bpp_terms')
+        if (bpp_terms === false) {
+          onCnfrmObj.tags_bpp_terms = `Tags should have same and valid gst_number as passed in /${constants.RET_ONINIT} and ${constants.RET_CONFIRM}`
+        }
+      }
+    } catch (error: any) {
+      logger.error(
+        `!!Error while Comparing tags in /${constants.RET_CONFIRM} and /${constants.RET_ONCONFIRM}
+        ${error.stack}`,
+      )
     }
 
     return onCnfrmObj

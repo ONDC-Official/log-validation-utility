@@ -3,14 +3,7 @@
 import { logger } from '../../../shared/logger'
 import { setValue, getValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
-import {
-  validateSchema,
-  isObjectEmpty,
-  checkContext,
-  checkGpsPrecision,
-  emailRegex,
-  checkBppIdOrBapId,
-} from '../../../utils'
+import { validateSchema, isObjectEmpty, checkContext, checkGpsPrecision, emailRegex } from '../../../utils'
 import _, { isEmpty } from 'lodash'
 
 export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
@@ -23,7 +16,7 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.RET_ONSEARCHINC, data)
+  const schemaValidation = validateSchema('RET11', 'on_search_inc', data)
 
   const contextRes: any = checkContext(context, constants.RET_ONSEARCH)
   setValue(`${ApiSequence.INC_ONSEARCH}_context`, context)
@@ -31,11 +24,6 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
 
   const errorObj: any = {}
 
-  const checkBap = checkBppIdOrBapId(context.bap_id)
-  const checkBpp = checkBppIdOrBapId(context.bpp_id)
-
-  if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
-  if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
   if (schemaValidation !== 'error') {
     Object.assign(errorObj, schemaValidation)
   }
@@ -69,6 +57,17 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
   }
 
   try {
+    logger.info(`Comparing Message Ids of /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH}`)
+    if (!_.isEqual(searchContext.message_id, context.message_id)) {
+      errorObj.message_id = `Message Id for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api should be same`
+    }
+  } catch (error: any) {
+    logger.info(
+      `Error while comparing message ids for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api, ${error.stack}`,
+    )
+  }
+
+  try {
     logger.info(`Comparing message for /${ApiSequence.ON_SEARCH} & /${ApiSequence.INC_ONSEARCH}`)
     if (JSON.stringify(message) === JSON.stringify(onSearchMessage)) {
       // return if message is same as on_search_full_catalog_refresh
@@ -77,10 +76,11 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
     }
   } catch (error: any) {
     logger.info(`Error while comparing message object for /${ApiSequence.ON_SEARCH} &
-     /${ApiSequence.INC_ONSEARCH}, ${error.stack}`)
+ /${ApiSequence.INC_ONSEARCH}, ${error.stack}`)
   }
 
   const onSearchCatalog: any = message.catalog
+  const onSearchFFIds = new Set()
   const prvdrsId = new Set()
 
   try {

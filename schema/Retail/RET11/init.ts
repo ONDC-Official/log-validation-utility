@@ -157,7 +157,7 @@ export const FnBinitSchema = {
                     },
                   },
                 },
-                required: ['id', 'fulfillment_id', 'quantity', 'parent_item_id', 'tags'],
+                required: ['id', 'fulfillment_id', 'quantity'],
               },
             },
             billing: {

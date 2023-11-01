@@ -128,7 +128,7 @@ export const FnBonSearchIncSchema = {
                     properties: {
                       label: {
                         type: 'string',
-                        enum: ['enable', 'disable'],
+                        enum: ['enable', 'disable', 'close'],
                       },
                       timestamp: {
                         type: 'string',

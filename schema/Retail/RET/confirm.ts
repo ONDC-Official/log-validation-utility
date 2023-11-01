@@ -231,7 +231,7 @@ export const confirmSchema = {
                   format: 'date-time',
                 },
               },
-              required: ['name', 'address', 'phone', 'email', 'created_at', 'updated_at'],
+              required: ['name', 'address', 'phone', 'created_at', 'updated_at'],
             },
             fulfillments: {
               type: 'array',

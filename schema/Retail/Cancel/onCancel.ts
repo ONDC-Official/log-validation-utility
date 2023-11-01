@@ -195,7 +195,7 @@ export const onCancelSchema = {
                   format: 'date-time',
                 },
               },
-              required: ['name', 'address', 'email', 'phone', 'created_at', 'updated_at'],
+              required: ['name', 'address', 'phone', 'created_at', 'updated_at'],
             },
             cancellation: {
               type: 'object',

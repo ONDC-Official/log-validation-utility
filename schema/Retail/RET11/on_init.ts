@@ -154,7 +154,7 @@ export const FnBonInitSchema = {
                     },
                   },
                 },
-                required: ['id', 'fulfillment_id', 'quantity', 'parent_item_id', 'tags'],
+                required: ['id', 'fulfillment_id', 'quantity'],
               },
             },
             billing: {
@@ -215,7 +215,7 @@ export const FnBonInitSchema = {
                   format: 'date-time',
                 },
               },
-              required: ['name', 'address', 'email', 'phone', 'created_at', 'updated_at'],
+              required: ['name', 'address', 'phone', 'created_at', 'updated_at'],
             },
             fulfillments: {
               type: 'array',
@@ -423,7 +423,6 @@ export const FnBonInitSchema = {
                             },
                           },
                         },
-                        required: ['parent_item_id', 'tags'],
                       },
                     },
                     required: ['@ondc/org/item_id', 'title', '@ondc/org/title_type', 'price'],

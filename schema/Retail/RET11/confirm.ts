@@ -232,7 +232,7 @@ export const FnBconfirmSchema = {
                   format: 'date-time',
                 },
               },
-              required: ['name', 'address', 'phone', 'email', 'created_at', 'updated_at'],
+              required: ['name', 'address', 'phone', 'created_at', 'updated_at'],
             },
             fulfillments: {
               type: 'array',
@@ -433,7 +433,6 @@ export const FnBconfirmSchema = {
                             },
                           },
                         },
-                        required: ['parent_item_id', 'tags'],
                       },
                     },
                     required: ['@ondc/org/item_id', 'title', '@ondc/org/title_type', 'price'],

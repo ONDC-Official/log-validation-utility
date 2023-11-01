@@ -17,10 +17,12 @@ import { checkCancel } from '../utils/Retail/Cancel/cancel'
 import { checkOnCancel } from '../utils/Retail/Cancel/onCancel'
 import { checkOnTrack } from '../utils/Retail/Track/onTrack'
 import { checkTrack } from '../utils/Retail/Track/track'
-import { checkOnStatus } from '../utils/Retail/Status/onStatus'
+import { checkOnStatusPending } from '../utils/Retail/Status/onStatusPending'
 import { checkStatus } from '../utils/Retail/Status/status'
 import { checkSearch } from '../utils/Retail/Search/search'
 import { checkOnsearch } from '../utils/Retail/Search/on_search'
+import { checkOnStatusPicked } from '../utils/Retail/Status/onStatusPicked'
+import { checkOnStatusDelivered } from '../utils/Retail/Status/onStatusDelivered'
 
 export const validateLogs = (data: any, domain: string) => {
   const msgIdSet = new Set()
@@ -136,11 +138,27 @@ export const validateLogs = (data: any, domain: string) => {
         }
       }
 
-      if (data[ApiSequence.ON_STATUS]) {
-        const onStatusResp = checkOnStatus(data[ApiSequence.ON_STATUS])
+      if (data[ApiSequence.ON_STATUS_PENDING]) {
+        const onStatusResp = checkOnStatusPending(data[ApiSequence.ON_STATUS_PENDING], 'pending')
 
         if (!_.isEmpty(onStatusResp)) {
-          logReport = { ...logReport, [ApiSequence.ON_STATUS]: onStatusResp }
+          logReport = { ...logReport, [ApiSequence.ON_STATUS_PENDING]: onStatusResp }
+        }
+      }
+
+      if (data[ApiSequence.ON_STATUS_PICKED]) {
+        const onStatusResp = checkOnStatusPicked(data[ApiSequence.ON_STATUS_PICKED], 'pending')
+
+        if (!_.isEmpty(onStatusResp)) {
+          logReport = { ...logReport, [ApiSequence.ON_STATUS_PICKED]: onStatusResp }
+        }
+      }
+
+      if (data[ApiSequence.ON_STATUS_DELIVERED]) {
+        const onStatusResp = checkOnStatusDelivered(data[ApiSequence.ON_STATUS_DELIVERED], 'pending')
+
+        if (!_.isEmpty(onStatusResp)) {
+          logReport = { ...logReport, [ApiSequence.ON_STATUS_DELIVERED]: onStatusResp }
         }
       }
 
@@ -237,6 +255,38 @@ export const validateLogs = (data: any, domain: string) => {
 
         if (!_.isEmpty(on_confirmResps)) {
           logReport = { ...logReport, [ApiSequence.ON_CONFIRM]: on_confirmResps }
+        }
+      }
+
+      if (data[ApiSequence.STATUS]) {
+        const statusResp = checkStatus(data[ApiSequence.STATUS])
+
+        if (!_.isEmpty(statusResp)) {
+          logReport = { ...logReport, [ApiSequence.STATUS]: statusResp }
+        }
+      }
+
+      if (data[ApiSequence.ON_STATUS_PENDING]) {
+        const onStatusResp = checkOnStatusPending(data[ApiSequence.ON_STATUS_PENDING], 'pending')
+
+        if (!_.isEmpty(onStatusResp)) {
+          logReport = { ...logReport, [ApiSequence.ON_STATUS_PENDING]: onStatusResp }
+        }
+      }
+
+      if (data[ApiSequence.ON_STATUS_PICKED]) {
+        const onStatusResp = checkOnStatusPicked(data[ApiSequence.ON_STATUS_PICKED], 'pending')
+
+        if (!_.isEmpty(onStatusResp)) {
+          logReport = { ...logReport, [ApiSequence.ON_STATUS_PICKED]: onStatusResp }
+        }
+      }
+
+      if (data[ApiSequence.ON_STATUS_DELIVERED]) {
+        const onStatusResp = checkOnStatusDelivered(data[ApiSequence.ON_STATUS_DELIVERED], 'pending')
+
+        if (!_.isEmpty(onStatusResp)) {
+          logReport = { ...logReport, [ApiSequence.ON_STATUS_DELIVERED]: onStatusResp }
         }
       }
 

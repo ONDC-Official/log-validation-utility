@@ -22,6 +22,8 @@ export default Object.freeze({
   RET_SUPPORT: 'support',
   RET_ONSUPPORT: 'on_support',
   DECIMAL_PRECISION: 6,
+  ORDER_PICKED: 'Order-picked-up',
+  ORDER_DELIVERED: 'Order-delivered',
 })
 
 export const ApiSequence = {
@@ -40,7 +42,9 @@ export const ApiSequence = {
   TRACK: 'track',
   ON_TRACK: 'on_track',
   STATUS: 'status',
-  ON_STATUS: 'on_status',
+  ON_STATUS_PENDING: 'on_status_pending',
+  ON_STATUS_PICKED: 'on_status_picked',
+  ON_STATUS_DELIVERED: 'on_status_delivered',
   UPDATE: 'update',
   ON_UPDATE: 'on_update',
 }

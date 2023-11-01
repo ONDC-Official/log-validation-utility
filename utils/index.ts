@@ -491,3 +491,9 @@ function findGSTNumber(tags: any[], termToMatch: string): string | undefined {
 
   return undefined // GST number not found or not valid
 }
+
+export function areTimestampsLessThanOrEqualTo(timestamp1: string, timestamp2: string): boolean {
+  const date1 = new Date(timestamp1).getTime()
+  const date2 = new Date(timestamp2).getTime()
+  return date1 <= date2
+}

@@ -2,14 +2,14 @@
 import _ from 'lodash'
 import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, checkContext } from '../../../utils'
+import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkOnStatus = (data: any) => {
+export const checkOnStatusPending = (data: any, state: string) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.ON_STATUS]: 'Json cannot be empty' }
+      return { [ApiSequence.ON_STATUS_PENDING]: 'Json cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -30,7 +30,7 @@ export const checkOnStatus = (data: any) => {
       Object.assign(onStatusObj, contextRes.ERRORS)
     }
 
-    setValue(`${ApiSequence.ON_STATUS}`, data)
+    setValue(`${ApiSequence.ON_STATUS_PENDING}`, data)
 
     try {
       logger.info(`Checking context for /${constants.RET_ONSTATUS} API`) //checking context
@@ -61,6 +61,44 @@ export const checkOnStatus = (data: any) => {
     } catch (error: any) {
       logger.info(
         `!!Error while comparing transaction ids for /${constants.RET_SELECT} and /${constants.RET_ONSTATUS} api, ${error.stack}`,
+      )
+    }
+
+    const on_status = message.order
+    try {
+      logger.info(`Comparing order Id in /${constants.RET_ONCONFIRM} and /${constants.RET_ONSTATUS}_${state}`)
+      if (on_status.id != getValue('cnfrmOrdrId')) {
+        logger.info(`Order id (/${constants.RET_ONSTATUS}_${state}) mismatches with /${constants.RET_CONFIRM})`)
+        onStatusObj.onStatusOdrId = `Order id in /${constants.RET_CONFIRM} and /${constants.RET_ONSTATUS}_${state} do not match`
+      }
+    } catch (error) {
+      logger.info(
+        `!!Error while comparing order id in /${constants.RET_ONSTATUS}_${state} and /${constants.RET_CONFIRM}`,
+        error,
+      )
+    }
+
+    try {
+      logger.info(`Comparing timestamp of /${constants.RET_ONCONFIRM} and /${constants.RET_ONSTATUS}_${state} API`)
+      if (_.gte(getValue('tmstmp'), context.timestamp)) {
+        onStatusObj.tmpstmp1 = `Timestamp for /${constants.RET_ONCONFIRM} api cannot be greater than or equal to /${constants.RET_ONSTATUS}_${state} api`
+      }
+
+      setValue('tmpstmp', on_status.context.timestamp)
+    } catch (error: any) {
+      logger.error(`!!Error occurred while comparing timestamp for /${constants.RET_ONSTATUS}_${state}, ${error.stack}`)
+    }
+
+    const contextTime = context.timestamp
+    try {
+      logger.info(`Comparing order.updated_at and context timestamp for /${constants.RET_ONSTATUS}_${state} API`)
+
+      if (!areTimestampsLessThanOrEqualTo(on_status.updated_at, contextTime)) {
+        onStatusObj.tmpstmp2 = ` order.updated_at timestamp should be less than or eqaul to  context timestamp for /${constants.RET_ONSTATUS}_${state} api`
+      }
+    } catch (error: any) {
+      logger.error(
+        `!!Error occurred while comparing order updated at for /${constants.RET_ONSTATUS}_${state}, ${error.stack}`,
       )
     }
 

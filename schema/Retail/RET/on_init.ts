@@ -214,7 +214,7 @@ export const onInitSchema = {
                   format: 'date-time',
                 },
               },
-              required: ['name', 'address', 'email', 'phone', 'created_at', 'updated_at'],
+              required: ['name', 'address', 'phone', 'created_at', 'updated_at'],
             },
             fulfillments: {
               type: 'array',

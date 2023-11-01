@@ -34,7 +34,7 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
 
   setValue(`${ApiSequence.INC_ONSEARCH}`, data)
 
-  const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
+  const incSearchContext: any = getValue(`${ApiSequence.INC_SEARCH}_context`)
   const onSearchMessage: any = getValue(`${ApiSequence.ON_SEARCH}_message`)
 
   try {
@@ -46,24 +46,24 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
   }
 
   try {
-    logger.info(`Comparing transaction Ids of /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH}`)
-    if (!_.isEqual(searchContext.transaction_id, context.transaction_id)) {
-      errorObj.transaction_id = `Transaction Id for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api should be same`
+    logger.info(`Comparing transaction Ids of /${ApiSequence.INC_SEARCH} and /${ApiSequence.INC_ONSEARCH}`)
+    if (!_.isEqual(incSearchContext.transaction_id, context.transaction_id)) {
+      errorObj.transaction_id = `Transaction Id for /${ApiSequence.INC_SEARCH} and /${ApiSequence.INC_ONSEARCH} api should be same`
     }
   } catch (error: any) {
     logger.info(
-      `Error while comparing transaction ids for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api, ${error.stack}`,
+      `Error while comparing transaction ids for /${ApiSequence.INC_SEARCH} and /${ApiSequence.INC_ONSEARCH} api, ${error.stack}`,
     )
   }
 
   try {
-    logger.info(`Comparing Message Ids of /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH}`)
-    if (!_.isEqual(searchContext.message_id, context.message_id)) {
-      errorObj.message_id = `Message Id for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api should be same`
+    logger.info(`Comparing Message Ids of /${ApiSequence.INC_SEARCH} and /${ApiSequence.INC_ONSEARCH}`)
+    if (!_.isEqual(incSearchContext.message_id, context.message_id)) {
+      errorObj.message_id = `Message Id for /${ApiSequence.INC_SEARCH} and /${ApiSequence.INC_ONSEARCH} api should be same`
     }
   } catch (error: any) {
     logger.info(
-      `Error while comparing message ids for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api, ${error.stack}`,
+      `Error while comparing message ids for /${ApiSequence.INC_SEARCH} and /${ApiSequence.INC_ONSEARCH} api, ${error.stack}`,
     )
   }
 
@@ -128,7 +128,7 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
           const providerTime = new Date(prvdr.time.timestamp).getTime()
           const contextTimestamp = new Date(tmpstmp).getTime()
 
-          if (providerTime > contextTimestamp) {
+          if (prvdr.time.label !== 'close' && providerTime > contextTimestamp) {
             errorObj.StoreEnableDisable = `store enable/disable timestamp (/bpp/providers/time/timestamp) should be less then or equal to context.timestamp`
           }
 

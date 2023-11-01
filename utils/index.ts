@@ -1,7 +1,7 @@
 /* eslint-disable no-prototype-builtins */
 import _ from 'lodash'
 import { logger } from '../shared/logger'
-import constants from '../constants'
+import constants, { statusArray } from '../constants'
 import schemaValidator from '../shared/schemaValidator'
 
 export const getObjValues = (obj: any) => {
@@ -496,4 +496,36 @@ export function areTimestampsLessThanOrEqualTo(timestamp1: string, timestamp2: s
   const date1 = new Date(timestamp1).getTime()
   const date2 = new Date(timestamp2).getTime()
   return date1 <= date2
+}
+
+export function validateStatusOrderAndTimestamp(set: any) {
+  const errObj: any = {}
+  let previousTimestamp = null
+  let previousStatusIndex = -1
+
+  for (const obj of set) {
+    if (!obj.hasOwnProperty('status') || !obj.hasOwnProperty('timestamp')) {
+      errObj.status = `on_status calls must have either of following status ${statusArray}`
+    }
+
+    const statusIndex = statusArray.indexOf(obj.status)
+    if (statusIndex === -1 || statusIndex < previousStatusIndex) {
+      errObj.status = `on_status calls must have their order state in inc. order of Pending, Packed, Agent-assigned, Order-picked-up, Out-for-delivery, Order-delivered, Cancelled`
+    }
+
+    if (obj.timestamp < previousTimestamp) {
+      errObj.time = `Timestamp on previous on_status call shouldn't be greater than timestamp on current on_status ${previousTimestamp} && ${obj.timestamp}`
+    }
+
+    previousStatusIndex = statusIndex
+    previousTimestamp = obj.timestamp
+  }
+
+  if (_.isEmpty(errObj)) {
+    const result = { valid: true, SUCCESS: 'Valid order states' }
+    return result
+  } else {
+    const result = { valid: false, ERRORS: errObj }
+    return result
+  }
 }

@@ -111,26 +111,6 @@ export const checkInit = (data: any) => {
     }
 
     try {
-      logger.info(`Checking billing object in /${constants.RET_INIT}`)
-      if (!init['billing']) {
-        initObj.bill = `Billing object missing in /${constants.RET_INIT}`
-      } else {
-        const billing = init.billing
-        const tmpstmp = getValue('tmpstmp')
-        setValue('billing', billing)
-        if (!_.isEqual(billing.created_at, tmpstmp)) {
-          initObj.bllngCrtd = `billing/created_at should match context.timestamp`
-        }
-
-        if (!_.isEqual(init.billing.updated_at, tmpstmp)) {
-          initObj.bllngUptd = `billing/updated_at should match context.timestamp`
-        }
-      }
-    } catch (error: any) {
-      logger.error(`!!Error while checking billing object in /${constants.RET_INIT}, ${error.stack}`)
-    }
-
-    try {
       //checking address components length
       const noOfFulfillments = init.fulfillments.length //will be 1 ideally
       let i = 0

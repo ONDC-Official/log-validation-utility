@@ -172,7 +172,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
 
         logger.info('Checking fixed or split timings')
         //scenario 1: range =1 freq/times =1
-        if (loc.time.range && (loc.time.schedule.frequency || loc.time.schedule.times)) {
+        if (loc.time.range && (loc.time.schedule?.frequency || loc.time.schedule?.times)) {
           const key = `prvdr${i}loctime${iter}`
           errorObj[
             key

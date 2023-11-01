@@ -8,7 +8,6 @@ export const FnBonSearchIncSchema = {
       properties: {
         domain: {
           type: 'string',
-          const: 'ONDC:RET11',
         },
         action: {
           type: 'string',

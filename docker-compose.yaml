@@ -13,7 +13,7 @@ services:
   nginx:
     build:
       context: nginx
-      dockerfile: DockerfileWithoutSSL
+      dockerfile: Dockerfile
     container_name: nginx-service
     depends_on:
       - retail-logs-utility

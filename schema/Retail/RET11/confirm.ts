@@ -275,7 +275,7 @@ export const FnBconfirmSchema = {
                             maxLength: 11,
                           },
                         },
-                        required: ['email', 'phone'],
+                        required: ['phone'],
                       },
                       location: {
                         type: 'object',
@@ -326,7 +326,7 @@ export const FnBconfirmSchema = {
                     required: ['person', 'contact', 'location'],
                   },
                 },
-                required: ['id', 'type', 'tracking', 'end'],
+                required: ['id', 'type', 'end'],
               },
             },
             quote: {
@@ -531,10 +531,8 @@ export const FnBconfirmSchema = {
                       'settlement_counterparty',
                       'settlement_phase',
                       'settlement_type',
-                      'upi_address',
                       'settlement_bank_account_no',
                       'settlement_ifsc_code',
-                      'beneficiary_name',
                       'bank_name',
                       'branch_name',
                     ],

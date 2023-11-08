@@ -387,7 +387,7 @@ export const onStatusSchema = {
                             format: 'email',
                           },
                         },
-                        required: ['phone', 'email'],
+                        required: ['phone'],
                       },
                     },
                     required: ['location', 'time', 'contact'],

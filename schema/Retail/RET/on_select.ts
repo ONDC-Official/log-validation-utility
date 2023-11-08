@@ -172,7 +172,7 @@ export const onSelectSchema = {
                     required: ['descriptor'],
                   },
                 },
-                required: ['id', '@ondc/org/provider_name', 'tracking', '@ondc/org/category', '@ondc/org/TAT', 'state'],
+                required: ['id', '@ondc/org/provider_name', '@ondc/org/category', '@ondc/org/TAT', 'state'],
               },
             },
             quote: {

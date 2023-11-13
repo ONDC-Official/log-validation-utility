@@ -38,6 +38,8 @@ export const checkContext = (
   }
 
   if (data.action != path) {
+    console.log('🚀 ~ file: index.ts:41 ~ data.action :', data.action)
+    console.log('🚀 ~ file: index.ts:41 ~ path:', path)
     errObj.action_err = `context.action should be ${path}`
   }
 

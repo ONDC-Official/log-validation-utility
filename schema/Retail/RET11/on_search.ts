@@ -433,7 +433,6 @@ export const FnBonSearchSchema = {
                                     },
                                     value: {
                                       type: 'string',
-                                      pattern: '^[0-9]+$',
                                     },
                                   },
                                   required: ['unit', 'value'],
@@ -446,7 +445,6 @@ export const FnBonSearchSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
-                                  pattern: '^[0-9]+$',
                                 },
                               },
                               required: ['count'],
@@ -456,7 +454,6 @@ export const FnBonSearchSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
-                                  pattern: '^[0-9]+$',
                                 },
                               },
                               required: ['count'],

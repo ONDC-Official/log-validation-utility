@@ -274,7 +274,7 @@ export const confirmSchema = {
                             maxLength: 11,
                           },
                         },
-                        required: ['email', 'phone'],
+                        required: ['phone'],
                       },
                       location: {
                         type: 'object',

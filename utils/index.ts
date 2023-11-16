@@ -38,8 +38,6 @@ export const checkContext = (
   }
 
   if (data.action != path) {
-    console.log('🚀 ~ file: index.ts:41 ~ data.action :', data.action)
-    console.log('🚀 ~ file: index.ts:41 ~ path:', path)
     errObj.action_err = `context.action should be ${path}`
   }
 
@@ -70,6 +68,7 @@ export const checkContext = (
 
 const validate_schema_for_retail_json = (vertical: string, api: string, data: any) => {
   const res = (schemaValidator as any)[`validate_schema_${api}_${vertical}_for_json`](data)
+
   return res
 }
 

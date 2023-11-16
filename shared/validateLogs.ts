@@ -31,6 +31,8 @@ import checkLspIssueStatus from '../utils/igm/lspIssueStatus'
 import checkLspOnIssueStatus from '../utils/igm/lspOnIssueStatus'
 import checkLspOnIssue from '../utils/igm/lspOnIssue'
 import checkOnIssueStatus from '../utils/igm/retOnIssueStatus'
+import checkOnIssueStatusUnsolicited from '../utils/igm/retOnIssueStatus(unsolicited)'
+import checkLspIssueClose from '../utils/igm/lspIssue(close)'
 
 export const validateLogs = (data: any, domain: string) => {
   const msgIdSet = new Set()
@@ -349,6 +351,14 @@ export const IGMvalidateLogs = (data: any) => {
       }
     }
 
+    if (data[IGMApiSequence.RET_ON_ISSUE_STATUS_UNSOLICITED]) {
+      const ret_onissue_status_un = checkOnIssueStatusUnsolicited(data[IGMApiSequence.RET_ON_ISSUE_STATUS_UNSOLICITED])
+
+      if (!_.isEmpty(ret_onissue_status_un)) {
+        logReport = { ...logReport, [IGMApiSequence.RET_ON_ISSUE_STATUS_UNSOLICITED]: ret_onissue_status_un }
+      }
+    }
+
     if (data[IGMApiSequence.LSP_ISSUE]) {
       const lsp_issue = checkLspIssue(data[IGMApiSequence.LSP_ISSUE])
 
@@ -362,6 +372,14 @@ export const IGMvalidateLogs = (data: any) => {
 
       if (!_.isEmpty(lsp_on_issue)) {
         logReport = { ...logReport, [IGMApiSequence.LSP_ON_ISSUE]: lsp_on_issue }
+      }
+    }
+
+    if (data[IGMApiSequence.LSP_ISSUE_CLOSE]) {
+      const lsp_on_issue = checkLspIssueClose(data[IGMApiSequence.LSP_ISSUE_CLOSE])
+
+      if (!_.isEmpty(lsp_on_issue)) {
+        logReport = { ...logReport, [IGMApiSequence.LSP_ISSUE_CLOSE]: lsp_on_issue }
       }
     }
 

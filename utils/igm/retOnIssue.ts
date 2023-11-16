@@ -4,13 +4,19 @@ import { checkContext, isObjectEmpty } from '../../utils/index'
 import constants, { IGMApiSequence } from '../../constants/index'
 import { validateSchema } from '../../utils/index'
 import { logger } from '../../shared/logger'
+import {
+  checkCreatedAtInAll,
+  checkDomainInAll,
+  checkOrganizationNameandDomain,
+  compareContextTimeStampAndUpdatedAt,
+  compareUpdatedAtAndContextTimeStamp,
+} from './igmHelpers'
 
 const checkOnIssue = (data: any) => {
   const onissueObj: any = {}
   let res: any = {}
   try {
     const on_issue: any = data
-    const issue: any = data
 
     if (!data || isObjectEmpty(data)) {
       return { [IGMApiSequence.RET_ON_ISSUE]: 'Json cannot be empty' }
@@ -88,39 +94,59 @@ const checkOnIssue = (data: any) => {
           99999999999,
         )
       ) {
-        onissueObj.phone = `Phone Number for /${constants.RET_ONISSUE} api is not in the valid Range`
+        onissueObj.Phn = `Phone Number for /${constants.RET_ONISSUE} api is not in the valid Range`
       }
     } catch (error: any) {
       logger.error(`Error while checking phone number for /${constants.RET_ONISSUE} api, ${error.stack}`)
     }
 
-    try {
-      logger.info(`Checking time of creation and updation for /${constants.RET_ONISSUE}`)
-      if (!_.lte(on_issue.message.issue.created_at, issue.context.timestamp)) {
-        onissueObj.updatedTime = `Time of Creation for /${constants.RET_ONISSUE} api should be less than current timestamp`
-      }
+    // try {
+    //   logger.info(
+    //     `Checking time of creation and updation for /${constants.RET_ONISSUE}`
+    //   );
+    //   if (!_.lte(issue.context.timestamp, on_issue.message.issue.created_at)) {
+    //     onissueObj.updatedTime = `Time of Creation for /${constants.RET_ONISSUE} api should be less than context timestamp`;
+    //   }
+    // } catch (error:any) {
+    //   logger.error(
+    //     `Error while checking time of creation and updation for /${constants.RET_ONISSUE} api, ${error.stack}`
+    //   );
+    // }
+    setValue('igmCreatedAt', on_issue.message.issue.created_at)
 
-      setValue('igmCreatedAt', on_issue.message.issue.created_at)
-    } catch (error: any) {
-      logger.error(
-        `Error while checking time of creation and updation for /${constants.RET_ONISSUE} api, ${error.stack}`,
-      )
-    }
+    const respondent_actions = on_issue.message.issue.issue_actions.respondent_actions
 
-    try {
-      logger.info(`Checking organization's name for /${constants.RET_ONISSUE}`)
-      const org_name = on_issue.message.issue.issue_actions.respondent_actions?.[0].updated_by.org.name
-      const org_id = org_name.split('::')
-      if (!_.isEqual(on_issue.context.bpp_id, org_id?.[0])) {
-        onissueObj.org_name = `Organization's Name for /${constants.RET_ONISSUE} api mismatched with bpp_id`
-      }
+    checkOrganizationNameandDomain({
+      endpoint: constants.RET_ONISSUE,
+      actionPayload: respondent_actions,
+      contextSubscriberId: on_issue.context.bpp_id,
+      contextDomain: on_issue.context.domain,
+      issueReportObj: onissueObj,
+    })
 
-      if (!_.lte(on_issue.context.domain, org_id[1])) {
-        onissueObj.org_domain = `Domain of organization for /${constants.RET_ONISSUE} api mismatched with domain in context`
-      }
-    } catch (error: any) {
-      logger.error(`Error while checking organization's name for /${constants.RET_ONISSUE} api, ${error.stack}`)
-    }
+    compareUpdatedAtAndContextTimeStamp({
+      endpoint: constants.RET_ONISSUE,
+      actionPayload: respondent_actions,
+      messageUpdatedAt: on_issue.message.issue.updated_at,
+      issueReportObj: onissueObj,
+    })
+
+    checkCreatedAtInAll({
+      endpoint: constants.RET_ONISSUE,
+      created_at: on_issue.message.issue.created_at,
+      issueReportObj: onissueObj,
+    })
+
+    checkDomainInAll({ endpoint: constants.RET_ONISSUE, domain: on_issue.context.domain, issueReportObj: onissueObj })
+
+    compareContextTimeStampAndUpdatedAt({
+      endpoint: constants.RET_ONISSUE,
+      contextTimeStamp: on_issue.context.timestamp,
+      issue_updated_at: on_issue.message.issue.updated_at,
+      issueReportObj: onissueObj,
+    })
+
+    setValue('onissueObj', onissueObj)
 
     // setValue("onissueObj", onissueObj);
     return onissueObj

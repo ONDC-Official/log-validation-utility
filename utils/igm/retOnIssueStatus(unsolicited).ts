@@ -12,7 +12,7 @@ import {
   compareUpdatedAtAndContextTimeStamp,
 } from './igmHelpers'
 
-const checkOnIssueStatus = (data: any) => {
+const checkOnIssueStatusUnsolicited = (data: any) => {
   const onIssueStatusObj: any = {}
   let res: any = {}
   try {
@@ -57,8 +57,8 @@ const checkOnIssueStatus = (data: any) => {
 
     try {
       logger.info(`Comparing transaction ID of /${constants.RET_ISSUE} and /${constants.RET_ONISSUE_STATUS}`)
-      if (!_.isEqual(getValue('igmTxnId'), onIssueStatus.context.transaction_id)) {
-        onIssueStatusObj.igmTxnId = `transaction ID mismatch in /${constants.RET_ISSUE} and /${constants.RET_ONISSUE_STATUS}`
+      if (_.isEqual(getValue('igmTxnId'), onIssueStatus.context.transaction_id)) {
+        onIssueStatusObj.igmTxnId = `transaction ID should not matched in /${constants.RET_ISSUE} and /${constants.RET_ONISSUE_STATUS}(unsolicited)`
       }
     } catch (error: any) {
       logger.error(
@@ -165,4 +165,4 @@ const checkOnIssueStatus = (data: any) => {
   }
 }
 
-export default checkOnIssueStatus
+export default checkOnIssueStatusUnsolicited

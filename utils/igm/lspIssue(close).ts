@@ -6,14 +6,14 @@ import { logger } from '../../shared/logger'
 import issueSubcategories from '../../utils/issue_subcategories'
 import getLspIssueMessage from '../messages_constants'
 import { setValue, getValue } from '../../shared/dao'
-import { compareUpdatedAtAndContextTimeStamp } from './igmHelpers'
+import { compareContextTimeStampAndUpdatedAt, compareUpdatedAtAndContextTimeStamp } from './igmHelpers'
 
-const checkLspIssue = (data: any) => {
-  const issueObj: any = {}
-  const res: any = []
+const checkLspIssueClose = (data: any) => {
+  let issueObj: any = {}
+
   const message = getLspIssueMessage(constants.RET_ISSUE)
   try {
-    const issue: any = data
+    let issue: any = data
 
     try {
       logger.info(`Validating Schema for ${constants.RET_ISSUE} API`)
@@ -31,9 +31,9 @@ const checkLspIssue = (data: any) => {
 
     try {
       logger.info(`Checking context for ${constants.RET_ISSUE} API`) //checking context
-      const res: any = checkContext(issue.context, constants.RET_ISSUE)
-      if (!res?.valid) {
-        Object.assign(issueObj, res?.ERRORS)
+      var res: any = checkContext(issue.context, constants.RET_ISSUE)
+      if (!res.valid) {
+        Object.assign(issueObj, res.ERRORS)
       }
     } catch (error: any) {
       logger.error(`Some error occurred while checking /${constants.RET_ISSUE} context, ${error.stack}`)
@@ -71,6 +71,7 @@ const checkLspIssue = (data: any) => {
       let respondent_action = issue.message.issue.issue_actions.respondent_actions
 
       const orgDomain = respondent_action[0].updated_by.org.name.split('::')
+
       if (!_.isEqual(issue.context.bap_id, orgDomain[0])) {
         issueObj.org_name = message.organization_name
       }
@@ -157,14 +158,21 @@ const checkLspIssue = (data: any) => {
       issueReportObj: issueObj,
     })
 
+    compareContextTimeStampAndUpdatedAt({
+      endpoint: constants.RET_ISSUE,
+      contextTimeStamp: issue.context.timestamp,
+      issue_updated_at: issue.message.issue.updated_at,
+      issueReportObj: issueObj,
+    })
+
     return issueObj
   } catch (err: any) {
     if (err.code === 'ENOENT') {
-      logger.info(`!!File not found for /${constants.RET_ISSUE}_lsp API!`)
+      logger.info(`!!File not found for /lsp_${constants.RET_ISSUE}_lsp API!`)
     } else {
       logger.error(`!!Some error occurred while checking /${constants.RET_ISSUE} API`, err)
     }
   }
 }
 
-export default checkLspIssue
+export default checkLspIssueClose

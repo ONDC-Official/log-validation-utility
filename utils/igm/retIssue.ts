@@ -5,21 +5,26 @@ import constants, { IGMApiSequence } from '../../constants/index'
 import { validateSchema } from '../../utils/index'
 import { logger } from '../../shared/logger'
 import issue_subcategory from '../issue_subcategories'
-import messages from '../../utils/messages_constants'
+// import messages from '../../utils/messages_constants'
+import {
+  checkOrganizationNameandDomain,
+  compareContextTimeStampAndUpdatedAt,
+  compareCreatedAtAndUpdationTime,
+  compareUpdatedAtAndContextTimeStamp,
+} from './igmHelpers'
 
 const checkIssue = (data: any) => {
   const issueObj: any = {}
-  const res: any = {}
+  let res: any = {}
 
-  const message = messages(constants.RET_ISSUE)
+  if (!data || isObjectEmpty(data)) {
+    return { [IGMApiSequence.RET_ON_ISSUE]: 'Json cannot be empty' }
+  }
 
   try {
     const issue: any = data
 
     try {
-      if (!data || isObjectEmpty(data)) {
-        return { [IGMApiSequence.RET_ISSUE]: 'Json cannot be empty' }
-      }
       logger.info(`Validating Schema for ${constants.RET_ISSUE} API`)
       const vs = validateSchema('igm', constants.RET_ISSUE, issue)
       if (vs != 'error') {
@@ -28,11 +33,9 @@ const checkIssue = (data: any) => {
     } catch (error: any) {
       logger.error(`!!Error occurred while performing schema validation for /${constants.RET_ISSUE}, ${error.stack}`)
     }
-
     try {
       logger.info(`Checking context for ${constants.RET_ISSUE} API`) //checking context
-      const res: any = checkContext(issue.context, constants.RET_ISSUE)
-      setValue('issue_timeStamp', issue.context.timestamp)
+      res = checkContext(issue.context, constants.RET_ISSUE)
       if (!res.valid) {
         Object.assign(issueObj, res.ERRORS)
       }
@@ -55,7 +58,6 @@ const checkIssue = (data: any) => {
       if (issue.message) {
         setValue('igmIssueType', issue.message.issue.issue_type)
       }
-
       // msgIdSet.add(issue.context.message_id);
       if (!res.valid) {
         Object.assign(issueObj, res.ERRORS)
@@ -68,31 +70,60 @@ const checkIssue = (data: any) => {
       logger.info(`Validating category and subcategory in /${constants.RET_ISSUE}`)
 
       if (
-        (issue.category === 'ITEM' && !issue_subcategory.issueItmSubCategories.includes(issue.sub_category)) ||
-        (issue.category === 'FULFILLMENT' && !issue_subcategory.issueFlmSubcategories.includes(issue.sub_category))
+        (issue.message.category === 'ITEM' &&
+          !issue_subcategory.issueItmSubCategories.includes(issue.message.sub_category)) ||
+        (issue.message.category === 'FULFILLMENT' &&
+          !issue_subcategory.issueFlmSubcategories.includes(issue.message.sub_category))
       ) {
         issueObj.ctgrySubCategory = `Invalid sub_category ${issue.sub_category} for issue category "${issue.category}"`
+      }
+
+      if (issue.message.issue.category === 'ITEM') {
+        if (issue.message.issue.order_details.items.length === 0) {
+          issueObj.items = `Items in issue.message.issue.order_details.items should not be empty when message category is ITEM`
+        }
+      }
+      if (issue.message.issue.category === 'FULFILLMENT') {
+        if (issue.message.issue.order_details.fulfillments.length === 0) {
+          issueObj.items = `Fulfillments in issue.message.issue.order_details.fulfillments should not be empty when message category is FULFILLMENT`
+        }
       }
     } catch (error: any) {
       logger.error(`!!Error while validating category and subcategory in /${constants.RET_ISSUE}, ${error.stack}`)
     }
 
-    try {
-      logger.info(`checking updated_at and last complainent_action's updated_at /${constants.RET_ONISSUE}`)
+    const complainant_actions = issue.message.issue.issue_actions.complainant_actions
 
-      const complainant_actions = issue.message.issue.issue_actions.complainant_actions
+    checkOrganizationNameandDomain({
+      endpoint: constants.RET_ISSUE,
+      actionPayload: complainant_actions,
+      contextSubscriberId: issue.context.bap_id,
+      contextDomain: issue.context.domain,
+      issueReportObj: issueObj,
+    })
 
-      console.log(
-        'complainant_actions[complainant_actions.length - 1]',
-        complainant_actions[complainant_actions.length - 1],
-      )
+    compareUpdatedAtAndContextTimeStamp({
+      endpoint: constants.RET_ISSUE,
+      actionPayload: complainant_actions,
+      messageUpdatedAt: issue.message.issue.updated_at,
+      issueReportObj: issueObj,
+    })
 
-      if (complainant_actions[complainant_actions.length - 1].updated_at === issue.message.issue.updated_at) {
-        issueObj.updated_at = message.updatedAtInRespondentAction
-      }
-    } catch (error: any) {
-      logger.error(`!!Some error occurred while checking /${constants.RET_ONISSUE} message, ${error.stack}`)
-    }
+    compareCreatedAtAndUpdationTime({
+      endpoint: constants.RET_ISSUE,
+      created_at: issue.message.issue.created_at,
+      contextTimeStamp: issue.context.timestamp,
+      messageUpdatedAt: issue.message.issue.updated_at,
+      domain: issue.context.domain,
+      issueReportObj: issueObj,
+    })
+
+    compareContextTimeStampAndUpdatedAt({
+      endpoint: constants.RET_ISSUE,
+      contextTimeStamp: issue.context.timestamp,
+      issue_updated_at: issue.message.issue.updated_at,
+      issueReportObj: issueObj,
+    })
 
     try {
       logger.info(`Checking conditional mandatory images for certain issue sub-categories`)
@@ -108,50 +139,16 @@ const checkIssue = (data: any) => {
 
     try {
       logger.info(`Phone Number Check for /${constants.RET_ISSUE}`)
-
-      console.log('🚀 ~ file: retIssue.ts:109 ~ checkIssue ~ constants.RET_ISSUE:', constants.RET_ISSUE)
       // on_issue.message.issue.issue_actions.respondent_actions[0].updated_by.contact.phone
       if (!_.inRange(issue.message.issue.complainant_info.contact.phone, 1000000000, 99999999999)) {
-        issueObj.phone = `Phone Number for /${constants.RET_ISSUE} api is not in the valid Range`
+        issueObj.Phn = `Phone Number for /${constants.RET_ISSUE} api is not in the valid Range`
       }
-
       setValue('igmPhn', issue.message.issue.complainant_info.contact.phone)
     } catch (error: any) {
       logger.error(`Error while checking phone number for /${constants.RET_ISSUE} api, ${error.stack}`)
     }
 
-    try {
-      logger.info(`Checking time of creation and updation for /${constants.RET_ISSUE}`)
-      if (
-        !_.isEqual(issue.message.issue.created_at, issue.message.issue.updated_at) &&
-        issue.message.issue.issue_actions.responsdent_actions.length === 0
-      ) {
-        if (!_.lte(issue.message.issue.created_at, issue.context.timestamp)) {
-          issueObj.updatedTime = `Time of Creation for /${constants.RET_ISSUE} api should be less than context timestamp`
-        }
-
-        issueObj.respTime = `Time of Creation and time of updation for /${constants.RET_ISSUE} api should be same`
-      }
-
-      setValue('igmCreatedAt', issue.message.issue.created_at)
-    } catch (error: any) {
-      logger.error(`Error while checking time of creation and updation for /${constants.RET_ISSUE} api, ${error.stack}`)
-    }
-
-    try {
-      logger.info(`Checking organization's name for /${constants.RET_ISSUE}`)
-      const org_name = issue.message.issue.issue_actions.complainant_actions[0].updated_by.org.name
-      const org_id = org_name.split('::')
-      if (!_.isEqual(issue.context.bap_id, org_id[0])) {
-        issueObj.org_name = `Organization's Name for /${constants.RET_ISSUE} api mismatched with bap id`
-      }
-
-      if (!_.lte(issue.context.domain, org_id[1])) {
-        issueObj.org_domain = `Domain of organization for /${constants.RET_ISSUE} api mismatched with domain in context`
-      }
-    } catch (error: any) {
-      logger.error(`Error while checking organization's name for /${constants.RET_ISSUE} api, ${error.stack}`)
-    }
+    setValue('igmCreatedAt', issue.message.issue.created_at)
 
     //setValue("issueObj", issueObj);
     return issueObj

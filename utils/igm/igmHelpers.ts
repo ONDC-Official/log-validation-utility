@@ -72,10 +72,16 @@ export function compareUpdatedAtAndContextTimeStamp({
 
     logger.info(`Checking 'updated_at' and last ${actionType}'s 'updated_at' for /${endpoint}`)
 
-    if (
-      !_.isEqual(actionPayload[actionPayload.length - 1].updated_at, messageUpdatedAt) &&
-      !messageUpdatedAt > actionPayload[actionPayload.length - 1].updated_at
-    ) {
+    //TODO: need to confirm this condition
+    // !_.isEqual(actionPayload[actionPayload.length - 1].updated_at, messageUpdatedAt) &&
+    //   !messageUpdatedAt > actionPayload[actionPayload.length - 1].updated_at
+
+    console.log(
+      '🚀 ~ file: igmHelpers.ts:80 ~ !_.isEqual(actionPayload[actionPayload.length - 1].updated_at, messageUpdatedAt):',
+      !_.isEqual(actionPayload[actionPayload.length - 1].updated_at, messageUpdatedAt),
+    )
+
+    if (!_.isEqual(actionPayload[actionPayload.length - 1].updated_at, messageUpdatedAt)) {
       issueReportObj.updated_at = `The 'updated_at' of message/issue/issue_action/${actionType}/index[${
         actionPayload.length - 1
       }]/updated_at should be the same as 'message/issue/update_at' in ${endpoint}`

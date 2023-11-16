@@ -24,6 +24,11 @@ import { onInitSchema } from '../schema/Retail/RET/on_init'
 import { confirmSchema } from '../schema/Retail/RET/confirm'
 import { onConfirmSchema } from '../schema/Retail/RET/on_confirm'
 
+import issueSchema from '../schema/Igm/issueSchema'
+import onIssueSchema from '../schema/Igm/onIssueSchema'
+import issueStatusSchema from '../schema/Igm/issueStatusSchema'
+import onIssueStatusSchema from '../schema/Igm/onIssueStatusSchema'
+
 const ajv = new Ajv({
   allErrors: true,
   strict: 'log',
@@ -73,16 +78,16 @@ const validate_schema_search_RET10_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 const validate_schema_search_RET12_for_json = (data: any) => {
-  const error_list = validate_schema(data, searchSchema)
+  const error_list = validate_schema(data, FnBsearchSchema)
   return formatted_error(error_list)
 }
 const validate_schema_search_RET13_for_json = (data: any) => {
-  const error_list = validate_schema(data, searchSchema)
+  const error_list = validate_schema(data, FnBsearchSchema)
   return formatted_error(error_list)
 }
 
 const validate_schema_search_RET14_for_json = (data: any) => {
-  const error_list = validate_schema(data, searchSchema)
+  const error_list = validate_schema(data, FnBsearchSchema)
   return formatted_error(error_list)
 }
 
@@ -233,6 +238,28 @@ const validate_schema_on_status_RET11_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+//IGM
+
+const validate_schema_issue_igm_for_json = (data: any) => {
+  const error_list = validate_schema(data, issueSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_issue_igm_for_json = (data: any) => {
+  const error_list = validate_schema(data, onIssueSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_issue_status_igm_for_json = (data: any) => {
+  const error_list = validate_schema(data, issueStatusSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_issue_status_igm_for_json = (data: any) => {
+  const error_list = validate_schema(data, onIssueStatusSchema)
+  return formatted_error(error_list)
+}
+
 export default {
   validate_schema_search_RET11_for_json,
   validate_schema_select_RET11_for_json,
@@ -269,4 +296,8 @@ export default {
   validate_schema_on_confirm_RET10_for_json,
   validate_schema_on_search_inc_RET10_for_json,
   validate_schema_on_search_inc_RET12_for_json,
+  validate_schema_issue_igm_for_json,
+  validate_schema_on_issue_igm_for_json,
+  validate_schema_issue_status_igm_for_json,
+  validate_schema_on_issue_status_igm_for_json,
 }

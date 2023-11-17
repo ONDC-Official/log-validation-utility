@@ -226,11 +226,11 @@ const issueSchema = {
             },
             category: {
               type: 'string',
-              enum: utils.issueFlmSubcategories,
+              enum: utils.issueCategories,
             },
             sub_category: {
               type: 'string',
-              enum: utils.issueItmSubCategories,
+              enum: utils.issueSubCategories,
             },
             issue_type: {
               type: 'string',

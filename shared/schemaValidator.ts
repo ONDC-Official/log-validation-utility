@@ -78,16 +78,20 @@ const validate_schema_search_RET10_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 const validate_schema_search_RET12_for_json = (data: any) => {
-  const error_list = validate_schema(data, FnBsearchSchema)
+  const error_list = validate_schema(data, searchSchema)
   return formatted_error(error_list)
 }
 const validate_schema_search_RET13_for_json = (data: any) => {
-  const error_list = validate_schema(data, FnBsearchSchema)
+  const error_list = validate_schema(data, searchSchema)
   return formatted_error(error_list)
 }
 
 const validate_schema_search_RET14_for_json = (data: any) => {
-  const error_list = validate_schema(data, FnBsearchSchema)
+  const error_list = validate_schema(data, searchSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_search_RET19_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchSchema)
   return formatted_error(error_list)
 }
 
@@ -108,6 +112,11 @@ const validate_schema_on_search_RET12_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+const validate_schema_on_search_RET19_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSearchSchema)
+  return formatted_error(error_list)
+}
+
 // On search Inc
 
 const validate_schema_on_search_inc_RET10_for_json = (data: any) => {
@@ -119,6 +128,10 @@ const validate_schema_on_search_inc_RET11_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 const validate_schema_on_search_inc_RET12_for_json = (data: any) => {
+  const error_list = validate_schema(data, FnBonSearchIncSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_search_inc_RET19_for_json = (data: any) => {
   const error_list = validate_schema(data, FnBonSearchIncSchema)
   return formatted_error(error_list)
 }
@@ -136,6 +149,10 @@ const validate_schema_select_RET12_for_json = (data: any) => {
   const error_list = validate_schema(data, selectSchema)
   return formatted_error(error_list)
 }
+const validate_schema_select_RET19_for_json = (data: any) => {
+  const error_list = validate_schema(data, selectSchema)
+  return formatted_error(error_list)
+}
 
 // On select
 const validate_schema_on_select_RET10_for_json = (data: any) => {
@@ -147,6 +164,10 @@ const validate_schema_on_select_RET11_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 const validate_schema_on_select_RET12_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSelectSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_select_RET19_for_json = (data: any) => {
   const error_list = validate_schema(data, onSelectSchema)
   return formatted_error(error_list)
 }
@@ -164,6 +185,10 @@ const validate_schema_init_RET12_for_json = (data: any) => {
   const error_list = validate_schema(data, initSchema)
   return formatted_error(error_list)
 }
+const validate_schema_init_RET19_for_json = (data: any) => {
+  const error_list = validate_schema(data, initSchema)
+  return formatted_error(error_list)
+}
 
 // On init
 
@@ -176,6 +201,10 @@ const validate_schema_on_init_RET10_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 const validate_schema_on_init_RET12_for_json = (data: any) => {
+  const error_list = validate_schema(data, onInitSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_init_RET19_for_json = (data: any) => {
   const error_list = validate_schema(data, onInitSchema)
   return formatted_error(error_list)
 }
@@ -196,6 +225,10 @@ const validate_schema_confirm_RET12_for_json = (data: any) => {
   const error_list = validate_schema(data, confirmSchema)
   return formatted_error(error_list)
 }
+const validate_schema_confirm_RET19_for_json = (data: any) => {
+  const error_list = validate_schema(data, confirmSchema)
+  return formatted_error(error_list)
+}
 
 // On confirm
 
@@ -211,12 +244,24 @@ const validate_schema_on_confirm_RET12_for_json = (data: any) => {
   const error_list = validate_schema(data, onConfirmSchema)
   return formatted_error(error_list)
 }
+const validate_schema_on_confirm_RET19_for_json = (data: any) => {
+  const error_list = validate_schema(data, onConfirmSchema)
+  return formatted_error(error_list)
+}
 
 const validate_schema_cancel_RET11_for_json = (data: any) => {
   const error_list = validate_schema(data, cancelSchema)
   return formatted_error(error_list)
 }
+const validate_schema_cancel_RET19_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancelSchema)
+  return formatted_error(error_list)
+}
 const validate_schema_on_cancel_RET11_for_json = (data: any) => {
+  const error_list = validate_schema(data, onCancelSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_RET19_for_json = (data: any) => {
   const error_list = validate_schema(data, onCancelSchema)
   return formatted_error(error_list)
 }
@@ -233,7 +278,15 @@ const validate_schema_status_RET11_for_json = (data: any) => {
   const error_list = validate_schema(data, statusSchema)
   return formatted_error(error_list)
 }
+const validate_schema_status_RET19_for_json = (data: any) => {
+  const error_list = validate_schema(data, statusSchema)
+  return formatted_error(error_list)
+}
 const validate_schema_on_status_RET11_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_status_RET19_for_json = (data: any) => {
   const error_list = validate_schema(data, onStatusSchema)
   return formatted_error(error_list)
 }
@@ -262,20 +315,31 @@ const validate_schema_on_issue_status_igm_for_json = (data: any) => {
 
 export default {
   validate_schema_search_RET11_for_json,
+  validate_schema_search_RET19_for_json,
   validate_schema_select_RET11_for_json,
+  validate_schema_select_RET19_for_json,
   validate_schema_on_search_RET11_for_json,
+  validate_schema_on_search_RET19_for_json,
   validate_schema_on_select_RET11_for_json,
   validate_schema_init_RET11_for_json,
+  validate_schema_init_RET19_for_json,
   validate_schema_on_init_RET11_for_json,
+  validate_schema_on_init_RET19_for_json,
   validate_schema_confirm_RET11_for_json,
+  validate_schema_confirm_RET19_for_json,
   validate_schema_on_confirm_RET11_for_json,
+  validate_schema_on_confirm_RET19_for_json,
   validate_schema_cancel_RET11_for_json,
+  validate_schema_cancel_RET19_for_json,
   validate_schema_on_cancel_RET11_for_json,
+  validate_schema_on_cancel_RET19_for_json,
   validate_schema_track_RET11_for_json,
   validate_schema_on_track_RET11_for_json,
   validate_schema_status_RET11_for_json,
   validate_schema_on_status_RET11_for_json,
+  validate_schema_on_status_RET19_for_json,
   validate_schema_on_search_inc_RET11_for_json,
+  validate_schema_on_search_inc_RET19_for_json,
   validate_schema_search_RET10_for_json,
   validate_schema_search_RET12_for_json,
   validate_schema_search_RET13_for_json,
@@ -300,4 +364,6 @@ export default {
   validate_schema_on_issue_igm_for_json,
   validate_schema_issue_status_igm_for_json,
   validate_schema_on_issue_status_igm_for_json,
+  validate_schema_on_select_RET19_for_json,
+  validate_schema_status_RET19_for_json,
 }

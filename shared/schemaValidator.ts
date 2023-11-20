@@ -78,7 +78,7 @@ const validate_schema_search_RET10_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 const validate_schema_search_RET12_for_json = (data: any) => {
-  const error_list = validate_schema(data, searchSchema)
+  const error_list = validate_schema(data, FnBsearchSchema)
   return formatted_error(error_list)
 }
 const validate_schema_search_RET13_for_json = (data: any) => {

@@ -445,6 +445,7 @@ export const FnBonSearchSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
+                                  enum: ['99', '0'],
                                 },
                               },
                               required: ['count'],

@@ -75,7 +75,6 @@ export const validateSchema = (domain: string, api: string, data: any) => {
   logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
   const errObj: any = {}
 
-  console.log('domain, api', domain, api)
   const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
 
   const datavld = schmaVldtr
@@ -445,7 +444,6 @@ export function areGSTNumbersDifferent(tags: any[]): boolean {
   const bppTermsObject = tags.find((tag) => tag.code === 'bpp_terms')
   const bppTaxNumber = findTaxNumber(bppTermsObject)
 
-  console.log('bppTaxNumber', bppTaxNumber)
   // Find the "tax_number" in "bap_terms"
   const bapTermsObject = tags.find((tag) => tag.code === 'bap_terms')
   const bapTaxNumber = findTaxNumber(bapTermsObject)

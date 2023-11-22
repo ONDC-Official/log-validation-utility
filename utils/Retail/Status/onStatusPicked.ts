@@ -5,8 +5,6 @@ import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
-const startTimestampReq = ['Order-picked-up', 'Out-for-delivery', 'Order-delivered']
-
 export const checkOnStatusPicked = (data: any, state: string) => {
   const onStatusObj: any = {}
   try {
@@ -114,17 +112,6 @@ export const checkOnStatusPicked = (data: any, state: string) => {
     }
 
     try {
-      logger.info(`Checking timestamp of fulfillments/start/timestamp /${constants.RET_ONSTATUS}_${state}`)
-      if (!startTimestampReq.includes(message.fulfillments.state.descriptor.code)) {
-        console.log('====================================')
-        console.log(startTimestampReq)
-        console.log('====================================')
-      }
-    } catch (error) {
-      logger.error(`!!Error while checking order state in /${constants.RET_ONSTATUS}_${state}`)
-    }
-
-    try {
       logger.info(`Checking pickup timestamp in /${constants.RET_ONSTATUS}_${state}`)
       const noOfFulfillments = on_status.fulfillments.length
       let orderPicked = false
@@ -135,7 +122,6 @@ export const checkOnStatusPicked = (data: any, state: string) => {
         const fulfillment = on_status.fulfillments[i]
         const ffState = fulfillment.state.descriptor.code
 
-        console.log('fulfillment', fulfillment)
         //type should be Delivery
         if (fulfillment.type != 'Delivery') {
           i++

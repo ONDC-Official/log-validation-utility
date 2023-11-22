@@ -1,5 +1,3 @@
-import { fnbCategories } from '../../../utils/enum'
-
 export const FnBonSearchIncSchema = {
   type: 'object',
   properties: {
@@ -84,7 +82,7 @@ export const FnBonSearchIncSchema = {
                   },
                   type: {
                     type: 'string',
-                    enum: ['Delivery', 'Self-Pickup'],
+                    enum: ['Delivery', 'Self-Pickup', 'Delivery and Self-Pickup'],
                   },
                 },
                 required: ['id', 'type'],
@@ -432,7 +430,6 @@ export const FnBonSearchIncSchema = {
                                     },
                                     value: {
                                       type: 'string',
-                                      pattern: '^[0-9]+$',
                                     },
                                   },
                                   required: ['unit', 'value'],
@@ -445,7 +442,6 @@ export const FnBonSearchIncSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
-                                  pattern: '^[0-9]+$',
                                 },
                               },
                               required: ['count'],
@@ -455,7 +451,6 @@ export const FnBonSearchIncSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
-                                  pattern: '^[0-9]+$',
                                 },
                               },
                               required: ['count'],
@@ -481,7 +476,6 @@ export const FnBonSearchIncSchema = {
                         },
                         category_id: {
                           type: 'string',
-                          enum: fnbCategories,
                         },
                         category_ids: {
                           type: 'array',

@@ -102,6 +102,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
     logger.info(`Error while saving static fulfillment ids in /${constants.RET_ONSEARCH}, ${error.stack}`)
   }
 
+  setValue('onSearchFFIds', onSearchFFIds)
+
   try {
     logger.info(`Checking Providers info (bpp/providers) in /${constants.RET_ONSEARCH}`)
     let i = 0

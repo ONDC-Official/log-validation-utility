@@ -321,8 +321,6 @@ export const checkConfirm = (data: any) => {
         }
 
         const areGstDiff = areGSTNumbersDifferent(confirm.tags)
-
-        console.log('areGstDiff', areGstDiff)
         if (areGstDiff === true) {
           cnfrmObj.sameGstNumber = `Tags/bap_terms and Tags/bpp_terms should have different gst number in /${constants.RET_CONFIRM}`
         }

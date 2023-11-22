@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { checkSearchFullCatalogRefresh } from '../utils/Retail/RET11/searchFullCatalogRefresh'
 import { dropDB } from '../shared/dao'
 import { logger } from './logger'
-import { ApiSequence } from '../constants'
+import { ApiSequence, retailDomains } from '../constants'
 import { checkSearchIncremental } from '../utils/Retail/RET11/searchIncremental'
 import { validateSchema, isObjectEmpty } from '../utils'
 import { checkOnsearchFullCatalogRefresh } from '../utils/Retail/RET11/onSearch'
@@ -181,6 +181,10 @@ export const validateLogs = (data: any, domain: string) => {
       logger.info(logReport, 'Report Generated Successfully!!')
       return logReport
     } else {
+      if (!retailDomains.includes(domain)) {
+        return 'Domain should be one of the 1.2.0 retail domains'
+      }
+
       if (data[ApiSequence.SEARCH]) {
         const searchFullCatalogRefreshResp = checkSearch(data[ApiSequence.SEARCH], msgIdSet)
         if (!_.isEmpty(searchFullCatalogRefreshResp)) {

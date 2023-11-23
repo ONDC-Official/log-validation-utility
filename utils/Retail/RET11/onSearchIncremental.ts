@@ -473,8 +473,6 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
                 const itemWithoutTime = JSON.stringify(item, replaceTimestamp)
                 if (itemFullRefreshWithoutTime === itemWithoutTime)
                   errorObj.item = `Similar Item as in /${ApiSequence.ON_SEARCH} api call, item id- ${item?.id}`
-              } else {
-                errorObj.itemsObject = `Item with id ${item?.id} sent in payload was not found in any item sent in /${ApiSequence.ON_SEARCH} api `
               }
 
               j++

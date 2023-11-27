@@ -324,6 +324,27 @@ curl --location --request POST 'http://localhost:3006/api/validate' \
     }
 }'
 ```
+### For IGM Sample Curl Request (Local)
+```shell
+curl --location 'https://localhost:3006/api/validate/igm' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "",
+    "version": "1.2.0",
+    "payload": {
+        "ret_issue": {},
+        "ret_on_issue": {},
+        "ret_issue_status": {},
+        "ret_on_issue_status": {},
+        "ret_on_issue_status_unsolicited": {},
+        "lsp_issue": {},
+        "lsp_issue_close":{},
+        "lsp_on_issue": {},
+        "lsp_issue_status": {},
+        "lsp_on_issue_status": {}
+    }
+}'
+```
 
 Using Postman, you can import the above `curl` command into Postman and replace the empty objects in the payload with your actual data. This allows for easy testing and validation of transaction logs on your local environment.
 

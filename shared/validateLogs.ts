@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { checkSearchFullCatalogRefresh } from '../utils/Retail/RET11/searchFullCatalogRefresh'
 import { dropDB } from '../shared/dao'
 import { logger } from './logger'
-import { ApiSequence } from '../constants'
+import { ApiSequence, IGMApiSequence } from '../constants'
 import { checkSearchIncremental } from '../utils/Retail/RET11/searchIncremental'
 import { validateSchema, isObjectEmpty } from '../utils'
 import { checkOnsearchFullCatalogRefresh } from '../utils/Retail/RET11/onSearch'
@@ -23,6 +23,16 @@ import { checkSearch } from '../utils/Retail/Search/search'
 import { checkOnsearch } from '../utils/Retail/Search/on_search'
 import { checkOnStatusPicked } from '../utils/Retail/Status/onStatusPicked'
 import { checkOnStatusDelivered } from '../utils/Retail/Status/onStatusDelivered'
+import checkIssue from '../utils/igm/retIssue'
+import checkIssueStatus from '../utils/igm/retIssueStatus'
+import checkOnIssue from '../utils/igm/retOnIssue'
+import checkLspIssue from '../utils/igm/lspIssue'
+import checkLspIssueStatus from '../utils/igm/lspIssueStatus'
+import checkLspOnIssueStatus from '../utils/igm/lspOnIssueStatus'
+import checkLspOnIssue from '../utils/igm/lspOnIssue'
+import checkOnIssueStatus from '../utils/igm/retOnIssueStatus'
+import checkOnIssueStatusUnsolicited from '../utils/igm/retOnIssueStatus(unsolicited)'
+import checkLspIssueClose from '../utils/igm/lspIssue(close)'
 
 export const validateLogs = (data: any, domain: string) => {
   const msgIdSet = new Set()
@@ -292,6 +302,104 @@ export const validateLogs = (data: any, domain: string) => {
 
       logger.info(logReport, 'Report Generated Successfully!!')
       return logReport
+    }
+  } catch (error: any) {
+    logger.error(error.message)
+    return error.message
+  }
+}
+
+export const IGMvalidateLogs = (data: any) => {
+  let logReport: any = {}
+
+  try {
+    dropDB()
+  } catch (error) {
+    logger.error('!!Error while removing LMDB', error)
+  }
+
+  try {
+    if (data[IGMApiSequence.RET_ISSUE]) {
+      const ret_issue = checkIssue(data[IGMApiSequence.RET_ISSUE])
+
+      if (!_.isEmpty(ret_issue)) {
+        logReport = { ...logReport, [IGMApiSequence.RET_ISSUE]: ret_issue }
+      }
+    }
+
+    if (data[IGMApiSequence.RET_ON_ISSUE]) {
+      const ret_onissue = checkOnIssue(data[IGMApiSequence.RET_ON_ISSUE])
+
+      if (!_.isEmpty(ret_onissue)) {
+        logReport = { ...logReport, [IGMApiSequence.RET_ON_ISSUE]: ret_onissue }
+      }
+    }
+
+    if (data[IGMApiSequence.RET_ISSUE_STATUS]) {
+      const ret_issue_status = checkIssueStatus(data[IGMApiSequence.RET_ISSUE_STATUS])
+
+      if (!_.isEmpty(ret_issue_status)) {
+        logReport = { ...logReport, [IGMApiSequence.RET_ISSUE_STATUS]: ret_issue_status }
+      }
+    }
+
+    if (data[IGMApiSequence.RET_ON_ISSUE_STATUS]) {
+      const ret_onissue_status = checkOnIssueStatus(data[IGMApiSequence.RET_ON_ISSUE_STATUS])
+
+      if (!_.isEmpty(ret_onissue_status)) {
+        logReport = { ...logReport, [IGMApiSequence.RET_ON_ISSUE_STATUS]: ret_onissue_status }
+      }
+    }
+
+    if (data[IGMApiSequence.RET_ON_ISSUE_STATUS_UNSOLICITED]) {
+      const ret_onissue_status_un = checkOnIssueStatusUnsolicited(data[IGMApiSequence.RET_ON_ISSUE_STATUS_UNSOLICITED])
+
+      if (!_.isEmpty(ret_onissue_status_un)) {
+        logReport = { ...logReport, [IGMApiSequence.RET_ON_ISSUE_STATUS_UNSOLICITED]: ret_onissue_status_un }
+      }
+    }
+
+    if (data[IGMApiSequence.LSP_ISSUE]) {
+      const lsp_issue = checkLspIssue(data[IGMApiSequence.LSP_ISSUE])
+
+      if (!_.isEmpty(lsp_issue)) {
+        logReport = { ...logReport, [IGMApiSequence.LSP_ISSUE]: lsp_issue }
+      }
+    }
+
+    if (data[IGMApiSequence.LSP_ON_ISSUE]) {
+      const lsp_on_issue = checkLspOnIssue(data[IGMApiSequence.LSP_ON_ISSUE])
+
+      if (!_.isEmpty(lsp_on_issue)) {
+        logReport = { ...logReport, [IGMApiSequence.LSP_ON_ISSUE]: lsp_on_issue }
+      }
+    }
+
+    if (data[IGMApiSequence.LSP_ISSUE_CLOSE]) {
+      const lsp_on_issue = checkLspIssueClose(data[IGMApiSequence.LSP_ISSUE_CLOSE])
+
+      if (!_.isEmpty(lsp_on_issue)) {
+        logReport = { ...logReport, [IGMApiSequence.LSP_ISSUE_CLOSE]: lsp_on_issue }
+      }
+    }
+
+    if (data[IGMApiSequence.LSP_ISSUE_STATUS]) {
+      const lsp_issue_status = checkLspIssueStatus(data[IGMApiSequence.LSP_ISSUE_STATUS])
+
+      if (!_.isEmpty(lsp_issue_status)) {
+        logReport = { ...logReport, [IGMApiSequence.LSP_ISSUE_STATUS]: lsp_issue_status }
+      }
+
+      logger.info(logReport, 'Report Generated Successfully!!')
+      return logReport
+    }
+
+    if (data[IGMApiSequence.LSP_ON_ISSUE_STATUS]) {
+      const lsp_on_issue = checkLspOnIssueStatus(data[IGMApiSequence.LSP_ON_ISSUE_STATUS])
+
+      if (!_.isEmpty(lsp_on_issue)) {
+        logReport = { ...logReport, [IGMApiSequence.LSP_ON_ISSUE_STATUS]: lsp_on_issue }
+      }
     }
   } catch (error: any) {
     logger.error(error.message)

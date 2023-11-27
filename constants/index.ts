@@ -24,6 +24,10 @@ export default Object.freeze({
   DECIMAL_PRECISION: 6,
   ORDER_PICKED: 'Order-picked-up',
   ORDER_DELIVERED: 'Order-delivered',
+  RET_ISSUE: 'issue',
+  RET_ONISSUE: 'on_issue',
+  RET_ISSUE_STATUS: 'issue_status',
+  RET_ONISSUE_STATUS: 'on_issue_status',
 })
 
 export const ApiSequence = {
@@ -47,6 +51,19 @@ export const ApiSequence = {
   ON_STATUS_DELIVERED: 'on_status_delivered',
   UPDATE: 'update',
   ON_UPDATE: 'on_update',
+}
+
+export const IGMApiSequence = {
+  RET_ISSUE: 'ret_issue',
+  RET_ON_ISSUE: 'ret_on_issue',
+  RET_ISSUE_STATUS: 'ret_issue_status',
+  RET_ON_ISSUE_STATUS: 'ret_on_issue_status',
+  RET_ON_ISSUE_STATUS_UNSOLICITED: 'ret_on_issue_status_unsolicited',
+  LSP_ISSUE: 'lsp_issue',
+  LSP_ISSUE_CLOSE: 'lsp_issue_close',
+  LSP_ON_ISSUE: 'lsp_on_issue',
+  LSP_ISSUE_STATUS: 'lsp_issue_status',
+  LSP_ON_ISSUE_STATUS: 'lsp_on_issue_status',
 }
 
 export const actionsArray = [

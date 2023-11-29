@@ -733,12 +733,7 @@ export const onStatusSchema = {
                         type: 'string',
                       },
                     },
-                    required: [
-                      'settlement_counterparty',
-                      'settlement_phase',
-                      'settlement_timestamp',
-                      'settlement_type',
-                    ],
+                    required: ['settlement_counterparty', 'settlement_phase', 'settlement_type'],
                   },
                 },
               },

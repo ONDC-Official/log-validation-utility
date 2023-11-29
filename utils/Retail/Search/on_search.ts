@@ -175,7 +175,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
           logger.info('Checking fixed or split timings')
           //scenario 1: range =1 freq/times =1
-          if (loc.time.range && (loc.time.schedule.frequency || loc.time.schedule.times)) {
+          if (loc.time.range && (loc.time.schedule?.frequency || loc.time.schedule?.times)) {
             const key = `prvdr${i}loctime${iter}`
             errorObj[
               key
@@ -183,7 +183,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           }
 
           // scenario 2: range=0 freq || times =1
-          if (!loc.time.range && (!loc.time.schedule.frequency || !loc.time.schedule.times)) {
+          if (!loc.time.range && (!loc.time.schedule?.frequency || !loc.time.schedule?.times)) {
             const key = `prvdr${i}loctime${iter}`
             errorObj[
               key
@@ -200,7 +200,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
             }
           }
         } catch (error: any) {
-          logger.error(`Validation error for frequency: ${error.message}`)
+          logger.error(`Validation error for frequency: ${error.stack}`)
         }
       })
 
@@ -208,7 +208,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         logger.info(`Checking categories for provider (${prvdr.id}) in bpp/providers[${i}]`)
         let j = 0
         const categories = onSearchCatalog['bpp/providers'][i]['categories']
-        const iLen = categories.length
+        const iLen = categories?.length
         while (j < iLen) {
           logger.info(`Validating uniqueness for categories id in bpp/providers[${i}].items[${j}]...`)
           const category = categories[j]

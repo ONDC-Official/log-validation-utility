@@ -295,15 +295,6 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
                   ] = `fulfillment_id in /bpp/providers[${i}]/items[${j}] should be same as fulfillment_id sent in /${constants.RET_SEARCH} api call`
                 }
 
-                logger.info(`Checking location_id for item id: ${item.id}`)
-
-                if (item.location_id && !prvdrLocId.has(item.location_id)) {
-                  const key = `prvdr${i}item${j}loc`
-                  errorObj[
-                    key
-                  ] = `location_id in /bpp/providers[${i}]/items[${j}] should be one of the locations id in /bpp/providers[${i}]/locations`
-                }
-
                 logger.info(`Comparing location_id of /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api`)
 
                 if (item.location_id !== itemFullRefresh.location_id) {

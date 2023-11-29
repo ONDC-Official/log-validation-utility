@@ -68,6 +68,7 @@ export const checkContext = (
 
 const validate_schema_for_retail_json = (vertical: string, api: string, data: any) => {
   const res = (schemaValidator as any)[`validate_schema_${api}_${vertical}_for_json`](data)
+
   return res
 }
 

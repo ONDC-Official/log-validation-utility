@@ -401,6 +401,8 @@ export const IGMvalidateLogs = (data: any) => {
         logReport = { ...logReport, [IGMApiSequence.LSP_ON_ISSUE_STATUS]: lsp_on_issue }
       }
     }
+
+    return logReport
   } catch (error: any) {
     logger.error(error.message)
     return error.message

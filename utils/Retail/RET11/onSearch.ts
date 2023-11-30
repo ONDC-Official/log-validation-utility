@@ -98,6 +98,8 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
       onSearchFFIds.add(bppFF[i].id)
       i++
     }
+
+    setValue('onSearchFFIds', onSearchFFIds)
   } catch (error: any) {
     logger.info(`Error while saving static fulfillment ids in /${constants.RET_ONSEARCH}, ${error.stack}`)
   }

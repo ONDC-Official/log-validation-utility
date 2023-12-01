@@ -289,7 +289,7 @@ export const FnBonInitSchema = {
                     required: ['location', 'contact'],
                   },
                 },
-                required: ['id', 'type', 'tracking', 'end'],
+                required: ['id', 'type', 'end'],
               },
             },
             quote: {

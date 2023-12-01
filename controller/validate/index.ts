@@ -2,7 +2,9 @@ import { Response, Request } from 'express'
 import _ from 'lodash'
 import { validateActionSchema, validateLogs } from '../../shared/validateLogs'
 import { logger } from '../../shared/logger'
-import { actionsArray } from '../../constants'
+import { actionsArray, fisFlows } from '../../constants'
+import { validateLogsForFIS12 } from '../../shared/Actions/FIS12Actions'
+import { validateLogsForMobility } from '../../shared/Actions/mobilityActions'
 
 const controller = {
   validate: async (req: Request, res: Response): Promise<void> => {
@@ -22,6 +24,33 @@ const controller = {
 
       if (!_.isEmpty(response)) res.status(400).send({ success: false, response: response })
       else res.status(200).send({ success: true, response: response })
+    } catch (error) {
+      logger.error(error)
+      res.status(500).send({ success: false, error: error })
+    }
+  },
+
+  validateFIS: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { domain, version, payload, flow } = req.body
+      let response
+
+      if (!(flow in fisFlows)) {
+        res.status(400).send({ success: false, response: 'Invalid Flow!!' })
+      } else {
+        switch (version) {
+          case '1.2.0':
+            response = validateLogsForFIS12(payload, domain, flow)
+            break
+          default:
+            logger.warn('Invalid Version!! ')
+            res.status(400).send({ success: false, response: 'Invalid Version!! Please Enter a valid Version' })
+            return
+        }
+
+        if (!_.isEmpty(response)) res.status(400).send({ success: false, response: response })
+        else res.status(200).send({ success: true, response: response })
+      }
     } catch (error) {
       logger.error(error)
       res.status(500).send({ success: false, error: error })
@@ -63,6 +92,29 @@ const controller = {
     } catch (error) {
       logger.error(error)
       return res.status(500).send({ success: false, error: error })
+    }
+  },
+
+  validateMobility: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { domain, version, payload } = req.body
+      let response
+
+      switch (version) {
+        case '2.0.0':
+          response = validateLogsForMobility(payload, domain)
+          break
+        default:
+          logger.warn('Invalid Version!! ')
+          res.status(400).send({ success: false, response: 'Invalid Version!! Please Enter a valid Version' })
+          return
+      }
+
+      if (!_.isEmpty(response)) res.status(400).send({ success: false, response: response })
+      else res.status(200).send({ success: true, response: response })
+    } catch (error) {
+      logger.error(error)
+      res.status(500).send({ success: false, error: error })
     }
   },
 }

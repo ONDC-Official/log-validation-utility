@@ -1,5 +1,7 @@
 import Ajv from 'ajv'
+import fs from 'fs'
 import addFormats from 'ajv-formats'
+import yaml from 'js-yaml'
 import { FnBselectSchema } from '../schema/Retail/RET11/select'
 import { FnBsearchSchema } from '../schema/Retail/RET11/search'
 import { FnBonSearchSchema } from '../schema/Retail/RET11/on_search'
@@ -233,6 +235,49 @@ const validate_schema_on_status_RET11_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+const validate_schema_for_json = (data: any, schemaPath: any) => {
+  let error_list
+  try {
+    const schemaYAML = fs.readFileSync(schemaPath, 'utf8')
+    const schema = yaml.load(schemaYAML)
+    if (typeof schema === 'object') {
+      error_list = validate_schema(data, schema)
+    } else {
+      console.log('Schema is not a valid object.')
+      error_list = []
+    }
+  } catch (err) {
+    console.log('Error loading or parsing schema:', err)
+    error_list = []
+  }
+
+  return formatted_error(error_list)
+}
+
+const FIS12Validator = {
+  validate_schema_search_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/search.yaml'),
+  validate_schema_on_search_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_search.yaml'),
+  validate_schema_select_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/select.yaml'),
+  validate_schema_on_select_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_select.yaml'),
+  validate_schema_init_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/init.yaml'),
+  validate_schema_on_init_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_init.yaml'),
+  validate_schema_confirm_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/confirm.yaml'),
+  validate_schema_on_confirm_FIS12_for_json: (data: any) =>
+    validate_schema_for_json(data, 'schema/FIS/on_confirm.yaml'),
+  validate_schema_update_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/update.yaml'),
+  validate_schema_status_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/status.yaml'),
+  validate_schema_on_status_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_status.yaml'),
+  validate_schema_search_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/search.yaml'),
+  validate_schema_on_search_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_search.yaml'),
+  validate_schema_select_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/select.yaml'),
+  validate_schema_on_select_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_select.yaml'),
+  validate_schema_init_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/init.yaml'),
+  validate_schema_on_init_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_init.yaml'),
+  validate_schema_confirm_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/confirm.yaml'),
+  validate_schema_on_confirm_TRV10_for_json: (data: any) =>
+    validate_schema_for_json(data, 'schema/FIS/on_confirm.yaml'),
+}
+
 export default {
   validate_schema_search_RET11_for_json,
   validate_schema_select_RET11_for_json,
@@ -269,4 +314,5 @@ export default {
   validate_schema_on_confirm_RET10_for_json,
   validate_schema_on_search_inc_RET10_for_json,
   validate_schema_on_search_inc_RET12_for_json,
+  ...FIS12Validator,
 }

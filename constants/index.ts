@@ -24,6 +24,34 @@ export default Object.freeze({
   DECIMAL_PRECISION: 6,
   ORDER_PICKED: 'Order-picked-up',
   ORDER_DELIVERED: 'Order-delivered',
+  FIS_SEARCH: 'search',
+  FIS_ONSEARCH: 'on_search',
+  FIS_SELECT: 'select',
+  FIS_ONSELECT: 'on_select',
+  FIS_CONFIRM: 'confirm',
+  FIS_ONCONFIRM: 'on_confirm',
+  FIS_INIT: 'init',
+  FIS_ONINIT: 'on_init',
+  FIS_STATUS: 'status',
+  FIS_UPDATE: 'update',
+  FIS_ONUPDATE: 'on_update',
+  FIS_ONSTATUS: 'on_status',
+  FIS_CONTEXT_TTL: 'PT30S',
+  FIS_CONTEXT_ACTION: 'action',
+  MOB_SEARCH: 'search',
+  MOB_ONSEARCH: 'on_search',
+  MOB_SELECT: 'select',
+  MOB_ONSELECT: 'on_select',
+  MOB_CONFIRM: 'confirm',
+  MOB_ONCONFIRM: 'on_confirm',
+  MOB_INIT: 'init',
+  MOB_ONINIT: 'on_init',
+  MOB_STATUS: 'status',
+  MOB_UPDATE: 'update',
+  MOB_ONUPDATE: 'on_update',
+  MOB_ONSTATUS: 'on_status',
+  MOB_CONTEXT_TTL: 'PT30S',
+  MOB_CONTEXT_ACTION: 'action',
 })
 
 export const ApiSequence = {
@@ -47,6 +75,80 @@ export const ApiSequence = {
   ON_STATUS_DELIVERED: 'on_status_delivered',
   UPDATE: 'update',
   ON_UPDATE: 'on_update',
+}
+
+export const FisApiSequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SELECT: 'select',
+  SELECT_2: 'select2',
+  SELECT_3: 'select3',
+  ON_SELECT: 'on_select',
+  ON_SELECT_2: 'on_select2',
+  ON_SELECT_3: 'on_select3',
+  INIT: 'init',
+  INIT_2: 'init2',
+  INIT_3: 'init3',
+  INIT_4: 'init4',
+  ON_INIT: 'on_init',
+  ON_INIT_2: 'on_init2',
+  ON_INIT_3: 'on_init3',
+  ON_INIT_4: 'on_init4',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  CANCEL: 'cancel',
+  ON_CANCEL: 'on_cancel',
+  TRACK: 'track',
+  ON_TRACK: 'on_track',
+  STATUS: 'status',
+  ON_STATUS: 'on_status',
+  UPDATE: 'update',
+  ON_UPDATE: 'on_update',
+  ON_UPDATE_1: 'on_update1',
+}
+
+export const mobilitySequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SELECT: 'select',
+  ON_SELECT: 'on_select',
+  INIT: 'init',
+  ON_INIT: 'on_init',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  CANCEL: 'cancel',
+  ON_CANCEL: 'on_cancel',
+  UPDATE: 'update',
+  ON_UPDATE: 'on_update',
+  STATUS: 'status',
+  ON_STATUS: 'on_status',
+}
+export const mobilityFlow: any = {
+  AIRLINES: 'airlines',
+  METRO: 'metro',
+  ONDEMAND: 'on-demand',
+  INTERCITY: 'intercity',
+  INTRACITY: 'intracity',
+}
+
+export const formHeadingsFis: any = {
+  INVOICE_BASED_LOAN: {
+    on_search: ['Organization Information'],
+    on_select: ['Set Loan Amount', 'Know your Customer'],
+    on_init: 'Account details based loan form',
+  },
+  PERSONAL_LOAN: {
+    on_search: ['Personal Information'],
+    on_select: ['Buyer receives loan amount form'],
+    on_init: ['Loan Agreement details form'],
+  },
+}
+
+export const fisFlows = {
+  INVOICE: 'INVOICE_BASED_LOAN',
+  PERSONAL: 'PERSONAL_LOAN',
+  PRE_INVOICE: 'PERSONAL_LOAN',
+  PRE_PERSONAL: 'INVOICE_BASED_LOAN',
 }
 
 export const actionsArray = [

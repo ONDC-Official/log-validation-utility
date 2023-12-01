@@ -66,6 +66,86 @@ export const checkContext = (
   }
 }
 
+export const checkFISContext = (
+  data: { transaction_id: string; message_id: string; action: string; ttl: string; timestamp: string },
+  path: any,
+) => {
+  if (!data) return
+  const errObj: any = {}
+
+  //Transaction ID != Message ID
+  if (data.transaction_id === data.message_id) {
+    errObj.id_err = "transaction_id and message id can't be same"
+  }
+
+  if (data.action != path) {
+    errObj.action_err = `context.action should be ${path}`
+  }
+
+  if (data.ttl && data.ttl != constants.FIS_CONTEXT_TTL) {
+    {
+      errObj.ttl_err = `ttl = ${constants.FIS_CONTEXT_TTL} as per the API Contract`
+    }
+  }
+
+  if (data.timestamp) {
+    const date = data.timestamp
+    const result = timestampCheck(date)
+    if (result && result.err === 'FORMAT_ERR') {
+      errObj.timestamp_err = 'Timestamp not in RFC 3339 (YYYY-MM-DDTHH:MN:SS.MSSZ) Format'
+    } else if (result && result.err === 'INVLD_DT') {
+      errObj.timestamp_err = 'Timestamp should be in date-time format'
+    }
+  }
+
+  if (_.isEmpty(errObj)) {
+    const result = { valid: true, SUCCESS: 'Context Valid' }
+    return result
+  } else {
+    const result = { valid: false, ERRORS: errObj }
+    return result
+  }
+}
+
+export const checkMobilityContext = (
+  data: { transaction_id: string; message_id: string; action: string; ttl: string; timestamp: string },
+  path: any,
+) => {
+  if (!data) return
+  const errObj: any = {}
+  if (data.transaction_id === data.message_id) {
+    errObj.id_err = "transaction_id and message id can't be same"
+  }
+
+  if (data.action != path) {
+    errObj.action_err = `context.action should be ${path}`
+  }
+
+  if (data.ttl && data.ttl != constants.FIS_CONTEXT_TTL) {
+    {
+      errObj.ttl_err = `ttl = ${constants.FIS_CONTEXT_TTL} as per the API Contract`
+    }
+  }
+
+  if (data.timestamp) {
+    const date = data.timestamp
+    const result = timestampCheck(date)
+    if (result && result.err === 'FORMAT_ERR') {
+      errObj.timestamp_err = 'Timestamp not in RFC 3339 (YYYY-MM-DDTHH:MN:SS.MSSZ) Format'
+    } else if (result && result.err === 'INVLD_DT') {
+      errObj.timestamp_err = 'Timestamp should be in date-time format'
+    }
+  }
+
+  if (_.isEmpty(errObj)) {
+    const result = { valid: true, SUCCESS: 'Context Valid' }
+    return result
+  } else {
+    const result = { valid: false, ERRORS: errObj }
+    return result
+  }
+}
+
 const validate_schema_for_retail_json = (vertical: string, api: string, data: any) => {
   const res = (schemaValidator as any)[`validate_schema_${api}_${vertical}_for_json`](data)
   return res
@@ -528,4 +608,9 @@ export function validateStatusOrderAndTimestamp(set: any) {
     const result = { valid: false, ERRORS: errObj }
     return result
   }
+}
+
+export const isValidUrl = (url: string) => {
+  const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w.-]*)*\/?$/
+  return urlRegex.test(url)
 }

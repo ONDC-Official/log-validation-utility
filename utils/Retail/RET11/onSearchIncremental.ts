@@ -80,7 +80,8 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
   }
 
   const onSearchCatalog: any = message.catalog
-  const onSearchFFIds = new Set()
+  const onSearchFFIds: any = getValue('onSearchFFIds')
+
   const prvdrsId = new Set()
 
   try {
@@ -229,6 +230,7 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
             while (j < iLen) {
               logger.info(`Validating uniqueness for item id in bpp/providers[${i}].items[${j}]...`)
               const item = items[j]
+
               if (itemsFullRefresh.includes(item?.id)) {
                 const itemFullRefresh = prvdrFullRefresh.items.find((obj: any) => obj.id === item.id)
                 if (itemsId.has(item.id)) {
@@ -277,7 +279,7 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
 
                 logger.info(`Checking fulfillment_id for item id: ${item.id}`)
 
-                if (item.fulfillment_id && !onSearchFFIds.has(item.fulfillment_id)) {
+                if (item.fulfillment_id && !onSearchFFIds.includes(item.fulfillment_id)) {
                   const key = `prvdr${i}item${j}ff`
                   errorObj[
                     key
@@ -291,15 +293,6 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
                   errorObj[
                     key
                   ] = `fulfillment_id in /bpp/providers[${i}]/items[${j}] should be same as fulfillment_id sent in /${constants.RET_SEARCH} api call`
-                }
-
-                logger.info(`Checking location_id for item id: ${item.id}`)
-
-                if (item.location_id && !prvdrLocId.has(item.location_id)) {
-                  const key = `prvdr${i}item${j}loc`
-                  errorObj[
-                    key
-                  ] = `location_id in /bpp/providers[${i}]/items[${j}] should be one of the locations id in /bpp/providers[${i}]/locations`
                 }
 
                 logger.info(`Comparing location_id of /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api`)
@@ -471,8 +464,6 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
                 const itemWithoutTime = JSON.stringify(item, replaceTimestamp)
                 if (itemFullRefreshWithoutTime === itemWithoutTime)
                   errorObj.item = `Similar Item as in /${ApiSequence.ON_SEARCH} api call, item id- ${item?.id}`
-              } else {
-                errorObj.itemsObject = `Item with id ${item?.id} sent in payload was not found in any item sent in /${ApiSequence.ON_SEARCH} api `
               }
 
               j++

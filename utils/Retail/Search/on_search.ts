@@ -102,6 +102,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
     logger.info(`Error while saving static fulfillment ids in /${constants.RET_ONSEARCH}, ${error.stack}`)
   }
 
+  setValue('onSearchFFIds', onSearchFFIds)
+
   try {
     logger.info(`Checking Providers info (bpp/providers) in /${constants.RET_ONSEARCH}`)
     let i = 0
@@ -151,50 +153,54 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           )
         }
 
-        if (prvdrLocId.has(loc.id)) {
-          const key = `prvdr${i}${loc.id}${iter}`
-          errorObj[key] = `duplicate location id: ${loc.id} in /bpp/providers[${i}]/locations[${iter}]`
-        } else {
-          prvdrLocId.add(loc.id)
-        }
+        try {
+          if (prvdrLocId.has(loc.id)) {
+            const key = `prvdr${i}${loc.id}${iter}`
+            errorObj[key] = `duplicate location id: ${loc.id} in /bpp/providers[${i}]/locations[${iter}]`
+          } else {
+            prvdrLocId.add(loc.id)
+          }
 
-        logger.info('Checking store days...')
-        const days = loc.time.days.split(',')
-        days.forEach((day: any) => {
-          day = parseInt(day)
-          if (isNaN(day) || day < 1 || day > 7) {
-            const key = `prvdr${i}locdays${iter}`
+          logger.info('Checking store days...')
+          const days = loc.time.days.split(',')
+          days.forEach((day: any) => {
+            day = parseInt(day)
+            if (isNaN(day) || day < 1 || day > 7) {
+              const key = `prvdr${i}locdays${iter}`
+              errorObj[
+                key
+              ] = `store days (bpp/providers[${i}]/locations[${iter}]/time/days) should be in the format ("1,2,3,4,5,6,7") where 1- Monday and 7- Sunday`
+            }
+          })
+
+          logger.info('Checking fixed or split timings')
+          //scenario 1: range =1 freq/times =1
+          if (loc.time.range && (loc.time.schedule?.frequency || loc.time.schedule?.times)) {
+            const key = `prvdr${i}loctime${iter}`
             errorObj[
               key
-            ] = `store days (bpp/providers[${i}]/locations[${iter}]/time/days) should be in the format ("1,2,3,4,5,6,7") where 1- Monday and 7- Sunday`
+            ] = `Either one of fixed (range) or split (frequency and times) timings should be provided in /bpp/providers[${i}]/locations[${iter}]/time`
           }
-        })
 
-        logger.info('Checking fixed or split timings')
-        //scenario 1: range =1 freq/times =1
-        if (loc.time.range && (loc.time.schedule.frequency || loc.time.schedule.times)) {
-          const key = `prvdr${i}loctime${iter}`
-          errorObj[
-            key
-          ] = `Either one of fixed (range) or split (frequency and times) timings should be provided in /bpp/providers[${i}]/locations[${iter}]/time`
-        }
-
-        // scenario 2: range=0 freq || times =1
-        if (!loc.time.range && (!loc.time.schedule.frequency || !loc.time.schedule.times)) {
-          const key = `prvdr${i}loctime${iter}`
-          errorObj[
-            key
-          ] = `Either one of fixed timings (range) or split timings (both frequency and times) should be provided in /bpp/providers[${i}]/locations[${iter}]/time`
-        }
-
-        //scenario 3: range=1 (start and end not compliant) frequency=0;
-        if ('range' in loc.time) {
-          logger.info('checking range (fixed timings) start and end')
-          const startTime: any = 'start' in loc.time.range ? parseInt(loc.time.range.start) : ''
-          const endTime: any = 'end' in loc.time.range ? parseInt(loc.time.range.end) : ''
-          if (isNaN(startTime) || isNaN(endTime) || startTime > endTime || endTime > 2359) {
-            errorObj.startEndTime = `end time must be greater than start time in fixed timings /locations/time/range (fixed store timings)`
+          // scenario 2: range=0 freq || times =1
+          if (!loc.time.range && (!loc.time.schedule?.frequency || !loc.time.schedule?.times)) {
+            const key = `prvdr${i}loctime${iter}`
+            errorObj[
+              key
+            ] = `Either one of fixed timings (range) or split timings (both frequency and times) should be provided in /bpp/providers[${i}]/locations[${iter}]/time`
           }
+
+          //scenario 3: range=1 (start and end not compliant) frequency=0;
+          if ('range' in loc.time) {
+            logger.info('checking range (fixed timings) start and end')
+            const startTime: any = 'start' in loc.time.range ? parseInt(loc.time.range.start) : ''
+            const endTime: any = 'end' in loc.time.range ? parseInt(loc.time.range.end) : ''
+            if (isNaN(startTime) || isNaN(endTime) || startTime > endTime || endTime > 2359) {
+              errorObj.startEndTime = `end time must be greater than start time in fixed timings /locations/time/range (fixed store timings)`
+            }
+          }
+        } catch (error: any) {
+          logger.error(`Validation error for frequency: ${error.stack}`)
         }
       })
 
@@ -202,7 +208,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         logger.info(`Checking categories for provider (${prvdr.id}) in bpp/providers[${i}]`)
         let j = 0
         const categories = onSearchCatalog['bpp/providers'][i]['categories']
-        const iLen = categories.length
+        const iLen = categories?.length
         while (j < iLen) {
           logger.info(`Validating uniqueness for categories id in bpp/providers[${i}].items[${j}]...`)
           const category = categories[j]

@@ -408,7 +408,7 @@ export const onSearchSchema = {
                               },
                             },
                           },
-                          required: ['name', 'code', 'symbol', 'short_desc', 'long_desc', 'images'],
+                          required: ['name', 'symbol', 'short_desc', 'long_desc', 'images'],
                         },
                         quantity: {
                           type: 'object',

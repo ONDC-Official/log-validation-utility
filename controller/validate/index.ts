@@ -1,6 +1,6 @@
 import { Response, Request } from 'express'
 import _ from 'lodash'
-import { validateActionSchema, validateLogs } from '../../shared/validateLogs'
+import { IGMvalidateLogs, validateActionSchema, validateLogs } from '../../shared/validateLogs'
 import { logger } from '../../shared/logger'
 import { actionsArray, fisFlows } from '../../constants'
 import { validateLogsForFIS12 } from '../../shared/Actions/FIS12Actions'
@@ -51,6 +51,28 @@ const controller = {
         if (!_.isEmpty(response)) res.status(400).send({ success: false, response: response })
         else res.status(200).send({ success: true, response: response })
       }
+    } catch (error) {
+      logger.error(error)
+      res.status(500).send({ success: false, error: error })
+    }
+  },
+  validateIGM: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { version, payload } = req.body
+      let response
+
+      switch (version) {
+        case '1.2.0':
+          response = IGMvalidateLogs(payload)
+          break
+        default:
+          logger.warn('Invalid Version!! ')
+          res.status(400).send({ success: false, response: 'Invalid Version!! Please Enter a valid Version' })
+          return
+      }
+
+      if (!_.isEmpty(response)) res.status(400).send({ success: false, response: response })
+      else res.status(200).send({ success: true, response: response })
     } catch (error) {
       logger.error(error)
       res.status(500).send({ success: false, error: error })

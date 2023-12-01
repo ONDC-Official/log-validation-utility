@@ -52,6 +52,10 @@ export default Object.freeze({
   MOB_ONSTATUS: 'on_status',
   MOB_CONTEXT_TTL: 'PT30S',
   MOB_CONTEXT_ACTION: 'action',
+  RET_ISSUE: 'issue',
+  RET_ONISSUE: 'on_issue',
+  RET_ISSUE_STATUS: 'issue_status',
+  RET_ONISSUE_STATUS: 'on_issue_status',
 })
 
 export const ApiSequence = {
@@ -149,6 +153,19 @@ export const fisFlows = {
   PERSONAL: 'PERSONAL_LOAN',
   PRE_INVOICE: 'PERSONAL_LOAN',
   PRE_PERSONAL: 'INVOICE_BASED_LOAN',
+}
+
+export const IGMApiSequence = {
+  RET_ISSUE: 'ret_issue',
+  RET_ON_ISSUE: 'ret_on_issue',
+  RET_ISSUE_STATUS: 'ret_issue_status',
+  RET_ON_ISSUE_STATUS: 'ret_on_issue_status',
+  RET_ON_ISSUE_STATUS_UNSOLICITED: 'ret_on_issue_status_unsolicited',
+  LSP_ISSUE: 'lsp_issue',
+  LSP_ISSUE_CLOSE: 'lsp_issue_close',
+  LSP_ON_ISSUE: 'lsp_on_issue',
+  LSP_ISSUE_STATUS: 'lsp_issue_status',
+  LSP_ON_ISSUE_STATUS: 'lsp_on_issue_status',
 }
 
 export const actionsArray = [

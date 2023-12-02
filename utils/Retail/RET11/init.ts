@@ -93,6 +93,7 @@ export const checkInit = (data: any) => {
     }
 
     const init = message.order
+     setValue('billing', init.billing)
 
     try {
       logger.info(`Comparing provider object in /${constants.RET_SELECT} and /${constants.RET_INIT}`)

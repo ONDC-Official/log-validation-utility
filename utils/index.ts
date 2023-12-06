@@ -544,6 +544,7 @@ export function compareObjects(obj1: any, obj2: any, parentKey?: string): string
   // Check for key length mismatch
   if (keys1.length !== keys2.length) {
     errors.push(`Key length mismatch for ${parentKey || 'root'}`)
+    return errors // Stop comparing if key length mismatch is detected
   }
 
   for (const key of keys1) {

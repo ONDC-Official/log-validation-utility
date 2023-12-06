@@ -259,8 +259,17 @@ export const checkConfirm = (data: any) => {
 
     try {
       logger.info(`Comparing Quote object for /${constants.RET_ONSELECT} and /${constants.RET_CONFIRM}`)
-      if (!_.isEqual(getValue('quoteObj'), confirm.quote)) {
-        cnfrmObj.quoteObj = `Discrepancies between the quote object in /${constants.RET_ONSELECT} and /${constants.RET_CONFIRM}`
+      const on_select_quote = getValue('quoteObj')
+      const quoteErrors = compareObjects(on_select_quote, confirm.quote)
+
+      if (quoteErrors) {
+        let i = 0
+        const len = quoteErrors.length
+        while (i < len) {
+          const key = `quoteErr${i}`
+          cnfrmObj[key] = `${quoteErrors[i]}`
+          i++
+        }
       }
     } catch (error: any) {
       logger.error(`!!Error while Comparing Quote object for /${constants.RET_ONSELECT} and /${constants.RET_CONFIRM}`)

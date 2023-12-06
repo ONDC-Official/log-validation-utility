@@ -7,10 +7,10 @@ import {
   isObjectEmpty,
   checkContext,
   timeDiff as timeDifference,
-  isObjectEqual,
   checkItemTag,
   checkBppIdOrBapId,
   isTagsValid,
+  compareObjects,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -187,11 +187,16 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       logger.info(`Comparing billing object in /${constants.RET_INIT} and /${constants.RET_ONINIT}`)
       const billing = getValue('billing')
 
-      if (isObjectEqual(billing, billing).length > 0) {
-        const billingMismatch = isObjectEqual(billing, billing)
-        onInitObj.bill = `${billingMismatch.join(', ')} mismatches in /billing in /${constants.RET_INIT} and /${
-          constants.RET_ONINIT
-        }`
+      const billingErrors = compareObjects(billing, on_init.billing)
+
+      if (billingErrors) {
+        let i = 0
+        const len = billingErrors.length
+        while (i < len) {
+          const key = `billingErr${i}`
+          onInitObj[key] = `${billingErrors[i]}`
+          i++
+        }
       }
     } catch (error: any) {
       logger.error(

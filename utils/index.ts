@@ -528,3 +528,34 @@ export function validateStatusOrderAndTimestamp(set: any) {
     return result
   }
 }
+
+export function compareObjects(obj1: any, obj2: any, parentKey?: string): string[] {
+  const errors: string[] = []
+
+  // Check if obj1 or obj2 is undefined or null
+  if (obj1 === null || obj1 === undefined || obj2 === null || obj2 === undefined) {
+    errors.push('One of the objects is undefined or null')
+    return errors
+  }
+
+  const keys1 = Object.keys(obj1)
+  const keys2 = Object.keys(obj2)
+
+  // Check for key length mismatch
+  if (keys1.length !== keys2.length) {
+    errors.push(`Key length mismatch for ${parentKey || 'root'}`)
+  }
+
+  for (const key of keys1) {
+    const fullKey = parentKey ? `${parentKey}.${key}` : key
+
+    if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
+      const nestedErrors = compareObjects(obj1[key], obj2[key], fullKey)
+      errors.push(...nestedErrors)
+    } else if (obj1[key] !== obj2[key]) {
+      errors.push(`Key '${fullKey}' mismatch: ${obj1[key]} !== ${obj2[key]}`)
+    }
+  }
+
+  return errors
+}

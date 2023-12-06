@@ -6,12 +6,12 @@ import {
   validateSchema,
   isObjectEmpty,
   checkContext,
-  isObjectEqual,
   checkItemTag,
   checkBppIdOrBapId,
   areGSTNumbersMatching,
   isTagsValid,
   areGSTNumbersDifferent,
+  compareObjects,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -172,14 +172,18 @@ export const checkConfirm = (data: any) => {
     try {
       logger.info(`Comparing billing object in /${constants.RET_INIT} and /${constants.RET_CONFIRM}`)
       const billing = getValue('billing')
-      if (isObjectEqual(billing, confirm.billing).length > 0) {
-        const billingMismatch = isObjectEqual(billing, confirm.billing)
-        cnfrmObj.bill = `${billingMismatch.join(', ')} mismatches in /billing in /${constants.RET_INIT} and /${
-          constants.RET_CONFIRM
-        }`
-      }
 
-      setValue('billing', confirm.billing)
+      const billingErrors = compareObjects(billing, confirm.billing)
+
+      if (billingErrors) {
+        let i = 0
+        const len = billingErrors.length
+        while (i < len) {
+          const key = `billingErr${i}`
+          cnfrmObj[key] = `${billingErrors[i]}`
+          i++
+        }
+      }
     } catch (error: any) {
       logger.error(`!!Error while comparing billing object in /${constants.RET_INIT} and /${constants.RET_CONFIRM}`)
     }

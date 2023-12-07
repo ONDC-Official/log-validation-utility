@@ -276,7 +276,7 @@ If you want to use this utility locally, follow these steps:
 1. Clone the repository from GitHub:
 
    ```shell
-   git clone https://github.com/bluecypher/retail-log-utility.git
+   git clone https://github.com/ONDC-Official/log-validation-utility.git
    ```
 
 2. Install the required dependencies:
@@ -324,9 +324,11 @@ curl --location --request POST 'http://localhost:3006/api/validate' \
     }
 }'
 ```
+
 ### For IGM Sample Curl Request (Local)
+
 ```shell
-curl --location 'https://localhost:3006/api/validate/igm' \
+curl --location 'http://localhost:3006/api/validate/igm' \
 --header 'Content-Type: application/json' \
 --data '{
     "domain": "",

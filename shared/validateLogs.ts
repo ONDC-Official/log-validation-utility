@@ -393,9 +393,6 @@ export const IGMvalidateLogs = (data: any) => {
       if (!_.isEmpty(lsp_issue_status)) {
         logReport = { ...logReport, [IGMApiSequence.LSP_ISSUE_STATUS]: lsp_issue_status }
       }
-
-      logger.info(logReport, 'Report Generated Successfully!!')
-      return logReport
     }
 
     if (data[IGMApiSequence.LSP_ON_ISSUE_STATUS]) {
@@ -405,6 +402,8 @@ export const IGMvalidateLogs = (data: any) => {
         logReport = { ...logReport, [IGMApiSequence.LSP_ON_ISSUE_STATUS]: lsp_on_issue }
       }
     }
+    logger.info(logReport, 'Report Generated Successfully!!')
+    return logReport
   } catch (error: any) {
     logger.error(error.message)
     return error.message

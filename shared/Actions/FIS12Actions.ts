@@ -155,7 +155,7 @@ export function validateLogsForFIS12(data: any, domain: string, flow: string) {
     }
 
     if (data[FisApiSequence.ON_UPDATE]) {
-      const onUpdate = checkOnUpdate(data[FisApiSequence.ON_UPDATE])
+      const onUpdate = checkOnUpdate(data[FisApiSequence.ON_UPDATE], flow)
       if (!_.isEmpty(onUpdate)) {
         logReport = { ...logReport, [FisApiSequence.ON_UPDATE]: onUpdate }
       }
@@ -169,7 +169,7 @@ export function validateLogsForFIS12(data: any, domain: string, flow: string) {
     }
 
     if (data[FisApiSequence.ON_UPDATE_1]) {
-      const onUpdate1 = checkOnUpdate(data[FisApiSequence.ON_UPDATE_1])
+      const onUpdate1 = checkOnUpdate(data[FisApiSequence.ON_UPDATE_1], flow)
       if (!_.isEmpty(onUpdate1)) {
         logReport = { ...logReport, [FisApiSequence.ON_UPDATE_1]: onUpdate1 }
       }
@@ -183,7 +183,7 @@ export function validateLogsForFIS12(data: any, domain: string, flow: string) {
     }
 
     if (data[FisApiSequence.ON_STATUS]) {
-      const onStatus = checkOnStatus(data[FisApiSequence.ON_STATUS])
+      const onStatus = checkOnStatus(data[FisApiSequence.ON_STATUS], flow)
       if (!_.isEmpty(onStatus)) {
         logReport = { ...logReport, [FisApiSequence.ON_STATUS]: onStatus }
       }

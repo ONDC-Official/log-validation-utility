@@ -129,7 +129,6 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
         itemIdArray.push(item.id)
       })
       newItemIDSValue = itemIdArray
-      console.log('test')
     }
 
     logger.info(

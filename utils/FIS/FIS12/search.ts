@@ -11,7 +11,6 @@ export const search = (data: any, msgIdSet: any, flow: string) => {
       return
     }
 
-    console.log('flow', flow)
     if (
       !data.message ||
       !data.context ||

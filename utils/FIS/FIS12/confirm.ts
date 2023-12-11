@@ -99,7 +99,6 @@ export const checkConfirm = (data: any) => {
         itemIdArray.push(item.id)
       })
       newItemIDSValue = itemIdArray
-      console.log('test')
     }
 
     setValue('ItmIDS', newItemIDSValue)
@@ -120,11 +119,6 @@ export const checkConfirm = (data: any) => {
       logger.info(`Comparing item in /${constants.FIS_CONFIRM}`)
 
       confirm.items.forEach((item: any, index: number) => {
-        console.log(
-          '==================================================================================================================',
-          itemIdArray,
-          newItemIDSValue,
-        )
         if (!newItemIDSValue.includes(item.id)) {
           const key = `item[${index}].item_id`
           cnfrmObj[
@@ -147,12 +141,8 @@ export const checkConfirm = (data: any) => {
           storedFormIds.add(formId)
         }
 
-        if (storedFormIds.has(formId)) {
-          console.log(
-            '--------------------------------------------------------------',
-            `${FisApiSequence.SELECT}_form_${formId}_status)`,
-          )
-        }
+        // if (storedFormIds.has(formId)) {
+        // }
 
         if (getValue(`${FisApiSequence.SELECT}_form_${formId}_status`) === status) {
           const key = `item${index}_status`
@@ -161,57 +151,6 @@ export const checkConfirm = (data: any) => {
           ] = `/message/order/items/xinput/form_response/status in item: ${item.id} should be different from previous select calls for the same form_id: ${formId}`
         }
       })
-      // let i = 0
-      // const len = confirm.items.length
-
-      // onSelect.items.forEach((item: any, index: number) => {
-      //   if (!itemIdArray.includes(item.id)) {
-      //     const key = `item${index}item_id`
-      //     errorObj[key] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in select`
-      //   } else {
-      //     if (
-      //       !item?.tags?.some(
-      //         (tag: any) => tag.descriptor.code === 'CONSENT_INFO' || tag.descriptor.code === 'LOAN_INFO',
-      //       )
-      //     ) {
-      //       errorObj['on_select_items'] = {
-      //         tags: 'CONSENT_INFO or LOAN_INFO tag group must be present.',
-      //       }
-      //     }
-
-      //     if (
-      //       !Object.prototype.hasOwnProperty.call(item?.xinput?.form_response, 'status') ||
-      //       !Object.prototype.hasOwnProperty.call(item?.xinput?.form_response, 'submission_id')
-      //     )
-      //       errorObj[
-      //         `item${index}_xinput`
-      //       ] = `/message/order/items/xinput in item: ${item.id} must have both status & submission_id in form_response`
-      //   }
-      // })
-      // while (i < len) {
-      //   // const itemId = confirm.items[i].id
-      //   const item = confirm.items[i]
-
-      //   // if (!parentItemIdSet.includes(item.parent_item_id)) {
-      //   //   const itemkey = `item_PrntItmId${i}`
-      //   //   cnfrmObj[
-      //   //     itemkey
-      //   //   ] = `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.RET_ONSELECT} and /${constants.FIS_CONFIRM}`
-      //   // }
-
-      //   console.log('itemitemitemitemitemitemitemitemitemitemitemitem', item)
-
-      //   if (
-      //     !item.xinput ||
-      //     !item.xinput.form_response ||
-      //     !item.xinput.form_response.status ||
-      //     !item.xinput.form_response.submission_id
-      //   ) {
-      //     cnfrmObj.xinput = `xinput or xinput.form_response is missing in /${constants.FIS_CONFIRM}`
-      //   }
-
-      //   i++
-      // }
     } catch (error: any) {
       logger.error(`!!Error while comparing Item Id in /${constants.RET_ONSELECT} and /${constants.FIS_CONFIRM}`)
     }

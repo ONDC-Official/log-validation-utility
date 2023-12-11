@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import _ from 'lodash'
-import constants, { FisApiSequence } from '../../../constants'
+import constants, { FisApiSequence, fisFlows } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import {
   validateSchema,
@@ -11,10 +11,11 @@ import {
   isValidUrl,
 } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
+import { validateFulfillments } from './fisChecks'
 
 const cancellationTermsState = new Map()
 
-export const checkOnStatus = (data: any) => {
+export const checkOnStatus = (data: any, flow: string) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -103,15 +104,21 @@ export const checkOnStatus = (data: any) => {
     }
 
     const on_status = message.order
+    const itemIDS: any = getValue('ItmIDS')
+    const itemIdArray: any[] = []
 
-    // try {
-    //   logger.info(`Comparing order ids in /${constants.FIS_STATUS} and /${constants.FIS_ONSTATUS}`)
-    //   if (getValue('cnfrmOrdrId') != on_status.id) {
-    //     onStatusObj.orderID = `Order Id mismatches in /${constants.FIS_STATUS} and /${constants.FIS_ONSTATUS}`
-    //   }
-    // } catch (error: any) {
-    //   logger.error(`!!Error while trying to fetch order ids in /${constants.FIS_ONSTATUS}, ${error.stack}`)
-    // }
+    let newItemIDSValue: any[]
+
+    if (itemIDS && itemIDS.length > 0) {
+      newItemIDSValue = itemIDS
+    } else {
+      on_status.items.map((item: { id: string }) => {
+        itemIdArray.push(item.id)
+      })
+      newItemIDSValue = itemIdArray
+    }
+
+    setValue('ItmIDS', newItemIDSValue)
 
     try {
       logger.info(`Checking provider id /${constants.FIS_ONSTATUS}`)
@@ -130,29 +137,19 @@ export const checkOnStatus = (data: any) => {
     }
 
     try {
-      logger.info(`Comparing item in and /${constants.FIS_ONSTATUS}`)
-      let i = 0
-      const len: any = on_status.items.length
-      while (i < len) {
-        // const itemId: any = on_status.items[i].id
-        const item = on_status.items[i]
+      logger.info(`Comparing item in and /${constants.FIS_ONUPDATE}`)
 
-        // if (!parentItemIdSet.includes(item.parent_item_id)) {
-        //   const itemkey = `item_PrntItmId${i}`
-        //   onStatusObj[
-        //     itemkey
-        //   ] = `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.RET_ONSELECT} and /${constants.FIS_ONSTATUS}`
-        // }
-
-        if (on_status.quote.price.value !== item?.price?.value) {
-          onStatusObj[`item${i}_price`] = `Price mismatch for item: ${item.id}`
+      on_status.items.forEach((item: any, index: number) => {
+        if (!newItemIDSValue.includes(item.id)) {
+          const key = `item[${index}].item_id`
+          onStatusObj[
+            key
+          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
         }
 
         if (
-          !item.xinput ||
-          !item.xinput.form_response ||
-          !item.xinput.form_response.status ||
-          !item.xinput.form_response.submission_id
+          item.xinput &&
+          (!item.xinput.form_response || !item.xinput.form_response.status || !item.xinput.form_response.submission_id)
         ) {
           onStatusObj.xinput = `xinput or xinput.form_response is missing in /${constants.FIS_ONSTATUS}`
         }
@@ -164,37 +161,31 @@ export const checkOnStatus = (data: any) => {
           }
         }
 
-        i++
-      }
+        if (item?.descriptor?.code !== fisFlows[flow as keyof typeof fisFlows])
+          onStatusObj[`item[${index}].code`] = `Descriptor code: ${
+            item?.descriptor?.code
+          } in item[${index}] must be the same as ${fisFlows[flow as keyof typeof fisFlows]}`
+
+        if (on_status.quote.price.value !== item?.price?.value) {
+          onStatusObj[`item${index}_price`] = `Price mismatch for item: ${item.id}`
+        }
+      })
     } catch (error: any) {
-      logger.error(
-        `!!Error while comparing Item and Fulfillment Id in /${constants.RET_ONSELECT} and /${constants.FIS_ONSTATUS}, ${error.stack}`,
-      )
+      logger.error(`!!Error while comparing Item in /${constants.FIS_ONUPDATE}, ${error.stack}`)
     }
 
     try {
       logger.info(`Checking fulfillments objects in /${constants.FIS_ONSTATUS}`)
-      const fulfillments = on_status.fulfillments
-
-      if (fulfillments && fulfillments.length > 0) {
-        const fulfillment = fulfillments[0]
-
-        if (
-          fulfillment.customer &&
-          fulfillment.customer.person &&
-          fulfillment.customer.person.name &&
-          fulfillment.customer.contact &&
-          fulfillment.customer.contact.phone &&
-          fulfillment.customer.contact.email
-        ) {
-          if (!fulfillment.state || !fulfillment.state.descriptor || !fulfillment.state.descriptor.code) {
-            onStatusObj.missingFulfillmentStateDescriptor = 'Fulfillment state, descriptor or code is missing'
-          }
-        } else {
-          onStatusObj.missingFulfillmentCustomerDetails = 'Fulfillment customer details are incomplete'
+      let i = 0
+      const len = on_status.fulfillments.length
+      while (i < len) {
+        const fulfillment = on_status.fulfillments[i]
+        const fulfillmentErrors = validateFulfillments(fulfillment, i, on_status.documents)
+        if (fulfillmentErrors) {
+          Object.assign(onStatusObj, fulfillmentErrors)
         }
-      } else {
-        onStatusObj.missingFulfillmentDetails = 'Fulfillment details are missing'
+
+        i++
       }
     } catch (error: any) {
       logger.error(`!!Error while checking fulfillments object in /${constants.FIS_ONSTATUS}, ${error.stack}`)
@@ -252,6 +243,18 @@ export const checkOnStatus = (data: any) => {
 
       for (let i = 0; i < payments.length; i++) {
         const payment = payments[i]
+
+        if (payment.url) {
+          if (!isValidUrl(payment.url)) {
+            onStatusObj['invalidPaymentUrl'] = `Invalid payment url (${payment.url}) at index ${i}`
+          } else {
+            const updateValue = getValue(`updatePayment`)
+            if (payment?.params?.amount !== updateValue)
+              onStatusObj[
+                'invalidPaymentAmount'
+              ] = `Invalid payment amount (${payment.url}) at index ${i}, should be the same as sent in update call`
+          }
+        }
 
         if (payment.status !== 'PAID' && payment.status !== 'NOT-PAID') {
           onStatusObj.invalidPaymentStatus = `Invalid payment status (${payment.status}) at index ${i}`

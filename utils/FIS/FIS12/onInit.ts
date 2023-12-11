@@ -124,7 +124,6 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         itemIdArray.push(item.id)
       })
       newItemIDSValue = itemIdArray
-      console.log('test')
     }
 
     setValue('ItmIDS', newItemIDSValue)
@@ -163,10 +162,6 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       logger.info(`Comparing item in and /${constants.FIS_ONINIT}`)
 
       on_init.items.forEach((item: any, index: number) => {
-        console.log(
-          '==================================================================================================================',
-          item?.xinput,
-        )
         if (!newItemIDSValue.includes(item.id)) {
           const key = `item[${index}].item_id`
           onInitObj[
@@ -246,7 +241,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       const len = on_init.fulfillments.length
       while (i < len) {
         const fulfillment = on_init.fulfillments[i]
-        const fulfillmentErrors = validateFulfillments(fulfillment, i)
+        const fulfillmentErrors = validateFulfillments(fulfillment, i, [])
         if (fulfillmentErrors) {
           Object.assign(onInitObj, fulfillmentErrors)
         }

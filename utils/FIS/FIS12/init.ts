@@ -72,26 +72,26 @@ export const checkInit = (data: any, msgIdSet: any) => {
     }
 
     try {
-      logger.info(`Comparing timestamp of /${constants.RET_ONSELECT} and /${constants.FIS_INIT}`)
+      logger.info(`Comparing timestamp of /${constants.FIS_ONSELECT} and /${constants.FIS_INIT}`)
       if (_.gte(getValue('tmpstmp'), context.timestamp)) {
-        initObj.tmpstmp = `Timestamp for  /${constants.RET_ONSELECT} api cannot be greater than or equal to /init api`
+        initObj.tmpstmp = `Timestamp for  /${constants.FIS_ONSELECT} api cannot be greater than or equal to /init api`
       }
 
       setValue('tmpstmp', context.timestamp)
     } catch (error: any) {
       logger.error(
-        `!!Error while comparing timestamp for /${constants.RET_ONSELECT} and /${constants.FIS_INIT} api, ${error.stack}`,
+        `!!Error while comparing timestamp for /${constants.FIS_ONSELECT} and /${constants.FIS_INIT} api, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Comparing transaction Ids of /${constants.RET_SELECT} and /${constants.FIS_INIT}`)
+      logger.info(`Comparing transaction Ids of /${constants.FIS_SELECT} and /${constants.FIS_INIT}`)
       if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
-        initObj.txnId = `Transaction Id should be same from /${constants.RET_SELECT} onwards`
+        initObj.txnId = `Transaction Id should be same from /${constants.FIS_SELECT} onwards`
       }
     } catch (error: any) {
       logger.error(
-        `!!Error while comparing transaction ids for /${constants.RET_SELECT} and /${constants.FIS_INIT} api, ${error.stack}`,
+        `!!Error while comparing transaction ids for /${constants.FIS_SELECT} and /${constants.FIS_INIT} api, ${error.stack}`,
       )
     }
 
@@ -117,30 +117,24 @@ export const checkInit = (data: any, msgIdSet: any) => {
         itemIdArray.push(item.id)
       })
       newItemIDSValue = itemIdArray
-      console.log('test')
     }
 
     setValue('ItmIDS', newItemIDSValue)
     try {
-      logger.info(`Comparing provider object in /${constants.RET_SELECT} and /${constants.FIS_INIT}`)
+      logger.info(`Comparing provider object in /${constants.FIS_SELECT} and /${constants.FIS_INIT}`)
 
       if (getValue('providerId') != init.provider['id']) {
-        initObj.prvdId = `Provider Id mismatches in /${constants.RET_SELECT} and /${constants.FIS_INIT}`
+        initObj.prvdId = `Provider Id mismatches in /${constants.FIS_SELECT} and /${constants.FIS_INIT}`
       }
     } catch (error: any) {
       logger.error(
-        `!!Error while checking provider object in /${constants.RET_SELECT} and /${constants.FIS_INIT}, ${error.stack}`,
+        `!!Error while checking provider object in /${constants.FIS_SELECT} and /${constants.FIS_INIT}, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Comparing item Ids in /${constants.RET_ONSELECT} and /${constants.FIS_INIT}`)
+      logger.info(`Comparing item Ids in /${constants.FIS_ONSELECT} and /${constants.FIS_INIT}`)
       init.items.forEach((item: any, index: number) => {
-        console.log(
-          '==================================================================================================================',
-          itemIdArray,
-          newItemIDSValue,
-        )
         if (!newItemIDSValue.includes(item.id)) {
           const key = `item[${index}].item_id`
           initObj[
@@ -171,7 +165,7 @@ export const checkInit = (data: any, msgIdSet: any) => {
         }
       })
     } catch (error: any) {
-      logger.error(`!!Error while comparing Item in /${constants.RET_ONSELECT} and /${constants.FIS_INIT}`)
+      logger.error(`!!Error while comparing Item in /${constants.FIS_ONSELECT} and /${constants.FIS_INIT}`)
     }
 
     const buyerFinderFeesTag = init.payments[0].tags.find((tag: any) => tag.descriptor.code === 'BUYER_FINDER_FEES')

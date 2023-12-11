@@ -1,6 +1,8 @@
 import { getValue } from '../../../shared/dao'
 import { formHeadingsFis } from '../../../constants/'
 
+const FULFILLMENT_STATE_CODES = ['INITIATED', 'SANCTIONED', 'DISBURSED', 'PENDING', 'REJECTED', 'COMPLETED']
+
 export const checkUniqueCategoryIds = (categoryIds: (string | number)[], availableCategoryIds: any): boolean => {
   const uniqueCategoryIds = new Set(categoryIds)
   return categoryIds.length === uniqueCategoryIds.size && categoryIds.every((id) => availableCategoryIds.has(id))
@@ -14,18 +16,20 @@ const getFormHeading = (action: any, loanType: any): string[] | string | null =>
   return null
 }
 
-export const validateFulfillments = (fulfillment: any, i: number): any | null => {
+export const validateFulfillments = (fulfillment: any, i: number, documents: any[]): any | null => {
   const errors: any = {}
 
   const loanType: any = getValue(`LoanType`)
 
-  if (
-    !fulfillment.state ||
-    !fulfillment.state.descriptor ||
-    !fulfillment.state.descriptor.code ||
-    (fulfillment.state.descriptor.code !== 'INITIATED' && fulfillment.state.descriptor.code !== 'COMPLETED')
-  ) {
-    errors.fulfillmentState = `Fulfillment[${i}] state descriptor code must be either INITIATED or COMPLETED`
+  if (!fulfillment.state || !fulfillment.state.descriptor || !fulfillment.state.descriptor.code) {
+    errors.fulfillmentState = `Fulfillment[${i}] state descriptor code is missing`
+  } else {
+    const { code } = fulfillment.state.descriptor
+    if (!FULFILLMENT_STATE_CODES.includes(code)) {
+      errors.fulfillmentState = `Fulfillment[${i}] state descriptor code must be one of ${FULFILLMENT_STATE_CODES.join(
+        ', ',
+      )}`
+    }
   }
 
   if (loanType === 'PERSONAL_LOAN') {
@@ -57,6 +61,18 @@ export const validateFulfillments = (fulfillment: any, i: number): any | null =>
       errors.customerInfo = `Customer information is incomplete for Fulfillment[${i}]`
     }
   }
+
+  if (fulfillment.code === 'DISBURSED') {
+    const hasLoanCancellationDocument = documents.some((document: any) => {
+      return document.descriptor && document.descriptor.code === 'LOAN_CANCELLATION'
+    })
+
+    if (!hasLoanCancellationDocument) {
+      errors.missingLoanCancellationDocument =
+        'Documents must contain LOAN_CANCELLATION when fulfillment code is DISBURSED'
+    }
+  }
+
   return Object.keys(errors).length > 0 ? errors : null
 }
 

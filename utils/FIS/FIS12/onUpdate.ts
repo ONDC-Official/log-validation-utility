@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import _ from 'lodash'
-import constants, { FisApiSequence } from '../../../constants'
+import constants, { FisApiSequence, fisFlows } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import {
   validateSchema,
@@ -11,10 +11,11 @@ import {
   isValidUrl,
 } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
+import { validateFulfillments } from './fisChecks'
 
 const cancellationTermsState = new Map()
 
-export const checkOnUpdate = (data: any) => {
+export const checkOnUpdate = (data: any, flow: string) => {
   const onUpdateObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -115,18 +116,9 @@ export const checkOnUpdate = (data: any) => {
         itemIdArray.push(item.id)
       })
       newItemIDSValue = itemIdArray
-      console.log('test')
     }
 
     setValue('ItmIDS', newItemIDSValue)
-    // try {
-    //   logger.info(`Comparing order ids in /${constants.FIS_UPDATE} and /${constants.FIS_ONUPDATE}`)
-    //   if (getValue('cnfrmOrdrId') != on_update.id) {
-    //     onUpdateObj.orderID = `Order Id mismatches in /${constants.FIS_UPDATE} and /${constants.FIS_ONUPDATE}`
-    //   }
-    // } catch (error: any) {
-    //   logger.error(`!!Error while trying to fetch order ids in /${constants.FIS_ONUPDATE}, ${error.stack}`)
-    // }
 
     try {
       logger.info(`Checking provider id /${constants.FIS_ONUPDATE}`)
@@ -146,83 +138,47 @@ export const checkOnUpdate = (data: any) => {
 
     try {
       logger.info(`Comparing item in and /${constants.FIS_ONUPDATE}`)
-      let i = 0
-      const len: any = on_update.items.length
-      while (i < len) {
-        on_update.items.forEach((item: any, index: number) => {
-          console.log(
-            '==================================================================================================================',
-            itemIdArray,
-            newItemIDSValue,
-          )
-          if (!newItemIDSValue.includes(item.id)) {
-            const key = `item[${index}].item_id`
-            onUpdateObj[
-              key
-            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+
+      on_update.items.forEach((item: any, index: number) => {
+        if (!newItemIDSValue.includes(item.id)) {
+          const key = `item[${index}].item_id`
+          onUpdateObj[
+            key
+          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+        }
+
+        if (item.tags) {
+          const loanInfoTag = item.tags.find((tag: any) => tag.descriptor.code === 'LOAN-INFO')
+          if (!loanInfoTag) {
+            onUpdateObj[`loanInfoTagSubtagsMissing`] = `The LOAN_INFO tag group for Item ${item.id}: was not found`
           }
+        }
 
-          if (
-            !Object.prototype.hasOwnProperty.call(item?.xinput?.form_response, 'submission_id') ||
-            !Object.prototype.hasOwnProperty.call(item?.xinput?.form_response, 'status')
-          )
-            onUpdateObj[
-              `item${index}_xinput`
-            ] = `/message/order/items/xinput in item: ${item.id} must have both status & submission_id in form_response`
+        if (item?.descriptor?.code !== fisFlows[flow as keyof typeof fisFlows])
+          onUpdateObj[`item[${index}].code`] = `Descriptor code: ${
+            item?.descriptor?.code
+          } in item[${index}] must be the same as ${fisFlows[flow as keyof typeof fisFlows]}`
 
-          const formId = item?.xinput?.form.id
-          const status = item?.xinput?.form_response?.status
-
-          if (getValue(`${FisApiSequence.SELECT}_form_${formId}_status`) === status) {
-            const key = `item${index}_status`
-            onUpdateObj[
-              key
-            ] = `/message/order/items/xinput/form_response/status in item: ${item.id} should be different from previous select calls for the same form_id: ${formId}`
-          }
-
-          if (item.tags) {
-            const loanInfoTag = item.tags.find((tag: any) => tag.descriptor.code === 'LOAN-INFO')
-            if (!loanInfoTag) {
-              onUpdateObj[`loanInfoTagSubtagsMissing`] = `The LOAN_INFO tag group for Item ${item.id}: was not found`
-            }
-          }
-
-          if (on_update.quote.price.value !== item?.price?.value) {
-            onUpdateObj[`item${i}_price`] = `Price mismatch for item: ${item.id}`
-          }
-        })
-
-        i++
-      }
+        if (on_update.quote.price.value !== item?.price?.value) {
+          onUpdateObj[`item${index}_price`] = `Price mismatch for item: ${item.id}`
+        }
+      })
     } catch (error: any) {
-      logger.error(
-        `!!Error while comparing Item and Fulfillment Id in /${constants.RET_ONSELECT} and /${constants.FIS_ONUPDATE}, ${error.stack}`,
-      )
+      logger.error(`!!Error while comparing Item in /${constants.FIS_ONUPDATE}, ${error.stack}`)
     }
 
     try {
       logger.info(`Checking fulfillments objects in /${constants.FIS_ONUPDATE}`)
-      const fulfillments = on_update.fulfillments
-
-      if (fulfillments && fulfillments.length > 0) {
-        const fulfillment = fulfillments[0]
-
-        if (
-          fulfillment.customer &&
-          fulfillment.customer.person &&
-          fulfillment.customer.person.name &&
-          fulfillment.customer.contact &&
-          fulfillment.customer.contact.phone &&
-          fulfillment.customer.contact.email
-        ) {
-          if (!fulfillment.state || !fulfillment.state.descriptor || !fulfillment.state.descriptor.code) {
-            onUpdateObj.missingFulfillmentStateDescriptor = 'Fulfillment state, descriptor or code is missing'
-          }
-        } else {
-          onUpdateObj.missingFulfillmentCustomerDetails = 'Fulfillment customer details are incomplete'
+      let i = 0
+      const len = on_update.fulfillments.length
+      while (i < len) {
+        const fulfillment = on_update.fulfillments[i]
+        const fulfillmentErrors = validateFulfillments(fulfillment, i, on_update.documents)
+        if (fulfillmentErrors) {
+          Object.assign(onUpdateObj, fulfillmentErrors)
         }
-      } else {
-        onUpdateObj.missingFulfillmentDetails = 'Fulfillment details are missing'
+
+        i++
       }
     } catch (error: any) {
       logger.error(`!!Error while checking fulfillments object in /${constants.FIS_ONUPDATE}, ${error.stack}`)
@@ -280,6 +236,18 @@ export const checkOnUpdate = (data: any) => {
 
       for (let i = 0; i < payments.length; i++) {
         const payment = payments[i]
+
+        if (payment.url) {
+          if (!isValidUrl(payment.url)) {
+            onUpdateObj['invalidPaymentUrl'] = `Invalid payment url (${payment.url}) at index ${i}`
+          } else {
+            const updateValue = getValue(`updatePayment`)
+            if (payment?.params?.amount !== updateValue)
+              onUpdateObj[
+                'invalidPaymentAmount'
+              ] = `Invalid payment amount (${payment.url}) at index ${i}, should be the same as sent in update call`
+          }
+        }
 
         if (payment.status !== 'PAID' && payment.status !== 'NOT-PAID') {
           onUpdateObj.invalidPaymentStatus = `Invalid payment status (${payment.status}) at index ${i}`

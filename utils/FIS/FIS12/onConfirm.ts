@@ -31,8 +31,6 @@ export const checkOnConfirm = (data: any, flow: any) => {
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.FIS_ONCONFIRM, data)
     const contextRes: any = checkFISContext(context, constants.FIS_ONCONFIRM)
 
-    performChecks(onCnfrmObj, searchContext, context, flow)
-
     if (schemaValidation !== 'error') {
       Object.assign(onCnfrmObj, schemaValidation)
     }
@@ -41,27 +39,10 @@ export const checkOnConfirm = (data: any, flow: any) => {
       Object.assign(onCnfrmObj, contextRes.ERRORS)
     }
 
+    //Flow based checks for on_confirm
+    performChecks(onCnfrmObj, searchContext, context, flow)
+
     setValue(`${FisApiSequence.ON_CONFIRM}`, data)
-
-    try {
-      logger.info(`Comparing timestamp of /${constants.FIS_CONFIRM} and /${constants.FIS_ONCONFIRM}`)
-      const tmpstmp = getValue('tmpstmp')
-      if (_.gte(tmpstmp, context.timestamp)) {
-        onCnfrmObj.tmpstmp = `Timestamp for /${constants.FIS_CONFIRM} api cannot be greater than or equal to /${constants.FIS_ONCONFIRM} api`
-      } else {
-        const timeDiff = timeDifference(context.timestamp, tmpstmp)
-        logger.info(timeDiff)
-        if (timeDiff > 5000) {
-          onCnfrmObj.tmpstmp = `context/timestamp difference between /${constants.FIS_ONCONFIRM} and /${constants.FIS_CONFIRM} should be smaller than 5 sec`
-        }
-      }
-
-      setValue('tmpstmp', context.timestamp)
-    } catch (error: any) {
-      logger.info(
-        `Error while comparing timestamp for /${constants.FIS_CONFIRM} and /${constants.FIS_ONCONFIRM} api, ${error.stack}`,
-      )
-    }
 
     const on_confirm = message.order
     const itemIDS: any = getValue('ItmIDS')
@@ -76,15 +57,20 @@ export const checkOnConfirm = (data: any, flow: any) => {
         itemIdArray.push(item.id)
       })
       newItemIDSValue = itemIdArray
-      console.log('test')
     }
 
     setValue('ItmIDS', newItemIDSValue)
 
     try {
       logger.info(`Checking provider id /${constants.FIS_ONCONFIRM}`)
-      if (on_confirm.provider.id != getValue('providerId')) {
-        onCnfrmObj.prvdrId = `Provider Id mismatches in /${constants.FIS_ONSEARCH} and /${constants.FIS_ONCONFIRM}`
+
+      if (['PRE_INVOICE', 'PRE_PERSONAL'].includes(flow)) {
+        const on_confirmProviderId = on_confirm.provider.id
+        setValue('providerId', on_confirmProviderId)
+      } else {
+        if (on_confirm.provider.id !== getValue('providerId')) {
+          onCnfrmObj.prvdrId = `Provider Id mismatches in /${constants.FIS_ONSEARCH} and /${constants.FIS_ONCONFIRM}`
+        }
       }
 
       logger.info(`Checking tags in /${constants.FIS_ONCONFIRM}`)
@@ -101,11 +87,6 @@ export const checkOnConfirm = (data: any, flow: any) => {
       logger.info(`Comparing item in /${constants.FIS_ONCONFIRM}`)
 
       on_confirm.items.forEach((item: any, index: number) => {
-        console.log(
-          '==================================================================================================================',
-          itemIdArray,
-          newItemIDSValue,
-        )
         if (!newItemIDSValue.includes(item.id)) {
           const key = `item[${index}].item_id`
           onCnfrmObj[
@@ -136,7 +117,7 @@ export const checkOnConfirm = (data: any, flow: any) => {
       const len = on_confirm.fulfillments.length
       while (i < len) {
         const fulfillment = on_confirm.fulfillments[i]
-        const fulfillmentErrors = validateFulfillments(fulfillment, i)
+        const fulfillmentErrors = validateFulfillments(fulfillment, i, on_confirm.documents)
         if (fulfillmentErrors) {
           Object.assign(onCnfrmObj, fulfillmentErrors)
         }
@@ -412,15 +393,12 @@ const performChecks = (onCnfrmObj: any, searchContext: any, context: any, flow: 
     compareCity(onCnfrmObj, searchContext, context)
     compareCountry(onCnfrmObj, searchContext, context)
     compareTimestamp(onCnfrmObj, context)
+    compareTransactionIds(onCnfrmObj, context)
 
     const checkBap = checkBppIdOrBapId(context.bap_id)
     const checkBpp = checkBppIdOrBapId(context.bpp_id)
 
     if (checkBap) Object.assign(onCnfrmObj, { bap_id: 'context/bap_id should not be a url' })
     if (checkBpp) Object.assign(onCnfrmObj, { bpp_id: 'context/bpp_id should not be a url' })
-  }
-
-  if (!checksToSkipForFlows.includes(flow)) {
-    compareTransactionIds(onCnfrmObj, context)
   }
 }

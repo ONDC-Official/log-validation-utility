@@ -33,6 +33,7 @@ import checkLspOnIssue from '../utils/igm/lspOnIssue'
 import checkOnIssueStatus from '../utils/igm/retOnIssueStatus'
 import checkOnIssueStatusUnsolicited from '../utils/igm/retOnIssueStatus(unsolicited)'
 import checkLspIssueClose from '../utils/igm/lspIssue(close)'
+import checkIssueClose from '../utils/igm/retIssueClose'
 
 export const validateLogs = (data: any, domain: string) => {
   const msgIdSet = new Set()
@@ -325,6 +326,14 @@ export const IGMvalidateLogs = (data: any) => {
   try {
     if (data[IGMApiSequence.RET_ISSUE]) {
       const ret_issue = checkIssue(data[IGMApiSequence.RET_ISSUE])
+
+      if (!_.isEmpty(ret_issue)) {
+        logReport = { ...logReport, [IGMApiSequence.RET_ISSUE]: ret_issue }
+      }
+    }
+
+    if (data[IGMApiSequence.RET_ISSUE_CLOSE]) {
+      const ret_issue = checkIssueClose(data[IGMApiSequence.RET_ISSUE_CLOSE])
 
       if (!_.isEmpty(ret_issue)) {
         logReport = { ...logReport, [IGMApiSequence.RET_ISSUE]: ret_issue }

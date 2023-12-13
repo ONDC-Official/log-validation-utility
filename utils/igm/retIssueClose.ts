@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { setValue } from 'shared/dao'
+import { setValue } from '../../shared/dao'
 import { checkContext, isObjectEmpty } from '../../utils/index'
 import constants, { IGMApiSequence } from '../../constants/index'
 import { validateSchema } from '../../utils/index'

@@ -365,7 +365,7 @@ export const onConfirmSchema = {
                         required: ['phone'],
                       },
                     },
-                    required: ['location', 'time', 'contact'],
+                    required: ['location', 'contact'],
                   },
                   end: {
                     type: 'object',
@@ -460,7 +460,7 @@ export const onConfirmSchema = {
                         required: ['phone'],
                       },
                     },
-                    required: ['location', 'time', 'person', 'contact'],
+                    required: ['location', 'person', 'contact'],
                   },
                 },
                 required: ['id', '@ondc/org/provider_name', 'state', 'type', 'tracking', 'start', 'end'],

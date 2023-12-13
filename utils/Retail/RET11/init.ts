@@ -152,6 +152,13 @@ export const checkInit = (data: any) => {
     }
 
     try {
+      logger.info(`Storing billing address in /${constants.RET_INIT}`)
+      setValue('billing', init.billing)
+    } catch (error: any) {
+      logger.error(`!!Error while storing billing object in /${constants.RET_INIT}, ${error.stack}`)
+    }
+
+    try {
       logger.info(`Comparing item Ids and fulfillment ids in /${constants.RET_ONSELECT} and /${constants.RET_INIT}`)
       const itemFlfllmnts: any = getValue('itemFlfllmnts')
       const itemsIdList: any = getValue('itemsIdList')

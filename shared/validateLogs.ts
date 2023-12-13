@@ -33,6 +33,7 @@ import checkLspOnIssue from '../utils/igm/lspOnIssue'
 import checkOnIssueStatus from '../utils/igm/retOnIssueStatus'
 import checkOnIssueStatusUnsolicited from '../utils/igm/retOnIssueStatus(unsolicited)'
 import checkLspIssueClose from '../utils/igm/lspIssue(close)'
+import checkIssueClose from '../utils/igm/retIssueClose'
 
 export const validateLogs = (data: any, domain: string) => {
   const msgIdSet = new Set()
@@ -331,6 +332,14 @@ export const IGMvalidateLogs = (data: any) => {
       }
     }
 
+    if (data[IGMApiSequence.RET_ISSUE_CLOSE]) {
+      const ret_issue = checkIssueClose(data[IGMApiSequence.RET_ISSUE_CLOSE])
+
+      if (!_.isEmpty(ret_issue)) {
+        logReport = { ...logReport, [IGMApiSequence.RET_ISSUE]: ret_issue }
+      }
+    }
+
     if (data[IGMApiSequence.RET_ON_ISSUE]) {
       const ret_onissue = checkOnIssue(data[IGMApiSequence.RET_ON_ISSUE])
 
@@ -393,9 +402,6 @@ export const IGMvalidateLogs = (data: any) => {
       if (!_.isEmpty(lsp_issue_status)) {
         logReport = { ...logReport, [IGMApiSequence.LSP_ISSUE_STATUS]: lsp_issue_status }
       }
-
-      logger.info(logReport, 'Report Generated Successfully!!')
-      return logReport
     }
 
     if (data[IGMApiSequence.LSP_ON_ISSUE_STATUS]) {
@@ -405,6 +411,8 @@ export const IGMvalidateLogs = (data: any) => {
         logReport = { ...logReport, [IGMApiSequence.LSP_ON_ISSUE_STATUS]: lsp_on_issue }
       }
     }
+    logger.info(logReport, 'Report Generated Successfully!!')
+    return logReport
   } catch (error: any) {
     logger.error(error.message)
     return error.message

@@ -16,12 +16,14 @@ export function checkOrganizationNameandDomain({
   contextSubscriberId,
   contextDomain,
   issueReportObj,
+  IdType,
 }: {
   endpoint: string
   actionPayload: any
   contextSubscriberId: string
   contextDomain: string
   issueReportObj: any
+  IdType: string
 }) {
   try {
     logger.info(`Checking organization's name for /${endpoint}_close`)
@@ -35,7 +37,7 @@ export function checkOrganizationNameandDomain({
       let org_id = org_name.split('::')
 
       if (!_.isEqual(contextSubscriberId, org_id[0])) {
-        issueReportObj.org_name = `Organization's Name for /${endpoint} api in message/issue/issue_actions/${actionType}/[${index}] mismatched with BAP ID`
+        issueReportObj.org_name = `Organization's Name for /${endpoint} api in message/issue/issue_actions/${actionType}/[${index}] mismatched with ${IdType} ID`
       }
 
       if (!_.lte(contextDomain, org_id[1])) {

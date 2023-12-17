@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { getValue } from '../../shared/dao'
-import { checkContext } from '../../utils/index'
-import constants from '../../constants/index'
+import { checkContext, isObjectEmpty } from '../../utils/index'
+import constants, { IGMApiSequence } from '../../constants/index'
 import { validateSchema } from '../../utils/index'
 import { logger } from '../../shared/logger'
 import getLspIssueMessage from '../messages_constants'
@@ -11,6 +11,10 @@ const checkLspOnIssueStatus = (data: any) => {
   const issueObj: any = {}
 
   const message = getLspIssueMessage(constants.RET_ONISSUE_STATUS)
+
+  if (!data || isObjectEmpty(data)) {
+    return { [IGMApiSequence.LSP_ON_ISSUE_STATUS]: 'Json cannot be empty' }
+  }
 
   try {
     const issue: any = data

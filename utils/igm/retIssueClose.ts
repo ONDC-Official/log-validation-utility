@@ -1,13 +1,16 @@
 import _ from 'lodash'
 import { setValue } from 'shared/dao'
-import { checkContext } from '../../utils/index'
-import constants from '../../constants/index'
+import { checkContext, isObjectEmpty } from '../../utils/index'
+import constants, { IGMApiSequence } from '../../constants/index'
 import { validateSchema } from '../../utils/index'
 import { logger } from '../../shared/logger'
 const checkIssueClose = (data: any) => {
   const issueObj: any = {}
   let res: any = []
 
+  if (!data || isObjectEmpty(data)) {
+    return { [IGMApiSequence.RET_ISSUE]: 'Json cannot be empty' }
+  }
   try {
     const issue: any = data
 

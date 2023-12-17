@@ -55,6 +55,7 @@ export const ApiSequence = {
 
 export const IGMApiSequence = {
   RET_ISSUE: 'ret_issue',
+  RET_ISSUE_CLOSE: 'ret_issue',
   RET_ON_ISSUE: 'ret_on_issue',
   RET_ISSUE_STATUS: 'ret_issue_status',
   RET_ON_ISSUE_STATUS: 'ret_on_issue_status',

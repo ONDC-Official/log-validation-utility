@@ -63,12 +63,12 @@ const checkIssueClose = (data: any) => {
 
       //   issueObj.respTime = `Time of Creaton and time of updation for /${constants.RET_ISSUE}_close api should be same`
       // }
-       compareContextTimeStampAndUpdatedAt({
-         endpoint: `${constants.RET_ISSUE}_close`,
-         contextTimeStamp: issue.context.timestamp,
-         issue_updated_at: issue.message.issue.updated_at,
-         issueReportObj: issueObj,
-       })
+      compareContextTimeStampAndUpdatedAt({
+        endpoint: `${constants.RET_ISSUE}_close`,
+        contextTimeStamp: issue.context.timestamp,
+        issue_updated_at: issue.message.issue.updated_at,
+        issueReportObj: issueObj,
+      })
 
       setValue('igmCreatedAt', issue.message.issue.created_at)
     } catch (error: any) {

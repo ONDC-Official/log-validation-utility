@@ -333,10 +333,10 @@ export const IGMvalidateLogs = (data: any) => {
     }
 
     if (data[IGMApiSequence.RET_ISSUE_CLOSE]) {
-      const ret_issue = checkIssueClose(data[IGMApiSequence.RET_ISSUE_CLOSE])
+      const ret_issue_close = checkIssueClose(data[IGMApiSequence.RET_ISSUE_CLOSE])
 
-      if (!_.isEmpty(ret_issue)) {
-        logReport = { ...logReport, [IGMApiSequence.RET_ISSUE]: ret_issue }
+      if (!_.isEmpty(ret_issue_close)) {
+        logReport = { ...logReport, [`${IGMApiSequence.RET_ISSUE}_CLOSE`]: ret_issue_close }
       }
     }
 

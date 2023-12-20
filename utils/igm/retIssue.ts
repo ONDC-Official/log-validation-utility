@@ -100,6 +100,7 @@ const checkIssue = (data: any) => {
       contextSubscriberId: issue.context.bap_id,
       contextDomain: issue.context.domain,
       issueReportObj: issueObj,
+      IdType: 'BAP',
     })
 
     compareUpdatedAtAndContextTimeStamp({

@@ -531,6 +531,10 @@ const validate_schema_on_confirm_52110_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+const validate_schema_cancel_RET10_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancelSchema)
+  return formatted_error(error_list)
+}
 const validate_schema_cancel_RET11_for_json = (data: any) => {
   const error_list = validate_schema(data, cancelSchema)
   return formatted_error(error_list)
@@ -539,13 +543,29 @@ const validate_schema_on_cancel_RET11_for_json = (data: any) => {
   const error_list = validate_schema(data, onCancelSchema)
   return formatted_error(error_list)
 }
+const validate_schema_on_cancel_RET10_for_json = (data: any) => {
+  const error_list = validate_schema(data, onCancelSchema)
+  return formatted_error(error_list)
+}
 
+const validate_schema_track_RET10_for_json = (data: any) => {
+  const error_list = validate_schema(data, trackSchema)
+  return formatted_error(error_list)
+}
 const validate_schema_track_RET11_for_json = (data: any) => {
   const error_list = validate_schema(data, trackSchema)
   return formatted_error(error_list)
 }
+const validate_schema_on_track_RET10_for_json = (data: any) => {
+  const error_list = validate_schema(data, onTrackSchema)
+  return formatted_error(error_list)
+}
 const validate_schema_on_track_RET11_for_json = (data: any) => {
   const error_list = validate_schema(data, onTrackSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_status_RET10_for_json = (data: any) => {
+  const error_list = validate_schema(data, statusSchema)
   return formatted_error(error_list)
 }
 const validate_schema_status_RET11_for_json = (data: any) => {
@@ -553,6 +573,10 @@ const validate_schema_status_RET11_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 const validate_schema_on_status_RET11_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_status_RET10_for_json = (data: any) => {
   const error_list = validate_schema(data, onStatusSchema)
   return formatted_error(error_list)
 }
@@ -698,4 +722,10 @@ export default {
   validate_schema_confirm_52110_for_json,
   validate_schema_on_confirm_52110_for_json,
   validate_schema_on_search_inc_52110_for_json,
+  validate_schema_on_status_RET10_for_json,
+  validate_schema_status_RET10_for_json,
+  validate_schema_cancel_RET10_for_json,
+  validate_schema_on_cancel_RET10_for_json,
+  validate_schema_track_RET10_for_json,
+  validate_schema_on_track_RET10_for_json,
 }

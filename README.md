@@ -335,6 +335,7 @@ curl --location 'http://localhost:3006/api/validate/igm' \
     "version": "1.2.0",
     "payload": {
         "ret_issue": {},
+        "ret_issue_close":{},
         "ret_on_issue": {},
         "ret_issue_status": {},
         "ret_on_issue_status": {},

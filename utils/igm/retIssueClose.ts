@@ -1,13 +1,17 @@
 import _ from 'lodash'
-import { setValue } from 'shared/dao'
-import { checkContext } from '../../utils/index'
-import constants from '../../constants/index'
+import { setValue } from '../../shared/dao'
+import { checkContext, isObjectEmpty } from '../../utils/index'
+import constants, { IGMApiSequence } from '../../constants/index'
 import { validateSchema } from '../../utils/index'
 import { logger } from '../../shared/logger'
+import { compareContextTimeStampAndUpdatedAt } from './igmHelpers'
 const checkIssueClose = (data: any) => {
   const issueObj: any = {}
   let res: any = []
 
+  if (!data || isObjectEmpty(data)) {
+    return { [IGMApiSequence.RET_ISSUE]: 'Json cannot be empty' }
+  }
   try {
     const issue: any = data
 
@@ -52,13 +56,19 @@ const checkIssueClose = (data: any) => {
 
     try {
       logger.info(`Checking time of creation and updation for /${constants.RET_ISSUE}_close`)
-      if (!_.isEqual(issue.message.issue.created_at, issue.message.issue.updated_at)) {
-        if (!_.lte(issue.context.timestamp, issue.message.issue.created_at)) {
-          issueObj.updatedTime = `Time of Creation for /${constants.RET_ISSUE}_close api should be less than context timestamp`
-        }
+      // if (!_.isEqual(issue.message.issue.created_at, issue.message.issue.updated_at)) {
+      //   if (!_.lte(issue.context.timestamp, issue.message.issue.created_at)) {
+      //     issueObj.updatedTime = `Time of Creation for /${constants.RET_ISSUE}_close api should be less than context timestamp`
+      //   }
 
-        issueObj.respTime = `Time of Creation and time of updation for /${constants.RET_ISSUE}_close api should be same`
-      }
+      //   issueObj.respTime = `Time of Creaton and time of updation for /${constants.RET_ISSUE}_close api should be same`
+      // }
+      compareContextTimeStampAndUpdatedAt({
+        endpoint: `${constants.RET_ISSUE}_close`,
+        contextTimeStamp: issue.context.timestamp,
+        issue_updated_at: issue.message.issue.updated_at,
+        issueReportObj: issueObj,
+      })
 
       setValue('igmCreatedAt', issue.message.issue.created_at)
     } catch (error: any) {

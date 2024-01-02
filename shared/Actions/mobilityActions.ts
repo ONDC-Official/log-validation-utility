@@ -3,6 +3,7 @@ import { dropDB } from '../dao'
 import { logger } from '../logger'
 import { mobilitySequence } from '../../constants'
 import { search } from '../../utils/mobility/search'
+import { checkCancel } from '../../utils/mobility/cancel'
 import { checkOnSearch } from '../../utils/mobility/onSearch'
 import { checkSelect } from '../../utils/mobility/select'
 import { checkOnSelect } from '../../utils/mobility/onSelect'
@@ -14,8 +15,9 @@ import { checkUpdate } from '../../utils/mobility/update'
 import { checkOnUpdate } from '../../utils/mobility/onUpdate'
 import { checkStatus } from '../../utils/mobility/status'
 import { checkOnStatus } from '../../utils/mobility/onStatus'
+import { checkOnCancel } from '../../utils/mobility/onCancel'
 
-export function validateLogsForMobility(data: any, domain: string) {
+export function validateLogsForMobility(data: any, domain: string, flow: string) {
   const msgIdSet = new Set()
   let logReport: any = {}
   try {
@@ -70,14 +72,14 @@ export function validateLogsForMobility(data: any, domain: string) {
     }
 
     if (data[mobilitySequence.CONFIRM]) {
-      const searchResp = checkConfirm(data[mobilitySequence.CONFIRM])
+      const searchResp = checkConfirm(data[mobilitySequence.CONFIRM], msgIdSet)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [mobilitySequence.CONFIRM]: searchResp }
       }
     }
 
     if (data[mobilitySequence.ON_CONFIRM]) {
-      const searchResp = checkOnConfirm(data[mobilitySequence.ON_CONFIRM])
+      const searchResp = checkOnConfirm(data[mobilitySequence.ON_CONFIRM], msgIdSet)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [mobilitySequence.ON_CONFIRM]: searchResp }
       }
@@ -105,25 +107,25 @@ export function validateLogsForMobility(data: any, domain: string) {
     }
 
     if (data[mobilitySequence.ON_STATUS]) {
-      const searchResp = checkOnStatus(data[mobilitySequence.ON_STATUS])
+      const searchResp = checkOnStatus(data[mobilitySequence.ON_STATUS], msgIdSet)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [mobilitySequence.ON_STATUS]: searchResp }
       }
     }
 
-    // if(data[mobilitySequence.CANCEL]) {
-    //   const searchResp = checkCancel(data[mobilitySequence.CANCEL], msgIdSet)
-    //   if (!_.isEmpty(searchResp)) {
-    //     logReport = { ...logReport, [mobilitySequence.CANCEL]: searchResp }
-    //   }
-    // }
+    if (data[mobilitySequence.CANCEL]) {
+      const searchResp = checkCancel(data[mobilitySequence.CANCEL], msgIdSet)
+      if (!_.isEmpty(searchResp)) {
+        logReport = { ...logReport, [mobilitySequence.CANCEL]: searchResp }
+      }
+    }
 
-    // if(data[mobilitySequence.ON_CANCEL]) {
-    //   const searchResp = checkOnCancel(data[mobilitySequence.ON_CANCEL], msgIdSet)
-    //   if (!_.isEmpty(searchResp)) {
-    //     logReport = { ...logReport, [mobilitySequence.ON_CANCEL]: searchResp }
-    //   }
-    // }
+    if (data[mobilitySequence.ON_CANCEL]) {
+      const searchResp = checkOnCancel(data[mobilitySequence.ON_CANCEL], msgIdSet, flow)
+      if (!_.isEmpty(searchResp)) {
+        logReport = { ...logReport, [mobilitySequence.ON_CANCEL]: searchResp }
+      }
+    }
 
     logger.info(logReport, 'Report Generated Successfully!!')
     return logReport

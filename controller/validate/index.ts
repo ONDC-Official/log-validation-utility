@@ -119,12 +119,12 @@ const controller = {
 
   validateMobility: async (req: Request, res: Response): Promise<void> => {
     try {
-      const { domain, version, payload } = req.body
+      const { domain, version, payload, flow } = req.body
       let response
 
       switch (version) {
         case '2.0.0':
-          response = validateLogsForMobility(payload, domain)
+          response = validateLogsForMobility(payload, domain, flow)
           break
         default:
           logger.warn('Invalid Version!! ')

@@ -356,6 +356,10 @@ const FIS12Validator = {
   validate_schema_confirm_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/confirm.yaml'),
   validate_schema_on_confirm_TRV10_for_json: (data: any) =>
     validate_schema_for_json(data, 'schema/FIS/on_confirm.yaml'),
+  validate_schema_update_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/update.yaml'),
+  validate_schema_status_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/status.yaml'),
+  validate_schema_on_status_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_status.yaml'),
+  validate_schema_on_cancel_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_cancel.yaml'),
 }
 
 export default {

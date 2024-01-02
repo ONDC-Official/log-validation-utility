@@ -44,6 +44,8 @@ export default Object.freeze({
   MOB_ONSELECT: 'on_select',
   MOB_CONFIRM: 'confirm',
   MOB_ONCONFIRM: 'on_confirm',
+  MOB_CANCEL: 'cancel',
+  MOB_ONCANCEL: 'on_cancel',
   MOB_INIT: 'init',
   MOB_ONINIT: 'on_init',
   MOB_STATUS: 'status',
@@ -143,7 +145,7 @@ export const formHeadingsFis: any = {
   },
   PERSONAL_LOAN: {
     on_search: ['Personal Information'],
-    on_select: ['Buyer receives loan amount form'],
+    on_select: ['Set Loan Amount', 'Know your Customer'],
     on_init: ['Loan Agreement details form'],
   },
 }
@@ -153,6 +155,13 @@ export const fisFlows = {
   PERSONAL: 'PERSONAL_LOAN',
   PRE_INVOICE: 'PERSONAL_LOAN',
   PRE_PERSONAL: 'INVOICE_BASED_LOAN',
+}
+
+export const onDemandFlows = {
+  HAPPY_FLOW: 'HAPPY_FLOW',
+  RIDER_CANCEL: 'RIDER_CANCEL',
+  DRIVER_CANCEL: 'DRIVER_CANCEL',
+  PRICE_UPDATE: 'PRICE_UPDATE',
 }
 
 export const IGMApiSequence = {

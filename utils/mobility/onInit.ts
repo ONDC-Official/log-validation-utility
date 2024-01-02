@@ -1,12 +1,19 @@
-import _ from 'lodash'
+// import _ from 'lodash'
 import constants, { mobilitySequence } from '../../constants'
 import { logger } from '../../shared/logger'
-import { validateSchema, isObjectEmpty, checkMobilityContext, timeDiff as timeDifference, checkBppIdOrBapId } from '../'
+import { validateSchema, isObjectEmpty } from '../'
 import { getValue, setValue } from '../../shared/dao'
+import { validateContext, validatePaymentParams, validateQuote, validateStops } from './mobilityChecks'
+import { validatePaymentTags, validateRouteInfoTags } from './tags'
+
+// const cancellationTermsState = new Map()
+
+const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
+const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 
 export const checkOnInit = (data: any, msgIdSet: any) => {
   try {
-    const onInitObj: any = {}
+    const errorObj: any = {}
     if (!data || isObjectEmpty(data)) {
       return { [mobilitySequence.ON_INIT]: 'Json cannot be empty' }
     }
@@ -17,107 +24,241 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     }
 
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MOB_ONINIT, data)
-    const searchContext: any = getValue(`${mobilitySequence.SEARCH}_context`)
-    const contextRes: any = checkMobilityContext(context, constants.MOB_ONINIT)
-    // const parentItemIdSet: any = getValue(`parentItemIdSet`)
-
-    if (!context.bap_id) {
-      onInitObj['bap_id'] = 'context/bap_id is required'
-    } else {
-      const checkBap = checkBppIdOrBapId(context.bap_id)
-      if (checkBap) Object.assign(onInitObj, { bap_id: 'context/bap_id should not be a url' })
-    }
-
-    if (!context.bpp_id) {
-      onInitObj['bpp_id'] = 'context/bpp_id is required'
-    } else {
-      const checkBpp = checkBppIdOrBapId(context.bpp_id)
-      console.log('checkBppcheckBppcheckBppcheckBppcheckBppcheckBpp', checkBpp)
-      if (checkBpp) Object.assign(onInitObj, { bpp_id: 'context/bpp_id should not be a url' })
-    }
+    const contextRes: any = validateContext(context, msgIdSet, constants.MOB_INIT, constants.MOB_ONINIT)
+    setValue(`${mobilitySequence.ON_INIT}_message`, message)
 
     if (schemaValidation !== 'error') {
-      Object.assign(onInitObj, schemaValidation)
+      Object.assign(errorObj, schemaValidation)
     }
 
     if (!contextRes?.valid) {
-      Object.assign(onInitObj, contextRes.ERRORS)
+      Object.assign(errorObj, contextRes.ERRORS)
     }
 
-    setValue(`${mobilitySequence.ON_INIT}`, data)
-    msgIdSet.add(context.message_id)
+    const on_init = message.order
+    const itemIDS: any = getValue('ItmIDS')
+    const itemIdArray: any[] = []
+    const storedFull: any = getValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`)
+    const fulfillmentIdsSet = new Set()
 
-    logger.info(`Checking context for /${constants.MOB_ONINIT} API`) //checking context
+    let newItemIDSValue: any[]
+
+    if (itemIDS && itemIDS.length > 0) {
+      newItemIDSValue = itemIDS
+    } else {
+      on_init.items.map((item: { id: string }) => {
+        itemIdArray.push(item.id)
+      })
+      newItemIDSValue = itemIdArray
+      console.log('test')
+    }
+
+    setValue('ItmIDS', newItemIDSValue)
+
     try {
-      const res: any = checkMobilityContext(context, constants.MOB_ONINIT)
-      if (!res.valid) {
-        Object.assign(onInitObj, res.ERRORS)
+      logger.info(`Checking provider Id in /${constants.MOB_ONSEARCH} and /${constants.MOB_ONINIT}`)
+      if (!on_init.provider || on_init.provider.id != getValue('providerId')) {
+        errorObj.prvdrId = `Provider Id mismatches in /${constants.MOB_ONSEARCH} and /${constants.MOB_ONINIT}`
       }
     } catch (error: any) {
-      logger.error(`!!Some error occurred while checking /${constants.MOB_ONINIT} context, ${error.stack}`)
+      logger.error(
+        `!!Error while comparing provider Id in /${constants.MOB_ONSEARCH} and /${constants.MOB_ONINIT}, ${error.stack}`,
+      )
     }
 
     try {
-      logger.info(`Comparing city of ${constants.MOB_SEARCH} & ${constants.MOB_ONINIT}`)
-      if (!_.isEqual(searchContext.location.city, context.location.city)) {
-        onInitObj.city = `City code mismatch in ${constants.MOB_SEARCH} & ${constants.MOB_ONINIT}`
-      }
-    } catch (error: any) {
-      logger.info(`Error while comparing city in ${constants.MOB_SEARCH} & ${constants.MOB_ONINIT}, ${error.stack}`)
-    }
+      logger.info(`Validating fulfillments object for /${constants.MOB_ONSELECT}`)
+      on_init.fulfillments.forEach((fulfillment: any, index: number) => {
+        const fulfillmentKey = `fulfillments[${index}]`
 
-    try {
-      logger.info(`Comparing country of ${constants.MOB_SEARCH} & ${constants.MOB_ONINIT}`)
-      if (!_.isEqual(searchContext.location.country, context.location.country)) {
-        onInitObj.Country = `country code mismatch in ${constants.MOB_SEARCH} & ${constants.MOB_ONINIT}`
-      }
-    } catch (error: any) {
-      logger.info(`Error while comparing country in ${constants.MOB_SEARCH} & ${constants.MOB_ONINIT}, ${error.stack}`)
-    }
+        console.log('storedFull--1', storedFull, fulfillment.id)
 
-    try {
-      logger.info(`Comparing timestamp of ${constants.MOB_INIT} & ${constants.MOB_ONINIT}`)
-      const tmpstmp = getValue('tmpstmp')
-      if (_.gte(tmpstmp, context.timestamp)) {
-        onInitObj.tmpstmp = `Timestamp for ${constants.MOB_INIT} api cannot be greater than or equal to ${constants.MOB_ONINIT} api`
-      } else {
-        const timeDiff = timeDifference(context.timestamp, tmpstmp)
-        logger.info(timeDiff)
-        if (timeDiff > 5000) {
-          onInitObj.tmpstmp = `context/timestamp difference between /${constants.MOB_ONINIT} and /${constants.MOB_INIT} should be smaller than 5 sec`
+        if (!storedFull.includes(fulfillment.id)) {
+          errorObj[
+            `${fulfillmentKey}.id`
+          ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+        } else {
+          fulfillmentIdsSet.add(fulfillment.id)
         }
-      }
 
-      setValue('tmpstmp', context.timestamp)
+        if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
+          errorObj[
+            `${fulfillmentKey}.vehicleCategory`
+          ] = `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
+        }
+
+        if (fulfillment.type !== 'DELIVERY') {
+          errorObj[
+            `${fulfillmentKey}.type`
+          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.MOB_ONSELECT}`
+        }
+
+        // Check stops for START and END, or time range with valid timestamp and GPS
+        const otp = false
+        const cancel = false
+        validateStops(fulfillment?.stops, index, otp, cancel)
+
+        // Validate route info tags
+        const tagsValidation = validateRouteInfoTags(fulfillment.tags)
+        if (!tagsValidation.isValid) {
+          Object.assign(errorObj, { tags: tagsValidation.errors })
+        }
+      })
     } catch (error: any) {
-      logger.error(
-        `!!Error while comparing timestamp for /${constants.MOB_INIT} and /${constants.MOB_ONINIT} api, ${error.stack}`,
-      )
+      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.MOB_ONINIT},  ${error.message}`)
+      return { error: error.message }
     }
 
     try {
-      logger.info(`Comparing transaction Ids of /${constants.MOB_SELECT} & /${constants.MOB_ONINIT}`)
-      if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
-        onInitObj.txnId = `Transaction Id should be same from /${constants.MOB_SELECT} onwards`
-      }
+      on_init.items.forEach((item: any, index: number) => {
+        if (!newItemIDSValue.includes(item.id)) {
+          const key = `item[${index}].item_id`
+          errorObj[
+            key
+          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.MOB_ONINIT}`
+        }
+
+        if (!item.descriptor || !item.descriptor.code) {
+          const key = `item${index}_descriptor`
+          errorObj[key] = `Descriptor is missing in items[${index}]`
+        } else {
+          if (!VALID_DESCRIPTOR_CODES.includes(item.descriptor.code)) {
+            const key = `item${index}_descriptor`
+            errorObj[
+              key
+            ] = `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
+          }
+        }
+
+        const price = item.price
+        if (!price || !price.currency || !price.value) {
+          const key = `item${index}_price`
+          errorObj[key] = `Price is incomplete in /items[${index}]`
+        }
+
+        item.fulfillment_ids.forEach((fulfillmentId: string) => {
+          if (!fulfillmentIdsSet.has(fulfillmentId)) {
+            errorObj[
+              `invalidFulfillmentId_${index}`
+            ] = `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.MOB_ONINIT} is not valid`
+          }
+        })
+
+        // Validate item tags
+        const tagsValidation = validateRouteInfoTags(item.tags)
+        if (!tagsValidation.isValid) {
+          Object.assign(errorObj, { tags: tagsValidation.errors })
+        }
+      })
     } catch (error: any) {
-      logger.error(
-        `!!Error while comparing transaction ids for /${constants.MOB_SELECT} & /${constants.MOB_ONINIT} api, ${error.stack}`,
-      )
+      logger.error(`!!Error occcurred while checking items info in /${constants.MOB_ONINIT},  ${error.message}`)
+      return { error: error.message }
     }
 
     try {
-      logger.info(`Comparing Message Ids of /${constants.MOB_INIT} and /${constants.MOB_ONINIT}`)
-      if (!_.isEqual(getValue('msgId'), context.message_id)) {
-        onInitObj.msgId = `Message Ids for /${constants.MOB_INIT} and /${constants.MOB_ONINIT} api should be same`
-      }
+      logger.info(`Checking cancellation terms in /${constants.MOB_ONINIT}`)
+      const cancellationTerms = on_init.cancellation_terms
 
-      msgIdSet.add(context.message_id)
+      if (cancellationTerms && cancellationTerms.length > 0) {
+        for (let i = 0; i < cancellationTerms.length; i++) {
+          const cancellationTerm = cancellationTerms[i]
+
+          if (
+            cancellationTerm.fulfillment_state &&
+            cancellationTerm.fulfillment_state.descriptor &&
+            cancellationTerm.fulfillment_state.descriptor.code &&
+            (!cancellationTerm.cancellation_fee ||
+              !(
+                (cancellationTerm.cancellation_fee.percentage && !cancellationTerm.cancellation_fee.amount) ||
+                (!cancellationTerm.cancellation_fee.percentage && cancellationTerm.cancellation_fee.amount)
+              ))
+          ) {
+            errorObj.cancellationFee = `Either percentage or amount.currency & amount.value should be present, but not both, for Cancellation Term[${i}] when fulfillment_state is present`
+          }
+
+          // const descriptorCode = cancellationTerm.fulfillment_state.descriptor.code
+          // const storedPercentage = cancellationTermsState.get(descriptorCode)
+
+          // if (storedPercentage === undefined) {
+          //   cancellationTermsState.set(descriptorCode, cancellationTerm.cancellation_fee.percentage)
+          // } else if (storedPercentage !== cancellationTerm.cancellation_fee.percentage) {
+          //   errorObj.cancellationFee = `Cancellation terms percentage for ${descriptorCode} has changed`
+          // }
+        }
+      } else {
+        errorObj.cancellationTerms = `Cancellation Terms are required in /${constants.MOB_ONINIT}`
+      }
     } catch (error: any) {
-      logger.error(`!!Error while checking message id for /${constants.MOB_INIT}, ${error.stack}`)
+      logger.error(`!!Error while checking cancellation terms in /${constants.MOB_ONINIT}, ${error.stack}`)
     }
 
-    return onInitObj
+    try {
+      logger.info(`Checking payments in /${constants.MOB_ONINIT}`)
+      on_init?.payments?.forEach((arr: any, i: number) => {
+        if (!arr?.collected_by) {
+          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.MOB_ONSELECT}`
+        } else {
+          const srchCollectBy = getValue(`collected_by`)
+          if (srchCollectBy != arr?.collected_by)
+            errorObj[
+              `payemnts[${i}]_collected_by`
+            ] = `payments.collected_by value sent in ${constants.MOB_ONSELECT} should be ${srchCollectBy} as sent in ${constants.MOB_ONINIT}`
+        }
+
+        const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
+        if (!arr?.type || !validTypes.includes(arr.type)) {
+          errorObj[`payments[${i}]_type`] = `payments.params.type must be present in ${
+            constants.MOB_ONINIT
+          } & its value must be one of: ${validTypes.join(', ')}`
+        }
+
+        const validStatus = ['NOT-PAID', 'PAID']
+        if (!arr?.status || !validStatus.includes(arr.status)) {
+          errorObj[`payments[${i}]_status`] = `payments.status must be present in ${
+            constants.MOB_ONINIT
+          } & its value must be one of: ${validStatus.join(', ')}`
+        }
+
+        const params = arr.params
+        const bankCode: string | null = getValue('bank_code')
+        const bankAccountNumber: string | null = getValue('bank_account_number')
+        const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
+        // Validate bank_code
+        validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.MOB_ONINIT)
+
+        // Validate bank_account_number
+        validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.MOB_ONINIT)
+
+        // Validate virtual_payment_address
+        validatePaymentParams(
+          params,
+          virtualPaymentAddress,
+          'virtual_payment_address',
+          errorObj,
+          i,
+          constants.MOB_ONINIT,
+        )
+
+        // Validate payment tags
+        const tagsValidation = validatePaymentTags(arr.tags)
+        if (!tagsValidation.isValid) {
+          Object.assign(errorObj, { tags: tagsValidation.errors })
+        }
+      })
+    } catch (error: any) {
+      logger.error(`!!Errors while checking payments in /${constants.MOB_ONINIT}, ${error.stack}`)
+    }
+
+    try {
+      logger.info(`Checking quote details in /${constants.MOB_ONINIT}`)
+      const quoteErrors = validateQuote(on_init?.quote, constants.MOB_ONINIT)
+      Object.assign(errorObj, quoteErrors)
+    } catch (error: any) {
+      logger.error(`!!Error occcurred while checking Quote in /${constants.MOB_ONINIT},  ${error.message}`)
+      return { error: error.message }
+    }
+
+    return errorObj
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.MOB_ONINIT} API`, err)
     return { error: err.message }

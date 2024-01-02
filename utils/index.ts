@@ -67,7 +67,17 @@ export const checkContext = (
 }
 
 export const checkFISContext = (
-  data: { transaction_id: string; message_id: string; action: string; ttl: string; timestamp: string },
+  data: {
+    transaction_id: string
+    message_id: string
+    action: string
+    ttl: string
+    timestamp: string
+    bppUri: string
+    bppId: string
+    bapId: string
+    bapUri: string
+  },
   path: any,
 ) => {
   if (!data) return
@@ -82,9 +92,12 @@ export const checkFISContext = (
     errObj.action_err = `context.action should be ${path}`
   }
 
-  if (data.ttl && data.ttl != constants.FIS_CONTEXT_TTL) {
-    {
-      errObj.ttl_err = `ttl = ${constants.FIS_CONTEXT_TTL} as per the API Contract`
+  if (!data.ttl) {
+    errObj.ttl_err = 'ttl is required in the context'
+  } else {
+    const ttlRegex = /^PT(\d+M|\d+H\d+M|\d+H|\d+S)$/
+    if (!ttlRegex.test(data.ttl)) {
+      errObj.ttl_err = 'Invalid TTL format. Should be in the format PT10M.'
     }
   }
 
@@ -121,9 +134,9 @@ export const checkMobilityContext = (
     errObj.action_err = `context.action should be ${path}`
   }
 
-  if (data.ttl && data.ttl != constants.FIS_CONTEXT_TTL) {
+  if (!data.ttl) {
     {
-      errObj.ttl_err = `ttl = ${constants.FIS_CONTEXT_TTL} as per the API Contract`
+      errObj.ttl_err = `ttl should be present in context`
     }
   }
 
@@ -399,8 +412,21 @@ const replaceValueType = (key: any, value: any): number => {
   else return value
 }
 
-export const checkBppIdOrBapId = (input: string) => {
-  return input.includes('https://') || input.includes('www') || input.includes('https:') || input.includes('http')
+export const checkBppIdOrBapId = (input: string, type?: string) => {
+  try {
+    console.log('input', input)
+    if (!input) {
+      console.log('input', input)
+
+      return `${type} Id is not present`
+    }
+
+    if (input?.includes('https://') || input.includes('www') || input.includes('https:') || input.includes('http'))
+      return `context/${type}_id should not be a url`
+  } catch (e) {
+    console.log('e', e)
+    return e
+  }
 }
 
 export function checkServiceabilityType(tags: any[]) {
@@ -611,7 +637,46 @@ export function validateStatusOrderAndTimestamp(set: any) {
   }
 }
 
+export const isValidEmail = (value: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(value)
+}
+
+export const isValidPhoneNumber = (value: string): boolean => {
+  const phoneRegex = /^(\d{10}|\d{11})$/
+  const val = value?.replace(/\s+/g, ' ').trim()
+  return phoneRegex.test(val)
+}
+
 export const isValidUrl = (url: string) => {
-  const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w.-]*)*\/?$/
+  const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(:[0-9]+)?([/\w.-]*)*\/?$/
   return urlRegex.test(url)
+}
+
+export const checkIdAndUri = (id: string, uri: string, type: string) => {
+  try {
+    const errors: string[] = []
+
+    if (!id) {
+      errors.push(`${type}_id is not present`)
+    }
+
+    if (id && uri) {
+      const idDomain = id.split('.')[0]
+      const uriDomain = new URL(uri).hostname.split('.')[0]
+
+      if (idDomain !== uriDomain) {
+        errors.push(`${type}_id (${idDomain}) should be the domain part of ${type}_uri (${uriDomain})`)
+      }
+    }
+
+    if (id && (id.includes('https://') || id.includes('www') || id.includes('https:') || id.includes('http'))) {
+      errors.push(`context/${type}_id should not be a URL`)
+    }
+
+    return errors.length > 0 ? errors.join(', ') : null
+  } catch (e: any) {
+    console.error('Error:', e)
+    return e.message || 'An error occurred during validation'
+  }
 }

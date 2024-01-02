@@ -48,20 +48,18 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
 
     setValue('itemIds', newItemIDSValue)
 
-    // if (!('id' in confirm)) {
-    //   errorObj['order'] = `id should be sent in /${constants.MOB_CONFIRM}`
-    // } else {
-    //   setValue(`orderId`, confirm.id)
-    // }
+    if (Object.prototype.hasOwnProperty.call(confirm, 'id')) {
+      errorObj[`order`] = `/message/order/id is not part of /${constants.MOB_CONFIRM} call`
+    }
 
     try {
-      logger.info(`Comparing provider object in /${constants.MOB_ONSELECT} and /${constants.MOB_CONFIRM}`)
+      logger.info(`Comparing provider object in /${constants.MOB_ONINIT} and /${constants.MOB_CONFIRM}`)
       if (getValue('providerId') != confirm.provider['id']) {
-        errorObj.prvdId = `Provider Id mismatches in /${constants.MOB_ONSELECT} and /${constants.MOB_CONFIRM}`
+        errorObj.prvdId = `Provider Id mismatches in /${constants.MOB_ONINIT} and /${constants.MOB_CONFIRM}`
       }
     } catch (error: any) {
       logger.error(
-        `!!Error while checking provider object in /${constants.MOB_ONSELECT} and /${constants.MOB_CONFIRM}, ${error.stack}`,
+        `!!Error while checking provider object in /${constants.MOB_ONINIT} and /${constants.MOB_CONFIRM}, ${error.stack}`,
       )
     }
 
@@ -76,20 +74,20 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         }
       })
     } catch (error: any) {
-      logger.error(`!!Error while comparing Item Id in /${constants.MOB_ONSELECT} and /${constants.MOB_CONFIRM}`)
+      logger.error(`!!Error while comparing Item Id in /${constants.MOB_ONINIT} and /${constants.MOB_CONFIRM}`)
     }
 
     try {
       logger.info(`Checking payments in /${constants.MOB_CONFIRM}`)
       confirm?.payments?.forEach((arr: any, i: number) => {
         if (!arr?.collected_by) {
-          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.MOB_ONSELECT}`
+          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.MOB_ONINIT}`
         } else {
           const srchCollectBy = getValue(`collected_by`)
           if (srchCollectBy != arr?.collected_by)
             errorObj[
               `payemnts[${i}]_collected_by`
-            ] = `payments.collected_by value sent in ${constants.MOB_ONSELECT} should be ${srchCollectBy} as sent in ${constants.MOB_CONFIRM}`
+            ] = `payments.collected_by value sent in ${constants.MOB_ONINIT} should be ${srchCollectBy} as sent in ${constants.MOB_CONFIRM}`
         }
 
         const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
@@ -151,7 +149,9 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         }
 
         if (!VALID_VEHICLE_CATEGORIES.includes(full.vehicle.category)) {
-          errorObj[`fulfillment_${index}_vehicleCategory`] = `Invalid vehicle category for fulfillment ${index}`
+          errorObj[
+            `fulfillment_${index}_vehicleCategory`
+          ] = `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
         }
 
         if (!Object.prototype.hasOwnProperty.call(full.customer?.person, 'name')) {
@@ -179,7 +179,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         if (full.type !== 'DELIVERY') {
           errorObj[
             `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.MOB_ONSELECT}`
+          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.MOB_ONINIT}`
         }
 
         // Check stops for START and END, or time range with valid timestamp and GPS

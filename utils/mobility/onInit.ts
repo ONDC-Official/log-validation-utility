@@ -67,18 +67,14 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     }
 
     try {
-      logger.info(`Validating fulfillments object for /${constants.MOB_ONSELECT}`)
+      logger.info(`Validating fulfillments object for /${constants.MOB_ONINIT}`)
       on_init.fulfillments.forEach((fulfillment: any, index: number) => {
         const fulfillmentKey = `fulfillments[${index}]`
-
-        console.log('storedFull--1', storedFull, fulfillment.id)
-
+        fulfillmentIdsSet.add(fulfillment.id)
         if (!storedFull.includes(fulfillment.id)) {
           errorObj[
             `${fulfillmentKey}.id`
           ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
-        } else {
-          fulfillmentIdsSet.add(fulfillment.id)
         }
 
         if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
@@ -90,7 +86,11 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         if (fulfillment.type !== 'DELIVERY') {
           errorObj[
             `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.MOB_ONSELECT}`
+          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.MOB_ONINIT}`
+        }
+
+        if (Object.prototype.hasOwnProperty.call(fulfillment, 'agent')) {
+          errorObj[`fulfillments${index}_agent`] = `/message/order/agent is not part of /${constants.MOB_ONINIT} call`
         }
 
         // Check stops for START and END, or time range with valid timestamp and GPS
@@ -196,13 +196,13 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       logger.info(`Checking payments in /${constants.MOB_ONINIT}`)
       on_init?.payments?.forEach((arr: any, i: number) => {
         if (!arr?.collected_by) {
-          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.MOB_ONSELECT}`
+          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.MOB_ONINIT}`
         } else {
           const srchCollectBy = getValue(`collected_by`)
           if (srchCollectBy != arr?.collected_by)
             errorObj[
               `payemnts[${i}]_collected_by`
-            ] = `payments.collected_by value sent in ${constants.MOB_ONSELECT} should be ${srchCollectBy} as sent in ${constants.MOB_ONINIT}`
+            ] = `payments.collected_by value sent in ${constants.MOB_ONINIT} should be ${srchCollectBy} as sent in ${constants.MOB_ONSELECT}`
         }
 
         const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']

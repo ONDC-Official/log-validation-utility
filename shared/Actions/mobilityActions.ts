@@ -26,7 +26,7 @@ export function validateLogsForMobility(data: any, domain: string, flow: string)
     logger.error('!!Error while removing LMDB', error)
   }
 
-  console.log('domain', domain)
+  console.log('domain', domain, flow)
 
   try {
     if (data[mobilitySequence.SEARCH]) {
@@ -113,17 +113,44 @@ export function validateLogsForMobility(data: any, domain: string, flow: string)
       }
     }
 
+    if (data[mobilitySequence.SOFT_CANCEL]) {
+      const searchResp = checkCancel(data[mobilitySequence.SOFT_CANCEL], msgIdSet, mobilitySequence.SOFT_CANCEL)
+      if (!_.isEmpty(searchResp)) {
+        logReport = { ...logReport, [mobilitySequence.SOFT_CANCEL]: searchResp }
+      }
+    }
+
+    if (data[mobilitySequence.SOFT_ON_CANCEL]) {
+      const searchResp = checkOnCancel(data[mobilitySequence.SOFT_ON_CANCEL], msgIdSet, mobilitySequence.SOFT_ON_CANCEL)
+      if (!_.isEmpty(searchResp)) {
+        logReport = { ...logReport, [mobilitySequence.SOFT_ON_CANCEL]: searchResp }
+      }
+    }
+
     if (data[mobilitySequence.CANCEL]) {
-      const searchResp = checkCancel(data[mobilitySequence.CANCEL], msgIdSet)
+      const searchResp = checkCancel(data[mobilitySequence.CANCEL], msgIdSet, mobilitySequence.CANCEL)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [mobilitySequence.CANCEL]: searchResp }
       }
     }
 
     if (data[mobilitySequence.ON_CANCEL]) {
-      const searchResp = checkOnCancel(data[mobilitySequence.ON_CANCEL], msgIdSet, flow)
+      const searchResp = checkOnCancel(data[mobilitySequence.ON_CANCEL], msgIdSet, mobilitySequence.ON_CANCEL)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [mobilitySequence.ON_CANCEL]: searchResp }
+      }
+    }
+
+    if (flow === 'RIDER_CANCEL') {
+      const cancelKeys = [
+        mobilitySequence.SOFT_CANCEL,
+        mobilitySequence.SOFT_ON_CANCEL,
+        mobilitySequence.CANCEL,
+        mobilitySequence.ON_CANCEL,
+      ]
+
+      if (!cancelKeys.some((key) => key in data)) {
+        logReport.error = 'RIDER_CANCEL flow calls are incomplete'
       }
     }
 

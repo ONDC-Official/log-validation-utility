@@ -16,6 +16,7 @@ const VALID_FULL_STATE = [
   'RIDE_ENROUTE_PICKUP',
   'RIDE_ARRIVED_PICKUP',
 ]
+const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
 
 export const checkOnConfirm = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
@@ -83,6 +84,56 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
       )
     }
 
+    console.log('on_confirm.items', on_confirm.items)
+
+    try {
+      on_confirm.items &&
+        on_confirm.items.forEach((item: any, index: number) => {
+          if (!newItemIDSValue.includes(item.id)) {
+            const key = `item[${index}].item_id`
+            errorObj[
+              key
+            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.MOB_ONCONFIRM}`
+          }
+
+          if (!item.descriptor || !item.descriptor.code) {
+            const key = `item${index}_descriptor`
+            errorObj[key] = `Descriptor is missing in items[${index}]`
+          } else {
+            if (!VALID_DESCRIPTOR_CODES.includes(item.descriptor.code)) {
+              const key = `item${index}_descriptor`
+              errorObj[
+                key
+              ] = `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
+            }
+          }
+
+          const price = item.price
+          if (!price || !price.currency || !price.value) {
+            const key = `item${index}_price`
+            errorObj[key] = `Price is incomplete in /items[${index}]`
+          }
+
+          item.fulfillment_ids &&
+            item.fulfillment_ids.forEach((fulfillmentId: string) => {
+              if (!fulfillmentIdsSet.has(fulfillmentId)) {
+                errorObj[
+                  `invalidFulfillmentId_${index}`
+                ] = `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.MOB_ONCONFIRM} is not valid`
+              }
+            })
+
+          // Validate item tags
+          const tagsValidation = validateRouteInfoTags(item.tags)
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { tags: tagsValidation.errors })
+          }
+        })
+    } catch (error: any) {
+      logger.error(`!!Error occcurred while checking items info in /${constants.MOB_ONCONFIRM},  ${error.message}`)
+      return { error: error.message }
+    }
+
     try {
       logger.info(`Validating fulfillments object for /${constants.MOB_ONCONFIRM}`)
       on_confirm.fulfillments.forEach((fulfillment: any, index: number) => {
@@ -97,7 +148,9 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
         }
 
         if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
-          errorObj[`${fulfillmentKey}.vehicleCategory`] = `Invalid vehicle category for fulfillment ${index}`
+          errorObj[
+            `${fulfillmentKey}.vehicleCategory`
+          ] = `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
         }
 
         if (!VALID_FULL_STATE.includes(fulfillment?.state?.descriptor?.code)) {
@@ -222,6 +275,12 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
           i,
           constants.MOB_ONCONFIRM,
         )
+
+        if (arr.time) {
+          if (!arr.label || arr.label !== 'INSTALLMENT') {
+            errorObj.time.label = `If time is present in payment, the corresponding label should be INSTALLMENT.`
+          }
+        }
 
         // Validate payment tags
         const tagsValidation = validatePaymentTags(arr.tags)

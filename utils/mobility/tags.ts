@@ -50,15 +50,23 @@ export const validateRouteInfoTags = (tags: RouteInfoTag[]): ValidationResult =>
   tags.forEach((tag, index) => {
     if (tag.descriptor.code === 'ROUTE_INFO') {
       if (tag.display !== undefined && typeof tag.display !== 'boolean') {
-        errors.push(`Tag[${index}] has an invalid value for the 'display' property. It should be a boolean.`)
+        errors.push(`route.tag[${index}] has an invalid value for the 'display' property. It should be a boolean.`)
       }
 
       tag.list.forEach((item, itemIndex) => {
-        switch (item.descriptor.code) {
+        const descriptorCode = item.descriptor.code
+
+        if (descriptorCode !== descriptorCode.toUpperCase()) {
+          errors.push(
+            `route.tag[${index}], List item[${itemIndex}] has a descriptor code in lowercase. Please use uppercase for descriptor codes.`,
+          )
+        }
+
+        switch (descriptorCode.toUpperCase()) {
           case 'ENCODED_POLYLINE':
             if (typeof item.value !== 'string') {
               errors.push(
-                `Tag[${index}], List item[${itemIndex}] has an invalid value for ENCODED_POLYLINE. It should be a string.`,
+                `route.tag[${index}], List item[${itemIndex}] has an invalid value for ENCODED_POLYLINE. It should be a string.`,
               )
             }
 
@@ -67,14 +75,14 @@ export const validateRouteInfoTags = (tags: RouteInfoTag[]): ValidationResult =>
           case 'WAYPOINTS':
             if (typeof item.value !== 'string') {
               errors.push(
-                `Tag[${index}], List item[${itemIndex}] has an invalid value for WAYPOINTS. It should be a string.`,
+                `route.tag[${index}], List item[${itemIndex}] has an invalid value for WAYPOINTS. It should be a string.`,
               )
             }
 
             break
 
           default:
-            errors.push(`Tag[${index}], List item[${itemIndex}] has an unexpected descriptor code`)
+            errors.push(`route.tag[${index}], List item[${itemIndex}] has an unexpected descriptor code`)
         }
       })
     }
@@ -93,12 +101,12 @@ export const validatePaymentTags = (tags: Tag[]): ValidationResult => {
 
   tags.forEach((tag, index) => {
     if (!validDescriptorCodes.includes(tag.descriptor.code)) {
-      errors.push(`Tag[${index}] has an invalid descriptor code`)
+      errors.push(`payment.tag[${index}] has an invalid descriptor code`)
       return
     }
 
     if (tag.display !== undefined && typeof tag.display !== 'boolean') {
-      errors.push(`Tag[${index}] has an invalid value for the 'display' property. It should be a boolean.`)
+      errors.push(`payment.tag[${index}] has an invalid value for the 'display' property. It should be a boolean.`)
     }
 
     switch (tag.descriptor.code) {
@@ -109,7 +117,7 @@ export const validatePaymentTags = (tags: Tag[]): ValidationResult => {
 
         const invalidDescriptorCodes = actualDescriptorCodes.filter((code) => !expectedDescriptorCodes.includes(code))
         if (invalidDescriptorCodes.length > 0) {
-          errors.push(`Tag[${index}] has unexpected descriptor codes: ${invalidDescriptorCodes.join(', ')}`)
+          errors.push(`payment.tag[${index}] has unexpected descriptor codes: ${invalidDescriptorCodes.join(', ')}`)
         }
 
         // const buyerFinderFeesType: any = tag.list.find((item: any) => item.descriptor.code === 'BUYER_FINDER_FEES_TYPE')
@@ -132,7 +140,6 @@ export const validatePaymentTags = (tags: Tag[]): ValidationResult => {
         tag.list.forEach((item: any, itemIndex) => {
           switch (item.descriptor.code) {
             case 'SETTLEMENT_WINDOW':
-              console.log('item.value----------', item.value)
               if (!/^PT(\d+H)?(\d+M)?(\d+S)?$/.test(item.value)) {
                 errors.push(`SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid duration value`)
               }
@@ -207,12 +214,12 @@ export const validateProviderTags = (tags: Tag[]): ValidationResult => {
 
   tags.forEach((tag, index) => {
     if (!validDescriptorCodes.includes(tag.descriptor.code)) {
-      errors.push(`Tag[${index}] has an invalid descriptor code`)
+      errors.push(`provider.tag${index}] has an invalid descriptor code`)
       return
     }
 
     if (tag.display !== undefined && typeof tag.display !== 'boolean') {
-      errors.push(`Tag[${index}] has an invalid value for the 'display' property. It should be a boolean.`)
+      errors.push(`provider.tag${index}] has an invalid value for the 'display' property. It should be a boolean.`)
     }
 
     switch (tag.descriptor.code) {
@@ -222,7 +229,7 @@ export const validateProviderTags = (tags: Tag[]): ValidationResult => {
             case 'GRO_NAME':
               if (typeof item.value !== 'string' || item.value.trim() === '') {
                 errors.push(
-                  `${item.descriptor.name} in Tag[${index}], List item[${itemIndex}] must be a non-empty string`,
+                  `${item.descriptor.name} in contact.tag${index}], List item[${itemIndex}] must be a non-empty string`,
                 )
               }
 
@@ -231,7 +238,7 @@ export const validateProviderTags = (tags: Tag[]): ValidationResult => {
             case 'GRO_EMAIL':
               if (!isValidEmail(item.value)) {
                 errors.push(
-                  `${item.descriptor.name} in Tag[${index}], List item[${itemIndex}] must be a valid email address`,
+                  `${item.descriptor.name} in contact.tag${index}], List item[${itemIndex}] must be a valid email address`,
                 )
               }
 
@@ -240,7 +247,7 @@ export const validateProviderTags = (tags: Tag[]): ValidationResult => {
             case 'GRO_CONTACT_NUMBER':
               if (!isValidPhoneNumber(item.value)) {
                 errors.push(
-                  `${item.descriptor.name} in Tag[${index}], List item[${itemIndex}] must be a valid 10-digit phone number`,
+                  `${item.descriptor.name} in contact.tag${index}], List item[${itemIndex}] must be a valid 10-digit phone number`,
                 )
               }
 
@@ -248,7 +255,9 @@ export const validateProviderTags = (tags: Tag[]): ValidationResult => {
 
             case 'CUSTOMER_SUPPORT_LINK':
               if (!isValidUrl(item.value)) {
-                errors.push(`${item.descriptor.name} in Tag[${index}], List item[${itemIndex}] must be a valid URL`)
+                errors.push(
+                  `${item.descriptor.name} in contact.tag${index}], List item[${itemIndex}] must be a valid URL`,
+                )
               }
 
               break
@@ -256,7 +265,7 @@ export const validateProviderTags = (tags: Tag[]): ValidationResult => {
             case 'CUSTOMER_SUPPORT_EMAIL':
               if (!isValidEmail(item.value)) {
                 errors.push(
-                  `${item.descriptor.name} in Tag[${index}], List item[${itemIndex}] must be a valid email address`,
+                  `${item.descriptor.name} in contact.tag${index}], List item[${itemIndex}] must be a valid email address`,
                 )
               }
 
@@ -265,7 +274,7 @@ export const validateProviderTags = (tags: Tag[]): ValidationResult => {
             case 'CUSTOMER_SUPPORT_CONTACT_NUMBER':
               if (!isValidPhoneNumber(item.value)) {
                 errors.push(
-                  `${item.descriptor.name} in Tag[${index}], List item[${itemIndex}] must be a valid 10-digit phone number`,
+                  `${item.descriptor.name} in contact.tag${index}], List item[${itemIndex}] must be a valid 10-digit phone number`,
                 )
               }
 
@@ -281,30 +290,32 @@ export const validateProviderTags = (tags: Tag[]): ValidationResult => {
           switch (item.descriptor.code) {
             case 'LSP_NAME':
               if (typeof item.value !== 'string' || item.value.trim() === '') {
-                errors.push(`Tag[${index}], List item[${itemIndex}] has an invalid or empty value for LSP_NAME`)
+                errors.push(`lsp.tag[${index}], List item[${itemIndex}] has an invalid or empty value for LSP_NAME`)
               }
 
               break
             case 'LSP_EMAIL':
               if (!isValidEmail(item.value)) {
-                errors.push(`Tag[${index}], List item[${itemIndex}] has an invalid email for LSP_EMAIL`)
+                errors.push(`lsp.tag[${index}], List item[${itemIndex}] has an invalid email for LSP_EMAIL`)
               }
 
               break
             case 'LSP_CONTACT_NUMBER':
               if (!isValidPhoneNumber(item.value)) {
-                errors.push(`Tag[${index}], List item[${itemIndex}] has an invalid phone number for LSP_CONTACT_NUMBER`)
+                errors.push(
+                  `lsp.tag[${index}], List item[${itemIndex}] has an invalid phone number for LSP_CONTACT_NUMBER`,
+                )
               }
 
               break
             case 'LSP_ADDRESS':
               if (typeof item.value !== 'string' || item.value.trim() === '') {
-                errors.push(`Tag[${index}], List item[${itemIndex}] has an invalid or empty value for LSP_ADDRESS`)
+                errors.push(`lsp.tag[${index}], List item[${itemIndex}] has an invalid or empty value for LSP_ADDRESS`)
               }
 
               break
             default:
-              errors.push(`Tag[${index}], List item[${itemIndex}] has an unexpected descriptor code`)
+              errors.push(`lsp.tag[${index}], List item[${itemIndex}] has an unexpected descriptor code`)
           }
         })
 
@@ -334,7 +345,7 @@ export const validateItemsTags = (tags: Tag[]): ValidationResult => {
       case 'INFO': {
         if (tag.descriptor.name !== 'General Information') {
           errors.push(
-            `Tag[${index}] has an invalid name for the 'INFO' descriptor. It should be 'General Information'.`,
+            `info-tag[${index}] has an invalid name for the 'INFO' descriptor. It should be 'General Information'.`,
           )
         }
 
@@ -344,11 +355,11 @@ export const validateItemsTags = (tags: Tag[]): ValidationResult => {
         const etaToNearestDriverMin = tag.list.find((item) => item.descriptor.code === 'ETA_TO_NEAREST_DRIVER_MIN')
 
         if (!distanceToNearestDriverMeter || parseInt(distanceToNearestDriverMeter.value) < 0) {
-          errors.push(`Tag[${index}], DISTANCE_TO_NEAREST_DRIVER_METER must be a positive integer`)
+          errors.push(`general-info.tag[${index}], DISTANCE_TO_NEAREST_DRIVER_METER must be a positive integer`)
         }
 
         if (!etaToNearestDriverMin || parseInt(etaToNearestDriverMin.value) < 0) {
-          errors.push(`Tag[${index}], ETA_TO_NEAREST_DRIVER_MIN must be a positive integer`)
+          errors.push(`general-info.tag[${index}], ETA_TO_NEAREST_DRIVER_MIN must be a positive integer`)
         }
 
         break
@@ -366,7 +377,7 @@ export const validateItemsTags = (tags: Tag[]): ValidationResult => {
 
         tag.list.forEach((item, itemIndex) => {
           if (!fareDescriptors.includes(item.descriptor.code)) {
-            errors.push(`Tag[${index}], List item[${itemIndex}] has an unexpected descriptor code`)
+            errors.push(`fair-policy.tag[${index}], List item[${itemIndex}] has an unexpected descriptor code`)
             return
           }
 
@@ -375,14 +386,18 @@ export const validateItemsTags = (tags: Tag[]): ValidationResult => {
             item.descriptor.code !== 'NIGHT_SHIFT_END_TIME' &&
             (!/^\d+(\.\d+)?$/.test(item.value) || parseFloat(item.value) < 0)
           ) {
-            errors.push(`Tag[${index}], List item[${itemIndex}] must be a valid non-negative integer or float`)
+            errors.push(
+              `fair-policy.tag[${index}], List item[${itemIndex}] must be a valid non-negative integer or float`,
+            )
           }
 
           if (
             (item.descriptor.code === 'NIGHT_SHIFT_START_TIME' || item.descriptor.code === 'NIGHT_SHIFT_END_TIME') &&
             !/^\d{2}:\d{2}:\d{2}$/.test(item.value)
           ) {
-            errors.push(`Tag[${index}], List item[${itemIndex}] must be a valid timestamp in the format HH:mm:ss`)
+            errors.push(
+              `fair-policy.tag[${index}], List item[${itemIndex}] must be a valid timestamp in the format HH:mm:ss`,
+            )
           }
         })
 

@@ -2,7 +2,7 @@
 // import _ from 'lodash'
 import constants, { mobilitySequence } from '../../constants'
 import { logger } from '../../shared/logger'
-import { validateSchema, isObjectEmpty, checkIdAndUri, checkBppIdOrBapId, timeDiff as timeDifference } from '../'
+import { validateSchema, isObjectEmpty } from '../'
 import { getValue, setValue } from '../../shared/dao'
 import { validateContext, validateStops } from './mobilityChecks'
 import { validateRouteInfoTags, validateCancellationTerm } from './tags'
@@ -18,7 +18,7 @@ import _ from 'lodash'
 //   'RIDE_ARRIVED_PICKUP',
 // ]
 
-export const checkOnCancel = (data: any, msgIdSet: any, flow: string) => {
+export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -31,15 +31,11 @@ export const checkOnCancel = (data: any, msgIdSet: any, flow: string) => {
     }
 
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MOB_ONCANCEL, data)
+    const contextRes: any = validateContext(context, msgIdSet, constants.MOB_CANCEL, constants.MOB_ONCANCEL)
     setValue(`${mobilitySequence.ON_CANCEL}_message`, message)
-    if (flow == 'RIDER_CANCEL') {
-      const cancelContext: any = getValue(`${mobilitySequence.CANCEL}_context`)
-      performChecks(errorObj, cancelContext, context, flow)
-    } else {
-      const contextRes: any = validateContext(context, msgIdSet, constants.MOB_CANCEL, constants.MOB_ONCANCEL)
-      if (!contextRes?.valid) {
-        Object.assign(errorObj, contextRes.ERRORS)
-      }
+
+    if (!contextRes?.valid) {
+      Object.assign(errorObj, contextRes.ERRORS)
     }
 
     if (schemaValidation !== 'error') {
@@ -54,14 +50,32 @@ export const checkOnCancel = (data: any, msgIdSet: any, flow: string) => {
     //   const storedFulfillments = new Set()
     const fulfillmentIdsSet = new Set()
     const paymentIdsSet = new Set()
-    const orderId: any = getValue(`orderId`)
+    // const orderId: any = getValue(`orderId`)
 
     if (!('id' in onCancel)) {
       errorObj['order'] = `id should be sent in /${constants.MOB_ONCANCEL}`
-    } else if (orderId) {
-      if (!_.isEqual(onCancel.id, orderId)) {
-        errorObj['order'] = `id should be the same as sent in /${constants.MOB_CANCEL}`
+      // } else if (orderId) {
+      //   if (!_.isEqual(onCancel.id, orderId)) {
+      //     errorObj['order'] = `id should be the same as sent in /${constants.MOB_CANCEL}`
+      //   }
+    }
+
+    try {
+      logger.info(`Validating status for /${constants.MOB_ONCANCEL}`)
+      const status = onCancel?.status
+      if (!status) {
+        errorObj['status'] = `status should be sent in /${constants.MOB_CANCEL}`
+      } else if (sequence === 'on_cancel') {
+        if (status !== 'CANCELLED') {
+          errorObj['status'] = `status should be CANCELLED in /${constants.MOB_ONCANCEL}`
+        }
+      } else if (sequence === 'soft_on_cancel') {
+        if (status !== 'SOFT_CANCEL') {
+          errorObj['status'] = `status should be SOFT_CANCEL in /${constants.MOB_ONCANCEL}`
+        }
       }
+    } catch (error: any) {
+      logger.error(`!!Error while validating provider for /${constants.MOB_ONCANCEL}, ${error.stack}`)
     }
 
     try {
@@ -107,10 +121,25 @@ export const checkOnCancel = (data: any, msgIdSet: any, flow: string) => {
           }
 
           const stateCode = fulfillment.state?.descriptor?.code
-          if (onCancel.status === 'CANCELLED' && stateCode !== 'RIDE_CANCELLED') {
+          if (sequence === 'on_cancel' && stateCode !== 'RIDE_CANCELLED') {
             errorObj[
               `fulfillmentStateCode_${i}`
             ] = `Fulfillment state code must be RIDE_CANCELLED at index ${i} in /${constants.MOB_ONCANCEL}`
+          } else {
+            const validStateCodes = [
+              'RIDE CANCELLED',
+              'RIDE ENDED',
+              'RIDE STARTED',
+              'RIDE ASSIGNED',
+              'RIDE ENROUTE PICKUP',
+              'RIDE ARRIVED PICKUP',
+            ]
+
+            if (!validStateCodes.includes(stateCode)) {
+              errorObj[
+                `fulfillmentStateCode_${i}`
+              ] = `Invalid fulfillment state code at index ${i} in /${constants.MOB_ONCANCEL}`
+            }
           }
 
           validateCustomer(errorObj, fulfillment.customer, i)
@@ -223,21 +252,31 @@ export const checkOnCancel = (data: any, msgIdSet: any, flow: string) => {
             errorObj[`price_${index}`] = `Price details are incomplete at index ${index} in /${constants.MOB_ONCANCEL}`
           }
 
-          item.payment_ids.forEach((paymentId: string) => {
-            if (!paymentIdsSet.has(paymentId)) {
-              errorObj[
-                `invalidPaymentId_${index}`
-              ] = `Payment ID '${paymentId}' at index ${index} in /${constants.MOB_ONCANCEL} is not valid`
-            }
-          })
+          if (!item?.payment_ids) {
+            errorObj[`payment_ids`] = `payment_ids should be present at index ${index} in /${constants.MOB_ONCANCEL}`
+          } else {
+            item.payment_ids.forEach((paymentId: string) => {
+              if (!paymentIdsSet.has(paymentId)) {
+                errorObj[
+                  `invalidPaymentId_${index}`
+                ] = `Payment ID '${paymentId}' at index ${index} in /${constants.MOB_ONCANCEL} is not valid`
+              }
+            })
+          }
 
-          item.fulfillment_ids.forEach((fulfillmentId: string) => {
-            if (!fulfillmentIdsSet.has(fulfillmentId)) {
-              errorObj[
-                `invalidFulfillmentId_${index}`
-              ] = `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.MOB_ONCANCEL} is not valid`
-            }
-          })
+          if (!item?.fulfillment_ids) {
+            errorObj[
+              `fulfillment_ids`
+            ] = `fulfillment_ids should be present at index ${index} in /${constants.MOB_ONCANCEL}`
+          } else {
+            item.fulfillment_ids.forEach((fulfillmentId: string) => {
+              if (!fulfillmentIdsSet.has(fulfillmentId)) {
+                errorObj[
+                  `invalidFulfillmentId_${index}`
+                ] = `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.MOB_ONCANCEL} is not valid`
+              }
+            })
+          }
 
           // Validate tags
           const requiredTagGroups = ['FARE_POLICY', 'INFO']
@@ -265,7 +304,7 @@ export const checkOnCancel = (data: any, msgIdSet: any, flow: string) => {
       const quoteBreakup = quote.breakup
       const requiredBreakupItems = ['BASE_FARE', 'DISTANCE_FARE', 'CURRENT_FARE_CHARGE']
 
-      if (onCancel.status == 'SOFT_CANCEL') {
+      if (sequence == 'soft_on_cancel') {
         requiredBreakupItems.push('CANCELLATION_CHARGES')
       }
 
@@ -347,136 +386,5 @@ const validateVehicle = (errorObj: any, vehicle: any, i: number) => {
     errorObj[
       `fulfillment_${i}_vehicle_details`
     ] = `Vehicle details are incomplete at index ${i} in /${constants.MOB_ONCANCEL}`
-  }
-}
-
-const compareCity = (errorObj: any, cancelContext: any, context: any) => {
-  try {
-    logger.info(`Comparing city of /${constants.MOB_CANCEL} and /${constants.MOB_ONCANCEL}`)
-    if (!_.isEqual(cancelContext.location.city, context.location.city)) {
-      errorObj.city = `City code mismatch in /${constants.MOB_CANCEL} and /${constants.MOB_ONCANCEL}`
-    }
-  } catch (error: any) {
-    logger.info(`Error while comparing city in /${constants.MOB_CANCEL} and /${constants.MOB_ONCANCEL}, ${error.stack}`)
-  }
-}
-
-const compareTimestamp = (errorObj: any, context: any) => {
-  try {
-    logger.info(`Comparing timestamp of /${constants.MOB_CANCEL} and /${constants.MOB_ONCANCEL}`)
-    const tmpstmp = getValue('tmpstmp')
-    if (_.gte(tmpstmp, context.timestamp)) {
-      errorObj.tmpstmp = `Timestamp for /${constants.MOB_CANCEL} api cannot be greater than or equal to /${constants.MOB_ONCANCEL} api`
-    } else {
-      const timeDiff = timeDifference(context.timestamp, tmpstmp)
-      logger.info(timeDiff)
-      if (timeDiff > 5000) {
-        errorObj.tmpstmp = `context/timestamp difference between /${constants.MOB_ONCANCEL} and /${constants.MOB_CANCEL} should be smaller than 5 sec`
-      }
-    }
-
-    setValue('tmpstmp', context.timestamp)
-  } catch (error: any) {
-    logger.info(
-      `Error while comparing timestamp for /${constants.MOB_CANCEL} and /${constants.MOB_ONCANCEL} api, ${error.stack}`,
-    )
-  }
-}
-
-const compareCountry = (errorObj: any, cancelContext: any, context: any) => {
-  try {
-    logger.info(`Comparing country of /${constants.MOB_CANCEL} and /${constants.MOB_ONCANCEL}`)
-    if (!_.isEqual(cancelContext.location.country, context.location.country)) {
-      errorObj.country = `Country code mismatch in /${constants.MOB_CANCEL} and /${constants.MOB_ONCANCEL}`
-    }
-  } catch (error: any) {
-    logger.info(
-      `Error while comparing country in /${constants.MOB_CANCEL} and /${constants.MOB_ONCANCEL}, ${error.stack}`,
-    )
-  }
-}
-
-const compareTransactionIds = (errorObj: any, context: any) => {
-  try {
-    logger.info(`Comparing transaction Ids of /${constants.MOB_CANCEL} and /${constants.MOB_ONCANCEL}`)
-    if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
-      errorObj.txnId = `Transaction Id throughout user journey should be same`
-    }
-  } catch (error: any) {
-    logger.error(
-      `!!Error while comparing transaction ids for /${constants.MOB_CANCEL} and /${constants.MOB_ONCANCEL} api, ${error.stack}`,
-    )
-  }
-}
-
-const compareMessageIds = (errorObj: any, cancelContext: any, context: any) => {
-  try {
-    logger.info(`Comparing Message Ids of /${constants.MOB_CANCEL} and /${constants.MOB_ONCANCEL}`)
-    if (!_.isEqual(cancelContext.message_id, context.message_id)) {
-      errorObj.message_id = `Message Id for /${constants.MOB_CANCEL} and /${constants.MOB_ONCANCEL} api should be same`
-    }
-  } catch (error: any) {
-    logger.info(
-      `Error while comparing message ids for /${constants.MOB_CANCEL} and /${constants.MOB_ONCANCEL} api, ${error.stack}`,
-    )
-  }
-}
-
-const performChecks = (errorObj: any, cancelContext: any, context: any, flow: any) => {
-  const checksToSkipForFlows = ['DRIVER_CANCEL']
-
-  if (!checksToSkipForFlows.includes(flow)) {
-    compareCity(errorObj, cancelContext, context)
-    compareCountry(errorObj, cancelContext, context)
-    compareTimestamp(errorObj, context)
-    compareTransactionIds(errorObj, context)
-    compareMessageIds(errorObj, cancelContext, context)
-
-    try {
-      logger.info(`Comparing BAP and BPP in /${constants.MOB_ONCANCEL}`)
-
-      const bppValidationResult = checkIdAndUri(context?.bpp_id, context?.bpp_uri, 'bpp')
-      const bapValidationResult = checkIdAndUri(context?.bap_id, context?.bap_uri, 'bap')
-
-      if (bppValidationResult !== null) {
-        errorObj.bpp = bppValidationResult
-      }
-
-      if (bapValidationResult !== null) {
-        errorObj.bap = bapValidationResult
-
-        if (!errorObj.bpp && !errorObj.bap) {
-          const prevContext: any = getValue(`${mobilitySequence.SEARCH}_context`)
-
-          if (!_.isEqual(prevContext.bpp_id, context.bpp_id)) {
-            errorObj.bppIdContextMismatch = `BPP Id mismatch in /${constants.MOB_CANCEL} and /${constants.MOB_ONCANCEL}`
-          }
-
-          if (!_.isEqual(prevContext.bpp_uri, context.bpp_uri)) {
-            errorObj.bppUriContextMismatch = `BPP URL mismatch in /${constants.MOB_CANCEL} and /${constants.MOB_ONCANCEL}`
-          }
-
-          if (!_.isEqual(prevContext.bap_id, context.bap_id)) {
-            errorObj.bapIdContextMismatch = `BAP Id mismatch in /${constants.MOB_CANCEL} and /${constants.MOB_ONCANCEL}`
-          }
-
-          if (!_.isEqual(prevContext.bap_uri, context.bap_uri)) {
-            errorObj.bapUriContextMismatch = `BAP URL mismatch in /${constants.MOB_CANCEL} and /${constants.MOB_ONCANCEL}`
-          }
-        }
-      }
-    } catch (error: any) {
-      logger.error(`!!Error while comparing BAP and BPP Ids in /${constants.MOB_ONCANCEL}, ${error.stack}`)
-    }
-
-    const checkBap = checkBppIdOrBapId(context.bap_id)
-    const checkBpp = checkBppIdOrBapId(context.bpp_id)
-
-    if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
-    if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
-  } else {
-    if (!context.location || !context.location.city || !context.location.country) {
-      errorObj['location'] = 'context/location/city and context/location/country are mandatory'
-    }
   }
 }

@@ -8,7 +8,7 @@ import { validateContext } from './fisChecks'
 
 export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
   if (!data || isObjectEmpty(data)) {
-    return { [FisApiSequence.SELECT]: 'Json cannot be empty' }
+    return { [constants.FIS_SELECT]: 'Json cannot be empty' }
   }
 
   const { message, context } = data
@@ -29,7 +29,7 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
     Object.assign(errorObj, contextRes.ERRORS)
   }
 
-  setValue(`${FisApiSequence.SELECT}`, data)
+  setValue(`${constants.FIS_SELECT}`, data)
 
   const onSearch: any = getValue(`${FisApiSequence.ON_SEARCH}`)
 
@@ -104,7 +104,7 @@ const validateXInput = (item: any, index: number, sequence: string) => {
     ] = `/message/order/items/xinput in item: ${item.id} must have status in form_response`
   } else {
     const status = item?.xinput?.form_response?.status
-    const code = sequence === 'select2' ? 'APPROVED' : 'SUCCESS'
+    const code = sequence === 'select_2' ? 'APPROVED' : 'SUCCESS'
     if (status !== code) {
       errorObj[
         `item${index}_status`

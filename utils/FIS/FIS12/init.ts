@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import constants, { FisApiSequence } from '../../../constants'
+import constants from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
@@ -10,7 +10,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [FisApiSequence.INIT]: 'Json cannot be empty' }
+      return { [constants.FIS_INIT]: 'Json cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -18,7 +18,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const onSelect: any = getValue(`${FisApiSequence.ON_SELECT}_context`)
+    const onSelect: any = getValue(`${constants.FIS_ONSELECT}_context`)
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.FIS_INIT, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.FIS_ONSELECT, constants.FIS_INIT)
 
@@ -30,7 +30,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
       Object.assign(errorObj, contextRes.ERRORS)
     }
 
-    setValue(`${FisApiSequence.INIT}_context`, data?.context)
+    setValue(`${constants.FIS_INIT}_context`, data?.context)
 
     const init = message.order
     const itemIDS: any = getValue('ItmIDS')

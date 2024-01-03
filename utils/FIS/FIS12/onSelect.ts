@@ -1,7 +1,7 @@
 /* eslint-disable no-prototype-builtins */
 import { getValue } from '../../../shared/dao'
-import constants, { FisApiSequence } from '../../../constants'
-import { validateSchema, isObjectEmpty, isValidUrl } from '../..'
+import constants from '../../../constants'
+import { validateSchema, isObjectEmpty } from '../..'
 import _ from 'lodash'
 import { logger } from '../../../shared/logger'
 import { validateContext, validateXInput } from './fisChecks'
@@ -9,7 +9,7 @@ import { validateProviderTags } from './tags'
 
 export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
   if (!data || isObjectEmpty(data)) {
-    return { [FisApiSequence.ON_SELECT]: 'Json cannot be empty' }
+    return { [constants.FIS_ONSELECT]: 'Json cannot be empty' }
   }
 
   const { message, context } = data
@@ -30,7 +30,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
     Object.assign(errorObj, contextRes.ERRORS)
   }
 
-  const select: any = getValue(`${FisApiSequence.SELECT}`)
+  const select: any = getValue(`${constants.FIS_SELECT}`)
 
   try {
     const itemIdArray: any[] = []
@@ -115,11 +115,6 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
             ] = `/message/order/items/xinput in item: ${item.id} must have submission_id in form_response`
           } else {
             const submissionId = getValue(`select_submission_id`)
-            console.log(
-              'item?.xinput?.form_response?.submission_id',
-              submissionId,
-              item?.xinput?.form_response?.submission_id,
-            )
             if (!_.isEqual(submissionId, item?.xinput?.form_response?.submission_id)) {
               errorObj.submission_id = `submission_id for /${constants.FIS_SELECT} and /${constants.FIS_ONSELECT} api should be the same as sent in previous call`
             }
@@ -173,6 +168,8 @@ const validateProvider = (provider: any) => {
       return providerErrors
     }
 
+    logger.info(`Validating Descriptor asdsafdsffor /${constants.FIS_ONSELECT}`)
+
     if (!Array.isArray(provider.descriptor.images) || provider.descriptor.images.length < 1) {
       providerErrors.images = 'Descriptor images must be an array with a minimum length of one.'
     } else {
@@ -183,7 +180,7 @@ const validateProvider = (provider: any) => {
           ] = `Invalid image structure in descriptor. Each image should be an object with "url" and "size_type" properties.`
         } else {
           const { url, size_type } = image
-          if (typeof url !== 'string' || !url.trim() || !isValidUrl(url)) {
+          if (typeof url !== 'string' || !url.trim()) {
             providerErrors[`images[${index}].url`] = `Invalid URL for image in descriptor.`
           }
 
@@ -196,6 +193,8 @@ const validateProvider = (provider: any) => {
         }
       })
     }
+
+    logger.info(`Validating Descriptor fo123123123r /${constants.FIS_ONSELECT}`)
 
     if (!provider.descriptor.name || !provider.descriptor.name.trim()) {
       providerErrors.name = `Provider name cannot be empty.`

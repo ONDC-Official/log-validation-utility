@@ -309,14 +309,14 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
       }
 
       const missingBreakupItems = requiredBreakupItems.filter(
-        (item) => !quoteBreakup.find((breakupItem: any) => breakupItem.type === item),
+        (item) => !quoteBreakup.find((breakupItem: any) => breakupItem.title.toUpperCase() === item),
       )
 
       if (missingBreakupItems.length > 0) {
         errorObj.missingBreakupItems = `Quote breakup is missing the following items: ${missingBreakupItems.join(', ')}`
       }
 
-      const totalBreakupValue = quoteBreakup.reduce((total: any, item: any) => total + parseFloat(item.value), 0)
+      const totalBreakupValue = quoteBreakup.reduce((total: any, item: any) => total + parseFloat(item.price.value), 0)
       const priceValue = parseFloat(quote.price.value)
 
       if (totalBreakupValue !== priceValue) {

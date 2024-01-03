@@ -36,7 +36,6 @@ export const checkOnUpdate = (data: any) => {
       onUpdateObj['bpp_id'] = 'context/bpp_id is required'
     } else {
       const checkBpp = checkBppIdOrBapId(context.bpp_id)
-      console.log('checkBppcheckBppcheckBppcheckBppcheckBppcheckBpp', checkBpp)
       if (checkBpp) Object.assign(onUpdateObj, { bpp_id: 'context/bpp_id should not be a url' })
     }
 
@@ -157,7 +156,7 @@ export const checkOnUpdate = (data: any) => {
 
       const requiredBreakupItems = ['BASE_FARE', 'DISTANCE_FARE']
       const missingBreakupItems = requiredBreakupItems.filter(
-        (item) => !quoteBreakup.find((breakupItem: any) => breakupItem.title === item),
+        (item) => !quoteBreakup.find((breakupItem: any) => breakupItem.title.toUpperCase() === item),
       )
 
       if (missingBreakupItems.length > 0) {
@@ -166,7 +165,11 @@ export const checkOnUpdate = (data: any) => {
         )}`
       }
 
-      const totalBreakupValue = quoteBreakup.reduce((total: any, item: any) => total + parseFloat(item.value), 0)
+      const totalBreakupValue = quoteBreakup.reduce(
+        (total: any, item: any) =>
+          total + (item.title.toUpperCase() != 'NET_DISBURSED_AMOUNT' ? parseFloat(item.price.value) : 0),
+        0,
+      )
       const priceValue = parseFloat(quote.price.value)
 
       if (totalBreakupValue !== priceValue) {
@@ -190,7 +193,7 @@ export const checkOnUpdate = (data: any) => {
 
       const payments = on_update.payments
 
-      for (let i = 0; i < payments.length; i++) {
+      for (let i = 1; i < payments.length; i++) {
         const payment = payments[i]
 
         if (payment.status !== 'PAID' && payment.status !== 'NOT-PAID') {
@@ -227,7 +230,7 @@ export const checkOnUpdate = (data: any) => {
         }
 
         if (!allowedStatusValues.includes(payments[0].status)) {
-          onUpdateObj.paymentStatus = `Invalid value for status. It should be either NOT_PAID or PAID.`
+          onUpdateObj.paymentStatus = `Invalid value for status. It should be either of NOT_PAID or PAID.`
         }
       }
     } catch (error: any) {
@@ -265,7 +268,7 @@ export const checkOnUpdate = (data: any) => {
           const descriptorCode = cancellationTerm.fulfillment_state.descriptor.code
           const storedPercentage = cancellationTermsState.get(descriptorCode)
 
-          if (storedPercentage === undefined || storedPercentage !== cancellationTerm.cancellation_fee.percentage) {
+          if (storedPercentage !== undefined && storedPercentage !== cancellationTerm.cancellation_fee.percentage) {
             onUpdateObj.cancellationFee = `Cancellation terms percentage for ${descriptorCode} has changed`
           }
         }

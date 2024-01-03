@@ -89,7 +89,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         // if (storedFormIds.has(formId)) {
         // }
 
-        if (getValue(`${FisApiSequence.SELECT}_form_${formId}_status`) === status) {
+        if (getValue(`${constants.FIS_SELECT}_form_${formId}_status`) === status) {
           const key = `item${index}_status`
           errorObj[
             key
@@ -134,7 +134,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         }
 
         if (!allowedStatusValues.includes(confirm.payments[0].status)) {
-          errorObj.paymentStatus = `Invalid value for status. It should be either NOT_PAID or PAID.`
+          errorObj.paymentStatus = `Invalid value for status. It should be either of NOT_PAID or PAID.`
         }
 
         const params = confirm.payments[0].params

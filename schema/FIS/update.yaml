@@ -986,11 +986,11 @@ properties:
                             type:
                               type: string
                               enum:
-                                - PRE-ORDER
-                                - PRE-FULFILLMENT
-                                - ON-FULFILLMENT
-                                - POST-FULFILLMENT
-                                - ON-ORDER
+                                - PRE_ORDER
+                                - PRE_FULFILLMENT
+                                - ON_FULFILLMENT
+                                - POST_FULFILLMENT
+                                - ON_ORDER
                             status:
                               type: string
                               enum:

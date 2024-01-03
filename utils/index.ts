@@ -89,6 +89,7 @@ export const checkFISContext = (
   }
 
   if (data.action != path) {
+    console.log('data.action', data.action, path)
     errObj.action_err = `context.action should be ${path}`
   }
 

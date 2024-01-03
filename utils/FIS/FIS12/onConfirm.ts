@@ -1,21 +1,13 @@
 /* eslint-disable no-prototype-builtins */
-import _ from 'lodash'
 import constants, { FisApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import {
-  validateSchema,
-  isObjectEmpty,
-  checkFISContext,
-  timeDiff as timeDifference,
-  checkBppIdOrBapId,
-  isValidUrl,
-} from '../../'
+import { validateSchema, isObjectEmpty, isValidUrl } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
-import { validateFulfillments } from './fisChecks'
+import { validateContext, validateFulfillments } from './fisChecks'
 
 const cancellationTermsState = new Map()
 
-export const checkOnConfirm = (data: any, flow: any) => {
+export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
   const onCnfrmObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -27,9 +19,8 @@ export const checkOnConfirm = (data: any, flow: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const searchContext: any = getValue(`${FisApiSequence.SEARCH}_context`)
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.FIS_ONCONFIRM, data)
-    const contextRes: any = checkFISContext(context, constants.FIS_ONCONFIRM)
+    const contextRes: any = validateContext(context, msgIdSet, constants.FIS_CONFIRM, constants.FIS_ONCONFIRM)
 
     if (schemaValidation !== 'error') {
       Object.assign(onCnfrmObj, schemaValidation)
@@ -38,9 +29,6 @@ export const checkOnConfirm = (data: any, flow: any) => {
     if (!contextRes?.valid) {
       Object.assign(onCnfrmObj, contextRes.ERRORS)
     }
-
-    //Flow based checks for on_confirm
-    performChecks(onCnfrmObj, searchContext, context, flow)
 
     setValue(`${FisApiSequence.ON_CONFIRM}`, data)
 
@@ -145,9 +133,17 @@ export const checkOnConfirm = (data: any, flow: any) => {
       const quote = on_confirm.quote
       const quoteBreakup = quote.breakup
 
-      const requiredBreakupItems = ['Principal', 'Interest', 'Processing Fee']
+      const requiredBreakupItems = [
+        'PRINCIPAL',
+        'INTEREST',
+        'NET_DISBURSED_AMOUNT',
+        'OTHER_UPFRONT_CHARGES',
+        'INSURANCE_CHARGES',
+        'OTHER_CHARGES',
+        'PROCESSING_FEE',
+      ]
       const missingBreakupItems = requiredBreakupItems.filter(
-        (item) => !quoteBreakup.find((breakupItem: any) => breakupItem.type === item),
+        (item) => !quoteBreakup.find((breakupItem: any) => breakupItem.title.toUpperCase() === item),
       )
 
       if (missingBreakupItems.length > 0) {
@@ -156,7 +152,11 @@ export const checkOnConfirm = (data: any, flow: any) => {
         )}`
       }
 
-      const totalBreakupValue = quoteBreakup.reduce((total: any, item: any) => total + parseFloat(item.value), 0)
+      const totalBreakupValue = quoteBreakup.reduce(
+        (total: any, item: any) =>
+          total + (item.title.toUpperCase() != 'NET_DISBURSED_AMOUNT' ? parseFloat(item.price.value) : 0),
+        0,
+      )
       const priceValue = parseFloat(quote.price.value)
 
       if (totalBreakupValue !== priceValue) {
@@ -189,7 +189,7 @@ export const checkOnConfirm = (data: any, flow: any) => {
         onCnfrmObj.paymentsAmountMismatch = `Total payments amount (${totalPaymentsAmount}) does not match with quote.price.value (${quotePriceValue})`
       }
 
-      for (let i = 0; i < payments.length; i++) {
+      for (let i = 1; i < payments.length; i++) {
         const payment = payments[i]
 
         if (payment.status !== 'PAID' && payment.status !== 'NOT-PAID') {
@@ -245,7 +245,7 @@ export const checkOnConfirm = (data: any, flow: any) => {
         }
 
         if (!allowedStatusValues.includes(payments[0].status)) {
-          onCnfrmObj.paymentStatus = `Invalid value for status. It should be either NOT_PAID or PAID.`
+          onCnfrmObj.paymentStatus = `Invalid value for status. It should be either of NOT_PAID or PAID.`
         }
       }
     } catch (error: any) {
@@ -270,13 +270,13 @@ export const checkOnConfirm = (data: any, flow: any) => {
               parseFloat(cancellationTerm.cancellation_fee.percentage) <= 0 ||
               !Number.isInteger(parseFloat(cancellationTerm.cancellation_fee.percentage)))
           ) {
-            onCnfrmObj.cancellationFee = `Cancellation fee is required and must be a positive integer for Cancellation Term[${i}]`
+            onCnfrmObj.cancellationFee = `Cancellation fee is required and must be bounded by 0 and 100 for Cancellation Term[${i}]`
           }
 
           const descriptorCode = cancellationTerm.fulfillment_state.descriptor.code
           const storedPercentage = cancellationTermsState.get(descriptorCode)
 
-          if (storedPercentage === undefined || storedPercentage !== cancellationTerm.cancellation_fee.percentage) {
+          if (storedPercentage !== undefined && storedPercentage !== cancellationTerm.cancellation_fee.percentage) {
             onCnfrmObj.cancellationFee = `Cancellation terms percentage for ${descriptorCode} has changed`
           }
         }
@@ -335,83 +335,5 @@ export const checkOnConfirm = (data: any, flow: any) => {
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.FIS_ONCONFIRM} API`, JSON.stringify(err.stack))
     return { error: err.message }
-  }
-}
-
-const compareCity = (onCnfrmObj: any, searchContext: any, context: any) => {
-  try {
-    logger.info(`Comparing city of /${constants.FIS_SEARCH} and /${constants.FIS_ONCONFIRM}`)
-    if (!_.isEqual(searchContext.location.city, context.location.city)) {
-      onCnfrmObj.city = `City code mismatch in /${constants.FIS_SEARCH} and /${constants.FIS_ONCONFIRM}`
-    }
-  } catch (error: any) {
-    logger.info(
-      `Error while comparing city in /${constants.FIS_SEARCH} and /${constants.FIS_ONCONFIRM}, ${error.stack}`,
-    )
-  }
-}
-
-const compareTimestamp = (onCnfrmObj: any, context: any) => {
-  try {
-    logger.info(`Comparing timestamp of /${constants.FIS_CONFIRM} and /${constants.FIS_ONCONFIRM}`)
-    const tmpstmp = getValue('tmpstmp')
-    if (_.gte(tmpstmp, context.timestamp)) {
-      onCnfrmObj.tmpstmp = `Timestamp for /${constants.FIS_CONFIRM} api cannot be greater than or equal to /${constants.FIS_ONCONFIRM} api`
-    } else {
-      const timeDiff = timeDifference(context.timestamp, tmpstmp)
-      logger.info(timeDiff)
-      if (timeDiff > 5000) {
-        onCnfrmObj.tmpstmp = `context/timestamp difference between /${constants.FIS_ONCONFIRM} and /${constants.FIS_CONFIRM} should be smaller than 5 sec`
-      }
-    }
-
-    setValue('tmpstmp', context.timestamp)
-  } catch (error: any) {
-    logger.info(
-      `Error while comparing timestamp for /${constants.FIS_CONFIRM} and /${constants.FIS_ONCONFIRM} api, ${error.stack}`,
-    )
-  }
-}
-
-const compareCountry = (onCnfrmObj: any, searchContext: any, context: any) => {
-  try {
-    logger.info(`Comparing country of /${constants.FIS_SEARCH} and /${constants.FIS_ONCONFIRM}`)
-    if (!_.isEqual(searchContext.location.country, context.location.country)) {
-      onCnfrmObj.country = `Country code mismatch in /${constants.FIS_SEARCH} and /${constants.FIS_ONCONFIRM}`
-    }
-  } catch (error: any) {
-    logger.info(
-      `Error while comparing country in /${constants.FIS_SEARCH} and /${constants.FIS_ONCONFIRM}, ${error.stack}`,
-    )
-  }
-}
-
-const compareTransactionIds = (onCnfrmObj: any, context: any) => {
-  try {
-    logger.info(`Comparing transaction Ids of /${constants.FIS_SELECT} and /${constants.FIS_ONCONFIRM}`)
-    if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
-      onCnfrmObj.txnId = `Transaction Id should be same throughout the flow`
-    }
-  } catch (error: any) {
-    logger.error(
-      `!!Error while comparing transaction ids for /${constants.FIS_SELECT} and /${constants.FIS_ONCONFIRM} api, ${error.stack}`,
-    )
-  }
-}
-
-const performChecks = (onCnfrmObj: any, searchContext: any, context: any, flow: any) => {
-  const checksToSkipForFlows = ['PRE_INVOICE', 'PRE_PERSONAL']
-
-  if (!checksToSkipForFlows.includes(flow)) {
-    compareCity(onCnfrmObj, searchContext, context)
-    compareCountry(onCnfrmObj, searchContext, context)
-    compareTimestamp(onCnfrmObj, context)
-    compareTransactionIds(onCnfrmObj, context)
-
-    const checkBap = checkBppIdOrBapId(context.bap_id)
-    const checkBpp = checkBppIdOrBapId(context.bpp_id)
-
-    if (checkBap) Object.assign(onCnfrmObj, { bap_id: 'context/bap_id should not be a url' })
-    if (checkBpp) Object.assign(onCnfrmObj, { bpp_id: 'context/bpp_id should not be a url' })
   }
 }

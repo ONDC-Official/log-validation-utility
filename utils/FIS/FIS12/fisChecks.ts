@@ -1,7 +1,7 @@
 import { getValue, setValue } from '../../../shared/dao'
-import { FisApiSequence } from '../../../constants/'
+import { formHeadingsFis } from '../../../constants/'
 import { logger } from '../../../shared/logger'
-import { checkIdAndUri, checkFISContext, timeDiff } from '../../'
+import { checkIdAndUri, checkFISContext } from '../../'
 import _ from 'lodash'
 const FULFILLMENT_STATE_CODES = ['INITIATED', 'SANCTIONED', 'DISBURSED', 'PENDING', 'REJECTED', 'COMPLETED']
 
@@ -10,13 +10,13 @@ export const checkUniqueCategoryIds = (categoryIds: (string | number)[], availab
   return categoryIds.length === uniqueCategoryIds.size && categoryIds.every((id) => availableCategoryIds.has(id))
 }
 
-// const getFormHeading = (action: any, loanType: any): string[] | string | null => {
-//   if (formHeadingsFis[loanType] && formHeadingsFis[loanType][action]) {
-//     return formHeadingsFis[loanType][action]
-//   }
+const getFormHeading = (action: any, loanType: any): string[] | string | null => {
+  if (formHeadingsFis[loanType] && formHeadingsFis[loanType][action]) {
+    return formHeadingsFis[loanType][action]
+  }
 
-//   return null
-// }
+  return null
+}
 
 export const validateFulfillments = (fulfillment: any, i: number, documents: any[]): any | null => {
   const errors: any = {}
@@ -117,22 +117,22 @@ export const validateXInput = (xinput: any, i: number, j: number, action: string
         ] = `cur should be between min and max in providers[${i}].items[${j}].xinput.head.index`
       }
 
-      if (!headings || !Array.isArray(headings) || headings.length !== index.max + 1) {
-        errors[
-          `prvdr${i}item${j}_xinput_head_headings`
-        ] = `headings array should be of size max + 1 in providers[${i}].items[${j}].xinput.head`
-      }
+      const loanType: any = getValue(`LoanType`)
+      if (loanType && action) {
+        const formHeading: any = getFormHeading(action, loanType)
 
-      // const loanType: any = getValue(`LoanType`)
-      // if (loanType && action) {
-      //   const formHeading: any = getFormHeading(action, loanType)
-      //   headings?.forEach((heading: string) => {
-      //     if (!formHeading.includes(heading))
-      //       errors[
-      //         `prvdr${i}item${j}_xinput_head_headings`
-      //       ] = `Form headings array must only contain headings as defined in Api contract`
-      //   })
-      // }
+        if (!headings || !Array.isArray(headings) || formHeading.length !== index.max + 1) {
+          errors[`prvdr${i}item${j}_xinput_head_index`] = `max value should be ${
+            formHeading?.length - 1
+          } in providers[${i}].items[${j}].xinput.head`
+        }
+        // headings?.forEach((heading: string) => {
+        //   if (!formHeading.includes(heading))``
+        //     errors[
+        //       `prvdr${i}item${j}_xinput_head_headings`
+        //     ] = `Form headings array must only contain headings as defined in Api contract`
+        // })
+      }
     }
 
     if (!form || typeof form !== 'object') {
@@ -182,22 +182,8 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
   setValue(`${curentCall}_context`, context)
   msgIdSet.add(context.message_id)
 
-  try {
-    logger.info(`Comparing city of /${pastCall} and /${curentCall}`)
-    if (!_.isEqual(prevContext.location.city, context.location.city)) {
-      errorObj.city = `City code mismatch in /${pastCall} and /${curentCall}`
-    }
-  } catch (error: any) {
-    logger.error(`!!Error while comparing city in /${pastCall} and /${curentCall}, ${error.stack}`)
-  }
-
-  try {
-    logger.info(`Comparing country of /${pastCall} and /${curentCall}`)
-    if (!_.isEqual(prevContext.location.country, context.location.country)) {
-      errorObj.country = `Country code mismatch in /${pastCall} and /${curentCall}`
-    }
-  } catch (error: any) {
-    logger.error(`!!Error while comparing country in /${pastCall} and /${curentCall}, ${error.stack}`)
+  if (!context.location || !context.location.city || !context.location.country) {
+    errorObj['location'] = 'context/location/city and context/location/country are required'
   }
 
   try {
@@ -212,10 +198,10 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
 
     if (bapValidationResult !== null) {
       errorObj.bap = bapValidationResult
+    }
 
-      if (!errorObj.bpp && !errorObj.bap) {
-        const prevContext: any = getValue(`${FisApiSequence.SEARCH}_context`)
-
+    if (prevContext) {
+      if (pastCall !== 'search') {
         if (!_.isEqual(prevContext.bpp_id, context.bpp_id)) {
           errorObj.bppIdContextMismatch = `BPP Id mismatch in /${pastCall} and /${curentCall}`
         }
@@ -223,66 +209,76 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
         if (!_.isEqual(prevContext.bpp_uri, context.bpp_uri)) {
           errorObj.bppUriContextMismatch = `BPP URL mismatch in /${pastCall} and /${curentCall}`
         }
+      }
 
-        if (!_.isEqual(prevContext.bap_id, context.bap_id)) {
-          errorObj.bapIdContextMismatch = `BAP Id mismatch in /${pastCall} and /${curentCall}`
-        }
+      if (!_.isEqual(prevContext.bap_id, context.bap_id)) {
+        errorObj.bapIdContextMismatch = `BAP Id mismatch in /${pastCall} and /${curentCall}`
+      }
 
-        if (!_.isEqual(prevContext.bap_uri, context.bap_uri)) {
-          errorObj.bapUriContextMismatch = `BAP URL mismatch in /${pastCall} and /${curentCall}`
-        }
+      if (!_.isEqual(prevContext.bap_uri, context.bap_uri)) {
+        errorObj.bapUriContextMismatch = `BAP URL mismatch in /${pastCall} and /${curentCall}`
       }
     }
   } catch (error: any) {
     logger.error(`!!Error while comparing BAP and BPP Ids in /${curentCall}, ${error.stack}`)
   }
 
-  try {
-    logger.info(`Comparing transaction Ids of /${pastCall} and /${curentCall}`)
-    if (!_.isEqual(prevContext.transaction_id, context.transaction_id)) {
-      errorObj.transaction_id = `Transaction Id for /${pastCall} and /${curentCall} api should be same`
+  if (prevContext) {
+    try {
+      logger.info(`Comparing city of /${pastCall} and /${curentCall}`)
+      if (!_.isEqual(prevContext.location.city, context.location.city)) {
+        errorObj.city = `City code mismatch in /${pastCall} and /${curentCall}`
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while comparing city in /${pastCall} and /${curentCall}, ${error.stack}`)
     }
-  } catch (error: any) {
-    logger.info(`Error while comparing transaction ids for /${pastCall} and /${curentCall} api, ${error.stack}`)
-  }
 
-  try {
-    logger.info(`Comparing Message Ids of /${pastCall} and /${curentCall}`)
-    if (curentCall.startsWith('on_')) {
+    try {
+      logger.info(`Comparing country of /${pastCall} and /${curentCall}`)
+      if (!_.isEqual(prevContext.location.country, context.location.country)) {
+        errorObj.country = `Country code mismatch in /${pastCall} and /${curentCall}`
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while comparing country in /${pastCall} and /${curentCall}, ${error.stack}`)
+    }
+
+    try {
+      logger.info(`Comparing transaction Ids of /${pastCall} and /${curentCall}`)
+      if (!_.isEqual(prevContext.transaction_id, context.transaction_id)) {
+        errorObj.transaction_id = `Transaction Id for /${pastCall} and /${curentCall} api should be same`
+      }
+    } catch (error: any) {
+      logger.info(`Error while comparing transaction ids for /${pastCall} and /${curentCall} api, ${error.stack}`)
+    }
+
+    try {
       logger.info(`Comparing Message Ids of /${pastCall} and /${curentCall}`)
-      if (!_.isEqual(prevContext.message_id, context.message_id)) {
-        errorObj.message_id = `Message Id for /${pastCall} and /${curentCall} api should be same`
+      if (curentCall.startsWith('on_')) {
+        logger.info(`Comparing Message Ids of /${pastCall} and /${curentCall}`)
+        if (!_.isEqual(prevContext.message_id, context.message_id)) {
+          errorObj.message_id = `Message Id for /${pastCall} and /${curentCall} api should be same`
+        }
+      } else {
+        logger.info(`Checking if Message Ids are different for /${pastCall} and /${curentCall}`)
+        if (_.isEqual(prevContext.message_id, context.message_id)) {
+          errorObj.message_id = `Message Id for /${pastCall} and /${curentCall} api should be different`
+        }
       }
-    } else {
-      logger.info(`Checking if Message Ids are different for /${pastCall} and /${curentCall}`)
-      if (_.isEqual(prevContext.message_id, context.message_id)) {
-        errorObj.message_id = `Message Id for /${pastCall} and /${curentCall} api should be different`
-      }
-    }
-  } catch (error: any) {
-    logger.info(`Error while comparing message ids for /${pastCall} and /${curentCall} api, ${error.stack}`)
-  }
-
-  try {
-    logger.info(`Comparing timestamp of /${pastCall} and /${curentCall}`)
-    const tmpstmp = prevContext.context.timestamp
-    if (_.gte(tmpstmp, context.timestamp)) {
-      errorObj.tmpstmp = `Timestamp for /${pastCall} api cannot be greater than or equal to /${curentCall} api`
-    } else {
-      const timeDifference = timeDiff(context.timestamp, tmpstmp)
-      logger.info(timeDifference)
-      if (timeDifference > 5000) {
-        errorObj.tmpstmp = `context/timestamp difference between /${curentCall} and /${pastCall} should be smaller than 5 sec`
-      }
+    } catch (error: any) {
+      logger.info(`Error while comparing message ids for /${pastCall} and /${curentCall} api, ${error.stack}`)
     }
 
-    setValue('tmpstmp', context.timestamp)
-  } catch (error: any) {
-    logger.error(`!!Error while comparing timestamp for /${pastCall} and /${curentCall}, ${error.stack}`)
-  }
+    try {
+      logger.info(`Comparing timestamp of /${pastCall} and /${curentCall}`)
+      const tmpstmp = prevContext.timestamp
+      if (_.gte(tmpstmp, context.timestamp)) {
+        errorObj.tmpstmp = `Timestamp for /${curentCall} api should be greater than timestamp of /${pastCall} api`
+      }
 
-  if (!context.location || !context.location.city || !context.location.country) {
-    errorObj['location'] = 'context/location/city and context/location/country are required'
+      setValue('tmpstmp', context.timestamp)
+    } catch (error: any) {
+      logger.error(`!!Error while comparing timestamp for /${pastCall} and /${curentCall}, ${error.stack}`)
+    }
   }
 
   if (_.isEmpty(errorObj)) {

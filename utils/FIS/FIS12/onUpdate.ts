@@ -1,21 +1,13 @@
 /* eslint-disable no-prototype-builtins */
-import _ from 'lodash'
 import constants, { FisApiSequence, fisFlows } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import {
-  validateSchema,
-  isObjectEmpty,
-  checkFISContext,
-  timeDiff as timeDifference,
-  checkBppIdOrBapId,
-  isValidUrl,
-} from '../../'
+import { validateSchema, isObjectEmpty, isValidUrl } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
-import { validateFulfillments } from './fisChecks'
+import { validateContext, validateFulfillments } from './fisChecks'
 
 const cancellationTermsState = new Map()
 
-export const checkOnUpdate = (data: any, flow: string) => {
+export const checkOnUpdate = (data: any, msgIdSet: any, flow: string) => {
   const onUpdateObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -27,18 +19,8 @@ export const checkOnUpdate = (data: any, flow: string) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const searchContext: any = getValue(`${FisApiSequence.SEARCH}_context`)
-    // const parentItemIdSet: any = getValue(`parentItemIdSet`)
-
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.FIS_ONUPDATE, data)
-
-    const contextRes: any = checkFISContext(context, constants.FIS_ONUPDATE)
-
-    const checkBap = checkBppIdOrBapId(context.bap_id)
-    const checkBpp = checkBppIdOrBapId(context.bpp_id)
-
-    if (checkBap) Object.assign(onUpdateObj, { bap_id: 'context/bap_id should not be a url' })
-    if (checkBpp) Object.assign(onUpdateObj, { bpp_id: 'context/bpp_id should not be a url' })
+    const contextRes: any = validateContext(context, msgIdSet, constants.FIS_UPDATE, constants.FIS_ONUPDATE)
 
     if (schemaValidation !== 'error') {
       Object.assign(onUpdateObj, schemaValidation)
@@ -49,60 +31,6 @@ export const checkOnUpdate = (data: any, flow: string) => {
     }
 
     setValue(`${FisApiSequence.ON_UPDATE}`, data)
-
-    try {
-      logger.info(`Comparing city of /${constants.FIS_SEARCH} and /${constants.FIS_ONUPDATE}`)
-      if (!_.isEqual(searchContext.location.city, context.location.city)) {
-        onUpdateObj.city = `City code mismatch in /${constants.FIS_SEARCH} and /${constants.FIS_ONUPDATE}`
-      }
-    } catch (error: any) {
-      logger.info(
-        `Error while comparing city in /${constants.FIS_SEARCH} and /${constants.FIS_ONUPDATE}, ${error.stack}`,
-      )
-    }
-
-    try {
-      logger.info(`Comparing country of /${constants.FIS_SEARCH} and /${constants.FIS_ONUPDATE}`)
-      if (!_.isEqual(searchContext.location.country, context.location.country)) {
-        onUpdateObj.country = `Country code mismatch in /${constants.FIS_SEARCH} and /${constants.FIS_ONUPDATE}`
-      }
-    } catch (error: any) {
-      logger.info(
-        `Error while comparing country in /${constants.FIS_SEARCH} and /${constants.FIS_ONUPDATE}, ${error.stack}`,
-      )
-    }
-
-    try {
-      logger.info(`Comparing timestamp of /${constants.FIS_UPDATE} and /${constants.FIS_ONUPDATE}`)
-      const tmpstmp = getValue('tmpstmp')
-      if (_.gte(tmpstmp, context.timestamp)) {
-        onUpdateObj.tmpstmp = `Timestamp for /${constants.FIS_UPDATE} api cannot be greater than or equal to /${constants.FIS_ONUPDATE} api`
-      } else {
-        const timeDiff = timeDifference(context.timestamp, tmpstmp)
-        logger.info(timeDiff)
-        if (timeDiff > 5000) {
-          onUpdateObj.tmpstmp = `context/timestamp difference between /${constants.FIS_ONUPDATE} and /${constants.FIS_UPDATE} should be smaller than 5 sec`
-        }
-      }
-
-      setValue('tmpstmp', context.timestamp)
-    } catch (error: any) {
-      logger.info(
-        `Error while comparing timestamp for /${constants.FIS_UPDATE} and /${constants.FIS_ONUPDATE} api, ${error.stack}`,
-      )
-    }
-
-    try {
-      logger.info(`Comparing transaction Ids of /${constants.FIS_CONFIRM} and /${constants.FIS_ONUPDATE}`)
-      if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
-        onUpdateObj.txnId = `Transaction Id should be same from /${constants.FIS_CONFIRM} onwards`
-      }
-    } catch (error: any) {
-      logger.error(
-        `!!Error while comparing transaction ids for /${constants.FIS_CONFIRM} and /${constants.FIS_ONUPDATE} api, ${error.stack}`,
-      )
-    }
-
     const on_update = message.order
     const itemIDS: any = getValue('ItmIDS')
     const itemIdArray: any[] = []
@@ -190,9 +118,17 @@ export const checkOnUpdate = (data: any, flow: string) => {
       const quote = on_update.quote
       const quoteBreakup = quote.breakup
 
-      const requiredBreakupItems = ['Principal', 'Interest', 'Processing Fee']
+      const requiredBreakupItems = [
+        'PRINCIPAL',
+        'INTEREST',
+        'NET_DISBURSED_AMOUNT',
+        'OTHER_UPFRONT_CHARGES',
+        'INSURANCE_CHARGES',
+        'OTHER_CHARGES',
+        'PROCESSING_FEE',
+      ]
       const missingBreakupItems = requiredBreakupItems.filter(
-        (item) => !quoteBreakup.find((breakupItem: any) => breakupItem.type === item),
+        (item) => !quoteBreakup.find((breakupItem: any) => breakupItem.title.toUpperCase() === item),
       )
 
       if (missingBreakupItems.length > 0) {
@@ -201,7 +137,11 @@ export const checkOnUpdate = (data: any, flow: string) => {
         )}`
       }
 
-      const totalBreakupValue = quoteBreakup.reduce((total: any, item: any) => total + parseFloat(item.value), 0)
+      const totalBreakupValue = quoteBreakup.reduce(
+        (total: any, item: any) =>
+          total + (item.title.toUpperCase() != 'NET_DISBURSED_AMOUNT' ? parseFloat(item.price.value) : 0),
+        0,
+      )
       const priceValue = parseFloat(quote.price.value)
 
       if (totalBreakupValue !== priceValue) {
@@ -234,7 +174,7 @@ export const checkOnUpdate = (data: any, flow: string) => {
         onUpdateObj.paymentsAmountMismatch = `Total payments amount (${totalPaymentsAmount}) does not match with quote.price.value (${quotePriceValue})`
       }
 
-      for (let i = 0; i < payments.length; i++) {
+      for (let i = 1; i < payments.length; i++) {
         const payment = payments[i]
 
         if (payment.url) {
@@ -302,7 +242,7 @@ export const checkOnUpdate = (data: any, flow: string) => {
         }
 
         if (!allowedStatusValues.includes(payments[0].status)) {
-          onUpdateObj.paymentStatus = `Invalid value for status. It should be either NOT_PAID or PAID.`
+          onUpdateObj.paymentStatus = `Invalid value for status. It should be either of NOT_PAID or PAID.`
         }
       }
     } catch (error: any) {
@@ -327,13 +267,13 @@ export const checkOnUpdate = (data: any, flow: string) => {
               parseFloat(cancellationTerm.cancellation_fee.percentage) <= 0 ||
               !Number.isInteger(parseFloat(cancellationTerm.cancellation_fee.percentage)))
           ) {
-            onUpdateObj.cancellationFee = `Cancellation fee is required and must be a positive integer for Cancellation Term[${i}]`
+            onUpdateObj.cancellationFee = `Cancellation fee is required and must be bounded by 0 and 100 for Cancellation Term[${i}]`
           }
 
           const descriptorCode = cancellationTerm.fulfillment_state.descriptor.code
           const storedPercentage = cancellationTermsState.get(descriptorCode)
 
-          if (storedPercentage === undefined || storedPercentage !== cancellationTerm.cancellation_fee.percentage) {
+          if (storedPercentage !== undefined && storedPercentage !== cancellationTerm.cancellation_fee.percentage) {
             onUpdateObj.cancellationFee = `Cancellation terms percentage for ${descriptorCode} has changed`
           }
         }

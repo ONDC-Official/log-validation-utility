@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import _ from 'lodash'
-import constants, { FisApiSequence } from '../../../constants'
+import constants from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, isValidUrl } from '../../'
 import { validateContext, validateFulfillments, validateXInput } from './fisChecks'
@@ -13,7 +13,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
   try {
     const errorObj: any = {}
     if (!data || isObjectEmpty(data)) {
-      return { [FisApiSequence.ON_INIT]: 'Json cannot be empty' }
+      return { [constants.FIS_ONINIT]: 'Json cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -32,7 +32,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
       Object.assign(errorObj, contextRes.ERRORS)
     }
 
-    setValue(`${FisApiSequence.ON_INIT}`, data)
+    setValue(`${constants.FIS_ONINIT}`, data)
 
     const on_init = message.order
     const itemIDS: any = getValue('ItmIDS')
@@ -137,7 +137,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
               parseFloat(cancellationTerm.cancellation_fee.percentage) <= 0 ||
               !Number.isInteger(parseFloat(cancellationTerm.cancellation_fee.percentage)))
           ) {
-            errorObj.cancellationFee = `Cancellation fee is required and must be a positive integer for Cancellation Term[${i}]`
+            errorObj.cancellationFee = `Cancellation fee is required and must be bounded by 0 and 100 for Cancellation Term[${i}]`
           }
 
           const descriptorCode = cancellationTerm.fulfillment_state.descriptor.code
@@ -193,7 +193,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
             const allowedStatusValues = ['NOT_PAID', 'PAID']
 
             if (!allowedStatusValues.includes(payment.status)) {
-              errorObj.paymentStatus = `Invalid value for status. It should be either NOT_PAID or PAID.`
+              errorObj.paymentStatus = `Invalid value for status. It should be either of NOT_PAID or PAID.`
             }
           }
 

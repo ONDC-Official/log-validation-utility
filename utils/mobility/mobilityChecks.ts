@@ -35,12 +35,14 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
     }
 
     if (prevContext) {
-      if (!_.isEqual(prevContext.bpp_id, context.bpp_id)) {
-        errorObj.bppIdContextMismatch = `BPP Id mismatch in /${pastCall} and /${curentCall}`
-      }
+      if (pastCall !== 'search') {
+        if (!_.isEqual(prevContext.bpp_id, context.bpp_id)) {
+          errorObj.bppIdContextMismatch = `BPP Id mismatch in /${pastCall} and /${curentCall}`
+        }
 
-      if (!_.isEqual(prevContext.bpp_uri, context.bpp_uri)) {
-        errorObj.bppUriContextMismatch = `BPP URL mismatch in /${pastCall} and /${curentCall}`
+        if (!_.isEqual(prevContext.bpp_uri, context.bpp_uri)) {
+          errorObj.bppUriContextMismatch = `BPP URL mismatch in /${pastCall} and /${curentCall}`
+        }
       }
 
       if (!_.isEqual(prevContext.bap_id, context.bap_id)) {
@@ -102,7 +104,7 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
 
     try {
       logger.info(`Comparing timestamp of /${pastCall} and /${curentCall}`)
-      const tmpstmp = prevContext.context.timestamp
+      const tmpstmp = prevContext.timestamp
       if (_.gte(tmpstmp, context.timestamp)) {
         errorObj.tmpstmp = `Timestamp for /${pastCall} api cannot be greater than or equal to /${curentCall} api`
       } else {

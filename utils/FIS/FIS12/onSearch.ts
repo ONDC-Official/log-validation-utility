@@ -3,7 +3,7 @@
 import { logger } from '../../../shared/logger'
 import { setValue, getValue } from '../../../shared/dao'
 import constants, { FisApiSequence, fisFlows } from '../../../constants'
-import { validateSchema, isObjectEmpty, isValidUrl } from '../../'
+import { validateSchema, isObjectEmpty } from '../../'
 import { checkUniqueCategoryIds, validateContext, validateXInput } from './fisChecks'
 import { validateProviderTags, validatePaymentTags, validateItemsTags } from './tags'
 
@@ -70,8 +70,8 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
 
         if (descriptor.images) {
           descriptor.images.forEach((image: any, index: number) => {
-            const [url, size_type] = image
-            if (typeof url !== 'string' || !url.trim() || !isValidUrl(url)) {
+            const { url, size_type } = image
+            if (typeof url !== 'string' || !url.trim()) {
               errorObj[`image_url_[${index}]`] = `Invalid URL for image in descriptor.`
             }
 

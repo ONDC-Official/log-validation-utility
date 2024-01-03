@@ -2,6 +2,7 @@ import { logger } from '../../../shared/logger'
 import { setValue } from '../../../shared/dao'
 import constants, { FisApiSequence, fisFlows } from '../../../constants'
 import { validateSchema, isObjectEmpty, checkFISContext } from '../../../utils'
+import { validatePaymentTags } from './tags'
 
 export const search = (data: any, msgIdSet: any, flow: string) => {
   const errorObj: any = {}
@@ -22,15 +23,9 @@ export const search = (data: any, msgIdSet: any, flow: string) => {
       return Object.keys(errorObj).length > 0 && errorObj
     }
 
-    msgIdSet.add(data.context.message_id)
-
     const schemaValidation = validateSchema(data?.context?.domain.split(':')[1], constants.FIS_SEARCH, data)
-
-    if (schemaValidation !== 'error') {
-      Object.assign(errorObj, schemaValidation)
-    }
-
     const contextRes: any = checkFISContext(data.context, constants.FIS_SEARCH)
+
     setValue(`${FisApiSequence.SEARCH}_context`, data.context)
     msgIdSet.add(data.context.message_id)
 
@@ -38,47 +33,63 @@ export const search = (data: any, msgIdSet: any, flow: string) => {
       Object.assign(errorObj, contextRes.ERRORS)
     }
 
-    const code = data.message.intent?.category?.descriptor?.code
+    if (schemaValidation !== 'error') {
+      Object.assign(errorObj, schemaValidation)
+    }
 
-    if (code) {
-      if (code !== fisFlows[flow as keyof typeof fisFlows]) {
-        errorObj['intent'] = {
+    try {
+      logger.info(`Validating category object for /${constants.FIS_SEARCH}`)
+      const code = data.message.intent?.category?.descriptor?.code
+      if (code) {
+        console.log('fisFlows[flow as keyof typeof fisFlows]', fisFlows[flow as keyof typeof fisFlows], code)
+        if (code != fisFlows[flow as keyof typeof fisFlows]) {
+          errorObj['category'] = {
+            category: {
+              descriptor: {
+                code: `Category descriptor code must be in a standard enum format as ${
+                  fisFlows[flow as keyof typeof fisFlows]
+                }`,
+              },
+            },
+          }
+        }
+
+        setValue(`LoanType`, code)
+      } else
+        errorObj['category'] = {
           category: {
             descriptor: {
-              code: `Category descriptor code must be same as ${fisFlows[flow as keyof typeof fisFlows]} in ${
+              code: `Category descriptor code ${fisFlows[flow as keyof typeof fisFlows]} must be present in ${
                 FisApiSequence.SEARCH
               }`,
             },
           },
         }
-      }
-
-      setValue(`LoanType`, code)
-    } else
-      errorObj['intent'] = {
-        category: {
-          descriptor: {
-            code: `Category descriptor code must be present in ${FisApiSequence.SEARCH}`,
-          },
-        },
-      }
-
-    if (!data.message.intent?.payment?.collected_by) {
-      errorObj['collected_by'] = `payment.collected_by must be present in ${FisApiSequence.SEARCH}`
-    } else {
-      setValue(`collected_by`, data.message.intent?.payment?.collected_by)
+    } catch (error: any) {
+      logger.error(`!!Error occcurred while validating category in /${constants.FIS_SEARCH},  ${error.message}`)
     }
 
-    if (!data.message.intent?.payment?.tags?.some((tag: any) => tag.descriptor.code === 'BUYER_FINDER_FEES')) {
-      errorObj['intent'] = {
-        tags: `BUYER_FINDER_FEES tag must be present in payment inside ${FisApiSequence.SEARCH}`,
-      }
-    }
+    try {
+      logger.info(`Validating payments object for /${constants.FIS_SEARCH}`)
+      const payment = data.message.intent?.payment
+      const collectedBy = payment?.collected_by
 
-    if (!data.message.intent?.payment?.tags?.some((tag: any) => tag.descriptor.code === 'SETTLEMENT_TERMS')) {
-      errorObj['intent'] = {
-        tags: `SETTLEMENT_TERMS tag must be present in payment inside ${FisApiSequence.SEARCH}`,
+      if (!collectedBy) {
+        errorObj[`collected_by`] = `payment.collected_by must be present in ${FisApiSequence.SEARCH}`
+      } else if (collectedBy !== 'BPP' && collectedBy !== 'BAP') {
+        errorObj['collected_by'] = `payment.collected_by can only be either 'BPP' or 'BAP' in ${FisApiSequence.SEARCH}`
+      } else {
+        setValue(`collected_by`, collectedBy)
       }
+
+      // Validate payment tags
+      const tagsValidation = validatePaymentTags(payment.tags)
+      console.log('tagsValidation', tagsValidation)
+      if (!tagsValidation.isValid) {
+        Object.assign(errorObj, { tags: tagsValidation.errors })
+      }
+    } catch (error: any) {
+      logger.error(`!!Error occcurred while validating payments in /${constants.FIS_SEARCH},  ${error.message}`)
     }
 
     return Object.keys(errorObj).length > 0 && errorObj

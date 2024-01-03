@@ -3,9 +3,9 @@
 import { logger } from '../../../shared/logger'
 import { setValue, getValue } from '../../../shared/dao'
 import constants, { FisApiSequence, fisFlows } from '../../../constants'
-import { validateSchema, isObjectEmpty, checkFISContext, checkBppIdOrBapId } from '../../'
-import { checkUniqueCategoryIds, validateXInput } from './fisChecks'
-import _ from 'lodash'
+import { validateSchema, isObjectEmpty, isValidUrl } from '../../'
+import { checkUniqueCategoryIds, validateContext, validateXInput } from './fisChecks'
+import { validateProviderTags, validatePaymentTags, validateItemsTags } from './tags'
 
 export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
   if (!data || isObjectEmpty(data)) {
@@ -18,75 +18,39 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
   }
 
   const schemaValidation = validateSchema(data?.context?.domain.split(':')[1], constants.FIS_ONSEARCH, data)
+  const contextRes: any = validateContext(context, msgIdSet, constants.FIS_SEARCH, constants.FIS_ONSEARCH)
 
-  const contextRes: any = checkFISContext(context, constants.FIS_ONSEARCH)
-  setValue(`${FisApiSequence.ON_SEARCH}_context`, context)
   setValue(`${FisApiSequence.ON_SEARCH}_message`, message)
-  msgIdSet.add(context.message_id)
-
+  setValue(`${FisApiSequence.ON_SEARCH}`, data)
   const errorObj: any = {}
 
   if (schemaValidation !== 'error') {
     Object.assign(errorObj, schemaValidation)
   }
 
-  const checkBap = checkBppIdOrBapId(context.bap_id)
-  const checkBpp = checkBppIdOrBapId(context.bpp_id)
-
-  if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
-  if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
   if (!contextRes?.valid) {
     Object.assign(errorObj, contextRes.ERRORS)
-  }
-
-  setValue(`${FisApiSequence.ON_SEARCH}`, data)
-
-  const searchContext: any = getValue(`${FisApiSequence.SEARCH}_context`)
-
-  try {
-    logger.info(`Storing BAP_ID and BPP_ID in /${constants.FIS_ONSEARCH}`)
-    setValue('bapId', context.bap_id)
-    setValue('bppId', context.bpp_id)
-  } catch (error: any) {
-    logger.error(`!!Error while storing BAP and BPP Ids in /${constants.FIS_ONSEARCH}, ${error.stack}`)
-  }
-
-  try {
-    logger.info(`Comparing transaction Ids of /${constants.FIS_SEARCH} and /${constants.FIS_ONSEARCH}`)
-    if (!_.isEqual(searchContext.transaction_id, context.transaction_id)) {
-      errorObj.transaction_id = `Transaction Id for /${constants.FIS_SEARCH} and /${constants.FIS_ONSEARCH} api should be same`
-    }
-  } catch (error: any) {
-    logger.info(
-      `Error while comparing transaction ids for /${constants.FIS_SEARCH} and /${constants.FIS_ONSEARCH} api, ${error.stack}`,
-    )
-  }
-
-  try {
-    logger.info(`Comparing Message Ids of /${constants.FIS_SEARCH} and /${constants.FIS_ONSEARCH}`)
-    if (!_.isEqual(searchContext.message_id, context.message_id)) {
-      errorObj.message_id = `Message Id for /${constants.FIS_SEARCH} and /${constants.FIS_ONSEARCH} api should be same`
-    }
-  } catch (error: any) {
-    logger.info(
-      `Error while comparing message ids for /${constants.FIS_SEARCH} and /${constants.FIS_ONSEARCH} api, ${error.stack}`,
-    )
   }
 
   const onSearchCatalog: any = message.catalog
   const prvdrsId = new Set()
   const prvdrLocId = new Set()
   const itemsId = new Set()
+  const loanCode = getValue(`LoanType`)
 
   try {
     logger.info(`Checking Providers info (providers) in /${constants.FIS_ONSEARCH}`)
-    let i = 0
     const bppPrvdrs = onSearchCatalog['providers']
     const len = bppPrvdrs.length
-    while (i < len) {
-      const categoriesId = new Set()
+    if (len === 0 || len === undefined) {
+      errorObj['providers'] = 'Providers array is missing or empty in /message/catalog'
+      return errorObj
+    }
 
+    let i = 0
+    while (i < len) {
       logger.info(`Validating uniqueness for provider id in providers[${i}]...`)
+      const categoriesId = new Set()
       const prvdr = bppPrvdrs[i]
 
       if (prvdrsId.has(prvdr.id)) {
@@ -97,10 +61,57 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
       }
 
       try {
+        logger.info(`Validating Descriptor for /${constants.FIS_ONSEARCH}`)
+        const descriptor = onSearchCatalog['providers'][i]['descriptor']
+
+        if (!descriptor) {
+          errorObj.descriptor = 'Provider descriptor is missing or invalid.'
+        }
+
+        if (descriptor.images) {
+          descriptor.images.forEach((image: any, index: number) => {
+            const [url, size_type] = image
+            if (typeof url !== 'string' || !url.trim() || !isValidUrl(url)) {
+              errorObj[`image_url_[${index}]`] = `Invalid URL for image in descriptor.`
+            }
+
+            const validSizes = ['md', 'sm', 'lg']
+            if (!validSizes.includes(size_type)) {
+              errorObj[
+                `image_size_[${index}]`
+              ] = `Invalid image size in descriptor. It should be one of: ${validSizes.join(', ')}`
+            }
+          })
+        }
+
+        if (!descriptor.name || !descriptor.name.trim()) {
+          errorObj.name = `Provider name cannot be empty.`
+        } else {
+          if (descriptor.name !== onSearchCatalog['descriptor']['name'])
+            errorObj.name = `Provider name should be same as sent in catalog/descriptor.`
+        }
+
+        if (descriptor.short_desc && !descriptor.short_desc.trim()) {
+          errorObj.short_desc = `Short description cannot be empty.`
+        }
+
+        if (descriptor.long_desc && !descriptor.long_desc.trim()) {
+          errorObj.long_desc = `Long description cannot be empty.`
+        }
+      } catch (error: any) {
+        logger.info(`Error while validating descriptor for /${constants.FIS_ONSEARCH}, ${error.stack}`)
+      }
+
+      try {
         logger.info(`Checking categories for provider (${prvdr.id}) in providers[${i}]`)
         let j = 0
         const categories = onSearchCatalog['providers'][i]['categories']
         const iLen = categories.length
+
+        if (iLen === 0 || iLen === undefined) {
+          errorObj['categories'] = 'Categories array is missing or empty in /message/catalog/providers/categories'
+        }
+
         while (j < iLen) {
           logger.info(`Validating uniqueness for categories id in providers[${i}].items[${j}]...`)
           const category = categories[j]
@@ -114,7 +125,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
 
           logger.info(`Validating descriptor code in providers[${i}].categories[${j}]...`)
 
-          if (category?.descriptor?.code !== fisFlows[flow as keyof typeof fisFlows])
+          if (category?.descriptor?.code !== loanCode)
             errorObj[`prvdr[${i}].category[${j}].code`] = `category code: ${
               category?.descriptor?.code
             } in providers[${i}] must be the same as ${fisFlows[flow as keyof typeof fisFlows]}`
@@ -139,20 +150,14 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
               ] = `payments.collected_by value sent in ${FisApiSequence.ON_SEARCH} should be ${srchCollectBy} as sent in ${FisApiSequence.SEARCH}`
           }
 
-          if (!arr.tags?.some((tag: any) => tag?.descriptor?.code === 'BUYER_FINDER_FEES')) {
-            errorObj[`payemnts[${i}]_BUYER_FINDER_FEES`] = {
-              tags: 'BUYER_FINDER_FEES tag is missing. It should be present.',
-            }
-          }
-
-          if (!arr?.tags?.some((tag: any) => tag?.descriptor?.code === 'SETTLEMENT_TERMS')) {
-            errorObj[`payemnts[${i}]_SETTLEMENT_TERMS`] = {
-              tags: 'SETTLEMENT_TERMS tag is missing. It should be present.',
-            }
+          // Validate payment tags
+          const tagsValidation = validatePaymentTags(arr.tags)
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { tags: tagsValidation.errors })
           }
         })
       } catch (error: any) {
-        logger.error(`!!Errors while checking categories in providers[${i}], ${error.stack}`)
+        logger.error(`!!Errors while checking payments in providers[${i}], ${error.stack}`)
       }
 
       try {
@@ -160,6 +165,11 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
         let j = 0
         const items = onSearchCatalog['providers'][i]['items']
         const iLen = items.length
+
+        if (iLen === 0 || iLen === undefined) {
+          errorObj['items'] = 'Items array is missing or empty in /message/catalog/providers/items'
+        }
+
         while (j < iLen) {
           logger.info(`Validating uniqueness for item id in providers[${i}].items[${j}]...`)
           const item = items[j]
@@ -182,10 +192,10 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
             }
           }
 
-          if (item?.descriptor?.code !== fisFlows[flow as keyof typeof fisFlows])
-            errorObj[`prvdr[${i}].item[${j}].code`] = `Descriptor code: ${
-              item?.descriptor?.code
-            } in item[${j}] must be the same as ${fisFlows[flow as keyof typeof fisFlows]}`
+          if (item?.descriptor?.code !== loanCode)
+            errorObj[
+              `prvdr[${i}].item[${j}].code`
+            ] = `Descriptor code: ${item?.descriptor?.code} in item[${j}] must be the same as ${loanCode}`
 
           const xinput = item.xinput
           const xinputValidationErrors = validateXInput(xinput, i, j, constants.FIS_ONSEARCH)
@@ -193,17 +203,10 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
             Object.assign(errorObj, xinputValidationErrors)
           }
 
-          const generalInfoTagGroup = item.tags.find((tag: { code: any }) => tag.code === 'GENERAL_INFO')
-          if (!generalInfoTagGroup) {
-            const key = `prvdr${i}item${j}_tags_GENERAL_INFO`
-            errorObj[key] = `GENERAL_INFO tag group is missing in /providers[${i}]/items[${j}] and is required`
-          } else {
-            if (generalInfoTagGroup.list.length !== 6) {
-              const key = `prvdr${i}item${j}_tags_GENERAL_INFO`
-              errorObj[
-                key
-              ] = `GENERAL_INFO tag group in /providers[${i}]/items[${j}] should have 6 elements as per the API contract`
-            }
+          // Validate Item tags
+          const tagsValidation = validateItemsTags(item?.tags)
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { tags: tagsValidation.errors })
           }
 
           j++
@@ -213,22 +216,17 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
       }
 
       try {
-        logger.info(`Checking serviceability construct for providers[${i}]`)
+        logger.info(`Checking tags construct for providers[${i}]`)
 
         const tags = onSearchCatalog['providers'][i]['tags']
 
-        tags.forEach((sc: any, t: any) => {
-          if ('list' in sc) {
-            if (sc.list.length != 6) {
-              const key = `prvdr${i}tags${t}`
-              errorObj[
-                key
-              ] = `serviceability construct /providers[${i}]/tags[${t}] should be defined as per the API contract`
-            }
-          }
-        })
+        // Validate tags
+        const tagsValidation = validateProviderTags(tags)
+        if (!tagsValidation.isValid) {
+          Object.assign(errorObj, { tags: tagsValidation.errors })
+        }
       } catch (error: any) {
-        logger.error(`!!Error while checking serviceability construct for providers[${i}], ${error.stack}`)
+        logger.error(`!!Error while checking tags construct for providers[${i}], ${error.stack}`)
       }
 
       i++
@@ -237,7 +235,6 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
     setValue(`${FisApiSequence.ON_SEARCH}prvdrsId`, prvdrsId)
     setValue(`${FisApiSequence.ON_SEARCH}prvdrLocId`, prvdrLocId)
     setValue(`${FisApiSequence.ON_SEARCH}_itemsId`, Array.from(itemsId))
-    setValue(`ItemIDS`, itemsId)
   } catch (error: any) {
     logger.error(`!!Error while checking Providers info in /${constants.FIS_ONSEARCH}, ${error.stack}`)
     return { error: error.message }

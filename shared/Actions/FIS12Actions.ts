@@ -6,7 +6,7 @@ import { search } from '../../utils/FIS/FIS12/search'
 import { checkOnSearch } from '../../utils/FIS/FIS12/onSearch'
 import { checkSelect } from '../../utils/FIS/FIS12/select'
 import { checkOnSelect } from '../../utils/FIS/FIS12/onSelect'
-import { checkOnSelect2 } from '../../utils/FIS/FIS12/onSelect2'
+// import { checkOnSelect2 } from '../../utils/FIS/FIS12/onSelect2'
 import { checkInit } from '../../utils/FIS/FIS12/init'
 import { checkOnInit } from '../../utils/FIS/FIS12/onInit'
 import { checkConfirm } from '../../utils/FIS/FIS12/confirm'
@@ -43,105 +43,91 @@ export function validateLogsForFIS12(data: any, domain: string, flow: string) {
     }
 
     if (data[FisApiSequence.SELECT]) {
-      const selectResp = checkSelect(data[FisApiSequence.SELECT], msgIdSet)
+      const selectResp = checkSelect(data[FisApiSequence.SELECT], msgIdSet, FisApiSequence.SELECT)
       if (!_.isEmpty(selectResp)) {
         logReport = { ...logReport, [FisApiSequence.SELECT]: selectResp }
       }
     }
 
     if (data[FisApiSequence.ON_SELECT]) {
-      const onSelectResp = checkOnSelect(data[FisApiSequence.ON_SELECT], msgIdSet)
+      const onSelectResp = checkOnSelect(data[FisApiSequence.ON_SELECT], msgIdSet, FisApiSequence.ON_SELECT)
       if (!_.isEmpty(onSelectResp)) {
         logReport = { ...logReport, [FisApiSequence.ON_SELECT]: onSelectResp }
       }
     }
 
     if (data[FisApiSequence.SELECT_2]) {
-      const select2Resp = checkSelect(data[FisApiSequence.SELECT_2], msgIdSet)
+      const select2Resp = checkSelect(data[FisApiSequence.SELECT_2], msgIdSet, FisApiSequence.SELECT_2)
       if (!_.isEmpty(select2Resp)) {
         logReport = { ...logReport, [FisApiSequence.SELECT_2]: select2Resp }
       }
     }
 
     if (data[FisApiSequence.ON_SELECT_2]) {
-      const onSelect2Resp = checkOnSelect2(data[FisApiSequence.ON_SELECT_2], msgIdSet)
+      const onSelect2Resp = checkOnSelect(data[FisApiSequence.ON_SELECT_2], msgIdSet, FisApiSequence.ON_SELECT_2)
       if (!_.isEmpty(onSelect2Resp)) {
         logReport = { ...logReport, [FisApiSequence.ON_SELECT_2]: onSelect2Resp }
       }
     }
 
     if (data[FisApiSequence.SELECT_3]) {
-      const select3Resp = checkSelect(data[FisApiSequence.SELECT_3], msgIdSet)
+      const select3Resp = checkSelect(data[FisApiSequence.SELECT_3], msgIdSet, FisApiSequence.SELECT_3)
       if (!_.isEmpty(select3Resp)) {
         logReport = { ...logReport, [FisApiSequence.SELECT_3]: select3Resp }
       }
     }
 
     if (data[FisApiSequence.ON_SELECT_3]) {
-      const onSelect3Resp = checkOnSelect2(data[FisApiSequence.ON_SELECT_3], msgIdSet)
+      const onSelect3Resp = checkOnSelect(data[FisApiSequence.ON_SELECT_3], msgIdSet, FisApiSequence.ON_SELECT_3)
       if (!_.isEmpty(onSelect3Resp)) {
         logReport = { ...logReport, [FisApiSequence.ON_SELECT_3]: onSelect3Resp }
       }
     }
 
     if (data[FisApiSequence.INIT]) {
-      const init = checkInit(data[FisApiSequence.INIT], msgIdSet)
+      const init = checkInit(data[FisApiSequence.INIT], msgIdSet, FisApiSequence.INIT)
       if (!_.isEmpty(init)) {
         logReport = { ...logReport, [FisApiSequence.INIT]: init }
       }
     }
 
     if (data[FisApiSequence.ON_INIT]) {
-      const onInit = checkOnInit(data[FisApiSequence.ON_INIT], msgIdSet)
+      const onInit = checkOnInit(data[FisApiSequence.ON_INIT], msgIdSet, FisApiSequence.ON_INIT)
       if (!_.isEmpty(onInit)) {
         logReport = { ...logReport, [FisApiSequence.ON_INIT]: onInit }
       }
     }
 
     if (data[FisApiSequence.INIT_2]) {
-      const init2 = checkInit(data[FisApiSequence.INIT_2], msgIdSet)
+      const init2 = checkInit(data[FisApiSequence.INIT_2], msgIdSet, FisApiSequence.INIT_2)
       if (!_.isEmpty(init2)) {
         logReport = { ...logReport, [FisApiSequence.INIT_2]: init2 }
       }
     }
 
     if (data[FisApiSequence.ON_INIT_2]) {
-      const onInit2 = checkOnInit(data[FisApiSequence.ON_INIT_2], msgIdSet)
+      const onInit2 = checkOnInit(data[FisApiSequence.ON_INIT_2], msgIdSet, FisApiSequence.ON_INIT_2)
       if (!_.isEmpty(onInit2)) {
         logReport = { ...logReport, [FisApiSequence.ON_INIT_2]: onInit2 }
       }
     }
 
     if (data[FisApiSequence.INIT_3]) {
-      const init3 = checkInit(data[FisApiSequence.INIT_3], msgIdSet)
+      const init3 = checkInit(data[FisApiSequence.INIT_3], msgIdSet, FisApiSequence.INIT_3)
       if (!_.isEmpty(init3)) {
         logReport = { ...logReport, [FisApiSequence.INIT_3]: init3 }
       }
     }
 
     if (data[FisApiSequence.ON_INIT_3]) {
-      const onInit3 = checkOnInit(data[FisApiSequence.ON_INIT_3], msgIdSet)
+      const onInit3 = checkOnInit(data[FisApiSequence.ON_INIT_3], msgIdSet, FisApiSequence.ON_INIT_3)
       if (!_.isEmpty(onInit3)) {
         logReport = { ...logReport, [FisApiSequence.ON_INIT_3]: onInit3 }
       }
     }
 
-    if (data[FisApiSequence.INIT_4]) {
-      const init4 = checkInit(data[FisApiSequence.INIT_4], msgIdSet)
-      if (!_.isEmpty(init4)) {
-        logReport = { ...logReport, [FisApiSequence.INIT_4]: init4 }
-      }
-    }
-
-    if (data[FisApiSequence.ON_INIT_4]) {
-      const onInit4 = checkOnInit(data[FisApiSequence.ON_INIT_4], msgIdSet)
-      if (!_.isEmpty(onInit4)) {
-        logReport = { ...logReport, [FisApiSequence.ON_INIT_4]: onInit4 }
-      }
-    }
-
     if (data[FisApiSequence.CONFIRM]) {
-      const confirm = checkConfirm(data[FisApiSequence.CONFIRM])
+      const confirm = checkConfirm(data[FisApiSequence.CONFIRM], msgIdSet)
       if (!_.isEmpty(confirm)) {
         logReport = { ...logReport, [FisApiSequence.CONFIRM]: confirm }
       }

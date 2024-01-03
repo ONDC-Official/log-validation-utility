@@ -62,6 +62,17 @@ export const checkOnConfirm = (data: any, flow: any) => {
     setValue('ItmIDS', newItemIDSValue)
 
     try {
+      logger.info(`Checking id in message object  /${constants.FIS_ONCONFIRM}`)
+      if (!on_confirm.id) {
+        onCnfrmObj.id = `Id in message object must be present/${constants.FIS_ONCONFIRM}`
+      } else {
+        setValue('orderId', on_confirm?.id)
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking id in message object  /${constants.FIS_ONCONFIRM}, ${error.stack}`)
+    }
+
+    try {
       logger.info(`Checking provider id /${constants.FIS_ONCONFIRM}`)
 
       if (['PRE_INVOICE', 'PRE_PERSONAL'].includes(flow)) {
@@ -255,9 +266,11 @@ export const checkOnConfirm = (data: any, flow: any) => {
             cancellationTerm.fulfillment_state.descriptor.code &&
             (!cancellationTerm.cancellation_fee ||
               !cancellationTerm.cancellation_fee.percentage ||
-              isNaN(parseFloat(cancellationTerm.cancellation_fee.percentage)))
+              isNaN(parseFloat(cancellationTerm.cancellation_fee.percentage)) ||
+              parseFloat(cancellationTerm.cancellation_fee.percentage) <= 0 ||
+              !Number.isInteger(parseFloat(cancellationTerm.cancellation_fee.percentage)))
           ) {
-            onCnfrmObj.cancellationFee = `Cancellation fee is required for Cancellation Term[${i}] when fulfillment_state is present`
+            onCnfrmObj.cancellationFee = `Cancellation fee is required and must be a positive integer for Cancellation Term[${i}]`
           }
 
           const descriptorCode = cancellationTerm.fulfillment_state.descriptor.code
@@ -377,7 +390,7 @@ const compareTransactionIds = (onCnfrmObj: any, context: any) => {
   try {
     logger.info(`Comparing transaction Ids of /${constants.FIS_SELECT} and /${constants.FIS_ONCONFIRM}`)
     if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
-      onCnfrmObj.txnId = `Transaction Id should be same from /${constants.FIS_SELECT} onwards`
+      onCnfrmObj.txnId = `Transaction Id should be same throughout the flow`
     }
   } catch (error: any) {
     logger.error(

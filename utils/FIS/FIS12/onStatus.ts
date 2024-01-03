@@ -95,7 +95,7 @@ export const checkOnStatus = (data: any, flow: string) => {
     try {
       logger.info(`Comparing transaction Ids of /${constants.FIS_SELECT} and /${constants.FIS_ONSTATUS}`)
       if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
-        onStatusObj.txnId = `Transaction Id should be same from /${constants.FIS_SELECT} onwards`
+        onStatusObj.txnId = `Transaction Id should be same throughout the flow`
       }
     } catch (error: any) {
       logger.error(
@@ -330,9 +330,11 @@ export const checkOnStatus = (data: any, flow: string) => {
             cancellationTerm.fulfillment_state.descriptor.code &&
             (!cancellationTerm.cancellation_fee ||
               !cancellationTerm.cancellation_fee.percentage ||
-              isNaN(parseFloat(cancellationTerm.cancellation_fee.percentage)))
+              isNaN(parseFloat(cancellationTerm.cancellation_fee.percentage)) ||
+              parseFloat(cancellationTerm.cancellation_fee.percentage) <= 0 ||
+              !Number.isInteger(parseFloat(cancellationTerm.cancellation_fee.percentage)))
           ) {
-            onStatusObj.cancellationFee = `Cancellation fee is required for Cancellation Term[${i}] when fulfillment_state is present`
+            onStatusObj.cancellationFee = `Cancellation fee is required and must be a positive integer for Cancellation Term[${i}]`
           }
 
           const descriptorCode = cancellationTerm.fulfillment_state.descriptor.code

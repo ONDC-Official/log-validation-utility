@@ -7,11 +7,11 @@ import {
   isObjectEmpty,
   checkContext,
   timeDiff as timeDifference,
-  isObjectEqual,
   compareCoordinates,
   checkItemTag,
   checkBppIdOrBapId,
   areGSTNumbersMatching,
+  compareObjects,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -195,13 +195,18 @@ export const checkOnConfirm = (data: any) => {
     try {
       logger.info(`Comparing billing object in ${constants.RET_CONFIRM} and /${constants.RET_ONCONFIRM}`)
       const billing = getValue('billing')
-      if (isObjectEqual(billing, on_confirm.billing).length > 0) {
-        const billingMismatch = isObjectEqual(billing, on_confirm.billing)
-        onCnfrmObj.bill = `${billingMismatch.join(', ')} mismatches in /billing in /${constants.RET_CONFIRM} and /${
-          constants.RET_ONCONFIRM
-        }`
+
+      const billingErrors = compareObjects(billing, on_confirm.billing)
+
+      if (billingErrors) {
+        let i = 0
+        const len = billingErrors.length
+        while (i < len) {
+          const key = `billingErr${i}`
+          onCnfrmObj[key] = `${billingErrors[i]}`
+          i++
+        }
       }
-      // setValue("billing", on_confirm.billing);
     } catch (error: any) {
       logger.info(`!Error while comparing billing object in /${constants.RET_CONFIRM} and /${constants.RET_ONCONFIRM}`)
     }
@@ -282,8 +287,18 @@ export const checkOnConfirm = (data: any) => {
 
     try {
       logger.info(`Comparing Quote object for /${constants.RET_ONSELECT} and /${constants.RET_ONCONFIRM}`)
-      if (!_.isEqual(getValue('quoteObj'), on_confirm.quote)) {
-        onCnfrmObj.onQuoteObj = `Discrepancies between the quote object /${constants.RET_ONSELECT} and /${constants.RET_ONCONFIRM}`
+
+      const confirm_quote = getValue('quoteObj')
+      const quoteErrors = compareObjects(confirm_quote, on_confirm.quote)
+
+      if (quoteErrors) {
+        let i = 0
+        const len = quoteErrors.length
+        while (i < len) {
+          const key = `quoteErr${i}`
+          onCnfrmObj[key] = `${quoteErrors[i]}`
+          i++
+        }
       }
     } catch (error: any) {
       logger.error(`!!Error while comparing quote in /${constants.RET_ONSELECT} and /${constants.RET_ONCONFIRM}`)

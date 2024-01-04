@@ -546,10 +546,6 @@ export const FnBconfirmSchema = {
                 'collected_by',
                 '@ondc/org/buyer_app_finder_fee_type',
                 '@ondc/org/buyer_app_finder_fee_amount',
-                '@ondc/org/settlement_basis',
-                '@ondc/org/settlement_window',
-                '@ondc/org/withholding_amount',
-                '@ondc/org/settlement_details',
               ],
             },
             tags: {

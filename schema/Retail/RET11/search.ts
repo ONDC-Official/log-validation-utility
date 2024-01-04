@@ -142,7 +142,7 @@ export const FnBsearchSchema = {
                 properties: {
                   code: {
                     type: 'string',
-                    const: 'catalog_inc',
+                    enum: ['catalog_inc', 'bap_terms'],
                   },
                   list: {
                     type: 'array',
@@ -162,7 +162,6 @@ export const FnBsearchSchema = {
                         },
                         value: {
                           type: 'string',
-                          format: 'date-time',
                         },
                       },
                       required: ['code', 'value'],

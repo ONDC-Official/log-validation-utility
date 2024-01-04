@@ -166,6 +166,7 @@ export const onDemandFlows = {
 
 export const IGMApiSequence = {
   RET_ISSUE: 'ret_issue',
+  RET_ISSUE_CLOSE: 'ret_issue_close',
   RET_ON_ISSUE: 'ret_on_issue',
   RET_ISSUE_STATUS: 'ret_issue_status',
   RET_ON_ISSUE_STATUS: 'ret_on_issue_status',
@@ -207,3 +208,17 @@ export const statusArray = [
 ]
 
 export const buyerCancellationRid = new Set(['001', '003', '006', '009', '010'])
+
+export const retailDomains = [
+  'ONDC:RET10',
+  'ONDC:RET11',
+  'ONDC:RET12',
+  'ONDC:RET13',
+  'ONDC:RET14',
+  'ONDC:RET15',
+  'ONDC:RET16',
+  'ONDC:RET17',
+  'ONDC:RET18',
+  'ONDC:RET19',
+  'ONDC:RET20',
+]

@@ -6,12 +6,12 @@ import {
   validateSchema,
   isObjectEmpty,
   checkContext,
-  isObjectEqual,
   checkItemTag,
   checkBppIdOrBapId,
   areGSTNumbersMatching,
   isTagsValid,
   areGSTNumbersDifferent,
+  compareObjects,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -172,14 +172,18 @@ export const checkConfirm = (data: any) => {
     try {
       logger.info(`Comparing billing object in /${constants.RET_INIT} and /${constants.RET_CONFIRM}`)
       const billing = getValue('billing')
-      if (isObjectEqual(billing, confirm.billing).length > 0) {
-        const billingMismatch = isObjectEqual(billing, confirm.billing)
-        cnfrmObj.bill = `${billingMismatch.join(', ')} mismatches in /billing in /${constants.RET_INIT} and /${
-          constants.RET_CONFIRM
-        }`
-      }
 
-      setValue('billing', confirm.billing)
+      const billingErrors = compareObjects(billing, confirm.billing)
+
+      if (billingErrors) {
+        let i = 0
+        const len = billingErrors.length
+        while (i < len) {
+          const key = `billingErr${i}`
+          cnfrmObj[key] = `${billingErrors[i]}`
+          i++
+        }
+      }
     } catch (error: any) {
       logger.error(`!!Error while comparing billing object in /${constants.RET_INIT} and /${constants.RET_CONFIRM}`)
     }
@@ -255,8 +259,17 @@ export const checkConfirm = (data: any) => {
 
     try {
       logger.info(`Comparing Quote object for /${constants.RET_ONSELECT} and /${constants.RET_CONFIRM}`)
-      if (!_.isEqual(getValue('quoteObj'), confirm.quote)) {
-        cnfrmObj.quoteObj = `Discrepancies between the quote object in /${constants.RET_ONSELECT} and /${constants.RET_CONFIRM}`
+      const on_select_quote = getValue('quoteObj')
+      const quoteErrors = compareObjects(on_select_quote, confirm.quote)
+
+      if (quoteErrors) {
+        let i = 0
+        const len = quoteErrors.length
+        while (i < len) {
+          const key = `quoteErr${i}`
+          cnfrmObj[key] = `${quoteErrors[i]}`
+          i++
+        }
       }
     } catch (error: any) {
       logger.error(`!!Error while Comparing Quote object for /${constants.RET_ONSELECT} and /${constants.RET_CONFIRM}`)
@@ -321,8 +334,6 @@ export const checkConfirm = (data: any) => {
         }
 
         const areGstDiff = areGSTNumbersDifferent(confirm.tags)
-
-        console.log('areGstDiff', areGstDiff)
         if (areGstDiff === true) {
           cnfrmObj.sameGstNumber = `Tags/bap_terms and Tags/bpp_terms should have different gst number in /${constants.RET_CONFIRM}`
         }

@@ -365,7 +365,7 @@ export const onConfirmSchema = {
                         required: ['phone'],
                       },
                     },
-                    required: ['location', 'time', 'contact'],
+                    required: ['location', 'contact'],
                   },
                   end: {
                     type: 'object',
@@ -460,7 +460,7 @@ export const onConfirmSchema = {
                         required: ['phone'],
                       },
                     },
-                    required: ['location', 'time', 'person', 'contact'],
+                    required: ['location', 'person', 'contact'],
                   },
                 },
                 required: ['id', '@ondc/org/provider_name', 'state', 'type', 'tracking', 'start', 'end'],
@@ -686,10 +686,6 @@ export const onConfirmSchema = {
                 'collected_by',
                 '@ondc/org/buyer_app_finder_fee_type',
                 '@ondc/org/buyer_app_finder_fee_amount',
-                '@ondc/org/settlement_basis',
-                '@ondc/org/settlement_window',
-                '@ondc/org/withholding_amount',
-                '@ondc/org/settlement_details',
               ],
             },
             tags: {

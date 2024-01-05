@@ -23,7 +23,7 @@ const checkLspIssueClose = (data: any) => {
     try {
       logger.info(`Validating Schema for ${constants.RET_ISSUE} API`)
 
-      const vs = validateSchema('igm', constants.RET_ISSUE, issue)
+      const vs = validateSchema('igm', `${constants.RET_ISSUE}_close`, issue)
 
       if (vs != 'error') {
         Object.assign(issueObj, vs)

@@ -28,6 +28,7 @@ import issueSchema from '../schema/Igm/issueSchema'
 import onIssueSchema from '../schema/Igm/onIssueSchema'
 import issueStatusSchema from '../schema/Igm/issueStatusSchema'
 import onIssueStatusSchema from '../schema/Igm/onIssueStatusSchema'
+import issueCloseSchema from '../schema/Igm/issueCloseSchema'
 import { onSearchIncSchema } from '../schema/Retail/RET/on_search_inc'
 
 const ajv = new Ajv({
@@ -603,6 +604,11 @@ const validate_schema_on_issue_status_igm_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+const validate_schema_issue_close_igm_for_json = (data: any) => {
+  const error_list = validate_schema(data, issueCloseSchema)
+  return formatted_error(error_list)
+}
+
 export default {
   validate_schema_search_RET11_for_json,
   validate_schema_select_RET11_for_json,
@@ -640,6 +646,7 @@ export default {
   validate_schema_on_search_inc_RET10_for_json,
   validate_schema_on_search_inc_RET12_for_json,
   validate_schema_issue_igm_for_json,
+  validate_schema_issue_close_igm_for_json,
   validate_schema_on_issue_igm_for_json,
   validate_schema_issue_status_igm_for_json,
   validate_schema_on_issue_status_igm_for_json,

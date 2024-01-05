@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, checkContext, isObjectEqual, checkBppIdOrBapId } from '../../../utils'
+import { validateSchema, isObjectEmpty, checkContext, checkBppIdOrBapId, compareObjects } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const checkOnCancel = (data: any) => {
@@ -143,13 +143,19 @@ export const checkOnCancel = (data: any) => {
     }
 
     try {
-      logger.info(`Comparing billing object in /${constants.RET_CONFIRM} and /${constants.RET_ONCANCEL}`)
+      logger.info(`Comparing billing object in /${constants.RET_INIT} and /${constants.RET_ONCANCEL}`)
       const billing = getValue('billing')
-      if (isObjectEqual(billing, on_cancel.billing).length > 0) {
-        const billingMismatch = isObjectEqual(billing, on_cancel.billing)
-        onCnclObj.bill = `${billingMismatch.join(', ')} mismatches in /billing in /${constants.RET_CONFIRM} and /${
-          constants.RET_ONCANCEL
-        }`
+
+      const billingErrors = compareObjects(billing, onCnclObj.billing)
+
+      if (billingErrors) {
+        let i = 0
+        const len = billingErrors.length
+        while (i < len) {
+          const key = `billingErr${i}`
+          onCnclObj[key] = `${billingErrors[i]}`
+          i++
+        }
       }
 
       setValue('billing', on_cancel.billing)

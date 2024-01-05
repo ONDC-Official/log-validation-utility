@@ -1,4 +1,4 @@
-module.exports = {
+const issueCloseSChema =  {
   type: 'object',
   properties: {
     context: {
@@ -198,3 +198,6 @@ module.exports = {
   },
   required: ['context', 'message'],
 }
+
+
+export default issueCloseSChema

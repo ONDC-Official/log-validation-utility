@@ -18,8 +18,8 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MOB_ONSELECT, data)
-  const contextRes: any = validateContext(context, msgIdSet, constants.MOB_SELECT, constants.MOB_ONSELECT)
+  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SELECT, data)
+  const contextRes: any = validateContext(context, msgIdSet, constants.SELECT, constants.ON_SELECT)
   setValue(`${mobilitySequence.ON_SELECT}_message`, message)
   const errorObj: any = {}
 
@@ -43,7 +43,7 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
     const itemIdsSet = new Set()
 
     try {
-      logger.info(`Comparing Provider Id of /${constants.MOB_SELECT} and /${constants.MOB_ONSELECT}`)
+      logger.info(`Comparing Provider Id of /${constants.SELECT} and /${constants.ON_SELECT}`)
       const prvrdID: any = getValue('providerId')
       const selectedProviderId = onSelect.provider.id
 
@@ -51,18 +51,18 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
         logger.info(`Skipping Provider Id check due to insufficient data`)
         setValue('providerId', selectedProviderId)
       } else if (!_.isEqual(prvrdID, onSelect.provider.id)) {
-        errorObj.prvdrId = `Provider Id for /${constants.MOB_SELECT} and /${constants.MOB_ONSELECT} api should be same`
+        errorObj.prvdrId = `Provider Id for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
       } else {
         setValue('providerId', selectedProviderId)
       }
     } catch (error: any) {
       logger.info(
-        `Error while comparing provider id for /${constants.MOB_SELECT} and /${constants.MOB_ONSELECT} api, ${error.stack}`,
+        `Error while comparing provider id for /${constants.SELECT} and /${constants.ON_SELECT} api, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Validating fulfillments object for /${constants.MOB_ONSELECT}`)
+      logger.info(`Validating fulfillments object for /${constants.ON_SELECT}`)
       onSelect.fulfillments.forEach((fulfillment: any, index: number) => {
         const fulfillmentKey = `fulfillments[${index}]`
 
@@ -85,7 +85,7 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
         } else if (fulfillment.type !== 'DELIVERY') {
           errorObj[
             `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.MOB_ONSELECT}`
+          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_SELECT}`
         }
 
         // Check stops for START and END, or time range with valid timestamp and GPS
@@ -100,13 +100,11 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
         }
       })
     } catch (error: any) {
-      logger.error(
-        `!!Error occcurred while checking fulfillments info in /${constants.MOB_ONSELECT},  ${error.message}`,
-      )
+      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_SELECT},  ${error.message}`)
       return { error: error.message }
     }
 
-    logger.info(`Mapping Item Ids /${constants.MOB_ONSEARCH} and /${constants.MOB_ONSELECT}`)
+    logger.info(`Mapping Item Ids /${constants.ON_SEARCH} and /${constants.ON_SELECT}`)
     let newItemIDSValue: any[]
 
     if (itemIDS && itemIDS.length > 0) {
@@ -152,13 +150,13 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
             if (!fulfillmentIdsSet.has(fulfillmentId)) {
               errorObj[
                 `invalidFulfillmentId_${index}`
-              ] = `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.MOB_ONSELECT} is not valid`
+              ] = `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.ON_SELECT} is not valid`
             }
           })
         }
 
         if (item?.payment_ids) {
-          errorObj[`payment_ids_${index}`] = `payment_ids are not part of /${constants.MOB_ONSELECT}`
+          errorObj[`payment_ids_${index}`] = `payment_ids are not part of /${constants.ON_SELECT}`
         }
 
         // Validate item tags
@@ -169,31 +167,31 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
       })
       setValue(`itemIds`, Array.from(newItemIDSValue))
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking items info in /${constants.MOB_ONSELECT},  ${error.message}`)
+      logger.error(`!!Error occcurred while checking items info in /${constants.ON_SELECT},  ${error.message}`)
       return { error: error.message }
     }
 
     try {
-      logger.info(`Checking quote details in /${constants.MOB_ONSELECT}`)
-      const quoteErrors = validateQuote(onSelect?.quote, constants.MOB_ONSELECT)
+      logger.info(`Checking quote details in /${constants.ON_SELECT}`)
+      const quoteErrors = validateQuote(onSelect?.quote, constants.ON_SELECT)
       Object.assign(errorObj, quoteErrors)
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking Quote in /${constants.MOB_ONSELECT},  ${error.message}`)
+      logger.error(`!!Error occcurred while checking Quote in /${constants.ON_SELECT},  ${error.message}`)
       return { error: error.message }
     }
 
     if (onSelect?.payments) {
-      errorObj[`payments`] = `payments  is not part of /${constants.MOB_ONSELECT}`
+      errorObj[`payments`] = `payments  is not part of /${constants.ON_SELECT}`
     }
 
     if (onSelect?.cancellation_terms) {
-      errorObj[`cancellation_terms`] = `cancellation_terms  is not part of /${constants.MOB_ONSELECT}`
+      errorObj[`cancellation_terms`] = `cancellation_terms  is not part of /${constants.ON_SELECT}`
     }
 
     setValue(`${mobilitySequence.ON_SELECT}`, data)
     setValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`, Array.from(storedFull))
   } catch (error: any) {
-    logger.error(`!!Error occcurred while checking order info in /${constants.MOB_ONSELECT},  ${error.message}`)
+    logger.error(`!!Error occcurred while checking order info in /${constants.ON_SELECT},  ${error.message}`)
     return { error: error.message }
   }
 

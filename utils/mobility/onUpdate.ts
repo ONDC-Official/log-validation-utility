@@ -21,9 +21,9 @@ export const checkOnUpdate = (data: any) => {
     const searchContext: any = getValue(`${mobilitySequence.SEARCH}_context`)
     // const parentItemIdSet: any = getValue(`parentItemIdSet`)
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MOB_ONUPDATE, data)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_UPDATE, data)
 
-    const contextRes: any = checkMobilityContext(context, constants.MOB_ONUPDATE)
+    const contextRes: any = checkMobilityContext(context, constants.ON_UPDATE)
 
     if (!context.bap_id) {
       onUpdateObj['bap_id'] = 'context/bap_id is required'
@@ -50,55 +50,51 @@ export const checkOnUpdate = (data: any) => {
     setValue(`${mobilitySequence.ON_UPDATE}`, data)
 
     try {
-      logger.info(`Comparing city of /${constants.MOB_SEARCH} and /${constants.MOB_ONUPDATE}`)
+      logger.info(`Comparing city of /${constants.SEARCH} and /${constants.ON_UPDATE}`)
       if (!_.isEqual(searchContext.location.city, context.location.city)) {
-        onUpdateObj.city = `City code mismatch in /${constants.MOB_SEARCH} and /${constants.MOB_ONUPDATE}`
+        onUpdateObj.city = `City code mismatch in /${constants.SEARCH} and /${constants.ON_UPDATE}`
       }
     } catch (error: any) {
-      logger.info(
-        `Error while comparing city in /${constants.MOB_SEARCH} and /${constants.MOB_ONUPDATE}, ${error.stack}`,
-      )
+      logger.info(`Error while comparing city in /${constants.SEARCH} and /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing country of /${constants.MOB_SEARCH} and /${constants.MOB_ONUPDATE}`)
+      logger.info(`Comparing country of /${constants.SEARCH} and /${constants.ON_UPDATE}`)
       if (!_.isEqual(searchContext.location.country, context.location.country)) {
-        onUpdateObj.country = `Country code mismatch in /${constants.MOB_SEARCH} and /${constants.MOB_ONUPDATE}`
+        onUpdateObj.country = `Country code mismatch in /${constants.SEARCH} and /${constants.ON_UPDATE}`
       }
     } catch (error: any) {
-      logger.info(
-        `Error while comparing country in /${constants.MOB_SEARCH} and /${constants.MOB_ONUPDATE}, ${error.stack}`,
-      )
+      logger.info(`Error while comparing country in /${constants.SEARCH} and /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing timestamp of /${constants.MOB_UPDATE} and /${constants.MOB_ONUPDATE}`)
+      logger.info(`Comparing timestamp of /${constants.UPDATE} and /${constants.ON_UPDATE}`)
       const tmpstmp = getValue('tmpstmp')
       if (_.gte(tmpstmp, context.timestamp)) {
-        onUpdateObj.tmpstmp = `Timestamp for /${constants.MOB_UPDATE} api cannot be greater than or equal to /${constants.MOB_ONUPDATE} api`
+        onUpdateObj.tmpstmp = `Timestamp for /${constants.UPDATE} api cannot be greater than or equal to /${constants.ON_UPDATE} api`
       } else {
         const timeDiff = timeDifference(context.timestamp, tmpstmp)
         logger.info(timeDiff)
         if (timeDiff > 5000) {
-          onUpdateObj.tmpstmp = `context/timestamp difference between /${constants.MOB_ONUPDATE} and /${constants.MOB_UPDATE} should be smaller than 5 sec`
+          onUpdateObj.tmpstmp = `context/timestamp difference between /${constants.ON_UPDATE} and /${constants.UPDATE} should be smaller than 5 sec`
         }
       }
 
       setValue('tmpstmp', context.timestamp)
     } catch (error: any) {
       logger.info(
-        `Error while comparing timestamp for /${constants.MOB_UPDATE} and /${constants.MOB_ONUPDATE} api, ${error.stack}`,
+        `Error while comparing timestamp for /${constants.UPDATE} and /${constants.ON_UPDATE} api, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Comparing transaction Ids of /${constants.MOB_CONFIRM} and /${constants.MOB_ONUPDATE}`)
+      logger.info(`Comparing transaction Ids of /${constants.CONFIRM} and /${constants.ON_UPDATE}`)
       if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
-        onUpdateObj.txnId = `Transaction Id should be same from /${constants.MOB_CONFIRM} onwards`
+        onUpdateObj.txnId = `Transaction Id should be same from /${constants.CONFIRM} onwards`
       }
     } catch (error: any) {
       logger.error(
-        `!!Error while comparing transaction ids for /${constants.MOB_CONFIRM} and /${constants.MOB_ONUPDATE} api, ${error.stack}`,
+        `!!Error while comparing transaction ids for /${constants.CONFIRM} and /${constants.ON_UPDATE} api, ${error.stack}`,
       )
     }
 
@@ -121,7 +117,7 @@ export const checkOnUpdate = (data: any) => {
     setValue('ItmIDS', newItemIDSValue)
 
     try {
-      logger.info(`Checking fulfillments objects in /${constants.MOB_ONUPDATE}`)
+      logger.info(`Checking fulfillments objects in /${constants.ON_UPDATE}`)
       const fulfillments = on_update.fulfillments
 
       if (fulfillments && fulfillments.length > 0) {
@@ -145,11 +141,11 @@ export const checkOnUpdate = (data: any) => {
         onUpdateObj.missingFulfillmentDetails = 'Fulfillment details are missing'
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking fulfillments object in /${constants.MOB_ONUPDATE}, ${error.stack}`)
+      logger.error(`!!Error while checking fulfillments object in /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking quote details in /${constants.MOB_ONUPDATE}`)
+      logger.info(`Checking quote details in /${constants.ON_UPDATE}`)
 
       const quote = on_update.quote
       const quoteBreakup = quote.breakup
@@ -185,11 +181,11 @@ export const checkOnUpdate = (data: any) => {
         onUpdateObj.missingTTL = 'TTL is required in the quote'
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking quote details in /${constants.MOB_ONUPDATE}`, error.stack)
+      logger.error(`!!Error while checking quote details in /${constants.ON_UPDATE}`, error.stack)
     }
 
     try {
-      logger.info(`Checking payments details in /${constants.MOB_ONUPDATE}`)
+      logger.info(`Checking payments details in /${constants.ON_UPDATE}`)
 
       const payments = on_update.payments
 
@@ -234,20 +230,20 @@ export const checkOnUpdate = (data: any) => {
         }
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking payments details in /${constants.MOB_ONUPDATE}`, error.stack)
+      logger.error(`!!Error while checking payments details in /${constants.ON_UPDATE}`, error.stack)
     }
 
     try {
-      logger.info(`Checking provider id /${constants.MOB_ONUPDATE}`)
+      logger.info(`Checking provider id /${constants.ON_UPDATE}`)
       if (on_update.provider.id != getValue('providerId')) {
-        onUpdateObj.prvdrId = `Provider Id mismatches in /${constants.MOB_ONSEARCH} and /${constants.MOB_ONUPDATE}`
+        onUpdateObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.ON_UPDATE}`
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking provider id /${constants.MOB_ONUPDATE}, ${error.stack}`)
+      logger.error(`!!Error while checking provider id /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking cancellation terms in /${constants.MOB_ONUPDATE}`)
+      logger.info(`Checking cancellation terms in /${constants.ON_UPDATE}`)
       const cancellationTerms = on_update.cancellation_terms
 
       if (cancellationTerms && cancellationTerms.length > 0) {
@@ -274,12 +270,12 @@ export const checkOnUpdate = (data: any) => {
         }
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking cancellation terms in /${constants.MOB_ONUPDATE}, ${error.stack}`)
+      logger.error(`!!Error while checking cancellation terms in /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
     return onUpdateObj
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.MOB_ONUPDATE} API`, JSON.stringify(err.stack))
+    logger.error(`!!Some error occurred while checking /${constants.ON_UPDATE} API`, JSON.stringify(err.stack))
     return { error: err.message }
   }
 }

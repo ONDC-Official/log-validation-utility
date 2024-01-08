@@ -17,8 +17,8 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.FIS_CONFIRM, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.FIS_ONINIT, constants.FIS_CONFIRM)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.CONFIRM, data)
+    const contextRes: any = validateContext(context, msgIdSet, constants.ON_INIT, constants.CONFIRM)
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
@@ -52,16 +52,16 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     setValue('cnfrmOrdrId', cnfrmOrdrId)
 
     try {
-      logger.info(`Checking provider id in /${constants.FIS_CONFIRM}`)
+      logger.info(`Checking provider id in /${constants.CONFIRM}`)
       if (confirm.provider.id != getValue('providerId')) {
-        errorObj.prvdrId = `Provider Id mismatches in /${constants.FIS_ONSEARCH} and /${constants.FIS_CONFIRM}`
+        errorObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.CONFIRM}`
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking provider id in /${constants.FIS_CONFIRM}, ${error.stack}`)
+      logger.error(`!!Error while checking provider id in /${constants.CONFIRM}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing item in /${constants.FIS_CONFIRM}`)
+      logger.info(`Comparing item in /${constants.CONFIRM}`)
 
       confirm.items.forEach((item: any, index: number) => {
         if (!newItemIDSValue.includes(item.id)) {
@@ -89,7 +89,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         // if (storedFormIds.has(formId)) {
         // }
 
-        if (getValue(`${constants.FIS_SELECT}_form_${formId}_status`) === status) {
+        if (getValue(`${constants.SELECT}_form_${formId}_status`) === status) {
           const key = `item${index}_status`
           errorObj[
             key
@@ -97,11 +97,11 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         }
       })
     } catch (error: any) {
-      logger.error(`!!Error while comparing Item Id in /${constants.RET_ONSELECT} and /${constants.FIS_CONFIRM}`)
+      logger.error(`!!Error while comparing Item Id in /${constants.ON_SELECT} and /${constants.CONFIRM}`)
     }
 
     try {
-      logger.info(`Checking payment object in /${constants.FIS_CONFIRM}`)
+      logger.info(`Checking payment object in /${constants.CONFIRM}`)
 
       const buyerFinderFeesTag = confirm.payments[0].tags.find(
         (tag: any) => tag.descriptor.code === 'BUYER_FINDER_FEES',
@@ -147,19 +147,19 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         }
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking payment object in /${constants.FIS_CONFIRM}, ${error.stack}`)
+      logger.error(`!!Error while checking payment object in /${constants.CONFIRM}, ${error.stack}`)
     }
 
     try {
-      logger.info(`storing payment object in /${constants.FIS_CONFIRM}`)
+      logger.info(`storing payment object in /${constants.CONFIRM}`)
       setValue('cnfrmpymnt', confirm.payments)
     } catch (error: any) {
-      logger.error(`!!Error while storing payment object in /${constants.FIS_CONFIRM}, ${error.stack}`)
+      logger.error(`!!Error while storing payment object in /${constants.CONFIRM}, ${error.stack}`)
     }
 
     return errorObj
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.FIS_CONFIRM} API`, err)
+    logger.error(`!!Some error occurred while checking /${constants.CONFIRM} API`, err)
     return { error: err.message }
   }
 }

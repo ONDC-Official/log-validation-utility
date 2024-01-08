@@ -23,8 +23,8 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MOB_ONINIT, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.MOB_INIT, constants.MOB_ONINIT)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_INIT, data)
+    const contextRes: any = validateContext(context, msgIdSet, constants.INIT, constants.ON_INIT)
     setValue(`${mobilitySequence.ON_INIT}_message`, message)
 
     if (schemaValidation !== 'error') {
@@ -56,18 +56,18 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     setValue('ItmIDS', newItemIDSValue)
 
     try {
-      logger.info(`Checking provider Id in /${constants.MOB_ONSEARCH} and /${constants.MOB_ONINIT}`)
+      logger.info(`Checking provider Id in /${constants.ON_SEARCH} and /${constants.ON_INIT}`)
       if (!on_init.provider || on_init.provider.id != getValue('providerId')) {
-        errorObj.prvdrId = `Provider Id mismatches in /${constants.MOB_ONSEARCH} and /${constants.MOB_ONINIT}`
+        errorObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.ON_INIT}`
       }
     } catch (error: any) {
       logger.error(
-        `!!Error while comparing provider Id in /${constants.MOB_ONSEARCH} and /${constants.MOB_ONINIT}, ${error.stack}`,
+        `!!Error while comparing provider Id in /${constants.ON_SEARCH} and /${constants.ON_INIT}, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Validating fulfillments object for /${constants.MOB_ONINIT}`)
+      logger.info(`Validating fulfillments object for /${constants.ON_INIT}`)
       on_init.fulfillments.forEach((fulfillment: any, index: number) => {
         const fulfillmentKey = `fulfillments[${index}]`
         fulfillmentIdsSet.add(fulfillment.id)
@@ -86,11 +86,11 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         if (fulfillment.type !== 'DELIVERY') {
           errorObj[
             `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.MOB_ONINIT}`
+          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_INIT}`
         }
 
         if (Object.prototype.hasOwnProperty.call(fulfillment, 'agent')) {
-          errorObj[`fulfillments${index}_agent`] = `/message/order/agent is not part of /${constants.MOB_ONINIT} call`
+          errorObj[`fulfillments${index}_agent`] = `/message/order/agent is not part of /${constants.ON_INIT} call`
         }
 
         // Check stops for START and END, or time range with valid timestamp and GPS
@@ -105,7 +105,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         }
       })
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.MOB_ONINIT},  ${error.message}`)
+      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_INIT},  ${error.message}`)
       return { error: error.message }
     }
 
@@ -115,7 +115,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
           const key = `item[${index}].item_id`
           errorObj[
             key
-          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.MOB_ONINIT}`
+          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_INIT}`
         }
 
         if (!item.descriptor || !item.descriptor.code) {
@@ -140,7 +140,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
           if (!fulfillmentIdsSet.has(fulfillmentId)) {
             errorObj[
               `invalidFulfillmentId_${index}`
-            ] = `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.MOB_ONINIT} is not valid`
+            ] = `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_INIT} is not valid`
           }
         })
 
@@ -151,12 +151,12 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         }
       })
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking items info in /${constants.MOB_ONINIT},  ${error.message}`)
+      logger.error(`!!Error occcurred while checking items info in /${constants.ON_INIT},  ${error.message}`)
       return { error: error.message }
     }
 
     try {
-      logger.info(`Checking cancellation terms in /${constants.MOB_ONINIT}`)
+      logger.info(`Checking cancellation terms in /${constants.ON_INIT}`)
       const cancellationTerms = on_init.cancellation_terms
 
       if (cancellationTerms && cancellationTerms.length > 0) {
@@ -186,36 +186,36 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
           // }
         }
       } else {
-        errorObj.cancellationTerms = `Cancellation Terms are required in /${constants.MOB_ONINIT}`
+        errorObj.cancellationTerms = `Cancellation Terms are required in /${constants.ON_INIT}`
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking cancellation terms in /${constants.MOB_ONINIT}, ${error.stack}`)
+      logger.error(`!!Error while checking cancellation terms in /${constants.ON_INIT}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking payments in /${constants.MOB_ONINIT}`)
+      logger.info(`Checking payments in /${constants.ON_INIT}`)
       on_init?.payments?.forEach((arr: any, i: number) => {
         if (!arr?.collected_by) {
-          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.MOB_ONINIT}`
+          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.ON_INIT}`
         } else {
           const srchCollectBy = getValue(`collected_by`)
           if (srchCollectBy != arr?.collected_by)
             errorObj[
               `payemnts[${i}]_collected_by`
-            ] = `payments.collected_by value sent in ${constants.MOB_ONINIT} should be ${srchCollectBy} as sent in ${constants.MOB_ONSELECT}`
+            ] = `payments.collected_by value sent in ${constants.ON_INIT} should be ${srchCollectBy} as sent in ${constants.ON_SELECT}`
         }
 
         const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
         if (!arr?.type || !validTypes.includes(arr.type)) {
           errorObj[`payments[${i}]_type`] = `payments.params.type must be present in ${
-            constants.MOB_ONINIT
+            constants.ON_INIT
           } & its value must be one of: ${validTypes.join(', ')}`
         }
 
         const validStatus = ['NOT-PAID', 'PAID']
         if (!arr?.status || !validStatus.includes(arr.status)) {
           errorObj[`payments[${i}]_status`] = `payments.status must be present in ${
-            constants.MOB_ONINIT
+            constants.ON_INIT
           } & its value must be one of: ${validStatus.join(', ')}`
         }
 
@@ -224,20 +224,13 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         const bankAccountNumber: string | null = getValue('bank_account_number')
         const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
         // Validate bank_code
-        validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.MOB_ONINIT)
+        validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.ON_INIT)
 
         // Validate bank_account_number
-        validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.MOB_ONINIT)
+        validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.ON_INIT)
 
         // Validate virtual_payment_address
-        validatePaymentParams(
-          params,
-          virtualPaymentAddress,
-          'virtual_payment_address',
-          errorObj,
-          i,
-          constants.MOB_ONINIT,
-        )
+        validatePaymentParams(params, virtualPaymentAddress, 'virtual_payment_address', errorObj, i, constants.ON_INIT)
 
         // Validate payment tags
         const tagsValidation = validatePaymentTags(arr.tags)
@@ -246,21 +239,21 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         }
       })
     } catch (error: any) {
-      logger.error(`!!Errors while checking payments in /${constants.MOB_ONINIT}, ${error.stack}`)
+      logger.error(`!!Errors while checking payments in /${constants.ON_INIT}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking quote details in /${constants.MOB_ONINIT}`)
-      const quoteErrors = validateQuote(on_init?.quote, constants.MOB_ONINIT)
+      logger.info(`Checking quote details in /${constants.ON_INIT}`)
+      const quoteErrors = validateQuote(on_init?.quote, constants.ON_INIT)
       Object.assign(errorObj, quoteErrors)
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking Quote in /${constants.MOB_ONINIT},  ${error.message}`)
+      logger.error(`!!Error occcurred while checking Quote in /${constants.ON_INIT},  ${error.message}`)
       return { error: error.message }
     }
 
     return errorObj
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.MOB_ONINIT} API`, err)
+    logger.error(`!!Some error occurred while checking /${constants.ON_INIT} API`, err)
     return { error: err.message }
   }
 }

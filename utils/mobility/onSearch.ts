@@ -26,8 +26,8 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
   }
 
-  const contextRes: any = validateContext(context, msgIdSet, constants.MOB_SEARCH, constants.MOB_ONSEARCH)
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MOB_ONSEARCH, data)
+  const contextRes: any = validateContext(context, msgIdSet, constants.SEARCH, constants.ON_SEARCH)
+  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SEARCH, data)
   setValue(`${mobilitySequence.ON_SEARCH}_message`, message)
   const errorObj: any = {}
 
@@ -217,7 +217,7 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
         errorObj[`provider_${i}_payments`] = `Payments are missing for provider ${i}`
       } else {
         try {
-          logger.info(`Validating payments object for /${constants.MOB_ONSEARCH}`)
+          logger.info(`Validating payments object for /${constants.ON_SEARCH}`)
           payments?.map((payment: any, i: number) => {
             const collectedBy = payment?.collected_by
 
@@ -240,7 +240,7 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
             }
           })
         } catch (error: any) {
-          logger.error(`!!Error occcurred while validating payments in /${constants.MOB_ONSEARCH},  ${error.message}`)
+          logger.error(`!!Error occcurred while validating payments in /${constants.ON_SEARCH},  ${error.message}`)
         }
       }
 
@@ -253,7 +253,7 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
     setValue(`${mobilitySequence.ON_SEARCH}_storedLocations`, Array.from(storedLocations))
     setValue(`${mobilitySequence.ON_SEARCH}_storedFulfillments`, Array.from(storedFulfillments))
   } catch (error: any) {
-    logger.error(`!!Error while checking Providers info in /${constants.MOB_ONSEARCH}, ${error.stack}`)
+    logger.error(`!!Error while checking Providers info in /${constants.ON_SEARCH}, ${error.stack}`)
     return { error: error.message }
   }
 

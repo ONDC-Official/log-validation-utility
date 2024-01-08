@@ -29,8 +29,8 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MOB_ONSTATUS, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.MOB_STATUS, constants.MOB_ONSTATUS)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_STATUS, data)
+    const contextRes: any = validateContext(context, msgIdSet, constants.STATUS, constants.ON_STATUS)
     setValue(`${mobilitySequence.ON_STATUS}`, data)
 
     if (schemaValidation !== 'error') {
@@ -62,18 +62,18 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
     setValue('ItmIDS', newItemIDSValue)
 
     try {
-      logger.info(`Comparing provider object in /${constants.MOB_STATUS} and /${constants.MOB_ONSTATUS}`)
+      logger.info(`Comparing provider object in /${constants.STATUS} and /${constants.ON_STATUS}`)
       if (on_status.provider.id != getValue('providerId')) {
-        errorObj.prvdrId = `Provider Id mismatches in /${constants.MOB_STATUS} and /${constants.MOB_ONSTATUS}`
+        errorObj.prvdrId = `Provider Id mismatches in /${constants.STATUS} and /${constants.ON_STATUS}`
       }
     } catch (error: any) {
       logger.error(
-        `!!Error while checking provider object in /${constants.MOB_STATUS} and /${constants.MOB_ONSTATUS}, ${error.stack}`,
+        `!!Error while checking provider object in /${constants.STATUS} and /${constants.ON_STATUS}, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Validating fulfillments object for /${constants.MOB_ONSTATUS}`)
+      logger.info(`Validating fulfillments object for /${constants.ON_STATUS}`)
       on_status.fulfillments.forEach((fulfillment: any, index: number) => {
         const fulfillmentKey = `fulfillments[${index}]`
 
@@ -102,7 +102,7 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
         if (fulfillment.type !== 'DELIVERY') {
           errorObj[
             `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.MOB_ONSTATUS}`
+          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_STATUS}`
         }
 
         if (!Object.prototype.hasOwnProperty.call(fulfillment.customer?.person, 'name')) {
@@ -160,27 +160,27 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
         }
       })
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.MOB_ONINIT},  ${error.message}`)
+      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_INIT},  ${error.message}`)
       return { error: error.message }
     }
 
     try {
-      logger.info(`Checking payments in /${constants.MOB_ONSTATUS}`)
+      logger.info(`Checking payments in /${constants.ON_STATUS}`)
       on_status?.payments?.forEach((arr: any, i: number) => {
         if (!arr?.collected_by) {
-          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.MOB_ONSELECT}`
+          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.ON_SELECT}`
         } else {
           const srchCollectBy = getValue(`collected_by`)
           if (srchCollectBy != arr?.collected_by)
             errorObj[
               `payemnts[${i}]_collected_by`
-            ] = `payments.collected_by value sent in ${constants.MOB_ONSELECT} should be ${srchCollectBy} as sent in ${constants.MOB_ONSTATUS}`
+            ] = `payments.collected_by value sent in ${constants.ON_SELECT} should be ${srchCollectBy} as sent in ${constants.ON_STATUS}`
         }
 
         const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
         if (!arr?.type || !validTypes.includes(arr.type)) {
           errorObj[`payments[${i}]_type`] = `payments.params.type must be present in ${
-            constants.MOB_ONSTATUS
+            constants.ON_STATUS
           } & its value must be one of: ${validTypes.join(', ')}`
         }
 
@@ -189,10 +189,10 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
         const bankAccountNumber: string | null = getValue('bank_account_number')
         const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
         // Validate bank_code
-        validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.MOB_ONSTATUS)
+        validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.ON_STATUS)
 
         // Validate bank_account_number
-        validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.MOB_ONSTATUS)
+        validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.ON_STATUS)
 
         // Validate virtual_payment_address
         validatePaymentParams(
@@ -201,13 +201,13 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
           'virtual_payment_address',
           errorObj,
           i,
-          constants.MOB_ONSTATUS,
+          constants.ON_STATUS,
         )
 
         const validStatus = ['NOT-PAID', 'PAID']
         if (!arr?.status || !validStatus.includes(arr.status)) {
           errorObj[`payments[${i}]_status`] = `payments.status must be present in ${
-            constants.MOB_ONSTATUS
+            constants.ON_STATUS
           } & its value must be one of: ${validStatus.join(', ')}`
         } else {
           if (arr.status === 'PAID') {
@@ -237,20 +237,20 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
         }
       })
     } catch (error: any) {
-      logger.error(`!!Errors while checking payments in /${constants.MOB_ONSTATUS}, ${error.stack}`)
+      logger.error(`!!Errors while checking payments in /${constants.ON_STATUS}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking quote details in /${constants.MOB_ONSTATUS}`)
-      const quoteErrors = validateQuote(on_status?.quote, constants.MOB_ONSTATUS)
+      logger.info(`Checking quote details in /${constants.ON_STATUS}`)
+      const quoteErrors = validateQuote(on_status?.quote, constants.ON_STATUS)
       Object.assign(errorObj, quoteErrors)
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking Quote in /${constants.MOB_ONSTATUS},  ${error.message}`)
+      logger.error(`!!Error occcurred while checking Quote in /${constants.ON_STATUS},  ${error.message}`)
       return { error: error.message }
     }
 
     try {
-      logger.info(`Checking cancellation terms in /${constants.MOB_ONSTATUS}`)
+      logger.info(`Checking cancellation terms in /${constants.ON_STATUS}`)
       const cancellationTerms = on_status.cancellation_terms
 
       if (cancellationTerms && cancellationTerms.length > 0) {
@@ -280,15 +280,15 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
           // }
         }
       } else {
-        errorObj.cancellationTerms = `Cancellation Terms are required in /${constants.MOB_ONSTATUS}`
+        errorObj.cancellationTerms = `Cancellation Terms are required in /${constants.ON_STATUS}`
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking cancellation terms in /${constants.MOB_ONSTATUS}, ${error.stack}`)
+      logger.error(`!!Error while checking cancellation terms in /${constants.ON_STATUS}, ${error.stack}`)
     }
 
     return errorObj
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.MOB_ONSTATUS} API`, JSON.stringify(err.stack))
+    logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, JSON.stringify(err.stack))
     return { error: err.message }
   }
 }

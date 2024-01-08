@@ -19,8 +19,8 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.FIS_ONSTATUS, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.FIS_STATUS, constants.FIS_ONSTATUS)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_STATUS, data)
+    const contextRes: any = validateContext(context, msgIdSet, constants.STATUS, constants.ON_STATUS)
 
     if (schemaValidation !== 'error') {
       Object.assign(onStatusObj, schemaValidation)
@@ -50,23 +50,23 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
     setValue('ItmIDS', newItemIDSValue)
 
     try {
-      logger.info(`Checking provider id /${constants.FIS_ONSTATUS}`)
+      logger.info(`Checking provider id /${constants.ON_STATUS}`)
       if (on_status.provider.id != getValue('providerId')) {
-        onStatusObj.prvdrId = `Provider Id mismatches in /${constants.FIS_ONSEARCH} and /${constants.FIS_ONSTATUS}`
+        onStatusObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.ON_STATUS}`
       }
 
-      logger.info(`Checking tags in /${constants.FIS_ONSTATUS}`)
+      logger.info(`Checking tags in /${constants.ON_STATUS}`)
       const providerTags = on_status.provider.tags
 
       if (!providerTags || !Array.isArray(providerTags) || providerTags.length === 0) {
         onStatusObj.tags = 'Tags array is missing or empty in provider'
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking provider id /${constants.FIS_ONSTATUS}, ${error.stack}`)
+      logger.error(`!!Error while checking provider id /${constants.ON_STATUS}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing item in and /${constants.FIS_ONUPDATE}`)
+      logger.info(`Comparing item in and /${constants.ON_UPDATE}`)
 
       on_status.items.forEach((item: any, index: number) => {
         if (!newItemIDSValue.includes(item.id)) {
@@ -80,7 +80,7 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
           item.xinput &&
           (!item.xinput.form_response || !item.xinput.form_response.status || !item.xinput.form_response.submission_id)
         ) {
-          onStatusObj.xinput = `xinput or xinput.form_response is missing in /${constants.FIS_ONSTATUS}`
+          onStatusObj.xinput = `xinput or xinput.form_response is missing in /${constants.ON_STATUS}`
         }
 
         if (item.tags) {
@@ -100,11 +100,11 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
         }
       })
     } catch (error: any) {
-      logger.error(`!!Error while comparing Item in /${constants.FIS_ONUPDATE}, ${error.stack}`)
+      logger.error(`!!Error while comparing Item in /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking fulfillments objects in /${constants.FIS_ONSTATUS}`)
+      logger.info(`Checking fulfillments objects in /${constants.ON_STATUS}`)
       let i = 0
       const len = on_status.fulfillments.length
       while (i < len) {
@@ -117,11 +117,11 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
         i++
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking fulfillments object in /${constants.FIS_ONSTATUS}, ${error.stack}`)
+      logger.error(`!!Error while checking fulfillments object in /${constants.ON_STATUS}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking quote details in /${constants.FIS_ONSTATUS}`)
+      logger.info(`Checking quote details in /${constants.ON_STATUS}`)
 
       const quote = on_status.quote
       const quoteBreakup = quote.breakup
@@ -165,11 +165,11 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
         onStatusObj.missingTTL = 'TTL is required in the quote'
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking quote details in /${constants.FIS_ONSTATUS}`, error.stack)
+      logger.error(`!!Error while checking quote details in /${constants.ON_STATUS}`, error.stack)
     }
 
     try {
-      logger.info(`Checking payments details in /${constants.FIS_ONSTATUS}`)
+      logger.info(`Checking payments details in /${constants.ON_STATUS}`)
 
       const payments = on_status.payments
 
@@ -254,11 +254,11 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
         }
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking payments details in /${constants.FIS_ONSTATUS}`, error.stack)
+      logger.error(`!!Error while checking payments details in /${constants.ON_STATUS}`, error.stack)
     }
 
     try {
-      logger.info(`Checking cancellation terms in /${constants.FIS_ONSTATUS}`)
+      logger.info(`Checking cancellation terms in /${constants.ON_STATUS}`)
       const cancellationTerms = on_status.cancellation_terms
 
       if (cancellationTerms && cancellationTerms.length > 0) {
@@ -287,11 +287,11 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
         }
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking cancellation terms in /${constants.FIS_ONSTATUS}, ${error.stack}`)
+      logger.error(`!!Error while checking cancellation terms in /${constants.ON_STATUS}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking documents in /${constants.FIS_ONSTATUS}`)
+      logger.info(`Checking documents in /${constants.ON_STATUS}`)
       const documents = on_status.documents
 
       if (!documents || !Array.isArray(documents) || documents.length === 0) {
@@ -327,18 +327,16 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
 
           if (!document.url) {
             onStatusObj[`${documentKey}.url`] = 'Document URL is missing or empty'
-          } else {
-            if (!isValidUrl(document.url)) onStatusObj[`${documentKey}.url`] = 'URL must be valid'
           }
         })
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking documents in /${constants.FIS_ONSTATUS}, ${error.stack}`)
+      logger.error(`!!Error while checking documents in /${constants.ON_STATUS}, ${error.stack}`)
     }
 
     return onStatusObj
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.FIS_ONSTATUS} API`, JSON.stringify(err.stack))
+    logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, JSON.stringify(err.stack))
     return { error: err.message }
   }
 }

@@ -17,8 +17,8 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
     return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(data?.context?.domain.split(':')[1], constants.FIS_ONSEARCH, data)
-  const contextRes: any = validateContext(context, msgIdSet, constants.FIS_SEARCH, constants.FIS_ONSEARCH)
+  const schemaValidation = validateSchema(data?.context?.domain.split(':')[1], constants.ON_SEARCH, data)
+  const contextRes: any = validateContext(context, msgIdSet, constants.SEARCH, constants.ON_SEARCH)
 
   setValue(`${FisApiSequence.ON_SEARCH}_message`, message)
   setValue(`${FisApiSequence.ON_SEARCH}`, data)
@@ -39,7 +39,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
   const loanCode = getValue(`LoanType`)
 
   try {
-    logger.info(`Checking Providers info (providers) in /${constants.FIS_ONSEARCH}`)
+    logger.info(`Checking Providers info (providers) in /${constants.ON_SEARCH}`)
     const bppPrvdrs = onSearchCatalog['providers']
     const len = bppPrvdrs.length
     if (len === 0 || len === undefined) {
@@ -61,7 +61,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
       }
 
       try {
-        logger.info(`Validating Descriptor for /${constants.FIS_ONSEARCH}`)
+        logger.info(`Validating Descriptor for /${constants.ON_SEARCH}`)
         const descriptor = onSearchCatalog['providers'][i]['descriptor']
 
         if (!descriptor) {
@@ -99,7 +99,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
           errorObj.long_desc = `Long description cannot be empty.`
         }
       } catch (error: any) {
-        logger.info(`Error while validating descriptor for /${constants.FIS_ONSEARCH}, ${error.stack}`)
+        logger.info(`Error while validating descriptor for /${constants.ON_SEARCH}, ${error.stack}`)
       }
 
       try {
@@ -198,7 +198,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
             ] = `Descriptor code: ${item?.descriptor?.code} in item[${j}] must be the same as ${loanCode}`
 
           const xinput = item.xinput
-          const xinputValidationErrors = validateXInput(xinput, i, j, constants.FIS_ONSEARCH)
+          const xinputValidationErrors = validateXInput(xinput, i, j, constants.ON_SEARCH)
           if (xinputValidationErrors) {
             Object.assign(errorObj, xinputValidationErrors)
           }
@@ -236,7 +236,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
     setValue(`${FisApiSequence.ON_SEARCH}prvdrLocId`, prvdrLocId)
     setValue(`${FisApiSequence.ON_SEARCH}_itemsId`, Array.from(itemsId))
   } catch (error: any) {
-    logger.error(`!!Error while checking Providers info in /${constants.FIS_ONSEARCH}, ${error.stack}`)
+    logger.error(`!!Error while checking Providers info in /${constants.ON_SEARCH}, ${error.stack}`)
     return { error: error.message }
   }
 

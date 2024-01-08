@@ -30,8 +30,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MOB_ONCONFIRM, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.MOB_CONFIRM, constants.MOB_ONCONFIRM)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_CONFIRM, data)
+    const contextRes: any = validateContext(context, msgIdSet, constants.CONFIRM, constants.ON_CONFIRM)
     setValue(`${mobilitySequence.ON_CONFIRM}_message`, message)
 
     if (schemaValidation !== 'error') {
@@ -63,24 +63,24 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
     setValue('ItmIDS', newItemIDSValue)
 
     try {
-      logger.info(`Checking id in message object  /${constants.MOB_ONCONFIRM}`)
+      logger.info(`Checking id in message object  /${constants.ON_CONFIRM}`)
       if (!on_confirm.id) {
-        errorObj.id = `Id in message object must be present/${constants.MOB_ONCONFIRM}`
+        errorObj.id = `Id in message object must be present/${constants.ON_CONFIRM}`
       } else {
         setValue('orderId', on_confirm?.id)
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking id in message object  /${constants.MOB_ONCONFIRM}, ${error.stack}`)
+      logger.error(`!!Error while checking id in message object  /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing provider object in /${constants.MOB_CONFIRM} and /${constants.MOB_ONCONFIRM}`)
+      logger.info(`Comparing provider object in /${constants.CONFIRM} and /${constants.ON_CONFIRM}`)
       if (on_confirm.provider.id != getValue('providerId')) {
-        errorObj.prvdrId = `Provider Id mismatches in /${constants.MOB_CONFIRM} and /${constants.MOB_ONCONFIRM}`
+        errorObj.prvdrId = `Provider Id mismatches in /${constants.CONFIRM} and /${constants.ON_CONFIRM}`
       }
     } catch (error: any) {
       logger.error(
-        `!!Error while checking provider object in /${constants.MOB_CONFIRM} and /${constants.MOB_ONCONFIRM}, ${error.stack}`,
+        `!!Error while checking provider object in /${constants.CONFIRM} and /${constants.ON_CONFIRM}, ${error.stack}`,
       )
     }
 
@@ -93,7 +93,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
             const key = `item[${index}].item_id`
             errorObj[
               key
-            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.MOB_ONCONFIRM}`
+            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_CONFIRM}`
           }
 
           if (!item.descriptor || !item.descriptor.code) {
@@ -119,7 +119,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
               if (!fulfillmentIdsSet.has(fulfillmentId)) {
                 errorObj[
                   `invalidFulfillmentId_${index}`
-                ] = `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.MOB_ONCONFIRM} is not valid`
+                ] = `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_CONFIRM} is not valid`
               }
             })
 
@@ -130,12 +130,12 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
           }
         })
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking items info in /${constants.MOB_ONCONFIRM},  ${error.message}`)
+      logger.error(`!!Error occcurred while checking items info in /${constants.ON_CONFIRM},  ${error.message}`)
       return { error: error.message }
     }
 
     try {
-      logger.info(`Validating fulfillments object for /${constants.MOB_ONCONFIRM}`)
+      logger.info(`Validating fulfillments object for /${constants.ON_CONFIRM}`)
       on_confirm.fulfillments.forEach((fulfillment: any, index: number) => {
         const fulfillmentKey = `fulfillments[${index}]`
 
@@ -166,7 +166,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
         if (fulfillment.type !== 'DELIVERY') {
           errorObj[
             `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.MOB_ONCONFIRM}`
+          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_CONFIRM}`
         }
 
         if (!Object.prototype.hasOwnProperty.call(fulfillment.customer?.person, 'name')) {
@@ -225,34 +225,34 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
         }
       })
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.MOB_ONINIT},  ${error.message}`)
+      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_INIT},  ${error.message}`)
       return { error: error.message }
     }
 
     try {
-      logger.info(`Checking payments in /${constants.MOB_ONCONFIRM}`)
+      logger.info(`Checking payments in /${constants.ON_CONFIRM}`)
       on_confirm?.payments?.forEach((arr: any, i: number) => {
         if (!arr?.collected_by) {
-          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.MOB_ONSELECT}`
+          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.ON_SELECT}`
         } else {
           const srchCollectBy = getValue(`collected_by`)
           if (srchCollectBy != arr?.collected_by)
             errorObj[
               `payemnts[${i}]_collected_by`
-            ] = `payments.collected_by value sent in ${constants.MOB_ONSELECT} should be ${srchCollectBy} as sent in ${constants.MOB_ONCONFIRM}`
+            ] = `payments.collected_by value sent in ${constants.ON_SELECT} should be ${srchCollectBy} as sent in ${constants.ON_CONFIRM}`
         }
 
         const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
         if (!arr?.type || !validTypes.includes(arr.type)) {
           errorObj[`payments[${i}]_type`] = `payments.params.type must be present in ${
-            constants.MOB_ONCONFIRM
+            constants.ON_CONFIRM
           } & its value must be one of: ${validTypes.join(', ')}`
         }
 
         const validStatus = ['NOT-PAID', 'PAID']
         if (!arr?.status || !validStatus.includes(arr.status)) {
           errorObj[`payments[${i}]_status`] = `payments.status must be present in ${
-            constants.MOB_ONCONFIRM
+            constants.ON_CONFIRM
           } & its value must be one of: ${validStatus.join(', ')}`
         }
 
@@ -261,10 +261,10 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
         const bankAccountNumber: string | null = getValue('bank_account_number')
         const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
         // Validate bank_code
-        validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.MOB_ONCONFIRM)
+        validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.ON_CONFIRM)
 
         // Validate bank_account_number
-        validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.MOB_ONCONFIRM)
+        validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.ON_CONFIRM)
 
         // Validate virtual_payment_address
         validatePaymentParams(
@@ -273,7 +273,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
           'virtual_payment_address',
           errorObj,
           i,
-          constants.MOB_ONCONFIRM,
+          constants.ON_CONFIRM,
         )
 
         if (arr.time) {
@@ -289,20 +289,20 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
         }
       })
     } catch (error: any) {
-      logger.error(`!!Errors while checking payments in /${constants.MOB_ONCONFIRM}, ${error.stack}`)
+      logger.error(`!!Errors while checking payments in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking quote details in /${constants.MOB_ONCONFIRM}`)
-      const quoteErrors = validateQuote(on_confirm?.quote, constants.MOB_ONCONFIRM)
+      logger.info(`Checking quote details in /${constants.ON_CONFIRM}`)
+      const quoteErrors = validateQuote(on_confirm?.quote, constants.ON_CONFIRM)
       Object.assign(errorObj, quoteErrors)
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking Quote in /${constants.MOB_ONCONFIRM},  ${error.message}`)
+      logger.error(`!!Error occcurred while checking Quote in /${constants.ON_CONFIRM},  ${error.message}`)
       return { error: error.message }
     }
 
     try {
-      logger.info(`Checking cancellation terms in /${constants.MOB_ONCONFIRM}`)
+      logger.info(`Checking cancellation terms in /${constants.ON_CONFIRM}`)
       const cancellationTerms = on_confirm.cancellation_terms
 
       if (cancellationTerms && cancellationTerms.length > 0) {
@@ -332,24 +332,24 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
           // }
         }
       } else {
-        errorObj.cancellationTerms = `Cancellation Terms are required in /${constants.MOB_ONCONFIRM}`
+        errorObj.cancellationTerms = `Cancellation Terms are required in /${constants.ON_CONFIRM}`
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking cancellation terms in /${constants.MOB_ONCONFIRM}, ${error.stack}`)
+      logger.error(`!!Error while checking cancellation terms in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking status in message object  /${constants.MOB_ONCONFIRM}`)
+      logger.info(`Checking status in message object  /${constants.ON_CONFIRM}`)
       if (!message.status || !['COMPLETE', 'ACTIVE'].includes(message.status)) {
         errorObj.status = 'Invalid or missing status in the message object. It must be one of: COMPLETE or ACTIVE'
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking status in message object  /${constants.MOB_ONCONFIRM}, ${error.stack}`)
+      logger.error(`!!Error while checking status in message object  /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
     return errorObj
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.MOB_ONCONFIRM} API`, JSON.stringify(err.stack))
+    logger.error(`!!Some error occurred while checking /${constants.ON_CONFIRM} API`, JSON.stringify(err.stack))
     return { error: err.message }
   }
 }

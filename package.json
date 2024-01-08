@@ -40,7 +40,7 @@
     "dotenv": "^14.2.0",
     "express": "^4.17.2",
     "js-yaml": "^4.1.0",
-    "lmdb": "^2.8.5",
+    "lmdb": "^2.9.2",
     "pino": "^7.6.4",
     "swagger-ui-express": "^4.3.0"
   },
@@ -50,7 +50,7 @@
     "@types/express-pino-logger": "^4.0.3",
     "@types/jest": "^27.4.1",
     "@types/lodash": "^4.14.198",
-    "@types/node": "^17.0.10",
+    "@types/node": "^20.10.7",
     "@types/supertest": "^2.0.12",
     "@types/swagger-ui-express": "^4.1.3",
     "@typescript-eslint/eslint-plugin": "^4.29.2",

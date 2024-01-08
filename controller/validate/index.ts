@@ -3,6 +3,8 @@ import _ from 'lodash'
 import { IGMvalidateLogs, validateActionSchema, validateLogs } from '../../shared/validateLogs'
 import { logger } from '../../shared/logger'
 import { actionsArray } from '../../constants'
+import { validateLogsForFIS12 } from '../../shared/Actions/FIS12Actions'
+import { validateLogsForMobility } from '../../shared/Actions/mobilityActions'
 
 const controller = {
   validate: async (req: Request, res: Response): Promise<void> => {
@@ -28,6 +30,17 @@ const controller = {
     }
   },
 
+  validateFIS: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { domain, version, payload, flow } = req.body
+      const response = validateLogsForFIS12(payload, domain, flow, version)
+      if (!_.isEmpty(response)) res.status(400).send({ success: false, response: response })
+      else res.status(200).send({ success: true, response: response })
+    } catch (error) {
+      logger.error(error)
+      res.status(500).send({ success: false, error: error })
+    }
+  },
   validateIGM: async (req: Request, res: Response): Promise<void> => {
     try {
       const { version, payload } = req.body
@@ -86,6 +99,18 @@ const controller = {
     } catch (error) {
       logger.error(error)
       return res.status(500).send({ success: false, error: error })
+    }
+  },
+
+  validateMobility: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { domain, version, payload, flow } = req.body
+      const response = validateLogsForMobility(payload, domain, flow, version)
+      if (!_.isEmpty(response)) res.status(400).send({ success: false, response: response })
+      else res.status(200).send({ success: true, response: response })
+    } catch (error) {
+      logger.error(error)
+      res.status(500).send({ success: false, error: error })
     }
   },
 }

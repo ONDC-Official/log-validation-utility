@@ -31,13 +31,13 @@ export const checkSearch = (data: any, msgIdSet: any) => {
 
     msgIdSet.add(data.context.message_id)
 
-    const schemaValidation = validateSchema(data.context.domain.split(':')[1], constants.RET_SEARCH, data)
+    const schemaValidation = validateSchema(data.context.domain.split(':')[1], constants.SEARCH, data)
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
     }
 
-    const contextRes: any = checkContext(data.context, constants.RET_SEARCH)
+    const contextRes: any = checkContext(data.context, constants.SEARCH)
     setValue(`${ApiSequence.SEARCH}_context`, data.context)
     msgIdSet.add(data.context.message_id)
 

@@ -1,5 +1,5 @@
 {
-  "name": "retail-logs-validation",
+  "name": "log-validation-utility",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -19,14 +19,18 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sharmasahil0331/retail-logs-validation.git"
+    "url": "git+https://github.com/ONDC-Official/log-validation-utility.git"
   },
-  "author": "",
+  "author": "ONDC-Official",
+  "contributors": [
+    "bluecypher",
+    "sharmasahil0331"
+  ],
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/sharmasahil0331/retail-logs-validation/issues"
+    "url": "https://github.com/ONDC-Official/log-validation-utility/issues"
   },
-  "homepage": "https://github.com/sharmasahil0331/retail-logs-validation",
+  "homepage": "https://github.com/ONDC-Official/log-validation-utility",
   "dependencies": {
     "ajv": "^8.12.0",
     "ajv-errors": "^3.0.0",
@@ -34,7 +38,6 @@
     "body-parser": "^1.19.1",
     "dotenv": "^14.2.0",
     "express": "^4.17.2",
-    "express-pino-logger": "^7.0.0",
     "lmdb": "^2.8.5",
     "pino": "^7.6.4",
     "swagger-ui-express": "^4.3.0"

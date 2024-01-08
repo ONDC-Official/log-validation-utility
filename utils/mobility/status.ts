@@ -17,8 +17,8 @@ export const checkStatus = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MOB_STATUS, data)
-  const contextRes: any = validateContext(context, msgIdSet, constants.MOB_ONINIT, constants.MOB_STATUS)
+  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.STATUS, data)
+  const contextRes: any = validateContext(context, msgIdSet, constants.ON_INIT, constants.STATUS)
   setValue(`${mobilitySequence.STATUS}_message`, message)
 
   if (schemaValidation !== 'error') {
@@ -31,7 +31,7 @@ export const checkStatus = (data: any, msgIdSet: any) => {
 
   if (!message.ref_id) {
     const key = `${mobilitySequence.STATUS}_ref_id`
-    errorObj[key] = `ref_id in /${constants.MOB_STATUS} must be present`
+    errorObj[key] = `ref_id in /${constants.STATUS} must be present`
   } else {
     if (_.isEqual(message.ref_id, context.transaction_id)) {
       errorObj['ref_id'] = `ref_id value should be the value of transaction_id`

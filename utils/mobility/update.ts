@@ -14,9 +14,9 @@ export const checkUpdate = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MOB_UPDATE, data)
+  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.UPDATE, data)
 
-  const contextRes: any = checkMobilityContext(context, constants.MOB_UPDATE)
+  const contextRes: any = checkMobilityContext(context, constants.UPDATE)
   msgIdSet.add(context.message_id)
 
   const errorObj: any = {}
@@ -50,7 +50,7 @@ export const checkUpdate = (data: any, msgIdSet: any) => {
   const onsearchContext: any = getValue(`${mobilitySequence.ON_CONFIRM}_context`)
 
   try {
-    logger.info(`Comparing city of /${constants.MOB_CONFIRM} and /${constants.MOB_UPDATE}`)
+    logger.info(`Comparing city of /${constants.CONFIRM} and /${constants.UPDATE}`)
     if (!_.isEqual(searchContext.location.city, context.location.city)) {
       const key = `${mobilitySequence.CONFIRM}_city`
       errorObj[key] = `City code mismatch in /${mobilitySequence.CONFIRM} and /${mobilitySequence.UPDATE}`
@@ -62,7 +62,7 @@ export const checkUpdate = (data: any, msgIdSet: any) => {
   }
 
   try {
-    logger.info(`Comparing country of /${constants.MOB_CONFIRM} and /${constants.MOB_UPDATE}`)
+    logger.info(`Comparing country of /${constants.CONFIRM} and /${constants.UPDATE}`)
     if (!_.isEqual(searchContext.location.country, context.location.country)) {
       const key = `${mobilitySequence.CONFIRM}_country`
       errorObj[key] = `Country code mismatch in /${mobilitySequence.CONFIRM} and /${mobilitySequence.UPDATE}`
@@ -74,20 +74,20 @@ export const checkUpdate = (data: any, msgIdSet: any) => {
   }
 
   try {
-    logger.info(`Comparing timestamp of /${constants.MOB_ONCONFIRM} and /${constants.MOB_UPDATE}`)
+    logger.info(`Comparing timestamp of /${constants.ON_CONFIRM} and /${constants.UPDATE}`)
     if (_.gte(onsearchContext.timestamp, context.timestamp)) {
-      errorObj.tmpstmp = `Timestamp for /${constants.MOB_ONCONFIRM} api cannot be greater than or equal to /${constants.MOB_UPDATE} api`
+      errorObj.tmpstmp = `Timestamp for /${constants.ON_CONFIRM} api cannot be greater than or equal to /${constants.UPDATE} api`
     }
 
     setValue('tmpstmp', context.timestamp)
   } catch (error: any) {
     logger.info(
-      `Error while comparing timestamp for /${constants.MOB_ONCONFIRM} and /${constants.MOB_UPDATE} api, ${error.stack}`,
+      `Error while comparing timestamp for /${constants.ON_CONFIRM} and /${constants.UPDATE} api, ${error.stack}`,
     )
   }
 
   try {
-    logger.info(`Comparing Message Ids of /${constants.MOB_ONCONFIRM} and /${constants.MOB_UPDATE}`)
+    logger.info(`Comparing Message Ids of /${constants.ON_CONFIRM} and /${constants.UPDATE}`)
     if (_.isEqual(onsearchContext.message_id, context.message_id)) {
       const key = `${mobilitySequence.ON_CONFIRM}_msgId`
       errorObj[
@@ -104,7 +104,7 @@ export const checkUpdate = (data: any, msgIdSet: any) => {
     setValue('txnId', context.transaction_id)
   } catch (error: any) {
     logger.info(
-      `Error while comparing message ids for /${constants.MOB_ONCONFIRM} and /${constants.MOB_UPDATE} api, ${error.stack}`,
+      `Error while comparing message ids for /${constants.ON_CONFIRM} and /${constants.UPDATE} api, ${error.stack}`,
     )
     return { error: error.message }
   }

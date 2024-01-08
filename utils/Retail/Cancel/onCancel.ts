@@ -18,9 +18,9 @@ export const checkOnCancel = (data: any) => {
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const schemaValidation = validateSchema('RET11', constants.RET_ONCANCEL, data)
+    const schemaValidation = validateSchema('RET11', constants.ON_CANCEL, data)
     const select: any = getValue(`${ApiSequence.SELECT}`)
-    const contextRes: any = checkContext(context, constants.RET_ONCANCEL)
+    const contextRes: any = checkContext(context, constants.ON_CANCEL)
 
     const checkBap = checkBppIdOrBapId(context.bap_id)
     const checkBpp = checkBppIdOrBapId(context.bpp_id)
@@ -38,76 +38,74 @@ export const checkOnCancel = (data: any) => {
     setValue(`${ApiSequence.CANCEL}`, data)
 
     try {
-      logger.info(`Checking context for /${constants.RET_ONCANCEL} API`) //checking context
-      const res: any = checkContext(context, constants.RET_ONCANCEL)
+      logger.info(`Checking context for /${constants.ON_CANCEL} API`) //checking context
+      const res: any = checkContext(context, constants.ON_CANCEL)
       if (!res.valid) {
         Object.assign(onCnclObj, res.ERRORS)
       }
     } catch (error: any) {
-      logger.error(`!!Some error occurred while checking /${constants.RET_ONCANCEL} context, ${error.stack}`)
+      logger.error(`!!Some error occurred while checking /${constants.ON_CANCEL} context, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing city of /${constants.RET_SEARCH} and /${constants.RET_ONCANCEL}`)
+      logger.info(`Comparing city of /${constants.SEARCH} and /${constants.ON_CANCEL}`)
       if (!_.isEqual(searchContext.city, context.city)) {
-        onCnclObj.city = `City code mismatch in /${constants.RET_SEARCH} and /${constants.RET_ONCANCEL}`
+        onCnclObj.city = `City code mismatch in /${constants.SEARCH} and /${constants.ON_CANCEL}`
       }
     } catch (error: any) {
-      logger.error(
-        `!!Error while comparing city in /${constants.RET_SEARCH} and /${constants.RET_ONCANCEL}, ${error.stack}`,
-      )
+      logger.error(`!!Error while comparing city in /${constants.SEARCH} and /${constants.ON_CANCEL}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing timestamp of /${constants.RET_ONINIT} and /${constants.RET_ONCANCEL}`)
+      logger.info(`Comparing timestamp of /${constants.ON_INIT} and /${constants.ON_CANCEL}`)
       if (_.gte(getValue('tmpstmp'), context.timestamp)) {
-        onCnclObj.tmpstmp = `Timestamp for /${constants.RET_ONINIT} api cannot be greater than or equal to /${constants.RET_ONCANCEL} api`
+        onCnclObj.tmpstmp = `Timestamp for /${constants.ON_INIT} api cannot be greater than or equal to /${constants.ON_CANCEL} api`
       }
 
       setValue('tmpstmp', context.timestamp)
     } catch (error: any) {
       logger.error(
-        `!!Error while comparing timestamp for /${constants.RET_ONINIT} and /${constants.RET_ONCANCEL} api, ${error.stack}`,
+        `!!Error while comparing timestamp for /${constants.ON_INIT} and /${constants.ON_CANCEL} api, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Comparing transaction Ids of /${constants.RET_SELECT} and /${constants.RET_ONCANCEL}`)
+      logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_CANCEL}`)
       if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
-        onCnclObj.txnId = `Transaction Id should be same from /${constants.RET_SELECT} onwards`
+        onCnclObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
       }
     } catch (error: any) {
       logger.info(
-        `!!Error while comparing transaction ids for /${constants.RET_SELECT} and /${constants.RET_ONCANCEL} api, ${error.stack}`,
+        `!!Error while comparing transaction ids for /${constants.SELECT} and /${constants.ON_CANCEL} api, ${error.stack}`,
       )
     }
 
     const on_cancel = message.order
 
     try {
-      logger.info(`Comparing order ids in /${constants.RET_ONCANCEL} and /${constants.RET_ONCONFIRM}`)
+      logger.info(`Comparing order ids in /${constants.ON_CANCEL} and /${constants.ON_CONFIRM}`)
       if (getValue('cnfrmOrdrId') != on_cancel.id) {
-        onCnclObj.orderID = `Order Id mismatches in /${constants.RET_ONCANCEL} and /${constants.RET_ONCONFIRM}`
+        onCnclObj.orderID = `Order Id mismatches in /${constants.ON_CANCEL} and /${constants.ON_CONFIRM}`
       }
     } catch (error: any) {
-      logger.error(`!!Error while trying to fetch order ids in /${constants.RET_ONCONFIRM}, ${error.stack}`)
+      logger.error(`!!Error while trying to fetch order ids in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking provider id and location in /${constants.RET_ONCANCEL}`)
+      logger.info(`Checking provider id and location in /${constants.ON_CANCEL}`)
       if (on_cancel.provider.id != getValue('providerId')) {
-        onCnclObj.prvdrId = `Provider Id mismatches in /${constants.RET_ONSEARCH} and /${constants.RET_ONCANCEL}`
+        onCnclObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.ON_CANCEL}`
       }
 
       if (on_cancel.provider.locations[0].id != getValue('providerLoc')) {
-        onCnclObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.RET_ONSEARCH} and /${constants.RET_ONCANCEL}`
+        onCnclObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.ON_SEARCH} and /${constants.ON_CANCEL}`
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking provider id and location in /${constants.RET_ONCANCEL}, ${error.stack}`)
+      logger.error(`!!Error while checking provider id and location in /${constants.ON_CANCEL}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing item Ids and fulfillment ids in /${constants.RET_ONSELECT} and /${constants.RET_ONCANCEL}`)
+      logger.info(`Comparing item Ids and fulfillment ids in /${constants.ON_SELECT} and /${constants.ON_CANCEL}`)
       const itemFlfllmnts: any = getValue('itemFlfllmnts')
       const itemsIdList: any = getValue('itemsIdList')
       let i = 0
@@ -120,17 +118,17 @@ export const checkOnCancel = (data: any) => {
             const itemkey = `item_FFErr${i}`
             onCnclObj[
               itemkey
-            ] = `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.RET_ONSELECT} and /${constants.RET_ONCANCEL}`
+            ] = `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_CANCEL}`
           }
         } else {
           const itemkey = `item_FFErr${i}`
-          onCnclObj[itemkey] = `Item Id ${itemId} does not exist in /${constants.RET_ONSELECT}`
+          onCnclObj[itemkey] = `Item Id ${itemId} does not exist in /${constants.ON_SELECT}`
         }
 
         if (itemId in itemsIdList) {
           if (on_cancel.items[i].quantity.count != itemsIdList[itemId]) {
             itemsIdList[itemId] = on_cancel.items[i].quantity.count
-            onCnclObj.cntErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.RET_SELECT}`
+            onCnclObj.cntErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
           }
         }
 
@@ -138,12 +136,12 @@ export const checkOnCancel = (data: any) => {
       }
     } catch (error: any) {
       logger.error(
-        `!!Error while comparing Item and Fulfillment Id in /${constants.RET_ONSELECT} and /${constants.RET_ONCANCEL}, ${error.stack}`,
+        `!!Error while comparing Item and Fulfillment Id in /${constants.ON_SELECT} and /${constants.ON_CANCEL}, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Comparing billing object in /${constants.RET_INIT} and /${constants.RET_ONCANCEL}`)
+      logger.info(`Comparing billing object in /${constants.INIT} and /${constants.ON_CANCEL}`)
       const billing = getValue('billing')
 
       const billingErrors = compareObjects(billing, onCnclObj.billing)
@@ -160,11 +158,11 @@ export const checkOnCancel = (data: any) => {
 
       setValue('billing', on_cancel.billing)
     } catch (error: any) {
-      logger.error(`!!Error while comparing billing object in /${constants.RET_CONFIRM} and /${constants.RET_ONCANCEL}`)
+      logger.error(`!!Error while comparing billing object in /${constants.CONFIRM} and /${constants.ON_CANCEL}`)
     }
 
     try {
-      logger.info(`Checking fulfillments objects in /${constants.RET_ONCANCEL}`)
+      logger.info(`Checking fulfillments objects in /${constants.ON_CANCEL}`)
       const itemFlfllmnts: any = getValue('itemFlfllmnts')
       let i = 0
       const len = on_cancel.fulfillments.length
@@ -175,10 +173,10 @@ export const checkOnCancel = (data: any) => {
           if (!Object.values(itemFlfllmnts).includes(id)) {
             const key = `ffID${id}`
             //MM->Mismatch
-            onCnclObj[key] = `fulfillment id ${id} does not exist in /${constants.RET_ONSELECT}`
+            onCnclObj[key] = `fulfillment id ${id} does not exist in /${constants.ON_SELECT}`
           }
         } else {
-          onCnclObj.ffId = `fulfillments[${i}].id is missing in /${constants.RET_CONFIRM}`
+          onCnclObj.ffId = `fulfillments[${i}].id is missing in /${constants.CONFIRM}`
         }
 
         if (!on_cancel.fulfillments[i].end || !on_cancel.fulfillments[i].end.person) {
@@ -196,45 +194,45 @@ export const checkOnCancel = (data: any) => {
         i++
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking fulfillments object in /${constants.RET_ONCANCEL}, ${error.stack}`)
+      logger.error(`!!Error while checking fulfillments object in /${constants.ON_CANCEL}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking payment object in /${constants.RET_ONCANCEL}`)
+      logger.info(`Checking payment object in /${constants.ON_CANCEL}`)
 
       if (!_.isEqual(on_cancel.payment['@ondc/org/settlement_details'][0], getValue('sttlmntdtls'))) {
-        onCnclObj.sttlmntdtls = `payment settlement_details mismatch in /${constants.RET_ONINIT} & /${constants.RET_ONCANCEL}`
+        onCnclObj.sttlmntdtls = `payment settlement_details mismatch in /${constants.ON_INIT} & /${constants.ON_CANCEL}`
       }
 
       if (!on_cancel.hasOwnProperty('created_at') || !on_cancel.hasOwnProperty('updated_at')) {
-        onCnclObj.ordertmpstmp = `order created and updated timestamps are mandatory in /${constants.RET_ONCANCEL}`
+        onCnclObj.ordertmpstmp = `order created and updated timestamps are mandatory in /${constants.ON_CANCEL}`
       } else {
         if (!_.isEqual(on_cancel.created_at, on_cancel.updated_at)) {
           onCnclObj.ordrupdtd = `order.updated_at timestamp should match order.created_at timestamp`
         }
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking payment object in /${constants.RET_ONCANCEL}, ${error.stack}`)
+      logger.error(`!!Error while checking payment object in /${constants.ON_CANCEL}, ${error.stack}`)
     }
 
     try {
-      logger.info(`storing payment object in /${constants.RET_ONCANCEL}`)
+      logger.info(`storing payment object in /${constants.ON_CANCEL}`)
       setValue('cnfrmpymnt', on_cancel.payment)
     } catch (error: any) {
-      logger.error(`!!Error while storing payment object in /${constants.RET_ONCANCEL}, ${error.stack}`)
+      logger.error(`!!Error while storing payment object in /${constants.ON_CANCEL}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing Quote object for /${constants.RET_ONSELECT} and /${constants.RET_ONCANCEL}`)
+      logger.info(`Comparing Quote object for /${constants.ON_SELECT} and /${constants.ON_CANCEL}`)
       if (!_.isEqual(getValue('quoteObj'), on_cancel.quote)) {
-        onCnclObj.quoteObj = `Discrepancies between the quote object in /${constants.RET_ONSELECT} and /${constants.RET_ONCANCEL}`
+        onCnclObj.quoteObj = `Discrepancies between the quote object in /${constants.ON_SELECT} and /${constants.ON_CANCEL}`
       }
     } catch (error: any) {
-      logger.error(`!!Error while Comparing Quote object for /${constants.RET_ONSELECT} and /${constants.RET_ONCANCEL}`)
+      logger.error(`!!Error while Comparing Quote object for /${constants.ON_SELECT} and /${constants.ON_CANCEL}`)
     }
 
     return onCnclObj
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.RET_ONCANCEL} API`, err)
+    logger.error(`!!Some error occurred while checking /${constants.ON_CANCEL} API`, err)
   }
 }

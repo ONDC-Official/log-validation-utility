@@ -18,9 +18,9 @@ export const checkStatus = (data: any) => {
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const schemaValidation = validateSchema('RET11', constants.RET_STATUS, data)
+    const schemaValidation = validateSchema('RET11', constants.STATUS, data)
     const select: any = getValue(`${ApiSequence.SELECT}`)
-    const contextRes: any = checkContext(context, constants.RET_STATUS)
+    const contextRes: any = checkContext(context, constants.STATUS)
 
     const checkBap = checkBppIdOrBapId(context.bap_id)
     const checkBpp = checkBppIdOrBapId(context.bpp_id)
@@ -38,39 +38,37 @@ export const checkStatus = (data: any) => {
     setValue(`${ApiSequence.STATUS}`, data)
 
     try {
-      logger.info(`Checking context for /${constants.RET_STATUS} API`) //checking context
-      const res: any = checkContext(context, constants.RET_STATUS)
+      logger.info(`Checking context for /${constants.STATUS} API`) //checking context
+      const res: any = checkContext(context, constants.STATUS)
       if (!res.valid) {
         Object.assign(statusObj, res.ERRORS)
       }
     } catch (error: any) {
-      logger.error(`!!Some error occurred while checking /${constants.RET_STATUS} context, ${error.stack}`)
+      logger.error(`!!Some error occurred while checking /${constants.STATUS} context, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing city of /${constants.RET_SEARCH} and /${constants.RET_STATUS}`)
+      logger.info(`Comparing city of /${constants.SEARCH} and /${constants.STATUS}`)
       if (!_.isEqual(searchContext.city, context.city)) {
-        statusObj.city = `City code mismatch in /${constants.RET_SEARCH} and /${constants.RET_STATUS}`
+        statusObj.city = `City code mismatch in /${constants.SEARCH} and /${constants.STATUS}`
       }
     } catch (error: any) {
-      logger.error(
-        `!!Error while comparing city in /${constants.RET_SEARCH} and /${constants.RET_STATUS}, ${error.stack}`,
-      )
+      logger.error(`!!Error while comparing city in /${constants.SEARCH} and /${constants.STATUS}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing transaction Ids of /${constants.RET_SELECT} and /${constants.RET_STATUS}`)
+      logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.STATUS}`)
       if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
-        statusObj.txnId = `Transaction Id should be same from /${constants.RET_SELECT} onwards`
+        statusObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
       }
     } catch (error: any) {
       logger.info(
-        `!!Error while comparing transaction ids for /${constants.RET_SELECT} and /${constants.RET_STATUS} api, ${error.stack}`,
+        `!!Error while comparing transaction ids for /${constants.SELECT} and /${constants.STATUS} api, ${error.stack}`,
       )
     }
 
     return statusObj
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.RET_STATUS} API`, err)
+    logger.error(`!!Some error occurred while checking /${constants.STATUS} API`, err)
   }
 }

@@ -23,8 +23,8 @@ export const search = (data: any, msgIdSet: any) => {
       return Object.keys(errorObj).length > 0 && errorObj
     }
 
-    const schemaValidation = validateSchema(data.context.domain.split(':')[1], constants.MOB_SEARCH, data)
-    const contextRes: any = checkMobilityContext(data.context, constants.MOB_SEARCH)
+    const schemaValidation = validateSchema(data.context.domain.split(':')[1], constants.SEARCH, data)
+    const contextRes: any = checkMobilityContext(data.context, constants.SEARCH)
     setValue(`${mobilitySequence.SEARCH}_context`, data.context)
     msgIdSet.add(data.context.message_id)
 
@@ -96,7 +96,7 @@ export const search = (data: any, msgIdSet: any) => {
     }
 
     try {
-      logger.info(`Validating payments object for /${constants.MOB_SEARCH}`)
+      logger.info(`Validating payments object for /${constants.SEARCH}`)
       const payment = data.message.intent?.payment
       const collectedBy = payment?.collected_by
 
@@ -117,7 +117,7 @@ export const search = (data: any, msgIdSet: any) => {
         Object.assign(errorObj, { tags: tagsValidation.errors })
       }
     } catch (error: any) {
-      logger.error(`!!Error occcurred while validating payments in /${constants.MOB_SEARCH},  ${error.message}`)
+      logger.error(`!!Error occcurred while validating payments in /${constants.SEARCH},  ${error.message}`)
     }
 
     return Object.keys(errorObj).length > 0 && errorObj

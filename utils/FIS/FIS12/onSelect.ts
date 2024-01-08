@@ -9,7 +9,7 @@ import { validateProviderTags } from './tags'
 
 export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
   if (!data || isObjectEmpty(data)) {
-    return { [constants.ON_SELECT]: 'Json cannot be empty' }
+    return { [constants.ON_SELECT]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data

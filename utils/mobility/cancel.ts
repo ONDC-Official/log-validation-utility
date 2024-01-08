@@ -7,7 +7,7 @@ import { validateContext } from './mobilityChecks'
 export const checkCancel = (data: any, msgIdSet: any, sequence: string) => {
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [mobilitySequence.ON_CANCEL]: 'Json cannot be empty' }
+      return { [mobilitySequence.ON_CANCEL]: 'JSON cannot be empty' }
     }
 
     console.log('data--', data)

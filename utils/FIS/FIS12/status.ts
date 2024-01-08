@@ -5,7 +5,7 @@ import { validateContext } from './fisChecks'
 
 export const checkStatus = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [FisApiSequence.STATUS]: 'Json cannot be empty' }
+    return { [FisApiSequence.STATUS]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data

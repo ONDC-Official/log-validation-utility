@@ -11,7 +11,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
   const onCnfrmObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [FisApiSequence.ON_CONFIRM]: 'Json cannot be empty' }
+      return { [FisApiSequence.ON_CONFIRM]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data

@@ -9,7 +9,7 @@ export const checkStatus = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
 
   if (!data || isObjectEmpty(data)) {
-    return { [mobilitySequence.STATUS]: 'Json cannot be empty' }
+    return { [mobilitySequence.STATUS]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data

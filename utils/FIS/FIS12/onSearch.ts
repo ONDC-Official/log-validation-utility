@@ -9,7 +9,7 @@ import { validateProviderTags, validatePaymentTags, validateItemsTags } from './
 
 export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
   if (!data || isObjectEmpty(data)) {
-    return { [FisApiSequence.ON_SEARCH]: 'Json cannot be empty' }
+    return { [FisApiSequence.ON_SEARCH]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data

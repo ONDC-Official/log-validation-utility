@@ -10,7 +10,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [constants.INIT]: 'Json cannot be empty' }
+      return { [constants.INIT]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data

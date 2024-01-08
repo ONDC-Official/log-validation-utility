@@ -1,21 +1,20 @@
 // import _ from 'lodash'
-import constants, { mobilitySequence } from '../../constants'
+import constants, {
+  mobilitySequence,
+  MOB_VEHICLE_CATEGORIES as VALID_VEHICLE_CATEGORIES,
+  MOB__DESCRIPTOR_CODES as VALID_DESCRIPTOR_CODES,
+} from '../../constants'
 import { logger } from '../../shared/logger'
 import { validateSchema, isObjectEmpty } from '../'
 import { getValue, setValue } from '../../shared/dao'
 import { validateContext, validatePaymentParams, validateQuote, validateStops } from './mobilityChecks'
 import { validatePaymentTags, validateRouteInfoTags } from './tags'
 
-// const cancellationTermsState = new Map()
-
-const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
-const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
-
 export const checkOnInit = (data: any, msgIdSet: any) => {
   try {
     const errorObj: any = {}
     if (!data || isObjectEmpty(data)) {
-      return { [mobilitySequence.ON_INIT]: 'Json cannot be empty' }
+      return { [mobilitySequence.ON_INIT]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data

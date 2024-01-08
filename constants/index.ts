@@ -192,3 +192,14 @@ export const retailDomains = [
   'ONDC:RET19',
   'ONDC:RET20',
 ]
+
+export const MOB_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
+export const MOB__DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
+export const MOB_FULL_STATE = [
+  'RIDE_CANCELLED',
+  'RIDE_ENDED',
+  'RIDE_STARTED',
+  'RIDE_ASSIGNED',
+  'RIDE_ENROUTE_PICKUP',
+  'RIDE_ARRIVED_PICKUP',
+]

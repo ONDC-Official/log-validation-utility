@@ -11,7 +11,7 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [FisApiSequence.ON_STATUS]: 'Json cannot be empty' }
+      return { [FisApiSequence.ON_STATUS]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data

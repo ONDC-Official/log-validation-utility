@@ -6,7 +6,7 @@ import { logger } from '../../shared/logger'
 
 export const checkUpdate = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [mobilitySequence.UPDATE]: 'Json cannot be empty' }
+    return { [mobilitySequence.UPDATE]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data

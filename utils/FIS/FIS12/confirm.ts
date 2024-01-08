@@ -9,7 +9,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [FisApiSequence.CONFIRM]: 'Json cannot be empty' }
+      return { [FisApiSequence.CONFIRM]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data

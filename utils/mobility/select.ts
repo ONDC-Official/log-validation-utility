@@ -7,7 +7,7 @@ import { validateContext } from './mobilityChecks'
 
 export const checkSelect = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [mobilitySequence.SELECT]: 'Json cannot be empty' }
+    return { [mobilitySequence.SELECT]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data

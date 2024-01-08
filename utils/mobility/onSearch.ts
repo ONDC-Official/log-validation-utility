@@ -1,24 +1,17 @@
 import { logger } from '../../shared/logger'
 import { setValue } from '../../shared/dao'
-import constants, { mobilitySequence } from '../../constants'
-import {
-  validateSchema,
-  isObjectEmpty,
-  // checkMobilityContext,
-  // checkBppIdOrBapId,
-  checkGpsPrecision,
-  timestampCheck,
-  // timeDiff,
-} from '../../utils'
+import constants, {
+  mobilitySequence,
+  MOB_VEHICLE_CATEGORIES as VALID_VEHICLE_CATEGORIES,
+  MOB__DESCRIPTOR_CODES as VALID_DESCRIPTOR_CODES,
+} from '../../constants'
+import { validateSchema, isObjectEmpty, checkGpsPrecision, timestampCheck } from '../../utils'
 import { validateContext } from './mobilityChecks'
 import { validatePaymentTags } from './tags'
 
-const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
-const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
-
 export const checkOnSearch = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [mobilitySequence.ON_SEARCH]: 'Json cannot be empty' }
+    return { [mobilitySequence.ON_SEARCH]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data

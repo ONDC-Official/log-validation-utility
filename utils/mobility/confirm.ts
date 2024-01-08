@@ -1,16 +1,15 @@
-import constants, { mobilitySequence } from '../../constants'
+import constants, { mobilitySequence, MOB_VEHICLE_CATEGORIES as VALID_VEHICLE_CATEGORIES } from '../../constants'
 import { logger } from '../../shared/logger'
 import { validateSchema, isObjectEmpty } from '../'
 import { getValue, setValue } from '../../shared/dao'
 import { validateContext, validateStops } from './mobilityChecks'
 import { validatePaymentTags } from './tags'
 
-const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 export const checkConfirm = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [mobilitySequence.CONFIRM]: 'Json cannot be empty' }
+      return { [mobilitySequence.CONFIRM]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data

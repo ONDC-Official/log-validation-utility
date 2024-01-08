@@ -1,16 +1,18 @@
 import { logger } from '../../shared/logger'
-import constants, { mobilitySequence } from '../../constants'
+import constants, {
+  mobilitySequence,
+  MOB_VEHICLE_CATEGORIES as VALID_VEHICLE_CATEGORIES,
+  MOB__DESCRIPTOR_CODES as VALID_DESCRIPTOR_CODES,
+} from '../../constants'
 import { validateSchema, isObjectEmpty } from '../'
 import _ from 'lodash'
 import { getValue, setValue } from '../../shared/dao'
 import { validateContext, validateQuote, validateStops } from './mobilityChecks'
 import { validateRouteInfoTags } from './tags'
 
-const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
-const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 export const checkOnSelect = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [mobilitySequence.ON_SELECT]: 'Json cannot be empty' }
+    return { [mobilitySequence.ON_SELECT]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data

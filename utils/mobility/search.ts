@@ -8,7 +8,7 @@ export const search = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      errorObj[mobilitySequence.SEARCH] = 'Json cannot be empty'
+      errorObj[mobilitySequence.SEARCH] = 'JSON cannot be empty'
       return
     }
 

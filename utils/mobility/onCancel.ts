@@ -8,21 +8,11 @@ import { validateContext, validateStops } from './mobilityChecks'
 import { validateRouteInfoTags, validateCancellationTerm } from './tags'
 import _ from 'lodash'
 
-// const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
-// const VALID_FULL_STATE = [
-//   'RIDE_CANCELLED',
-//   'RIDE_ENDED',
-//   'RIDE_STARTED',
-//   'RIDE_ASSIGNED',
-//   'RIDE_ENROUTE_PICKUP',
-//   'RIDE_ARRIVED_PICKUP',
-// ]
-
 export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [mobilitySequence.ON_CANCEL]: 'Json cannot be empty' }
+      return { [mobilitySequence.ON_CANCEL]: 'JSON cannot be empty' }
     }
 
     const { message, context } = data
@@ -43,21 +33,11 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
     }
 
     const onCancel: any = message.order
-    //   const prvdrsId = new Set()
-    //   const prvdrLocId = new Set()
-    //   const itemsId = new Set()
-    //   const storedLocations = new Set()
-    //   const storedFulfillments = new Set()
     const fulfillmentIdsSet = new Set()
     const paymentIdsSet = new Set()
-    // const orderId: any = getValue(`orderId`)
 
     if (!('id' in onCancel)) {
       errorObj['order'] = `id should be sent in /${constants.ON_CANCEL}`
-      // } else if (orderId) {
-      //   if (!_.isEqual(onCancel.id, orderId)) {
-      //     errorObj['order'] = `id should be the same as sent in /${constants.CANCEL}`
-      //   }
     }
 
     try {

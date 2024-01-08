@@ -10,7 +10,7 @@ export const checkOnUpdate = (data: any) => {
   const onUpdateObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [mobilitySequence.ON_UPDATE]: 'Json cannot be empty' }
+      return { [mobilitySequence.ON_UPDATE]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data

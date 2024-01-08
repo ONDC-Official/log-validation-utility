@@ -8,7 +8,7 @@ export const search = (data: any, msgIdSet: any, flow: string) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      errorObj[FisApiSequence.SEARCH] = 'Json cannot be empty'
+      errorObj[FisApiSequence.SEARCH] = 'JSON cannot be empty'
       return
     }
 

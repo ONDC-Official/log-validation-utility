@@ -11,7 +11,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string) => {
   const onUpdateObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [FisApiSequence.ON_UPDATE]: 'Json cannot be empty' }
+      return { [FisApiSequence.ON_UPDATE]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data

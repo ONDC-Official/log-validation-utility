@@ -8,7 +8,7 @@ import { validateContext } from './fisChecks'
 
 export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
   if (!data || isObjectEmpty(data)) {
-    return { [constants.SELECT]: 'Json cannot be empty' }
+    return { [constants.SELECT]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data

@@ -9,7 +9,7 @@ export const checkTrack = (data: any) => {
   const trckObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.TRACK]: 'Json cannot be empty' }
+      return { [ApiSequence.TRACK]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data

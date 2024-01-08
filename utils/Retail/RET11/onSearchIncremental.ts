@@ -8,7 +8,7 @@ import _, { isEmpty } from 'lodash'
 
 export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [ApiSequence.INC_ONSEARCH]: 'Json cannot be empty' }
+    return { [ApiSequence.INC_ONSEARCH]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data

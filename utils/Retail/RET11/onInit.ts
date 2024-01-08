@@ -18,7 +18,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
   try {
     const onInitObj: any = {}
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.ON_INIT]: 'Json cannot be empty' }
+      return { [ApiSequence.ON_INIT]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data

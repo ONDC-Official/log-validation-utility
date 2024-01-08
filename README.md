@@ -266,7 +266,7 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
 - The output of the utility service provides the report in a JSON format along with a success flag (true/false). Refer to the above sample payloads.
 - The service can be used to validate the entire transaction on the network or a particular schema of any payload.
   - Endpoint for the validation of the entire transaction: [https://log-validation.ondc.org/api/validate](https://log-validation.ondc.org/api/validate)
-  - Endpoint for the validation of schema: [https://log-validation.ondc.org/api/validate-schema/api-endpoint](https://log-validation.ondc.org/api/validate-schema/api-endpoint) (replace `api-endpoint` with the specific API endpoint you want to validate, e.g., search, select, on_confirm, etc.)
+  - Endpoint for the validation of schema: [https://log-validation.ondc.org/api/validate-schema/api-endpoint](https://log-validation.ondc.org/api/validate-schema/)
 - Community contributions are welcome to enhance this utility for future releases. To contribute, please raise a PR or create an issue. Contribution through either way works!
 
 ## Installation (Local Server)

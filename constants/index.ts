@@ -98,6 +98,25 @@ export const statusArray = [
 
 export const buyerCancellationRid = new Set(['001', '003', '006', '009', '010'])
 
+export const rtoCancellationRid = new Set(['003', '006', '009', '010', '011', '012', '013', '014', '015', '016', '017'])
+
+export const sellerCancellationRid = new Set([
+  '002',
+  '005',
+  '008',
+  '011',
+  '012',
+  '013',
+  '014',
+  '015',
+  '016',
+  '017',
+  '018',
+  '019',
+  '020',
+  '021',
+])
+
 export const retailDomains = [
   'ONDC:RET10',
   'ONDC:RET11',

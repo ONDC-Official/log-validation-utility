@@ -14,7 +14,7 @@ export const checkSearch = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      errorObj[ApiSequence.SEARCH] = 'Json cannot be empty'
+      errorObj[ApiSequence.SEARCH] = 'JSON cannot be empty'
       return
     }
 

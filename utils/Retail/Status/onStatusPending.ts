@@ -9,7 +9,7 @@ export const checkOnStatusPending = (data: any, state: string) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.ON_STATUS_PENDING]: 'Json cannot be empty' }
+      return { [ApiSequence.ON_STATUS_PENDING]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data

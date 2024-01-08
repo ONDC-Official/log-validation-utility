@@ -13,7 +13,7 @@ import {
 export const checkSearchIncremental = (data: any, msgIdSet: any) => {
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.INC_SEARCH]: 'Json cannot be empty' }
+      return { [ApiSequence.INC_SEARCH]: 'JSON cannot be empty' }
     }
 
     const { message, context } = data

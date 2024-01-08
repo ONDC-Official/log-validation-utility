@@ -22,7 +22,7 @@ const retailPymntTtl: { [key: string]: string } = {
 }
 export const checkOnSelect = (data: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [ApiSequence.ON_SELECT]: 'Json cannot be empty' }
+    return { [ApiSequence.ON_SELECT]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data

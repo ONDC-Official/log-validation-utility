@@ -349,6 +349,68 @@ curl --location 'http://localhost:3006/api/validate/igm' \
 }'
 ```
 
+### For FIS12 Sample Curl Request (Local)
+
+```shell
+curl --location 'http://localhost:3006/api/validate/fis/fis12' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS12",
+    "version": "2.0.0",
+    "flow": "PERSONAL",
+    "payload": {
+        "search": {},
+        "on_search":{},
+        "select_1": {},
+        "on_select_1": {},
+        "select_2": {},
+        "on_select_2": {},
+        "select_3": {},
+        "on_select_3":{},
+        "init_1": {},
+        "on_init_1": {},
+        "init_2": {}
+        "on_init_2": {},
+        "init_3": {}
+        "on_init_3": {},
+        "confirm": {}
+        "on_confirm": {},
+        "status": {}
+        "on_status": {},
+        "update": {}
+        "on_update": {},
+    }
+}'
+```
+
+### For TRV10 Sample Curl Request (Local)
+
+```shell
+curl --location 'http://localhost:3006/api/validate/trv/trv10' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:TRV10",
+    "version": "2.0.0",
+    "flow": "RIDER_CANCEL",
+    "payload": {
+        "search": {},
+        "on_search":{},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {}
+        "on_confirm": {},
+        "status": {}
+        "on_status": {},
+        "soft_cancel": {}
+        "soft_on_cancel": {},
+        "cancel": {}
+        "on_cancel": {},
+    }
+}'
+```
+
 Using Postman, you can import the above `curl` command into Postman and replace the empty objects in the payload with your actual data. This allows for easy testing and validation of transaction logs on your local environment.
 
 With these instructions, you can start using the Retail Logs Validation Utility for local log validation.

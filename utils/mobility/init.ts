@@ -191,7 +191,8 @@ export const checkInit = (data: any, msgIdSet: any) => {
           errorObj[`fulfillments${index}_agent`] = `/message/order/agent is not part of init call`
         }
 
-        if (full.type !== 'DELIVERY') {
+        //if type is sent then it should be DELIVERY else, no mandatory to check for the BAP end call
+        if (full.type && full.type !== 'DELIVERY') {
           errorObj[
             `${fulfillmentKey}.type`
           ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_SELECT}`

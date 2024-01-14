@@ -175,7 +175,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
           }
         }
 
-        if (full.type !== 'DELIVERY') {
+        if (full.type && full.type !== 'DELIVERY') {
           errorObj[
             `${fulfillmentKey}.type`
           ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_INIT}`

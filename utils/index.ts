@@ -643,7 +643,7 @@ export const isValidEmail = (value: string): boolean => {
 
 export const isValidPhoneNumber = (value: string): boolean => {
   const phoneRegex = /^(\d{10}|\d{11})$/
-  const val = value?.replace(/\s+/g, ' ').trim()
+  const val = value?.replace('-', '')?.replace(/\s+/g, ' ').trim()
   return phoneRegex.test(val)
 }
 

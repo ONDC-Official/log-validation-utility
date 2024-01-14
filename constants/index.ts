@@ -78,7 +78,7 @@ export const FisApiSequence = {
   ON_STATUS: 'on_status',
   UPDATE: 'update',
   ON_UPDATE: 'on_update',
-  ON_UPDATE_1: 'on_update1',
+  ON_UPDATE_UNSOLICATED: 'on_update_unsolicated',
 }
 
 export const mobilitySequence = {
@@ -125,6 +125,9 @@ export const fisFlows = {
   PERSONAL: 'PERSONAL_LOAN',
   PRE_INVOICE: 'PERSONAL_LOAN',
   PRE_PERSONAL: 'INVOICE_BASED_LOAN',
+  LOAN_FORECLOSURE: 'FORECLOSURE',
+  PRE_PART_PAYMENT: 'PRE_PART_PAYMENT',
+  MISSED_EMI_PAYMENT: 'MISSED_EMI_PAYMENT',
 }
 
 export const onDemandFlows = {

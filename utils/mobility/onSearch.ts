@@ -99,7 +99,7 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
             const hasTimeRangeStart = stop.time?.range?.start
             if (hasTimeRangeStart) {
               const timestampCheckResult = timestampCheck(stop.time?.range?.start || '')
-              if (timestampCheckResult.err) {
+              if (timestampCheckResult && timestampCheckResult.err) {
                 errorObj[
                   `provider_${i}_fulfillment_${k}_stop_${l}_timestamp`
                 ] = `Invalid timestamp for stop ${l} in fulfillment ${k} in provider ${i}: ${timestampCheckResult.err}`
@@ -107,7 +107,7 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
             }
 
             // Check if GPS coordinates are valid
-            if (stop.location?.gps && checkGpsPrecision(stop.location.gps)) {
+            if (stop.location?.gps && !checkGpsPrecision(stop.location.gps)) {
               errorObj[`provider_${i}_fulfillment_${k}_stop_${l}_gpsPrecision`] =
                 'GPS coordinates must be specified with at least six decimal places of precision'
             }

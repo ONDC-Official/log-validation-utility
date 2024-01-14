@@ -25,7 +25,6 @@ import { initSchema } from '../schema/Retail/RET/init'
 import { onInitSchema } from '../schema/Retail/RET/on_init'
 import { confirmSchema } from '../schema/Retail/RET/confirm'
 import { onConfirmSchema } from '../schema/Retail/RET/on_confirm'
-
 import issueSchema from '../schema/Igm/issueSchema'
 import onIssueSchema from '../schema/Igm/onIssueSchema'
 import issueStatusSchema from '../schema/Igm/issueStatusSchema'
@@ -646,6 +645,7 @@ const FIS12Validator = {
   validate_schema_on_confirm_FIS12_for_json: (data: any) =>
     validate_schema_for_json(data, 'schema/FIS/on_confirm.yaml'),
   validate_schema_update_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/update.yaml'),
+  validate_schema_on_update_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_update.yaml'),
   validate_schema_status_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/status.yaml'),
   validate_schema_on_status_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_status.yaml'),
 }

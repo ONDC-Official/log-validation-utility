@@ -8,7 +8,13 @@ import constants, {
 import { logger } from '../../shared/logger'
 import { validateSchema, isObjectEmpty } from '../'
 import { getValue, setValue } from '../../shared/dao'
-import { validateContext, validatePaymentParams, validateQuote, validateStops } from './mobilityChecks'
+import {
+  validateCancellationTerms,
+  validateContext,
+  validatePaymentParams,
+  validateQuote,
+  validateStops,
+} from './mobilityChecks'
 import { validatePaymentTags, validateRouteInfoTags } from './tags'
 
 export const checkOnStatus = (data: any, msgIdSet: any) => {
@@ -84,7 +90,7 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
         }
 
         if (!VALID_FULL_STATE.includes(fulfillment?.state?.descriptor?.code)) {
-          errorObj[`${fulfillmentKey}.state`] = `Invalid descriptor code for fulfillment ${index}`
+          errorObj[`${fulfillmentKey}.state`] = `Invalid or missing descriptor.code for fulfillment ${index}`
         }
 
         const vehicle = fulfillment.vehicle
@@ -147,10 +153,13 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
         const otp = true
         const cancel = false
         validateStops(fulfillment?.stops, index, otp, cancel)
-        // Validate route info tags
-        const tagsValidation = validateRouteInfoTags(fulfillment.tags)
-        if (!tagsValidation.isValid) {
-          Object.assign(errorObj, { tags: tagsValidation.errors })
+
+        if (fulfillment.tags) {
+          // Validate route info tags
+          const tagsValidation = validateRouteInfoTags(fulfillment.tags)
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { tags: tagsValidation.errors })
+          }
         }
       })
     } catch (error: any) {
@@ -245,39 +254,10 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
 
     try {
       logger.info(`Checking cancellation terms in /${constants.ON_STATUS}`)
-      const cancellationTerms = on_status.cancellation_terms
-
-      if (cancellationTerms && cancellationTerms.length > 0) {
-        for (let i = 0; i < cancellationTerms.length; i++) {
-          const cancellationTerm = cancellationTerms[i]
-
-          if (
-            cancellationTerm.fulfillment_state &&
-            cancellationTerm.fulfillment_state.descriptor &&
-            cancellationTerm.fulfillment_state.descriptor.code &&
-            (!cancellationTerm.cancellation_fee ||
-              !(
-                (cancellationTerm.cancellation_fee.percentage && !cancellationTerm.cancellation_fee.amount) ||
-                (!cancellationTerm.cancellation_fee.percentage && cancellationTerm.cancellation_fee.amount)
-              ))
-          ) {
-            errorObj.cancellationFee = `Either percentage or amount.currency & amount.value should be present, but not both, for Cancellation Term[${i}] when fulfillment_state is present`
-          }
-
-          // const descriptorCode = cancellationTerm.fulfillment_state.descriptor.code
-          // const storedPercentage = cancellationTermsState.get(descriptorCode)
-
-          // if (storedPercentage === undefined) {
-          //   cancellationTermsState.set(descriptorCode, cancellationTerm.cancellation_fee.percentage)
-          // } else if (storedPercentage !== cancellationTerm.cancellation_fee.percentage) {
-          //   errorObj.cancellationFee = `Cancellation terms percentage for ${descriptorCode} has changed`
-          // }
-        }
-      } else {
-        errorObj.cancellationTerms = `Cancellation Terms are required in /${constants.ON_STATUS}`
-      }
+      const cancellationErrors = validateCancellationTerms(on_status.cancellation_terms, constants.ON_STATUS)
+      Object.assign(errorObj, cancellationErrors)
     } catch (error: any) {
-      logger.error(`!!Error while checking cancellation terms in /${constants.ON_STATUS}, ${error.stack}`)
+      logger.error(`!!Error while checking cancellation_terms in /${constants.ON_STATUS}, ${error.stack}`)
     }
 
     return errorObj

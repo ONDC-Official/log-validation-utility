@@ -45,52 +45,54 @@ export const search = (data: any, msgIdSet: any) => {
       errorObj.city = `Country code must be IND`
     }
 
-    // Stops & Gps check
-    const stops = data.message.intent?.fulfillment?.stops
-    if (!stops || stops.length === 0) {
-      errorObj['stops'] = {
-        fulfillment: {
-          stops: 'Fulfillment stops are missing or empty',
-        },
-      }
-    } else {
-      const stopTypes = stops.map((stop: any) => stop.type)
-      const invalidStopTypes = stopTypes.filter((type: string) => type !== 'START' && type !== 'END')
-
-      if (invalidStopTypes.length > 0) {
+    if (data.message.intent?.fulfillment) {
+      // Stops & Gps check
+      const stops = data.message.intent?.fulfillment?.stops
+      if (!stops || stops.length === 0) {
         errorObj['stops'] = {
-          fulfillments: {
-            stops: `Invalid stop types found: ${invalidStopTypes.join(
-              ', ',
-            )}. Fulfillments stops must contain only 'START' and 'END' types.`,
-          },
-        }
-      }
-
-      const startStop = stops.find((stop: any) => stop.type === 'START')
-      const endStop = stops.find((stop: any) => stop.type === 'END')
-
-      if (!startStop || !endStop) {
-        errorObj['stops'] = {
-          fulfillments: {
-            stops: 'Fulfillments stops must contain both types: START and END',
+          fulfillment: {
+            stops: 'Fulfillment stops are missing or empty',
           },
         }
       } else {
-        const startGps = startStop?.location?.gps
-        if (!startGps) {
-          errorObj['fulfillmentsLocationStart'] = 'fulfillments/start/location should have a required property gps'
-        } else if (checkGpsPrecision(startGps)) {
-          errorObj['gpsPrecisionStart'] =
-            'fulfillments/start/location/gps coordinates must be specified with at least six decimal places of precision.'
+        const stopTypes = stops.map((stop: any) => stop.type)
+        const invalidStopTypes = stopTypes.filter((type: string) => type !== 'START' && type !== 'END')
+
+        if (invalidStopTypes.length > 0) {
+          errorObj['stops'] = {
+            fulfillments: {
+              stops: `Invalid stop types found: ${invalidStopTypes.join(
+                ', ',
+              )}. Fulfillments stops must contain only 'START' and 'END' types.`,
+            },
+          }
         }
 
-        const endGps = endStop?.location?.gps
-        if (!endGps) {
-          errorObj['fulfillmentsLocationEnd'] = 'fulfillments/end/location should have a required property gps'
-        } else if (checkGpsPrecision(endGps)) {
-          errorObj['gpsPrecisionEnd'] =
-            'fulfillments/end/location/gps coordinates must be specified with at least six decimal places of precision.'
+        const startStop = stops.find((stop: any) => stop.type === 'START')
+        const endStop = stops.find((stop: any) => stop.type === 'END')
+
+        if (!startStop || !endStop) {
+          errorObj['stops'] = {
+            fulfillments: {
+              stops: 'Fulfillments stops must contain both types: START and END',
+            },
+          }
+        } else {
+          const startGps = startStop?.location?.gps
+          if (!startGps) {
+            errorObj['fulfillmentsLocationStart'] = 'fulfillments/start/location should have a required property gps'
+          } else if (!checkGpsPrecision(startGps)) {
+            errorObj['gpsPrecisionStart'] =
+              'fulfillments/start/location/gps coordinates must be specified with at least six decimal places of precision.'
+          }
+
+          const endGps = endStop?.location?.gps
+          if (!endGps) {
+            errorObj['fulfillmentsLocationEnd'] = 'fulfillments/end/location should have a required property gps'
+          } else if (!checkGpsPrecision(endGps)) {
+            errorObj['gpsPrecisionEnd'] =
+              'fulfillments/end/location/gps coordinates must be specified with at least six decimal places of precision.'
+          }
         }
       }
     }
@@ -100,14 +102,14 @@ export const search = (data: any, msgIdSet: any) => {
       const payment = data.message.intent?.payment
       const collectedBy = payment?.collected_by
 
-      if (!collectedBy) {
-        errorObj[`collected_by`] = `collected_by must be present in payment object`
-      } else if (collectedBy !== 'BPP' && collectedBy !== 'BAP') {
-        errorObj[
-          'collected_by'
-        ] = `payment.collected_by can only be either 'BPP' or 'BAP' in ${mobilitySequence.SEARCH}`
-      } else {
-        setValue(`collected_by`, collectedBy)
+      if (collectedBy) {
+        if (collectedBy !== 'BPP' && collectedBy !== 'BAP') {
+          errorObj[
+            'collected_by'
+          ] = `payment.collected_by can only be either 'BPP' or 'BAP' in ${mobilitySequence.SEARCH}`
+        } else {
+          setValue(`collected_by`, collectedBy)
+        }
       }
 
       // Validate payment tags

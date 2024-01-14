@@ -40,7 +40,7 @@ export const validateRouteInfoTags = (tags: RouteInfoTag[]): ValidationResult =>
   const errors: string[] = []
 
   if (!tags) {
-    errors.push('Tags are required for validation in fulfillments')
+    errors.push('Tags are missing in fulfillments')
     return {
       isValid: false,
       errors,
@@ -57,9 +57,7 @@ export const validateRouteInfoTags = (tags: RouteInfoTag[]): ValidationResult =>
         const descriptorCode = item.descriptor.code
 
         if (descriptorCode !== descriptorCode.toUpperCase()) {
-          errors.push(
-            `route.tag[${index}], List item[${itemIndex}] has a descriptor code in lowercase. Please use uppercase for descriptor codes.`,
-          )
+          errors.push(`code should be in uppercase at route.tag[${index}], List item[${itemIndex}].`)
         }
 
         switch (descriptorCode.toUpperCase()) {
@@ -430,21 +428,6 @@ export function validateCancellationTerm(term: any, index: number) {
 
   if (cancellationFeePercentage === undefined && cancellationFeeAmount === undefined) {
     errors[`cancellationFee_${index}`] = `cancellation_fee is missing or invalid`
-  }
-
-  if (cancellationFeePercentage !== undefined && typeof cancellationFeePercentage !== 'string') {
-    errors[`cancellationFeePercentage_${index}`] = `Invalid data type for cancellation_fee.percentage`
-  }
-
-  if (cancellationFeePercentage && cancellationFeePercentage) {
-    errors[`cancellationFeePercentage_${index}`] = `Either of amount or percentage should be sent`
-  }
-
-  if (
-    cancellationFeeAmount !== undefined &&
-    (typeof cancellationFeeAmount !== 'string' || isNaN(Number(cancellationFeeAmount)))
-  ) {
-    errors[`cancellationFeeAmount_${index}`] = `Invalid data type or value for cancellation_fee.amount.value`
   }
 
   return errors

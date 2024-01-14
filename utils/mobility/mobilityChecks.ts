@@ -90,12 +90,12 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
       if (curentCall.startsWith('on_')) {
         logger.info(`Comparing Message Ids of /${pastCall} and /${curentCall}`)
         if (!_.isEqual(prevContext.message_id, context.message_id)) {
-          errorObj.message_id = `Message Id for /${pastCall} and /${curentCall} api should be same`
+          errorObj.message_id = `message_id for /${pastCall} and /${curentCall} api should be same`
         }
       } else {
         logger.info(`Checking if Message Ids are different for /${pastCall} and /${curentCall}`)
         if (_.isEqual(prevContext.message_id, context.message_id)) {
-          errorObj.message_id = `Message Id for /${pastCall} and /${curentCall} api should be different`
+          errorObj.message_id = `message_id for /${pastCall} and /${curentCall} api should be different`
         }
       }
     } catch (error: any) {
@@ -147,7 +147,7 @@ export const validateStops = (stops: any, index: number, otp: boolean, cancel: b
     const hasTimeRangeStart = stop.time?.range?.start
     if (hasTimeRangeStart) {
       const timestampCheckResult = timestampCheck(stop.time?.range?.start || '')
-      if (timestampCheckResult.err) {
+      if (timestampCheckResult && timestampCheckResult.err) {
         errorObj[
           `fulfillment_${index}_stop_${l}_timestamp`
         ] = `Invalid timestamp for stop ${l} in fulfillment ${index} in : ${timestampCheckResult.err}`
@@ -155,9 +155,9 @@ export const validateStops = (stops: any, index: number, otp: boolean, cancel: b
     }
 
     // Check if GPS coordinates are valid
-    if (stop.location?.gps && checkGpsPrecision(stop.location.gps)) {
+    if (stop.location?.gps && !checkGpsPrecision(stop.location.gps)) {
       errorObj[`fulfillment_${index}_stop_${l}_gpsPrecision`] =
-        'GPS coordinates must be specified with at least six decimal places of precision'
+        'GPS coordinates must be specifieddddd with at least six decimal places of precision'
     }
   })
 
@@ -213,7 +213,7 @@ export const validateQuote = (quote: any, action: string) => {
   try {
     logger.info(`Checking quote details in /${action}`)
     const quoteBreakup = quote.breakup
-    const validBreakupItems = ['BASE_FARE', 'DISTANCE_FARE', 'CURRENT_FARE_CHARGE']
+    const validBreakupItems = ['BASE_FARE', 'DISTANCE_FARE']
 
     const requiredBreakupItems = validBreakupItems.filter((item) =>
       quoteBreakup.some((breakupItem: any) => breakupItem.title.toUpperCase() === item),
@@ -250,6 +250,48 @@ export const validateQuote = (quote: any, action: string) => {
     // }
   } catch (error: any) {
     logger.error(`!!Error while checking quote details in /${action}`, error.stack)
+  }
+
+  return errorObj
+}
+
+export const validateCancellationTerms = (cancellationTerms: any, action: string) => {
+  const errorObj: any = {}
+  try {
+    logger.info(`Checking cancellation terms in /${action}`)
+    if (!cancellationTerms) {
+      errorObj.cancellationTerms = `cancellation_terms are required in /${action}`
+    } else if (cancellationTerms && cancellationTerms.length > 0) {
+      for (let i = 0; i < cancellationTerms.length; i++) {
+        const cancellationTerm = cancellationTerms[i]
+
+        if (
+          cancellationTerm.fulfillment_state &&
+          cancellationTerm.fulfillment_state.descriptor &&
+          cancellationTerm.fulfillment_state.descriptor.code &&
+          (!cancellationTerm.cancellation_fee ||
+            !(
+              (cancellationTerm.cancellation_fee.percentage && !cancellationTerm.cancellation_fee.amount) ||
+              (!cancellationTerm.cancellation_fee.percentage && cancellationTerm.cancellation_fee.amount)
+            ))
+        ) {
+          errorObj.cancellationFee = `Either percentage or amount.currency & amount.value should be present, but not both, for Cancellation Term[${i}] when fulfillment_state is present`
+        }
+
+        // const descriptorCode = cancellationTerm.fulfillment_state.descriptor.code
+        // const storedPercentage = cancellationTermsState.get(descriptorCode)
+
+        // if (storedPercentage === undefined) {
+        //   cancellationTermsState.set(descriptorCode, cancellationTerm.cancellation_fee.percentage)
+        // } else if (storedPercentage !== cancellationTerm.cancellation_fee.percentage) {
+        //   errorObj.cancellationFee = `cancellation_terms percentage for ${descriptorCode} has changed`
+        // }
+      }
+    } else {
+      errorObj.cancellationTerms = `cancellation_terms should be an array in /${action}`
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while checking cancellation_terms in /${action}, ${error.stack}`)
   }
 
   return errorObj

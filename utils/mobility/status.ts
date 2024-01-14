@@ -29,11 +29,11 @@ export const checkStatus = (data: any, msgIdSet: any) => {
     Object.assign(errorObj, contextRes.ERRORS)
   }
 
-  if (!message.ref_id) {
-    const key = `${mobilitySequence.STATUS}_ref_id`
-    errorObj[key] = `ref_id in /${constants.STATUS} must be present`
+  if (!message?.ref_id && !message?.order_id) {
+    const key = `${mobilitySequence.STATUS}_id`
+    errorObj[key] = `either of ref_id or order_id must be present in /${constants.STATUS}`
   } else {
-    if (_.isEqual(message.ref_id, context.transaction_id)) {
+    if (_.isEqual(message?.ref_id, context.transaction_id)) {
       errorObj['ref_id'] = `ref_id value should be the value of transaction_id`
     }
   }

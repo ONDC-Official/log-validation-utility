@@ -4,8 +4,8 @@ import constants, { mobilitySequence } from '../../constants'
 import { logger } from '../../shared/logger'
 import { validateSchema, isObjectEmpty, checkMobilityContext, timeDiff as timeDifference, checkBppIdOrBapId } from '../'
 import { getValue, setValue } from '../../shared/dao'
+import { validateCancellationTerms } from './mobilityChecks'
 
-const cancellationTermsState = new Map()
 export const checkOnUpdate = (data: any) => {
   const onUpdateObj: any = {}
   try {
@@ -244,33 +244,10 @@ export const checkOnUpdate = (data: any) => {
 
     try {
       logger.info(`Checking cancellation terms in /${constants.ON_UPDATE}`)
-      const cancellationTerms = on_update.cancellation_terms
-
-      if (cancellationTerms && cancellationTerms.length > 0) {
-        for (let i = 0; i < cancellationTerms.length; i++) {
-          const cancellationTerm = cancellationTerms[i]
-
-          if (
-            cancellationTerm.fulfillment_state &&
-            cancellationTerm.fulfillment_state.descriptor &&
-            cancellationTerm.fulfillment_state.descriptor.code &&
-            (!cancellationTerm.cancellation_fee ||
-              !cancellationTerm.cancellation_fee.percentage ||
-              isNaN(parseFloat(cancellationTerm.cancellation_fee.percentage)))
-          ) {
-            onUpdateObj.cancellationFee = `Cancellation fee is required for Cancellation Term[${i}] when fulfillment_state is present`
-          }
-
-          const descriptorCode = cancellationTerm.fulfillment_state.descriptor.code
-          const storedPercentage = cancellationTermsState.get(descriptorCode)
-
-          if (storedPercentage !== undefined && storedPercentage !== cancellationTerm.cancellation_fee.percentage) {
-            onUpdateObj.cancellationFee = `Cancellation terms percentage for ${descriptorCode} has changed`
-          }
-        }
-      }
+      const cancellationErrors = validateCancellationTerms(on_update.cancellation_terms, constants.ON_UPDATE)
+      Object.assign(onUpdateObj, cancellationErrors)
     } catch (error: any) {
-      logger.error(`!!Error while checking cancellation terms in /${constants.ON_UPDATE}, ${error.stack}`)
+      logger.error(`!!Error while checking cancellation_terms in /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
     return onUpdateObj

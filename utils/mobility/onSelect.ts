@@ -95,10 +95,12 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
         const cancel = false
         validateStops(fulfillment?.stops, index, otp, cancel)
 
-        // Validate route info tags
-        const tagsValidation = validateRouteInfoTags(fulfillment.tags)
-        if (!tagsValidation.isValid) {
-          Object.assign(errorObj, { tags: tagsValidation.errors })
+        if (fulfillment.tags) {
+          // Validate route info tags
+          const tagsValidation = validateRouteInfoTags(fulfillment.tags)
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { tags: tagsValidation.errors })
+          }
         }
       })
     } catch (error: any) {
@@ -149,7 +151,7 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
           errorObj[`invalidFulfillmentId_${index}`] = `fulfillment_ids should be present`
         } else {
           item.fulfillment_ids.forEach((fulfillmentId: string) => {
-            if (!fulfillmentIdsSet.has(fulfillmentId)) {
+            if (!_.isEmpty(fulfillmentIdsSet) && !fulfillmentIdsSet.has(fulfillmentId)) {
               errorObj[
                 `invalidFulfillmentId_${index}`
               ] = `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.ON_SELECT} is not valid`
@@ -159,12 +161,6 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
 
         if (item?.payment_ids) {
           errorObj[`payment_ids_${index}`] = `payment_ids are not part of /${constants.ON_SELECT}`
-        }
-
-        // Validate item tags
-        const tagsValidation = validateRouteInfoTags(item.tags)
-        if (!tagsValidation.isValid) {
-          Object.assign(errorObj, { tags: tagsValidation.errors })
         }
       })
       setValue(`itemIds`, Array.from(newItemIDSValue))

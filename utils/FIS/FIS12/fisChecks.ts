@@ -256,12 +256,12 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
       if (curentCall.startsWith('on_')) {
         logger.info(`Comparing Message Ids of /${pastCall} and /${curentCall}`)
         if (!_.isEqual(prevContext.message_id, context.message_id)) {
-          errorObj.message_id = `Message Id for /${pastCall} and /${curentCall} api should be same`
+          errorObj.message_id = `message_id for /${pastCall} and /${curentCall} api should be same`
         }
       } else {
         logger.info(`Checking if Message Ids are different for /${pastCall} and /${curentCall}`)
         if (_.isEqual(prevContext.message_id, context.message_id)) {
-          errorObj.message_id = `Message Id for /${pastCall} and /${curentCall} api should be different`
+          errorObj.message_id = `message_id for /${pastCall} and /${curentCall} api should be different`
         }
       }
     } catch (error: any) {

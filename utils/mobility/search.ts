@@ -1,14 +1,14 @@
 import { logger } from '../../shared/logger'
 import { setValue } from '../../shared/dao'
-import constants, { mobilitySequence } from '../../constants'
-import { validateSchema, isObjectEmpty, checkMobilityContext, checkGpsPrecision } from '../../utils'
+import constants, { metroSequence } from '../../constants'
+import { validateSchema, isObjectEmpty, checkMetroContext, checkGpsPrecision } from '../../utils'
 import { validatePaymentTags } from './tags'
 
 export const search = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      errorObj[mobilitySequence.SEARCH] = 'Json cannot be empty'
+      errorObj[metroSequence.SEARCH] = 'Json cannot be empty'
       return
     }
 
@@ -23,9 +23,9 @@ export const search = (data: any, msgIdSet: any) => {
       return Object.keys(errorObj).length > 0 && errorObj
     }
 
-    const schemaValidation = validateSchema(data.context.domain.split(':')[1], constants.MOB_SEARCH, data)
-    const contextRes: any = checkMobilityContext(data.context, constants.MOB_SEARCH)
-    setValue(`${mobilitySequence.SEARCH}_context`, data.context)
+    const schemaValidation = validateSchema(data.context.domain.split(':')[1], constants.MET_SEARCH, data)
+    const contextRes: any = checkMetroContext(data.context, constants.MET_SEARCH)
+    setValue(`${metroSequence.SEARCH}_context`, data.context)
     msgIdSet.add(data.context.message_id)
 
     if (schemaValidation !== 'error') {
@@ -96,7 +96,7 @@ export const search = (data: any, msgIdSet: any) => {
     }
 
     try {
-      logger.info(`Validating payments object for /${constants.MOB_SEARCH}`)
+      logger.info(`Validating payments object for /${constants.MET_SEARCH}`)
       const payment = data.message.intent?.payment
       const collectedBy = payment?.collected_by
 
@@ -105,7 +105,7 @@ export const search = (data: any, msgIdSet: any) => {
       } else if (collectedBy !== 'BPP' && collectedBy !== 'BAP') {
         errorObj[
           'collected_by'
-        ] = `payment.collected_by can only be either 'BPP' or 'BAP' in ${mobilitySequence.SEARCH}`
+        ] = `payment.collected_by can only be either 'BPP' or 'BAP' in ${metroSequence.SEARCH}`
       } else {
         setValue(`collected_by`, collectedBy)
       }
@@ -117,7 +117,7 @@ export const search = (data: any, msgIdSet: any) => {
         Object.assign(errorObj, { tags: tagsValidation.errors })
       }
     } catch (error: any) {
-      logger.error(`!!Error occcurred while validating payments in /${constants.MOB_SEARCH},  ${error.message}`)
+      logger.error(`!!Error occcurred while validating payments in /${constants.MET_SEARCH},  ${error.message}`)
     }
 
     return Object.keys(errorObj).length > 0 && errorObj

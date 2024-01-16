@@ -1,8 +1,8 @@
-import constants, { mobilitySequence } from '../../constants'
+import constants, { metroSequence } from '../../constants'
 import { logger } from '../../shared/logger'
 import { validateSchema, isObjectEmpty } from '../'
 import { getValue, setValue } from '../../shared/dao'
-import { validateContext, validateStops } from './mobilityChecks'
+import { validateContext, validateStops } from './metroChecks'
 import { validatePaymentTags } from './tags'
 import _ from 'lodash'
 
@@ -11,7 +11,7 @@ export const checkInit = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [mobilitySequence.INIT]: 'Json cannot be empty' }
+      return { [metroSequence.INIT]: 'Json cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -19,9 +19,9 @@ export const checkInit = (data: any, msgIdSet: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MOB_INIT, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.MOB_ONSELECT, constants.MOB_INIT)
-    setValue(`${mobilitySequence.INIT}_message`, message)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MET_INIT, data)
+    const contextRes: any = validateContext(context, msgIdSet, constants.MET_ONSELECT, constants.MET_INIT)
+    setValue(`${metroSequence.INIT}_message`, message)
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
@@ -35,13 +35,13 @@ export const checkInit = (data: any, msgIdSet: any) => {
 
     const itemIDS: any = getValue('itemIds')
     const itemIdArray: any[] = []
-    const storedFull: any = getValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`)
+    const storedFull: any = getValue(`${metroSequence.ON_SELECT}_storedFulfillments`)
     let newItemIDSValue: any[]
 
     if (itemIDS && itemIDS.length > 0) {
       newItemIDSValue = itemIDS
     } else {
-      const onSelect: any = getValue(`${mobilitySequence.ON_SELECT}_message`)
+      const onSelect: any = getValue(`${metroSequence.ON_SELECT}_message`)
       onSelect.order.items.map((item: { id: string }) => {
         itemIdArray.push(item.id)
       })
@@ -51,7 +51,7 @@ export const checkInit = (data: any, msgIdSet: any) => {
     setValue('itemIds', newItemIDSValue)
 
     try {
-      logger.info(`Comparing Provider Id of /${constants.MOB_ONSELECT} and /${constants.MOB_INIT}`)
+      logger.info(`Comparing Provider Id of /${constants.MET_ONSELECT} and /${constants.MET_INIT}`)
       const prvrdID: any = getValue('providerId')
       const selectedProviderId = init.provider.id
 
@@ -59,18 +59,18 @@ export const checkInit = (data: any, msgIdSet: any) => {
         logger.info(`Skipping Provider Id check due to insufficient data`)
         setValue('providerId', selectedProviderId)
       } else if (!_.isEqual(prvrdID, init.provider.id)) {
-        errorObj.prvdrId = `Provider Id for /${constants.MOB_ONSELECT} and /${constants.MOB_INIT} api should be same`
+        errorObj.prvdrId = `Provider Id for /${constants.MET_ONSELECT} and /${constants.MET_INIT} api should be same`
       } else {
         setValue('providerId', selectedProviderId)
       }
     } catch (error: any) {
       logger.info(
-        `Error while comparing provider id for /${constants.MOB_ONSELECT} and /${constants.MOB_INIT} api, ${error.stack}`,
+        `Error while comparing provider id for /${constants.MET_ONSELECT} and /${constants.MET_INIT} api, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Comparing item in /${constants.MOB_INIT}`)
+      logger.info(`Comparing item in /${constants.MET_INIT}`)
       init.items.forEach((item: any, index: number) => {
         if (!newItemIDSValue.includes(item.id)) {
           const key = `item[${index}].item_id`
@@ -80,20 +80,20 @@ export const checkInit = (data: any, msgIdSet: any) => {
         }
       })
     } catch (error: any) {
-      logger.error(`!!Error while comparing Item Id in /${constants.MOB_ONSELECT} and /${constants.MOB_INIT}`)
+      logger.error(`!!Error while comparing Item Id in /${constants.MET_ONSELECT} and /${constants.MET_INIT}`)
     }
 
     try {
-      logger.info(`Checking payments in /${constants.MOB_INIT}`)
+      logger.info(`Checking payments in /${constants.MET_INIT}`)
       init?.payments?.forEach((arr: any, i: number) => {
         if (!arr?.collected_by) {
-          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.MOB_ONSELECT}`
+          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.MET_ONSELECT}`
         } else {
           const srchCollectBy = getValue(`collected_by`)
           if (srchCollectBy && srchCollectBy != arr?.collected_by)
             errorObj[
               `payemnts[${i}]_collected_by`
-            ] = `payments.collected_by value sent in ${constants.MOB_ONSELECT} should be ${srchCollectBy} as sent in ${constants.MOB_INIT}`
+            ] = `payments.collected_by value sent in ${constants.MET_ONSELECT} should be ${srchCollectBy} as sent in ${constants.MET_INIT}`
 
           if (arr?.collected_by === 'BPP' && 'id' in arr)
             errorObj[`payemnts[${i}]_id`] = `id should not be present if collector is BPP`
@@ -104,20 +104,20 @@ export const checkInit = (data: any, msgIdSet: any) => {
         const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
         if (!arr?.type || !validTypes.includes(arr.type)) {
           errorObj[`payments[${i}]_type`] = `payments.params.type must be present in ${
-            constants.MOB_INIT
+            constants.MET_INIT
           } & its value must be one of: ${validTypes.join(', ')}`
         }
 
         const validStatus = ['NOT-PAID', 'PAID']
         if (!arr?.status || !validStatus.includes(arr.status)) {
           errorObj[`payments[${i}]_status`] = `payments.status must be present in ${
-            constants.MOB_INIT
+            constants.MET_INIT
           } & its value must be one of: ${validStatus.join(', ')}`
         }
 
         const params = arr.params
         if (!params?.bank_code) {
-          errorObj[`payments[${i}]_bank_code`] = `payments.params.bank_code must be present in ${constants.MOB_INIT}`
+          errorObj[`payments[${i}]_bank_code`] = `payments.params.bank_code must be present in ${constants.MET_INIT}`
         } else {
           setValue('bank_code', params?.bank_code)
         }
@@ -125,7 +125,7 @@ export const checkInit = (data: any, msgIdSet: any) => {
         if (!params?.bank_account_number) {
           errorObj[
             `payments[${i}]_bank_account_number`
-          ] = `payments.params.bank_account_number must be present in ${constants.MOB_INIT}`
+          ] = `payments.params.bank_account_number must be present in ${constants.MET_INIT}`
         } else {
           setValue('bank_account_number', params?.bank_account_number)
         }
@@ -133,7 +133,7 @@ export const checkInit = (data: any, msgIdSet: any) => {
         if (!params?.virtual_payment_address) {
           errorObj[
             `payments[${i}]_virtual_payment_address`
-          ] = `payments.params.virtual_payment_address must be present in ${constants.MOB_INIT}`
+          ] = `payments.params.virtual_payment_address must be present in ${constants.MET_INIT}`
         } else {
           setValue('virtual_payment_address', params?.virtual_payment_address)
         }
@@ -145,11 +145,11 @@ export const checkInit = (data: any, msgIdSet: any) => {
         }
       })
     } catch (error: any) {
-      logger.error(`!!Errors while checking payments in /${constants.MOB_INIT}, ${error.stack}`)
+      logger.error(`!!Errors while checking payments in /${constants.MET_INIT}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Validating fulfillments object for /${constants.MOB_INIT}`)
+      logger.info(`Validating fulfillments object for /${constants.MET_INIT}`)
       init.fulfillments.forEach((full: any, index: number) => {
         const fulfillmentKey = `fulfillments[${index}]`
         console.log('storedFull--', storedFull)
@@ -195,7 +195,7 @@ export const checkInit = (data: any, msgIdSet: any) => {
         if (full.type !== 'DELIVERY') {
           errorObj[
             `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.MOB_ONSELECT}`
+          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.MET_ONSELECT}`
         }
 
         // Check stops for START and END, or time range with valid timestamp and GPS
@@ -204,19 +204,19 @@ export const checkInit = (data: any, msgIdSet: any) => {
         validateStops(full?.stops, index, otp, cancel)
       })
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.MOB_INIT},  ${error.message}`)
+      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.MET_INIT},  ${error.message}`)
       return { error: error.message }
     }
 
     if ('billing' in init && init?.billing?.name) {
       setValue('billingName', init?.billing?.name)
     } else {
-      errorObj['billing'] = `billing must be part of /${constants.MOB_INIT}`
+      errorObj['billing'] = `billing must be part of /${constants.MET_INIT}`
     }
 
     return errorObj
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.MOB_INIT} API`, err)
+    logger.error(`!!Some error occurred while checking /${constants.MET_INIT} API`, err)
     return { error: err.message }
   }
 }

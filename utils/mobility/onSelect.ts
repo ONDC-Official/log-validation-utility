@@ -1,16 +1,16 @@
 import { logger } from '../../shared/logger'
-import constants, { mobilitySequence } from '../../constants'
+import constants, { metroSequence } from '../../constants'
 import { validateSchema, isObjectEmpty } from '../'
 import _ from 'lodash'
 import { getValue, setValue } from '../../shared/dao'
-import { validateContext, validateQuote, validateStops } from './mobilityChecks'
+import { validateContext, validateQuote, validateStops } from './metroChecks'
 import { validateRouteInfoTags } from './tags'
 
 const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
 const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 export const checkOnSelect = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [mobilitySequence.ON_SELECT]: 'Json cannot be empty' }
+    return { [metroSequence.ON_SELECT]: 'Json cannot be empty' }
   }
 
   const { message, context } = data
@@ -18,9 +18,9 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MOB_ONSELECT, data)
-  const contextRes: any = validateContext(context, msgIdSet, constants.MOB_SELECT, constants.MOB_ONSELECT)
-  setValue(`${mobilitySequence.ON_SELECT}_message`, message)
+  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MET_ONSELECT, data)
+  const contextRes: any = validateContext(context, msgIdSet, constants.MET_SELECT, constants.MET_ONSELECT)
+  setValue(`${metroSequence.ON_SELECT}_message`, message)
   const errorObj: any = {}
 
   if (schemaValidation !== 'error') {
@@ -31,19 +31,19 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
     Object.assign(errorObj, contextRes.ERRORS)
   }
 
-  // const searchContext: any = getValue(`${mobilitySequence.SEARCH}_context`)
-  const select: any = getValue(`${mobilitySequence.SELECT}`)
+  // const searchContext: any = getValue(`${metroSequence.SEARCH}_context`)
+  const select: any = getValue(`${metroSequence.SELECT}`)
 
   try {
     const onSelect = message.order
-    const itemIDS: any = getValue(`${mobilitySequence.ON_SEARCH}_itemsId`)
+    const itemIDS: any = getValue(`${metroSequence.ON_SEARCH}_itemsId`)
     const itemIdArray: any[] = []
-    const storedFull: any = getValue(`${mobilitySequence.ON_SEARCH}_storedFulfillments`)
+    const storedFull: any = getValue(`${metroSequence.ON_SEARCH}_storedFulfillments`)
     const fulfillmentIdsSet = new Set()
     const itemIdsSet = new Set()
 
     try {
-      logger.info(`Comparing Provider Id of /${constants.MOB_SELECT} and /${constants.MOB_ONSELECT}`)
+      logger.info(`Comparing Provider Id of /${constants.MET_SELECT} and /${constants.MET_ONSELECT}`)
       const prvrdID: any = getValue('providerId')
       const selectedProviderId = onSelect.provider.id
 
@@ -51,18 +51,18 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
         logger.info(`Skipping Provider Id check due to insufficient data`)
         setValue('providerId', selectedProviderId)
       } else if (!_.isEqual(prvrdID, onSelect.provider.id)) {
-        errorObj.prvdrId = `Provider Id for /${constants.MOB_SELECT} and /${constants.MOB_ONSELECT} api should be same`
+        errorObj.prvdrId = `Provider Id for /${constants.MET_SELECT} and /${constants.MET_ONSELECT} api should be same`
       } else {
         setValue('providerId', selectedProviderId)
       }
     } catch (error: any) {
       logger.info(
-        `Error while comparing provider id for /${constants.MOB_SELECT} and /${constants.MOB_ONSELECT} api, ${error.stack}`,
+        `Error while comparing provider id for /${constants.MET_SELECT} and /${constants.MET_ONSELECT} api, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Validating fulfillments object for /${constants.MOB_ONSELECT}`)
+      logger.info(`Validating fulfillments object for /${constants.MET_ONSELECT}`)
       onSelect.fulfillments.forEach((fulfillment: any, index: number) => {
         const fulfillmentKey = `fulfillments[${index}]`
 
@@ -85,7 +85,7 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
         } else if (fulfillment.type !== 'DELIVERY') {
           errorObj[
             `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.MOB_ONSELECT}`
+          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.MET_ONSELECT}`
         }
 
         // Check stops for START and END, or time range with valid timestamp and GPS
@@ -101,12 +101,12 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
       })
     } catch (error: any) {
       logger.error(
-        `!!Error occcurred while checking fulfillments info in /${constants.MOB_ONSELECT},  ${error.message}`,
+        `!!Error occcurred while checking fulfillments info in /${constants.MET_ONSELECT},  ${error.message}`,
       )
       return { error: error.message }
     }
 
-    logger.info(`Mapping Item Ids /${constants.MOB_ONSEARCH} and /${constants.MOB_ONSELECT}`)
+    logger.info(`Mapping Item Ids /${constants.MET_ONSEARCH} and /${constants.MET_ONSELECT}`)
     let newItemIDSValue: any[]
 
     if (itemIDS && itemIDS.length > 0) {
@@ -152,13 +152,13 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
             if (!fulfillmentIdsSet.has(fulfillmentId)) {
               errorObj[
                 `invalidFulfillmentId_${index}`
-              ] = `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.MOB_ONSELECT} is not valid`
+              ] = `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.MET_ONSELECT} is not valid`
             }
           })
         }
 
         if (item?.payment_ids) {
-          errorObj[`payment_ids_${index}`] = `payment_ids are not part of /${constants.MOB_ONSELECT}`
+          errorObj[`payment_ids_${index}`] = `payment_ids are not part of /${constants.MET_ONSELECT}`
         }
 
         // Validate item tags
@@ -169,31 +169,31 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
       })
       setValue(`itemIds`, Array.from(newItemIDSValue))
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking items info in /${constants.MOB_ONSELECT},  ${error.message}`)
+      logger.error(`!!Error occcurred while checking items info in /${constants.MET_ONSELECT},  ${error.message}`)
       return { error: error.message }
     }
 
     try {
-      logger.info(`Checking quote details in /${constants.MOB_ONSELECT}`)
-      const quoteErrors = validateQuote(onSelect?.quote, constants.MOB_ONSELECT)
+      logger.info(`Checking quote details in /${constants.MET_ONSELECT}`)
+      const quoteErrors = validateQuote(onSelect?.quote, constants.MET_ONSELECT)
       Object.assign(errorObj, quoteErrors)
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking Quote in /${constants.MOB_ONSELECT},  ${error.message}`)
+      logger.error(`!!Error occcurred while checking Quote in /${constants.MET_ONSELECT},  ${error.message}`)
       return { error: error.message }
     }
 
     if (onSelect?.payments) {
-      errorObj[`payments`] = `payments  is not part of /${constants.MOB_ONSELECT}`
+      errorObj[`payments`] = `payments  is not part of /${constants.MET_ONSELECT}`
     }
 
     if (onSelect?.cancellation_terms) {
-      errorObj[`cancellation_terms`] = `cancellation_terms  is not part of /${constants.MOB_ONSELECT}`
+      errorObj[`cancellation_terms`] = `cancellation_terms  is not part of /${constants.MET_ONSELECT}`
     }
 
-    setValue(`${mobilitySequence.ON_SELECT}`, data)
-    setValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`, Array.from(storedFull))
+    setValue(`${metroSequence.ON_SELECT}`, data)
+    setValue(`${metroSequence.ON_SELECT}_storedFulfillments`, Array.from(storedFull))
   } catch (error: any) {
-    logger.error(`!!Error occcurred while checking order info in /${constants.MOB_ONSELECT},  ${error.message}`)
+    logger.error(`!!Error occcurred while checking order info in /${constants.MET_ONSELECT},  ${error.message}`)
     return { error: error.message }
   }
 

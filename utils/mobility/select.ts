@@ -1,13 +1,13 @@
 import { logger } from '../../shared/logger'
 import { getValue, setValue } from '../../shared/dao'
-import constants, { mobilitySequence } from '../../constants'
+import constants, { metroSequence } from '../../constants'
 import { validateSchema, isObjectEmpty, checkGpsPrecision } from '../'
 // import _ from 'lodash'
-import { validateContext } from './mobilityChecks'
+import { validateContext } from './metroChecks'
 
 export const checkSelect = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [mobilitySequence.SELECT]: 'Json cannot be empty' }
+    return { [metroSequence.SELECT]: 'Json cannot be empty' }
   }
 
   const { message, context } = data
@@ -15,9 +15,9 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MOB_SELECT, data)
-  const contextRes: any = validateContext(context, msgIdSet, constants.MOB_ONSEARCH, constants.MOB_SELECT)
-  setValue(`${mobilitySequence.SELECT}_message`, message)
+  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MET_SELECT, data)
+  const contextRes: any = validateContext(context, msgIdSet, constants.MET_ONSEARCH, constants.MET_SELECT)
+  setValue(`${metroSequence.SELECT}_message`, message)
   const errorObj: any = {}
 
   if (schemaValidation !== 'error') {
@@ -29,25 +29,25 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   }
 
   try {
-    const storedItemIDS: any = getValue(`${mobilitySequence.ON_SEARCH}_itemsId`)
+    const storedItemIDS: any = getValue(`${metroSequence.ON_SEARCH}_itemsId`)
     const select = message.order
-    const onSearch: any = getValue(`${mobilitySequence.ON_SEARCH}_message`)
+    const onSearch: any = getValue(`${metroSequence.ON_SEARCH}_message`)
 
     try {
-      logger.info(`Comparing Provider object for /${constants.MOB_ONSEARCH} and /${constants.MOB_SELECT}`)
+      logger.info(`Comparing Provider object for /${constants.MET_ONSEARCH} and /${constants.MET_SELECT}`)
       const providerIDs = onSearch?.message?.catalog['providers']?.map((provider: { id: any }) => provider?.id)
       const selectedProviderId = select.provider.id
 
       if (!providerIDs || providerIDs.length === 0) {
         logger.info(`Skipping Provider Ids check due to insufficient data`)
       } else if (!providerIDs.includes(selectedProviderId)) {
-        errorObj.prvdrId = `Provider Id ${selectedProviderId} in /${constants.MOB_SELECT} does not exist in /${constants.MOB_ONSEARCH}`
+        errorObj.prvdrId = `Provider Id ${selectedProviderId} in /${constants.MET_SELECT} does not exist in /${constants.MET_ONSEARCH}`
       } else {
         setValue('providerId', selectedProviderId)
       }
     } catch (error: any) {
       logger.info(
-        `Error while comparing provider ids for /${constants.MOB_ONSEARCH} and /${constants.MOB_SELECT} api, ${error.stack}`,
+        `Error while comparing provider ids for /${constants.MET_ONSEARCH} and /${constants.MET_SELECT} api, ${error.stack}`,
       )
     }
 
@@ -66,7 +66,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
       })
     } catch (error: any) {
       logger.error(
-        `!!Error while Comparing and Mapping Items in /${constants.MOB_ONSEARCH} and /${constants.MOB_SELECT}, ${error.stack}`,
+        `!!Error while Comparing and Mapping Items in /${constants.MET_ONSEARCH} and /${constants.MET_SELECT}, ${error.stack}`,
       )
     }
 
@@ -109,7 +109,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
       })
     }
   } catch (error: any) {
-    logger.error(`!!Error occcurred while validating message object in /${constants.MOB_SELECT},  ${error.message}`)
+    logger.error(`!!Error occcurred while validating message object in /${constants.MET_SELECT},  ${error.message}`)
     return { error: error.message }
   }
 

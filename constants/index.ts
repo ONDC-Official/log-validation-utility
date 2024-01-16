@@ -54,6 +54,17 @@ export default Object.freeze({
   MOB_ONSTATUS: 'on_status',
   MOB_CONTEXT_TTL: 'PT30S',
   MOB_CONTEXT_ACTION: 'action',
+  MET_SEARCH: 'search',
+  MET_ONSEARCH: 'on_search',
+  MET_SELECT:'select',
+  MET_ONSELECT:'on_select',
+  MET_INIT:'init',
+  MET_ONINIT:'on_init',
+  MET_STATUS:'status',
+  MET_ONSTATUS:'on_status',
+  MET_CONFIRM:'confirm',
+  MET_ONCONFIRM: 'on_confirm',
+  MET_CONTEXT_ACTION:'action',
   RET_ISSUE: 'issue',
   RET_ONISSUE: 'on_issue',
   RET_ISSUE_STATUS: 'issue_status',
@@ -129,6 +140,27 @@ export const mobilitySequence = {
   STATUS: 'status',
   ON_STATUS: 'on_status',
 }
+
+export const metroSequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SELECT: 'select',
+  ON_SELECT: 'on_select',
+  INIT: 'init',
+  ON_INIT: 'on_init',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  CANCEL: 'cancel',
+  SOFT_CANCEL: 'soft_cancel',
+  ON_CANCEL: 'on_cancel',
+  SOFT_ON_CANCEL: 'soft_on_cancel',
+  UPDATE: 'update',
+  ON_UPDATE: 'on_update',
+  STATUS: 'status',
+  ON_STATUS: 'on_status',
+}
+
+
 export const mobilityFlow: any = {
   AIRLINES: 'airlines',
   METRO: 'metro',

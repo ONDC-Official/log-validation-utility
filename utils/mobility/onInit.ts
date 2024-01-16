@@ -1,5 +1,5 @@
 // import _ from 'lodash'
-import constants, { mobilitySequence } from '../../constants'
+import constants, { metroSequence } from '../../constants'
 import { logger } from '../../shared/logger'
 import { validateSchema, isObjectEmpty } from '../'
 import { getValue, setValue } from '../../shared/dao'
@@ -15,7 +15,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
   try {
     const errorObj: any = {}
     if (!data || isObjectEmpty(data)) {
-      return { [mobilitySequence.ON_INIT]: 'Json cannot be empty' }
+      return { [metroSequence.ON_INIT]: 'Json cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -25,7 +25,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MOB_ONINIT, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.MOB_INIT, constants.MOB_ONINIT)
-    setValue(`${mobilitySequence.ON_INIT}_message`, message)
+    setValue(`${metroSequence.ON_INIT}_message`, message)
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
@@ -38,7 +38,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     const on_init = message.order
     const itemIDS: any = getValue('ItmIDS')
     const itemIdArray: any[] = []
-    const storedFull: any = getValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`)
+    const storedFull: any = getValue(`${metroSequence.ON_SELECT}_storedFulfillments`)
     const fulfillmentIdsSet = new Set()
 
     let newItemIDSValue: any[]
@@ -56,18 +56,18 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     setValue('ItmIDS', newItemIDSValue)
 
     try {
-      logger.info(`Checking provider Id in /${constants.MOB_ONSEARCH} and /${constants.MOB_ONINIT}`)
+      logger.info(`Checking provider Id in /${constants.MET_ONSEARCH} and /${constants.MET_ONINIT}`)
       if (!on_init.provider || on_init.provider.id != getValue('providerId')) {
-        errorObj.prvdrId = `Provider Id mismatches in /${constants.MOB_ONSEARCH} and /${constants.MOB_ONINIT}`
+        errorObj.prvdrId = `Provider Id mismatches in /${constants.MET_ONSEARCH} and /${constants.MET_ONINIT}`
       }
     } catch (error: any) {
       logger.error(
-        `!!Error while comparing provider Id in /${constants.MOB_ONSEARCH} and /${constants.MOB_ONINIT}, ${error.stack}`,
+        `!!Error while comparing provider Id in /${constants.MET_ONSEARCH} and /${constants.MET_ONINIT}, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Validating fulfillments object for /${constants.MOB_ONINIT}`)
+      logger.info(`Validating fulfillments object for /${constants.MET_ONINIT}`)
       on_init.fulfillments.forEach((fulfillment: any, index: number) => {
         const fulfillmentKey = `fulfillments[${index}]`
         fulfillmentIdsSet.add(fulfillment.id)
@@ -86,11 +86,11 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         if (fulfillment.type !== 'DELIVERY') {
           errorObj[
             `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.MOB_ONINIT}`
+          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.MET_ONINIT}`
         }
 
         if (Object.prototype.hasOwnProperty.call(fulfillment, 'agent')) {
-          errorObj[`fulfillments${index}_agent`] = `/message/order/agent is not part of /${constants.MOB_ONINIT} call`
+          errorObj[`fulfillments${index}_agent`] = `/message/order/agent is not part of /${constants.MET_ONINIT} call`
         }
 
         // Check stops for START and END, or time range with valid timestamp and GPS

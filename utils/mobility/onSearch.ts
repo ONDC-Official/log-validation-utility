@@ -1,16 +1,16 @@
 import { logger } from '../../shared/logger'
 import { setValue } from '../../shared/dao'
-import constants, { mobilitySequence } from '../../constants'
+import constants, { metroSequence } from '../../constants'
 import {
   validateSchema,
   isObjectEmpty,
-  // checkMobilityContext,
+  // checkMetroContext,
   // checkBppIdOrBapId,
   checkGpsPrecision,
   timestampCheck,
   // timeDiff,
 } from '../../utils'
-import { validateContext } from './mobilityChecks'
+import { validateContext } from './metroChecks'
 import { validatePaymentTags } from './tags'
 
 const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
@@ -18,7 +18,7 @@ const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', '
 
 export const checkOnSearch = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [mobilitySequence.ON_SEARCH]: 'Json cannot be empty' }
+    return { [metroSequence.ON_SEARCH]: 'Json cannot be empty' }
   }
 
   const { message, context } = data
@@ -26,9 +26,9 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
   }
 
-  const contextRes: any = validateContext(context, msgIdSet, constants.MOB_SEARCH, constants.MOB_ONSEARCH)
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MOB_ONSEARCH, data)
-  setValue(`${mobilitySequence.ON_SEARCH}_message`, message)
+  const contextRes: any = validateContext(context, msgIdSet, constants.MET_SEARCH, constants.MET_ONSEARCH)
+  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MET_ONSEARCH, data)
+  setValue(`${metroSequence.ON_SEARCH}_message`, message)
   const errorObj: any = {}
 
   if (schemaValidation !== 'error') {
@@ -217,18 +217,18 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
         errorObj[`provider_${i}_payments`] = `Payments are missing for provider ${i}`
       } else {
         try {
-          logger.info(`Validating payments object for /${constants.MOB_ONSEARCH}`)
+          logger.info(`Validating payments object for /${constants.MET_ONSEARCH}`)
           payments?.map((payment: any, i: number) => {
             const collectedBy = payment?.collected_by
 
             if (!collectedBy) {
-              errorObj[`collected_by`] = `payment.collected_by must be present in ${mobilitySequence.ON_SEARCH}`
+              errorObj[`collected_by`] = `payment.collected_by must be present in ${metroSequence.ON_SEARCH}`
             } else {
               setValue(`collected_by`, collectedBy)
               if (collectedBy !== 'BPP' && collectedBy !== 'BAP') {
                 errorObj[
                   'collected_by'
-                ] = `payment.collected_by can only be either 'BPP' or 'BAP' in ${mobilitySequence.ON_SEARCH}`
+                ] = `payment.collected_by can only be either 'BPP' or 'BAP' in ${metroSequence.ON_SEARCH}`
               }
             }
 
@@ -240,20 +240,20 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
             }
           })
         } catch (error: any) {
-          logger.error(`!!Error occcurred while validating payments in /${constants.MOB_ONSEARCH},  ${error.message}`)
+          logger.error(`!!Error occcurred while validating payments in /${constants.MET_ONSEARCH},  ${error.message}`)
         }
       }
 
       i++
     }
 
-    setValue(`${mobilitySequence.ON_SEARCH}prvdrsId`, prvdrsId)
-    setValue(`${mobilitySequence.ON_SEARCH}prvdrLocId`, prvdrLocId)
-    setValue(`${mobilitySequence.ON_SEARCH}_itemsId`, Array.from(itemsId))
-    setValue(`${mobilitySequence.ON_SEARCH}_storedLocations`, Array.from(storedLocations))
-    setValue(`${mobilitySequence.ON_SEARCH}_storedFulfillments`, Array.from(storedFulfillments))
+    setValue(`${metroSequence.ON_SEARCH}prvdrsId`, prvdrsId)
+    setValue(`${metroSequence.ON_SEARCH}prvdrLocId`, prvdrLocId)
+    setValue(`${metroSequence.ON_SEARCH}_itemsId`, Array.from(itemsId))
+    setValue(`${metroSequence.ON_SEARCH}_storedLocations`, Array.from(storedLocations))
+    setValue(`${metroSequence.ON_SEARCH}_storedFulfillments`, Array.from(storedFulfillments))
   } catch (error: any) {
-    logger.error(`!!Error while checking Providers info in /${constants.MOB_ONSEARCH}, ${error.stack}`)
+    logger.error(`!!Error while checking Providers info in /${constants.MET_ONSEARCH}, ${error.stack}`)
     return { error: error.message }
   }
 

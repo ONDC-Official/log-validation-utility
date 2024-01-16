@@ -99,6 +99,16 @@ export const mobilitySequence = {
   STATUS: 'status',
   ON_STATUS: 'on_status',
 }
+
+export const rsfSequence = {
+  COLLECTOR_RECON: 'collector_recon',
+  ON_COLLECTOR_RECON: 'on_collector_recon',
+  SETTLE: 'settle',
+  ON_SETTLE: 'on_settle',
+  RECEIVER_RECON: 'receiver_recon',
+  ON_RECEIVER_RECON: 'on_receiver_recon',
+}
+
 export const mobilityFlow: any = {
   AIRLINES: 'airlines',
   METRO: 'metro',

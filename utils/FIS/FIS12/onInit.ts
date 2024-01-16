@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import constants from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, isValidUrl } from '../../'
+import { validateSchema, isObjectEmpty } from '../../'
 import { validateContext, validateFulfillments, validateXInput } from './fisChecks'
 import { getValue, setValue } from '../../../shared/dao'
 import { validatePaymentTags, validateProviderTags } from './tags'
@@ -274,22 +274,22 @@ const validateProvider = (provider: any) => {
       return providerErrors
     }
 
-    if (!Array.isArray(provider.descriptor.images) || provider.descriptor.images.length < 1) {
+    if (!Array.isArray(provider?.descriptor?.images) || provider?.descriptor?.images?.length < 1) {
       providerErrors.images = 'Descriptor images must be an array with a minimum length of one.'
     } else {
-      provider.descriptor.images.forEach((image: any, index: number) => {
+      provider?.descriptor?.images.forEach((image: any, index: number) => {
         if (!image || typeof image !== 'object' || Array.isArray(image) || Object.keys(image).length !== 2) {
           providerErrors[
             `images[${index}]`
           ] = `Invalid image structure in descriptor. Each image should be an object with "url" and "size_type" properties.`
         } else {
           const { url, size_type } = image
-          if (typeof url !== 'string' || !url.trim() || !isValidUrl(url)) {
+          if (typeof url !== 'string' || !url.trim()) {
             providerErrors[`images[${index}].url`] = `Invalid URL for image in descriptor.`
           }
 
           const validSizes = ['md', 'sm', 'lg']
-          if (!validSizes.includes(size_type)) {
+          if (size_type && !validSizes.includes(size_type)) {
             providerErrors[
               `images[${index}].size_type`
             ] = `Invalid image size in descriptor. It should be one of: ${validSizes.join(', ')}`
@@ -298,15 +298,15 @@ const validateProvider = (provider: any) => {
       })
     }
 
-    if (!provider.descriptor.name || !provider.descriptor.name.trim()) {
+    if (!provider?.descriptor?.name || !provider?.descriptor?.name?.trim()) {
       providerErrors.name = `Provider name cannot be empty.`
     }
 
-    if (provider.descriptor.short_desc && !provider.descriptor.short_desc.trim()) {
+    if (provider?.descriptor?.short_desc && !provider?.descriptor?.short_desc?.trim()) {
       providerErrors.short_desc = `Short description cannot be empty.`
     }
 
-    if (provider.descriptor.long_desc && !provider.descriptor.long_desc.trim()) {
+    if (provider?.descriptor?.long_desc && !provider?.descriptor?.long_desc.trim()) {
       providerErrors.long_desc = `Long description cannot be empty.`
     }
   } catch (error: any) {

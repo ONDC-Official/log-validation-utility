@@ -308,11 +308,11 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
 
     try {
       logger.info(`Checking status in message object  /${constants.ON_CONFIRM}`)
-      if (!message.status || !['COMPLETE', 'ACTIVE'].includes(message.status)) {
-        errorObj.status = 'Invalid or missing status in the message object. It must be one of: COMPLETE or ACTIVE'
+      if (!message.order.status || !['COMPLETE', 'ACTIVE'].includes(message.order.status)) {
+        errorObj.status = 'Invalid or missing"` status in the message.order object. It must be one of: COMPLETE or ACTIVE'
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking status in message object  /${constants.ON_CONFIRM}, ${error.stack}`)
+      logger.error(`!!Error while checking status in message.order object  /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
     return errorObj

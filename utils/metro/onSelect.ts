@@ -1,6 +1,6 @@
 import { logger } from '../../shared/logger'
 import constants, { metroSequence } from '../../constants'
-import { validateSchema, isObjectEmpty } from '../'
+import { validateSchema, isObjectEmpty } from '..'
 import _ from 'lodash'
 import { getValue, setValue } from '../../shared/dao'
 import { validateContext, validateQuote, validateStops } from './metroChecks'

@@ -1,12 +1,12 @@
 import { logger } from '../../shared/logger'
 import { getValue, setValue } from '../../shared/dao'
-import { checkGpsPrecision, checkIdAndUri, checkMobilityContext, timeDiff, timestampCheck } from '../../utils'
+import { checkGpsPrecision, checkIdAndUri, checkMetroContext, timeDiff, timestampCheck } from '..'
 import _ from 'lodash'
 
 export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any) => {
   const errorObj: any = {}
 
-  const contextRes: any = checkMobilityContext(context, curentCall)
+  const contextRes: any = checkMetroContext(context, curentCall)
 
   if (!contextRes?.valid) {
     Object.assign(errorObj, contextRes.ERRORS)

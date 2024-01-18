@@ -1,6 +1,6 @@
 import constants, { metroSequence } from '../../constants'
 import { logger } from '../../shared/logger'
-import { validateSchema, isObjectEmpty } from '../'
+import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
 import { validateContext, validateStops } from './metroChecks'
 import { validatePaymentTags } from './tags'

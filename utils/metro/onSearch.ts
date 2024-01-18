@@ -9,7 +9,7 @@ import {
   checkGpsPrecision,
   timestampCheck,
   // timeDiff,
-} from '../../utils'
+} from '..'
 import { validateContext } from './metroChecks'
 import { validatePaymentTags } from './tags'
 

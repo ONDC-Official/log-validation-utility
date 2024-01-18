@@ -1,7 +1,7 @@
 import { logger } from '../../shared/logger'
 import { setValue } from '../../shared/dao'
 import constants, { mobilitySequence } from '../../constants'
-import { validateSchema, isObjectEmpty } from '../../utils'
+import { validateSchema, isObjectEmpty } from '..'
 import { validateContext } from './mobilityChecks'
 
 export const checkCancel = (data: any, msgIdSet: any, sequence: string) => {

@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import constants, { mobilitySequence } from '../../constants'
 import { logger } from '../../shared/logger'
-import { validateSchema, isObjectEmpty, checkMobilityContext, timeDiff as timeDifference, checkBppIdOrBapId } from '../'
+import { validateSchema, isObjectEmpty, checkMobilityContext, timeDiff as timeDifference, checkBppIdOrBapId } from '..'
 import { getValue, setValue } from '../../shared/dao'
 
 const cancellationTermsState = new Map()

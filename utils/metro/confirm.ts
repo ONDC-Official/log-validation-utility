@@ -1,6 +1,6 @@
-import constants, { mobilitySequence } from '../../constants'
+import constants, { metroSequence } from '../../constants'
 import { logger } from '../../shared/logger'
-import { validateSchema, isObjectEmpty } from '../'
+import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
 import { validateContext, validateStops } from './mobilityChecks'
 import { validatePaymentTags } from './tags'
@@ -10,7 +10,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [mobilitySequence.CONFIRM]: 'Json cannot be empty' }
+      return { [metroSequence.CONFIRM]: 'Json cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -18,10 +18,10 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const onInit: any = getValue(`${mobilitySequence.ON_INIT}_message`)
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MOB_CONFIRM, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.MOB_ONINIT, constants.MOB_CONFIRM)
-    setValue(`${mobilitySequence.CONFIRM}_message`, message)
+    const onInit: any = getValue(`${metroSequence.ON_INIT}_message`)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MET_CONFIRM, data)
+    const contextRes: any = validateContext(context, msgIdSet, constants.MET_ONINIT, constants.MET_CONFIRM)
+    setValue(`${metroSequence.CONFIRM}_message`, message)
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
@@ -34,7 +34,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     const confirm = message.order
     const itemIDS: any = getValue('itemIds')
     const itemIdArray: any[] = []
-    const storedFull: any = getValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`)
+    const storedFull: any = getValue(`${metroSequence.ON_SELECT}_storedFulfillments`)
     let newItemIDSValue: any[]
 
     if (itemIDS && itemIDS.length > 0) {
@@ -49,22 +49,22 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     setValue('itemIds', newItemIDSValue)
 
     if (Object.prototype.hasOwnProperty.call(confirm, 'id')) {
-      errorObj[`order`] = `/message/order/id is not part of /${constants.MOB_CONFIRM} call`
+      errorObj[`order`] = `/message/order/id is not part of /${constants.MET_CONFIRM} call`
     }
 
     try {
-      logger.info(`Comparing provider object in /${constants.MOB_ONINIT} and /${constants.MOB_CONFIRM}`)
+      logger.info(`Comparing provider object in /${constants.MET_ONINIT} and /${constants.MET_CONFIRM}`)
       if (getValue('providerId') != confirm.provider['id']) {
-        errorObj.prvdId = `Provider Id mismatches in /${constants.MOB_ONINIT} and /${constants.MOB_CONFIRM}`
+        errorObj.prvdId = `Provider Id mismatches in /${constants.MET_ONINIT} and /${constants.MET_CONFIRM}`
       }
     } catch (error: any) {
       logger.error(
-        `!!Error while checking provider object in /${constants.MOB_ONINIT} and /${constants.MOB_CONFIRM}, ${error.stack}`,
+        `!!Error while checking provider object in /${constants.MET_ONINIT} and /${constants.MET_CONFIRM}, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Comparing item in /${constants.MOB_CONFIRM}`)
+      logger.info(`Comparing item in /${constants.MET_CONFIRM}`)
       confirm.items.forEach((item: any, index: number) => {
         if (!newItemIDSValue.includes(item.id)) {
           const key = `item[${index}].item_id`
@@ -74,33 +74,33 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         }
       })
     } catch (error: any) {
-      logger.error(`!!Error while comparing Item Id in /${constants.MOB_ONINIT} and /${constants.MOB_CONFIRM}`)
+      logger.error(`!!Error while comparing Item Id in /${constants.MET_ONINIT} and /${constants.MET_CONFIRM}`)
     }
 
     try {
       logger.info(`Checking payments in /${constants.MOB_CONFIRM}`)
       confirm?.payments?.forEach((arr: any, i: number) => {
         if (!arr?.collected_by) {
-          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.MOB_ONINIT}`
+          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.MET_ONINIT}`
         } else {
           const srchCollectBy = getValue(`collected_by`)
           if (srchCollectBy != arr?.collected_by)
             errorObj[
               `payemnts[${i}]_collected_by`
-            ] = `payments.collected_by value sent in ${constants.MOB_ONINIT} should be ${srchCollectBy} as sent in ${constants.MOB_CONFIRM}`
+            ] = `payments.collected_by value sent in ${constants.MET_ONINIT} should be ${srchCollectBy} as sent in ${constants.MET_CONFIRM}`
         }
 
         const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
         if (!arr?.type || !validTypes.includes(arr.type)) {
           errorObj[`payments[${i}]_type`] = `payments.params.type must be present in ${
-            constants.MOB_CONFIRM
+            constants.MET_CONFIRM
           } & its value must be one of: ${validTypes.join(', ')}`
         }
 
         const validStatus = ['NOT-PAID', 'PAID']
         if (!arr?.status || !validStatus.includes(arr.status)) {
           errorObj[`payments[${i}]_status`] = `payments.status must be present in ${
-            constants.MOB_CONFIRM
+            constants.MET_CONFIRM
           } & its value must be one of: ${validStatus.join(', ')}`
         }
 

@@ -3,7 +3,7 @@ import constants, { metroSequence } from '../../constants'
 import { logger } from '../../shared/logger'
 import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
-import { validateContext, validatePaymentParams, validateQuote, validateStops } from './mETROChecks'
+import { validateContext, validatePaymentParams, validateQuote, validateStops } from './metroChecks'
 import { validatePaymentTags, validateRouteInfoTags } from './tags'
 
 // const cancellationTermsState = new Map()

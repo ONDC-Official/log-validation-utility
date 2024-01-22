@@ -2,7 +2,7 @@ import constants, { metroSequence } from '../../constants'
 import { logger } from '../../shared/logger'
 import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
-import { validateContext, validateStops } from './mobilityChecks'
+import { validateContext, validateStops } from './metroChecks'
 import { validatePaymentTags } from './tags'
 
 const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
@@ -78,7 +78,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     }
 
     try {
-      logger.info(`Checking payments in /${constants.MOB_CONFIRM}`)
+      logger.info(`Checking payments in /${constants.MET_CONFIRM}`)
       confirm?.payments?.forEach((arr: any, i: number) => {
         if (!arr?.collected_by) {
           errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.MET_ONINIT}`
@@ -106,7 +106,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
 
         const params = arr.params
         if (!params?.bank_code) {
-          errorObj[`payments[${i}]_bank_code`] = `payments.params.bank_code must be present in ${constants.MOB_CONFIRM}`
+          errorObj[`payments[${i}]_bank_code`] = `payments.params.bank_code must be present in ${constants.MET_CONFIRM}`
         } else {
           setValue('bank_code', params?.bank_code)
         }
@@ -114,7 +114,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         if (!params?.bank_account_number) {
           errorObj[
             `payments[${i}]_bank_account_number`
-          ] = `payments.params.bank_account_number must be present in ${constants.MOB_CONFIRM}`
+          ] = `payments.params.bank_account_number must be present in ${constants.MET_CONFIRM}`
         } else {
           setValue('bank_account_number', params?.bank_account_number)
         }
@@ -122,7 +122,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         if (!params?.virtual_payment_address) {
           errorObj[
             `payments[${i}]_virtual_payment_address`
-          ] = `payments.params.virtual_payment_address must be present in ${constants.MOB_CONFIRM}`
+          ] = `payments.params.virtual_payment_address must be present in ${constants.MET_CONFIRM}`
         } else {
           setValue('virtual_payment_address', params?.virtual_payment_address)
         }
@@ -134,11 +134,11 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         }
       })
     } catch (error: any) {
-      logger.error(`!!Errors while checking payments in /${constants.MOB_CONFIRM}, ${error.stack}`)
+      logger.error(`!!Errors while checking payments in /${constants.MET_CONFIRM}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Validating fulfillments object for /${constants.MOB_CONFIRM}`)
+      logger.info(`Validating fulfillments object for /${constants.MET_CONFIRM}`)
       confirm.fulfillments.forEach((full: any, index: number) => {
         const fulfillmentKey = `fulfillments[${index}]`
         if (!storedFull.includes(full.id)) {
@@ -179,7 +179,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         if (full.type !== 'DELIVERY') {
           errorObj[
             `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.MOB_ONINIT}`
+          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.MET_ONINIT}`
         }
 
         // Check stops for START and END, or time range with valid timestamp and GPS
@@ -188,19 +188,19 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         validateStops(full?.stops, index, otp, cancel)
       })
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.MOB_CONFIRM},  ${error.message}`)
+      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.MET_CONFIRM},  ${error.message}`)
       return { error: error.message }
     }
 
     if ('billing' in confirm && confirm?.billing?.name) {
       setValue('billingName', confirm?.billing?.name)
     } else {
-      errorObj['billing'] = `billing must be part of /${constants.MOB_CONFIRM}`
+      errorObj['billing'] = `billing must be part of /${constants.MET_CONFIRM}`
     }
 
     return errorObj
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.MOB_CONFIRM} API`, err)
+    logger.error(`!!Some error occurred while checking /${constants.MET_CONFIRM} API`, err)
     return { error: err.message }
   }
 }

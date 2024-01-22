@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import { getValue } from '../../../shared/dao'
-import constants from '../../../constants'
+import constants, { FisApiSequence } from '../../../constants'
 import { validateSchema, isObjectEmpty } from '../..'
 import _ from 'lodash'
 import { logger } from '../../../shared/logger'
@@ -69,10 +69,14 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
           }
         }
 
-        if (sequence !== 'on_select') {
-          const itemPrice = parseFloat(item.price.value)
-          const quotePrice = parseFloat(message.order.quote.price.value)
-          if (itemPrice !== quotePrice) {
+        if (sequence !== FisApiSequence.ON_SELECT_1) {
+          const itemPrice = parseFloat(item?.price?.value)
+          const interestAmount =
+            parseFloat(
+              message.order?.quote?.breakup.find((item: any) => item.title.toUpperCase() === 'INTEREST')?.price.value,
+            ) || 0
+          const updatedQuotePrice = parseFloat(message.order?.quote?.price.value) - interestAmount
+          if (itemPrice !== updatedQuotePrice) {
             errorObj[`item${index}_price`] = `Price value mismatch for item: ${item.id}`
           }
 
@@ -108,13 +112,15 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
             }
           }
 
+          console.log('item?.xinput?.form_response', item?.xinput?.form_response)
+
           // Check submission_id in form_response
           if (!Object.prototype.hasOwnProperty.call(item?.xinput?.form_response, 'submission_id')) {
             errorObj[
               `item${index}_xinput`
             ] = `/message/order/items/xinput in item: ${item.id} must have submission_id in form_response`
           } else {
-            const submissionId = getValue(`select_submission_id`)
+            const submissionId = getValue(`${sequence?.replace('on_', '')}_submission_id`)
             if (!_.isEqual(submissionId, item?.xinput?.form_response?.submission_id)) {
               errorObj.submission_id = `submission_id for /${constants.SELECT} and /${constants.ON_SELECT} api should be the same as sent in previous call`
             }
@@ -128,7 +134,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
     }
 
     //quote checks
-    if (sequence !== 'on_select') {
+    if (sequence !== FisApiSequence.ON_SELECT_1) {
       const quoteErrors = validateQuote(onSelect)
       Object.assign(errorObj, quoteErrors)
     }

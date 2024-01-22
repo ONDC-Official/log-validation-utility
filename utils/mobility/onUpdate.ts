@@ -212,7 +212,7 @@ export const checkOnUpdate = (data: any) => {
         onUpdateObj.payments = `collected_by  is missing in payments`
       } else {
         const allowedCollectedByValues = ['BPP', 'BAP']
-        const allowedStatusValues = ['NOT_PAID', 'PAID']
+        const allowedStatusValues = ['NOT_PAID', 'PAID', 'NOT-PAID']
 
         const collectedBy = getValue(`collected_by`)
         if (collectedBy && collectedBy !== payments[0].collected_by) {

@@ -3,9 +3,7 @@ import constants, { FisApiSequence, fisFlows } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, isValidUrl } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
-import { validateContext, validateFulfillments } from './fisChecks'
-
-const cancellationTermsState = new Map()
+import { validateCancellationTerms, validateContext, validateFulfillments } from './fisChecks'
 
 export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: string) => {
   const onUpdateObj: any = {}
@@ -76,7 +74,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
         }
 
         if (item.tags) {
-          const loanInfoTag = item.tags.find((tag: any) => tag.descriptor.code === 'LOAN-INFO')
+          const loanInfoTag = item.tags.find((tag: any) => tag.descriptor.code === 'LOAN_INFO')
           if (!loanInfoTag) {
             onUpdateObj[`loanInfoTagSubtagsMissing`] = `The LOAN_INFO tag group for Item ${item.id}: was not found`
           }
@@ -298,7 +296,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
           onUpdateObj.payments = `collected_by  is missing in payments`
         } else {
           const allowedCollectedByValues = ['BPP', 'BAP']
-          const allowedStatusValues = ['NOT_PAID', 'PAID']
+          const allowedStatusValues = ['NOT_PAID', 'PAID', 'NOT-PAID']
 
           const collectedBy = getValue(`collected_by`)
           if (collectedBy && collectedBy !== payments[0].collected_by) {
@@ -322,35 +320,10 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
 
     try {
       logger.info(`Checking cancellation terms in /${constants.ON_UPDATE}`)
-      const cancellationTerms = on_update.cancellation_terms
-
-      if (cancellationTerms && cancellationTerms.length > 0) {
-        for (let i = 0; i < cancellationTerms.length; i++) {
-          const cancellationTerm = cancellationTerms[i]
-
-          if (
-            cancellationTerm.fulfillment_state &&
-            cancellationTerm.fulfillment_state.descriptor &&
-            cancellationTerm.fulfillment_state.descriptor.code &&
-            (!cancellationTerm.cancellation_fee ||
-              !cancellationTerm.cancellation_fee.percentage ||
-              isNaN(parseFloat(cancellationTerm.cancellation_fee.percentage)) ||
-              parseFloat(cancellationTerm.cancellation_fee.percentage) <= 0 ||
-              !Number.isInteger(parseFloat(cancellationTerm.cancellation_fee.percentage)))
-          ) {
-            onUpdateObj.cancellationFee = `Cancellation fee is required and must be bounded by 0 and 100 for Cancellation Term[${i}]`
-          }
-
-          const descriptorCode = cancellationTerm.fulfillment_state.descriptor.code
-          const storedPercentage = cancellationTermsState.get(descriptorCode)
-
-          if (storedPercentage !== undefined && storedPercentage !== cancellationTerm.cancellation_fee.percentage) {
-            onUpdateObj.cancellationFee = `Cancellation terms percentage for ${descriptorCode} has changed`
-          }
-        }
-      }
+      const cancellationErrors = validateCancellationTerms(on_update?.cancellation_terms, constants.ON_UPDATE)
+      Object.assign(onUpdateObj, cancellationErrors)
     } catch (error: any) {
-      logger.error(`!!Error while checking cancellation terms in /${constants.ON_UPDATE}, ${error.stack}`)
+      logger.error(`!!Error while checking cancellation_terms in /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
     try {

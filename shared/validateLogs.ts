@@ -35,7 +35,7 @@ import checkOnIssueStatusUnsolicited from '../utils/igm/retOnIssueStatus(unsolic
 import checkLspIssueClose from '../utils/igm/lspIssue(close)'
 import checkIssueClose from '../utils/igm/retIssueClose'
 
-export const validateLogs = (data: any, domain: string) => {
+export const validateLogs = async (data: any, domain: string) => {
   const msgIdSet = new Set()
   let logReport: any = {}
 
@@ -195,7 +195,6 @@ export const validateLogs = (data: any, domain: string) => {
       if (!retailDomains.includes(domain)) {
         return 'Domain should be one of the 1.2.0 retail domains'
       }
-
       if (data[ApiSequence.SEARCH]) {
         const searchFullCatalogRefreshResp = checkSearch(data[ApiSequence.SEARCH], msgIdSet)
         if (!_.isEmpty(searchFullCatalogRefreshResp)) {
@@ -305,6 +304,8 @@ export const validateLogs = (data: any, domain: string) => {
         }
       }
 
+      console.log(data[ApiSequence.ON_SEARCH].context.bap_id)
+
       logger.info(logReport, 'Report Generated Successfully!!')
       return logReport
     }
@@ -411,7 +412,6 @@ export const IGMvalidateLogs = (data: any) => {
         logReport = { ...logReport, [IGMApiSequence.LSP_ON_ISSUE_STATUS]: lsp_on_issue }
       }
     }
-
     logger.info(logReport, 'Report Generated Successfully!!')
     return logReport
   } catch (error: any) {

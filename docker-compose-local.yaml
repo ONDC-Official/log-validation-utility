@@ -1,14 +1,15 @@
-version: "2"
+version: '2'
 
 services:
-
   retail-logs-utility:
     container_name: retail-logs-utility
+    depends_on:
+      - postgres
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3006:3006"
+      - '3006:3006'
 
   nginx:
     build:
@@ -22,3 +23,11 @@ services:
     ports:
       - 80:80
       - 443:443
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+      POSTGRES_DB: log_validation_utility

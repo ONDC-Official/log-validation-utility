@@ -1,14 +1,15 @@
-version: "2"
+version: '2'
 
 services:
-
   retail-logs-utility:
     container_name: retail-logs-utility
+    depends_on:
+      - postgres
     build:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3006:3006"
+      - '3006:3006'
 
   nginx:
     build:
@@ -28,8 +29,16 @@ services:
 
   certbot:
     image: certbot/certbot
-    restart: "always"
+    restart: 'always'
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+  postgres:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+      POSTGRES_DB: log_validation_utility

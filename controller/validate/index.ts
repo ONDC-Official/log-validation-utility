@@ -36,6 +36,7 @@ const controller = {
           }
           break
         case DOMAIN.MOBILITY:
+          'in mobility'
           {
             const { response, success, message } = await helper.validateMobility(domain, payload, version, flow)
             result = { response, success, message }

@@ -91,12 +91,10 @@ const validateMobility = async (domain: string, payload: string, version: string
   }
   return { response, success, message }
 }
-const validateIGM = async (payload: string, version: string, flow?: string) => {
+const validateIGM = async (payload: string, version: string) => {
   let response
   let success = false
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
-
-  if (!flow) throw new Error('Flow not defined')
 
   switch (version) {
     case '1.2.0':

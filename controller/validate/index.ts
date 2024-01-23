@@ -27,6 +27,7 @@ const controller = {
           break
         case DOMAIN.LOGISTICS:
           // to-do
+          throw new Error('Domain not supported yet')
           break
         case DOMAIN.FINANCE:
           {
@@ -41,6 +42,8 @@ const controller = {
           }
           break
         case DOMAIN.IGM:
+          const { response, success, message } = await helper.validateIGM(payload, version)
+          result = { response, success, message }
           break
         default:
           throw new Error('Internal server error')
@@ -87,7 +90,7 @@ const controller = {
     }
   },
 
-  validateAction: async (req: Request, res: Response): Promise<any> => {
+  validateSingleAction: async (req: Request, res: Response): Promise<Response | void> => {
     try {
       let error
       if (!req.body) return res.status(400).send({ success: false, error: 'provide transaction logs to verify' })

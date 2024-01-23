@@ -13,6 +13,9 @@ const createSignature = async ({ message }: { message: string }) => {
 
   const currentDate = new Date().toISOString()
   const hashString = await hash({ message })
+
+  console.log(hashString)
+
   const signingString = `${hashString}|${currentDate}`
   const signature = await sign({ message: signingString, privateKey })
   return { signature, currentDate }

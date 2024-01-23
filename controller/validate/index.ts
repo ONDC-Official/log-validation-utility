@@ -15,6 +15,7 @@ const controller = {
       let result: { response?: string; success?: boolean; message?: string } = {}
       const splitPath = req.originalUrl.split('/')
       const pathUrl = splitPath[splitPath.length - 1]
+      const stringPayload = JSON.stringify(payload)
 
       const normalisedDomain = helper.getEnumForDomain(pathUrl)
 
@@ -36,7 +37,6 @@ const controller = {
           }
           break
         case DOMAIN.MOBILITY:
-          'in mobility'
           {
             const { response, success, message } = await helper.validateMobility(domain, payload, version, flow)
             result = { response, success, message }
@@ -51,8 +51,6 @@ const controller = {
       }
 
       const { response, success, message } = result
-
-      const stringPayload = JSON.stringify(payload)
 
       if (!success) return res.status(400).send({ success, response: { message, report: response } })
 
@@ -80,6 +78,8 @@ const controller = {
 
       if (!supportedVersions.includes(version)) throw new Error('Invalid Version! Please enter a valid version')
       const hashString = await hash({ message: stringJSON })
+
+      console.log(hashString)
 
       const signingString = `${hashString}|${signTimestamp}`
 

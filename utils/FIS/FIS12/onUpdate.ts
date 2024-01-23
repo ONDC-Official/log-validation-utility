@@ -11,7 +11,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string) => {
   const onUpdateObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [FisApiSequence.ON_UPDATE]: 'Json cannot be empty' }
+      return { [FisApiSequence.ON_UPDATE]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -19,8 +19,8 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.FIS_ONUPDATE, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.FIS_UPDATE, constants.FIS_ONUPDATE)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_UPDATE, data)
+    const contextRes: any = validateContext(context, msgIdSet, constants.UPDATE, constants.ON_UPDATE)
 
     if (schemaValidation !== 'error') {
       Object.assign(onUpdateObj, schemaValidation)
@@ -49,23 +49,23 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string) => {
     setValue('ItmIDS', newItemIDSValue)
 
     try {
-      logger.info(`Checking provider id /${constants.FIS_ONUPDATE}`)
+      logger.info(`Checking provider id /${constants.ON_UPDATE}`)
       if (on_update.provider.id != getValue('providerId')) {
-        onUpdateObj.prvdrId = `Provider Id mismatches in /${constants.FIS_ONSEARCH} and /${constants.FIS_ONUPDATE}`
+        onUpdateObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.ON_UPDATE}`
       }
 
-      logger.info(`Checking tags in /${constants.FIS_ONUPDATE}`)
+      logger.info(`Checking tags in /${constants.ON_UPDATE}`)
       const providerTags = on_update.provider.tags
 
       if (!providerTags || !Array.isArray(providerTags) || providerTags.length === 0) {
         onUpdateObj.tags = 'Tags array is missing or empty in provider'
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking provider id /${constants.FIS_ONUPDATE}, ${error.stack}`)
+      logger.error(`!!Error while checking provider id /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing item in and /${constants.FIS_ONUPDATE}`)
+      logger.info(`Comparing item in and /${constants.ON_UPDATE}`)
 
       on_update.items.forEach((item: any, index: number) => {
         if (!newItemIDSValue.includes(item.id)) {
@@ -92,11 +92,11 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string) => {
         }
       })
     } catch (error: any) {
-      logger.error(`!!Error while comparing Item in /${constants.FIS_ONUPDATE}, ${error.stack}`)
+      logger.error(`!!Error while comparing Item in /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking fulfillments objects in /${constants.FIS_ONUPDATE}`)
+      logger.info(`Checking fulfillments objects in /${constants.ON_UPDATE}`)
       let i = 0
       const len = on_update.fulfillments.length
       while (i < len) {
@@ -109,11 +109,11 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string) => {
         i++
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking fulfillments object in /${constants.FIS_ONUPDATE}, ${error.stack}`)
+      logger.error(`!!Error while checking fulfillments object in /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking quote details in /${constants.FIS_ONUPDATE}`)
+      logger.info(`Checking quote details in /${constants.ON_UPDATE}`)
 
       const quote = on_update.quote
       const quoteBreakup = quote.breakup
@@ -157,11 +157,11 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string) => {
         onUpdateObj.missingTTL = 'TTL is required in the quote'
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking quote details in /${constants.FIS_ONUPDATE}`, error.stack)
+      logger.error(`!!Error while checking quote details in /${constants.ON_UPDATE}`, error.stack)
     }
 
     try {
-      logger.info(`Checking payments details in /${constants.FIS_ONUPDATE}`)
+      logger.info(`Checking payments details in /${constants.ON_UPDATE}`)
 
       const payments = on_update.payments
 
@@ -246,11 +246,11 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string) => {
         }
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking payments details in /${constants.FIS_ONUPDATE}`, error.stack)
+      logger.error(`!!Error while checking payments details in /${constants.ON_UPDATE}`, error.stack)
     }
 
     try {
-      logger.info(`Checking cancellation terms in /${constants.FIS_ONUPDATE}`)
+      logger.info(`Checking cancellation terms in /${constants.ON_UPDATE}`)
       const cancellationTerms = on_update.cancellation_terms
 
       if (cancellationTerms && cancellationTerms.length > 0) {
@@ -279,11 +279,11 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string) => {
         }
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking cancellation terms in /${constants.FIS_ONUPDATE}, ${error.stack}`)
+      logger.error(`!!Error while checking cancellation terms in /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking documents in /${constants.FIS_ONUPDATE}`)
+      logger.info(`Checking documents in /${constants.ON_UPDATE}`)
       const documents = on_update.documents
 
       if (!documents || !Array.isArray(documents) || documents.length === 0) {
@@ -325,12 +325,12 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string) => {
         })
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking documents in /${constants.FIS_ONUPDATE}, ${error.stack}`)
+      logger.error(`!!Error while checking documents in /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
     return onUpdateObj
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.FIS_ONUPDATE} API`, JSON.stringify(err.stack))
+    logger.error(`!!Some error occurred while checking /${constants.ON_UPDATE} API`, JSON.stringify(err.stack))
     return { error: err.message }
   }
 }

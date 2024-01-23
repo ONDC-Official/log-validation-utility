@@ -1,7 +1,7 @@
 /* eslint-disable no-prototype-builtins */
 import constants, { FisApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, isValidUrl } from '../../'
+import { validateSchema, isObjectEmpty } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
 import { validateContext, validateFulfillments } from './fisChecks'
 
@@ -11,7 +11,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
   const onCnfrmObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [FisApiSequence.ON_CONFIRM]: 'Json cannot be empty' }
+      return { [FisApiSequence.ON_CONFIRM]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -19,8 +19,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.FIS_ONCONFIRM, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.FIS_CONFIRM, constants.FIS_ONCONFIRM)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_CONFIRM, data)
+    const contextRes: any = validateContext(context, msgIdSet, constants.CONFIRM, constants.ON_CONFIRM)
 
     if (schemaValidation !== 'error') {
       Object.assign(onCnfrmObj, schemaValidation)
@@ -50,40 +50,40 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
     setValue('ItmIDS', newItemIDSValue)
 
     try {
-      logger.info(`Checking id in message object  /${constants.FIS_ONCONFIRM}`)
+      logger.info(`Checking id in message object  /${constants.ON_CONFIRM}`)
       if (!on_confirm.id) {
-        onCnfrmObj.id = `Id in message object must be present/${constants.FIS_ONCONFIRM}`
+        onCnfrmObj.id = `Id in message object must be present/${constants.ON_CONFIRM}`
       } else {
         setValue('orderId', on_confirm?.id)
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking id in message object  /${constants.FIS_ONCONFIRM}, ${error.stack}`)
+      logger.error(`!!Error while checking id in message object  /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking provider id /${constants.FIS_ONCONFIRM}`)
+      logger.info(`Checking provider id /${constants.ON_CONFIRM}`)
 
       if (['PRE_INVOICE', 'PRE_PERSONAL'].includes(flow)) {
         const on_confirmProviderId = on_confirm.provider.id
         setValue('providerId', on_confirmProviderId)
       } else {
         if (on_confirm.provider.id !== getValue('providerId')) {
-          onCnfrmObj.prvdrId = `Provider Id mismatches in /${constants.FIS_ONSEARCH} and /${constants.FIS_ONCONFIRM}`
+          onCnfrmObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.ON_CONFIRM}`
         }
       }
 
-      logger.info(`Checking tags in /${constants.FIS_ONCONFIRM}`)
+      logger.info(`Checking tags in /${constants.ON_CONFIRM}`)
       const providerTags = on_confirm.provider.tags
 
       if (!providerTags || !Array.isArray(providerTags) || providerTags.length === 0) {
         onCnfrmObj.tags = 'Tags array is missing or empty in provider'
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking provider id /${constants.FIS_ONCONFIRM}, ${error.stack}`)
+      logger.error(`!!Error while checking provider id /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing item in /${constants.FIS_ONCONFIRM}`)
+      logger.info(`Comparing item in /${constants.ON_CONFIRM}`)
 
       on_confirm.items.forEach((item: any, index: number) => {
         if (!newItemIDSValue.includes(item.id)) {
@@ -106,12 +106,12 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
       })
     } catch (error: any) {
       logger.error(
-        `!!Error while comparing Item in /${constants.RET_ONSELECT} and /${constants.FIS_ONCONFIRM}, ${error.stack}`,
+        `!!Error while comparing Item in /${constants.ON_SELECT} and /${constants.ON_CONFIRM}, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Checking fulfillments objects in /${constants.FIS_ONCONFIRM}`)
+      logger.info(`Checking fulfillments objects in /${constants.ON_CONFIRM}`)
       let i = 0
       const len = on_confirm.fulfillments.length
       while (i < len) {
@@ -124,11 +124,11 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
         i++
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking fulfillments object in /${constants.FIS_ONCONFIRM}, ${error.stack}`)
+      logger.error(`!!Error while checking fulfillments object in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking quote details in /${constants.FIS_ONCONFIRM}`)
+      logger.info(`Checking quote details in /${constants.ON_CONFIRM}`)
 
       const quote = on_confirm.quote
       const quoteBreakup = quote.breakup
@@ -172,11 +172,11 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
         onCnfrmObj.missingTTL = 'TTL is required in the quote'
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking quote details in /${constants.FIS_ONCONFIRM}`, error.stack)
+      logger.error(`!!Error while checking quote details in /${constants.ON_CONFIRM}`, error.stack)
     }
 
     try {
-      logger.info(`Checking payments details in /${constants.FIS_ONCONFIRM}`)
+      logger.info(`Checking payments details in /${constants.ON_CONFIRM}`)
 
       const payments = on_confirm.payments
 
@@ -249,11 +249,11 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
         }
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking payments details in /${constants.FIS_ONCONFIRM}`, error.stack)
+      logger.error(`!!Error while checking payments details in /${constants.ON_CONFIRM}`, error.stack)
     }
 
     try {
-      logger.info(`Checking cancellation terms in /${constants.FIS_ONCONFIRM}`)
+      logger.info(`Checking cancellation terms in /${constants.ON_CONFIRM}`)
       const cancellationTerms = on_confirm.cancellation_terms
 
       if (cancellationTerms && cancellationTerms.length > 0) {
@@ -282,11 +282,11 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
         }
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking cancellation terms in /${constants.FIS_ONCONFIRM}, ${error.stack}`)
+      logger.error(`!!Error while checking cancellation terms in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking documents in /${constants.FIS_ONCONFIRM}`)
+      logger.info(`Checking documents in /${constants.ON_CONFIRM}`)
       const documents = on_confirm.documents
 
       if (!documents || !Array.isArray(documents) || documents.length === 0) {
@@ -322,18 +322,16 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
 
           if (!document.url) {
             onCnfrmObj[`${documentKey}.url`] = 'Document URL is missing or empty'
-          } else {
-            if (!isValidUrl(document.url)) onCnfrmObj[`${documentKey}.url`] = 'URL must be valid'
           }
         })
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking documents in /${constants.FIS_ONCONFIRM}, ${error.stack}`)
+      logger.error(`!!Error while checking documents in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
     return onCnfrmObj
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.FIS_ONCONFIRM} API`, JSON.stringify(err.stack))
+    logger.error(`!!Some error occurred while checking /${constants.ON_CONFIRM} API`, JSON.stringify(err.stack))
     return { error: err.message }
   }
 }

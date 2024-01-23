@@ -1,12 +1,11 @@
 import _ from 'lodash'
 import { dropDB } from '../dao'
 import { logger } from '../logger'
-import { FisApiSequence } from '../../constants'
+import { FisApiSequence, fisFlows } from '../../constants'
 import { search } from '../../utils/FIS/FIS12/search'
 import { checkOnSearch } from '../../utils/FIS/FIS12/onSearch'
 import { checkSelect } from '../../utils/FIS/FIS12/select'
 import { checkOnSelect } from '../../utils/FIS/FIS12/onSelect'
-// import { checkOnSelect2 } from '../../utils/FIS/FIS12/onSelect2'
 import { checkInit } from '../../utils/FIS/FIS12/init'
 import { checkOnInit } from '../../utils/FIS/FIS12/onInit'
 import { checkConfirm } from '../../utils/FIS/FIS12/confirm'
@@ -16,7 +15,7 @@ import { checkOnUpdate } from '../../utils/FIS/FIS12/onUpdate'
 import { checkStatus } from '../../utils/FIS/FIS12/status'
 import { checkOnStatus } from '../../utils/FIS/FIS12/onStatus'
 
-export function validateLogsForFIS12(data: any, domain: string, flow: string) {
+export function validateLogsForFIS12(data: any, domain: string, flow: string, version: string) {
   const msgIdSet = new Set()
   let logReport: any = {}
   try {
@@ -26,6 +25,14 @@ export function validateLogsForFIS12(data: any, domain: string, flow: string) {
   }
 
   console.log('domain', domain)
+
+  if (!_.isEqual(version, '2.0.0')) {
+    logReport = { ...logReport, version: `Invalid version ${version}` }
+  }
+
+  if (!(flow in fisFlows)) {
+    logReport = { ...logReport, version: `Invalid flow ${flow}` }
+  }
 
   try {
     if (data[FisApiSequence.SEARCH]) {

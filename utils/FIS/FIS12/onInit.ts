@@ -13,7 +13,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
   try {
     const errorObj: any = {}
     if (!data || isObjectEmpty(data)) {
-      return { [constants.FIS_ONINIT]: 'Json cannot be empty' }
+      return { [constants.ON_INIT]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -21,8 +21,8 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.FIS_ONINIT, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.FIS_INIT, constants.FIS_ONINIT)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_INIT, data)
+    const contextRes: any = validateContext(context, msgIdSet, constants.INIT, constants.ON_INIT)
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
@@ -32,7 +32,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
       Object.assign(errorObj, contextRes.ERRORS)
     }
 
-    setValue(`${constants.FIS_ONINIT}`, data)
+    setValue(`${constants.ON_INIT}`, data)
 
     const on_init = message.order
     const itemIDS: any = getValue('ItmIDS')
@@ -55,7 +55,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
     setValue('ItmIDS', newItemIDSValue)
 
     try {
-      logger.info(`Comparing Items object for /${constants.FIS_ONSELECT} and /${constants.FIS_ONINIT}`)
+      logger.info(`Comparing Items object for /${constants.ON_SELECT} and /${constants.ON_INIT}`)
       on_init.items.forEach((item: any, index: number) => {
         if (!newItemIDSValue.includes(item.id)) {
           const key = `item[${index}].item_id`
@@ -75,7 +75,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
           errorObj[`item${index}_price`] = `Price value mismatch for item: ${item.id}`
         }
 
-        const xinputValidationErrors = validateXInput(item?.xinput, 0, index, constants.FIS_ONINIT)
+        const xinputValidationErrors = validateXInput(item?.xinput, 0, index, constants.ON_INIT)
         if (xinputValidationErrors) {
           Object.assign(errorObj, xinputValidationErrors)
         }
@@ -101,7 +101,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
         //       `item${index}_xinput`
         //     ] = `/message/order/items/xinput in item: ${item.id} must have submission_id in form_response`
         //   } else {
-        //     setValue(`${constants.FIS_ONSELECT}_submission_id`, item?.xinput?.form_response?.submission_id)
+        //     setValue(`${constants.ON_SELECT}_submission_id`, item?.xinput?.form_response?.submission_id)
         //   }
         // }
 
@@ -115,12 +115,12 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
       })
     } catch (error: any) {
       logger.error(
-        `!!Error while comparing Item and Fulfillment Id in /${constants.FIS_ONSELECT} and /${constants.FIS_ONINIT}, ${error.stack}`,
+        `!!Error while comparing Item and Fulfillment Id in /${constants.ON_SELECT} and /${constants.ON_INIT}, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Checking cancellation terms in /${constants.FIS_ONINIT}`)
+      logger.info(`Checking cancellation terms in /${constants.ON_INIT}`)
       const cancellationTerms = on_init.cancellation_terms
 
       if (cancellationTerms && cancellationTerms.length > 0) {
@@ -151,11 +151,11 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
         }
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking cancellation terms in /${constants.FIS_ONINIT}, ${error.stack}`)
+      logger.error(`!!Error while checking cancellation terms in /${constants.ON_INIT}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking fulfillments objects in /${constants.FIS_ONINIT}`)
+      logger.info(`Checking fulfillments objects in /${constants.ON_INIT}`)
       let i = 0
       const len = on_init.fulfillments.length
       while (i < len) {
@@ -168,24 +168,24 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
         i++
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking fulfillments object in /${constants.FIS_ONINIT}, ${error.stack}`)
+      logger.error(`!!Error while checking fulfillments object in /${constants.ON_INIT}, ${error.stack}`)
     }
 
-    // logger.info(`Comparing /${constants.FIS_ONINIT} Quoted Price and /${constants.FIS_ONSELECT} Quoted Price`)
+    // logger.info(`Comparing /${constants.ON_INIT} Quoted Price and /${constants.ON_SELECT} Quoted Price`)
     // const onSelectPrice: any = getValue('onSelectPrice')
     // if (onSelectPrice != initQuotePrice) {
     //   logger.info(
-    //     `Quoted Price in /${constants.FIS_ONINIT} is not equal to the quoted price in /${constants.FIS_ONSELECT}`,
+    //     `Quoted Price in /${constants.ON_INIT} is not equal to the quoted price in /${constants.ON_SELECT}`,
     //   )
-    //   errorObj.onInitPriceErr2 = `Quoted Price in /${constants.FIS_ONINIT} INR ${initQuotePrice} does not match with the quoted price in /${constants.FIS_ONSELECT} INR ${onSelectPrice}`
+    //   errorObj.ON_INITPriceErr2 = `Quoted Price in /${constants.ON_INIT} INR ${initQuotePrice} does not match with the quoted price in /${constants.ON_SELECT} INR ${onSelectPrice}`
     // }
 
-    logger.info(`Checking Payment Object for  /${constants.FIS_ONINIT}`)
+    logger.info(`Checking Payment Object for  /${constants.ON_INIT}`)
     if (!on_init.payments) {
-      errorObj.pymnterrorObj = `Payment Object can't be null in /${constants.FIS_ONINIT}`
+      errorObj.pymnterrorObj = `Payment Object can't be null in /${constants.ON_INIT}`
     } else {
       try {
-        logger.info(`Checking Payment Object for  /${constants.FIS_ONINIT}`)
+        logger.info(`Checking Payment Object for  /${constants.ON_INIT}`)
         on_init.payments?.map((payment: any) => {
           if (!payment.status) {
             errorObj.payments = `status is missing in payments`
@@ -229,7 +229,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
           }
         })
       } catch (error: any) {
-        logger.error(`!!Error while checking Payment Object in /${constants.FIS_ONINIT}, ${error.stack}`)
+        logger.error(`!!Error while checking Payment Object in /${constants.ON_INIT}, ${error.stack}`)
       }
     }
 
@@ -241,7 +241,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
 
     return errorObj
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.FIS_ONINIT} API`, err)
+    logger.error(`!!Some error occurred while checking /${constants.ON_INIT} API`, err)
     return { error: err.message }
   }
 }
@@ -255,19 +255,19 @@ const validateProvider = (provider: any) => {
       return providerErrors
     }
 
-    logger.info(`Comparing Provider Ids of /${constants.FIS_ONSEARCH} and /${constants.FIS_ONINIT}`)
+    logger.info(`Comparing Provider Ids of /${constants.ON_SEARCH} and /${constants.ON_INIT}`)
     const prvrdID: any = getValue('providerId')
     if (!_.isEqual(prvrdID, provider.id)) {
-      providerErrors.prvdrId = `Provider Id for /${constants.FIS_ONSEARCH} and /${constants.FIS_ONINIT} api should be same`
+      providerErrors.prvdrId = `Provider Id for /${constants.ON_SEARCH} and /${constants.ON_INIT} api should be same`
     }
   } catch (error: any) {
     logger.info(
-      `Error while comparing provider ids for /${constants.FIS_ONSEARCH} and /${constants.FIS_ONINIT} api, ${error.stack}`,
+      `Error while comparing provider ids for /${constants.ON_SEARCH} and /${constants.ON_INIT} api, ${error.stack}`,
     )
   }
 
   try {
-    logger.info(`Validating Descriptor for /${constants.FIS_ONINIT}`)
+    logger.info(`Validating Descriptor for /${constants.ON_INIT}`)
 
     if (!provider?.descriptor) {
       providerErrors.descriptor = 'Provider descriptor is missing or invalid.'
@@ -310,7 +310,7 @@ const validateProvider = (provider: any) => {
       providerErrors.long_desc = `Long description cannot be empty.`
     }
   } catch (error: any) {
-    logger.info(`Error while validating descriptor for /${constants.FIS_ONINIT}, ${error.stack}`)
+    logger.info(`Error while validating descriptor for /${constants.ON_INIT}, ${error.stack}`)
   }
 
   // Validate tags
@@ -326,7 +326,7 @@ const validateQuote = (onSelect: any) => {
   const errorObj: any = {}
 
   try {
-    logger.info(`Checking quote details in /${constants.FIS_ONINIT}`)
+    logger.info(`Checking quote details in /${constants.ON_INIT}`)
 
     const quote = onSelect.quote
     const quoteBreakup = quote.breakup
@@ -378,7 +378,7 @@ const validateQuote = (onSelect: any) => {
       errorObj.missingTTL = 'TTL is required in the quote'
     }
   } catch (error: any) {
-    logger.error(`!!Error while checking quote details in /${constants.FIS_ONINIT}`, error.stack)
+    logger.error(`!!Error while checking quote details in /${constants.ON_INIT}`, error.stack)
   }
 
   return errorObj

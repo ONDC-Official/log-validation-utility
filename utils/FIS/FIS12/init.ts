@@ -10,7 +10,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [constants.FIS_INIT]: 'Json cannot be empty' }
+      return { [constants.INIT]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -18,9 +18,9 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const onSelect: any = getValue(`${constants.FIS_ONSELECT}_context`)
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.FIS_INIT, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.FIS_ONSELECT, constants.FIS_INIT)
+    const onSelect: any = getValue(`${constants.ON_SELECT}_context`)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.INIT, data)
+    const contextRes: any = validateContext(context, msgIdSet, constants.ON_SELECT, constants.INIT)
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
@@ -30,7 +30,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
       Object.assign(errorObj, contextRes.ERRORS)
     }
 
-    setValue(`${constants.FIS_INIT}_context`, data?.context)
+    setValue(`${constants.INIT}_context`, data?.context)
 
     const init = message.order
     const itemIDS: any = getValue('ItmIDS')
@@ -50,25 +50,25 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
 
     // setValue('ItmIDS', newItemIDSValue)
     try {
-      logger.info(`Comparing Provider object in /${constants.FIS_ONSELECT} and /${constants.FIS_INIT}`)
+      logger.info(`Comparing Provider object in /${constants.ON_SELECT} and /${constants.INIT}`)
       const providerIDs = getValue('providerId')
       const selectedProviderId = init.provider.id
 
       if (!providerIDs || providerIDs.length === 0) {
         logger.info(`Skipping Provider Ids check due to insufficient data`)
       } else if (!providerIDs.includes(selectedProviderId)) {
-        errorObj.prvdrId = `Provider Id ${selectedProviderId} in /${constants.FIS_INIT} does not exist in /${constants.FIS_ONSELECT}`
+        errorObj.prvdrId = `Provider Id ${selectedProviderId} in /${constants.INIT} does not exist in /${constants.ON_SELECT}`
       } else {
         setValue('providerId', selectedProviderId)
       }
     } catch (error: any) {
       logger.error(
-        `!!Error while checking provider object in /${constants.FIS_ONSELECT} and /${constants.FIS_INIT}, ${error.stack}`,
+        `!!Error while checking provider object in /${constants.ON_SELECT} and /${constants.INIT}, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Comparing item object in /${constants.FIS_ONSELECT} and /${constants.FIS_INIT}`)
+      logger.info(`Comparing item object in /${constants.ON_SELECT} and /${constants.INIT}`)
       init.items.forEach((item: any, index: number) => {
         if (newItemIDSValue && !newItemIDSValue.includes(item.id)) {
           const key = `item[${index}].item_id`
@@ -81,20 +81,20 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
         Object.assign(errorObj, xinputErrors)
       })
     } catch (error: any) {
-      logger.error(`!!Error while comparing Item in /${constants.FIS_ONSELECT} and /${constants.FIS_INIT}`)
+      logger.error(`!!Error while comparing Item in /${constants.ON_SELECT} and /${constants.INIT}`)
     }
 
     try {
-      logger.info(`Checking payments in /${constants.FIS_INIT}`)
+      logger.info(`Checking payments in /${constants.INIT}`)
       init?.payments?.forEach((arr: any, i: number) => {
         if (!arr?.collected_by) {
-          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.FIS_ONSELECT}`
+          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.ON_SELECT}`
         } else {
           const srchCollectBy = getValue(`collected_by`)
           if (srchCollectBy != arr?.collected_by)
             errorObj[
               `payemnts[${i}]_collected_by`
-            ] = `payments.collected_by value sent in ${constants.FIS_ONSELECT} should be ${srchCollectBy} as sent in ${constants.FIS_INIT}`
+            ] = `payments.collected_by value sent in ${constants.ON_SELECT} should be ${srchCollectBy} as sent in ${constants.INIT}`
 
           if (arr?.collected_by === 'BPP' && 'id' in arr)
             errorObj[`payemnts[${i}]_id`] = `id should not be present if collector is BPP`
@@ -103,12 +103,12 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
         if (!arr?.type || arr?.type !== 'ON_ORDER') {
           errorObj[
             `payments[${i}]_type`
-          ] = `payments.params.type must be present in ${constants.FIS_INIT} & its value must be in a standard enum format (ON_ORDER)`
+          ] = `payments.params.type must be present in ${constants.INIT} & its value must be in a standard enum format (ON_ORDER)`
         }
 
         const params = arr.params
         if (!params?.bank_code) {
-          errorObj[`payments[${i}]_bank_code`] = `payments.params.bank_code must be present in ${constants.FIS_INIT}`
+          errorObj[`payments[${i}]_bank_code`] = `payments.params.bank_code must be present in ${constants.INIT}`
         } else {
           setValue('bank_code', params?.bank_code)
         }
@@ -116,7 +116,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
         if (!params?.bank_account_number) {
           errorObj[
             `payments[${i}]_bank_account_number`
-          ] = `payments.params.bank_account_number must be present in ${constants.FIS_INIT}`
+          ] = `payments.params.bank_account_number must be present in ${constants.INIT}`
         } else {
           setValue('bank_account_number', params?.bank_account_number)
         }
@@ -124,7 +124,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
         if (!params?.virtual_payment_address) {
           errorObj[
             `payments[${i}]_virtual_payment_address`
-          ] = `payments.params.virtual_payment_address must be present in ${constants.FIS_INIT}`
+          ] = `payments.params.virtual_payment_address must be present in ${constants.INIT}`
         } else {
           setValue('virtual_payment_address', params?.virtual_payment_address)
         }
@@ -136,12 +136,12 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
         }
       })
     } catch (error: any) {
-      logger.error(`!!Errors while checking payments in /${constants.FIS_INIT}, ${error.stack}`)
+      logger.error(`!!Errors while checking payments in /${constants.INIT}, ${error.stack}`)
     }
 
     return errorObj
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.FIS_INIT} API`, err)
+    logger.error(`!!Some error occurred while checking /${constants.INIT} API`, err)
     return { error: err.message }
   }
 }
@@ -154,7 +154,7 @@ const validateXInput = (item: any, index: number, sequence: string) => {
   } else {
     const formId: any = getValue(`formId`)
     if (!_.isEqual(formId, item?.xinput?.form?.id)) {
-      errorObj[`item${index}_formId`] = `Id mismatch in form for /${constants.FIS_ONSELECT} and /${constants.FIS_INIT}`
+      errorObj[`item${index}_formId`] = `Id mismatch in form for /${constants.ON_SELECT} and /${constants.INIT}`
     }
   }
 

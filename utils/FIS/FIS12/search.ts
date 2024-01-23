@@ -8,7 +8,7 @@ export const search = (data: any, msgIdSet: any, flow: string) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      errorObj[FisApiSequence.SEARCH] = 'Json cannot be empty'
+      errorObj[FisApiSequence.SEARCH] = 'JSON cannot be empty'
       return
     }
 
@@ -23,8 +23,8 @@ export const search = (data: any, msgIdSet: any, flow: string) => {
       return Object.keys(errorObj).length > 0 && errorObj
     }
 
-    const schemaValidation = validateSchema(data?.context?.domain.split(':')[1], constants.FIS_SEARCH, data)
-    const contextRes: any = checkFISContext(data.context, constants.FIS_SEARCH)
+    const schemaValidation = validateSchema(data?.context?.domain.split(':')[1], constants.SEARCH, data)
+    const contextRes: any = checkFISContext(data.context, constants.SEARCH)
 
     setValue(`${FisApiSequence.SEARCH}_context`, data.context)
     msgIdSet.add(data.context.message_id)
@@ -38,7 +38,7 @@ export const search = (data: any, msgIdSet: any, flow: string) => {
     }
 
     try {
-      logger.info(`Validating category object for /${constants.FIS_SEARCH}`)
+      logger.info(`Validating category object for /${constants.SEARCH}`)
       const code = data.message.intent?.category?.descriptor?.code
       if (code) {
         console.log('fisFlows[flow as keyof typeof fisFlows]', fisFlows[flow as keyof typeof fisFlows], code)
@@ -66,11 +66,11 @@ export const search = (data: any, msgIdSet: any, flow: string) => {
           },
         }
     } catch (error: any) {
-      logger.error(`!!Error occcurred while validating category in /${constants.FIS_SEARCH},  ${error.message}`)
+      logger.error(`!!Error occcurred while validating category in /${constants.SEARCH},  ${error.message}`)
     }
 
     try {
-      logger.info(`Validating payments object for /${constants.FIS_SEARCH}`)
+      logger.info(`Validating payments object for /${constants.SEARCH}`)
       const payment = data.message.intent?.payment
       const collectedBy = payment?.collected_by
 
@@ -89,7 +89,7 @@ export const search = (data: any, msgIdSet: any, flow: string) => {
         Object.assign(errorObj, { tags: tagsValidation.errors })
       }
     } catch (error: any) {
-      logger.error(`!!Error occcurred while validating payments in /${constants.FIS_SEARCH},  ${error.message}`)
+      logger.error(`!!Error occcurred while validating payments in /${constants.SEARCH},  ${error.message}`)
     }
 
     return Object.keys(errorObj).length > 0 && errorObj

@@ -9,7 +9,7 @@ import { validateProviderTags } from './tags'
 
 export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
   if (!data || isObjectEmpty(data)) {
-    return { [constants.FIS_ONSELECT]: 'Json cannot be empty' }
+    return { [constants.ON_SELECT]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data
@@ -17,8 +17,8 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.FIS_ONSELECT, data)
-  const contextRes: any = validateContext(context, msgIdSet, constants.FIS_SELECT, constants.FIS_ONSELECT)
+  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SELECT, data)
+  const contextRes: any = validateContext(context, msgIdSet, constants.SELECT, constants.ON_SELECT)
 
   const errorObj: any = {}
 
@@ -30,7 +30,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
     Object.assign(errorObj, contextRes.ERRORS)
   }
 
-  const select: any = getValue(`${constants.FIS_SELECT}`)
+  const select: any = getValue(`${constants.SELECT}`)
 
   try {
     const itemIdArray: any[] = []
@@ -52,7 +52,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
     }
 
     try {
-      logger.info(`Comparing Items object for /${constants.FIS_SELECT} and /${constants.FIS_ONSELECT}`)
+      logger.info(`Comparing Items object for /${constants.SELECT} and /${constants.ON_SELECT}`)
       onSelect.items.forEach((item: any, index: number) => {
         if (!newItemIDSValue.includes(item.id)) {
           const key = `item[${index}].item_id`
@@ -76,7 +76,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
             errorObj[`item${index}_price`] = `Price value mismatch for item: ${item.id}`
           }
 
-          const xinputValidationErrors = validateXInput(item?.xinput, 0, index, constants.FIS_ONSELECT)
+          const xinputValidationErrors = validateXInput(item?.xinput, 0, index, constants.ON_SELECT)
           if (xinputValidationErrors) {
             Object.assign(errorObj, xinputValidationErrors)
           }
@@ -116,14 +116,14 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
           } else {
             const submissionId = getValue(`select_submission_id`)
             if (!_.isEqual(submissionId, item?.xinput?.form_response?.submission_id)) {
-              errorObj.submission_id = `submission_id for /${constants.FIS_SELECT} and /${constants.FIS_ONSELECT} api should be the same as sent in previous call`
+              errorObj.submission_id = `submission_id for /${constants.SELECT} and /${constants.ON_SELECT} api should be the same as sent in previous call`
             }
           }
         }
       })
     } catch (error: any) {
       logger.error(
-        `!!Error while Comparing and Mapping Items in /${constants.FIS_ONSEARCH} and /${constants.FIS_SELECT}, ${error.stack}`,
+        `!!Error while Comparing and Mapping Items in /${constants.ON_SEARCH} and /${constants.SELECT}, ${error.stack}`,
       )
     }
 
@@ -133,7 +133,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
       Object.assign(errorObj, quoteErrors)
     }
   } catch (error: any) {
-    logger.error(`!!Error occcurred while checking message in /${constants.FIS_SELECT},  ${error.message}`)
+    logger.error(`!!Error occcurred while checking message in /${constants.SELECT},  ${error.message}`)
     return { error: error.message }
   }
 
@@ -149,26 +149,26 @@ const validateProvider = (provider: any) => {
       return providerErrors
     }
 
-    logger.info(`Comparing Provider Ids of /${constants.FIS_SELECT} and /${constants.FIS_ONSELECT}`)
+    logger.info(`Comparing Provider Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
     const prvrdID: any = getValue('providerId')
     if (!_.isEqual(prvrdID, provider.id)) {
-      providerErrors.prvdrId = `Provider Id for /${constants.FIS_SELECT} and /${constants.FIS_ONSELECT} api should be same`
+      providerErrors.prvdrId = `Provider Id for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
     }
   } catch (error: any) {
     logger.info(
-      `Error while comparing provider ids for /${constants.FIS_SELECT} and /${constants.FIS_ONSELECT} api, ${error.stack}`,
+      `Error while comparing provider ids for /${constants.SELECT} and /${constants.ON_SELECT} api, ${error.stack}`,
     )
   }
 
   try {
-    logger.info(`Validating Descriptor for /${constants.FIS_ONSELECT}`)
+    logger.info(`Validating Descriptor for /${constants.ON_SELECT}`)
 
     if (!provider?.descriptor) {
       providerErrors.descriptor = 'Provider descriptor is missing or invalid.'
       return providerErrors
     }
 
-    logger.info(`Validating Descriptor asdsafdsffor /${constants.FIS_ONSELECT}`)
+    logger.info(`Validating Descriptor asdsafdsffor /${constants.ON_SELECT}`)
 
     if (!Array.isArray(provider.descriptor.images) || provider.descriptor.images.length < 1) {
       providerErrors.images = 'Descriptor images must be an array with a minimum length of one.'
@@ -194,7 +194,7 @@ const validateProvider = (provider: any) => {
       })
     }
 
-    logger.info(`Validating Descriptor fo123123123r /${constants.FIS_ONSELECT}`)
+    logger.info(`Validating Descriptor fo123123123r /${constants.ON_SELECT}`)
 
     if (!provider.descriptor.name || !provider.descriptor.name.trim()) {
       providerErrors.name = `Provider name cannot be empty.`
@@ -214,7 +214,7 @@ const validateProvider = (provider: any) => {
       Object.assign(providerErrors, { tags: tagsValidation.errors })
     }
   } catch (error: any) {
-    logger.info(`Error while validating descriptor for /${constants.FIS_ONSELECT}, ${error.stack}`)
+    logger.info(`Error while validating descriptor for /${constants.ON_SELECT}, ${error.stack}`)
   }
 
   return providerErrors
@@ -224,7 +224,7 @@ const validateQuote = (onSelect: any) => {
   const errorObj: any = {}
 
   try {
-    logger.info(`Checking quote details in /${constants.FIS_ONSELECT}`)
+    logger.info(`Checking quote details in /${constants.ON_SELECT}`)
 
     const quote = onSelect.quote
     const quoteBreakup = quote.breakup
@@ -276,7 +276,7 @@ const validateQuote = (onSelect: any) => {
       errorObj.missingTTL = 'TTL is required in the quote'
     }
   } catch (error: any) {
-    logger.error(`!!Error while checking quote details in /${constants.FIS_ONSELECT}`, error.stack)
+    logger.error(`!!Error while checking quote details in /${constants.ON_SELECT}`, error.stack)
   }
 
   return errorObj

@@ -1,4 +1,4 @@
-module.exports = {
+const issueCloseSChema =  {
   type: 'object',
   properties: {
     context: {
@@ -6,7 +6,23 @@ module.exports = {
       properties: {
         domain: {
           type: 'string',
-          enum: ['nic2004:52110', 'nic2004:60232'],
+          enum: [
+            'nic2004:52110',
+            'nic2004:60232',
+            'ONDC:RET10',
+            'ONDC:RET11',
+            'ONDC:RET12',
+            'ONDC:RET13',
+            'ONDC:RET14',
+            'ONDC:RET15',
+            'ONDC:RET16',
+            'ONDC:RET17',
+            'ONDC:NTS10',
+            'ONDC:NTS11',
+            'ONDC:TRV10',
+            'ONDC:FIS10',
+            'ONDC:FIS11',
+          ],
         },
         action: {
           type: 'string',
@@ -182,3 +198,6 @@ module.exports = {
   },
   required: ['context', 'message'],
 }
+
+
+export default issueCloseSChema

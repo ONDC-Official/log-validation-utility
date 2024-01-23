@@ -16,12 +16,14 @@ export function checkOrganizationNameandDomain({
   contextSubscriberId,
   contextDomain,
   issueReportObj,
+  IdType,
 }: {
   endpoint: string
   actionPayload: any
   contextSubscriberId: string
   contextDomain: string
   issueReportObj: any
+  IdType: string
 }) {
   try {
     logger.info(`Checking organization's name for /${endpoint}_close`)
@@ -35,7 +37,7 @@ export function checkOrganizationNameandDomain({
       let org_id = org_name.split('::')
 
       if (!_.isEqual(contextSubscriberId, org_id[0])) {
-        issueReportObj.org_name = `Organization's Name for /${endpoint} api in message/issue/issue_actions/${actionType}/[${index}] mismatched with BAP ID`
+        issueReportObj.org_name = `Organization's Name for /${endpoint} api in message/issue/issue_actions/${actionType}/[${index}] mismatched with ${IdType} ID`
       }
 
       if (!_.lte(contextDomain, org_id[1])) {
@@ -76,10 +78,10 @@ export function compareUpdatedAtAndContextTimeStamp({
     // !_.isEqual(actionPayload[actionPayload.length - 1].updated_at, messageUpdatedAt) &&
     //   !messageUpdatedAt > actionPayload[actionPayload.length - 1].updated_at
 
-    if (!_.isEqual(actionPayload[actionPayload.length - 1].updated_at, messageUpdatedAt)) {
+    if (!_.lte(actionPayload[actionPayload.length - 1].updated_at, messageUpdatedAt)) {
       issueReportObj.updated_at = `The 'updated_at' of message/issue/issue_action/${actionType}/index[${
         actionPayload.length - 1
-      }]/updated_at should be the same as 'message/issue/update_at' in ${endpoint}`
+      }]/updated_at should be the same as or less than 'message/issue/update_at' in ${endpoint}`
     }
   } catch (error: any) {
     logger.error(`Error occurred while checking /${endpoint} message, ${error.stack}`)

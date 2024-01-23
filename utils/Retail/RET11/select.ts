@@ -12,7 +12,8 @@ import _ from 'lodash'
 import { logger } from '../../../shared/logger'
 
 const tagFinder = (item: { tags: any[] }, value: string): any => {
-  const res = item.tags.find((tag: any) => {
+  console.log('item', item)
+  const res = item?.tags?.find((tag: any) => {
     return (
       tag.code === 'type' &&
       tag.list &&
@@ -34,9 +35,9 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.RET_SELECT, data)
+  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.SELECT, data)
 
-  const contextRes: any = checkContext(context, constants.RET_SELECT)
+  const contextRes: any = checkContext(context, constants.SELECT)
   msgIdSet.add(context.message_id)
 
   const errorObj: any = {}
@@ -65,7 +66,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   const onSearchContext: any = getValue(`${ApiSequence.ON_SEARCH}_context`)
 
   try {
-    logger.info(`Comparing city of /${constants.RET_SEARCH} and /${constants.RET_SELECT}`)
+    logger.info(`Comparing city of /${constants.SEARCH} and /${constants.SELECT}`)
     if (!_.isEqual(searchContext.city, context.city)) {
       const key = `${ApiSequence.SEARCH}_city`
       errorObj[key] = `City code mismatch in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT}`
@@ -75,7 +76,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   }
 
   try {
-    logger.info(`Comparing city of /${constants.RET_ONSEARCH} and /${constants.RET_SELECT}`)
+    logger.info(`Comparing city of /${constants.ON_SEARCH} and /${constants.SELECT}`)
     if (!_.isEqual(onSearchContext.city, context.city)) {
       const key = `${ApiSequence.ON_SEARCH}_city`
       errorObj[key] = `City code mismatch in /${ApiSequence.ON_SEARCH} and /${ApiSequence.SELECT}`
@@ -85,20 +86,20 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   }
 
   try {
-    logger.info(`Comparing timestamp of /${constants.RET_ONSEARCH} and /${constants.RET_SELECT}`)
+    logger.info(`Comparing timestamp of /${constants.ON_SEARCH} and /${constants.SELECT}`)
     if (_.gte(onSearchContext.timestamp, context.timestamp)) {
-      errorObj.tmpstmp = `Timestamp for /${constants.RET_ONSEARCH} api cannot be greater than or equal to /${constants.RET_SELECT} api`
+      errorObj.tmpstmp = `Timestamp for /${constants.ON_SEARCH} api cannot be greater than or equal to /${constants.SELECT} api`
     }
 
     setValue('tmpstmp', context.timestamp)
   } catch (error: any) {
     logger.info(
-      `Error while comparing timestamp for /${constants.RET_ONSEARCH} and /${constants.RET_SELECT} api, ${error.stack}`,
+      `Error while comparing timestamp for /${constants.ON_SEARCH} and /${constants.SELECT} api, ${error.stack}`,
     )
   }
 
   try {
-    logger.info(`Comparing Message Ids of /${constants.RET_ONSEARCH} and /${constants.RET_SELECT}`)
+    logger.info(`Comparing Message Ids of /${constants.ON_SEARCH} and /${constants.SELECT}`)
     if (_.isEqual(onSearchContext.message_id, context.message_id)) {
       const key = `${ApiSequence.ON_SEARCH}_msgId`
       errorObj[key] = `Message Id for /${ApiSequence.ON_SEARCH} and /${ApiSequence.SELECT} api cannot be same`
@@ -113,7 +114,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     setValue('txnId', context.transaction_id)
   } catch (error: any) {
     logger.info(
-      `Error while comparing message ids for /${constants.RET_ONSEARCH} and /${constants.RET_SELECT} api, ${error.stack}`,
+      `Error while comparing message ids for /${constants.ON_SEARCH} and /${constants.SELECT} api, ${error.stack}`,
     )
   }
 
@@ -147,18 +148,18 @@ export const checkSelect = (data: any, msgIdSet: any) => {
       setValue('providerName', provider.descriptor.name)
 
       try {
-        logger.info(`Comparing provider location in /${constants.RET_ONSEARCH} and /${constants.RET_SELECT}`)
+        logger.info(`Comparing provider location in /${constants.ON_SEARCH} and /${constants.SELECT}`)
         if (provider.locations[0].id != select.provider.locations[0].id) {
-          errorObj.prvdLoc = `provider.locations[0].id ${provider.locations[0].id} mismatches in /${constants.RET_ONSEARCH} and /${constants.RET_SELECT}`
+          errorObj.prvdLoc = `provider.locations[0].id ${provider.locations[0].id} mismatches in /${constants.ON_SEARCH} and /${constants.SELECT}`
         }
       } catch (error: any) {
         logger.error(
-          `!!Error while comparing provider's location id in /${constants.RET_ONSEARCH} and /${constants.RET_SELECT}, ${error.stack}`,
+          `!!Error while comparing provider's location id in /${constants.ON_SEARCH} and /${constants.SELECT}, ${error.stack}`,
         )
       }
 
       logger.info(
-        `Mapping Item Ids with their counts, categories and prices /${constants.RET_ONSEARCH} and /${constants.RET_SELECT}`,
+        `Mapping Item Ids with their counts, categories and prices /${constants.ON_SEARCH} and /${constants.SELECT}`,
       )
 
       try {
@@ -255,7 +256,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
         )
 
         try {
-          logger.info(`Saving time_to_ship in /${constants.RET_ONSEARCH}`)
+          logger.info(`Saving time_to_ship in /${constants.ON_SEARCH}`)
           let timeToShip = 0
           itemsTat.forEach((tts: any) => {
             const ttship = isoDurToSec(tts)
@@ -265,7 +266,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
           logger.info('timeTOSHIP', timeToShip)
           setValue('timeToShip', timeToShip)
         } catch (error: any) {
-          logger.error(`!!Error while saving time_to_ship in ${constants.RET_ONSEARCH}`, error)
+          logger.error(`!!Error while saving time_to_ship in ${constants.ON_SEARCH}`, error)
         }
 
         setValue('itemsIdList', itemsIdList)
@@ -273,21 +274,21 @@ export const checkSelect = (data: any, msgIdSet: any) => {
         setValue('selectedPrice', selectedPrice)
         setValue('parentItemIdSet', parentItemIdSet)
 
-        logger.info(`Provider Id in /${constants.RET_ONSEARCH} and /${constants.RET_SELECT} matched`)
+        logger.info(`Provider Id in /${constants.ON_SEARCH} and /${constants.SELECT} matched`)
       } catch (error: any) {
         logger.error(
-          `!!Error while Comparing and Mapping Items in /${constants.RET_ONSEARCH} and /${constants.RET_SELECT}, ${error.stack}`,
+          `!!Error while Comparing and Mapping Items in /${constants.ON_SEARCH} and /${constants.SELECT}, ${error.stack}`,
         )
       }
     } else {
-      logger.info(`Provider Ids in /${constants.RET_ONSEARCH} and /${constants.RET_SELECT} mismatch`)
-      errorObj.prvdrIdMatch = `Provider Id ${select.provider.id} in /${constants.RET_SELECT} does not exist in /${constants.RET_ONSEARCH}`
+      logger.info(`Provider Ids in /${constants.ON_SEARCH} and /${constants.SELECT} mismatch`)
+      errorObj.prvdrIdMatch = `Provider Id ${select.provider.id} in /${constants.SELECT} does not exist in /${constants.ON_SEARCH}`
     }
 
     setValue('select_customIdArray', customIdArray)
     try {
       select.fulfillments.forEach((ff: any) => {
-        logger.info(`Checking GPS Precision in /${constants.RET_SELECT}`)
+        logger.info(`Checking GPS Precision in /${constants.SELECT}`)
 
         // eslint-disable-next-line no-prototype-builtins
         if (ff.hasOwnProperty('end')) {
@@ -303,15 +304,15 @@ export const checkSelect = (data: any, msgIdSet: any) => {
 
           // eslint-disable-next-line no-prototype-builtins
           if (!ff.end.location.address.hasOwnProperty('area_code')) {
-            errorObj.areaCode = `address.area_code is required property in /${constants.RET_SELECT}`
+            errorObj.areaCode = `address.area_code is required property in /${constants.SELECT}`
           }
         }
       })
     } catch (error: any) {
-      logger.error(`!!Error while checking GPS Precision in /${constants.RET_SELECT}, ${error.stack}`)
+      logger.error(`!!Error while checking GPS Precision in /${constants.SELECT}, ${error.stack}`)
     }
   } catch (error: any) {
-    logger.error(`!!Error occcurred while checking providers info in /${constants.RET_SELECT},  ${error.message}`)
+    logger.error(`!!Error occcurred while checking providers info in /${constants.SELECT},  ${error.message}`)
   }
 
   return Object.keys(errorObj).length > 0 && errorObj

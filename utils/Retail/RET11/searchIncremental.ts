@@ -22,8 +22,8 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
       return { missingFields: '/context, /message, /intent or /message/intent is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1] || 'RET11', constants.RET_SEARCH, data)
-    const contextRes: any = checkContext(context, constants.RET_SEARCH)
+    const schemaValidation = validateSchema(context.domain.split(':')[1] || 'RET11', constants.SEARCH, data)
+    const contextRes: any = checkContext(context, constants.SEARCH)
     setValue(`${ApiSequence.INC_SEARCH}_context`, context)
     msgIdSet.add(context.message_id)
 

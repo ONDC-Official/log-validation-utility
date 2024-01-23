@@ -31,13 +31,13 @@ export const checkSearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
 
     msgIdSet.add(data.context.message_id)
 
-    const schemaValidation = validateSchema('RET11', constants.RET_SEARCH, data)
+    const schemaValidation = validateSchema('RET11', constants.SEARCH, data)
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
     }
 
-    const contextRes: any = checkContext(data.context, constants.RET_SEARCH)
+    const contextRes: any = checkContext(data.context, constants.SEARCH)
     setValue(`${ApiSequence.SEARCH}_context`, data.context)
     msgIdSet.add(data.context.message_id)
 

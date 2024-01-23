@@ -18,7 +18,7 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
 
   const schemaValidation = validateSchema('RET11', 'on_search_inc', data)
 
-  const contextRes: any = checkContext(context, constants.RET_ONSEARCH)
+  const contextRes: any = checkContext(context, constants.ON_SEARCH)
   setValue(`${ApiSequence.INC_ONSEARCH}_context`, context)
   msgIdSet.add(context.message_id)
 
@@ -38,11 +38,11 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
   const onSearchMessage: any = getValue(`${ApiSequence.ON_SEARCH}_message`)
 
   try {
-    logger.info(`Storing BAP_ID and BPP_ID in /${constants.RET_ONSEARCH}`)
+    logger.info(`Storing BAP_ID and BPP_ID in /${constants.ON_SEARCH}`)
     setValue('bapId', context.bap_id)
     setValue('bppId', context.bpp_id)
   } catch (error: any) {
-    logger.error(`!!Error while storing BAP and BPP Ids in /${constants.RET_ONSEARCH}, ${error.stack}`)
+    logger.error(`!!Error while storing BAP and BPP Ids in /${constants.ON_SEARCH}, ${error.stack}`)
   }
 
   try {
@@ -85,7 +85,7 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
   const prvdrsId = new Set()
 
   try {
-    logger.info(`Checking Providers info (bpp/providers) in /${constants.RET_ONSEARCH}`)
+    logger.info(`Checking Providers info (bpp/providers) in /${constants.ON_SEARCH}`)
     let i = 0
     if (!_.isEmpty(onSearchCatalog['bpp/fulfillments'])) {
       errorObj.bppFulfillments = `bpp/fulfillments sent in payload shoulnd't be part of /${ApiSequence.INC_ONSEARCH} api`
@@ -286,31 +286,22 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
                   ] = `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/fulfillments`
                 }
 
-                logger.info(`Comparing fulfillment_id of /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api`)
+                logger.info(`Comparing fulfillment_id of /${constants.SEARCH} and /${constants.ON_SEARCH} api`)
 
                 if (item.fulfillment_id !== itemFullRefresh.fulfillment_id) {
                   const key = `prvdr${i}item${j}ff`
                   errorObj[
                     key
-                  ] = `fulfillment_id in /bpp/providers[${i}]/items[${j}] should be same as fulfillment_id sent in /${constants.RET_SEARCH} api call`
+                  ] = `fulfillment_id in /bpp/providers[${i}]/items[${j}] should be same as fulfillment_id sent in /${constants.SEARCH} api call`
                 }
 
-                logger.info(`Checking location_id for item id: ${item.id}`)
-
-                if (item.location_id && !prvdrLocId.has(item.location_id)) {
-                  const key = `prvdr${i}item${j}loc`
-                  errorObj[
-                    key
-                  ] = `location_id in /bpp/providers[${i}]/items[${j}] should be one of the locations id in /bpp/providers[${i}]/locations`
-                }
-
-                logger.info(`Comparing location_id of /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api`)
+                logger.info(`Comparing location_id of /${constants.SEARCH} and /${constants.ON_SEARCH} api`)
 
                 if (item.location_id !== itemFullRefresh.location_id) {
                   const key = `prvdr${i}item${j}ff`
                   errorObj[
                     key
-                  ] = `location_id in /bpp/providers[${i}]/items[${j}] should be same as location_id sent in /${constants.RET_SEARCH} api call`
+                  ] = `location_id in /bpp/providers[${i}]/items[${j}] should be same as location_id sent in /${constants.SEARCH} api call`
                 }
 
                 logger.info(`Checking consumer care details for item id: ${item.id}`)
@@ -473,8 +464,6 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
                 const itemWithoutTime = JSON.stringify(item, replaceTimestamp)
                 if (itemFullRefreshWithoutTime === itemWithoutTime)
                   errorObj.item = `Similar Item as in /${ApiSequence.ON_SEARCH} api call, item id- ${item?.id}`
-              } else {
-                errorObj.itemsObject = `Item with id ${item?.id} sent in payload was not found in any item sent in /${ApiSequence.ON_SEARCH} api `
               }
 
               j++
@@ -488,7 +477,7 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
       i++
     }
   } catch (error: any) {
-    logger.error(`!!Error while checking Providers info in /${constants.RET_ONSEARCH}, ${error.stack}`)
+    logger.error(`!!Error while checking Providers info in /${constants.ON_SEARCH}, ${error.stack}`)
   }
 
   return Object.keys(errorObj).length > 0 && errorObj

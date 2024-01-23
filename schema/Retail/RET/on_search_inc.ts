@@ -1,4 +1,4 @@
-export const onSearchSchema = {
+export const onSearchIncSchema = {
   type: 'object',
   properties: {
     context: {
@@ -6,7 +6,6 @@ export const onSearchSchema = {
       properties: {
         domain: {
           type: 'string',
-          minLength: 1,
         },
         action: {
           type: 'string',
@@ -14,11 +13,10 @@ export const onSearchSchema = {
         },
         country: {
           type: 'string',
-          minLength: 1,
+          const: 'IND',
         },
         city: {
           type: 'string',
-          minLength: 1,
         },
         core_version: {
           type: 'string',
@@ -26,27 +24,16 @@ export const onSearchSchema = {
         },
         bap_id: {
           type: 'string',
-          minLength: 1,
         },
         bap_uri: {
-          type: 'string',
-          minLength: 1,
-          format: 'url',
-        },
-        bpp_id: {
-          type: 'string',
-        },
-        bpp_uri: {
           type: 'string',
           format: 'url',
         },
         transaction_id: {
           type: 'string',
-          minLength: 1,
         },
         message_id: {
           type: 'string',
-          minLength: 1,
         },
         timestamp: {
           type: 'string',
@@ -55,6 +42,13 @@ export const onSearchSchema = {
         ttl: {
           type: 'string',
           format: 'duration',
+        },
+        bpp_id: {
+          type: 'string',
+        },
+        bpp_uri: {
+          type: 'string',
+          format: 'url',
         },
       },
       required: [
@@ -131,7 +125,7 @@ export const onSearchSchema = {
                     properties: {
                       label: {
                         type: 'string',
-                        enum: ['enable', 'disable'],
+                        enum: ['enable', 'disable', 'close'],
                       },
                       timestamp: {
                         type: 'string',
@@ -145,12 +139,6 @@ export const onSearchSchema = {
                     items: {
                       type: 'object',
                       properties: {
-                        id: {
-                          type: 'string',
-                        },
-                        type: {
-                          type: 'string',
-                        },
                         contact: {
                           type: 'object',
                           properties: {
@@ -167,7 +155,7 @@ export const onSearchSchema = {
                           required: ['phone', 'email'],
                         },
                       },
-                      required: ['id', 'type', 'contact'],
+                      required: ['contact'],
                     },
                   },
                   descriptor: {
@@ -194,8 +182,14 @@ export const onSearchSchema = {
                     },
                     required: ['name', 'symbol', 'short_desc', 'long_desc', 'images'],
                   },
+                  '@ondc/org/fssai_license_no': {
+                    type: 'string',
+                    minLength: 14,
+                    maxLength: 14,
+                  },
                   ttl: {
                     type: 'string',
+                    format: 'duration',
                   },
                   locations: {
                     type: 'array',
@@ -210,7 +204,7 @@ export const onSearchSchema = {
                           properties: {
                             label: {
                               type: 'string',
-                              enum: ['enable', 'disable'],
+                              enum: ['enable', 'disable', 'close'],
                             },
                             timestamp: {
                               type: 'string',
@@ -231,6 +225,7 @@ export const onSearchSchema = {
                                 },
                                 frequency: {
                                   type: 'string',
+                                  format: 'duration',
                                 },
                                 times: {
                                   type: 'array',
@@ -296,6 +291,7 @@ export const onSearchSchema = {
                               properties: {
                                 unit: {
                                   type: 'string',
+                                  const: 'km',
                                 },
                                 value: {
                                   type: 'string',
@@ -304,10 +300,10 @@ export const onSearchSchema = {
                               required: ['unit', 'value'],
                             },
                           },
-                          required: ['gps', 'radius'],
+                          required: ['radius', 'gps'],
                         },
                       },
-                      required: ['id', 'time', 'gps', 'address'],
+                      required: ['id', 'time'],
                     },
                   },
                   categories: {
@@ -318,11 +314,26 @@ export const onSearchSchema = {
                         id: {
                           type: 'string',
                         },
+                        parent_category_id: {
+                          type: 'string',
+                        },
                         descriptor: {
                           type: 'object',
                           properties: {
                             name: {
                               type: 'string',
+                            },
+                            short_desc: {
+                              type: 'string',
+                            },
+                            long_desc: {
+                              type: 'string',
+                            },
+                            images: {
+                              type: 'array',
+                              items: {
+                                type: 'string',
+                              },
                             },
                           },
                           required: ['name'],
@@ -355,7 +366,7 @@ export const onSearchSchema = {
                           },
                         },
                       },
-                      required: ['id', 'descriptor', 'tags'],
+                      required: ['id', 'tags'],
                     },
                   },
                   items: {
@@ -380,16 +391,10 @@ export const onSearchSchema = {
                           },
                           required: ['label', 'timestamp'],
                         },
-                        parent_item_id: {
-                          type: 'string',
-                        },
                         descriptor: {
                           type: 'object',
                           properties: {
                             name: {
-                              type: 'string',
-                            },
-                            code: {
                               type: 'string',
                             },
                             symbol: {
@@ -408,7 +413,7 @@ export const onSearchSchema = {
                               },
                             },
                           },
-                          required: ['name', 'symbol', 'short_desc', 'long_desc', 'images'],
+                          required: ['name'],
                         },
                         quantity: {
                           type: 'object',
@@ -421,6 +426,7 @@ export const onSearchSchema = {
                                   properties: {
                                     unit: {
                                       type: 'string',
+                                      enum: ['unit', 'dozen', 'gram', 'kilogram', 'tonne', 'litre', 'millilitre'],
                                     },
                                     value: {
                                       type: 'string',
@@ -436,7 +442,6 @@ export const onSearchSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
-                                  enum: ['99', '0'],
                                 },
                               },
                               required: ['count'],
@@ -451,13 +456,14 @@ export const onSearchSchema = {
                               required: ['count'],
                             },
                           },
-                          required: ['unitized', 'available', 'maximum'],
+                          required: ['available', 'maximum'],
                         },
                         price: {
                           type: 'object',
                           properties: {
                             currency: {
                               type: 'string',
+                              const: 'INR',
                             },
                             value: {
                               type: 'string',
@@ -471,11 +477,24 @@ export const onSearchSchema = {
                         category_id: {
                           type: 'string',
                         },
+                        category_ids: {
+                          type: 'array',
+                          items: {
+                            type: 'string',
+                            pattern: '^[a-zA-Z0-9]{1,12}:[a-zA-Z0-9]{1,12}$',
+                          },
+                        },
                         fulfillment_id: {
                           type: 'string',
                         },
                         location_id: {
                           type: 'string',
+                        },
+                        related: {
+                          type: 'boolean',
+                        },
+                        recommended: {
+                          type: 'boolean',
                         },
                         '@ondc/org/returnable': {
                           type: 'boolean',
@@ -498,56 +517,6 @@ export const onSearchSchema = {
                         '@ondc/org/contact_details_consumer_care': {
                           type: 'string',
                         },
-                        '@ondc/org/statutory_reqs_packaged_commodities': {
-                          type: 'object',
-                          properties: {
-                            manufacturer_or_packer_name: {
-                              type: 'string',
-                            },
-                            manufacturer_or_packer_address: {
-                              type: 'string',
-                            },
-                            common_or_generic_name_of_commodity: {
-                              type: 'string',
-                            },
-                            month_year_of_manufacture_packing_import: {
-                              type: 'string',
-                            },
-                          },
-                          required: [
-                            'manufacturer_or_packer_name',
-                            'manufacturer_or_packer_address',
-                            'common_or_generic_name_of_commodity',
-                            'month_year_of_manufacture_packing_import',
-                          ],
-                        },
-                        '@ondc/org/statutory_reqs_prepackaged_food': {
-                          type: 'object',
-                          properties: {
-                            nutritional_info: {
-                              type: 'string',
-                            },
-                            additives_info: {
-                              type: 'string',
-                            },
-                            brand_owner_FSSAI_license_no: {
-                              type: 'string',
-                            },
-                            other_FSSAI_license_no: {
-                              type: 'string',
-                            },
-                            importer_FSSAI_license_no: {
-                              type: 'string',
-                            },
-                          },
-                          required: [
-                            'nutritional_info',
-                            'additives_info',
-                            'brand_owner_FSSAI_license_no',
-                            'other_FSSAI_license_no',
-                            'importer_FSSAI_license_no',
-                          ],
-                        },
                         tags: {
                           type: 'array',
                           items: {
@@ -558,44 +527,25 @@ export const onSearchSchema = {
                               },
                               list: {
                                 type: 'array',
-                                items: [
-                                  {
-                                    type: 'object',
-                                    properties: {
-                                      code: {
-                                        type: 'string',
-                                      },
-                                      value: {
-                                        type: 'string',
-                                      },
+                                items: {
+                                  type: 'object',
+                                  properties: {
+                                    code: {
+                                      type: 'string',
                                     },
-                                    required: ['code', 'value'],
+                                    value: {
+                                      type: 'string',
+                                    },
                                   },
-                                ],
+                                  required: ['code', 'value'],
+                                },
                               },
                             },
                             required: ['code', 'list'],
                           },
                         },
                       },
-                      required: [
-                        'id',
-                        'time',
-                        'descriptor',
-                        'quantity',
-                        'price',
-                        'category_id',
-                        'fulfillment_id',
-                        'location_id',
-                        '@ondc/org/returnable',
-                        '@ondc/org/cancellable',
-                        '@ondc/org/return_window',
-                        '@ondc/org/seller_pickup_return',
-                        '@ondc/org/time_to_ship',
-                        '@ondc/org/available_on_cod',
-                        '@ondc/org/contact_details_consumer_care',
-                        'tags',
-                      ],
+                      required: ['id', 'descriptor', 'quantity', 'price', 'category_id', 'tags'],
                     },
                   },
                   tags: {
@@ -626,11 +576,11 @@ export const onSearchSchema = {
                     },
                   },
                 },
-                required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],
+                required: ['id'],
               },
             },
           },
-          required: ['bpp/fulfillments', 'bpp/descriptor', 'bpp/providers'],
+          required: ['bpp/providers'],
         },
       },
       required: ['catalog'],

@@ -2,7 +2,7 @@ import { Response, Request } from 'express'
 import _ from 'lodash'
 import { IGMvalidateLogs, validateActionSchema, validateLogs } from '../../shared/validateLogs'
 import { logger } from '../../shared/logger'
-import { actionsArray, fisFlows } from '../../constants'
+import { actionsArray } from '../../constants'
 import { validateLogsForFIS12 } from '../../shared/Actions/FIS12Actions'
 import { validateLogsForMobility } from '../../shared/Actions/mobilityActions'
 import {validateLogsForMetro} from   '../..shared/Actions/metroActions'
@@ -34,24 +34,9 @@ const controller = {
   validateFIS: async (req: Request, res: Response): Promise<void> => {
     try {
       const { domain, version, payload, flow } = req.body
-      let response
-
-      if (!(flow in fisFlows)) {
-        res.status(400).send({ success: false, response: 'Invalid Flow!!' })
-      } else {
-        switch (version) {
-          case '1.2.0':
-            response = validateLogsForFIS12(payload, domain, flow)
-            break
-          default:
-            logger.warn('Invalid Version!! ')
-            res.status(400).send({ success: false, response: 'Invalid Version!! Please Enter a valid Version' })
-            return
-        }
-
-        if (!_.isEmpty(response)) res.status(400).send({ success: false, response: response })
-        else res.status(200).send({ success: true, response: response })
-      }
+      const response = validateLogsForFIS12(payload, domain, flow, version)
+      if (!_.isEmpty(response)) res.status(400).send({ success: false, response: response })
+      else res.status(200).send({ success: true, response: response })
     } catch (error) {
       logger.error(error)
       res.status(500).send({ success: false, error: error })
@@ -121,18 +106,7 @@ const controller = {
   validateMobility: async (req: Request, res: Response): Promise<void> => {
     try {
       const { domain, version, payload, flow } = req.body
-      let response
-
-      switch (version) {
-        case '2.0.0':
-          response = validateLogsForMobility(payload, domain, flow)
-          break
-        default:
-          logger.warn('Invalid Version!! ')
-          res.status(400).send({ success: false, response: 'Invalid Version!! Please Enter a valid Version' })
-          return
-      }
-
+      const response = validateLogsForMobility(payload, domain, flow, version)
       if (!_.isEmpty(response)) res.status(400).send({ success: false, response: response })
       else res.status(200).send({ success: true, response: response })
     } catch (error) {

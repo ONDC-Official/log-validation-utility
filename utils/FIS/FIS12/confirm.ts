@@ -124,7 +124,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
 
         const collectedBy = getValue(`collected_by`)
         if (collectedBy && collectedBy !== confirm.payments[0].collected_by) {
-          errorObj.collectedBy = `Collected_By didn't matched with what was send in previous call.`
+          errorObj.collectedBy = `Collected_By didn't match with what was sent in previous call.`
         } else {
           if (!allowedCollectedByValues.includes(confirm.payments[0].collected_by)) {
             errorObj.collectedBy = `Invalid value for collected_by. It should be either BPP or BAP.`

@@ -238,7 +238,7 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
 
         const collectedBy = getValue(`collected_by`)
         if (collectedBy && collectedBy !== payments[0].collected_by) {
-          onStatusObj.collectedBy = `Collected_By didn't matched with what was send in previous call.`
+          onStatusObj.collectedBy = `Collected_By didn't match with what was sent in previous call.`
         } else {
           if (!allowedCollectedByValues.includes(payments[0].collected_by)) {
             onStatusObj.collectedBy = `Invalid value for collected_by. It should be either BPP or BAP.`

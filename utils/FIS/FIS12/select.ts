@@ -8,7 +8,7 @@ import { validateContext } from './fisChecks'
 
 export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
   if (!data || isObjectEmpty(data)) {
-    return { [constants.FIS_SELECT]: 'Json cannot be empty' }
+    return { [constants.SELECT]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data
@@ -16,8 +16,8 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.FIS_SELECT, data)
-  const contextRes: any = validateContext(context, msgIdSet, constants.FIS_ONSEARCH, constants.FIS_SELECT)
+  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.SELECT, data)
+  const contextRes: any = validateContext(context, msgIdSet, constants.ON_SEARCH, constants.SELECT)
 
   const errorObj: any = {}
 
@@ -29,7 +29,7 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
     Object.assign(errorObj, contextRes.ERRORS)
   }
 
-  setValue(`${constants.FIS_SELECT}`, data)
+  setValue(`${constants.SELECT}`, data)
 
   const onSearch: any = getValue(`${FisApiSequence.ON_SEARCH}`)
 
@@ -39,25 +39,25 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
     const selectedIds: any[] = []
 
     try {
-      logger.info(`Comparing Provider object for /${constants.FIS_ONSEARCH} and /${constants.FIS_SELECT}`)
+      logger.info(`Comparing Provider object for /${constants.ON_SEARCH} and /${constants.SELECT}`)
       const providerIDs = onSearch?.message?.catalog['providers']?.map((provider: { id: any }) => provider?.id)
       const selectedProviderId = select.provider.id
 
       if (!providerIDs || providerIDs.length === 0) {
         logger.info(`Skipping Provider Ids check due to insufficient data`)
       } else if (!providerIDs.includes(selectedProviderId)) {
-        errorObj.prvdrId = `Provider Id ${selectedProviderId} in /${constants.FIS_SELECT} does not exist in /${constants.FIS_ONSEARCH}`
+        errorObj.prvdrId = `Provider Id ${selectedProviderId} in /${constants.SELECT} does not exist in /${constants.ON_SEARCH}`
       } else {
         setValue('providerId', selectedProviderId)
       }
     } catch (error: any) {
       logger.info(
-        `Error while comparing provider ids for /${constants.FIS_ONSEARCH} and /${constants.FIS_SELECT} api, ${error.stack}`,
+        `Error while comparing provider ids for /${constants.ON_SEARCH} and /${constants.SELECT} api, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Comparing Items object for /${constants.FIS_ONSEARCH} and /${constants.FIS_SELECT}`)
+      logger.info(`Comparing Items object for /${constants.ON_SEARCH} and /${constants.SELECT}`)
       select.items.forEach((item: any, index: number) => {
         if (storedItemIDS && !storedItemIDS.includes(item.id)) {
           const key = `item[${index}].item_id`
@@ -73,11 +73,11 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
       setValue('ItmIDS', selectedIds)
     } catch (error: any) {
       logger.error(
-        `!!Error while Comparing and Mapping Items in /${constants.FIS_ONSEARCH} and /${constants.FIS_SELECT}, ${error.stack}`,
+        `!!Error while Comparing and Mapping Items in /${constants.ON_SEARCH} and /${constants.SELECT}, ${error.stack}`,
       )
     }
   } catch (error: any) {
-    logger.error(`!!Error occcurred while checking providers info in /${constants.FIS_SELECT},  ${error.message}`)
+    logger.error(`!!Error occcurred while checking providers info in /${constants.SELECT},  ${error.message}`)
     return { error: error.message }
   }
 
@@ -92,9 +92,7 @@ const validateXInput = (item: any, index: number, sequence: string) => {
   } else {
     const formId: any = getValue(`formId`)
     if (!_.isEqual(formId, item?.xinput?.form?.id)) {
-      errorObj[
-        `item${index}_formId`
-      ] = `Id mismatch in form for /${constants.FIS_ONSEARCH} and /${constants.FIS_SELECT}`
+      errorObj[`item${index}_formId`] = `Id mismatch in form for /${constants.ON_SEARCH} and /${constants.SELECT}`
     }
   }
 

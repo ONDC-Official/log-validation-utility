@@ -18,7 +18,7 @@ const checkIssue = (data: any) => {
   let res: any = {}
 
   if (!data || isObjectEmpty(data)) {
-    return { [IGMApiSequence.RET_ON_ISSUE]: 'Json cannot be empty' }
+    return { [IGMApiSequence.RET_ISSUE]: 'Json cannot be empty' }
   }
 
   try {
@@ -100,6 +100,7 @@ const checkIssue = (data: any) => {
       contextSubscriberId: issue.context.bap_id,
       contextDomain: issue.context.domain,
       issueReportObj: issueObj,
+      IdType: 'BAP',
     })
 
     compareUpdatedAtAndContextTimeStamp({

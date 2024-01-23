@@ -210,7 +210,6 @@ export const validateSchema = (domain: string, api: string, data: any) => {
   logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
   const errObj: any = {}
 
-  console.log('domain, api', domain, api)
   const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
 
   const datavld = schmaVldtr
@@ -593,7 +592,6 @@ export function areGSTNumbersDifferent(tags: any[]): boolean {
   const bppTermsObject = tags.find((tag) => tag.code === 'bpp_terms')
   const bppTaxNumber = findTaxNumber(bppTermsObject)
 
-  console.log('bppTaxNumber', bppTaxNumber)
   // Find the "tax_number" in "bap_terms"
   const bapTermsObject = tags.find((tag) => tag.code === 'bap_terms')
   const bapTaxNumber = findTaxNumber(bapTermsObject)
@@ -720,4 +718,36 @@ export const checkIdAndUri = (id: string, uri: string, type: string) => {
     console.error('Error:', e)
     return e.message || 'An error occurred during validation'
   }
+}
+
+export function compareObjects(obj1: any, obj2: any, parentKey?: string): string[] {
+  const errors: string[] = []
+
+  // Check if obj1 or obj2 is undefined or null
+  if (obj1 === null || obj1 === undefined || obj2 === null || obj2 === undefined) {
+    errors.push('One of the objects is undefined or null')
+    return errors
+  }
+
+  const keys1 = Object.keys(obj1)
+  const keys2 = Object.keys(obj2)
+
+  // Check for key length mismatch
+  if (keys1.length !== keys2.length) {
+    errors.push(`Key length mismatch for ${parentKey || 'root'}`)
+    return errors // Stop comparing if key length mismatch is detected
+  }
+
+  for (const key of keys1) {
+    const fullKey = parentKey ? `${parentKey}.${key}` : key
+
+    if (typeof obj1[key] === 'object' && typeof obj2[key] === 'object') {
+      const nestedErrors = compareObjects(obj1[key], obj2[key], fullKey)
+      errors.push(...nestedErrors)
+    } else if (obj1[key] !== obj2[key]) {
+      errors.push(`Key '${fullKey}' mismatch: ${obj1[key]} !== ${obj2[key]}`)
+    }
+  }
+
+  return errors
 }

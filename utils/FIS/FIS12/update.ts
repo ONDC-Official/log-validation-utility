@@ -5,7 +5,7 @@ import { validateContext } from './fisChecks'
 
 export const checkUpdate = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [FisApiSequence.UPDATE]: 'Json cannot be empty' }
+    return { [FisApiSequence.UPDATE]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data
@@ -13,8 +13,8 @@ export const checkUpdate = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.FIS_UPDATE, data)
-  const contextRes: any = validateContext(context, msgIdSet, constants.FIS_ONCONFIRM, constants.FIS_UPDATE)
+  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.UPDATE, data)
+  const contextRes: any = validateContext(context, msgIdSet, constants.ON_CONFIRM, constants.UPDATE)
   msgIdSet.add(context.message_id)
 
   const errorObj: any = {}

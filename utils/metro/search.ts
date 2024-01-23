@@ -23,8 +23,8 @@ export const search = (data: any, msgIdSet: any) => {
       return Object.keys(errorObj).length > 0 && errorObj
     }
 
-    const schemaValidation = validateSchema(data.context.domain.split(':')[1], constants.MET_SEARCH, data)
-    const contextRes: any = checkMetroContext(data.context, constants.MET_SEARCH)
+    const schemaValidation = validateSchema(data.context.domain.split(':')[1], constants.SEARCH, data)
+    const contextRes: any = checkMetroContext(data.context, constants.SEARCH)
     setValue(`${metroSequence.SEARCH}_context`, data.context)
     msgIdSet.add(data.context.message_id)
 
@@ -96,16 +96,14 @@ export const search = (data: any, msgIdSet: any) => {
     }
 
     try {
-      logger.info(`Validating payments object for /${constants.MET_SEARCH}`)
+      logger.info(`Validating payments object for /${constants.SEARCH}`)
       const payment = data.message.intent?.payment
       const collectedBy = payment?.collected_by
 
       if (!collectedBy) {
         errorObj[`collected_by`] = `collected_by must be present in payment object`
       } else if (collectedBy !== 'BPP' && collectedBy !== 'BAP') {
-        errorObj[
-          'collected_by'
-        ] = `payment.collected_by can only be either 'BPP' or 'BAP' in ${metroSequence.SEARCH}`
+        errorObj['collected_by'] = `payment.collected_by can only be either 'BPP' or 'BAP' in ${metroSequence.SEARCH}`
       } else {
         setValue(`collected_by`, collectedBy)
       }
@@ -117,7 +115,7 @@ export const search = (data: any, msgIdSet: any) => {
         Object.assign(errorObj, { tags: tagsValidation.errors })
       }
     } catch (error: any) {
-      logger.error(`!!Error occcurred while validating payments in /${constants.MET_SEARCH},  ${error.message}`)
+      logger.error(`!!Error occcurred while validating payments in /${constants.SEARCH},  ${error.message}`)
     }
 
     return Object.keys(errorObj).length > 0 && errorObj

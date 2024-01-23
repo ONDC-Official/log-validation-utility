@@ -122,6 +122,7 @@ const checkOnIssue = (data: any) => {
       contextSubscriberId: on_issue.context.bpp_id,
       contextDomain: on_issue.context.domain,
       issueReportObj: onissueObj,
+      IdType: 'BPP',
     })
 
     compareUpdatedAtAndContextTimeStamp({

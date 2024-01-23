@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { checkSearchFullCatalogRefresh } from '../utils/Retail/RET11/searchFullCatalogRefresh'
 import { dropDB } from '../shared/dao'
 import { logger } from './logger'
-import { ApiSequence, IGMApiSequence } from '../constants'
+import { ApiSequence, retailDomains, IGMApiSequence } from '../constants'
 import { checkSearchIncremental } from '../utils/Retail/RET11/searchIncremental'
 import { validateSchema, isObjectEmpty } from '../utils'
 import { checkOnsearchFullCatalogRefresh } from '../utils/Retail/RET11/onSearch'
@@ -33,6 +33,7 @@ import checkLspOnIssue from '../utils/igm/lspOnIssue'
 import checkOnIssueStatus from '../utils/igm/retOnIssueStatus'
 import checkOnIssueStatusUnsolicited from '../utils/igm/retOnIssueStatus(unsolicited)'
 import checkLspIssueClose from '../utils/igm/lspIssue(close)'
+import checkIssueClose from '../utils/igm/retIssueClose'
 
 export const validateLogs = (data: any, domain: string) => {
   const msgIdSet = new Set()
@@ -191,6 +192,10 @@ export const validateLogs = (data: any, domain: string) => {
       logger.info(logReport, 'Report Generated Successfully!!')
       return logReport
     } else {
+      if (!retailDomains.includes(domain)) {
+        return 'Domain should be one of the 1.2.0 retail domains'
+      }
+
       if (data[ApiSequence.SEARCH]) {
         const searchFullCatalogRefreshResp = checkSearch(data[ApiSequence.SEARCH], msgIdSet)
         if (!_.isEmpty(searchFullCatalogRefreshResp)) {
@@ -327,6 +332,14 @@ export const IGMvalidateLogs = (data: any) => {
       }
     }
 
+    if (data[IGMApiSequence.RET_ISSUE_CLOSE]) {
+      const ret_issue_close = checkIssueClose(data[IGMApiSequence.RET_ISSUE_CLOSE])
+
+      if (!_.isEmpty(ret_issue_close)) {
+        logReport = { ...logReport, [`${IGMApiSequence.RET_ISSUE}_CLOSE`]: ret_issue_close }
+      }
+    }
+
     if (data[IGMApiSequence.RET_ON_ISSUE]) {
       const ret_onissue = checkOnIssue(data[IGMApiSequence.RET_ON_ISSUE])
 
@@ -389,9 +402,6 @@ export const IGMvalidateLogs = (data: any) => {
       if (!_.isEmpty(lsp_issue_status)) {
         logReport = { ...logReport, [IGMApiSequence.LSP_ISSUE_STATUS]: lsp_issue_status }
       }
-
-      logger.info(logReport, 'Report Generated Successfully!!')
-      return logReport
     }
 
     if (data[IGMApiSequence.LSP_ON_ISSUE_STATUS]) {
@@ -401,6 +411,9 @@ export const IGMvalidateLogs = (data: any) => {
         logReport = { ...logReport, [IGMApiSequence.LSP_ON_ISSUE_STATUS]: lsp_on_issue }
       }
     }
+
+    logger.info(logReport, 'Report Generated Successfully!!')
+    return logReport
   } catch (error: any) {
     logger.error(error.message)
     return error.message
@@ -410,26 +423,13 @@ export const IGMvalidateLogs = (data: any) => {
 export const validateActionSchema = (data: any, domain: string, action: string) => {
   const errorObj: any = {}
 
-  switch (domain) {
-    case 'ONDC:RET11': {
-      const schemaError = validateSchema('RET11', action, data)
-      if (schemaError !== 'error') Object.assign(errorObj, schemaError)
-      return isObjectEmpty(errorObj) ? false : errorObj
-    }
-
-    case 'ONDC:RET10': {
-      const schemaError = validateSchema('RET10', action, data)
-      if (schemaError !== 'error') Object.assign(errorObj, schemaError)
-      return isObjectEmpty(errorObj) ? false : errorObj
-    }
-
-    case 'ONDC:RET12': {
-      const schemaError = validateSchema('RET12', action, data)
-      if (schemaError !== 'error') Object.assign(errorObj, schemaError)
-      return isObjectEmpty(errorObj) ? false : errorObj
-    }
-
-    default:
-      return 'Invalid Domain!! Please Enter a valid domain'
+  if (domain === 'ONDC:RET11') {
+    const schemaError = validateSchema('RET11', action, data)
+    if (schemaError !== 'error') Object.assign(errorObj, schemaError)
+    return isObjectEmpty(errorObj) ? false : errorObj
+  } else {
+    const schemaError = validateSchema('RET10', action, data)
+    if (schemaError !== 'error') Object.assign(errorObj, schemaError)
+    return isObjectEmpty(errorObj) ? false : errorObj
   }
 }

@@ -57,8 +57,8 @@ const checkOnIssueStatusUnsolicited = (data: any) => {
 
     try {
       logger.info(`Comparing transaction ID of /${constants.RET_ISSUE} and /${constants.RET_ONISSUE_STATUS}`)
-      if (_.isEqual(getValue('igmTxnId'), onIssueStatus.context.transaction_id)) {
-        onIssueStatusObj.igmTxnId = `transaction ID should not matched in /${constants.RET_ISSUE} and /${constants.RET_ONISSUE_STATUS}(unsolicited)`
+      if (!_.isEqual(getValue('igmTxnId'), onIssueStatus.context.transaction_id)) {
+        onIssueStatusObj.igmTxnId = `transaction ID should matched in /${constants.RET_ISSUE} and /${constants.RET_ONISSUE_STATUS}(unsolicited)`
       }
     } catch (error: any) {
       logger.error(
@@ -68,8 +68,8 @@ const checkOnIssueStatusUnsolicited = (data: any) => {
 
     try {
       logger.info(`Comparing MESSAGE ID of /${constants.RET_ISSUE_STATUS} and /${constants.RET_ONISSUE_STATUS}`)
-      if (!_.isEqual(getValue('igmIssueStatMsgId'), onIssueStatus.context.message_id)) {
-        onIssueStatusObj.igmIssueMsgId = `Message  ID mismatch in /${constants.RET_ISSUE_STATUS} and /${constants.RET_ONISSUE_STATUS}`
+      if (_.isEqual(getValue('igmIssueStatMsgId'), onIssueStatus.context.message_id)) {
+        onIssueStatusObj.igmIssueMsgId = `MessageId should not match in /${constants.RET_ISSUE_STATUS} and /${constants.RET_ONISSUE_STATUS}(unsolicited)`
       }
     } catch (error: any) {
       logger.error(
@@ -124,6 +124,7 @@ const checkOnIssueStatusUnsolicited = (data: any) => {
       contextSubscriberId: onIssueStatus.context.bpp_id,
       contextDomain: onIssueStatus.context.domain,
       issueReportObj: onIssueStatusObj,
+      IdType: 'BPP',
     })
 
     compareUpdatedAtAndContextTimeStamp({

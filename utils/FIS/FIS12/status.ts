@@ -5,7 +5,7 @@ import { validateContext } from './fisChecks'
 
 export const checkStatus = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [FisApiSequence.STATUS]: 'Json cannot be empty' }
+    return { [FisApiSequence.STATUS]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data
@@ -13,8 +13,8 @@ export const checkStatus = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.FIS_STATUS, data)
-  const contextRes: any = validateContext(context, msgIdSet, constants.FIS_ONCONFIRM, constants.FIS_STATUS)
+  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.STATUS, data)
+  const contextRes: any = validateContext(context, msgIdSet, constants.ON_CONFIRM, constants.STATUS)
   msgIdSet.add(context.message_id)
 
   const errorObj: any = {}
@@ -31,7 +31,7 @@ export const checkStatus = (data: any, msgIdSet: any) => {
 
   if (!message.ref_id) {
     const key = `${FisApiSequence.STATUS}_ref_id`
-    errorObj[key] = `ref_id in /${constants.FIS_STATUS} must be present`
+    errorObj[key] = `ref_id in /${constants.STATUS} must be present`
   }
 
   return Object.keys(errorObj).length > 0 && errorObj

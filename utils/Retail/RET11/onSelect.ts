@@ -30,9 +30,9 @@ export const checkOnSelect = (data: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.RET_ONSELECT, data)
+  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SELECT, data)
 
-  const contextRes: any = checkContext(context, constants.RET_ONSELECT)
+  const contextRes: any = checkContext(context, constants.ON_SELECT)
 
   const errorObj: any = {}
 
@@ -54,66 +54,64 @@ export const checkOnSelect = (data: any) => {
   const select: any = getValue(`${ApiSequence.SELECT}`)
 
   try {
-    logger.info(`Comparing city of /${constants.RET_SEARCH} and /${constants.RET_ONSELECT}`)
+    logger.info(`Comparing city of /${constants.SEARCH} and /${constants.ON_SELECT}`)
     if (!_.isEqual(searchContext.city, context.city)) {
-      errorObj.city = `City code mismatch in /${constants.RET_SEARCH} and /${constants.RET_ONSELECT}`
+      errorObj.city = `City code mismatch in /${constants.SEARCH} and /${constants.ON_SELECT}`
     }
   } catch (error: any) {
-    logger.error(
-      `!!Error while comparing city in /${constants.RET_SEARCH} and /${constants.RET_ONSELECT}, ${error.stack}`,
-    )
+    logger.error(`!!Error while comparing city in /${constants.SEARCH} and /${constants.ON_SELECT}, ${error.stack}`)
   }
 
   try {
-    logger.info(`Comparing timestamp of /${constants.RET_SELECT} and /${constants.RET_ONSELECT}`)
+    logger.info(`Comparing timestamp of /${constants.SELECT} and /${constants.ON_SELECT}`)
     const tmpstmp = select.context.timestamp
     if (_.gte(tmpstmp, context.timestamp)) {
-      errorObj.tmpstmp = `Timestamp for /${constants.RET_SELECT} api cannot be greater than or equal to /${constants.RET_ONSELECT} api`
+      errorObj.tmpstmp = `Timestamp for /${constants.SELECT} api cannot be greater than or equal to /${constants.ON_SELECT} api`
     } else {
       const timeDifference = timeDiff(context.timestamp, tmpstmp)
       logger.info(timeDifference)
       if (timeDifference > 5000) {
-        errorObj.tmpstmp = `context/timestamp difference between /${constants.RET_ONSELECT} and /${constants.RET_SELECT} should be smaller than 5 sec`
+        errorObj.tmpstmp = `context/timestamp difference between /${constants.ON_SELECT} and /${constants.SELECT} should be smaller than 5 sec`
       }
     }
 
     setValue('tmpstmp', context.timestamp)
   } catch (error: any) {
     logger.error(
-      `!!Error while comparing timestamp for /${constants.RET_SELECT} and /${constants.RET_ONSELECT}, ${error.stack}`,
+      `!!Error while comparing timestamp for /${constants.SELECT} and /${constants.ON_SELECT}, ${error.stack}`,
     )
   }
 
   try {
-    logger.info(`Comparing transaction Ids of /${constants.RET_SELECT} and /${constants.RET_ONSELECT}`)
+    logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
     if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
-      errorObj.txnId = `Transaction Id should be same from /${constants.RET_SELECT} onwards`
+      errorObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
     }
   } catch (error: any) {
     logger.error(
-      `!!Error while comparing transaction ids for /${constants.RET_SELECT} and /${constants.RET_ONSELECT} api, ${error.stack}`,
+      `!!Error while comparing transaction ids for /${constants.SELECT} and /${constants.ON_SELECT} api, ${error.stack}`,
     )
   }
 
   try {
-    logger.info(`Comparing Message Ids of /${constants.RET_SELECT} and /${constants.RET_ONSELECT}`)
+    logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
     if (!_.isEqual(select.context.message_id, context.message_id)) {
-      errorObj.msgId = `Message Id for /${constants.RET_SELECT} and /${constants.RET_ONSELECT} api should be same`
+      errorObj.msgId = `Message Id for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
     }
   } catch (error: any) {
     logger.info(
-      `Error while comparing message ids for /${constants.RET_SELECT} and /${constants.RET_ONSELECT} api, ${error.stack}`,
+      `Error while comparing message ids for /${constants.SELECT} and /${constants.ON_SELECT} api, ${error.stack}`,
     )
   }
 
   let on_select_error: any = {}
   try {
-    logger.info(`Checking domain-error in /${constants.RET_ONSELECT}`)
+    logger.info(`Checking domain-error in /${constants.ON_SELECT}`)
     if (data.hasOwnProperty('error')) {
       on_select_error = data.error
     }
   } catch (error: any) {
-    logger.info(`Error while checking domain-error in /${constants.RET_ONSELECT}, ${error.stack}`)
+    logger.info(`Error while checking domain-error in /${constants.ON_SELECT}, ${error.stack}`)
   }
 
   const on_select: any = message.order
@@ -121,13 +119,13 @@ export const checkOnSelect = (data: any) => {
   const itemFlfllmnts: any = {}
 
   try {
-    logger.info(`Checking provider id in /${constants.RET_ONSEARCH} and /${constants.RET_ONSELECT}`)
+    logger.info(`Checking provider id in /${constants.ON_SEARCH} and /${constants.ON_SELECT}`)
     if (getValue('providerId') != on_select.provider.id) {
-      errorObj.prvdrId = `provider.id mismatches in /${constants.RET_ONSEARCH} and /${constants.RET_ONSELECT}`
+      errorObj.prvdrId = `provider.id mismatches in /${constants.ON_SEARCH} and /${constants.ON_SELECT}`
     }
   } catch (error: any) {
     logger.info(
-      `Error while comparing provider ids in /${constants.RET_ONSEARCH} and /${constants.RET_ONSELECT}, ${error.stack}`,
+      `Error while comparing provider ids in /${constants.ON_SEARCH} and /${constants.ON_SELECT}, ${error.stack}`,
     )
   }
 
@@ -145,9 +143,7 @@ export const checkOnSelect = (data: any) => {
       i++
     }
   } catch (error: any) {
-    logger.error(
-      `!!Error while checking Item Id and Fulfillment Id Mapping in /${constants.RET_ONSELECT}, ${error.stack}`,
-    )
+    logger.error(`!!Error while checking Item Id and Fulfillment Id Mapping in /${constants.ON_SELECT}, ${error.stack}`)
   }
 
   try {
@@ -166,28 +162,28 @@ export const checkOnSelect = (data: any) => {
   }
 
   try {
-    logger.info(`Checking TAT and TTS in /${constants.RET_ONSELECT}`)
+    logger.info(`Checking TAT and TTS in /${constants.ON_SELECT}`)
     const tts: any = getValue('timeToShip')
     on_select.fulfillments.forEach((ff: { [x: string]: any }, indx: any) => {
       const tat = isoDurToSec(ff['@ondc/org/TAT'])
 
       if (tat < tts) {
-        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.RET_ONSELECT} can't be smaller than @ondc/org/time_ship (O2S) in /${constants.RET_ONSEARCH}`
+        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be smaller than @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
       }
 
       if (tat === tts) {
-        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.RET_ONSELECT} can't be equal to @ondc/org/time_ship (O2S) in /${constants.RET_ONSEARCH}`
+        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be equal to @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
       }
 
       logger.info(tat, 'asdfasdf', tts)
     })
   } catch (error: any) {
-    logger.error(`!!Error while checking TAT and TTS in /${constants.RET_ONSELECT}`)
+    logger.error(`!!Error while checking TAT and TTS in /${constants.ON_SELECT}`)
   }
 
   let nonServiceableFlag = 0
   try {
-    logger.info(`Checking fulfillments' state in ${constants.RET_ONSELECT}`)
+    logger.info(`Checking fulfillments' state in ${constants.ON_SELECT}`)
     const ffState = on_select.fulfillments.every((ff: { state: { descriptor: any } }) => {
       const ffDesc = ff.state.descriptor
       if (ffDesc.code === 'Non-serviceable') {
@@ -206,14 +202,14 @@ export const checkOnSelect = (data: any) => {
       errorObj.notServiceable = `Non Serviceable Domain error should be provided when fulfillment is not serviceable`
     }
   } catch (error: any) {
-    logger.error(`!!Error while checking fulfillments' state in /${constants.RET_ONSELECT}, ${error.stack}`)
+    logger.error(`!!Error while checking fulfillments' state in /${constants.ON_SELECT}, ${error.stack}`)
   }
 
   let onSelectPrice: any = 0 //Net price after discounts and tax in /on_select
   let onSelectItemsPrice = 0 //Price of only items in /on_select
 
   try {
-    logger.info(`Comparing count of items in ${constants.RET_SELECT} and ${constants.RET_ONSELECT}`)
+    logger.info(`Comparing count of items in ${constants.SELECT} and ${constants.ON_SELECT}`)
     const itemsIdList: any = getValue('itemsIdList') || {}
     logger.info('itemsIdList', itemsIdList)
     on_select.quote.breakup.forEach((item: { [x: string]: any }) => {
@@ -225,19 +221,19 @@ export const checkOnSelect = (data: any) => {
           const cntkey = `cnt${item['@ondc/org/item_id']}`
           errorObj[
             cntkey
-          ] = `Count of item with id: ${item['@ondc/org/item_id']} does not match in ${constants.RET_SELECT} & ${constants.RET_ONSELECT} (suitable domain error should be provided)`
+          ] = `Count of item with id: ${item['@ondc/org/item_id']} does not match in ${constants.SELECT} & ${constants.ON_SELECT} (suitable domain error should be provided)`
         }
       }
     })
   } catch (error: any) {
     // errorObj.countErr = `Count of item does not match with the count in /select`;
     logger.error(
-      `!!Error while comparing count items in ${constants.RET_SELECT} and ${constants.RET_ONSELECT}, ${error.stack}`,
+      `!!Error while comparing count items in ${constants.SELECT} and ${constants.ON_SELECT}, ${error.stack}`,
     )
   }
 
   try {
-    logger.info(`-x-x-x-x-Quote Breakup ${constants.RET_ONSELECT} all checks-x-x-x-x`)
+    logger.info(`-x-x-x-x-Quote Breakup ${constants.ON_SELECT} all checks-x-x-x-x`)
     const itemsIdList: any = getValue('itemsIdList')
     const itemsCtgrs: any = getValue('itemsCtgrs')
     on_select.quote.breakup.forEach((element: any, i: any) => {
@@ -265,7 +261,7 @@ export const checkOnSelect = (data: any) => {
           errorObj.priceBreakup = `Item's unit and total price mismatch for id: ${element['@ondc/org/item_id']}`
         }
 
-        logger.info(`checking available and maximum count in ${constants.RET_ONSELECT}`)
+        logger.info(`checking available and maximum count in ${constants.ON_SELECT}`)
 
         if (element.item.hasOwnProperty('quantity')) {
           if (
@@ -279,7 +275,7 @@ export const checkOnSelect = (data: any) => {
         }
       }
 
-      logger.info(`Calculating Items' prices in /${constants.RET_ONSELECT}`)
+      logger.info(`Calculating Items' prices in /${constants.ON_SELECT}`)
       if (typeof itemsIdList === 'object' && itemsIdList && element['@ondc/org/item_id'] in itemsIdList) {
         if (
           titleType === 'item' ||
@@ -326,15 +322,15 @@ export const checkOnSelect = (data: any) => {
 
     const selectedPrice = getValue('selectedPrice')
     logger.info(
-      `Matching price breakup of items ${onSelectItemsPrice} (/${constants.RET_ONSELECT}) with selected items price ${selectedPrice} (${constants.RET_SELECT})`,
+      `Matching price breakup of items ${onSelectItemsPrice} (/${constants.ON_SELECT}) with selected items price ${selectedPrice} (${constants.SELECT})`,
     )
 
     if (typeof selectedPrice === 'number' && onSelectItemsPrice !== selectedPrice) {
-      errorObj.priceErr = `Warning: Quoted Price in /${constants.RET_ONSELECT} INR ${onSelectItemsPrice} does not match with the total price of items in /${constants.RET_SELECT} INR ${selectedPrice}`
+      errorObj.priceErr = `Warning: Quoted Price in /${constants.ON_SELECT} INR ${onSelectItemsPrice} does not match with the total price of items in /${constants.SELECT} INR ${selectedPrice}`
       logger.info('Quoted Price and Selected Items price mismatch')
     }
   } catch (error: any) {
-    logger.error(`!!Error while checking and comparing the quoted price in /${constants.RET_ONSELECT}, ${error.stack}`)
+    logger.error(`!!Error while checking and comparing the quoted price in /${constants.ON_SELECT}, ${error.stack}`)
   }
 
   try {
@@ -348,11 +344,11 @@ export const checkOnSelect = (data: any) => {
       errorObj.deliveryLineItem = `delivery line item must be present in quote/breakup (if location is serviceable)`
     }
   } catch (error: any) {
-    logger.info(`!!Error occurred while checking delivery line item in /${constants.RET_ONSELECT}`)
+    logger.info(`!!Error occurred while checking delivery line item in /${constants.ON_SELECT}`)
   }
 
   try {
-    logger.info(`Checking payment breakup title & type in /${constants.RET_ONSELECT}`)
+    logger.info(`Checking payment breakup title & type in /${constants.ON_SELECT}`)
     on_select.quote.breakup.forEach((item: { [x: string]: any; title: string }) => {
       if (
         item['@ondc/org/title_type'] != 'item' &&
@@ -373,7 +369,7 @@ export const checkOnSelect = (data: any) => {
       }
     })
   } catch (error: any) {
-    logger.error(`!!Error while checking payment breakup title & type in /${constants.RET_ONSELECT}, ${error.stack}`)
+    logger.error(`!!Error while checking payment breakup title & type in /${constants.ON_SELECT}, ${error.stack}`)
   }
 
   try {
@@ -386,7 +382,7 @@ export const checkOnSelect = (data: any) => {
       }
     })
   } catch (error: any) {
-    logger.info(`Error while checking fulfillments TAT in /${constants.RET_ONSELECT}`)
+    logger.info(`Error while checking fulfillments TAT in /${constants.ON_SELECT}`)
   }
 
   try {
@@ -395,11 +391,11 @@ export const checkOnSelect = (data: any) => {
       errorObj.qtTtl = 'quote.ttl: Validity of the quote is missing'
     }
   } catch (error: any) {
-    logger.error(`!!Error while checking quote.ttl in /${constants.RET_ONSELECT}`)
+    logger.error(`!!Error while checking quote.ttl in /${constants.ON_SELECT}`)
   }
 
   try {
-    logger.info(`Storing Quote object in /${constants.RET_ONSELECT}`)
+    logger.info(`Storing Quote object in /${constants.ON_SELECT}`)
     on_select.quote.breakup.forEach((element: BreakupElement) => {
       if (element['@ondc/org/title_type'] === 'item') {
         if (element.item && element.item.hasOwnProperty('quantity')) {
@@ -410,7 +406,7 @@ export const checkOnSelect = (data: any) => {
     //saving on select quote
     setValue('quoteObj', on_select.quote)
   } catch (error: any) {
-    logger.error(`!!Error while storing quote object in /${constants.RET_ONSELECT}, ${error.stack}`)
+    logger.error(`!!Error while storing quote object in /${constants.ON_SELECT}, ${error.stack}`)
   }
 
   return Object.keys(errorObj).length > 0 && errorObj

@@ -26,9 +26,9 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
   }
 
-  const schemaValidation = validateSchema('RET11', constants.RET_ONSEARCH, data)
+  const schemaValidation = validateSchema('RET11', constants.ON_SEARCH, data)
 
-  const contextRes: any = checkContext(context, constants.RET_ONSEARCH)
+  const contextRes: any = checkContext(context, constants.ON_SEARCH)
   setValue(`${ApiSequence.ON_SEARCH}_context`, context)
   setValue(`${ApiSequence.ON_SEARCH}_message`, message)
   msgIdSet.add(context.message_id)
@@ -53,32 +53,32 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
 
   try {
-    logger.info(`Storing BAP_ID and BPP_ID in /${constants.RET_ONSEARCH}`)
+    logger.info(`Storing BAP_ID and BPP_ID in /${constants.ON_SEARCH}`)
     setValue('bapId', context.bap_id)
     setValue('bppId', context.bpp_id)
   } catch (error: any) {
-    logger.error(`!!Error while storing BAP and BPP Ids in /${constants.RET_ONSEARCH}, ${error.stack}`)
+    logger.error(`!!Error while storing BAP and BPP Ids in /${constants.ON_SEARCH}, ${error.stack}`)
   }
 
   try {
-    logger.info(`Comparing transaction Ids of /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH}`)
+    logger.info(`Comparing transaction Ids of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
     if (!_.isEqual(searchContext.transaction_id, context.transaction_id)) {
-      errorObj.transaction_id = `Transaction Id for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api should be same`
+      errorObj.transaction_id = `Transaction Id for /${constants.SEARCH} and /${constants.ON_SEARCH} api should be same`
     }
   } catch (error: any) {
     logger.info(
-      `Error while comparing transaction ids for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api, ${error.stack}`,
+      `Error while comparing transaction ids for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
     )
   }
 
   try {
-    logger.info(`Comparing Message Ids of /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH}`)
+    logger.info(`Comparing Message Ids of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
     if (!_.isEqual(searchContext.message_id, context.message_id)) {
-      errorObj.message_id = `Message Id for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api should be same`
+      errorObj.message_id = `Message Id for /${constants.SEARCH} and /${constants.ON_SEARCH} api should be same`
     }
   } catch (error: any) {
     logger.info(
-      `Error while comparing message ids for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api, ${error.stack}`,
+      `Error while comparing message ids for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
     )
   }
 
@@ -89,7 +89,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
   const itemsId = new Set()
 
   try {
-    logger.info(`Saving static fulfillment ids in /${constants.RET_ONSEARCH}`)
+    logger.info(`Saving static fulfillment ids in /${constants.ON_SEARCH}`)
 
     let i = 0
     const bppFF = onSearchCatalog['bpp/fulfillments']
@@ -101,11 +101,11 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
 
     setValue('onSearchFFIds', onSearchFFIds)
   } catch (error: any) {
-    logger.info(`Error while saving static fulfillment ids in /${constants.RET_ONSEARCH}, ${error.stack}`)
+    logger.info(`Error while saving static fulfillment ids in /${constants.ON_SEARCH}, ${error.stack}`)
   }
 
   try {
-    logger.info(`Checking Providers info (bpp/providers) in /${constants.RET_ONSEARCH}`)
+    logger.info(`Checking Providers info (bpp/providers) in /${constants.ON_SEARCH}`)
     let i = 0
     const bppPrvdrs = onSearchCatalog['bpp/providers']
     const len = bppPrvdrs.length
@@ -245,7 +245,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
                       case 'day_from':
                       case 'day_to':
                         const dayValue = parseInt(item.value)
-                        if (isNaN(dayValue) || dayValue < 1 || dayValue > 5 || !/^-?\d+(\.\d+)?$/.test(item.value)) {
+                        if (isNaN(dayValue) || dayValue < 1 || dayValue > 7 || !/^-?\d+(\.\d+)?$/.test(item.value)) {
                           errorObj.custom_menu_timing_tag = `Invalid value for '${item.code}': ${item.value}`
                         }
 
@@ -601,199 +601,201 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
 
         //checking for each serviceability construct
         tags.forEach((sc: any, t: any) => {
-          if ('list' in sc) {
-            if (sc.list.length != 5) {
-              const key = `prvdr${i}tags${t}`
-              errorObj[
-                key
-              ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract`
-            }
+          if (sc.code === 'serviceability') {
+            if ('list' in sc) {
+              if (sc.list.length != 5) {
+                const key = `prvdr${i}tags${t}`
+                errorObj[
+                  key
+                ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract`
+              }
 
-            //checking location
-            const loc = sc.list.find((elem: any) => elem.code === 'location') || ''
-            if (!loc) {
-              const key = `prvdr${i}tags${t}loc`
-              errorObj[
-                key
-              ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (location is missing)`
-            } else {
-              if ('value' in loc) {
-                if (!prvdrLocId.has(loc.value)) {
-                  const key = `prvdr${i}tags${t}loc`
-                  errorObj[
-                    key
-                  ] = `location in serviceability construct should be one of the location ids bpp/providers[${i}]/locations`
-                }
-              } else {
+              //checking location
+              const loc = sc.list.find((elem: any) => elem.code === 'location') || ''
+              if (!loc) {
                 const key = `prvdr${i}tags${t}loc`
                 errorObj[
                   key
                 ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (location is missing)`
-              }
-            }
-
-            //checking category
-            const ctgry = sc.list.find((elem: any) => elem.code === 'category') || ''
-            if (!ctgry) {
-              const key = `prvdr${i}tags${t}ctgry`
-              errorObj[
-                key
-              ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (category is missing)`
-            } else {
-              if ('value' in ctgry) {
-                if (!itemCategory_id.has(ctgry.value)) {
-                  const key = `prvdr${i}tags${t}ctgry`
+              } else {
+                if ('value' in loc) {
+                  if (!prvdrLocId.has(loc.value)) {
+                    const key = `prvdr${i}tags${t}loc`
+                    errorObj[
+                      key
+                    ] = `location in serviceability construct should be one of the location ids bpp/providers[${i}]/locations`
+                  }
+                } else {
+                  const key = `prvdr${i}tags${t}loc`
                   errorObj[
                     key
-                  ] = `category in serviceability construct should be one of the category ids bpp/providers[${i}]/items/category_id`
+                  ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (location is missing)`
                 }
-              } else {
+              }
+
+              //checking category
+              const ctgry = sc.list.find((elem: any) => elem.code === 'category') || ''
+              if (!ctgry) {
                 const key = `prvdr${i}tags${t}ctgry`
                 errorObj[
                   key
                 ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (category is missing)`
-              }
-            }
-
-            //checking type (hyperlocal, intercity or PAN India)
-            const type = sc.list.find((elem: any) => elem.code === 'type') || ''
-            if (!type) {
-              const key = `prvdr${i}tags${t}type`
-              errorObj[
-                key
-              ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (type is missing)`
-            } else {
-              if ('value' in type) {
-                switch (type.value) {
-                  case '10':
-                    {
-                      //For hyperlocal
-
-                      //checking value
-                      const val = sc.list.find((elem: any) => elem.code === 'val') || ''
-                      if ('value' in val) {
-                        if (isNaN(val.value)) {
-                          const key = `prvdr${i}tags${t}valvalue`
-                          errorObj[
-                            key
-                          ] = `value should be a number (code:"val") for type 10 (hyperlocal) in /bpp/providers[${i}]/tags[${t}]`
-                        }
-                      } else {
-                        const key = `prvdr${i}tags${t}val`
-                        errorObj[
-                          key
-                        ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "val")`
-                      }
-
-                      //checking unit
-                      const unit = sc.list.find((elem: any) => elem.code === 'unit') || ''
-                      if ('value' in unit) {
-                        if (unit.value != 'km') {
-                          const key = `prvdr${i}tags${t}unitvalue`
-                          errorObj[
-                            key
-                          ] = `value should be "km" (code:"unit") for type 10 (hyperlocal) in /bpp/providers[${i}]/tags[${t}]`
-                        }
-                      } else {
-                        const key = `prvdr${i}tags${t}unit`
-                        errorObj[
-                          key
-                        ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "unit")`
-                      }
-                    }
-
-                    break
-                  case '11':
-                    {
-                      //intercity
-
-                      //checking value
-                      const val = sc.list.find((elem: any) => elem.code === 'val') || ''
-                      if ('value' in val) {
-                        const pincodes = val.value.split(/,|-/)
-                        pincodes.forEach((pincode: any) => {
-                          if (isNaN(pincode) || pincode.length != 6) {
-                            const key = `prvdr${i}tags${t}valvalue`
-                            errorObj[
-                              key
-                            ] = `value should be a valid range of pincodes (code:"val") for type 11 (intercity) in /bpp/providers[${i}]/tags[${t}]`
-                          }
-                        })
-                      } else {
-                        const key = `prvdr${i}tags${t}val`
-                        errorObj[
-                          key
-                        ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "val")`
-                      }
-
-                      //checking unit
-                      const unit = sc.list.find((elem: any) => elem.code === 'unit') || ''
-                      if ('value' in unit) {
-                        if (unit.value != 'pincode') {
-                          const key = `prvdr${i}tags${t}unitvalue`
-                          errorObj[
-                            key
-                          ] = `value should be "pincode" (code:"unit") for type 11 (intercity) in /bpp/providers[${i}]/tags[${t}]`
-                        }
-                      } else {
-                        const key = `prvdr${i}tags${t}unit`
-                        errorObj[
-                          key
-                        ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "unit")`
-                      }
-                    }
-
-                    break
-                  case '12':
-                    {
-                      //PAN India
-
-                      //checking value
-                      const val = sc.list.find((elem: any) => elem.code === 'val') || ''
-                      if ('value' in val) {
-                        if (val.value != 'IND') {
-                          const key = `prvdr${i}tags${t}valvalue`
-                          errorObj[
-                            key
-                          ] = `value should be "IND" (code:"val") for type 12 (PAN India) in /bpp/providers[${i}]tags[${t}]`
-                        }
-                      } else {
-                        const key = `prvdr${i}tags${t}val`
-                        errorObj[
-                          key
-                        ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "val")`
-                      }
-
-                      //checking unit
-                      const unit = sc.list.find((elem: any) => elem.code === 'unit') || ''
-                      if ('value' in unit) {
-                        if (unit.value != 'country') {
-                          const key = `prvdr${i}tags${t}unitvalue`
-                          errorObj[
-                            key
-                          ] = `value should be "country" (code:"unit") for type 12 (PAN India) in /bpp/providers[${i}]tags[${t}]`
-                        }
-                      } else {
-                        const key = `prvdr${i}tags${t}unit`
-                        errorObj[
-                          key
-                        ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "unit")`
-                      }
-                    }
-
-                    break
-                  default: {
-                    const key = `prvdr${i}tags${t}type`
+              } else {
+                if ('value' in ctgry) {
+                  if (!itemCategory_id.has(ctgry.value)) {
+                    const key = `prvdr${i}tags${t}ctgry`
                     errorObj[
                       key
-                    ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (invalid type "${type.value}")`
+                    ] = `category in serviceability construct should be one of the category ids bpp/providers[${i}]/items/category_id`
                   }
+                } else {
+                  const key = `prvdr${i}tags${t}ctgry`
+                  errorObj[
+                    key
+                  ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (category is missing)`
                 }
-              } else {
+              }
+
+              //checking type (hyperlocal, intercity or PAN India)
+              const type = sc.list.find((elem: any) => elem.code === 'type') || ''
+              if (!type) {
                 const key = `prvdr${i}tags${t}type`
                 errorObj[
                   key
                 ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (type is missing)`
+              } else {
+                if ('value' in type) {
+                  switch (type.value) {
+                    case '10':
+                      {
+                        //For hyperlocal
+
+                        //checking value
+                        const val = sc.list.find((elem: any) => elem.code === 'val') || ''
+                        if ('value' in val) {
+                          if (isNaN(val.value)) {
+                            const key = `prvdr${i}tags${t}valvalue`
+                            errorObj[
+                              key
+                            ] = `value should be a number (code:"val") for type 10 (hyperlocal) in /bpp/providers[${i}]/tags[${t}]`
+                          }
+                        } else {
+                          const key = `prvdr${i}tags${t}val`
+                          errorObj[
+                            key
+                          ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "val")`
+                        }
+
+                        //checking unit
+                        const unit = sc.list.find((elem: any) => elem.code === 'unit') || ''
+                        if ('value' in unit) {
+                          if (unit.value != 'km') {
+                            const key = `prvdr${i}tags${t}unitvalue`
+                            errorObj[
+                              key
+                            ] = `value should be "km" (code:"unit") for type 10 (hyperlocal) in /bpp/providers[${i}]/tags[${t}]`
+                          }
+                        } else {
+                          const key = `prvdr${i}tags${t}unit`
+                          errorObj[
+                            key
+                          ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "unit")`
+                        }
+                      }
+
+                      break
+                    case '11':
+                      {
+                        //intercity
+
+                        //checking value
+                        const val = sc.list.find((elem: any) => elem.code === 'val') || ''
+                        if ('value' in val) {
+                          const pincodes = val.value.split(/,|-/)
+                          pincodes.forEach((pincode: any) => {
+                            if (isNaN(pincode) || pincode.length != 6) {
+                              const key = `prvdr${i}tags${t}valvalue`
+                              errorObj[
+                                key
+                              ] = `value should be a valid range of pincodes (code:"val") for type 11 (intercity) in /bpp/providers[${i}]/tags[${t}]`
+                            }
+                          })
+                        } else {
+                          const key = `prvdr${i}tags${t}val`
+                          errorObj[
+                            key
+                          ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "val")`
+                        }
+
+                        //checking unit
+                        const unit = sc.list.find((elem: any) => elem.code === 'unit') || ''
+                        if ('value' in unit) {
+                          if (unit.value != 'pincode') {
+                            const key = `prvdr${i}tags${t}unitvalue`
+                            errorObj[
+                              key
+                            ] = `value should be "pincode" (code:"unit") for type 11 (intercity) in /bpp/providers[${i}]/tags[${t}]`
+                          }
+                        } else {
+                          const key = `prvdr${i}tags${t}unit`
+                          errorObj[
+                            key
+                          ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "unit")`
+                        }
+                      }
+
+                      break
+                    case '12':
+                      {
+                        //PAN India
+
+                        //checking value
+                        const val = sc.list.find((elem: any) => elem.code === 'val') || ''
+                        if ('value' in val) {
+                          if (val.value != 'IND') {
+                            const key = `prvdr${i}tags${t}valvalue`
+                            errorObj[
+                              key
+                            ] = `value should be "IND" (code:"val") for type 12 (PAN India) in /bpp/providers[${i}]tags[${t}]`
+                          }
+                        } else {
+                          const key = `prvdr${i}tags${t}val`
+                          errorObj[
+                            key
+                          ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "val")`
+                        }
+
+                        //checking unit
+                        const unit = sc.list.find((elem: any) => elem.code === 'unit') || ''
+                        if ('value' in unit) {
+                          if (unit.value != 'country') {
+                            const key = `prvdr${i}tags${t}unitvalue`
+                            errorObj[
+                              key
+                            ] = `value should be "country" (code:"unit") for type 12 (PAN India) in /bpp/providers[${i}]tags[${t}]`
+                          }
+                        } else {
+                          const key = `prvdr${i}tags${t}unit`
+                          errorObj[
+                            key
+                          ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "unit")`
+                        }
+                      }
+
+                      break
+                    default: {
+                      const key = `prvdr${i}tags${t}type`
+                      errorObj[
+                        key
+                      ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (invalid type "${type.value}")`
+                    }
+                  }
+                } else {
+                  const key = `prvdr${i}tags${t}type`
+                  errorObj[
+                    key
+                  ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (type is missing)`
+                }
               }
             }
           }
@@ -809,7 +811,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     setValue(`${ApiSequence.ON_SEARCH}prvdrLocId`, prvdrLocId)
     setValue(`${ApiSequence.ON_SEARCH}itemsId`, itemsId)
   } catch (error: any) {
-    logger.error(`!!Error while checking Providers info in /${constants.RET_ONSEARCH}, ${error.stack}`)
+    logger.error(`!!Error while checking Providers info in /${constants.ON_SEARCH}, ${error.stack}`)
   }
 
   return Object.keys(errorObj).length > 0 && errorObj

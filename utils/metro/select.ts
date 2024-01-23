@@ -15,8 +15,8 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.MET_SELECT, data)
-  const contextRes: any = validateContext(context, msgIdSet, constants.MET_ONSEARCH, constants.MET_SELECT)
+  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.SELECT, data)
+  const contextRes: any = validateContext(context, msgIdSet, constants.ON_SEARCH, constants.SELECT)
   setValue(`${metroSequence.SELECT}_message`, message)
   const errorObj: any = {}
 
@@ -34,39 +34,38 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     const onSearch: any = getValue(`${metroSequence.ON_SEARCH}_message`)
 
     try {
-      logger.info(`Comparing Provider object for /${constants.MET_ONSEARCH} and /${constants.MET_SELECT}`)
+      logger.info(`Comparing Provider object for /${constants.ON_SEARCH} and /${constants.SELECT}`)
       const providerIDs = onSearch?.message?.catalog['providers']?.map((provider: { id: any }) => provider?.id)
       const selectedProviderId = select.provider.id
 
       if (!providerIDs || providerIDs.length === 0) {
         logger.info(`Skipping Provider Ids check due to insufficient data`)
       } else if (!providerIDs.includes(selectedProviderId)) {
-        errorObj.prvdrId = `Provider Id ${selectedProviderId} in /${constants.MET_SELECT} does not exist in /${constants.MET_ONSEARCH}`
+        errorObj.prvdrId = `Provider Id ${selectedProviderId} in /${constants.SELECT} does not exist in /${constants.ON_SEARCH}`
       } else {
         setValue('providerId', selectedProviderId)
       }
     } catch (error: any) {
       logger.info(
-        `Error while comparing provider ids for /${constants.MET_ONSEARCH} and /${constants.MET_SELECT} api, ${error.stack}`,
+        `Error while comparing provider ids for /${constants.ON_SEARCH} and /${constants.SELECT} api, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Comparing Items object for /${constants.FIS_ONSEARCH} and /${constants.FIS_SELECT}`)
+      logger.info(`Comparing Items object for /${constants.ON_SEARCH} and /${constants.SELECT}`)
 
       select.items.forEach((item: any, index: number) => {
         if (storedItemIDS && !storedItemIDS.includes(item.id)) {
           const key = `item[${index}].item_id`
-          errorObj[
-            key
-          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+          errorObj[key] =
+            `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
         } else {
           setValue('itemId', item.id)
         }
       })
     } catch (error: any) {
       logger.error(
-        `!!Error while Comparing and Mapping Items in /${constants.MET_ONSEARCH} and /${constants.MET_SELECT}, ${error.stack}`,
+        `!!Error while Comparing and Mapping Items in /${constants.ON_SEARCH} and /${constants.SELECT}, ${error.stack}`,
       )
     }
 
@@ -109,7 +108,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
       })
     }
   } catch (error: any) {
-    logger.error(`!!Error occcurred while validating message object in /${constants.MET_SELECT},  ${error.message}`)
+    logger.error(`!!Error occcurred while validating message object in /${constants.SELECT},  ${error.message}`)
     return { error: error.message }
   }
 

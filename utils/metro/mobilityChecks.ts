@@ -1,6 +1,6 @@
 import { logger } from '../../shared/logger'
 import { getValue, setValue } from '../../shared/dao'
-import { checkGpsPrecision, checkIdAndUri, checkMobilityContext, timeDiff, timestampCheck } from '..'
+import { checkGpsPrecision, checkIdAndUri, checkMobilityContext, timestampCheck } from '../../utils'
 import _ from 'lodash'
 
 export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any) => {
@@ -107,12 +107,6 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
       const tmpstmp = prevContext.timestamp
       if (_.gte(tmpstmp, context.timestamp)) {
         errorObj.tmpstmp = `Timestamp for /${pastCall} api cannot be greater than or equal to /${curentCall} api`
-      } else {
-        const timeDifference = timeDiff(context.timestamp, tmpstmp)
-        logger.info(timeDifference)
-        if (timeDifference > 5000) {
-          errorObj.tmpstmp = `context/timestamp difference between /${curentCall} and /${pastCall} should be smaller than 5 sec`
-        }
       }
 
       setValue('tmpstmp', context.timestamp)

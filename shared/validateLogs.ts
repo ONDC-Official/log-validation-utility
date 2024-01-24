@@ -304,8 +304,6 @@ export const validateLogs = async (data: any, domain: string) => {
         }
       }
 
-      console.log(data[ApiSequence.ON_SEARCH].context.bap_id)
-
       logger.info(logReport, 'Report Generated Successfully!!')
       return logReport
     }

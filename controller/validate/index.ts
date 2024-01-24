@@ -79,8 +79,6 @@ const controller = {
       if (!supportedVersions.includes(version)) throw new Error('Invalid Version! Please enter a valid version')
       const hashString = await hash({ message: stringJSON })
 
-      console.log(hashString)
-
       const signingString = `${hashString}|${signTimestamp}`
 
       const isVerified = await verify({ signedMessage: signature, message: signingString, publicKey })

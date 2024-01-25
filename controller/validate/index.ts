@@ -52,9 +52,12 @@ const controller = {
 
       const { response, success, message } = result
 
-      if (!success) return res.status(400).send({ success, response: { message, report: response } })
-
       const { signature, currentDate } = await helper.createSignature({ message: stringPayload })
+
+      if (!success)
+        return res
+          .status(400)
+          .send({ success, response: { message, signature, signTimestamp: currentDate, report: response } })
 
       return res.status(200).send({ success, response: { message, signature, signTimestamp: currentDate } })
     } catch (error: any) {

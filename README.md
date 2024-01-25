@@ -281,7 +281,7 @@ The signature can be provided to validate that your request was approved by the 
 In order to perform a validation request with combination of signature and signTimestamp, you can do the following request:
 
 ```shell
-curl --location 'http://https://log-validation.ondc.org/api/validate/token' \
+curl --location 'https://log-validation.ondc.org/api/validate/token' \
 --header 'Content-Type: application/json' \
 --header 'Cookie: connect.sid=s%3AjQe2v39s-ZeiHTOm-dkGI1NK5rqN0Lj4.PLxLV6QlhCtGTHP2ZKe0a5OpHl2ng0oQ%2BAqWmd56POU' \
 --data-raw '{
@@ -573,7 +573,7 @@ curl --location --request POST 'http://localhost:3006/api/validate' \
 ### For IGM Sample Curl Request (Local)
 
 ```shell
-curl --location 'http://https://localhost:3006/api/validate/igm' \
+curl --location 'https://localhost:3006/api/validate/igm' \
 --header 'Content-Type: application/json' \
 --data '{
     "domain": "",
@@ -597,7 +597,7 @@ curl --location 'http://https://localhost:3006/api/validate/igm' \
 ### For FIS12 Sample Curl Request (Local)
 
 ```shell
-curl --location 'http://https://log-validation.ondc.org/api/validate/fis/fis12' \
+curl --location 'https://log-validation.ondc.org/api/validate/fis/fis12' \
 --header 'Content-Type: application/json' \
 --data '{
     "domain": "ONDC:FIS12",
@@ -631,7 +631,7 @@ curl --location 'http://https://log-validation.ondc.org/api/validate/fis/fis12' 
 ### For TRV10 Sample Curl Request (Local)
 
 ```shell
-curl --location 'http://https://localhost:3006/api/validate/trv/trv10' \
+curl --location 'https://localhost:3006/api/validate/trv/trv10' \
 --header 'Content-Type: application/json' \
 --data '{
     "domain": "ONDC:TRV10",

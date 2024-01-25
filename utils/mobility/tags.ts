@@ -96,6 +96,8 @@ export const validatePaymentTags = (tags: Tag[]): ValidationResult => {
   const errors: string[] = []
 
   const validDescriptorCodes = ['BUYER_FINDER_FEES', 'SETTLEMENT_TERMS']
+  const settlementTypes = ['upi', 'neft', 'rtgs']
+  const settlementBasis = ['Delivery', 'INVOICE_RECEIPT']
 
   tags.forEach((tag, index) => {
     if (!validDescriptorCodes.includes(tag.descriptor.code)) {
@@ -144,17 +146,17 @@ export const validatePaymentTags = (tags: Tag[]): ValidationResult => {
 
               break
             case 'SETTLEMENT_BASIS':
-              if (item.value !== 'Delivery') {
+              if (!settlementBasis?.includes(item.value)) {
                 errors.push(
-                  `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid value for SETTLEMENT_BASIS`,
+                  `SETTLEMENT_TERMS_[${index}],SETTLEMENT_BASIS must be either if ${settlementBasis} at item[${itemIndex}]`,
                 )
               }
 
               break
             case 'SETTLEMENT_TYPE':
-              if (item.value !== 'upi') {
+              if (!settlementTypes?.includes(item.value?.toLowerCase())) {
                 errors.push(
-                  `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid value for SETTLEMENT_TYPE`,
+                  `SETTLEMENT_TERMS_[${index}],SETTLEMENT_TYPE must be either if ${settlementTypes} at item[${itemIndex}]`,
                 )
               }
 

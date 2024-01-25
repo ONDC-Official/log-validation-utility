@@ -967,7 +967,6 @@ properties:
                           enum:
                             - PAID
                             - NOT-PAID
-                            - NOT_PAID
                         time: *ref_8
                         tags:
                           type: array

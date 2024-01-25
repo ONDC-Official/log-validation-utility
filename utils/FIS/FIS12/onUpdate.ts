@@ -102,7 +102,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
         const fulfillmentErrors = validateFulfillments(fulfillment, i, on_update.documents)
         if (
           flow == fisFlows.LOAN_FORECLOSURE &&
-          action == FisApiSequence.ON_UPDATE_UNSOLICATED &&
+          action == FisApiSequence.ON_UPDATE_UNCOLICATED &&
           fulfillment?.state?.descriptor?.code &&
           fulfillment.state.descriptor.code !== 'COMPLETED'
         ) {
@@ -193,7 +193,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
             onUpdateObj['label'] = `label should be present & it's value should be ${flow}`
           }
 
-          if (action == FisApiSequence.ON_UPDATE_UNSOLICATED) {
+          if (action == FisApiSequence.ON_UPDATE_UNCOLICATED) {
             if (payment?.status !== 'PAID') {
               onUpdateObj.invalidPaymentStatus = `payment status should be PAID at index ${i}`
             }
@@ -212,16 +212,16 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
 
         if (flow === fisFlows.LOAN_FORECLOSURE && payment?.status) {
           if (payment?.status == 'NOT-PAID') unPaidInstallments++
-          if (action == FisApiSequence.ON_UPDATE_UNSOLICATED && payment?.status == 'DEFERRED') defferedInstallments++
+          if (action == FisApiSequence.ON_UPDATE_UNCOLICATED && payment?.status == 'DEFERRED') defferedInstallments++
         }
 
         if (flow === fisFlows.MISSED_EMI_PAYMENT && payment?.status) {
-          if (action == FisApiSequence.ON_UPDATE_UNSOLICATED && payment?.status == 'DEFERRED') defferedInstallments++
+          if (action == FisApiSequence.ON_UPDATE_UNCOLICATED && payment?.status == 'DEFERRED') defferedInstallments++
           if (action == FisApiSequence.ON_UPDATE && payment?.status == 'DELAYED') delayedInstallments++
         }
 
         // !personal -> solicated : count of NOT-PAID
-        // !personal -> unsolicated : count of DEFFERED
+        // !personal -> UNCOLICATED : count of DEFFERED
         // count of NOT-PAID == count of DEFFERED
 
         if (payment.url) {
@@ -280,7 +280,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
         }
       }
 
-      if (action != FisApiSequence.ON_UPDATE_UNSOLICATED) {
+      if (action != FisApiSequence.ON_UPDATE_UNCOLICATED) {
         const buyerFinderFeesTag = payments[0].tags?.find((tag: any) => tag.descriptor.code === 'BUYER_FINDER_FEES')
         const settlementTermsTag = payments[0].tags?.find((tag: any) => tag.descriptor.code === 'SETTLEMENT_TERMS')
 
@@ -296,7 +296,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
           onUpdateObj.payments = `collected_by  is missing in payments`
         } else {
           const allowedCollectedByValues = ['BPP', 'BAP']
-          const allowedStatusValues = ['NOT_PAID', 'PAID', 'NOT-PAID']
+          const allowedStatusValues = ['NOT-PAID', 'PAID']
 
           const collectedBy = getValue(`collected_by`)
           if (collectedBy && collectedBy !== payments[0].collected_by) {
@@ -310,7 +310,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
           }
 
           if (!allowedStatusValues.includes(payments[0].status)) {
-            onUpdateObj.paymentStatus = `Invalid value for status. It should be either of NOT_PAID or PAID.`
+            onUpdateObj.paymentStatus = `Invalid value for status. It should be either of NOT-PAID or PAID.`
           }
         }
       }

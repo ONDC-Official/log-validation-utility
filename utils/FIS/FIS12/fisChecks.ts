@@ -254,7 +254,7 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
 
     try {
       logger.info(`Comparing Message Ids of /${pastCall} and /${curentCall}`)
-      if (curentCall.startsWith('on_')) {
+      if (curentCall.startsWith('on_') && curentCall.includes(pastCall)) {
         logger.info(`Comparing Message Ids of /${pastCall} and /${curentCall}`)
         if (!_.isEqual(prevContext.message_id, context.message_id)) {
           errorObj.message_id = `message_id for /${pastCall} and /${curentCall} api should be same`
@@ -371,10 +371,9 @@ export const validatePayments = (payments: any, action: string, quote: any) => {
       if (!payment.status) {
         errorObj.payments = `status is missing in payments`
       } else {
-        const allowedStatusValues = ['NOT_PAID', 'PAID', 'NOT-PAID']
-
+        const allowedStatusValues = ['NOT-PAID', 'PAID']
         if (!allowedStatusValues.includes(payment.status)) {
-          errorObj.paymentStatus = `Invalid value for status. It should be either of NOT_PAID or PAID.`
+          errorObj.paymentStatus = `Invalid value for status. It should be either of NOT-PAID or PAID.`
         }
       }
 
@@ -410,7 +409,7 @@ export const validatePayments = (payments: any, action: string, quote: any) => {
       errorObj.payments = `collected_by  is missing in payments`
     } else {
       const allowedCollectedByValues = ['BPP', 'BAP']
-      const allowedStatusValues = ['NOT_PAID', 'PAID', 'NOT-PAID']
+      const allowedStatusValues = ['NOT-PAID', 'PAID']
 
       const collectedBy = getValue(`collected_by`)
       if (collectedBy && collectedBy !== payments[0].collected_by) {
@@ -424,7 +423,7 @@ export const validatePayments = (payments: any, action: string, quote: any) => {
       }
 
       if (!allowedStatusValues.includes(payments[0].status)) {
-        errorObj.paymentStatus = `Invalid value for status. It should be either of NOT_PAID or PAID.`
+        errorObj.paymentStatus = `Invalid value for status. It should be either of NOT-PAID or PAID.`
       }
     }
 

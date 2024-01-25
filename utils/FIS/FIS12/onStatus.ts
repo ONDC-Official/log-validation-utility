@@ -234,7 +234,7 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
         onStatusObj.payments = `collected_by  is missing in payments`
       } else {
         const allowedCollectedByValues = ['BPP', 'BAP']
-        const allowedStatusValues = ['NOT_PAID', 'PAID', 'NOT-PAID']
+        const allowedStatusValues = ['NOT-PAID', 'PAID']
 
         const collectedBy = getValue(`collected_by`)
         if (collectedBy && collectedBy !== payments[0].collected_by) {
@@ -248,7 +248,7 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
         }
 
         if (!allowedStatusValues.includes(payments[0].status)) {
-          onStatusObj.paymentStatus = `Invalid value for status. It should be either of NOT_PAID or PAID.`
+          onStatusObj.paymentStatus = `Invalid value for status. It should be either of NOT-PAID or PAID.`
         }
       }
     } catch (error: any) {

@@ -87,7 +87,7 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
 
     try {
       logger.info(`Comparing Message Ids of /${pastCall} and /${curentCall}`)
-      if (curentCall.startsWith('on_')) {
+      if (curentCall.startsWith('on_') && curentCall.includes(pastCall)) {
         logger.info(`Comparing Message Ids of /${pastCall} and /${curentCall}`)
         if (!_.isEqual(prevContext.message_id, context.message_id)) {
           errorObj.message_id = `message_id for /${pastCall} and /${curentCall} api should be same`

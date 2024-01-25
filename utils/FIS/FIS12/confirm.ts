@@ -120,7 +120,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         errorObj.payments = `collected_by or params is missing in payments`
       } else {
         const allowedCollectedByValues = ['BPP', 'BAP']
-        const allowedStatusValues = ['NOT_PAID', 'PAID', 'NOT-PAID']
+        const allowedStatusValues = ['NOT-PAID', 'PAID']
 
         const collectedBy = getValue(`collected_by`)
         if (collectedBy && collectedBy !== confirm.payments[0].collected_by) {
@@ -134,7 +134,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         }
 
         if (!allowedStatusValues.includes(confirm.payments[0].status)) {
-          errorObj.paymentStatus = `Invalid value for status. It should be either of NOT_PAID or PAID.`
+          errorObj.paymentStatus = `Invalid value for status. It should be either of NOT-PAID or PAID.`
         }
 
         const params = confirm.payments[0].params

@@ -2,20 +2,20 @@ import _ from 'lodash'
 import { dropDB } from '../dao'
 import { logger } from '../logger'
 import { FisApiSequence, fisFlows } from '../../constants'
-import { search } from '../../utils/FIS/FIS12/search'
-import { checkOnSearch } from '../../utils/FIS/FIS12/onSearch'
-import { checkSelect } from '../../utils/FIS/FIS12/select'
-import { checkOnSelect } from '../../utils/FIS/FIS12/onSelect'
-import { checkInit } from '../../utils/FIS/FIS12/init'
-import { checkOnInit } from '../../utils/FIS/FIS12/onInit'
-import { checkConfirm } from '../../utils/FIS/FIS12/confirm'
-import { checkOnConfirm } from '../../utils/FIS/FIS12/onConfirm'
-import { checkUpdate } from '../../utils/FIS/FIS12/update'
-import { checkOnUpdate } from '../../utils/FIS/FIS12/onUpdate'
-import { checkStatus } from '../../utils/FIS/FIS12/status'
-import { checkOnStatus } from '../../utils/FIS/FIS12/onStatus'
+import { search } from '../../utils/FIS/FIS13/search'
+import { checkOnSearch } from '../../utils/FIS/FIS13/onSearch'
+import { checkSelect } from '../../utils/FIS/FIS13/select'
+import { checkOnSelect } from '../../utils/FIS/FIS13/onSelect'
+import { checkInit } from '../../utils/FIS/FIS13/init'
+import { checkOnInit } from '../../utils/FIS/FIS13/onInit'
+import { checkConfirm } from '../../utils/FIS/FIS13/confirm'
+import { checkOnConfirm } from '../../utils/FIS/FIS13/onConfirm'
+import { checkUpdate } from '../../utils/FIS/FIS13/update'
+import { checkOnUpdate } from '../../utils/FIS/FIS13/onUpdate'
+import { checkStatus } from '../../utils/FIS/FIS13/status'
+import { checkOnStatus } from '../../utils/FIS/FIS13/onStatus'
 
-export function validateLogsForFIS12(data: any, domain: string, flow: string, version: string) {
+export function validateLogsForFIS13(data: any, domain: string, flow: string, version: string) {
   const msgIdSet = new Set()
   let logReport: any = {}
   try {

@@ -68,9 +68,8 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
       on_update.items.forEach((item: any, index: number) => {
         if (!newItemIDSValue.includes(item.id)) {
           const key = `item[${index}].item_id`
-          onUpdateObj[
-            key
-          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+          onUpdateObj[key] =
+            `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
         }
 
         if (item.tags) {
@@ -81,9 +80,8 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
         }
 
         if (item?.descriptor?.code !== fisFlows.PERSONAL)
-          onUpdateObj[
-            `item[${index}].code`
-          ] = `Descriptor code: ${item?.descriptor?.code} in item[${index}] must be the same as ${flow}`
+          onUpdateObj[`item[${index}].code`] =
+            `Descriptor code: ${item?.descriptor?.code} in item[${index}] must be the same as ${flow}`
 
         if (on_update.quote.price.value !== item?.price?.value) {
           onUpdateObj[`item${index}_price`] = `Price mismatch for item: ${item.id}`
@@ -102,7 +100,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
         const fulfillmentErrors = validateFulfillments(fulfillment, i, on_update.documents)
         if (
           flow == fisFlows.LOAN_FORECLOSURE &&
-          action == FisApiSequence.ON_UPDATE_UNCOLICATED &&
+          action == FisApiSequence.ON_UPDATE_UNSOLICATED &&
           fulfillment?.state?.descriptor?.code &&
           fulfillment.state.descriptor.code !== 'COMPLETED'
         ) {
@@ -193,7 +191,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
             onUpdateObj['label'] = `label should be present & it's value should be ${flow}`
           }
 
-          if (action == FisApiSequence.ON_UPDATE_UNCOLICATED) {
+          if (action == FisApiSequence.ON_UPDATE_UNSOLICATED) {
             if (payment?.status !== 'PAID') {
               onUpdateObj.invalidPaymentStatus = `payment status should be PAID at index ${i}`
             }
@@ -212,11 +210,11 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
 
         if (flow === fisFlows.LOAN_FORECLOSURE && payment?.status) {
           if (payment?.status == 'NOT-PAID') unPaidInstallments++
-          if (action == FisApiSequence.ON_UPDATE_UNCOLICATED && payment?.status == 'DEFERRED') defferedInstallments++
+          if (action == FisApiSequence.ON_UPDATE_UNSOLICATED && payment?.status == 'DEFERRED') defferedInstallments++
         }
 
         if (flow === fisFlows.MISSED_EMI_PAYMENT && payment?.status) {
-          if (action == FisApiSequence.ON_UPDATE_UNCOLICATED && payment?.status == 'DEFERRED') defferedInstallments++
+          if (action == FisApiSequence.ON_UPDATE_UNSOLICATED && payment?.status == 'DEFERRED') defferedInstallments++
           if (action == FisApiSequence.ON_UPDATE && payment?.status == 'DELAYED') delayedInstallments++
         }
 
@@ -230,9 +228,8 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
           } else {
             const updateValue = getValue(`updatePayment`)
             if (payment?.params?.amount !== updateValue)
-              onUpdateObj[
-                'invalidPaymentAmount'
-              ] = `Invalid payment amount (${payment.url}) at index ${i}, should be the same as sent in update call`
+              onUpdateObj['invalidPaymentAmount'] =
+                `Invalid payment amount (${payment.url}) at index ${i}, should be the same as sent in update call`
           }
         }
 
@@ -280,7 +277,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
         }
       }
 
-      if (action != FisApiSequence.ON_UPDATE_UNCOLICATED) {
+      if (action != FisApiSequence.ON_UPDATE_UNSOLICATED) {
         const buyerFinderFeesTag = payments[0].tags?.find((tag: any) => tag.descriptor.code === 'BUYER_FINDER_FEES')
         const settlementTermsTag = payments[0].tags?.find((tag: any) => tag.descriptor.code === 'SETTLEMENT_TERMS')
 

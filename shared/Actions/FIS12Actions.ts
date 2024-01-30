@@ -148,15 +148,15 @@ export function validateLogsForFIS12(data: any, domain: string, flow: string, ve
     }
 
     if (flow === fisFlows.PERSONAL) {
-      if (data[FisApiSequence.ON_UPDATE_UNCOLICATED]) {
+      if (data[FisApiSequence.ON_UPDATE_UNSOLICATED]) {
         const onUpdate = checkOnUpdate(
-          data[FisApiSequence.ON_UPDATE_UNCOLICATED],
+          data[FisApiSequence.ON_UPDATE_UNSOLICATED],
           msgIdSet,
           flow,
-          FisApiSequence.ON_UPDATE_UNCOLICATED,
+          FisApiSequence.ON_UPDATE_UNSOLICATED,
         )
         if (!_.isEmpty(onUpdate)) {
-          logReport = { ...logReport, [FisApiSequence.ON_UPDATE_UNCOLICATED]: onUpdate }
+          logReport = { ...logReport, [FisApiSequence.ON_UPDATE_UNSOLICATED]: onUpdate }
         }
       }
     }
@@ -176,15 +176,15 @@ export function validateLogsForFIS12(data: any, domain: string, flow: string, ve
     }
 
     if (flow === fisFlows.LOAN_FORECLOSURE) {
-      if (data[FisApiSequence.ON_UPDATE_UNCOLICATED]) {
+      if (data[FisApiSequence.ON_UPDATE_UNSOLICATED]) {
         const onUpdate = checkOnUpdate(
-          data[FisApiSequence.ON_UPDATE_UNCOLICATED],
+          data[FisApiSequence.ON_UPDATE_UNSOLICATED],
           msgIdSet,
           flow,
-          FisApiSequence.ON_UPDATE_UNCOLICATED,
+          FisApiSequence.ON_UPDATE_UNSOLICATED,
         )
         if (!_.isEmpty(onUpdate)) {
-          logReport = { ...logReport, [FisApiSequence.ON_UPDATE_UNCOLICATED]: onUpdate }
+          logReport = { ...logReport, [FisApiSequence.ON_UPDATE_UNSOLICATED]: onUpdate }
         }
       }
     }

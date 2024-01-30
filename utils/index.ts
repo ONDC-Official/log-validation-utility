@@ -136,8 +136,11 @@ export const checkMobilityContext = (
   }
 
   if (!data.ttl) {
-    {
-      errObj.ttl_err = `ttl should be present in context`
+    errObj.ttl_err = 'ttl is required in the context'
+  } else {
+    const ttlRegex = /^PT(\d+M|\d+H\d+M|\d+H|\d+S)$/
+    if (!ttlRegex.test(data.ttl)) {
+      errObj.ttl_err = 'Invalid TTL format. Should be in the format PT10M.'
     }
   }
 

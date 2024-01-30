@@ -1,13 +1,8 @@
 /* eslint-disable no-prototype-builtins */
 // import _ from 'lodash'
-import constants, {
-  mobilitySequence,
-  MOB_VEHICLE_CATEGORIES as VALID_VEHICLE_CATEGORIES,
-  MOB__DESCRIPTOR_CODES as VALID_DESCRIPTOR_CODES,
-  MOB_FULL_STATE as VALID_FULL_STATE,
-} from '../../constants'
+import constants, { metroSequence } from '../../constants'
 import { logger } from '../../shared/logger'
-import { validateSchema, isObjectEmpty } from '../'
+import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
 import {
   validateContext,
@@ -15,15 +10,26 @@ import {
   validateQuote,
   validateStops,
   validateCancellationTerms,
-} from './mobilityChecks'
+} from './metroChecks'
 import { validatePaymentTags, validateRouteInfoTags } from './tags'
 import _ from 'lodash'
+
+const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
+const VALID_FULL_STATE = [
+  'RIDE_CANCELLED',
+  'RIDE_ENDED',
+  'RIDE_STARTED',
+  'RIDE_ASSIGNED',
+  'RIDE_ENROUTE_PICKUP',
+  'RIDE_ARRIVED_PICKUP',
+]
+const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
 
 export const checkOnConfirm = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [mobilitySequence.ON_CONFIRM]: 'JSON cannot be empty' }
+      return { [metroSequence.ON_CONFIRM]: 'Json cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -33,7 +39,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
 
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_CONFIRM, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.CONFIRM, constants.ON_CONFIRM)
-    setValue(`${mobilitySequence.ON_CONFIRM}_message`, message)
+    setValue(`${metroSequence.ON_CONFIRM}_message`, message)
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
@@ -47,7 +53,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
     const itemIDS: any = getValue('ItmIDS')
     const itemIdArray: any[] = []
     const fulfillmentIdsSet = new Set()
-    const storedFull: any = getValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`)
+    const storedFull: any = getValue(`${metroSequence.ON_SELECT}_storedFulfillments`)
 
     let newItemIDSValue: any[]
 
@@ -92,9 +98,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
         on_confirm.items.forEach((item: any, index: number) => {
           if (!newItemIDSValue.includes(item.id)) {
             const key = `item[${index}].item_id`
-            errorObj[
-              key
-            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_CONFIRM}`
+            errorObj[key] =
+              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_CONFIRM}`
           }
 
           if (!item.descriptor || !item.descriptor.code) {
@@ -103,9 +108,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
           } else {
             if (!VALID_DESCRIPTOR_CODES.includes(item.descriptor.code)) {
               const key = `item${index}_descriptor`
-              errorObj[
-                key
-              ] = `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
+              errorObj[key] =
+                `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
             }
           }
 
@@ -117,10 +121,9 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
 
           item.fulfillment_ids &&
             item.fulfillment_ids.forEach((fulfillmentId: string) => {
-              if (!_.isEmpty(fulfillmentIdsSet) && !fulfillmentIdsSet.has(fulfillmentId)) {
-                errorObj[
-                  `invalidFulfillmentId_${index}`
-                ] = `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_CONFIRM} is not valid`
+              if (!fulfillmentIdsSet.has(fulfillmentId)) {
+                errorObj[`invalidFulfillmentId_${index}`] =
+                  `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_CONFIRM} is not valid`
               }
             })
         })
@@ -135,17 +138,15 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
         const fulfillmentKey = `fulfillments[${index}]`
 
         if (!storedFull.includes(fulfillment.id)) {
-          errorObj[
-            `${fulfillmentKey}.id`
-          ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+          errorObj[`${fulfillmentKey}.id`] =
+            `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
         } else {
           fulfillmentIdsSet.add(fulfillment.id)
         }
 
         if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
-          errorObj[
-            `${fulfillmentKey}.vehicleCategory`
-          ] = `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
+          errorObj[`${fulfillmentKey}.vehicleCategory`] =
+            `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
         }
 
         if (!VALID_FULL_STATE.includes(fulfillment?.state?.descriptor?.code)) {
@@ -159,9 +160,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
         }
 
         if (fulfillment.type !== 'DELIVERY') {
-          errorObj[
-            `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_CONFIRM}`
+          errorObj[`${fulfillmentKey}.type`] =
+            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_CONFIRM}`
         }
 
         if (!Object.prototype.hasOwnProperty.call(fulfillment.customer?.person, 'name')) {
@@ -234,9 +234,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
         } else {
           const srchCollectBy = getValue(`collected_by`)
           if (srchCollectBy != arr?.collected_by)
-            errorObj[
-              `payemnts[${i}]_collected_by`
-            ] = `payments.collected_by value sent in ${constants.ON_SELECT} should be ${srchCollectBy} as sent in ${constants.ON_CONFIRM}`
+            errorObj[`payemnts[${i}]_collected_by`] =
+              `payments.collected_by value sent in ${constants.ON_SELECT} should be ${srchCollectBy} as sent in ${constants.ON_CONFIRM}`
         }
 
         const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']

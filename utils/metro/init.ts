@@ -1,16 +1,17 @@
-import constants, { mobilitySequence, MOB_VEHICLE_CATEGORIES as VALID_VEHICLE_CATEGORIES } from '../../constants'
+import constants, { metroSequence } from '../../constants'
 import { logger } from '../../shared/logger'
-import { validateSchema, isObjectEmpty } from '../'
+import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
-import { validateContext, validateStops } from './mobilityChecks'
+import { validateContext, validateStops } from './metroChecks'
 import { validatePaymentTags } from './tags'
 import _ from 'lodash'
 
+const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 export const checkInit = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [mobilitySequence.INIT]: 'JSON cannot be empty' }
+      return { [metroSequence.INIT]: 'Json cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -20,7 +21,7 @@ export const checkInit = (data: any, msgIdSet: any) => {
 
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.INIT, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.ON_SELECT, constants.INIT)
-    setValue(`${mobilitySequence.INIT}_message`, message)
+    setValue(`${metroSequence.INIT}_message`, message)
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
@@ -34,13 +35,13 @@ export const checkInit = (data: any, msgIdSet: any) => {
 
     const itemIDS: any = getValue('itemIds')
     const itemIdArray: any[] = []
-    const storedFull: any = getValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`)
+    const storedFull: any = getValue(`${metroSequence.ON_SELECT}_storedFulfillments`)
     let newItemIDSValue: any[]
 
     if (itemIDS && itemIDS.length > 0) {
       newItemIDSValue = itemIDS
     } else {
-      const onSelect: any = getValue(`${mobilitySequence.ON_SELECT}_message`)
+      const onSelect: any = getValue(`${metroSequence.ON_SELECT}_message`)
       onSelect.order.items.map((item: { id: string }) => {
         itemIdArray.push(item.id)
       })
@@ -73,9 +74,8 @@ export const checkInit = (data: any, msgIdSet: any) => {
       init.items.forEach((item: any, index: number) => {
         if (!newItemIDSValue.includes(item.id)) {
           const key = `item[${index}].item_id`
-          errorObj[
-            key
-          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+          errorObj[key] =
+            `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
         }
       })
     } catch (error: any) {
@@ -90,9 +90,8 @@ export const checkInit = (data: any, msgIdSet: any) => {
         } else {
           const srchCollectBy = getValue(`collected_by`)
           if (srchCollectBy && srchCollectBy != arr?.collected_by)
-            errorObj[
-              `payemnts[${i}]_collected_by`
-            ] = `payments.collected_by value sent in ${constants.ON_SELECT} should be ${srchCollectBy} as sent in ${constants.INIT}`
+            errorObj[`payemnts[${i}]_collected_by`] =
+              `payments.collected_by value sent in ${constants.ON_SELECT} should be ${srchCollectBy} as sent in ${constants.INIT}`
 
           if (arr?.collected_by === 'BPP' && 'id' in arr)
             errorObj[`payemnts[${i}]_id`] = `id should not be present if collector is BPP`
@@ -122,17 +121,15 @@ export const checkInit = (data: any, msgIdSet: any) => {
         }
 
         if (!params?.bank_account_number) {
-          errorObj[
-            `payments[${i}]_bank_account_number`
-          ] = `payments.params.bank_account_number must be present in ${constants.INIT}`
+          errorObj[`payments[${i}]_bank_account_number`] =
+            `payments.params.bank_account_number must be present in ${constants.INIT}`
         } else {
           setValue('bank_account_number', params?.bank_account_number)
         }
 
         if (!params?.virtual_payment_address) {
-          errorObj[
-            `payments[${i}]_virtual_payment_address`
-          ] = `payments.params.virtual_payment_address must be present in ${constants.INIT}`
+          errorObj[`payments[${i}]_virtual_payment_address`] =
+            `payments.params.virtual_payment_address must be present in ${constants.INIT}`
         } else {
           setValue('virtual_payment_address', params?.virtual_payment_address)
         }
@@ -154,15 +151,13 @@ export const checkInit = (data: any, msgIdSet: any) => {
         console.log('storedFull--', storedFull)
         if (storedFull && !storedFull.includes(full.id)) {
           const key = `fulfillments[${index}].id`
-          errorObj[
-            key
-          ] = `/message/order/fulfillments/id in fulfillments: ${full.id} should be one of the /fulfillments/id mapped in previous call`
+          errorObj[key] =
+            `/message/order/fulfillments/id in fulfillments: ${full.id} should be one of the /fulfillments/id mapped in previous call`
         }
 
         if (!VALID_VEHICLE_CATEGORIES.includes(full.vehicle.category)) {
-          errorObj[
-            `fulfillment_${index}_vehicleCategory`
-          ] = `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
+          errorObj[`fulfillment_${index}_vehicleCategory`] =
+            `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
         }
 
         if (!Object.prototype.hasOwnProperty.call(full.customer?.person, 'name')) {
@@ -191,11 +186,10 @@ export const checkInit = (data: any, msgIdSet: any) => {
           errorObj[`fulfillments${index}_agent`] = `/message/order/agent is not part of init call`
         }
 
-        //if type is sent then it should be DELIVERY else, no mandatory to check for the BAP end call
+        //if type is sent then it should be DELIVERY else, no mandatory to check for the BAP's call
         if (full.type && full.type !== 'DELIVERY') {
-          errorObj[
-            `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_SELECT}`
+          errorObj[`${fulfillmentKey}.type`] =
+            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_SELECT}`
         }
 
         // Check stops for START and END, or time range with valid timestamp and GPS

@@ -2,7 +2,7 @@
 // import _ from 'lodash'
 import constants, { mobilitySequence } from '../../constants'
 import { logger } from '../../shared/logger'
-import { validateSchema, isObjectEmpty } from '../'
+import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
 import { validateContext, validateStops } from './mobilityChecks'
 import { validateRouteInfoTags, validateCancellationTerm } from './tags'

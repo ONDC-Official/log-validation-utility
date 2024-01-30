@@ -1,13 +1,13 @@
 import { logger } from '../../shared/logger'
 import { getValue, setValue } from '../../shared/dao'
-import constants, { mobilitySequence } from '../../constants'
-import { validateSchema, isObjectEmpty, checkGpsPrecision } from '../'
+import constants, { metroSequence } from '../../constants'
+import { validateSchema, isObjectEmpty, checkGpsPrecision } from '..'
 // import _ from 'lodash'
-import { validateContext } from './mobilityChecks'
+import { validateContext } from './metroChecks'
 
 export const checkSelect = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [mobilitySequence.SELECT]: 'JSON cannot be empty' }
+    return { [metroSequence.SELECT]: 'Json cannot be empty' }
   }
 
   const { message, context } = data
@@ -17,7 +17,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
 
   const schemaValidation = validateSchema(context.domain.split(':')[1], constants.SELECT, data)
   const contextRes: any = validateContext(context, msgIdSet, constants.ON_SEARCH, constants.SELECT)
-  setValue(`${mobilitySequence.SELECT}_message`, message)
+  setValue(`${metroSequence.SELECT}_message`, message)
   const errorObj: any = {}
 
   if (schemaValidation !== 'error') {
@@ -29,9 +29,9 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   }
 
   try {
-    const storedItemIDS: any = getValue(`${mobilitySequence.ON_SEARCH}_itemsId`)
+    const storedItemIDS: any = getValue(`${metroSequence.ON_SEARCH}_itemsId`)
     const select = message.order
-    const onSearch: any = getValue(`${mobilitySequence.ON_SEARCH}_message`)
+    const onSearch: any = getValue(`${metroSequence.ON_SEARCH}_message`)
 
     try {
       logger.info(`Comparing Provider object for /${constants.ON_SEARCH} and /${constants.SELECT}`)
@@ -57,9 +57,8 @@ export const checkSelect = (data: any, msgIdSet: any) => {
       select.items.forEach((item: any, index: number) => {
         if (storedItemIDS && !storedItemIDS.includes(item.id)) {
           const key = `item[${index}].item_id`
-          errorObj[
-            key
-          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+          errorObj[key] =
+            `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
         } else {
           setValue('itemId', item.id)
         }

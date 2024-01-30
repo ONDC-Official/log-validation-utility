@@ -99,6 +99,26 @@ export const mobilitySequence = {
   STATUS: 'status',
   ON_STATUS: 'on_status',
 }
+
+export const metroSequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SELECT: 'select',
+  ON_SELECT: 'on_select',
+  INIT: 'init',
+  ON_INIT: 'on_init',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  CANCEL: 'cancel',
+  SOFT_CANCEL: 'soft_cancel',
+  ON_CANCEL: 'on_cancel',
+  SOFT_ON_CANCEL: 'soft_on_cancel',
+  UPDATE: 'update',
+  ON_UPDATE: 'on_update',
+  STATUS: 'status',
+  ON_STATUS: 'on_status',
+}
+
 export const mobilityFlow: any = {
   AIRLINES: 'airlines',
   METRO: 'metro',

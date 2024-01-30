@@ -3,8 +3,9 @@ import constants, { metroSequence } from '../../constants'
 import { logger } from '../../shared/logger'
 import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
-import { validateContext, validatePaymentParams, validateQuote, validateStops } from './metroChecks'
+import { validateContext, validatePaymentParams, validateQuote, validateStops, validateCancellationTerms } from './metroChecks'
 import { validatePaymentTags, validateRouteInfoTags } from './tags'
+import _ from 'lodash'
 
 const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
 const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
@@ -92,10 +93,12 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         const cancel = false
         validateStops(fulfillment?.stops, index, otp, cancel)
 
-        // Validate route info tags
-        const tagsValidation = validateRouteInfoTags(fulfillment.tags)
-        if (!tagsValidation.isValid) {
-          Object.assign(errorObj, { tags: tagsValidation.errors })
+        if (fulfillment.tags) {
+          // Validate route info tags
+          const tagsValidation = validateRouteInfoTags(fulfillment.tags)
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { tags: tagsValidation.errors })
+          }
         }
       })
     } catch (error: any) {
@@ -134,12 +137,6 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
               `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_INIT} is not valid`
           }
         })
-
-        // Validate item tags
-        const tagsValidation = validateRouteInfoTags(item.tags)
-        if (!tagsValidation.isValid) {
-          Object.assign(errorObj, { tags: tagsValidation.errors })
-        }
       })
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking items info in /${constants.ON_INIT},  ${error.message}`)
@@ -148,39 +145,10 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
     try {
       logger.info(`Checking cancellation terms in /${constants.ON_INIT}`)
-      const cancellationTerms = on_init.cancellation_terms
-
-      if (cancellationTerms && cancellationTerms.length > 0) {
-        for (let i = 0; i < cancellationTerms.length; i++) {
-          const cancellationTerm = cancellationTerms[i]
-
-          if (
-            cancellationTerm.fulfillment_state &&
-            cancellationTerm.fulfillment_state.descriptor &&
-            cancellationTerm.fulfillment_state.descriptor.code &&
-            (!cancellationTerm.cancellation_fee ||
-              !(
-                (cancellationTerm.cancellation_fee.percentage && !cancellationTerm.cancellation_fee.amount) ||
-                (!cancellationTerm.cancellation_fee.percentage && cancellationTerm.cancellation_fee.amount)
-              ))
-          ) {
-            errorObj.cancellationFee = `Either percentage or amount.currency & amount.value should be present, but not both, for Cancellation Term[${i}] when fulfillment_state is present`
-          }
-
-          // const descriptorCode = cancellationTerm.fulfillment_state.descriptor.code
-          // const storedPercentage = cancellationTermsState.get(descriptorCode)
-
-          // if (storedPercentage === undefined) {
-          //   cancellationTermsState.set(descriptorCode, cancellationTerm.cancellation_fee.percentage)
-          // } else if (storedPercentage !== cancellationTerm.cancellation_fee.percentage) {
-          //   errorObj.cancellationFee = `Cancellation terms percentage for ${descriptorCode} has changed`
-          // }
-        }
-      } else {
-        errorObj.cancellationTerms = `Cancellation Terms are required in /${constants.ON_INIT}`
-      }
+      const cancellationErrors = validateCancellationTerms(on_init.cancellation_terms, constants.ON_INIT)
+      Object.assign(errorObj, cancellationErrors)
     } catch (error: any) {
-      logger.error(`!!Error while checking cancellation terms in /${constants.ON_INIT}, ${error.stack}`)
+      logger.error(`!!Error while checking cancellation_terms in /${constants.ON_INIT}, ${error.stack}`)
     }
 
     try {

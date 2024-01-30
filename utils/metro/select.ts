@@ -79,12 +79,8 @@ export const checkSelect = (data: any, msgIdSet: any) => {
           fulfillmentErrors[`${fulfillmentKey}.id`] = `${fulfillmentKey}/id is required`
         }
 
-        if (fulfillment.type == undefined) {
-          fulfillmentErrors[`${fulfillmentKey}.type`] = `Fulfillment type 'DELIVERY' should be present in provoider`
-        } else {
-          if (fulfillment.type !== 'DELIVERY') {
-            fulfillmentErrors[`${fulfillmentKey}.type`] = `Fulfillment type should be 'DELIVERY' in provoider}`
-          }
+        if (fulfillment.type && fulfillment.type !== 'DELIVERY') {
+          fulfillmentErrors[`${fulfillmentKey}.type`] = `Fulfillment type should be 'DELIVERY' in provoider}`
         }
 
         if ('stops' in fulfillment && Array.isArray(fulfillment.stops)) {

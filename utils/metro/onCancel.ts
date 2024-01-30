@@ -126,10 +126,12 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
           validateAgent(errorObj, fulfillment.agent, i)
           validateVehicle(errorObj, fulfillment.vehicle, i)
 
-          // Validate route info tags
-          const tagsValidation = validateRouteInfoTags(fulfillment.tags)
-          if (!tagsValidation.isValid) {
-            Object.assign(errorObj, { tags: tagsValidation.errors })
+          if (fulfillment.tags) {
+            // Validate route info tags
+            const tagsValidation = validateRouteInfoTags(fulfillment.tags)
+            if (!tagsValidation.isValid) {
+              Object.assign(errorObj, { tags: tagsValidation.errors })
+            }
           }
 
           // Check stops for START and END, or time range with valid timestamp and GPS
@@ -248,7 +250,7 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
             ] = `fulfillment_ids should be present at index ${index} in /${constants.ON_CANCEL}`
           } else {
             item.fulfillment_ids.forEach((fulfillmentId: string) => {
-              if (!fulfillmentIdsSet.has(fulfillmentId)) {
+              if (!_.isEmpty(fulfillmentIdsSet) && !fulfillmentIdsSet.has(fulfillmentId)) {
                 errorObj[
                   `invalidFulfillmentId_${index}`
                 ] = `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.ON_CANCEL} is not valid`

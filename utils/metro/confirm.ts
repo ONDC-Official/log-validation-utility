@@ -170,9 +170,10 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
           }
         }
 
-        if (full.type !== 'DELIVERY') {
+        //if type is sent then it should be DELIVERY else, no mandatory to check for the BAP's call
+        if (full.type && full.type !== 'DELIVERY') {
           errorObj[`${fulfillmentKey}.type`] =
-            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_INIT}`
+            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_SELECT}`
         }
 
         // Check stops for START and END, or time range with valid timestamp and GPS

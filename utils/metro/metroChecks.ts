@@ -260,3 +260,37 @@ export const validateQuote = (quote: any, action: string) => {
 
   return errorObj
 }
+
+export const validateCancellationTerms = (cancellationTerms: any, action: string) => {
+  const errorObj: any = {}
+  try {
+    logger.info(`Checking cancellation terms in /${action}`)
+    if (!cancellationTerms) {
+      errorObj.cancellationTerms = `cancellation_terms are required in /${action}`
+    } else if (cancellationTerms && cancellationTerms.length > 0) {
+      for (let i = 0; i < cancellationTerms.length; i++) {
+        const cancellationTerm = cancellationTerms[i]
+
+        if (
+          cancellationTerm.fulfillment_state &&
+          cancellationTerm.fulfillment_state.descriptor &&
+          cancellationTerm.fulfillment_state.descriptor.code &&
+          (!cancellationTerm.cancellation_fee ||
+            !(
+              (cancellationTerm.cancellation_fee.percentage && !cancellationTerm.cancellation_fee.amount) ||
+              (!cancellationTerm.cancellation_fee.percentage && cancellationTerm.cancellation_fee.amount)
+            ))
+        ) {
+          errorObj.cancellationFee = `Either percentage or amount.currency & amount.value should be present, but not both, for Cancellation Term[${i}] when fulfillment_state is present`
+        }
+
+      }
+    } else {
+      errorObj.cancellationTerms = `cancellation_terms should be an array in /${action}`
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while checking cancellation_terms in /${action}, ${error.stack}`)
+  }
+
+  return errorObj
+}

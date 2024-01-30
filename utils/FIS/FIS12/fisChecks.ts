@@ -3,6 +3,7 @@ import { formHeadingsFis } from '../../../constants/'
 import { logger } from '../../../shared/logger'
 import { checkIdAndUri, checkFISContext } from '../../'
 import _ from 'lodash'
+import { validatePaymentTags } from './tags'
 const FULFILLMENT_STATE_CODES = ['INITIATED', 'SANCTIONED', 'DISBURSED', 'PENDING', 'REJECTED', 'COMPLETED']
 
 export const checkUniqueCategoryIds = (categoryIds: (string | number)[], availableCategoryIds: any): boolean => {
@@ -253,15 +254,15 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
 
     try {
       logger.info(`Comparing Message Ids of /${pastCall} and /${curentCall}`)
-      if (curentCall.startsWith('on_')) {
+      if (curentCall.startsWith('on_') && curentCall.includes(pastCall)) {
         logger.info(`Comparing Message Ids of /${pastCall} and /${curentCall}`)
         if (!_.isEqual(prevContext.message_id, context.message_id)) {
-          errorObj.message_id = `Message Id for /${pastCall} and /${curentCall} api should be same`
+          errorObj.message_id = `message_id for /${pastCall} and /${curentCall} api should be same`
         }
       } else {
         logger.info(`Checking if Message Ids are different for /${pastCall} and /${curentCall}`)
         if (_.isEqual(prevContext.message_id, context.message_id)) {
-          errorObj.message_id = `Message Id for /${pastCall} and /${curentCall} api should be different`
+          errorObj.message_id = `message_id for /${pastCall} and /${curentCall} api should be different`
         }
       }
     } catch (error: any) {
@@ -287,5 +288,147 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
   } else {
     const result = { valid: false, ERRORS: errorObj }
     return result
+  }
+}
+
+export const validateCancellationTerms = (cancellationTerms: any, action: string) => {
+  const errorObj: any = {}
+  try {
+    logger.info(`Checking cancellation terms in /${action}`)
+    const cancellationTermsState = new Map()
+    if (!cancellationTerms) {
+      errorObj.cancellationTerms = `cancellation_terms are required in /${action}`
+    } else if (cancellationTerms && cancellationTerms.length > 0) {
+      for (let i = 0; i < cancellationTerms.length; i++) {
+        const cancellationTerm = cancellationTerms[i]
+
+        const hasExternalRef = cancellationTerm?.external_ref !== undefined
+        const hasFulfillmentState = cancellationTerm?.fulfillment_state !== undefined
+        const hasCancellationFee = cancellationTerm?.cancellation_fee !== undefined
+        const hasPercentage = hasCancellationFee && cancellationTerm?.cancellation_fee?.percentage !== undefined
+        const hasAmount = hasCancellationFee && cancellationTerm?.cancellation_fee?.amount !== undefined
+
+        const isValidTerm =
+          (hasExternalRef || (hasFulfillmentState && hasCancellationFee && (hasPercentage || hasAmount))) &&
+          (!hasFulfillmentState ||
+            (hasFulfillmentState &&
+              cancellationTerm.fulfillment_state.descriptor &&
+              cancellationTerm.fulfillment_state.descriptor.code &&
+              ((hasPercentage &&
+                !isNaN(parseFloat(cancellationTerm.cancellation_fee.percentage)) &&
+                parseFloat(cancellationTerm.cancellation_fee.percentage) > 0 &&
+                Number.isInteger(parseFloat(cancellationTerm.cancellation_fee.percentage))) ||
+                (hasAmount &&
+                  !isNaN(parseFloat(cancellationTerm.cancellation_fee.amount)) &&
+                  parseFloat(cancellationTerm.cancellation_fee.amount) > 0))))
+
+        if (!isValidTerm) {
+          errorObj.cancellationFee = `Invalid Cancellation Term[${i}] - Either external_ref or fulfillment_state with valid cancellation_fee is required`
+        }
+
+        if (hasFulfillmentState) {
+          const descriptorCode = cancellationTerm.fulfillment_state.descriptor.code
+          const storedPercentage = cancellationTermsState.get(descriptorCode)
+
+          if (storedPercentage === undefined) {
+            cancellationTermsState.set(
+              descriptorCode,
+              hasPercentage ? cancellationTerm.cancellation_fee.percentage : cancellationTerm.cancellation_fee.amount,
+            )
+          } else if (
+            storedPercentage !==
+            (hasPercentage ? cancellationTerm.cancellation_fee.percentage : cancellationTerm.cancellation_fee.amount)
+          ) {
+            errorObj.cancellationFee = `Cancellation terms percentage or amount for ${descriptorCode} has changed`
+          }
+        }
+      }
+    } else {
+      errorObj.cancellationTerms = `cancellation_terms should be an array in /${action}`
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while checking cancellation_terms in /${action}, ${error.stack}`)
+  }
+
+  return errorObj
+}
+
+export const validatePayments = (payments: any, action: string, quote: any) => {
+  try {
+    const errorObj: any = {}
+    const totalPaymentsAmount = payments
+      .filter((payment: any) => payment.params && payment.params.amount)
+      .reduce((total: any, payment: any) => total + parseFloat(payment.params.amount), 0)
+    const quotePriceValue = parseFloat(quote.price.value)
+
+    if (totalPaymentsAmount !== quotePriceValue) {
+      errorObj.paymentsAmountMismatch = `Total payments amount (${totalPaymentsAmount}) does not match with quote.price.value (${quotePriceValue})`
+    }
+
+    for (let i = 1; i < payments.length; i++) {
+      const payment = payments[i]
+
+      if (!payment.status) {
+        errorObj.payments = `status is missing in payments`
+      } else {
+        const allowedStatusValues = ['NOT-PAID', 'PAID']
+        if (!allowedStatusValues.includes(payment.status)) {
+          errorObj.paymentStatus = `Invalid value for status. It should be either of NOT-PAID or PAID.`
+        }
+      }
+
+      if (payment.time && payment.time.range) {
+        const { start, end } = payment.time.range
+        const startTime = new Date(start).getTime()
+        const endTime = new Date(end).getTime()
+
+        if (isNaN(startTime) || isNaN(endTime) || startTime > endTime) {
+          errorObj.invalidTimeRange = `Invalid time range for payment at index ${i}`
+        }
+
+        if (i > 0) {
+          const prevEndTime = new Date(payments[i - 1].time.range.end).getTime()
+          if (startTime <= prevEndTime) {
+            errorObj.timeRangeOrderError = `Time range order error for payment at index ${i}`
+          }
+        }
+      } else {
+        errorObj.missingTimeRange = `Missing time range for payment at index ${i}`
+      }
+    }
+
+    if (payments[0].tags) {
+      // Validate payment tags
+      const tagsValidation = validatePaymentTags(payments[0].tags)
+      if (!tagsValidation.isValid) {
+        Object.assign(errorObj, { tags: tagsValidation.errors })
+      }
+    }
+
+    if (!payments[0].collected_by) {
+      errorObj.payments = `collected_by  is missing in payments`
+    } else {
+      const allowedCollectedByValues = ['BPP', 'BAP']
+      const allowedStatusValues = ['NOT-PAID', 'PAID']
+
+      const collectedBy = getValue(`collected_by`)
+      if (collectedBy && collectedBy !== payments[0].collected_by) {
+        errorObj.collectedBy = `Collected_By didn't match with what was sent in previous call.`
+      } else {
+        if (!allowedCollectedByValues.includes(payments[0].collected_by)) {
+          errorObj.collectedBy = `Invalid value for collected_by. It should be either BPP or BAP.`
+        }
+
+        setValue(`collected_by`, payments[0].collected_by)
+      }
+
+      if (!allowedStatusValues.includes(payments[0].status)) {
+        errorObj.paymentStatus = `Invalid value for status. It should be either of NOT-PAID or PAID.`
+      }
+    }
+
+    return errorObj
+  } catch (error: any) {
+    logger.error(`!!Error /${action}`, error.stack)
   }
 }

@@ -902,6 +902,11 @@ properties:
                     - ON_FULFILLMENT
                     - POST_FULFILLMENT
                     - ON_ORDER
+                    - PRE-ORDER
+                    - PRE-FULFILLMENT
+                    - ON-FULFILLMENT
+                    - POST-FULFILLMENT
+                    - ON-ORDER
                 status:
                   type: string
                   enum:

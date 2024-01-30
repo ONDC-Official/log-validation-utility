@@ -147,24 +147,45 @@ export function validateLogsForFIS12(data: any, domain: string, flow: string, ve
       }
     }
 
-    if (data[FisApiSequence.ON_UPDATE]) {
-      const onUpdate = checkOnUpdate(data[FisApiSequence.ON_UPDATE], msgIdSet, flow)
-      if (!_.isEmpty(onUpdate)) {
-        logReport = { ...logReport, [FisApiSequence.ON_UPDATE]: onUpdate }
+    if (flow === fisFlows.PERSONAL) {
+      if (data[FisApiSequence.ON_UPDATE_UNSOLICATED]) {
+        const onUpdate = checkOnUpdate(
+          data[FisApiSequence.ON_UPDATE_UNSOLICATED],
+          msgIdSet,
+          flow,
+          FisApiSequence.ON_UPDATE_UNSOLICATED,
+        )
+        if (!_.isEmpty(onUpdate)) {
+          logReport = { ...logReport, [FisApiSequence.ON_UPDATE_UNSOLICATED]: onUpdate }
+        }
       }
     }
 
     if (data[FisApiSequence.UPDATE]) {
-      const update = checkUpdate(data[FisApiSequence.UPDATE], msgIdSet)
+      const update = checkUpdate(data[FisApiSequence.UPDATE], msgIdSet, flow)
       if (!_.isEmpty(update)) {
         logReport = { ...logReport, [FisApiSequence.UPDATE]: update }
       }
     }
 
-    if (data[FisApiSequence.ON_UPDATE_1]) {
-      const onUpdate1 = checkOnUpdate(data[FisApiSequence.ON_UPDATE_1], msgIdSet, flow)
-      if (!_.isEmpty(onUpdate1)) {
-        logReport = { ...logReport, [FisApiSequence.ON_UPDATE_1]: onUpdate1 }
+    if (data[FisApiSequence.ON_UPDATE]) {
+      const onUpdate = checkOnUpdate(data[FisApiSequence.ON_UPDATE], msgIdSet, flow, FisApiSequence.ON_UPDATE)
+      if (!_.isEmpty(onUpdate)) {
+        logReport = { ...logReport, [FisApiSequence.ON_UPDATE]: onUpdate }
+      }
+    }
+
+    if (flow === fisFlows.LOAN_FORECLOSURE) {
+      if (data[FisApiSequence.ON_UPDATE_UNSOLICATED]) {
+        const onUpdate = checkOnUpdate(
+          data[FisApiSequence.ON_UPDATE_UNSOLICATED],
+          msgIdSet,
+          flow,
+          FisApiSequence.ON_UPDATE_UNSOLICATED,
+        )
+        if (!_.isEmpty(onUpdate)) {
+          logReport = { ...logReport, [FisApiSequence.ON_UPDATE_UNSOLICATED]: onUpdate }
+        }
       }
     }
 

@@ -40,7 +40,7 @@ export const validateRouteInfoTags = (tags: RouteInfoTag[]): ValidationResult =>
   const errors: string[] = []
 
   if (!tags) {
-    errors.push('Tags are required for validation in fulfillments')
+    errors.push('Tags are missing in fulfillments')
     return {
       isValid: false,
       errors,
@@ -57,9 +57,7 @@ export const validateRouteInfoTags = (tags: RouteInfoTag[]): ValidationResult =>
         const descriptorCode = item.descriptor.code
 
         if (descriptorCode !== descriptorCode.toUpperCase()) {
-          errors.push(
-            `route.tag[${index}], List item[${itemIndex}] has a descriptor code in lowercase. Please use uppercase for descriptor codes.`,
-          )
+          errors.push(`code should be in uppercase at route.tag[${index}], List item[${itemIndex}].`)
         }
 
         switch (descriptorCode.toUpperCase()) {
@@ -98,6 +96,8 @@ export const validatePaymentTags = (tags: Tag[]): ValidationResult => {
   const errors: string[] = []
 
   const validDescriptorCodes = ['BUYER_FINDER_FEES', 'SETTLEMENT_TERMS']
+  const settlementTypes = ['upi', 'neft', 'rtgs']
+  const settlementBasis = ['Delivery', 'INVOICE_RECEIPT']
 
   tags.forEach((tag, index) => {
     if (!validDescriptorCodes.includes(tag.descriptor.code)) {
@@ -146,17 +146,17 @@ export const validatePaymentTags = (tags: Tag[]): ValidationResult => {
 
               break
             case 'SETTLEMENT_BASIS':
-              if (item.value !== 'Delivery') {
+              if (!settlementBasis?.includes(item.value)) {
                 errors.push(
-                  `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid value for SETTLEMENT_BASIS`,
+                  `SETTLEMENT_TERMS_[${index}],SETTLEMENT_BASIS must be either if ${settlementBasis} at item[${itemIndex}]`,
                 )
               }
 
               break
             case 'SETTLEMENT_TYPE':
-              if (item.value !== 'upi') {
+              if (!settlementTypes?.includes(item.value?.toLowerCase())) {
                 errors.push(
-                  `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid value for SETTLEMENT_TYPE`,
+                  `SETTLEMENT_TERMS_[${index}],SETTLEMENT_TYPE must be either if ${settlementTypes} at item[${itemIndex}]`,
                 )
               }
 
@@ -430,21 +430,6 @@ export function validateCancellationTerm(term: any, index: number) {
 
   if (cancellationFeePercentage === undefined && cancellationFeeAmount === undefined) {
     errors[`cancellationFee_${index}`] = `cancellation_fee is missing or invalid`
-  }
-
-  if (cancellationFeePercentage !== undefined && typeof cancellationFeePercentage !== 'string') {
-    errors[`cancellationFeePercentage_${index}`] = `Invalid data type for cancellation_fee.percentage`
-  }
-
-  if (cancellationFeePercentage && cancellationFeePercentage) {
-    errors[`cancellationFeePercentage_${index}`] = `Either of amount or percentage should be sent`
-  }
-
-  if (
-    cancellationFeeAmount !== undefined &&
-    (typeof cancellationFeeAmount !== 'string' || isNaN(Number(cancellationFeeAmount)))
-  ) {
-    errors[`cancellationFeeAmount_${index}`] = `Invalid data type or value for cancellation_fee.amount.value`
   }
 
   return errors

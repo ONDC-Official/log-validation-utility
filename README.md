@@ -604,7 +604,7 @@ curl --location 'https://log-validation.ondc.org/api/validate/fis/fis12' \
     "version": "2.0.0",
     "flow": "PERSONAL",
     "payload": {
-        "search": {},
+    "search": {},
         "on_search":{},
         "select_1": {},
         "on_select_1": {},
@@ -623,7 +623,7 @@ curl --location 'https://log-validation.ondc.org/api/validate/fis/fis12' \
         "status": {},
         "on_status": {},
         "update": {},
-        "on_update": {},
+        "on_update": {}
     }
 }'
 ```
@@ -651,7 +651,7 @@ curl --location 'https://localhost:3006/api/validate/trv/trv10' \
         "soft_cancel": {},
         "soft_on_cancel": {},
         "cancel": {},
-        "on_cancel": {},
+        "on_cancel": {}
     }
 }'
 ```

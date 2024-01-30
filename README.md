@@ -614,15 +614,15 @@ curl --location 'https://log-validation.ondc.org/api/validate/fis/fis12' \
         "on_select_3":{},
         "init_1": {},
         "on_init_1": {},
-        "init_2": {}
+        "init_2": {},
         "on_init_2": {},
-        "init_3": {}
+        "init_3": {},
         "on_init_3": {},
-        "confirm": {}
+        "confirm": {},
         "on_confirm": {},
-        "status": {}
+        "status": {},
         "on_status": {},
-        "update": {}
+        "update": {},
         "on_update": {},
     }
 }'
@@ -644,13 +644,13 @@ curl --location 'https://localhost:3006/api/validate/trv/trv10' \
         "on_select": {},
         "init": {},
         "on_init": {},
-        "confirm": {}
+        "confirm": {},
         "on_confirm": {},
-        "status": {}
+        "status": {},
         "on_status": {},
-        "soft_cancel": {}
+        "soft_cancel": {},
         "soft_on_cancel": {},
-        "cancel": {}
+        "cancel": {},
         "on_cancel": {},
     }
 }'

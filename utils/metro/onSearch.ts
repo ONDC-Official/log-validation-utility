@@ -1,17 +1,23 @@
 import { logger } from '../../shared/logger'
 import { setValue } from '../../shared/dao'
-import constants, {
-  mobilitySequence,
-  MOB_VEHICLE_CATEGORIES as VALID_VEHICLE_CATEGORIES,
-  MOB__DESCRIPTOR_CODES as VALID_DESCRIPTOR_CODES,
-} from '../../constants'
-import { validateSchema, isObjectEmpty, checkGpsPrecision, timestampCheck } from '../../utils'
-import { validateContext } from './mobilityChecks'
+import constants, { metroSequence } from '../../constants'
+import {
+  validateSchema,
+  isObjectEmpty,
+  // checkMetroContext,
+  // checkBppIdOrBapId,
+  checkGpsPrecision,
+  timestampCheck,
+  // timeDiff,
+} from '..'
+import { validateContext } from './metroChecks'
 import { validatePaymentTags } from './tags'
 
+const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
+const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
 export const checkOnSearch = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [mobilitySequence.ON_SEARCH]: 'JSON cannot be empty' }
+    return { [metroSequence.ON_SEARCH]: 'Json cannot be empty' }
   }
 
   const { message, context } = data
@@ -21,7 +27,7 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
 
   const contextRes: any = validateContext(context, msgIdSet, constants.SEARCH, constants.ON_SEARCH)
   const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SEARCH, data)
-  setValue(`${mobilitySequence.ON_SEARCH}_message`, message)
+  setValue(`${metroSequence.ON_SEARCH}_message`, message)
   const errorObj: any = {}
 
   if (schemaValidation !== 'error') {
@@ -67,9 +73,8 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
           // }
 
           if (fulfillment.type == undefined) {
-            errorObj[
-              `provider_${i}_fulfillment_${k}type`
-            ] = `Fulfillment type 'DELIVERY' should be present in provoider`
+            errorObj[`provider_${i}_fulfillment_${k}type`] =
+              `Fulfillment type 'DELIVERY' should be present in provoider`
           } else {
             if (fulfillment.type !== 'DELIVERY') {
               errorObj[`provider_${i}_fulfillment_${k}type`] = `Fulfillment type should be 'DELIVERY' in provoider}`
@@ -78,9 +83,8 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
 
           // Check if the vehicle category is valid
           if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
-            errorObj[
-              `provider_${i}_fulfillment_${k}_vehicleCategory`
-            ] = `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
+            errorObj[`provider_${i}_fulfillment_${k}_vehicleCategory`] =
+              `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
           }
 
           // Check stops for START and END, or time range with valid timestamp and GPS
@@ -89,9 +93,8 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
           const hasEndStop = stops.some((stop: any) => stop.type === 'END')
 
           if (!(hasStartStop && hasEndStop)) {
-            errorObj[
-              `provider_${i}_fulfillment_${k}_stops`
-            ] = `Fulfillment ${k} in provider ${i} must contain both START and END stops or a valid time range start`
+            errorObj[`provider_${i}_fulfillment_${k}_stops`] =
+              `Fulfillment ${k} in provider ${i} must contain both START and END stops or a valid time range start`
           }
 
           stops.forEach((stop: any, l: number) => {
@@ -100,9 +103,8 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
             if (hasTimeRangeStart) {
               const timestampCheckResult = timestampCheck(stop.time?.range?.start || '')
               if (timestampCheckResult.err) {
-                errorObj[
-                  `provider_${i}_fulfillment_${k}_stop_${l}_timestamp`
-                ] = `Invalid timestamp for stop ${l} in fulfillment ${k} in provider ${i}: ${timestampCheckResult.err}`
+                errorObj[`provider_${i}_fulfillment_${k}_stop_${l}_timestamp`] =
+                  `Invalid timestamp for stop ${l} in fulfillment ${k} in provider ${i}: ${timestampCheckResult.err}`
               }
             }
 
@@ -153,9 +155,8 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
             } else {
               if (!VALID_DESCRIPTOR_CODES.includes(item.descriptor.code)) {
                 const key = `prvdr${i}item${j}_descriptor`
-                errorObj[
-                  key
-                ] = `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
+                errorObj[key] =
+                  `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
               }
             }
 
@@ -174,9 +175,8 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
                 locationIds.forEach((locationId: string) => {
                   if (!storedLocations.has(locationId)) {
                     const key = `prvdr${i}item${j}_location_ids_not_found`
-                    errorObj[
-                      key
-                    ] = `Location ID ${locationId} in /providers[${i}]/items[${j}] not found in stored locations`
+                    errorObj[key] =
+                      `Location ID ${locationId} in /providers[${i}]/items[${j}] not found in stored locations`
                   }
                 })
               }
@@ -190,9 +190,8 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
               fulfillmentIds.forEach((fulfillmentId: string) => {
                 if (!storedFulfillments.has(fulfillmentId)) {
                   const key = `prvdr${i}item${j}_fulfillment_ids_not_found`
-                  errorObj[
-                    key
-                  ] = `Fulfillment ID ${fulfillmentId} in /providers[${i}]/items[${j}] not found in stored fulfillments`
+                  errorObj[key] =
+                    `Fulfillment ID ${fulfillmentId} in /providers[${i}]/items[${j}] not found in stored fulfillments`
                 }
               })
             }
@@ -215,13 +214,12 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
             const collectedBy = payment?.collected_by
 
             if (!collectedBy) {
-              errorObj[`collected_by`] = `payment.collected_by must be present in ${mobilitySequence.ON_SEARCH}`
+              errorObj[`collected_by`] = `payment.collected_by must be present in ${metroSequence.ON_SEARCH}`
             } else {
               setValue(`collected_by`, collectedBy)
               if (collectedBy !== 'BPP' && collectedBy !== 'BAP') {
-                errorObj[
-                  'collected_by'
-                ] = `payment.collected_by can only be either 'BPP' or 'BAP' in ${mobilitySequence.ON_SEARCH}`
+                errorObj['collected_by'] =
+                  `payment.collected_by can only be either 'BPP' or 'BAP' in ${metroSequence.ON_SEARCH}`
               }
             }
 
@@ -240,11 +238,11 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
       i++
     }
 
-    setValue(`${mobilitySequence.ON_SEARCH}prvdrsId`, prvdrsId)
-    setValue(`${mobilitySequence.ON_SEARCH}prvdrLocId`, prvdrLocId)
-    setValue(`${mobilitySequence.ON_SEARCH}_itemsId`, Array.from(itemsId))
-    setValue(`${mobilitySequence.ON_SEARCH}_storedLocations`, Array.from(storedLocations))
-    setValue(`${mobilitySequence.ON_SEARCH}_storedFulfillments`, Array.from(storedFulfillments))
+    setValue(`${metroSequence.ON_SEARCH}prvdrsId`, prvdrsId)
+    setValue(`${metroSequence.ON_SEARCH}prvdrLocId`, prvdrLocId)
+    setValue(`${metroSequence.ON_SEARCH}_itemsId`, Array.from(itemsId))
+    setValue(`${metroSequence.ON_SEARCH}_storedLocations`, Array.from(storedLocations))
+    setValue(`${metroSequence.ON_SEARCH}_storedFulfillments`, Array.from(storedFulfillments))
   } catch (error: any) {
     logger.error(`!!Error while checking Providers info in /${constants.ON_SEARCH}, ${error.stack}`)
     return { error: error.message }

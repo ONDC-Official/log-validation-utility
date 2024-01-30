@@ -1,20 +1,18 @@
 // import _ from 'lodash'
-import constants, {
-  mobilitySequence,
-  MOB_VEHICLE_CATEGORIES as VALID_VEHICLE_CATEGORIES,
-  MOB__DESCRIPTOR_CODES as VALID_DESCRIPTOR_CODES,
-} from '../../constants'
+import constants, { metroSequence } from '../../constants'
 import { logger } from '../../shared/logger'
-import { validateSchema, isObjectEmpty } from '../'
+import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
-import { validateContext, validatePaymentParams, validateQuote, validateStops } from './mobilityChecks'
+import { validateContext, validatePaymentParams, validateQuote, validateStops } from './metroChecks'
 import { validatePaymentTags, validateRouteInfoTags } from './tags'
 
+const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
+const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 export const checkOnInit = (data: any, msgIdSet: any) => {
   try {
     const errorObj: any = {}
     if (!data || isObjectEmpty(data)) {
-      return { [mobilitySequence.ON_INIT]: 'JSON cannot be empty' }
+      return { [metroSequence.ON_INIT]: 'Json cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -24,7 +22,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_INIT, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.INIT, constants.ON_INIT)
-    setValue(`${mobilitySequence.ON_INIT}_message`, message)
+    setValue(`${metroSequence.ON_INIT}_message`, message)
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
@@ -37,7 +35,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     const on_init = message.order
     const itemIDS: any = getValue('ItmIDS')
     const itemIdArray: any[] = []
-    const storedFull: any = getValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`)
+    const storedFull: any = getValue(`${metroSequence.ON_SELECT}_storedFulfillments`)
     const fulfillmentIdsSet = new Set()
 
     let newItemIDSValue: any[]
@@ -71,21 +69,18 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         const fulfillmentKey = `fulfillments[${index}]`
         fulfillmentIdsSet.add(fulfillment.id)
         if (!storedFull.includes(fulfillment.id)) {
-          errorObj[
-            `${fulfillmentKey}.id`
-          ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+          errorObj[`${fulfillmentKey}.id`] =
+            `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
         }
 
         if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
-          errorObj[
-            `${fulfillmentKey}.vehicleCategory`
-          ] = `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
+          errorObj[`${fulfillmentKey}.vehicleCategory`] =
+            `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
         }
 
         if (fulfillment.type !== 'DELIVERY') {
-          errorObj[
-            `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_INIT}`
+          errorObj[`${fulfillmentKey}.type`] =
+            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_INIT}`
         }
 
         if (Object.prototype.hasOwnProperty.call(fulfillment, 'agent')) {
@@ -112,9 +107,8 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       on_init.items.forEach((item: any, index: number) => {
         if (!newItemIDSValue.includes(item.id)) {
           const key = `item[${index}].item_id`
-          errorObj[
-            key
-          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_INIT}`
+          errorObj[key] =
+            `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_INIT}`
         }
 
         if (!item.descriptor || !item.descriptor.code) {
@@ -123,9 +117,8 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         } else {
           if (!VALID_DESCRIPTOR_CODES.includes(item.descriptor.code)) {
             const key = `item${index}_descriptor`
-            errorObj[
-              key
-            ] = `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
+            errorObj[key] =
+              `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
           }
         }
 
@@ -137,9 +130,8 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
         item.fulfillment_ids.forEach((fulfillmentId: string) => {
           if (!fulfillmentIdsSet.has(fulfillmentId)) {
-            errorObj[
-              `invalidFulfillmentId_${index}`
-            ] = `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_INIT} is not valid`
+            errorObj[`invalidFulfillmentId_${index}`] =
+              `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_INIT} is not valid`
           }
         })
 
@@ -199,9 +191,8 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         } else {
           const srchCollectBy = getValue(`collected_by`)
           if (srchCollectBy != arr?.collected_by)
-            errorObj[
-              `payemnts[${i}]_collected_by`
-            ] = `payments.collected_by value sent in ${constants.ON_INIT} should be ${srchCollectBy} as sent in ${constants.ON_SELECT}`
+            errorObj[`payemnts[${i}]_collected_by`] =
+              `payments.collected_by value sent in ${constants.ON_INIT} should be ${srchCollectBy} as sent in ${constants.ON_SELECT}`
         }
 
         const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']

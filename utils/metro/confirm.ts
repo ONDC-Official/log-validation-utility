@@ -1,15 +1,16 @@
-import constants, { mobilitySequence, MOB_VEHICLE_CATEGORIES as VALID_VEHICLE_CATEGORIES } from '../../constants'
+import constants, { metroSequence } from '../../constants'
 import { logger } from '../../shared/logger'
-import { validateSchema, isObjectEmpty } from '../'
+import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
-import { validateContext, validateStops } from './mobilityChecks'
+import { validateContext, validateStops } from './metroChecks'
 import { validatePaymentTags } from './tags'
 
+const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 export const checkConfirm = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [mobilitySequence.CONFIRM]: 'JSON cannot be empty' }
+      return { [metroSequence.CONFIRM]: 'Json cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -17,10 +18,10 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const onInit: any = getValue(`${mobilitySequence.ON_INIT}_message`)
+    const onInit: any = getValue(`${metroSequence.ON_INIT}_message`)
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.CONFIRM, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.ON_INIT, constants.CONFIRM)
-    setValue(`${mobilitySequence.CONFIRM}_message`, message)
+    setValue(`${metroSequence.CONFIRM}_message`, message)
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
@@ -33,7 +34,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     const confirm = message.order
     const itemIDS: any = getValue('itemIds')
     const itemIdArray: any[] = []
-    const storedFull: any = getValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`)
+    const storedFull: any = getValue(`${metroSequence.ON_SELECT}_storedFulfillments`)
     let newItemIDSValue: any[]
 
     if (itemIDS && itemIDS.length > 0) {
@@ -67,9 +68,8 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       confirm.items.forEach((item: any, index: number) => {
         if (!newItemIDSValue.includes(item.id)) {
           const key = `item[${index}].item_id`
-          errorObj[
-            key
-          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+          errorObj[key] =
+            `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
         }
       })
     } catch (error: any) {
@@ -84,9 +84,8 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         } else {
           const srchCollectBy = getValue(`collected_by`)
           if (srchCollectBy != arr?.collected_by)
-            errorObj[
-              `payemnts[${i}]_collected_by`
-            ] = `payments.collected_by value sent in ${constants.ON_INIT} should be ${srchCollectBy} as sent in ${constants.CONFIRM}`
+            errorObj[`payemnts[${i}]_collected_by`] =
+              `payments.collected_by value sent in ${constants.ON_INIT} should be ${srchCollectBy} as sent in ${constants.CONFIRM}`
         }
 
         const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
@@ -111,17 +110,15 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         }
 
         if (!params?.bank_account_number) {
-          errorObj[
-            `payments[${i}]_bank_account_number`
-          ] = `payments.params.bank_account_number must be present in ${constants.CONFIRM}`
+          errorObj[`payments[${i}]_bank_account_number`] =
+            `payments.params.bank_account_number must be present in ${constants.CONFIRM}`
         } else {
           setValue('bank_account_number', params?.bank_account_number)
         }
 
         if (!params?.virtual_payment_address) {
-          errorObj[
-            `payments[${i}]_virtual_payment_address`
-          ] = `payments.params.virtual_payment_address must be present in ${constants.CONFIRM}`
+          errorObj[`payments[${i}]_virtual_payment_address`] =
+            `payments.params.virtual_payment_address must be present in ${constants.CONFIRM}`
         } else {
           setValue('virtual_payment_address', params?.virtual_payment_address)
         }
@@ -142,15 +139,13 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         const fulfillmentKey = `fulfillments[${index}]`
         if (!storedFull.includes(full.id)) {
           const key = `fulfillments[${index}].id`
-          errorObj[
-            key
-          ] = `/message/order/fulfillments/id in fulfillments: ${full.id} should be one of the /fulfillments/id mapped in previous call`
+          errorObj[key] =
+            `/message/order/fulfillments/id in fulfillments: ${full.id} should be one of the /fulfillments/id mapped in previous call`
         }
 
         if (!VALID_VEHICLE_CATEGORIES.includes(full.vehicle.category)) {
-          errorObj[
-            `fulfillment_${index}_vehicleCategory`
-          ] = `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
+          errorObj[`fulfillment_${index}_vehicleCategory`] =
+            `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
         }
 
         if (!Object.prototype.hasOwnProperty.call(full.customer?.person, 'name')) {
@@ -176,9 +171,8 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         }
 
         if (full.type !== 'DELIVERY') {
-          errorObj[
-            `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_INIT}`
+          errorObj[`${fulfillmentKey}.type`] =
+            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_INIT}`
         }
 
         // Check stops for START and END, or time range with valid timestamp and GPS

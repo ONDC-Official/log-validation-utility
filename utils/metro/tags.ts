@@ -1,5 +1,5 @@
 /* eslint-disable no-prototype-builtins */
-import { isValidEmail, isValidPhoneNumber, isValidUrl } from '../'
+import { isValidEmail, isValidPhoneNumber, isValidUrl } from '..'
 
 interface Tag {
   display: boolean

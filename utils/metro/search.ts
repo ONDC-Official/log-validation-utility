@@ -1,14 +1,14 @@
 import { logger } from '../../shared/logger'
 import { setValue } from '../../shared/dao'
-import constants, { mobilitySequence } from '../../constants'
-import { validateSchema, isObjectEmpty, checkMobilityContext, checkGpsPrecision } from '../../utils'
+import constants, { metroSequence } from '../../constants'
+import { validateSchema, isObjectEmpty, checkMetroContext, checkGpsPrecision } from '..'
 import { validatePaymentTags } from './tags'
 
 export const search = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      errorObj[mobilitySequence.SEARCH] = 'JSON cannot be empty'
+      errorObj[metroSequence.SEARCH] = 'Json cannot be empty'
       return
     }
 
@@ -24,8 +24,8 @@ export const search = (data: any, msgIdSet: any) => {
     }
 
     const schemaValidation = validateSchema(data.context.domain.split(':')[1], constants.SEARCH, data)
-    const contextRes: any = checkMobilityContext(data.context, constants.SEARCH)
-    setValue(`${mobilitySequence.SEARCH}_context`, data.context)
+    const contextRes: any = checkMetroContext(data.context, constants.SEARCH)
+    setValue(`${metroSequence.SEARCH}_context`, data.context)
     msgIdSet.add(data.context.message_id)
 
     if (schemaValidation !== 'error') {
@@ -103,9 +103,7 @@ export const search = (data: any, msgIdSet: any) => {
       if (!collectedBy) {
         errorObj[`collected_by`] = `collected_by must be present in payment object`
       } else if (collectedBy !== 'BPP' && collectedBy !== 'BAP') {
-        errorObj[
-          'collected_by'
-        ] = `payment.collected_by can only be either 'BPP' or 'BAP' in ${mobilitySequence.SEARCH}`
+        errorObj['collected_by'] = `payment.collected_by can only be either 'BPP' or 'BAP' in ${metroSequence.SEARCH}`
       } else {
         setValue(`collected_by`, collectedBy)
       }

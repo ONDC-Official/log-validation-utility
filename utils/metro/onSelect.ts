@@ -1,18 +1,16 @@
 import { logger } from '../../shared/logger'
-import constants, {
-  mobilitySequence,
-  MOB_VEHICLE_CATEGORIES as VALID_VEHICLE_CATEGORIES,
-  MOB__DESCRIPTOR_CODES as VALID_DESCRIPTOR_CODES,
-} from '../../constants'
-import { validateSchema, isObjectEmpty } from '../'
+import constants, { metroSequence } from '../../constants'
+import { validateSchema, isObjectEmpty } from '..'
 import _ from 'lodash'
 import { getValue, setValue } from '../../shared/dao'
-import { validateContext, validateQuote, validateStops } from './mobilityChecks'
+import { validateContext, validateQuote, validateStops } from './metroChecks'
 import { validateRouteInfoTags } from './tags'
 
+const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
+const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 export const checkOnSelect = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [mobilitySequence.ON_SELECT]: 'JSON cannot be empty' }
+    return { [metroSequence.ON_SELECT]: 'Json cannot be empty' }
   }
 
   const { message, context } = data
@@ -22,7 +20,7 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
 
   const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SELECT, data)
   const contextRes: any = validateContext(context, msgIdSet, constants.SELECT, constants.ON_SELECT)
-  setValue(`${mobilitySequence.ON_SELECT}_message`, message)
+  setValue(`${metroSequence.ON_SELECT}_message`, message)
   const errorObj: any = {}
 
   if (schemaValidation !== 'error') {
@@ -33,14 +31,14 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
     Object.assign(errorObj, contextRes.ERRORS)
   }
 
-  // const searchContext: any = getValue(`${mobilitySequence.SEARCH}_context`)
-  const select: any = getValue(`${mobilitySequence.SELECT}`)
+  // const searchContext: any = getValue(`${metroSequence.SEARCH}_context`)
+  const select: any = getValue(`${metroSequence.SELECT}`)
 
   try {
     const onSelect = message.order
-    const itemIDS: any = getValue(`${mobilitySequence.ON_SEARCH}_itemsId`)
+    const itemIDS: any = getValue(`${metroSequence.ON_SEARCH}_itemsId`)
     const itemIdArray: any[] = []
-    const storedFull: any = getValue(`${mobilitySequence.ON_SEARCH}_storedFulfillments`)
+    const storedFull: any = getValue(`${metroSequence.ON_SEARCH}_storedFulfillments`)
     const fulfillmentIdsSet = new Set()
     const itemIdsSet = new Set()
 
@@ -69,25 +67,22 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
         const fulfillmentKey = `fulfillments[${index}]`
 
         if (storedFull && !storedFull.includes(fulfillment.id)) {
-          errorObj[
-            `${fulfillmentKey}.id`
-          ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+          errorObj[`${fulfillmentKey}.id`] =
+            `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
         } else {
           fulfillmentIdsSet.add(fulfillment.id)
         }
 
         if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
-          errorObj[
-            `${fulfillmentKey}.vehicleCategory`
-          ] = `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
+          errorObj[`${fulfillmentKey}.vehicleCategory`] =
+            `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
         }
 
         if (!fulfillment.type) {
           errorObj[`${fulfillmentKey}.type`] = `Fulfillment type is missing`
         } else if (fulfillment.type !== 'DELIVERY') {
-          errorObj[
-            `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_SELECT}`
+          errorObj[`${fulfillmentKey}.type`] =
+            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_SELECT}`
         }
 
         // Check stops for START and END, or time range with valid timestamp and GPS
@@ -133,9 +128,8 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
         } else {
           if (!VALID_DESCRIPTOR_CODES.includes(item.descriptor.code)) {
             const key = `item${index}_descriptor`
-            errorObj[
-              key
-            ] = `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
+            errorObj[key] =
+              `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
           }
         }
 
@@ -150,9 +144,8 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
         } else {
           item.fulfillment_ids.forEach((fulfillmentId: string) => {
             if (!fulfillmentIdsSet.has(fulfillmentId)) {
-              errorObj[
-                `invalidFulfillmentId_${index}`
-              ] = `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.ON_SELECT} is not valid`
+              errorObj[`invalidFulfillmentId_${index}`] =
+                `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.ON_SELECT} is not valid`
             }
           })
         }
@@ -190,8 +183,8 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
       errorObj[`cancellation_terms`] = `cancellation_terms  is not part of /${constants.ON_SELECT}`
     }
 
-    setValue(`${mobilitySequence.ON_SELECT}`, data)
-    setValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`, Array.from(storedFull))
+    setValue(`${metroSequence.ON_SELECT}`, data)
+    setValue(`${metroSequence.ON_SELECT}_storedFulfillments`, Array.from(storedFull))
   } catch (error: any) {
     logger.error(`!!Error occcurred while checking order info in /${constants.ON_SELECT},  ${error.message}`)
     return { error: error.message }

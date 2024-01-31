@@ -2,12 +2,16 @@
 import _ from 'lodash'
 import constants from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, isValidUrl } from '../../'
-import { validateContext, validateFulfillments, validateXInput } from './fisChecks'
+import { validateSchema, isObjectEmpty } from '../../'
+import {
+  validateCancellationTerms,
+  validateContext,
+  validateFulfillments,
+  validatePayments,
+  validateXInput,
+} from './fisChecks'
 import { getValue, setValue } from '../../../shared/dao'
-import { validatePaymentTags, validateProviderTags } from './tags'
-
-const cancellationTermsState = new Map()
+import { validateProviderTags } from './tags'
 
 export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
   try {
@@ -121,37 +125,10 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
 
     try {
       logger.info(`Checking cancellation terms in /${constants.ON_INIT}`)
-      const cancellationTerms = on_init.cancellation_terms
-
-      if (cancellationTerms && cancellationTerms.length > 0) {
-        for (let i = 0; i < cancellationTerms.length; i++) {
-          const cancellationTerm = cancellationTerms[i]
-
-          if (
-            cancellationTerm.fulfillment_state &&
-            cancellationTerm.fulfillment_state.descriptor &&
-            cancellationTerm.fulfillment_state.descriptor.code &&
-            (!cancellationTerm.cancellation_fee ||
-              !cancellationTerm.cancellation_fee.percentage ||
-              isNaN(parseFloat(cancellationTerm.cancellation_fee.percentage)) ||
-              parseFloat(cancellationTerm.cancellation_fee.percentage) <= 0 ||
-              !Number.isInteger(parseFloat(cancellationTerm.cancellation_fee.percentage)))
-          ) {
-            errorObj.cancellationFee = `Cancellation fee is required and must be bounded by 0 and 100 for Cancellation Term[${i}]`
-          }
-
-          const descriptorCode = cancellationTerm.fulfillment_state.descriptor.code
-          const storedPercentage = cancellationTermsState.get(descriptorCode)
-
-          if (storedPercentage === undefined) {
-            cancellationTermsState.set(descriptorCode, cancellationTerm.cancellation_fee.percentage)
-          } else if (storedPercentage !== cancellationTerm.cancellation_fee.percentage) {
-            errorObj.cancellationFee = `Cancellation terms percentage for ${descriptorCode} has changed`
-          }
-        }
-      }
+      const cancellationErrors = validateCancellationTerms(on_init?.cancellation_terms, constants.ON_INIT)
+      Object.assign(errorObj, cancellationErrors)
     } catch (error: any) {
-      logger.error(`!!Error while checking cancellation terms in /${constants.ON_INIT}, ${error.stack}`)
+      logger.error(`!!Error while checking cancellation_terms in /${constants.ON_INIT}, ${error.stack}`)
     }
 
     try {
@@ -171,66 +148,13 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
       logger.error(`!!Error while checking fulfillments object in /${constants.ON_INIT}, ${error.stack}`)
     }
 
-    // logger.info(`Comparing /${constants.ON_INIT} Quoted Price and /${constants.ON_SELECT} Quoted Price`)
-    // const onSelectPrice: any = getValue('onSelectPrice')
-    // if (onSelectPrice != initQuotePrice) {
-    //   logger.info(
-    //     `Quoted Price in /${constants.ON_INIT} is not equal to the quoted price in /${constants.ON_SELECT}`,
-    //   )
-    //   errorObj.ON_INITPriceErr2 = `Quoted Price in /${constants.ON_INIT} INR ${initQuotePrice} does not match with the quoted price in /${constants.ON_SELECT} INR ${onSelectPrice}`
-    // }
+    try {
+      logger.info(`Checking payments details in /${constants.ON_INIT}`)
 
-    logger.info(`Checking Payment Object for  /${constants.ON_INIT}`)
-    if (!on_init.payments) {
-      errorObj.pymnterrorObj = `Payment Object can't be null in /${constants.ON_INIT}`
-    } else {
-      try {
-        logger.info(`Checking Payment Object for  /${constants.ON_INIT}`)
-        on_init.payments?.map((payment: any) => {
-          if (!payment.status) {
-            errorObj.payments = `status is missing in payments`
-          } else {
-            const allowedStatusValues = ['NOT_PAID', 'PAID']
-
-            if (!allowedStatusValues.includes(payment.status)) {
-              errorObj.paymentStatus = `Invalid value for status. It should be either of NOT_PAID or PAID.`
-            }
-          }
-
-          if (!payment.collected_by) {
-            errorObj.payments = `collected_by is missing in payments`
-          } else {
-            const allowedCollectedByValues = ['BPP', 'BAP']
-
-            const collectedBy = getValue(`collected_by`)
-            if (collectedBy && collectedBy !== payment.collected_by) {
-              errorObj.collectedBy = `Collected_By didn't matched with what was send in previous call.`
-            } else {
-              if (!allowedCollectedByValues.includes(payment.collected_by)) {
-                errorObj.collectedBy = `Invalid value for collected_by. It should be either BPP or BAP.`
-              }
-
-              setValue(`collected_by`, payment.collected_by)
-            }
-          }
-
-          if (sequence == 'on_init3' && payment.time) {
-            if (!payment.label || payment.label !== 'INSTALLMENT') {
-              errorObj.time.label = `If time is present in payment, the corresponding label should be INSTALLMENT.`
-            }
-          }
-
-          if (payment.tags) {
-            // Validate payment tags
-            const tagsValidation = validatePaymentTags(payment.tags)
-            if (!tagsValidation.isValid) {
-              Object.assign(errorObj, { tags: tagsValidation.errors })
-            }
-          }
-        })
-      } catch (error: any) {
-        logger.error(`!!Error while checking Payment Object in /${constants.ON_INIT}, ${error.stack}`)
-      }
+      const paymentErrors = validatePayments(on_init?.payments, constants.ON_INIT, on_init?.quote)
+      Object.assign(errorObj, paymentErrors)
+    } catch (error: any) {
+      logger.error(`!!Error while checking payments details in /${constants.ON_INIT}`, error.stack)
     }
 
     //quote checks
@@ -274,22 +198,22 @@ const validateProvider = (provider: any) => {
       return providerErrors
     }
 
-    if (!Array.isArray(provider.descriptor.images) || provider.descriptor.images.length < 1) {
+    if (!Array.isArray(provider?.descriptor?.images) || provider?.descriptor?.images?.length < 1) {
       providerErrors.images = 'Descriptor images must be an array with a minimum length of one.'
     } else {
-      provider.descriptor.images.forEach((image: any, index: number) => {
+      provider?.descriptor?.images.forEach((image: any, index: number) => {
         if (!image || typeof image !== 'object' || Array.isArray(image) || Object.keys(image).length !== 2) {
           providerErrors[
             `images[${index}]`
           ] = `Invalid image structure in descriptor. Each image should be an object with "url" and "size_type" properties.`
         } else {
           const { url, size_type } = image
-          if (typeof url !== 'string' || !url.trim() || !isValidUrl(url)) {
+          if (typeof url !== 'string' || !url.trim()) {
             providerErrors[`images[${index}].url`] = `Invalid URL for image in descriptor.`
           }
 
           const validSizes = ['md', 'sm', 'lg']
-          if (!validSizes.includes(size_type)) {
+          if (size_type && !validSizes.includes(size_type)) {
             providerErrors[
               `images[${index}].size_type`
             ] = `Invalid image size in descriptor. It should be one of: ${validSizes.join(', ')}`
@@ -298,15 +222,15 @@ const validateProvider = (provider: any) => {
       })
     }
 
-    if (!provider.descriptor.name || !provider.descriptor.name.trim()) {
+    if (!provider?.descriptor?.name || !provider?.descriptor?.name?.trim()) {
       providerErrors.name = `Provider name cannot be empty.`
     }
 
-    if (provider.descriptor.short_desc && !provider.descriptor.short_desc.trim()) {
+    if (provider?.descriptor?.short_desc && !provider?.descriptor?.short_desc?.trim()) {
       providerErrors.short_desc = `Short description cannot be empty.`
     }
 
-    if (provider.descriptor.long_desc && !provider.descriptor.long_desc.trim()) {
+    if (provider?.descriptor?.long_desc && !provider?.descriptor?.long_desc.trim()) {
       providerErrors.long_desc = `Long description cannot be empty.`
     }
   } catch (error: any) {

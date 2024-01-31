@@ -1,15 +1,16 @@
-import constants, { mobilitySequence, MOB_VEHICLE_CATEGORIES as VALID_VEHICLE_CATEGORIES } from '../../constants'
+import constants, { metroSequence } from '../../constants'
 import { logger } from '../../shared/logger'
-import { validateSchema, isObjectEmpty } from '../'
+import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
-import { validateContext, validateStops } from './mobilityChecks'
+import { validateContext, validateStops } from './metroChecks'
 import { validatePaymentTags } from './tags'
 
+const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 export const checkConfirm = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [mobilitySequence.CONFIRM]: 'JSON cannot be empty' }
+      return { [metroSequence.CONFIRM]: 'Json cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -17,10 +18,10 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const onInit: any = getValue(`${mobilitySequence.ON_INIT}_message`)
+    const onInit: any = getValue(`${metroSequence.ON_INIT}_message`)
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.CONFIRM, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.ON_INIT, constants.CONFIRM)
-    setValue(`${mobilitySequence.CONFIRM}_message`, message)
+    setValue(`${metroSequence.CONFIRM}_message`, message)
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
@@ -33,7 +34,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     const confirm = message.order
     const itemIDS: any = getValue('itemIds')
     const itemIdArray: any[] = []
-    const storedFull: any = getValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`)
+    const storedFull: any = getValue(`${metroSequence.ON_SELECT}_storedFulfillments`)
     let newItemIDSValue: any[]
 
     if (itemIDS && itemIDS.length > 0) {
@@ -169,9 +170,10 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
           }
         }
 
+        //if type is sent then it should be DELIVERY else, no mandatory to check for the BAP's call
         if (full.type && full.type !== 'DELIVERY') {
           errorObj[`${fulfillmentKey}.type`] =
-            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_INIT}`
+            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_SELECT}`
         }
 
         // Check stops for START and END, or time range with valid timestamp and GPS

@@ -3,9 +3,7 @@ import constants, { FisApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
-import { validateContext, validateFulfillments } from './fisChecks'
-
-const cancellationTermsState = new Map()
+import { validateCancellationTerms, validateContext, validateFulfillments, validatePayments } from './fisChecks'
 
 export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
   const onCnfrmObj: any = {}
@@ -98,7 +96,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
         }
 
         if (item.tags) {
-          const loanInfoTag = item.tags.find((tag: any) => tag.descriptor.code === 'LOAN-INFO')
+          const loanInfoTag = item.tags.find((tag: any) => tag.descriptor.code === 'LOAN_INFO')
           if (!loanInfoTag) {
             onCnfrmObj[`loanInfoTagSubtagsMissing`] = `The LOAN_INFO tag group for Item ${item.id}: was not found`
           }
@@ -178,111 +176,18 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
     try {
       logger.info(`Checking payments details in /${constants.ON_CONFIRM}`)
 
-      const payments = on_confirm.payments
-
-      const totalPaymentsAmount = payments
-        .filter((payment: any) => payment.params && payment.params.amount)
-        .reduce((total: any, payment: any) => total + parseFloat(payment.params.amount), 0)
-      const quotePriceValue = parseFloat(on_confirm.quote.price.value)
-
-      if (totalPaymentsAmount !== quotePriceValue) {
-        onCnfrmObj.paymentsAmountMismatch = `Total payments amount (${totalPaymentsAmount}) does not match with quote.price.value (${quotePriceValue})`
-      }
-
-      for (let i = 1; i < payments.length; i++) {
-        const payment = payments[i]
-
-        if (payment.status !== 'PAID' && payment.status !== 'NOT-PAID') {
-          onCnfrmObj.invalidPaymentStatus = `Invalid payment status (${payment.status}) at index ${i}`
-        }
-
-        if (payment.time && payment.time.range) {
-          const { start, end } = payment.time.range
-          const startTime = new Date(start).getTime()
-          const endTime = new Date(end).getTime()
-
-          if (isNaN(startTime) || isNaN(endTime) || startTime > endTime) {
-            onCnfrmObj.invalidTimeRange = `Invalid time range for payment at index ${i}`
-          }
-
-          if (i > 0) {
-            const prevEndTime = new Date(payments[i - 1].time.range.end).getTime()
-            if (startTime <= prevEndTime) {
-              onCnfrmObj.timeRangeOrderError = `Time range order error for payment at index ${i}`
-            }
-          }
-        } else {
-          onCnfrmObj.missingTimeRange = `Missing time range for payment at index ${i}`
-        }
-      }
-
-      const buyerFinderFeesTag = payments[0].tags.find((tag: any) => tag.descriptor.code === 'BUYER_FINDER_FEES')
-      const settlementTermsTag = payments[0].tags.find((tag: any) => tag.descriptor.code === 'SETTLEMENT_TERMS')
-
-      if (!buyerFinderFeesTag) {
-        onCnfrmObj.buyerFinderFees = `BUYER_FINDER_FEES tag is missing in payments`
-      }
-
-      if (!settlementTermsTag) {
-        onCnfrmObj.settlementTerms = `SETTLEMENT_TERMS tag is missing in payments`
-      }
-
-      if (!payments[0].collected_by) {
-        onCnfrmObj.payments = `collected_by  is missing in payments`
-      } else {
-        const allowedCollectedByValues = ['BPP', 'BAP']
-        const allowedStatusValues = ['NOT_PAID', 'PAID']
-
-        const collectedBy = getValue(`collected_by`)
-        if (collectedBy && collectedBy !== payments[0].collected_by) {
-          onCnfrmObj.collectedBy = `Collected_By didn't matched with what was send in previous call.`
-        } else {
-          if (!allowedCollectedByValues.includes(payments[0].collected_by)) {
-            onCnfrmObj.collectedBy = `Invalid value for collected_by. It should be either BPP or BAP.`
-          }
-
-          setValue(`collected_by`, payments[0].collected_by)
-        }
-
-        if (!allowedStatusValues.includes(payments[0].status)) {
-          onCnfrmObj.paymentStatus = `Invalid value for status. It should be either of NOT_PAID or PAID.`
-        }
-      }
+      const paymentErrors = validatePayments(on_confirm?.payments, constants.ON_CONFIRM, on_confirm?.quote)
+      Object.assign(onCnfrmObj, paymentErrors)
     } catch (error: any) {
       logger.error(`!!Error while checking payments details in /${constants.ON_CONFIRM}`, error.stack)
     }
 
     try {
       logger.info(`Checking cancellation terms in /${constants.ON_CONFIRM}`)
-      const cancellationTerms = on_confirm.cancellation_terms
-
-      if (cancellationTerms && cancellationTerms.length > 0) {
-        for (let i = 0; i < cancellationTerms.length; i++) {
-          const cancellationTerm = cancellationTerms[i]
-
-          if (
-            cancellationTerm.fulfillment_state &&
-            cancellationTerm.fulfillment_state.descriptor &&
-            cancellationTerm.fulfillment_state.descriptor.code &&
-            (!cancellationTerm.cancellation_fee ||
-              !cancellationTerm.cancellation_fee.percentage ||
-              isNaN(parseFloat(cancellationTerm.cancellation_fee.percentage)) ||
-              parseFloat(cancellationTerm.cancellation_fee.percentage) <= 0 ||
-              !Number.isInteger(parseFloat(cancellationTerm.cancellation_fee.percentage)))
-          ) {
-            onCnfrmObj.cancellationFee = `Cancellation fee is required and must be bounded by 0 and 100 for Cancellation Term[${i}]`
-          }
-
-          const descriptorCode = cancellationTerm.fulfillment_state.descriptor.code
-          const storedPercentage = cancellationTermsState.get(descriptorCode)
-
-          if (storedPercentage !== undefined && storedPercentage !== cancellationTerm.cancellation_fee.percentage) {
-            onCnfrmObj.cancellationFee = `Cancellation terms percentage for ${descriptorCode} has changed`
-          }
-        }
-      }
+      const cancellationErrors = validateCancellationTerms(on_confirm?.cancellation_terms, constants.ON_CONFIRM)
+      Object.assign(onCnfrmObj, cancellationErrors)
     } catch (error: any) {
-      logger.error(`!!Error while checking cancellation terms in /${constants.ON_CONFIRM}, ${error.stack}`)
+      logger.error(`!!Error while checking cancellation_terms in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
     try {

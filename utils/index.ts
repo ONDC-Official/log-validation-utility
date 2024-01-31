@@ -136,6 +136,48 @@ export const checkMobilityContext = (
   }
 
   if (!data.ttl) {
+    errObj.ttl_err = 'ttl is required in the context'
+  } else {
+    const ttlRegex = /^PT(\d+M|\d+H\d+M|\d+H|\d+S)$/
+    if (!ttlRegex.test(data.ttl)) {
+      errObj.ttl_err = 'Invalid TTL format. Should be in the format PT10M.'
+    }
+  }
+
+  if (data.timestamp) {
+    const date = data.timestamp
+    const result = timestampCheck(date)
+    if (result && result.err === 'FORMAT_ERR') {
+      errObj.timestamp_err = 'Timestamp not in RFC 3339 (YYYY-MM-DDTHH:MN:SS.MSSZ) Format'
+    } else if (result && result.err === 'INVLD_DT') {
+      errObj.timestamp_err = 'Timestamp should be in date-time format'
+    }
+  }
+
+  if (_.isEmpty(errObj)) {
+    const result = { valid: true, SUCCESS: 'Context Valid' }
+    return result
+  } else {
+    const result = { valid: false, ERRORS: errObj }
+    return result
+  }
+}
+
+export const checkMetroContext = (
+  data: { transaction_id: string; message_id: string; action: string; ttl: string; timestamp: string },
+  path: any,
+) => {
+  if (!data) return
+  const errObj: any = {}
+  if (data.transaction_id === data.message_id) {
+    errObj.id_err = "transaction_id and message id can't be same"
+  }
+
+  if (data.action != path) {
+    errObj.action_err = `context.action should be ${path}`
+  }
+
+  if (!data.ttl) {
     {
       errObj.ttl_err = `ttl should be present in context`
     }
@@ -159,6 +201,7 @@ export const checkMobilityContext = (
     return result
   }
 }
+
 
 const validate_schema_for_retail_json = (vertical: string, api: string, data: any) => {
   const res = (schemaValidator as any)[`validate_schema_${api}_${vertical}_for_json`](data)
@@ -643,7 +686,7 @@ export const isValidEmail = (value: string): boolean => {
 
 export const isValidPhoneNumber = (value: string): boolean => {
   const phoneRegex = /^(\d{10}|\d{11})$/
-  const val = value?.replace(/\s+/g, ' ').trim()
+  const val = value?.replace(/[^\d]/g, '')
   return phoneRegex.test(val)
 }
 

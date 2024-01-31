@@ -1,12 +1,12 @@
 import { logger } from '../../shared/logger'
 import { getValue, setValue } from '../../shared/dao'
-import { checkGpsPrecision, checkIdAndUri, checkMobilityContext, timestampCheck } from '../../utils'
+import { checkGpsPrecision, checkIdAndUri, checkMetroContext, timeDiff, timestampCheck } from '..'
 import _ from 'lodash'
 
 export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any) => {
   const errorObj: any = {}
 
-  const contextRes: any = checkMobilityContext(context, curentCall)
+  const contextRes: any = checkMetroContext(context, curentCall)
 
   if (!contextRes?.valid) {
     Object.assign(errorObj, contextRes.ERRORS)
@@ -87,15 +87,15 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
 
     try {
       logger.info(`Comparing Message Ids of /${pastCall} and /${curentCall}`)
-      if (curentCall.startsWith('on_') && curentCall.includes(pastCall)) {
+      if (curentCall.startsWith('on_')) {
         logger.info(`Comparing Message Ids of /${pastCall} and /${curentCall}`)
         if (!_.isEqual(prevContext.message_id, context.message_id)) {
-          errorObj.message_id = `message_id for /${pastCall} and /${curentCall} api should be same`
+          errorObj.message_id = `Message Id for /${pastCall} and /${curentCall} api should be same`
         }
       } else {
         logger.info(`Checking if Message Ids are different for /${pastCall} and /${curentCall}`)
         if (_.isEqual(prevContext.message_id, context.message_id)) {
-          errorObj.message_id = `message_id for /${pastCall} and /${curentCall} api should be different`
+          errorObj.message_id = `Message Id for /${pastCall} and /${curentCall} api should be different`
         }
       }
     } catch (error: any) {
@@ -107,6 +107,12 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
       const tmpstmp = prevContext.timestamp
       if (_.gte(tmpstmp, context.timestamp)) {
         errorObj.tmpstmp = `Timestamp for /${pastCall} api cannot be greater than or equal to /${curentCall} api`
+      } else {
+        const timeDifference = timeDiff(context.timestamp, tmpstmp)
+        logger.info(timeDifference)
+        if (timeDifference > 5000) {
+          errorObj.tmpstmp = `context/timestamp difference between /${curentCall} and /${pastCall} should be smaller than 5 sec`
+        }
       }
 
       setValue('tmpstmp', context.timestamp)
@@ -147,7 +153,7 @@ export const validateStops = (stops: any, index: number, otp: boolean, cancel: b
     const hasTimeRangeStart = stop.time?.range?.start
     if (hasTimeRangeStart) {
       const timestampCheckResult = timestampCheck(stop.time?.range?.start || '')
-      if (timestampCheckResult && timestampCheckResult.err) {
+      if (timestampCheckResult.err) {
         errorObj[
           `fulfillment_${index}_stop_${l}_timestamp`
         ] = `Invalid timestamp for stop ${l} in fulfillment ${index} in : ${timestampCheckResult.err}`
@@ -155,9 +161,9 @@ export const validateStops = (stops: any, index: number, otp: boolean, cancel: b
     }
 
     // Check if GPS coordinates are valid
-    if (stop.location?.gps && !checkGpsPrecision(stop.location.gps)) {
+    if (stop.location?.gps && checkGpsPrecision(stop.location.gps)) {
       errorObj[`fulfillment_${index}_stop_${l}_gpsPrecision`] =
-        'GPS coordinates must be specifieddddd with at least six decimal places of precision'
+        'GPS coordinates must be specified with at least six decimal places of precision'
     }
   })
 
@@ -213,7 +219,7 @@ export const validateQuote = (quote: any, action: string) => {
   try {
     logger.info(`Checking quote details in /${action}`)
     const quoteBreakup = quote.breakup
-    const validBreakupItems = ['BASE_FARE', 'DISTANCE_FARE']
+    const validBreakupItems = ['BASE_FARE', 'DISTANCE_FARE', 'CURRENT_FARE_CHARGE']
 
     const requiredBreakupItems = validBreakupItems.filter((item) =>
       quoteBreakup.some((breakupItem: any) => breakupItem.title.toUpperCase() === item),
@@ -278,14 +284,6 @@ export const validateCancellationTerms = (cancellationTerms: any, action: string
           errorObj.cancellationFee = `Either percentage or amount.currency & amount.value should be present, but not both, for Cancellation Term[${i}] when fulfillment_state is present`
         }
 
-        // const descriptorCode = cancellationTerm.fulfillment_state.descriptor.code
-        // const storedPercentage = cancellationTermsState.get(descriptorCode)
-
-        // if (storedPercentage === undefined) {
-        //   cancellationTermsState.set(descriptorCode, cancellationTerm.cancellation_fee.percentage)
-        // } else if (storedPercentage !== cancellationTerm.cancellation_fee.percentage) {
-        //   errorObj.cancellationFee = `cancellation_terms percentage for ${descriptorCode} has changed`
-        // }
       }
     } else {
       errorObj.cancellationTerms = `cancellation_terms should be an array in /${action}`

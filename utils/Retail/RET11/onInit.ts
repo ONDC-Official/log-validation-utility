@@ -112,28 +112,6 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     const on_init = message.order
 
     try {
-      logger.info(
-        `Checking provider Id and provider_location Id in /${constants.RET_ONSEARCH} and /${constants.RET_ONINIT}`,
-      )
-      if (!on_init.provider || on_init.provider.id != getValue('providerId')) {
-        onInitObj.prvdrId = `Provider Id mismatches in /${constants.RET_ONSEARCH} and /${constants.RET_ONINIT}`
-      }
-
-      if (
-        on_init.hasOwnProperty('provider_location') &&
-        (!on_init.provider_location.id || on_init.provider_location.id != getValue('providerLoc'))
-      ) {
-        onInitObj.prvdrLoc = `provider_location.id mismatches in /${constants.RET_ONSEARCH} and /${constants.RET_ONINIT}`
-      } else if (!on_init.hasOwnProperty('provider_location')) {
-        onInitObj.prvdrloc = `provider_location object is missing in /${constants.RET_ONINIT}`
-      }
-    } catch (error: any) {
-      logger.error(
-        `!!Error while comparing provider Id and location Id in /${constants.RET_ONSEARCH} and /${constants.RET_ONINIT}, ${error.stack}`,
-      )
-    }
-
-    try {
       logger.info(`Comparing item Ids and fulfillment Ids in /${constants.RET_ONSELECT} and /${constants.RET_ONINIT}`)
       const itemFlfllmnts: any = getValue('itemFlfllmnts')
       const itemsIdList: any = getValue('itemsIdList')

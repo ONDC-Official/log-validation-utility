@@ -18,9 +18,9 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const schemaValidation = validateSchema('RET11', constants.RET_ONSTATUS, data)
+    const schemaValidation = validateSchema('RET11', constants.ON_STATUS, data)
     const select: any = getValue(`${ApiSequence.SELECT}`)
-    const contextRes: any = checkContext(context, constants.RET_ONSTATUS)
+    const contextRes: any = checkContext(context, constants.ON_STATUS)
 
     if (schemaValidation !== 'error') {
       Object.assign(onStatusObj, schemaValidation)
@@ -33,86 +33,84 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
     setValue(`${ApiSequence.ON_STATUS_DELIVERED}`, data)
 
     try {
-      logger.info(`Checking context for /${constants.RET_ONSTATUS} API`) //checking context
-      const res: any = checkContext(context, constants.RET_ONSTATUS)
+      logger.info(`Checking context for /${constants.ON_STATUS} API`) //checking context
+      const res: any = checkContext(context, constants.ON_STATUS)
       if (!res.valid) {
         Object.assign(onStatusObj, res.ERRORS)
       }
     } catch (error: any) {
-      logger.error(`!!Some error occurred while checking /${constants.RET_ONSTATUS} context, ${error.stack}`)
+      logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} context, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing city of /${constants.RET_SEARCH} and /${constants.RET_ONSTATUS}`)
+      logger.info(`Comparing city of /${constants.SEARCH} and /${constants.ON_STATUS}`)
       if (!_.isEqual(searchContext.city, context.city)) {
-        onStatusObj.city = `City code mismatch in /${constants.RET_SEARCH} and /${constants.RET_ONSTATUS}`
+        onStatusObj.city = `City code mismatch in /${constants.SEARCH} and /${constants.ON_STATUS}`
       }
     } catch (error: any) {
-      logger.error(
-        `!!Error while comparing city in /${constants.RET_SEARCH} and /${constants.RET_ONSTATUS}, ${error.stack}`,
-      )
+      logger.error(`!!Error while comparing city in /${constants.SEARCH} and /${constants.ON_STATUS}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing transaction Ids of /${constants.RET_SELECT} and /${constants.RET_ONSTATUS}`)
+      logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_STATUS}`)
       if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
-        onStatusObj.txnId = `Transaction Id should be same from /${constants.RET_SELECT} onwards`
+        onStatusObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
       }
     } catch (error: any) {
       logger.info(
-        `!!Error while comparing transaction ids for /${constants.RET_SELECT} and /${constants.RET_ONSTATUS} api, ${error.stack}`,
+        `!!Error while comparing transaction ids for /${constants.SELECT} and /${constants.ON_STATUS} api, ${error.stack}`,
       )
     }
 
     const on_status = message.order
     try {
-      logger.info(`Comparing order Id in /${constants.RET_ONCONFIRM} and /${constants.RET_ONSTATUS}_${state}`)
+      logger.info(`Comparing order Id in /${constants.ON_CONFIRM} and /${constants.ON_STATUS}_${state}`)
       if (on_status.id != getValue('cnfrmOrdrId')) {
-        logger.info(`Order id (/${constants.RET_ONSTATUS}_${state}) mismatches with /${constants.RET_CONFIRM})`)
-        onStatusObj.onStatusOdrId = `Order id in /${constants.RET_CONFIRM} and /${constants.RET_ONSTATUS}_${state} do not match`
+        logger.info(`Order id (/${constants.ON_STATUS}_${state}) mismatches with /${constants.CONFIRM})`)
+        onStatusObj.onStatusOdrId = `Order id in /${constants.CONFIRM} and /${constants.ON_STATUS}_${state} do not match`
       }
     } catch (error) {
       logger.info(
-        `!!Error while comparing order id in /${constants.RET_ONSTATUS}_${state} and /${constants.RET_CONFIRM}`,
+        `!!Error while comparing order id in /${constants.ON_STATUS}_${state} and /${constants.CONFIRM}`,
         error,
       )
     }
 
     try {
-      logger.info(`Comparing timestamp of /${constants.RET_ONCONFIRM} and /${constants.RET_ONSTATUS}_${state} API`)
+      logger.info(`Comparing timestamp of /${constants.ON_CONFIRM} and /${constants.ON_STATUS}_${state} API`)
       if (_.gte(getValue('tmstmp'), context.timestamp)) {
-        onStatusObj.tmpstmp1 = `Timestamp for /${constants.RET_ONCONFIRM} api cannot be greater than or equal to /${constants.RET_ONSTATUS}_${state} api`
+        onStatusObj.tmpstmp1 = `Timestamp for /${constants.ON_CONFIRM} api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
       }
 
       setValue('tmpstmp', on_status.context.timestamp)
     } catch (error: any) {
-      logger.error(`!!Error occurred while comparing timestamp for /${constants.RET_ONSTATUS}_${state}, ${error.stack}`)
+      logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
     }
 
     const contextTime = context.timestamp
     try {
-      logger.info(`Comparing order.updated_at and context timestamp for /${constants.RET_ONSTATUS}_${state} API`)
+      logger.info(`Comparing order.updated_at and context timestamp for /${constants.ON_STATUS}_${state} API`)
 
       if (!areTimestampsLessThanOrEqualTo(on_status.updated_at, contextTime)) {
-        onStatusObj.tmpstmp2 = ` order.updated_at timestamp should be less than or eqaul to  context timestamp for /${constants.RET_ONSTATUS}_${state} api`
+        onStatusObj.tmpstmp2 = ` order.updated_at timestamp should be less than or eqaul to  context timestamp for /${constants.ON_STATUS}_${state} api`
       }
     } catch (error: any) {
       logger.error(
-        `!!Error occurred while comparing order updated at for /${constants.RET_ONSTATUS}_${state}, ${error.stack}`,
+        `!!Error occurred while comparing order updated at for /${constants.ON_STATUS}_${state}, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Checking order state in /${constants.RET_ONSTATUS}_${state}`)
+      logger.info(`Checking order state in /${constants.ON_STATUS}_${state}`)
       if (on_status.state != 'Completed') {
-        onStatusObj.ordrState = `order/state should be "In-progress" for /${constants.RET_ONSTATUS}_${state}`
+        onStatusObj.ordrState = `order/state should be "In-progress" for /${constants.ON_STATUS}_${state}`
       }
     } catch (error) {
-      logger.error(`!!Error while checking order state in /${constants.RET_ONSTATUS}_${state}`)
+      logger.error(`!!Error while checking order state in /${constants.ON_STATUS}_${state}`)
     }
 
     try {
-      logger.info(`Checking delivery timestamp in /${constants.RET_ONSTATUS}_${state}`)
+      logger.info(`Checking delivery timestamp in /${constants.ON_STATUS}_${state}`)
       const noOfFulfillments = on_status.fulfillments.length
       let orderDelivered = false
       let i = 0
@@ -143,7 +141,7 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
             }
           } catch (error) {
             logger.error(
-              `!!Error while checking delivery time matching with context timestamp in /${constants.RET_ONSTATUS}_${state}`,
+              `!!Error while checking delivery time matching with context timestamp in /${constants.ON_STATUS}_${state}`,
               error,
             )
           }
@@ -155,7 +153,7 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
             }
           } catch (error) {
             logger.error(
-              `!!Error while checking delivery time and pickup time in /${constants.RET_ONSTATUS}_${state}`,
+              `!!Error while checking delivery time and pickup time in /${constants.ON_STATUS}_${state}`,
               error,
             )
           }
@@ -170,10 +168,7 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
               onStatusObj.updatedAtTime = `order/updated_at timestamp can't be future dated (should match context/timestamp)`
             }
           } catch (error) {
-            logger.info(
-              `!!Error while checking order/updated_at timestamp in /${constants.RET_ONSTATUS}_${state}`,
-              error,
-            )
+            logger.info(`!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`, error)
           }
         }
 
@@ -181,14 +176,14 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
       }
 
       if (!orderDelivered) {
-        onStatusObj.noOrdrDelivered = `fulfillments/state should be Order-delivered for /${constants.RET_ONSTATUS}_${state}`
+        onStatusObj.noOrdrDelivered = `fulfillments/state should be Order-delivered for /${constants.ON_STATUS}_${state}`
       }
     } catch (error) {
-      logger.info(`Error while checking delivery timestamp in /${constants.RET_ONSTATUS}_${state}.json`)
+      logger.info(`Error while checking delivery timestamp in /${constants.ON_STATUS}_${state}.json`)
     }
 
     return onStatusObj
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.RET_ONSTATUS} API`, err)
+    logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)
   }
 }

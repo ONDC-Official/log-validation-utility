@@ -1,5 +1,5 @@
 {
-  "name": "retail-logs-validation",
+  "name": "log-validation-utility",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -19,23 +19,29 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/sharmasahil0331/retail-logs-validation.git"
+    "url": "git+https://github.com/ONDC-Official/log-validation-utility.git"
   },
-  "author": "",
+  "author": "ONDC-Official",
+  "contributors": [
+    "bluecypher",
+    "sharmasahil0331"
+  ],
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/sharmasahil0331/retail-logs-validation/issues"
+    "url": "https://github.com/ONDC-Official/log-validation-utility/issues"
   },
-  "homepage": "https://github.com/sharmasahil0331/retail-logs-validation",
+  "homepage": "https://github.com/ONDC-Official/log-validation-utility",
   "dependencies": {
+    "@types/js-yaml": "^4.0.9",
     "ajv": "^8.12.0",
     "ajv-errors": "^3.0.0",
     "ajv-formats": "^2.1.1",
     "body-parser": "^1.19.1",
     "dotenv": "^14.2.0",
     "express": "^4.17.2",
-    "express-pino-logger": "^7.0.0",
-    "lmdb": "^2.8.5",
+    "js-yaml": "^4.1.0",
+    "libsodium-wrappers": "^0.7.13",
+    "lmdb": "^2.9.2",
     "pino": "^7.6.4",
     "swagger-ui-express": "^4.3.0"
   },
@@ -44,8 +50,9 @@
     "@types/express": "^4.17.13",
     "@types/express-pino-logger": "^4.0.3",
     "@types/jest": "^27.4.1",
+    "@types/libsodium-wrappers": "^0.7.13",
     "@types/lodash": "^4.14.198",
-    "@types/node": "^17.0.10",
+    "@types/node": "^20.10.7",
     "@types/supertest": "^2.0.12",
     "@types/swagger-ui-express": "^4.1.3",
     "@typescript-eslint/eslint-plugin": "^4.29.2",
@@ -61,7 +68,8 @@
     "pino-pretty": "^7.5.0",
     "supertest": "^6.2.2",
     "ts-jest": "^27.1.4",
-    "ts-node-dev": "^1.1.8",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
     "typescript": "^4.5.5"
   }
 }

@@ -26,9 +26,9 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.RET_ONSEARCH, data)
+  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SEARCH, data)
 
-  const contextRes: any = checkContext(context, constants.RET_ONSEARCH)
+  const contextRes: any = checkContext(context, constants.ON_SEARCH)
   setValue(`${ApiSequence.ON_SEARCH}_context`, context)
   setValue(`${ApiSequence.ON_SEARCH}_message`, message)
   msgIdSet.add(context.message_id)
@@ -53,32 +53,32 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
 
   try {
-    logger.info(`Storing BAP_ID and BPP_ID in /${constants.RET_ONSEARCH}`)
+    logger.info(`Storing BAP_ID and BPP_ID in /${constants.ON_SEARCH}`)
     setValue('bapId', context.bap_id)
     setValue('bppId', context.bpp_id)
   } catch (error: any) {
-    logger.error(`!!Error while storing BAP and BPP Ids in /${constants.RET_ONSEARCH}, ${error.stack}`)
+    logger.error(`!!Error while storing BAP and BPP Ids in /${constants.ON_SEARCH}, ${error.stack}`)
   }
 
   try {
-    logger.info(`Comparing transaction Ids of /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH}`)
+    logger.info(`Comparing transaction Ids of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
     if (!_.isEqual(searchContext.transaction_id, context.transaction_id)) {
-      errorObj.transaction_id = `Transaction Id for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api should be same`
+      errorObj.transaction_id = `Transaction Id for /${constants.SEARCH} and /${constants.ON_SEARCH} api should be same`
     }
   } catch (error: any) {
     logger.info(
-      `Error while comparing transaction ids for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api, ${error.stack}`,
+      `Error while comparing transaction ids for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
     )
   }
 
   try {
-    logger.info(`Comparing Message Ids of /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH}`)
+    logger.info(`Comparing Message Ids of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
     if (!_.isEqual(searchContext.message_id, context.message_id)) {
-      errorObj.message_id = `Message Id for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api should be same`
+      errorObj.message_id = `Message Id for /${constants.SEARCH} and /${constants.ON_SEARCH} api should be same`
     }
   } catch (error: any) {
     logger.info(
-      `Error while comparing message ids for /${constants.RET_SEARCH} and /${constants.RET_ONSEARCH} api, ${error.stack}`,
+      `Error while comparing message ids for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
     )
   }
 
@@ -89,7 +89,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
   const itemsId = new Set()
 
   try {
-    logger.info(`Saving static fulfillment ids in /${constants.RET_ONSEARCH}`)
+    logger.info(`Saving static fulfillment ids in /${constants.ON_SEARCH}`)
 
     let i = 0
     const bppFF = onSearchCatalog['bpp/fulfillments']
@@ -99,13 +99,13 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
       i++
     }
   } catch (error: any) {
-    logger.info(`Error while saving static fulfillment ids in /${constants.RET_ONSEARCH}, ${error.stack}`)
+    logger.info(`Error while saving static fulfillment ids in /${constants.ON_SEARCH}, ${error.stack}`)
   }
 
   setValue('onSearchFFIds', onSearchFFIds)
 
   try {
-    logger.info(`Checking Providers info (bpp/providers) in /${constants.RET_ONSEARCH}`)
+    logger.info(`Checking Providers info (bpp/providers) in /${constants.ON_SEARCH}`)
     let i = 0
     const bppPrvdrs = onSearchCatalog['bpp/providers']
     const len = bppPrvdrs.length
@@ -815,7 +815,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
     setValue(`${ApiSequence.ON_SEARCH}prvdrLocId`, prvdrLocId)
     setValue(`${ApiSequence.ON_SEARCH}itemsId`, itemsId)
   } catch (error: any) {
-    logger.error(`!!Error while checking Providers info in /${constants.RET_ONSEARCH}, ${error.stack}`)
+    logger.error(`!!Error while checking Providers info in /${constants.ON_SEARCH}, ${error.stack}`)
   }
 
   return Object.keys(errorObj).length > 0 && errorObj

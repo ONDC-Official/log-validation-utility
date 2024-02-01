@@ -18,9 +18,9 @@ export const checkCancel = (data: any) => {
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const schemaValidation = validateSchema('RET11', constants.RET_CANCEL, data)
+    const schemaValidation = validateSchema('RET11', constants.CANCEL, data)
     const select: any = getValue(`${ApiSequence.SELECT}`)
-    const contextRes: any = checkContext(context, constants.RET_CANCEL)
+    const contextRes: any = checkContext(context, constants.CANCEL)
 
     const checkBap = checkBppIdOrBapId(context.bap_id)
     const checkBpp = checkBppIdOrBapId(context.bpp_id)
@@ -38,62 +38,58 @@ export const checkCancel = (data: any) => {
     setValue(`${ApiSequence.CANCEL}`, data)
 
     try {
-      logger.info(`Checking context for /${constants.RET_CANCEL} API`) //checking context
-      const res: any = checkContext(context, constants.RET_CANCEL)
+      logger.info(`Checking context for /${constants.CANCEL} API`) //checking context
+      const res: any = checkContext(context, constants.CANCEL)
       if (!res.valid) {
         Object.assign(cnclObj, res.ERRORS)
       }
     } catch (error: any) {
-      logger.error(`!!Some error occurred while checking /${constants.RET_CANCEL} context, ${error.stack}`)
+      logger.error(`!!Some error occurred while checking /${constants.CANCEL} context, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing city of /${constants.RET_SEARCH} and /${constants.RET_CANCEL}`)
+      logger.info(`Comparing city of /${constants.SEARCH} and /${constants.CANCEL}`)
       if (!_.isEqual(searchContext.city, context.city)) {
-        cnclObj.city = `City code mismatch in /${constants.RET_SEARCH} and /${constants.RET_CANCEL}`
+        cnclObj.city = `City code mismatch in /${constants.SEARCH} and /${constants.CANCEL}`
       }
     } catch (error: any) {
-      logger.error(
-        `!!Error while comparing city in /${constants.RET_SEARCH} and /${constants.RET_CANCEL}, ${error.stack}`,
-      )
+      logger.error(`!!Error while comparing city in /${constants.SEARCH} and /${constants.CANCEL}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing timestamp of /${constants.RET_ONINIT} and /${constants.RET_CANCEL}`)
+      logger.info(`Comparing timestamp of /${constants.ON_INIT} and /${constants.CANCEL}`)
       if (_.gte(getValue('tmpstmp'), context.timestamp)) {
-        cnclObj.tmpstmp = `Timestamp for /${constants.RET_ONINIT} api cannot be greater than or equal to /${constants.RET_CANCEL} api`
+        cnclObj.tmpstmp = `Timestamp for /${constants.ON_INIT} api cannot be greater than or equal to /${constants.CANCEL} api`
       }
 
       setValue('tmpstmp', context.timestamp)
     } catch (error: any) {
       logger.error(
-        `!!Error while comparing timestamp for /${constants.RET_ONINIT} and /${constants.RET_CANCEL} api, ${error.stack}`,
+        `!!Error while comparing timestamp for /${constants.ON_INIT} and /${constants.CANCEL} api, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Comparing transaction Ids of /${constants.RET_SELECT} and /${constants.RET_CANCEL}`)
+      logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.CANCEL}`)
       if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
-        cnclObj.txnId = `Transaction Id should be same from /${constants.RET_SELECT} onwards`
+        cnclObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
       }
     } catch (error: any) {
       logger.info(
-        `!!Error while comparing transaction ids for /${constants.RET_SELECT} and /${constants.RET_CANCEL} api, ${error.stack}`,
+        `!!Error while comparing transaction ids for /${constants.SELECT} and /${constants.CANCEL} api, ${error.stack}`,
       )
     }
 
     const cancel = message
 
     try {
-      logger.info(`Comparing order Id in /${constants.RET_CANCEL} and /${constants.RET_CONFIRM}`)
+      logger.info(`Comparing order Id in /${constants.CANCEL} and /${constants.CONFIRM}`)
       if (cancel.order_id != getValue('cnfrmOrdrId')) {
-        cnclObj.cancelOrdrId = `Order Id in /${constants.RET_CANCEL} and /${constants.RET_CONFIRM} do not match`
-        logger.info(`Order Id mismatch in /${constants.RET_CANCEL} and /${constants.RET_CONFIRM}`)
+        cnclObj.cancelOrdrId = `Order Id in /${constants.CANCEL} and /${constants.CONFIRM} do not match`
+        logger.info(`Order Id mismatch in /${constants.CANCEL} and /${constants.CONFIRM}`)
       }
     } catch (error: any) {
-      logger.info(
-        `Error while comparing order id in /${constants.RET_CANCEL} and /${constants.RET_CONFIRM}, ${error.stack}`,
-      )
+      logger.info(`Error while comparing order id in /${constants.CANCEL} and /${constants.CONFIRM}, ${error.stack}`)
     }
 
     try {
@@ -104,11 +100,11 @@ export const checkCancel = (data: any) => {
         cnclObj.cancelRid = `Cancellation reason id is not a valid reason id (buyer app initiated)`
       } else setValue('cnclRid', cancel.cancellation_reason_id)
     } catch (error: any) {
-      logger.info(`Error while checking validity of cancellation reason id /${constants.RET_CANCEL}, ${error.stack}`)
+      logger.info(`Error while checking validity of cancellation reason id /${constants.CANCEL}, ${error.stack}`)
     }
 
     return cnclObj
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.RET_CANCEL} API`, err)
+    logger.error(`!!Some error occurred while checking /${constants.CANCEL} API`, err)
   }
 }

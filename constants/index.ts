@@ -1,29 +1,29 @@
 export default Object.freeze({
   RET_CONTEXT_TTL: 'PT30S',
-  RET_CONTEXT_ACTION: 'action',
+  CONTEXT_ACTION: 'action',
   DB_PATH: 'dbfiles',
-  RET_SEARCH: 'search',
-  RET_ONSEARCH: 'on_search',
-  RET_ONSEARCHINC: 'on_search_inc',
-  RET_SELECT: 'select',
-  RET_ONSELECT: 'on_select',
-  RET_INIT: 'init',
-  RET_ONINIT: 'on_init',
-  RET_CONFIRM: 'confirm',
-  RET_ONCONFIRM: 'on_confirm',
-  RET_TRACK: 'track',
-  RET_ONTRACK: 'on_track',
-  RET_CANCEL: 'cancel',
-  RET_ONCANCEL: 'on_cancel',
-  RET_UPDATE: 'update',
-  RET_ONUPDATE: 'on_update',
-  RET_STATUS: 'status',
-  RET_ONSTATUS: 'on_status',
-  RET_SUPPORT: 'support',
-  RET_ONSUPPORT: 'on_support',
   DECIMAL_PRECISION: 6,
   ORDER_PICKED: 'Order-picked-up',
   ORDER_DELIVERED: 'Order-delivered',
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  ON_SEARCHINC: 'on_search_inc',
+  SELECT: 'select',
+  ON_SELECT: 'on_select',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  INIT: 'init',
+  ON_INIT: 'on_init',
+  STATUS: 'status',
+  UPDATE: 'update',
+  ON_UPDATE: 'on_update',
+  ON_STATUS: 'on_status',
+  CANCEL: 'cancel',
+  ON_CANCEL: 'on_cancel',
+  TRACK: 'track',
+  ON_TRACK: 'on_track',
+  SUPPORT: 'support',
+  ON_SUPPORT: 'on_support',
   RET_ISSUE: 'issue',
   RET_ONISSUE: 'on_issue',
   RET_ISSUE_STATUS: 'issue_status',
@@ -51,6 +51,110 @@ export const ApiSequence = {
   ON_STATUS_DELIVERED: 'on_status_delivered',
   UPDATE: 'update',
   ON_UPDATE: 'on_update',
+}
+
+export const FisApiSequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SELECT_1: 'select_1',
+  SELECT_2: 'select_2',
+  SELECT_3: 'select_3',
+  ON_SELECT_1: 'on_select_1',
+  ON_SELECT_2: 'on_select_2',
+  ON_SELECT_3: 'on_select_3',
+  INIT_1: 'init_1',
+  INIT_2: 'init_2',
+  INIT_3: 'init_3',
+  ON_INIT_1: 'on_init_1',
+  ON_INIT_2: 'on_init_2',
+  ON_INIT_3: 'on_init_3',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  CANCEL: 'cancel',
+  ON_CANCEL: 'on_cancel',
+  TRACK: 'track',
+  ON_TRACK: 'on_track',
+  STATUS: 'status',
+  ON_STATUS: 'on_status',
+  UPDATE: 'update',
+  ON_UPDATE: 'on_update',
+  ON_UPDATE_UNSOLICATED: 'on_update_unsolicated',
+}
+
+export const mobilitySequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SELECT: 'select',
+  ON_SELECT: 'on_select',
+  INIT: 'init',
+  ON_INIT: 'on_init',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  CANCEL: 'cancel',
+  SOFT_CANCEL: 'soft_cancel',
+  ON_CANCEL: 'on_cancel',
+  SOFT_ON_CANCEL: 'soft_on_cancel',
+  UPDATE: 'update',
+  ON_UPDATE: 'on_update',
+  STATUS: 'status',
+  ON_STATUS: 'on_status',
+}
+
+export const metroSequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SELECT: 'select',
+  ON_SELECT: 'on_select',
+  INIT: 'init',
+  ON_INIT: 'on_init',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  CANCEL: 'cancel',
+  SOFT_CANCEL: 'soft_cancel',
+  ON_CANCEL: 'on_cancel',
+  SOFT_ON_CANCEL: 'soft_on_cancel',
+  UPDATE: 'update',
+  ON_UPDATE: 'on_update',
+  STATUS: 'status',
+  ON_STATUS: 'on_status',
+}
+
+export const mobilityFlow: any = {
+  AIRLINES: 'airlines',
+  METRO: 'metro',
+  ONDEMAND: 'on-demand',
+  INTERCITY: 'intercity',
+  INTRACITY: 'intracity',
+}
+
+export const formHeadingsFis: any = {
+  INVOICE_BASED_LOAN: {
+    on_search: ['Organization Information'],
+    on_select: ['Set Loan Amount', 'Know your Customer'],
+    on_init: 'Account details based loan form',
+  },
+  PERSONAL_LOAN: {
+    on_search: ['Personal Information'],
+    on_select: ['Set Loan Amount', 'Know your Customer'],
+    on_init: ['Account Information', 'E-mandate', 'Loan Agreement'],
+  },
+}
+
+export const fisFlows = {
+  INVOICE: 'INVOICE_BASED_LOAN',
+  PERSONAL: 'PERSONAL_LOAN',
+  PRE_INVOICE: 'PERSONAL_LOAN',
+  PRE_PERSONAL: 'INVOICE_BASED_LOAN',
+  LOAN_FORECLOSURE: 'FORECLOSURE',
+  PRE_PART_PAYMENT: 'PRE_PART_PAYMENT',
+  MISSED_EMI_PAYMENT: 'MISSED_EMI_PAYMENT',
+}
+
+export const onDemandFlows = {
+  HAPPY_FLOW: 'HAPPY_FLOW',
+  RIDER_CANCEL: 'RIDER_CANCEL',
+  DRIVER_CANCEL: 'DRIVER_CANCEL',
+  PRICE_UPDATE: 'PRICE_UPDATE',
 }
 
 export const IGMApiSequence = {
@@ -110,4 +214,15 @@ export const retailDomains = [
   'ONDC:RET18',
   'ONDC:RET19',
   'ONDC:RET20',
+]
+
+export const MOB_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
+export const MOB__DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
+export const MOB_FULL_STATE = [
+  'RIDE_CANCELLED',
+  'RIDE_ENDED',
+  'RIDE_STARTED',
+  'RIDE_ASSIGNED',
+  'RIDE_ENROUTE_PICKUP',
+  'RIDE_ARRIVED_PICKUP',
 ]

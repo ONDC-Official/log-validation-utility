@@ -31,9 +31,9 @@ export const checkOnConfirm = (data: any) => {
     const parentItemIdSet: any = getValue(`parentItemIdSet`)
     const select_customIdArray: any = getValue(`select_customIdArray`)
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.RET_ONCONFIRM, data)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_CONFIRM, data)
 
-    const contextRes: any = checkContext(context, constants.RET_ONCONFIRM)
+    const contextRes: any = checkContext(context, constants.ON_CONFIRM)
 
     const checkBap = checkBppIdOrBapId(context.bap_id)
     const checkBpp = checkBppIdOrBapId(context.bpp_id)
@@ -52,65 +52,63 @@ export const checkOnConfirm = (data: any) => {
     setValue(`${ApiSequence.ON_CONFIRM}`, data)
 
     try {
-      logger.info(`Comparing city of /${constants.RET_SEARCH} and /${constants.RET_ONCONFIRM}`)
+      logger.info(`Comparing city of /${constants.SEARCH} and /${constants.ON_CONFIRM}`)
       if (!_.isEqual(searchContext.city, context.city)) {
-        onCnfrmObj.city = `City code mismatch in /${constants.RET_SEARCH} and /${constants.RET_ONCONFIRM}`
+        onCnfrmObj.city = `City code mismatch in /${constants.SEARCH} and /${constants.ON_CONFIRM}`
       }
     } catch (error: any) {
-      logger.info(
-        `Error while comparing city in /${constants.RET_SEARCH} and /${constants.RET_ONCONFIRM}, ${error.stack}`,
-      )
+      logger.info(`Error while comparing city in /${constants.SEARCH} and /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing timestamp of /${constants.RET_CONFIRM} and /${constants.RET_ONCONFIRM}`)
+      logger.info(`Comparing timestamp of /${constants.CONFIRM} and /${constants.ON_CONFIRM}`)
       const tmpstmp = getValue('tmpstmp')
       if (_.gte(tmpstmp, context.timestamp)) {
-        onCnfrmObj.tmpstmp = `Timestamp for /${constants.RET_CONFIRM} api cannot be greater than or equal to /${constants.RET_ONCONFIRM} api`
+        onCnfrmObj.tmpstmp = `Timestamp for /${constants.CONFIRM} api cannot be greater than or equal to /${constants.ON_CONFIRM} api`
       } else {
         const timeDiff = timeDifference(context.timestamp, tmpstmp)
         logger.info(timeDiff)
         if (timeDiff > 5000) {
-          onCnfrmObj.tmpstmp = `context/timestamp difference between /${constants.RET_ONCONFIRM} and /${constants.RET_CONFIRM} should be smaller than 5 sec`
+          onCnfrmObj.tmpstmp = `context/timestamp difference between /${constants.ON_CONFIRM} and /${constants.CONFIRM} should be smaller than 5 sec`
         }
       }
 
       setValue('tmpstmp', context.timestamp)
     } catch (error: any) {
       logger.info(
-        `Error while comparing timestamp for /${constants.RET_CONFIRM} and /${constants.RET_ONCONFIRM} api, ${error.stack}`,
+        `Error while comparing timestamp for /${constants.CONFIRM} and /${constants.ON_CONFIRM} api, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Comparing transaction Ids of /${constants.RET_SELECT} and /${constants.RET_ONCONFIRM}`)
+      logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_CONFIRM}`)
       if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
-        onCnfrmObj.txnId = `Transaction Id should be same from /${constants.RET_SELECT} onwards`
+        onCnfrmObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
       }
     } catch (error: any) {
       logger.error(
-        `!!Error while comparing transaction ids for /${constants.RET_SELECT} and /${constants.RET_ONCONFIRM} api, ${error.stack}`,
+        `!!Error while comparing transaction ids for /${constants.SELECT} and /${constants.ON_CONFIRM} api, ${error.stack}`,
       )
     }
 
     const on_confirm = message.order
 
     try {
-      logger.info(`Comparing order ids in /${constants.RET_CONFIRM} and /${constants.RET_ONCONFIRM}`)
+      logger.info(`Comparing order ids in /${constants.CONFIRM} and /${constants.ON_CONFIRM}`)
       if (getValue('cnfrmOrdrId') != on_confirm.id) {
-        onCnfrmObj.orderID = `Order Id mismatches in /${constants.RET_CONFIRM} and /${constants.RET_ONCONFIRM}`
+        onCnfrmObj.orderID = `Order Id mismatches in /${constants.CONFIRM} and /${constants.ON_CONFIRM}`
       }
     } catch (error: any) {
-      logger.error(`!!Error while trying to fetch order ids in /${constants.RET_ONCONFIRM}, ${error.stack}`)
+      logger.error(`!!Error while trying to fetch order ids in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
     try {
-      logger.info(`checking created_at and updated_at timestamp in /${constants.RET_ONCONFIRM}`)
+      logger.info(`checking created_at and updated_at timestamp in /${constants.ON_CONFIRM}`)
       const cnfrmOrdrCrtd = getValue('ordrCrtd')
       const cnfrmOrdrUpdtd = getValue('ordrUpdtd')
       if (on_confirm.state === 'Created' || on_confirm.state === 'Accepted') {
         if (cnfrmOrdrCrtd && (!on_confirm.created_at || on_confirm.created_at != cnfrmOrdrCrtd)) {
-          onCnfrmObj.crtdtmstmp = `order.created_at timestamp mismatches in /${constants.RET_CONFIRM} and /${constants.RET_ONCONFIRM}`
+          onCnfrmObj.crtdtmstmp = `order.created_at timestamp mismatches in /${constants.CONFIRM} and /${constants.ON_CONFIRM}`
         }
 
         if (
@@ -123,26 +121,24 @@ export const checkOnConfirm = (data: any) => {
         }
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking order timestamps in /${constants.RET_ONCONFIRM}, ${error.stack}`)
+      logger.error(`!!Error while checking order timestamps in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking provider id and location in /${constants.RET_ONCONFIRM}`)
+      logger.info(`Checking provider id and location in /${constants.ON_CONFIRM}`)
       if (on_confirm.provider.id != getValue('providerId')) {
-        onCnfrmObj.prvdrId = `Provider Id mismatches in /${constants.RET_ONSEARCH} and /${constants.RET_ONCONFIRM}`
+        onCnfrmObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.ON_CONFIRM}`
       }
 
       if (on_confirm.provider.locations[0].id != getValue('providerLoc')) {
-        onCnfrmObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.RET_ONSEARCH} and /${constants.RET_ONCONFIRM}`
+        onCnfrmObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.ON_SEARCH} and /${constants.ON_CONFIRM}`
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking provider id and location in /${constants.RET_ONCONFIRM}, ${error.stack}`)
+      logger.error(`!!Error while checking provider id and location in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
     try {
-      logger.info(
-        `Comparing item Ids and fulfillment ids in /${constants.RET_ONSELECT} and /${constants.RET_ONCONFIRM}`,
-      )
+      logger.info(`Comparing item Ids and fulfillment ids in /${constants.ON_SELECT} and /${constants.ON_CONFIRM}`)
       const itemFlfllmnts: any = getValue('itemFlfllmnts')
       const itemsIdList: any = getValue('itemsIdList')
       let i = 0
@@ -156,14 +152,14 @@ export const checkOnConfirm = (data: any) => {
           const itemkey = `item${i}tags.parent_id`
           onCnfrmObj[
             itemkey
-          ] = `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.RET_SELECT} and /${constants.RET_INIT}`
+          ] = `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.SELECT} and /${constants.INIT}`
         }
 
         if (!parentItemIdSet.includes(item.parent_item_id)) {
           const itemkey = `item_PrntItmId${i}`
           onCnfrmObj[
             itemkey
-          ] = `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.RET_ONSELECT} and /${constants.RET_ONINIT}`
+          ] = `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_INIT}`
         }
 
         if (itemId in itemFlfllmnts) {
@@ -171,16 +167,16 @@ export const checkOnConfirm = (data: any) => {
             const itemkey = `item_FFErr${i}`
             onCnfrmObj[
               itemkey
-            ] = `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.RET_ONSELECT} and /${constants.RET_ONCONFIRM}`
+            ] = `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_CONFIRM}`
           }
         } else {
           const itemkey = `item_FFErr${i}`
-          onCnfrmObj[itemkey] = `Item Id ${itemId} does not exist in /${constants.RET_ONSELECT}`
+          onCnfrmObj[itemkey] = `Item Id ${itemId} does not exist in /${constants.ON_SELECT}`
         }
 
         if (itemId in itemsIdList) {
           if (on_confirm.items[i].quantity.count != itemsIdList[itemId]) {
-            onCnfrmObj.cntErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.RET_SELECT}`
+            onCnfrmObj.cntErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
           }
         }
 
@@ -188,12 +184,12 @@ export const checkOnConfirm = (data: any) => {
       }
     } catch (error: any) {
       logger.error(
-        `!!Error while comparing Item and Fulfillment Id in /${constants.RET_ONSELECT} and /${constants.RET_CONFIRM}, ${error.stack}`,
+        `!!Error while comparing Item and Fulfillment Id in /${constants.ON_SELECT} and /${constants.CONFIRM}, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Comparing billing object in ${constants.RET_CONFIRM} and /${constants.RET_ONCONFIRM}`)
+      logger.info(`Comparing billing object in ${constants.CONFIRM} and /${constants.ON_CONFIRM}`)
       const billing = getValue('billing')
 
       const billingErrors = compareObjects(billing, on_confirm.billing)
@@ -208,11 +204,11 @@ export const checkOnConfirm = (data: any) => {
         }
       }
     } catch (error: any) {
-      logger.info(`!Error while comparing billing object in /${constants.RET_CONFIRM} and /${constants.RET_ONCONFIRM}`)
+      logger.info(`!Error while comparing billing object in /${constants.CONFIRM} and /${constants.ON_CONFIRM}`)
     }
 
     try {
-      logger.info(`Checking fulfillments objects in /${constants.RET_ONCONFIRM}`)
+      logger.info(`Checking fulfillments objects in /${constants.ON_CONFIRM}`)
       const itemFlfllmnts: any = getValue('itemFlfllmnts')
       let i = 0
       const len = on_confirm.fulfillments.length
@@ -223,10 +219,10 @@ export const checkOnConfirm = (data: any) => {
           if (!Object.values(itemFlfllmnts).includes(id)) {
             const key = `ffID${id}`
             //MM->Mismatch
-            onCnfrmObj[key] = `fulfillment id ${id} does not exist in /${constants.RET_ONSELECT}`
+            onCnfrmObj[key] = `fulfillment id ${id} does not exist in /${constants.ON_SELECT}`
           }
         } else {
-          onCnfrmObj.ffId = `fulfillments[${i}].id is missing in /${constants.RET_ONCONFIRM}`
+          onCnfrmObj.ffId = `fulfillments[${i}].id is missing in /${constants.ON_CONFIRM}`
         }
 
         logger.info('Checking the fulfillments state')
@@ -237,7 +233,7 @@ export const checkOnConfirm = (data: any) => {
 
         if (!ffStateCheck) {
           const key = `ffState${i}`
-          onCnfrmObj[key] = `default fulfillments state is missing in /${constants.RET_ONCONFIRM}`
+          onCnfrmObj[key] = `default fulfillments state is missing in /${constants.ON_CONFIRM}`
         }
 
         if (!on_confirm.fulfillments[i].start || !on_confirm.fulfillments[i].end) {
@@ -249,7 +245,7 @@ export const checkOnConfirm = (data: any) => {
             onCnfrmObj.sellerGpsErr = `store gps location /fulfillments[${i}]/start/location/gps can't change`
           }
         } catch (error: any) {
-          logger.error(`!!Error while checking store location in /${constants.RET_ONCONFIRM}`)
+          logger.error(`!!Error while checking store location in /${constants.ON_CONFIRM}`)
         }
 
         try {
@@ -257,7 +253,7 @@ export const checkOnConfirm = (data: any) => {
             onCnfrmObj.sellerNameErr = `store name  /fulfillments[${i}]/start/location/descriptor/name can't change`
           }
         } catch (error: any) {
-          logger.error(`!!Error while checking store name in /${constants.RET_ONCONFIRM}`)
+          logger.error(`!!Error while checking store name in /${constants.ON_CONFIRM}`)
         }
 
         if (!_.isEqual(on_confirm.fulfillments[i].end.location.gps, getValue('buyerGps'))) {
@@ -271,22 +267,22 @@ export const checkOnConfirm = (data: any) => {
         i++
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking fulfillments object in /${constants.RET_ONCONFIRM}, ${error.stack}`)
+      logger.error(`!!Error while checking fulfillments object in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing /${constants.RET_ONCONFIRM} quoted Price and Payment Params amount`)
+      logger.info(`Comparing /${constants.ON_CONFIRM} quoted Price and Payment Params amount`)
       if (parseFloat(on_confirm.payment.params.amount) != parseFloat(on_confirm.quote.price.value)) {
-        onCnfrmObj.onConfirmedAmount = `Quoted price (/${constants.RET_ONCONFIRM}) doesn't match with the amount in payment.params`
+        onCnfrmObj.onConfirmedAmount = `Quoted price (/${constants.ON_CONFIRM}) doesn't match with the amount in payment.params`
       }
     } catch (error: any) {
       logger.error(
-        `!!Error while Comparing /${constants.RET_ONCONFIRM} quoted Price and Payment Params amount, ${error.stack}`,
+        `!!Error while Comparing /${constants.ON_CONFIRM} quoted Price and Payment Params amount, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Comparing Quote object for /${constants.RET_ONSELECT} and /${constants.RET_ONCONFIRM}`)
+      logger.info(`Comparing Quote object for /${constants.ON_SELECT} and /${constants.ON_CONFIRM}`)
 
       const confirm_quote = getValue('quoteObj')
       const quoteErrors = compareObjects(confirm_quote, on_confirm.quote)
@@ -301,75 +297,75 @@ export const checkOnConfirm = (data: any) => {
         }
       }
     } catch (error: any) {
-      logger.error(`!!Error while comparing quote in /${constants.RET_ONSELECT} and /${constants.RET_ONCONFIRM}`)
+      logger.error(`!!Error while comparing quote in /${constants.ON_SELECT} and /${constants.ON_CONFIRM}`)
     }
 
     try {
-      logger.info(`Comparing order price value in /${constants.RET_ONSELECT} and /${constants.RET_ONCONFIRM}`)
+      logger.info(`Comparing order price value in /${constants.ON_SELECT} and /${constants.ON_CONFIRM}`)
       const onSelectPrice: any = getValue('onSelectPrice')
       const onConfirmQuotePrice = parseFloat(on_confirm.quote.price.value)
       if (onSelectPrice != onConfirmQuotePrice) {
         logger.info(
-          `order quote price in /${constants.RET_ONCONFIRM} is not equal to the quoted price in /${constants.RET_ONSELECT}`,
+          `order quote price in /${constants.ON_CONFIRM} is not equal to the quoted price in /${constants.ON_SELECT}`,
         )
-        onCnfrmObj.quoteErr = `Quoted Price in /${constants.RET_ONCONFIRM} ${onConfirmQuotePrice} does not match with the quoted price in /${constants.RET_ONSELECT} ${onSelectPrice}`
+        onCnfrmObj.quoteErr = `Quoted Price in /${constants.ON_CONFIRM} ${onConfirmQuotePrice} does not match with the quoted price in /${constants.ON_SELECT} ${onSelectPrice}`
       }
     } catch (error: any) {
       logger.error(
-        `!!Error while comparing order price value in /${constants.RET_ONSELECT} and /${constants.RET_ONCONFIRM}, ${error.stack}`,
+        `!!Error while comparing order price value in /${constants.ON_SELECT} and /${constants.ON_CONFIRM}, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Comparing payment object in /${constants.RET_CONFIRM} & /${constants.RET_ONCONFIRM}`)
+      logger.info(`Comparing payment object in /${constants.CONFIRM} & /${constants.ON_CONFIRM}`)
 
       if (!_.isEqual(getValue('cnfrmpymnt'), on_confirm.payment)) {
-        onCnfrmObj.pymntObj = `payment object mismatches in /${constants.RET_CONFIRM} & /${constants.RET_ONCONFIRM}`
+        onCnfrmObj.pymntObj = `payment object mismatches in /${constants.CONFIRM} & /${constants.ON_CONFIRM}`
       }
     } catch (error: any) {
       logger.error(
-        `!!Error while comparing payment object in /${constants.RET_CONFIRM} & /${constants.RET_ONCONFIRM}, ${error.stack}`,
+        `!!Error while comparing payment object in /${constants.CONFIRM} & /${constants.ON_CONFIRM}, ${error.stack}`,
       )
     }
 
     try {
-      logger.info(`Checking Buyer App finder fee amount in /${constants.RET_ONCONFIRM}`)
+      logger.info(`Checking Buyer App finder fee amount in /${constants.ON_CONFIRM}`)
       const buyerFF: any = getValue(`${ApiSequence.SEARCH}_buyerFF`)
       if (
         on_confirm.payment['@ondc/org/buyer_app_finder_fee_amount'] &&
         parseFloat(on_confirm.payment['@ondc/org/buyer_app_finder_fee_amount']) != buyerFF
       ) {
-        onCnfrmObj.buyerFF = `Buyer app finder fee can't change in /${constants.RET_ONCONFIRM}`
-        logger.info(`Buyer app finder fee can't change in /${constants.RET_ONCONFIRM}`)
+        onCnfrmObj.buyerFF = `Buyer app finder fee can't change in /${constants.ON_CONFIRM}`
+        logger.info(`Buyer app finder fee can't change in /${constants.ON_CONFIRM}`)
       }
     } catch (error: any) {
-      logger.info(`!Error while comparing buyer app finder fee in /${constants.RET_ONCONFIRM}, ${error.stack}`)
+      logger.info(`!Error while comparing buyer app finder fee in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
     try {
-      logger.info(`Comparing tags in /${constants.RET_CONFIRM} and /${constants.RET_ONCONFIRM}`)
+      logger.info(`Comparing tags in /${constants.CONFIRM} and /${constants.ON_CONFIRM}`)
       const confirm_tags: any[] | any = getValue('confirm_tags')
       if (on_confirm.tags) {
         const bap_terms = areGSTNumbersMatching(confirm_tags, on_confirm.tags, 'bap_terms')
 
         if (bap_terms === false) {
-          onCnfrmObj.tags_bap_terms = `Tags should have same and valid gst_number as passed in /${constants.RET_CONFIRM}`
+          onCnfrmObj.tags_bap_terms = `Tags should have same and valid gst_number as passed in /${constants.CONFIRM}`
         }
 
         const bpp_terms = areGSTNumbersMatching(confirm_tags, on_confirm.tags, 'bpp_terms')
         if (bpp_terms === false) {
-          onCnfrmObj.tags_bpp_terms = `Tags should have same and valid gst_number as passed in /${constants.RET_ONINIT} and ${constants.RET_CONFIRM}`
+          onCnfrmObj.tags_bpp_terms = `Tags should have same and valid gst_number as passed in /${constants.ON_INIT} and ${constants.CONFIRM}`
         }
       }
     } catch (error: any) {
       logger.error(
-        `!!Error while Comparing tags in /${constants.RET_CONFIRM} and /${constants.RET_ONCONFIRM}
+        `!!Error while Comparing tags in /${constants.CONFIRM} and /${constants.ON_CONFIRM}
         ${error.stack}`,
       )
     }
 
     return onCnfrmObj
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.RET_ONCONFIRM} API`, JSON.stringify(err.stack))
+    logger.error(`!!Some error occurred while checking /${constants.ON_CONFIRM} API`, JSON.stringify(err.stack))
   }
 }

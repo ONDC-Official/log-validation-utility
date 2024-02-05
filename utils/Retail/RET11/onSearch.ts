@@ -39,8 +39,10 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     Object.assign(errorObj, schemaValidation)
   }
 
+  logger.info("Initializing ---->")
   const checkBap = checkBppIdOrBapId(context.bap_id)
   const checkBpp = checkBppIdOrBapId(context.bpp_id)
+  logger.info(checkBap)
 
   if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
   if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })

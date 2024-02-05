@@ -13,10 +13,14 @@ import {
   checkServiceabilityType,
   validateLocations,
   isSequenceValid,
+  
+
+  
 } from '../../../utils'
 import _ from 'lodash'
 
 export const checkOnsearch = (data: any, msgIdSet: any) => {
+  
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.ON_SEARCH]: 'Json cannot be empty' }
   }
@@ -174,6 +178,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           })
 
           logger.info('Checking fixed or split timings')
+          
           //scenario 1: range =1 freq/times =1
           if (loc.time.range && (loc.time.schedule?.frequency || loc.time.schedule?.times)) {
             const key = `prvdr${i}loctime${iter}`
@@ -199,12 +204,74 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
               errorObj.startEndTime = `end time must be greater than start time in fixed timings /locations/time/range (fixed store timings)`
             }
           }
-        } catch (error: any) {
+
+          // // Check for holidays
+          // if (loc.time.holidays) {
+          //   logger.info('Checking holidays');
+          //   const currentDate = new Date();
+          //   const currentDay = currentDate.getDay();
+          //   const holidays = loc.time.holidays.split(',');
+
+            
+            
+
+          //   if (holidays.includes(currentDay.toString())) {
+          //     // If the current day is a holiday, add an error to the errorObj
+          //     const key = `prvdr${i}holiday${iter}`;
+          //     errorObj[key] = `It's a holiday for /bpp/providers[${i}]/locations[${iter}]`;
+          //   }
+
+          //   // Schedule future holidays
+          //   const futureHolidays = ['2024-02-14', '2024-12-25']; // Add your future holidays here
+          //   const formattedCurrentDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
+          //     .toString()
+          //     .padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
+
+          //   if (futureHolidays.includes(formattedCurrentDate)) {
+          //     const key = `prvdr${i}futureHoliday${iter}`;
+          //     errorObj[key] = `It's a scheduled future holiday for /bpp/providers[${i}]/locations[${iter}]`;
+          //   }
+          // }
+          
+          
+        }
+
+        catch (error: any) {
           logger.error(`Validation error for frequency: ${error.stack}`)
         }
       })
 
+      
       try {
+        const location = onSearchCatalog['bpp/providers'][i]['locations']
+        if(!location){
+          logger.error("No location detected ")
+        }
+        const scheduleObject = location[i].time.schedule.holidays;
+      if(scheduleObject.length ===0){
+        logger.info("no holidays are pesent")
+      }     
+        const currentDate = new Date();
+        const futureHolidays: any = [];
+  
+     scheduleObject.map((date: string)=>{
+         // convert this date into date object 
+         const dateObj = new Date(date);
+         // Compare it with current date
+         if(dateObj.getTime() > currentDate.getTime()){
+          futureHolidays.push(date);
+         }
+     })
+     console.log("Upcoming holidays: ", futureHolidays);
+        
+      }catch(e){
+        logger.error("No Holiday", e);
+        
+      }
+      
+
+      try {
+        
         logger.info(`Checking categories for provider (${prvdr.id}) in bpp/providers[${i}]`)
         let j = 0
         const categories = onSearchCatalog['bpp/providers'][i]['categories']
@@ -355,6 +422,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         logger.info(`Checking items for provider (${prvdr.id}) in bpp/providers[${i}]`)
         let j = 0
         const items = onSearchCatalog['bpp/providers'][i]['items']
+
         const iLen = items.length
         while (j < iLen) {
           logger.info(`Validating uniqueness for item id in bpp/providers[${i}].items[${j}]...`)
@@ -441,6 +509,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
               }
             }
           }
+
+          
 
           item.tags.map((tag: { code: any; list: any[] }, index: number) => {
             switch (tag.code) {

@@ -88,35 +88,126 @@ export const onSearchSchema = {
                   },
                   type: {
                     type: 'string',
-                    enum: ['Delivery', 'Self-Pickup', 'Delivery and Buyer-Delivery'],
+                    enum: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
                   },
                 },
                 required: ['id', 'type'],
               },
             },
-            'bpp/descriptor': {
-              type: 'object',
-              properties: {
-                name: {
-                  type: 'string',
-                },
-                symbol: {
-                  type: 'string',
-                },
-                short_desc: {
-                  type: 'string',
-                },
-                long_desc: {
-                  type: 'string',
-                },
-                images: {
-                  type: 'array',
-                  items: {
-                    type: 'string',
+              'bpp/descriptor': {
+                type: "object",
+                properties: {
+                  name: {
+                    type: "string"
                   },
+                  symbol: {
+                    type: "string",
+                    pattern: "^$|^https?:\\/\\/[^\\s]*"
+                  },
+                  short_desc: {
+                    type: "string"
+                  },
+                  long_desc: {
+                    type: "string"
+                  },
+                  images: {
+                    type: "array",
+                    items: {
+                      type: "string",
+                      pattern: "^$|^https?:\\/\\/[^\\s]*"
+                    }
+                  },
+                  tags: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        code: {
+                          type: "string",
+                          enum: ["bpp_terms"]
+                        },
+                        list: {
+                          type: "array",
+                          items: {
+                            oneOf: [
+                              {
+                                if: {
+                                  properties: {
+                                    code: { const: "np_type" }
+                                  }
+                                },
+                                then: {
+                                  type: "object",
+                                  properties: {
+                                    code: {
+                                      type: "string",
+                                      enum: ["np_type"]
+                                    },
+                                    value: {
+                                      type: "string",
+                                      enum: ["MSN", "ISN"]
+                                    }
+                                  },
+                                  required: ["code", "value"],
+                                  additionalProperties: false
+                                }
+                              },
+                              {
+                                if: {
+                                  properties: {
+                                    code: { const: "accept_bap_terms" }
+                                  }
+                                },
+                                then: {
+                                  type: "object",
+                                  properties: {
+                                    code: {
+                                      type: "string",
+                                      enum: ["accept_bap_terms"]
+                                    },
+                                    value: {
+                                      type: "string",
+                                      enum: ["Y", "N"]
+                                    }
+                                  },
+                                  required: ["code", "value"],
+                                  additionalProperties: false
+                                }
+                              },
+                              {
+                                if: {
+                                  properties: {
+                                    code: { const: "collect_payment" }
+                                  }
+                                },
+                                then: {
+                                  type: "object",
+                                  properties: {
+                                    code: {
+                                      type: "string",
+                                      enum: ["collect_payment"]
+                                    },
+                                    value: {
+                                      type: "string",
+                                      enum: ["Y", "N"]
+                                    }
+                                  },
+                                  required: ["code", "value"],
+                                  additionalProperties: false
+                                }
+                              }
+                            ]
+                          },
+                          minItems: 1
+                        }
+                      },
+                      required: ["code", "list"],
+                      additionalProperties: false
+                    }
+                  }
                 },
-              },
-              required: ['name', 'symbol', 'short_desc', 'long_desc', 'images'],
+                required: ["name", "short_desc", "long_desc", "tags"],
+                additionalProperties: true
             },
             'bpp/providers': {
               type: 'array',

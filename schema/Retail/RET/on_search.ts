@@ -482,6 +482,7 @@ export const onSearchSchema = {
                             },
                             code: {
                               type: 'string',
+                              pattern:"^(\\d{8}|\\d{12}|\\d{13}|\\d{14})$",
                             },
                             symbol: {
                               type: 'string',
@@ -499,7 +500,7 @@ export const onSearchSchema = {
                               },
                             },
                           },
-                          required: ['name', 'symbol', 'short_desc', 'long_desc', 'images'],
+                          required: ['name', 'symbol', 'short_desc', 'long_desc', 'images','code'],
                         },
                         quantity: {
                           type: 'object',

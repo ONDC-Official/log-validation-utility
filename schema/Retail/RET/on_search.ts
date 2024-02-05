@@ -88,7 +88,7 @@ export const onSearchSchema = {
                   },
                   type: {
                     type: 'string',
-                    enum: ['Delivery', 'Self-Pickup', 'Delivery and Self-Pickup'],
+                    enum: ['Delivery', 'Self-Pickup', 'Delivery and Buyer-Delivery'],
                   },
                 },
                 required: ['id', 'type'],

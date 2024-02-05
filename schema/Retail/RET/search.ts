@@ -75,7 +75,7 @@ export const searchSchema = {
               properties: {
                 type: {
                   type: 'string',
-                  enum: ['Delivery', 'Self-Pickup', 'Delivery and Self-Pickup'],
+                  enum: ['Delivery', 'Self-Pickup', 'Delivery and Buyer-Delivery'],
                 },
                 end: {
                   type: 'object',

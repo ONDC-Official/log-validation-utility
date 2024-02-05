@@ -69,7 +69,7 @@ export const FnBsearchSchema = {
               properties: {
                 type: {
                   type: 'string',
-                  enum: ['Delivery', 'Self-Pickup', 'Delivery and Self-Pickup'],
+                  enum: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
                 },
                 end: {
                   type: 'object',

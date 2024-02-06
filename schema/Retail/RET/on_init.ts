@@ -554,7 +554,7 @@ export const onInitSchema = {
               },
             },
           },
-          required: ['provider', 'items', 'billing', 'fulfillments', 'quote', 'payment', 'tags'],
+          required: ['provider', 'provider_location', 'items', 'billing', 'fulfillments', 'quote', 'payment', 'tags'],
         },
       },
       required: ['order'],

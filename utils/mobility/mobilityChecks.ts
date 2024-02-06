@@ -243,11 +243,6 @@ export const validateQuote = (quote: any, action: string) => {
     if (new Set(currencies).size !== 1) {
       errorObj.multipleCurrencies = 'Currency must be the same for all items in the quote breakup'
     }
-
-    // const regex = /^PT(\d+H)?(\d+M)?(\d+S)?$/
-    // if (quote.ttl && regex.test(quote.ttl)) {
-    //   errorObj.missingTTL = 'TTL must be in format'
-    // }
   } catch (error: any) {
     logger.error(`!!Error while checking quote details in /${action}`, error.stack)
   }
@@ -277,15 +272,6 @@ export const validateCancellationTerms = (cancellationTerms: any, action: string
         ) {
           errorObj.cancellationFee = `Either percentage or amount.currency & amount.value should be present, but not both, for Cancellation Term[${i}] when fulfillment_state is present`
         }
-
-        // const descriptorCode = cancellationTerm.fulfillment_state.descriptor.code
-        // const storedPercentage = cancellationTermsState.get(descriptorCode)
-
-        // if (storedPercentage === undefined) {
-        //   cancellationTermsState.set(descriptorCode, cancellationTerm.cancellation_fee.percentage)
-        // } else if (storedPercentage !== cancellationTerm.cancellation_fee.percentage) {
-        //   errorObj.cancellationFee = `cancellation_terms percentage for ${descriptorCode} has changed`
-        // }
       }
     } else {
       errorObj.cancellationTerms = `cancellation_terms should be an array in /${action}`

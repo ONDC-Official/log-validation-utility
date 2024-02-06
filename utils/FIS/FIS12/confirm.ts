@@ -86,9 +86,6 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
           storedFormIds.add(formId)
         }
 
-        // if (storedFormIds.has(formId)) {
-        // }
-
         if (getValue(`${constants.SELECT}_form_${formId}_status`) === status) {
           const key = `item${index}_status`
           errorObj[

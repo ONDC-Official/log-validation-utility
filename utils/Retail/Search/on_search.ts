@@ -15,6 +15,7 @@ import {
   isSequenceValid,
 } from '../../../utils'
 import _ from 'lodash'
+import { compareCitywithPinCode, compareSTDwithArea } from '../util/compareSTDwithArea'
 
 export const checkOnsearch = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
@@ -22,6 +23,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
   }
 
   const { message, context } = data
+
   if (!message || !context || !message.catalog || isObjectEmpty(message) || isObjectEmpty(message.catalog)) {
     return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
   }
@@ -32,7 +34,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
   setValue(`${ApiSequence.ON_SEARCH}_context`, context)
   setValue(`${ApiSequence.ON_SEARCH}_message`, message)
   msgIdSet.add(context.message_id)
-
   let errorObj: any = {}
 
   if (schemaValidation !== 'error') {
@@ -79,6 +80,58 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
   } catch (error: any) {
     logger.info(
       `Error while comparing message ids for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
+    )
+  }
+
+  try {
+    logger.info(`Comparing STD Id and area_code for /${constants.ON_SEARCH}`)
+    const providers = data.message.catalog['bpp/providers']
+
+    // Check if 'providers' array exists and has at least one element
+    if (providers && providers.length > 0) {
+      const locations = providers[0].locations
+
+      // Check if 'locations' array exists and has at least one element
+      if (locations && locations.length > 0) {
+        const address = locations[0].address
+
+        // Check if 'address' object exists
+        if (address) {
+          const area_code = Number.parseInt(address.area_code)
+          const city = address.city
+
+          // Extracting 'std' from 'city' in 'context'
+          const stdArray = context.city.split(':')
+          const std = stdArray.length > 1 ? stdArray[1] : null
+
+          // Check if 'std' exists
+          if (std !== null) {
+            logger.info(`Comparing area_code and std code of /${constants.ON_SEARCH}`)
+            logger.info(`Area code --> ${area_code}   and std ---> ${std}`)
+            const areaWithSTD = compareSTDwithArea(area_code, std)
+            if (!areaWithSTD) {
+              logger.error(`STD code does not match with correct area_code on /${constants.ON_SEARCH}`)
+            }
+
+            const areaWithCity = compareCitywithPinCode(area_code, city)
+            if (!areaWithCity) {
+              logger.error(`City does not match with correct area_code on /${constants.ON_SEARCH}`)
+            }
+          } else {
+            logger.error(`'std' is undefined or null.`)
+          }
+        } else {
+          logger.error(`'address' is undefined or null.`)
+        }
+      } else {
+        logger.error(`'locations' array is undefined or empty.`)
+      }
+    } else {
+      logger.error(`'bpp/providers' array is undefined or empty.`)
+    }
+  } catch (error: any) {
+    logger.error(
+      `Error while matching area_code and std code for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
     )
   }
 
@@ -174,6 +227,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           })
 
           logger.info('Checking fixed or split timings')
+
           //scenario 1: range =1 freq/times =1
           if (loc.time.range && (loc.time.schedule?.frequency || loc.time.schedule?.times)) {
             const key = `prvdr${i}loctime${iter}`
@@ -203,6 +257,33 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           logger.error(`Validation error for frequency: ${error.stack}`)
         }
       })
+
+      try {
+        const location = onSearchCatalog['bpp/providers'][i]['locations']
+        if (!location) {
+          logger.error('No location detected ')
+        }
+
+        const scheduleObject = location[i].time.schedule.holidays
+        if (scheduleObject.length === 0) {
+          logger.info('no holidays are pesent')
+        }
+
+        const currentDate = new Date()
+        const futureHolidays: any = []
+
+        scheduleObject.map((date: string) => {
+          // convert this date into date object
+          const dateObj = new Date(date)
+          // Compare it with current date
+          if (dateObj.getTime() > currentDate.getTime()) {
+            futureHolidays.push(date)
+          }
+        })
+        console.log('Upcoming holidays: ', futureHolidays)
+      } catch (e) {
+        logger.error('No Holiday', e)
+      }
 
       try {
         logger.info(`Checking categories for provider (${prvdr.id}) in bpp/providers[${i}]`)
@@ -355,6 +436,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         logger.info(`Checking items for provider (${prvdr.id}) in bpp/providers[${i}]`)
         let j = 0
         const items = onSearchCatalog['bpp/providers'][i]['items']
+
         const iLen = items.length
         while (j < iLen) {
           logger.info(`Validating uniqueness for item id in bpp/providers[${i}].items[${j}]...`)
@@ -391,6 +473,27 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           }
 
           logger.info(`Checking selling price and maximum price for item id: ${item.id}`)
+
+          //check availabe and max quantity
+          if (item.quantity && item.quantity.available && typeof item.quantity.available.count === 'string') {
+            const availCount = parseInt(item.quantity.available.count, 10)
+            if (availCount !== 99 && availCount !== 0) {
+              const key = `prvdr${i}item${j}availCount`
+              errorObj[
+                key
+              ] = `item.quantity.available.count should be either 99 (inventory available) or 0 (out-of-stock) in /bpp/providers[${i}]/items[${j}]`
+            }
+          }
+
+          if (item.quantity && item.quantity.maximum && typeof item.quantity.maximum.count === 'string') {
+            const maxCount = parseInt(item.quantity.maximum.count, 10)
+            if (maxCount !== 99 && maxCount <= 0) {
+              const key = `prvdr${i}item${j}maxCount`
+              errorObj[
+                key
+              ] = `item.quantity.maximum.count should be either default value 99 (no cap per order) or any other positive value (cap per order) in /bpp/providers[${i}]/items[${j}]`
+            }
+          }
 
           if ('price' in item) {
             const sPrice = parseFloat(item.price.value)
@@ -558,14 +661,14 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
                 break
 
               case 'veg_nonveg':
-                const allowedCodes = ['veg', 'non_veg', 'egg']
+                const allowedCodes = ['veg', 'non_veg']
 
                 for (const it of tag.list) {
                   if (it.code && !allowedCodes.includes(it.code)) {
                     const key = `prvdr${i}item${j}tag${index}veg_nonveg`
                     errorObj[
                       key
-                    ] = `item_id: ${item.id} should have veg_nonveg one of the 'veg', 'non_veg', 'egg' in bpp/providers[${i}]`
+                    ] = `item_id: ${item.id} should have veg_nonveg one of the 'veg', 'non_veg' in bpp/providers[${i}]`
                   }
                 }
 

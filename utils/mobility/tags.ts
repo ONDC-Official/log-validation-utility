@@ -120,14 +120,9 @@ export const validatePaymentTags = (tags: Tag[]): ValidationResult => {
           errors.push(`payment.tag[${index}] has unexpected descriptor codes: ${invalidDescriptorCodes.join(', ')}`)
         }
 
-        // const buyerFinderFeesType: any = tag.list.find((item: any) => item.descriptor.code === 'BUYER_FINDER_FEES_TYPE')
         const buyerFinderFeesPercentage = tag.list.find(
           (item) => item.descriptor.code === 'BUYER_FINDER_FEES_PERCENTAGE',
         )
-
-        // if (!buyerFinderFeesType || buyerFinderFeesType.value !== 'percent-annualized') {
-        //   errors.push(`BUYER_FINDER_FEES_[${index}], BUYER_FINDER_FEES_PERCENTAGE must be 'percent-annualized'`)
-        // }
 
         if (!buyerFinderFeesPercentage || !/^\d+$/.test(buyerFinderFeesPercentage.value)) {
           errors.push(`BUYER_FINDER_FEES_[${index}], BUYER_FINDER_FEES_PERCENTAGE must be a valid integer`)

@@ -1,4 +1,4 @@
-// import crypto from 'crypto'
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import * as _sodium from 'libsodium-wrappers'
 
 export const sign = async ({ message, privateKey }: { message: string; privateKey: string }) => {

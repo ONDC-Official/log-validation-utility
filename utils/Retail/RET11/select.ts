@@ -12,7 +12,6 @@ import _ from 'lodash'
 import { logger } from '../../../shared/logger'
 
 const tagFinder = (item: { tags: any[] }, value: string): any => {
-  console.log('item', item)
   const res = item?.tags?.find((tag: any) => {
     return (
       tag.code === 'type' &&

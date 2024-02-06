@@ -13,6 +13,7 @@ import {
   checkServiceabilityType,
   validateLocations,
   isSequenceValid,
+  isValidPhoneNumber,
 } from '../../../utils'
 import _ from 'lodash'
 
@@ -39,8 +40,10 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     Object.assign(errorObj, schemaValidation)
   }
 
+  logger.info('Initializing ---->')
   const checkBap = checkBppIdOrBapId(context.bap_id)
   const checkBpp = checkBppIdOrBapId(context.bpp_id)
+  logger.info(checkBap)
 
   if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
   if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
@@ -94,6 +97,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     let i = 0
     const bppFF = onSearchCatalog['bpp/fulfillments']
     const len = bppFF.length
+
     while (i < len) {
       onSearchFFIds.add(bppFF[i].id)
       i++
@@ -209,6 +213,14 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
           logger.info(`Validating uniqueness for categories id in bpp/providers[${i}].items[${j}]...`)
           const category = categories[j]
 
+          const fulfillments = onSearchCatalog['bpp/providers'][i]['fulfillments']
+          const phoneNumber = typeof fulfillments[i].contact.phone
+          console.log('adding full', fulfillments[i].contact.phone)
+
+          if (!isValidPhoneNumber(phoneNumber)) {
+            const key = `bpp/providers${i}fulfillments${i}`
+            errorObj[key] = `phone Number provided is incorrect${phoneNumber}`
+          }
           if (categoriesId.has(category.id)) {
             const key = `prvdr${i}category${j}`
             errorObj[key] = `duplicate category id: ${category.id} in bpp/providers[${i}]`
@@ -217,6 +229,9 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
           }
 
           try {
+            const fulfillments = onSearchCatalog['bpp/providers'][i]['fulfillments']
+            //const phoneNumber = typeof(fulfillments[i].contact.phone)
+            console.log('adding full', typeof fulfillments[i].contact.phone)
             category.tags.map((tag: { code: any; list: any[] }, index: number) => {
               switch (tag.code) {
                 case 'type':
@@ -554,14 +569,14 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
                 break
 
               case 'veg_nonveg':
-                const allowedCodes = ['veg', 'non_veg', 'egg']
+                const allowedCodes = ['veg', 'non_veg']
 
                 for (const it of tag.list) {
                   if (it.code && !allowedCodes.includes(it.code)) {
                     const key = `prvdr${i}item${j}tag${index}veg_nonveg`
                     errorObj[
                       key
-                    ] = `item_id: ${item.id} should have veg_nonveg one of the 'veg', 'non_veg', 'egg' in bpp/providers[${i}]`
+                    ] = `item_id: ${item.id} should have veg_nonveg one of the 'veg', 'non_veg' in bpp/providers[${i}]`
                   }
                 }
 

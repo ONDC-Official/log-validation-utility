@@ -2,7 +2,6 @@ import { logger } from '../../shared/logger'
 import { getValue, setValue } from '../../shared/dao'
 import constants, { metroSequence } from '../../constants'
 import { validateSchema, isObjectEmpty, checkGpsPrecision } from '..'
-// import _ from 'lodash'
 import { validateContext } from './metroChecks'
 
 export const checkSelect = (data: any, msgIdSet: any) => {
@@ -57,8 +56,9 @@ export const checkSelect = (data: any, msgIdSet: any) => {
       select.items.forEach((item: any, index: number) => {
         if (storedItemIDS && !storedItemIDS.includes(item.id)) {
           const key = `item[${index}].item_id`
-          errorObj[key] =
-            `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+          errorObj[
+            key
+          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
         } else {
           setValue('itemId', item.id)
         }

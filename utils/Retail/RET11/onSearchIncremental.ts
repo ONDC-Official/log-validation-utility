@@ -445,14 +445,14 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
                       break
 
                     case 'veg_nonveg':
-                      const allowedCodes = ['veg', 'non_veg', 'egg']
+                      const allowedCodes = ['veg', 'non_veg']
 
                       for (const it of tag.list) {
                         if (it.code && !allowedCodes.includes(it.code)) {
                           const key = `prvdr${i}item${j}tag${index}veg_nonveg`
                           errorObj[
                             key
-                          ] = `item_id: ${item.id} should have veg_nonveg one of the 'veg', 'non_veg', 'egg' in bpp/providers[${i}]`
+                          ] = `item_id: ${item.id} should have veg_nonveg one of the 'veg', 'non_veg' in bpp/providers[${i}]`
                         }
                       }
 

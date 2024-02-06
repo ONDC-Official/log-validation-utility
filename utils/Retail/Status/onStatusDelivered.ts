@@ -132,8 +132,6 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
           const deliveryTime = fulfillment.end.time.timestamp
           deliveryTimestamps[fulfillment.id] = deliveryTime
 
-          // dao.setValue("deliveredTime",deliveryTime);
-
           try {
             //checking delivery time matching with context timestamp
             if (!_.lte(deliveryTime, contextTime)) {

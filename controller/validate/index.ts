@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import { Response, Request } from 'express'
 import _ from 'lodash'
 import { validateActionSchema } from '../../shared/validateLogs'
@@ -16,8 +17,15 @@ const controller = {
       const splitPath = req.originalUrl.split('/')
       const pathUrl = splitPath[splitPath.length - 1]
 
-      const bap_id = payload[Object.keys(payload)[2]].context.bap_id
-      const bpp_id = payload[Object.keys(payload)[2]].context.bpp_id
+      // Assuming 'payload' is the object you provided
+      const payloadElement = payload['search_full_catalog_refresh']
+      if (!payloadElement || !payloadElement.context) {
+        // Handle the error appropriately, e.g., throw an error or return a response with an error message
+        throw new Error('Payload structure is incorrect')
+      }
+
+      const bap_id = payloadElement.context.bap_id
+      const bpp_id = payloadElement.context.bpp_id
 
       const normalisedDomain = helper.getEnumForDomain(pathUrl)
 
@@ -48,8 +56,8 @@ const controller = {
 
           break
         case DOMAIN.IGM:
-          // eslint-disable-next-line no-case-declarations
           const { response, success, message } = await helper.validateIGM(payload, version)
+
           result = { response, success, message }
           break
         default:

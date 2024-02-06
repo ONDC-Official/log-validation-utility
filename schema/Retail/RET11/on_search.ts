@@ -66,8 +66,7 @@ export const FnBonSearchSchema = {
         'bpp_uri',
         'transaction_id',
         'message_id',
-        'timestamp',
-        '@ondc/org/fssai_license_no'
+        'timestamp'
       ],
     },
     message: {

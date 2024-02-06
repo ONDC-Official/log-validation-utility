@@ -114,9 +114,7 @@ export const checkUpdate = (data: any, msgIdSet: any) => {
       'Invalid payload. update_target attribute must be present in message and order object must contain the specified update_target and order id.'
   }
 
-  // if (message.update_target.includes('collected_by')) {
-  //   setValue(`collected_by`, message.order[message.update_target])
-  // }
+
 
   return Object.keys(errorObj).length > 0 && errorObj
 }

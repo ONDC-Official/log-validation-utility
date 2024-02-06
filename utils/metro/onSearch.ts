@@ -67,10 +67,6 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
             storedFulfillments.add(fulfillment.id)
           }
 
-          // if (!fulfillment.descriptor || !fulfillment.descriptor.code) {
-          //   const key = `prvdr${i}fulfillment${k}_descriptor`
-          //   errorObj[key] = `Descriptor is missing in /providers[${i}]/fulfillment[${k}]`
-          // }
 
           if (fulfillment.type == undefined) {
             errorObj[`provider_${i}_fulfillment_${k}type`] =

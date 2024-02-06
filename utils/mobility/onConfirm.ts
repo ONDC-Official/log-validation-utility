@@ -1,5 +1,4 @@
 /* eslint-disable no-prototype-builtins */
-// import _ from 'lodash'
 import constants, {
   mobilitySequence,
   MOB_VEHICLE_CATEGORIES as VALID_VEHICLE_CATEGORIES,

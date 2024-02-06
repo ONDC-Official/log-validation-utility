@@ -13,22 +13,22 @@ import {
   checkServiceabilityType,
   validateLocations,
   isSequenceValid,
-  
 
-  
+
+
 } from '../../../utils'
 import _ from 'lodash'
 import { compareCitywithPinCode, compareSTDwithArea } from '../util/compareSTDwithArea'
 
 export const checkOnsearch = (data: any, msgIdSet: any) => {
-  
+
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.ON_SEARCH]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data
-  
-  
+
+
   if (!message || !context || !message.catalog || isObjectEmpty(message) || isObjectEmpty(message.catalog)) {
     return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
   }
@@ -107,12 +107,12 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           if (std !== null) {
             logger.info(`Comparing area_code and STD Code for /${constants.ON_SEARCH}`);
             const areaWithSTD = compareSTDwithArea(area_code, std);
-            if(!areaWithSTD){
+            if (!areaWithSTD) {
               logger.error(`STD code does not match with correct area_code on /${constants.ON_SEARCH}`)
             }
             logger.info(`Comparing area_code and city for /${constants.ON_SEARCH}`);
             const areaWithCity = compareCitywithPinCode(area_code, city)
-            if(!areaWithCity){
+            if (!areaWithCity) {
               logger.error(`City does not match with correct area_code on /${constants.ON_SEARCH}`)
             }
           } else {
@@ -237,7 +237,7 @@ try{
           })
 
           logger.info('Checking fixed or split timings')
-          
+
           //scenario 1: range =1 freq/times =1
           if (loc.time.range && (loc.time.schedule?.frequency || loc.time.schedule?.times)) {
             const key = `prvdr${i}loctime${iter}`
@@ -268,37 +268,36 @@ try{
         }
       })
 
-      
+
       try {
         const location = onSearchCatalog['bpp/providers'][i]['locations']
-        if(!location){
+        if (!location) {
           logger.error("No location detected ")
         }
         const scheduleObject = location[i].time.schedule.holidays;
-      if(scheduleObject.length ===0){
-        logger.info("no holidays are pesent")
-      }     
-        const currentDate = new Date();
-        const futureHolidays: any = [];
-  
-     scheduleObject.map((date: string)=>{
-         // convert this date into date object 
-         const dateObj = new Date(date);
-         // Compare it with current date
-         if(dateObj.getTime() > currentDate.getTime()){
-          futureHolidays.push(date);
-         }
-     })
-     console.log("Upcoming holidays: ", futureHolidays);
-        
-      }catch(e){
+        const timestamp = context.timestamp;
+        const [currentDate] = timestamp.split('T')[0];
+
+        scheduleObject.map((date: string) => {
+          const dateObj = new Date(date);
+          const currentDateObj = new Date(currentDate);
+          if (dateObj.getTime() > currentDateObj.getTime()) {
+            const key = `loc${i}/time/schedule/holidays`;
+            errorObj[key] = `Holiday dates are greater than current date time ${date}`
+            
+          }
+
+        }
+        )
+
+      } catch (e) {
         logger.error("No Holiday", e);
-        
+
       }
-      
+
 
       try {
-        
+
         logger.info(`Checking categories for provider (${prvdr.id}) in bpp/providers[${i}]`)
         let j = 0
         const categories = onSearchCatalog['bpp/providers'][i]['categories']
@@ -321,7 +320,7 @@ try{
                 case 'type':
                   const codeList = tag.list.find((item) => item.code === 'type')
                   if (
-                  
+
                     !(
                       codeList.value === 'custom_menu' ||
                       codeList.value === 'custom_group' ||
@@ -447,12 +446,12 @@ try{
         logger.info(`Checking items for provider (${prvdr.id}) in bpp/providers[${i}]`)
         let j = 0
         const items = onSearchCatalog['bpp/providers'][i]['items']
-        
+
         const iLen = items.length
         while (j < iLen) {
           logger.info(`Validating uniqueness for item id in bpp/providers[${i}].items[${j}]...`)
           const item = items[j]
-          
+
           if (itemsId.has(item.id)) {
             const key = `prvdr${i}item${j}`
             errorObj[key] = `duplicate item id: ${item.id} in bpp/providers[${i}]`
@@ -493,7 +492,7 @@ try{
               errorObj[key] = `item.quantity.available.count should be either 99 (inventory available) or 0 (out-of-stock) in /bpp/providers[${i}]/items[${j}]`;
             }
           }
-      
+
           if (item.quantity && item.quantity.maximum && typeof item.quantity.maximum.count === 'string') {
             const maxCount = parseInt(item.quantity.maximum.count, 10);
             if (maxCount !== 99 && maxCount <= 0) {
@@ -547,7 +546,7 @@ try{
             }
           }
 
-          
+
 
           item.tags.map((tag: { code: any; list: any[] }, index: number) => {
             switch (tag.code) {

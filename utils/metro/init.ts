@@ -148,7 +148,6 @@ export const checkInit = (data: any, msgIdSet: any) => {
       logger.info(`Validating fulfillments object for /${constants.INIT}`)
       init.fulfillments.forEach((full: any, index: number) => {
         const fulfillmentKey = `fulfillments[${index}]`
-        console.log('storedFull--', storedFull)
         if (storedFull && !storedFull.includes(full.id)) {
           const key = `fulfillments[${index}].id`
           errorObj[key] =

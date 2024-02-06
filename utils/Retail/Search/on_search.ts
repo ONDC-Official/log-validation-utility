@@ -23,6 +23,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
   }
 
   const { message, context } = data
+  
+  
   if (!message || !context || !message.catalog || isObjectEmpty(message) || isObjectEmpty(message.catalog)) {
     return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
   }
@@ -271,17 +273,20 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           }
 
           try {
+
             category.tags.map((tag: { code: any; list: any[] }, index: number) => {
               switch (tag.code) {
                 case 'type':
                   const codeList = tag.list.find((item) => item.code === 'type')
                   if (
+                  
                     !(
                       codeList.value === 'custom_menu' ||
                       codeList.value === 'custom_group' ||
                       codeList.value === 'variant_group'
                     )
                   ) {
+
                     const key = `prvdr${i}category${j}tags${index}`
                     errorObj[
                       key
@@ -405,6 +410,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         logger.info(`Checking items for provider (${prvdr.id}) in bpp/providers[${i}]`)
         let j = 0
         const items = onSearchCatalog['bpp/providers'][i]['items']
+        
         const iLen = items.length
         while (j < iLen) {
           logger.info(`Validating uniqueness for item id in bpp/providers[${i}].items[${j}]...`)

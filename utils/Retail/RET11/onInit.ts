@@ -111,23 +111,23 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
     const on_init = message.order
 
-// checking for tax_number in tags
-    try{
-     logger.info(`Checking for tax_number for ${constants.ON_INIT}`)
-     const tags = on_init.tags[0].list;
-     let tax_number = {};
-     tags.forEach((e:any)=>{
-          if(e.code === "tax_number"){
-            if(!e.value){
-              logger.error(`value must be present for tax_number in ${constants.ON_INIT}`)
-            }
-            tax_number = e;
+    // checking for tax_number in tags
+    try {
+      logger.info(`Checking for tax_number for ${constants.ON_INIT}`)
+      const tags = on_init.tags[0].list
+      let tax_number = {}
+      tags.forEach((e: any) => {
+        if (e.code === 'tax_number') {
+          if (!e.value) {
+            logger.error(`value must be present for tax_number in ${constants.ON_INIT}`)
           }
-     })
-     if(_.isEmpty(tax_number)){
-      logger.error(`tax_number must present in ${constants.ON_INIT}`)
-     }
-    }catch(error:any){
+          tax_number = e
+        }
+      })
+      if (_.isEmpty(tax_number)) {
+        logger.error(`tax_number must present in ${constants.ON_INIT}`)
+      }
+    } catch (error: any) {
       logger.error(`tax_number not present in tags for ${constants.ON_INIT}`)
     }
 
@@ -332,13 +332,17 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         onInitObj.sttlmntcntrparty = `settlement_counterparty is expected to be 'seller-app' in @ondc/org/settlement_details`
       }
       logger.info(`checking payment details in /${constants.ON_INIT}`)
-      const data = on_init.payment['@ondc/org/settlement_details'][0];
-      if (data['settlement_type'] !== 'neft' && 
-      data['settlement_type'] !== 'rtgs' && 
-     data['settlement_type'] !== 'upi') {
-      logger.error(`settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_detailsin /${constants.ON_INIT}`)
+      const data = on_init.payment['@ondc/org/settlement_details'][0]
+      if (
+        data['settlement_type'] !== 'neft' &&
+        data['settlement_type'] !== 'rtgs' &&
+        data['settlement_type'] !== 'upi'
+      ) {
+        logger.error(
+          `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_detailsin /${constants.ON_INIT}`,
+        )
         onInitObj.sttlmntcntrparty = `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_details`
-      }else if (data['settlement_type'] !== 'upi'){
+      } else if (data['settlement_type'] !== 'upi') {
         if (
           !data.bank_name ||
           !data.branch_name ||
@@ -354,9 +358,9 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         ) {
           logger.error(`Payment details are missing /${constants.ON_INIT}`)
           onInitObj.paymentDetails = `Payment details are missing/${constants.ON_INIT}`
-        } 
-      }else{
-        if(!data.upi_address || data.upi_address.trim() === ''){
+        }
+      } else {
+        if (!data.upi_address || data.upi_address.trim() === '') {
           logger.error(`Payment details are missing /${constants.ON_INIT}`)
           onInitObj.paymentDetails = `Payment details are missing/${constants.ON_INIT}`
         }

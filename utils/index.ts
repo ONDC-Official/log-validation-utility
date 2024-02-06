@@ -203,7 +203,6 @@ export const checkMetroContext = (
   }
 }
 
-
 const validate_schema_for_retail_json = (vertical: string, api: string, data: any) => {
   const res = (schemaValidator as any)[`validate_schema_${api}_${vertical}_for_json`](data)
 
@@ -459,7 +458,6 @@ const replaceValueType = (key: any, value: any): number => {
 export const checkBppIdOrBapId = (input: string, type?: string) => {
   try {
     if (!input) {
-
       return `${type} Id is not present`
     }
 

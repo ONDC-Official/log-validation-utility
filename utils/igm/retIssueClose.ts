@@ -12,6 +12,7 @@ const checkIssueClose = (data: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [IGMApiSequence.RET_ISSUE]: 'JSON cannot be empty' }
   }
+
   try {
     const issue: any = data
 

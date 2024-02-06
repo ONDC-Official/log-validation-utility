@@ -1,3 +1,4 @@
+/* eslint-disable no-case-declarations */
 import { Response, Request } from 'express'
 import _ from 'lodash'
 import { validateActionSchema } from '../../shared/validateLogs'
@@ -15,17 +16,16 @@ const controller = {
       let result: { response?: string; success?: boolean; message?: string } = {}
       const splitPath = req.originalUrl.split('/')
       const pathUrl = splitPath[splitPath.length - 1]
-      
+
       // Assuming 'payload' is the object you provided
-      const payloadElement = payload['search_full_catalog_refresh'];
+      const payloadElement = payload['search_full_catalog_refresh']
       if (!payloadElement || !payloadElement.context) {
-      // Handle the error appropriately, e.g., throw an error or return a response with an error message
-      throw new Error('Payload structure is incorrect');
+        // Handle the error appropriately, e.g., throw an error or return a response with an error message
+        throw new Error('Payload structure is incorrect')
       }
 
-      const bap_id = payloadElement.context.bap_id;
-      const bpp_id = payloadElement.context.bpp_id;
-
+      const bap_id = payloadElement.context.bap_id
+      const bpp_id = payloadElement.context.bpp_id
 
       const normalisedDomain = helper.getEnumForDomain(pathUrl)
 
@@ -35,6 +35,7 @@ const controller = {
             const { response, success, message } = await helper.validateRetail(domain, payload, version)
             result = { response, success, message }
           }
+
           break
         case DOMAIN.LOGISTICS:
           // to-do
@@ -45,15 +46,18 @@ const controller = {
             const { response, success, message } = await helper.validateFinance(domain, payload, version, flow)
             result = { response, success, message }
           }
+
           break
         case DOMAIN.MOBILITY:
           {
             const { response, success, message } = await helper.validateMobility(domain, payload, version, flow)
             result = { response, success, message }
           }
+
           break
         case DOMAIN.IGM:
           const { response, success, message } = await helper.validateIGM(payload, version)
+
           result = { response, success, message }
           break
         default:

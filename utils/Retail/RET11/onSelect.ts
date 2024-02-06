@@ -344,11 +344,11 @@ export const checkOnSelect = (data: any) => {
       errorObj.deliveryLineItem = `delivery line item must be present in quote/breakup (if location is serviceable)`
     }
 
-    // Checking for delivery charges in non servicable locations 
+    // Checking for delivery charges in non servicable locations
     if (noOfDeliveries && nonServiceableFlag) {
-      deliveryItems.map((e:any)=>{
-        if(e.price.value>0){
-          logger.error("Delivery charges not applicable for non-servicable locations")
+      deliveryItems.map((e: any) => {
+        if (e.price.value > 0) {
+          logger.error('Delivery charges not applicable for non-servicable locations')
         }
       })
     }
@@ -419,22 +419,22 @@ export const checkOnSelect = (data: any) => {
   }
 
   // Checking fulfillmentID with providerID for ON_SELECT
-  try{
+  try {
     logger.info(`Comparing fulfillmentID with providerID for /${constants.ON_SELECT} `)
-   const len:number = on_select.fulfillments.length;
-   let i = 0;
-   while(i<len){
-    const fulfillment_id = on_select.fulfillments[i].id;
-    const provider_id = on_select.provider.id
-    if(fulfillment_id===provider_id){
-      logger.error(`FullfillmentID can't be equal to ProviderID on ${constants.ON_SELECT}`);
+    const len: number = on_select.fulfillments.length
+    let i = 0
+    while (i < len) {
+      const fulfillment_id = on_select.fulfillments[i].id
+      const provider_id = on_select.provider.id
+      if (fulfillment_id === provider_id) {
+        logger.error(`FullfillmentID can't be equal to ProviderID on ${constants.ON_SELECT}`)
+      }
+
+      i++
     }
-    i++;
-   }
-  }catch(error:any){
+  } catch (error: any) {
     logger.error(`!Error while comparing fulfillmentID with providerID in /${constants.ON_SELECT}, ${error.stack}`)
   }
-
 
   return Object.keys(errorObj).length > 0 && errorObj
 }

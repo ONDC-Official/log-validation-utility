@@ -10,7 +10,6 @@ export const checkCancel = (data: any, msgIdSet: any, sequence: string) => {
       return { [mobilitySequence.ON_CANCEL]: 'JSON cannot be empty' }
     }
 
-
     const { message, context } = data
     if (!message || !context || !message || isObjectEmpty(message) || isObjectEmpty(message)) {
       return { missingFields: '/context or /message is missing or empty' }

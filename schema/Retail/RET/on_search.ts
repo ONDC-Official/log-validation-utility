@@ -709,7 +709,6 @@ export const onSearchSchema = {
                               value: {
                                 type: 'string',
                               },
-                              
                             },
                             required: ['code', 'value'],
                             allOf: [
@@ -773,7 +772,7 @@ export const onSearchSchema = {
                                 then: {
                                   properties: {
                                     value: {
-                                      format:'duration'
+                                      format: 'duration',
                                     },
                                   },
                                 },
@@ -790,7 +789,7 @@ export const onSearchSchema = {
                                   properties: {
                                     value: {
                                       description: 'RFC3339 UTC timestamp format',
-                                      format:'date-time'
+                                      format: 'date-time',
                                     },
                                   },
                                 },

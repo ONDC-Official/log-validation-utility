@@ -83,7 +83,6 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
       )
     }
 
-
     try {
       on_confirm.items &&
         on_confirm.items.forEach((item: any, index: number) => {

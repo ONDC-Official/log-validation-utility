@@ -112,7 +112,6 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
             }
           }
 
-
           // Check submission_id in form_response
           if (!Object.prototype.hasOwnProperty.call(item?.xinput?.form_response, 'submission_id')) {
             errorObj[

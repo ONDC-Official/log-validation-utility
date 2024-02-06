@@ -642,12 +642,7 @@ const onIssueStatusSchema = {
               format: 'date-time',
             },
           },
-          required: [
-            'id',
-            'created_at',
-            'updated_at',
-            'issue_actions',
-          ],
+          required: ['id', 'created_at', 'updated_at', 'issue_actions'],
         },
       },
       required: ['issue'],

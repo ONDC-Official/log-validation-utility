@@ -24,7 +24,6 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
     logger.error('!!Error while removing LMDB', error)
   }
 
-
   if (!_.isEqual(version, '2.0.0')) {
     logReport = { ...logReport, version: `Invalid version ${version}` }
   }

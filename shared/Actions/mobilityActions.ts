@@ -34,7 +34,6 @@ export function validateLogsForMobility(data: any, flow: string, version: string
     logReport = { ...logReport, version: `Invalid flow ${flow}` }
   }
 
-
   try {
     if (data[mobilitySequence.SEARCH]) {
       const searchResp = search(data[mobilitySequence.SEARCH], msgIdSet)

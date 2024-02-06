@@ -647,8 +647,6 @@ const onIssueStatusSchema = {
             'created_at',
             'updated_at',
             'issue_actions',
-            // "resolution_provider",
-            // "resolution",
           ],
         },
       },

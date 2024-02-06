@@ -55,7 +55,7 @@ const validateFinance = async (domain: string, payload: string, version: string,
 
   switch (version) {
     case '2.0.0':
-      response = validateLogsForFIS12(payload, domain, flow, version)
+      response = validateLogsForFIS12(payload, domain, flow)
 
       if (_.isEmpty(response)) {
         success = true
@@ -78,7 +78,7 @@ const validateMobility = async (domain: string, payload: string, version: string
 
   switch (version) {
     case '2.0.0':
-      response = validateLogsForMobility(payload, domain, flow, version)
+      response = validateLogsForMobility(payload, domain, flow)
 
       if (_.isEmpty(response)) {
         success = true

@@ -11,7 +11,7 @@ const checkLspOnIssue = (data: any) => {
   const message = getLspIssueMessage(constants.RET_ISSUE)
 
   if (!data || isObjectEmpty(data)) {
-    return { [IGMApiSequence.LSP_ON_ISSUE]: 'Json cannot be empty' }
+    return { [IGMApiSequence.LSP_ON_ISSUE]: 'JSON cannot be empty' }
   }
 
   try {

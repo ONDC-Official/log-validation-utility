@@ -409,5 +409,23 @@ export const checkOnSelect = (data: any) => {
     logger.error(`!!Error while storing quote object in /${constants.ON_SELECT}, ${error.stack}`)
   }
 
+  // Checking fulfillmentID with providerID for ON_SELECT
+  try{
+    logger.info(`Comparing fulfillmentID with providerID for /${constants.ON_SELECT} `)
+   const len:number = on_select.fulfillments.length;
+   let i = 0;
+   while(i<len){
+    const fulfillment_id = on_select.fulfillments[i].id;
+    const provider_id = on_select.provider.id
+    if(fulfillment_id===provider_id){
+      logger.error(`FullfillmentID can't be equal to ProviderID on ${constants.ON_SELECT}`);
+    }
+    i++;
+   }
+  }catch(error:any){
+    logger.error(`!!Error while comparing fulfillmentID with providerID in /${constants.ON_SELECT}, ${error.stack}`)
+  }
+
+
   return Object.keys(errorObj).length > 0 && errorObj
 }

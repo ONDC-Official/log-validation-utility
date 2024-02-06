@@ -15,9 +15,16 @@ const controller = {
       let result: { response?: string; success?: boolean; message?: string } = {}
       const splitPath = req.originalUrl.split('/')
       const pathUrl = splitPath[splitPath.length - 1]
+      
+      // Assuming 'payload' is the object you provided
+      const payloadElement = payload['search_full_catalog_refresh'];
+      if (!payloadElement || !payloadElement.context) {
+      // Handle the error appropriately, e.g., throw an error or return a response with an error message
+      throw new Error('Payload structure is incorrect');
+      }
 
-      const bap_id = payload[Object.keys(payload)[2]].context.bap_id
-      const bpp_id = payload[Object.keys(payload)[2]].context.bpp_id
+      const bap_id = payloadElement.context.bap_id;
+      const bpp_id = payloadElement.context.bpp_id;
 
       const normalisedDomain = helper.getEnumForDomain(pathUrl)
 

@@ -71,7 +71,7 @@ export const checkOnSelect = (data: any) => {
       const timeDifference = timeDiff(context.timestamp, tmpstmp)
       logger.info(timeDifference)
       if (timeDifference > 5000) {
-        errorObj.tmpstmp = `context/timestamp difference between /${constants.ON_SELECT} and /${constants.SELECT} should be smaller than 5 sec`
+        errorObj.tmpstmp = `context/timestamp difference between /${constants.ON_SELECT} and /${constants.SELECT} should be less than 5 sec`
       }
     }
 
@@ -168,7 +168,7 @@ export const checkOnSelect = (data: any) => {
       const tat = isoDurToSec(ff['@ondc/org/TAT'])
 
       if (tat < tts) {
-        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be smaller than @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
+        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be less than @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
       }
 
       if (tat === tts) {

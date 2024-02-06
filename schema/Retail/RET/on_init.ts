@@ -94,10 +94,8 @@ export const onInitSchema = {
               properties: {
                 id: {
                   type: 'string',
-                  minLength: 1,
                 },
               },
-              required: ['id'],
             },
             items: {
               type: 'array',
@@ -554,7 +552,7 @@ export const onInitSchema = {
               },
             },
           },
-          required: ['provider', 'provider_location', 'items', 'billing', 'fulfillments', 'quote', 'payment', 'tags'],
+          required: ['provider', 'items', 'billing', 'fulfillments', 'quote', 'payment', 'tags'],
         },
       },
       required: ['order'],

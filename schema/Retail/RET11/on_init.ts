@@ -95,10 +95,8 @@ export const FnBonInitSchema = {
               properties: {
                 id: {
                   type: 'string',
-                  minLength: 1,
                 },
               },
-              required: ['id'],
             },
             items: {
               type: 'array',
@@ -555,7 +553,7 @@ export const FnBonInitSchema = {
               },
             },
           },
-          required: ['provider', 'provider_location', 'items', 'billing', 'fulfillments', 'quote', 'payment', 'tags'],
+          required: ['provider', 'items', 'billing', 'fulfillments', 'quote', 'payment', 'tags'],
         },
       },
       required: ['order'],

@@ -433,6 +433,7 @@ export const FnBonSearchSchema = {
                                     },
                                     value: {
                                       type: 'string',
+                                      pattern: "-?^\\d*(.\\d{0,2})?$",
                                     },
                                   },
                                   required: ['unit', 'value'],
@@ -475,6 +476,35 @@ export const FnBonSearchSchema = {
                             maximum_value: {
                               type: 'string',
                             },
+                            tags: {
+                              type: "array",
+                              items: {
+                                type: "object",
+                                properties: {
+                                  code: {
+                                    type: "string",
+                                    enum: ["range"]
+                                  },
+                                  list: {
+                                    type: "array",
+                                    items: {
+                                      type: "object",
+                                      properties: {
+                                        code: {
+                                          type: "string",
+                                          enum: ["lower", "upper"]
+                                        },
+                                        value: {
+                                          type: "string",
+                                          pattern: "^\\d+(\\.\\d{2})?$"
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                            
                           },
                           required: ['currency', 'value', 'maximum_value'],
                         },
@@ -515,6 +545,8 @@ export const FnBonSearchSchema = {
                         },
                         '@ondc/org/time_to_ship': {
                           type: 'string',
+                          pattern: '^PT([1-5]?[0-9]|60)M$',
+
                         },
                         '@ondc/org/available_on_cod': {
                           type: 'boolean',

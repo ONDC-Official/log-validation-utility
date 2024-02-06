@@ -280,7 +280,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           futureHolidays.push(date);
          }
      })
-     console.log("Upcoming holidays: ", futureHolidays);
         
       }catch(e){
         logger.error("No Holiday", e);
@@ -503,8 +502,20 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
                 `selling price of item /price/value with id: (${item.id}) can't be greater than the maximum price /price/maximum_value in /bpp/providers[${i}]/items[${j}]/`
             }
           }
+          
 
           logger.info(`Checking fulfillment_id for item id: ${item.id}`)
+
+          if ('price' in item) {
+            const upper = parseFloat(item.price.tags[0].list[1].value)
+            const lower = parseFloat(item.price.tags[0].list[0].value)
+
+            if (upper > lower) {
+              const key = `prvdr${i}item${j}Price/tags/list`
+              errorObj[key] =
+                `selling lower range of item /price/range/value with id: (${item.id}) can't be greater than the upper in /bpp/providers[${i}]/items[${j}]/`
+            }
+          }
 
           if (item.fulfillment_id && !onSearchFFIds.has(item.fulfillment_id)) {
             const key = `prvdr${i}item${j}ff`

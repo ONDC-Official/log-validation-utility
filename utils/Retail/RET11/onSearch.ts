@@ -215,7 +215,6 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
 
           const fulfillments = onSearchCatalog['bpp/providers'][i]['fulfillments']
           const phoneNumber = typeof(fulfillments[i].contact.phone)
-          console.log("adding full", fulfillments[i].contact.phone);
           
           if (!isValidPhoneNumber(phoneNumber)) {
             const key = `bpp/providers${i}fulfillments${i}`
@@ -229,9 +228,6 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
           }
 
           try {
-const fulfillments = onSearchCatalog['bpp/providers'][i]['fulfillments']
-            //const phoneNumber = typeof(fulfillments[i].contact.phone)
-            console.log("adding full", typeof(fulfillments[i].contact.phone));
             category.tags.map((tag: { code: any; list: any[] }, index: number) => {
               switch (tag.code) {
                 case 'type':
@@ -408,6 +404,8 @@ const fulfillments = onSearchCatalog['bpp/providers'][i]['fulfillments']
           if ('price' in item) {
             const sPrice = parseFloat(item.price.value)
             const maxPrice = parseFloat(item.price.maximum_value)
+            const upper = parseFloat(item.price.tags[0].list[1].value)
+            const lower = parseFloat(item.price.tags[0].list[0].value)
 
             if (sPrice > maxPrice) {
               const key = `prvdr${i}item${j}Price`
@@ -415,9 +413,16 @@ const fulfillments = onSearchCatalog['bpp/providers'][i]['fulfillments']
                 key
               ] = `selling price of item /price/value with id: (${item.id}) can't be greater than the maximum price /price/maximum_value in /bpp/providers[${i}]/items[${j}]/`
             }
+
+            if (upper < lower) {
+              const key = `prvdr${i}item${j}Price/tags/list`
+              errorObj[key] =
+                `selling lower range of item /price/range/value with id: (${item.id}) can't be greater than the upper range`
+            }
           }
 
           logger.info(`Checking fulfillment_id for item id: ${item.id}`)
+
 
           if (item.fulfillment_id && !onSearchFFIds.has(item.fulfillment_id)) {
             

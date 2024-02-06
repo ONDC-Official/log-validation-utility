@@ -27,6 +27,7 @@ const controller = {
             const { response, success, message } = await helper.validateRetail(domain, payload, version)
             result = { response, success, message }
           }
+
           break
         case DOMAIN.LOGISTICS:
           // to-do
@@ -37,14 +38,17 @@ const controller = {
             const { response, success, message } = await helper.validateFinance(domain, payload, version, flow)
             result = { response, success, message }
           }
+
           break
         case DOMAIN.MOBILITY:
           {
             const { response, success, message } = await helper.validateMobility(domain, payload, version, flow)
             result = { response, success, message }
           }
+
           break
         case DOMAIN.IGM:
+          // eslint-disable-next-line no-case-declarations
           const { response, success, message } = await helper.validateIGM(payload, version)
           result = { response, success, message }
           break

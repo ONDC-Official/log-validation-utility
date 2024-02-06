@@ -2,7 +2,6 @@ import { logger } from '../../shared/logger'
 import { getValue, setValue } from '../../shared/dao'
 import constants, { metroSequence } from '../../constants'
 import { validateSchema, isObjectEmpty, checkGpsPrecision } from '..'
-// import _ from 'lodash'
 import { validateContext } from './metroChecks'
 
 export const checkSelect = (data: any, msgIdSet: any) => {

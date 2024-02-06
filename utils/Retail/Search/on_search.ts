@@ -256,36 +256,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
               errorObj.startEndTime = `end time must be greater than start time in fixed timings /locations/time/range (fixed store timings)`
             }
           }
-
-          // // Check for holidays
-          // if (loc.time.holidays) {
-          //   logger.info('Checking holidays');
-          //   const currentDate = new Date();
-          //   const currentDay = currentDate.getDay();
-          //   const holidays = loc.time.holidays.split(',');
-
-            
-            
-
-          //   if (holidays.includes(currentDay.toString())) {
-          //     // If the current day is a holiday, add an error to the errorObj
-          //     const key = `prvdr${i}holiday${iter}`;
-          //     errorObj[key] = `It's a holiday for /bpp/providers[${i}]/locations[${iter}]`;
-          //   }
-
-          //   // Schedule future holidays
-          //   const futureHolidays = ['2024-02-14', '2024-12-25']; // Add your future holidays here
-          //   const formattedCurrentDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
-          //     .toString()
-          //     .padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
-
-          //   if (futureHolidays.includes(formattedCurrentDate)) {
-          //     const key = `prvdr${i}futureHoliday${iter}`;
-          //     errorObj[key] = `It's a scheduled future holiday for /bpp/providers[${i}]/locations[${iter}]`;
-          //   }
-          // }
-          
-          
         }
 
         catch (error: any) {

@@ -126,12 +126,6 @@ export const validateXInput = (xinput: any, i: number, j: number, action: string
             formHeading?.length - 1
           } in providers[${i}].items[${j}].xinput.head`
         }
-        // headings?.forEach((heading: string) => {
-        //   if (!formHeading.includes(heading))``
-        //     errors[
-        //       `prvdr${i}item${j}_xinput_head_headings`
-        //     ] = `Form headings array must only contain headings as defined in Api contract`
-        // })
       }
     }
 

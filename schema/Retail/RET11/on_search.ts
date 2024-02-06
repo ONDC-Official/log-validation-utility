@@ -67,6 +67,7 @@ export const FnBonSearchSchema = {
         'transaction_id',
         'message_id',
         'timestamp',
+        '@ondc/org/fssai_license_no'
       ],
     },
     message: {

@@ -205,33 +205,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
             }
           }
 
-          // // Check for holidays
-          // if (loc.time.holidays) {
-          //   logger.info('Checking holidays');
-          //   const currentDate = new Date();
-          //   const currentDay = currentDate.getDay();
-          //   const holidays = loc.time.holidays.split(',');
-
-            
-            
-
-          //   if (holidays.includes(currentDay.toString())) {
-          //     // If the current day is a holiday, add an error to the errorObj
-          //     const key = `prvdr${i}holiday${iter}`;
-          //     errorObj[key] = `It's a holiday for /bpp/providers[${i}]/locations[${iter}]`;
-          //   }
-
-          //   // Schedule future holidays
-          //   const futureHolidays = ['2024-02-14', '2024-12-25']; // Add your future holidays here
-          //   const formattedCurrentDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1)
-          //     .toString()
-          //     .padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
-
-          //   if (futureHolidays.includes(formattedCurrentDate)) {
-          //     const key = `prvdr${i}futureHoliday${iter}`;
-          //     errorObj[key] = `It's a scheduled future holiday for /bpp/providers[${i}]/locations[${iter}]`;
-          //   }
-          // }
           
           
         }
@@ -247,22 +220,21 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         if(!location){
           logger.error("No location detected ")
         }
-        const scheduleObject = location[i].time.schedule.holidays;
-      if(scheduleObject.length ===0){
-        logger.info("no holidays are pesent")
-      }     
+        const scheduleObject = location[i].time.schedule.holidays;    
         const currentDate = new Date();
-        const futureHolidays: any = [];
   
-     scheduleObject.map((date: string)=>{
+      scheduleObject.map((date: string)=>{
          // convert this date into date object 
          const dateObj = new Date(date);
          // Compare it with current date
          if(dateObj.getTime() > currentDate.getTime()){
-          futureHolidays.push(date);
+          //futureHolidays.push(date);
+          const key = `loc${i}/time/schedule/holidays`;
+          errorObj[key] = `Holiday dates are greater than current date time ${date}`
          }
-     })
-     console.log("Upcoming holidays: ", futureHolidays);
+
+         }
+     )
         
       }catch(e){
         logger.error("No Holiday", e);

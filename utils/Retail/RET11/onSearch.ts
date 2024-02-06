@@ -95,8 +95,6 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     let i = 0
     const bppFF = onSearchCatalog['bpp/fulfillments']
     const len = bppFF.length
-    const fulfillment = onSearchCatalog['bpp/descriptor']
-console.log("bpp/=====>", fulfillment);
     
     while (i < len) {
       onSearchFFIds.add(bppFF[i].id)

@@ -711,6 +711,106 @@ export const onSearchSchema = {
                               },
                             },
                             required: ['code', 'value'],
+                            allOf: [
+                              {
+                                if: {
+                                  properties: {
+                                    code: {
+                                      const: 'catalog_link',
+                                    },
+                                  },
+                                },
+                                then: {
+                                  properties: {
+                                    value: {
+                                      pattern: '^(link|inline)$',
+                                    },
+                                  },
+                                  anyOf: [
+                                    {
+                                      if: {
+                                        properties: {
+                                          value: {
+                                            const: 'link',
+                                          },
+                                        },
+                                      },
+                                      then: {
+                                        properties: {
+                                          type_value: {
+                                            format: 'uri',
+                                          },
+                                        },
+                                        required: ['type_value'],
+                                      },
+                                    },
+                                    {
+                                      if: {
+                                        properties: {
+                                          value: {
+                                            const: 'inline',
+                                          },
+                                        },
+                                      },
+                                      then: {
+                                        not: {
+                                          required: ['type_value'],
+                                        },
+                                      },
+                                    },
+                                  ],
+                                },
+                              },
+                              {
+                                if: {
+                                  properties: {
+                                    code: {
+                                      const: 'type_validity',
+                                    },
+                                  },
+                                },
+                                then: {
+                                  properties: {
+                                    value: {
+                                      format: 'duration',
+                                    },
+                                  },
+                                },
+                              },
+                              {
+                                if: {
+                                  properties: {
+                                    code: {
+                                      const: 'last_update',
+                                    },
+                                  },
+                                },
+                                then: {
+                                  properties: {
+                                    value: {
+                                      description: 'RFC3339 UTC timestamp format',
+                                      format: 'date-time',
+                                    },
+                                  },
+                                },
+                              },
+                              {
+                                if: {
+                                  properties: {
+                                    code: {
+                                      const: 'min_value',
+                                    },
+                                  },
+                                },
+                                then: {
+                                  properties: {
+                                    value: {
+                                      pattern: '^\\d+(\\.\\d{1,2})?$',
+                                    },
+                                  },
+                                },
+                              },
+                            ],
                           },
                         },
                       },

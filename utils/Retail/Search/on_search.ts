@@ -83,36 +83,30 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
     )
   }
 
+  // Checking Valid Area_Code with City and STD Code
   try {
-    logger.info(`Comparing STD Id and area_code for /${constants.ON_SEARCH}`)
     const providers = data.message.catalog['bpp/providers']
-
-    // Check if 'providers' array exists and has at least one element
     if (providers && providers.length > 0) {
       const locations = providers[0].locations
 
-      // Check if 'locations' array exists and has at least one element
       if (locations && locations.length > 0) {
         const address = locations[0].address
 
-        // Check if 'address' object exists
         if (address) {
           const area_code = Number.parseInt(address.area_code)
           const city = address.city
 
-          // Extracting 'std' from 'city' in 'context'
           const stdArray = context.city.split(':')
           const std = stdArray.length > 1 ? stdArray[1] : null
 
-          // Check if 'std' exists
           if (std !== null) {
-            logger.info(`Comparing area_code and std code of /${constants.ON_SEARCH}`)
-            logger.info(`Area code --> ${area_code}   and std ---> ${std}`)
+            logger.info(`Comparing area_code and STD Code for /${constants.ON_SEARCH}`)
             const areaWithSTD = compareSTDwithArea(area_code, std)
             if (!areaWithSTD) {
               logger.error(`STD code does not match with correct area_code on /${constants.ON_SEARCH}`)
             }
 
+            logger.info(`Comparing area_code and city for /${constants.ON_SEARCH}`)
             const areaWithCity = compareCitywithPinCode(area_code, city)
             if (!areaWithCity) {
               logger.error(`City does not match with correct area_code on /${constants.ON_SEARCH}`)
@@ -132,6 +126,25 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
   } catch (error: any) {
     logger.error(
       `Error while matching area_code and std code for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
+    )
+  }
+
+  // Checking value and maximum_value constraint
+
+  try {
+    logger.info(`Comparing item_value with item_maximum_value for /${constants.ON_SEARCH}`)
+    const items = data.message.catalog['bpp/providers'][0].items
+    items.forEach((e: any) => {
+      const res = e.price.value <= e.price.maximum_value
+      if (!res) {
+        logger.error(
+          `Error while matching value with maximum_value on /${constants.ON_SEARCH} , {value > maximum_value}`,
+        )
+      }
+    })
+  } catch (error: any) {
+    logger.error(
+      `Error while matching value with maximum_value on /${constants.ON_SEARCH} , {value > maximum_value} api, ${error.stack}`,
     )
   }
 
@@ -265,22 +278,17 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         }
 
         const scheduleObject = location[i].time.schedule.holidays
-        if (scheduleObject.length === 0) {
-          logger.info('no holidays are pesent')
-        }
-
-        const currentDate = new Date()
-        const futureHolidays: any = []
+        const timestamp = context.timestamp
+        const [currentDate] = timestamp.split('T')[0]
 
         scheduleObject.map((date: string) => {
-          // convert this date into date object
           const dateObj = new Date(date)
-          // Compare it with current date
-          if (dateObj.getTime() > currentDate.getTime()) {
-            futureHolidays.push(date)
+          const currentDateObj = new Date(currentDate)
+          if (dateObj.getTime() > currentDateObj.getTime()) {
+            const key = `loc${i}/time/schedule/holidays`
+            errorObj[key] = `Holiday dates are greater than current date time ${date}`
           }
         })
-        console.log('Upcoming holidays: ', futureHolidays)
       } catch (e) {
         logger.error('No Holiday', e)
       }

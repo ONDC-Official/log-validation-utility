@@ -76,7 +76,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         const timeDiff = timeDifference(context.timestamp, tmpstmp)
         logger.info(timeDiff)
         if (timeDiff > 5000) {
-          onInitObj.tmpstmp = `context/timestamp difference between /${constants.ON_INIT} and /${constants.INIT} should be smaller than 5 sec`
+          onInitObj.tmpstmp = `context/timestamp difference between /${constants.ON_INIT} and /${constants.INIT} should be less than 5 sec`
         }
       }
 
@@ -110,6 +110,26 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     }
 
     const on_init = message.order
+
+    // checking for tax_number in tags
+    try {
+      logger.info(`Checking for tax_number for ${constants.ON_INIT}`)
+      const tags = on_init.tags[0].list
+      let tax_number = {}
+      tags.forEach((e: any) => {
+        if (e.code === 'tax_number') {
+          if (!e.value) {
+            logger.error(`value must be present for tax_number in ${constants.ON_INIT}`)
+          }
+          tax_number = e
+        }
+      })
+      if (_.isEmpty(tax_number)) {
+        logger.error(`tax_number must present in ${constants.ON_INIT}`)
+      }
+    } catch (error: any) {
+      logger.error(`tax_number not present in tags for ${constants.ON_INIT}`)
+    }
 
     try {
       logger.info(`Checking provider Id and provider_location Id in /${constants.ON_SEARCH} and /${constants.ON_INIT}`)
@@ -310,6 +330,40 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       logger.info(`checking payment object in /${constants.ON_INIT}`)
       if (on_init.payment['@ondc/org/settlement_details'][0]['settlement_counterparty'] != 'seller-app') {
         onInitObj.sttlmntcntrparty = `settlement_counterparty is expected to be 'seller-app' in @ondc/org/settlement_details`
+      }
+      logger.info(`checking payment details in /${constants.ON_INIT}`)
+      const data = on_init.payment['@ondc/org/settlement_details'][0]
+      if (
+        data['settlement_type'] !== 'neft' &&
+        data['settlement_type'] !== 'rtgs' &&
+        data['settlement_type'] !== 'upi'
+      ) {
+        logger.error(
+          `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_detailsin /${constants.ON_INIT}`,
+        )
+        onInitObj.sttlmntcntrparty = `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_details`
+      } else if (data['settlement_type'] !== 'upi') {
+        if (
+          !data.bank_name ||
+          !data.branch_name ||
+          !data.beneficiary_name ||
+          !data.settlement_phase ||
+          !data.settlement_ifsc_code ||
+          !data.settlement_counterparty ||
+          !data.settlement_bank_account_no ||
+          data.beneficiary_name.trim() === '' ||
+          data.bank_name.trim() === '' ||
+          data.branch_name.trim() === '' ||
+          data.settlement_bank_account_no.trim() === ''
+        ) {
+          logger.error(`Payment details are missing /${constants.ON_INIT}`)
+          onInitObj.paymentDetails = `Payment details are missing/${constants.ON_INIT}`
+        }
+      } else {
+        if (!data.upi_address || data.upi_address.trim() === '') {
+          logger.error(`Payment details are missing /${constants.ON_INIT}`)
+          onInitObj.paymentDetails = `Payment details are missing/${constants.ON_INIT}`
+        }
       }
     } catch (error: any) {
       logger.error(`!!Error while checking payment object in /${constants.ON_INIT}`)

@@ -1,6 +1,5 @@
 {
   "name": "log-validation-utility",
-  "name": "log-validation-utility",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -21,13 +20,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ONDC-Official/log-validation-utility.git"
-    "url": "git+https://github.com/ONDC-Official/log-validation-utility.git"
   },
-  "author": "ONDC-Official",
-  "contributors": [
-    "bluecypher",
-    "sharmasahil0331"
-  ],
   "author": "ONDC-Official",
   "contributors": [
     "bluecypher",
@@ -36,9 +29,7 @@
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/ONDC-Official/log-validation-utility/issues"
-    "url": "https://github.com/ONDC-Official/log-validation-utility/issues"
   },
-  "homepage": "https://github.com/ONDC-Official/log-validation-utility",
   "homepage": "https://github.com/ONDC-Official/log-validation-utility",
   "dependencies": {
     "@types/js-yaml": "^4.0.9",

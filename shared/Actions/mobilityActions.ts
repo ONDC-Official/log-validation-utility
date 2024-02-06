@@ -17,7 +17,7 @@ import { checkStatus } from '../../utils/mobility/status'
 import { checkOnStatus } from '../../utils/mobility/onStatus'
 import { checkOnCancel } from '../../utils/mobility/onCancel'
 
-export function validateLogsForMobility(data: any, domain: string, flow: string, version: string) {
+export function validateLogsForMobility(data: any, flow: string, version: string) {
   const msgIdSet = new Set()
   let logReport: any = {}
   try {
@@ -34,7 +34,6 @@ export function validateLogsForMobility(data: any, domain: string, flow: string,
     logReport = { ...logReport, version: `Invalid flow ${flow}` }
   }
 
-  console.log('domain', domain, flow)
 
   try {
     if (data[mobilitySequence.SEARCH]) {

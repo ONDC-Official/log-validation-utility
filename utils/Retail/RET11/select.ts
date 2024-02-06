@@ -12,7 +12,6 @@ import _ from 'lodash'
 import { logger } from '../../../shared/logger'
 
 const tagFinder = (item: { tags: any[] }, value: string): any => {
-  console.log('item', item)
   const res = item?.tags?.find((tag: any) => {
     return (
       tag.code === 'type' &&
@@ -27,7 +26,7 @@ const tagFinder = (item: { tags: any[] }, value: string): any => {
 
 export const checkSelect = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [ApiSequence.SELECT]: 'Json cannot be empty' }
+    return { [ApiSequence.SELECT]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data

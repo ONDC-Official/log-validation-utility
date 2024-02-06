@@ -26,6 +26,7 @@ const controller = {
       const bap_id = payloadElement.context.bap_id;
       const bpp_id = payloadElement.context.bpp_id;
 
+
       const normalisedDomain = helper.getEnumForDomain(pathUrl)
 
       switch (normalisedDomain) {

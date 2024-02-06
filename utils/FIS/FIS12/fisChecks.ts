@@ -81,7 +81,6 @@ export const validateFulfillments = (fulfillment: any, i: number, documents: any
 
 export const validateXInput = (xinput: any, i: number, j: number, action: string): any | null => {
   const errors: any = {}
-  console.log('action', action)
 
   if (!xinput || typeof xinput !== 'object') {
     errors[`prvdr${i}item${j}_xinput`] = `xinput is missing or not an object in providers[${i}].items[${j}]`
@@ -127,12 +126,6 @@ export const validateXInput = (xinput: any, i: number, j: number, action: string
             formHeading?.length - 1
           } in providers[${i}].items[${j}].xinput.head`
         }
-        // headings?.forEach((heading: string) => {
-        //   if (!formHeading.includes(heading))``
-        //     errors[
-        //       `prvdr${i}item${j}_xinput_head_headings`
-        //     ] = `Form headings array must only contain headings as defined in Api contract`
-        // })
       }
     }
 

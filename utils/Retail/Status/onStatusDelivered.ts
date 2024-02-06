@@ -9,7 +9,7 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.ON_STATUS_DELIVERED]: 'Json cannot be empty' }
+      return { [ApiSequence.ON_STATUS_DELIVERED]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -132,7 +132,6 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
           const deliveryTime = fulfillment.end.time.timestamp
           deliveryTimestamps[fulfillment.id] = deliveryTime
 
-          // dao.setValue("deliveredTime",deliveryTime);
 
           try {
             //checking delivery time matching with context timestamp

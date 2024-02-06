@@ -89,7 +89,6 @@ export const checkFISContext = (
   }
 
   if (data.action != path) {
-    console.log('data.action', data.action, path)
     errObj.action_err = `context.action should be ${path}`
   }
 
@@ -457,9 +456,7 @@ const replaceValueType = (key: any, value: any): number => {
 
 export const checkBppIdOrBapId = (input: string, type?: string) => {
   try {
-    console.log('input', input)
     if (!input) {
-      console.log('input', input)
 
       return `${type} Id is not present`
     }
@@ -467,7 +464,6 @@ export const checkBppIdOrBapId = (input: string, type?: string) => {
     if (input?.includes('https://') || input.includes('www') || input.includes('https:') || input.includes('http'))
       return `context/${type}_id should not be a url`
   } catch (e) {
-    console.log('e', e)
     return e
   }
 }
@@ -718,7 +714,6 @@ export const checkIdAndUri = (id: string, uri: string, type: string) => {
 
     return errors.length > 0 ? errors.join(', ') : null
   } catch (e: any) {
-    console.error('Error:', e)
     return e.message || 'An error occurred during validation'
   }
 }

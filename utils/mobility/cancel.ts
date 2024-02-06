@@ -10,7 +10,6 @@ export const checkCancel = (data: any, msgIdSet: any, sequence: string) => {
       return { [mobilitySequence.ON_CANCEL]: 'JSON cannot be empty' }
     }
 
-    console.log('data--', data)
 
     const { message, context } = data
     if (!message || !context || !message || isObjectEmpty(message) || isObjectEmpty(message)) {
@@ -40,7 +39,6 @@ export const checkCancel = (data: any, msgIdSet: any, sequence: string) => {
     if (!cancel.descriptor.code) {
       errorObj[`descriptor.code`] = `descriptor.code should be present at /${constants.CANCEL}`
     } else {
-      console.log('sequence', sequence)
       if (sequence === 'soft_cancel') {
         if (cancel.descriptor.code != 'SOFT_CANCEL') {
           errorObj[`descriptor.code`] = `descriptor.code should be SOFT_CANCEL at /${constants.CANCEL}`

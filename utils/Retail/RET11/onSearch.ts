@@ -13,6 +13,7 @@ import {
   checkServiceabilityType,
   validateLocations,
   isSequenceValid,
+  isValidPhoneNumber
 } from '../../../utils'
 import _ from 'lodash'
 
@@ -96,6 +97,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     let i = 0
     const bppFF = onSearchCatalog['bpp/fulfillments']
     const len = bppFF.length
+    
     while (i < len) {
       onSearchFFIds.add(bppFF[i].id)
       i++
@@ -211,6 +213,14 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
           logger.info(`Validating uniqueness for categories id in bpp/providers[${i}].items[${j}]...`)
           const category = categories[j]
 
+          const fulfillments = onSearchCatalog['bpp/providers'][i]['fulfillments']
+          const phoneNumber = typeof(fulfillments[i].contact.phone)
+          console.log("adding full", fulfillments[i].contact.phone);
+          
+          if (!isValidPhoneNumber(phoneNumber)) {
+            const key = `bpp/providers${i}fulfillments${i}`
+            errorObj[key] = `phone Number provided is incorrect${phoneNumber}`
+          }
           if (categoriesId.has(category.id)) {
             const key = `prvdr${i}category${j}`
             errorObj[key] = `duplicate category id: ${category.id} in bpp/providers[${i}]`
@@ -219,6 +229,9 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
           }
 
           try {
+const fulfillments = onSearchCatalog['bpp/providers'][i]['fulfillments']
+            //const phoneNumber = typeof(fulfillments[i].contact.phone)
+            console.log("adding full", typeof(fulfillments[i].contact.phone));
             category.tags.map((tag: { code: any; list: any[] }, index: number) => {
               switch (tag.code) {
                 case 'type':
@@ -230,11 +243,13 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
                       codeList.value === 'variant_group'
                     )
                   ) {
+                    
                     const key = `prvdr${i}category${j}tags${index}`
                     errorObj[
                       key
                     ] = `list.code == type then value should be one of 'custom_menu','custom_group' and 'variant_group' in bpp/providers[${i}]`
                   }
+                  
 
                   if (codeList.value === 'custom_group') {
                     customGrpId.add(category.id)
@@ -405,11 +420,13 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
           logger.info(`Checking fulfillment_id for item id: ${item.id}`)
 
           if (item.fulfillment_id && !onSearchFFIds.has(item.fulfillment_id)) {
+            
             const key = `prvdr${i}item${j}ff`
             errorObj[
               key
             ] = `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/fulfillments`
           }
+          
 
           logger.info(`Checking location_id for item id: ${item.id}`)
 

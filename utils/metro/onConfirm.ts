@@ -64,7 +64,6 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
         itemIdArray.push(item.id)
       })
       newItemIDSValue = itemIdArray
-      console.log('test')
     }
 
     setValue('ItmIDS', newItemIDSValue)
@@ -91,7 +90,6 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
       )
     }
 
-    console.log('on_confirm.items', on_confirm.items)
 
     try {
       on_confirm.items &&

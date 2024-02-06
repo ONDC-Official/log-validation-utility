@@ -17,7 +17,7 @@ import { checkOnConfirm } from '../../utils/metro/onConfirm'
 // import { checkOnStatus } from '../../utils/metro/onStatus'
 // import { checkOnCancel } from '../../utils/metro/onCancel'
 
-export function validateLogsFormetro(data: any, domain: string, flow: string) {
+export function validateLogsFormetro(data: any) {
   const msgIdSet = new Set()
   let logReport: any = {}
   try {
@@ -26,7 +26,7 @@ export function validateLogsFormetro(data: any, domain: string, flow: string) {
     logger.error('!!Error while removing LMDB', error)
   }
 
-  console.log('domain', domain, flow)
+
 
   try {
     if (data[metroSequence.SEARCH]) {

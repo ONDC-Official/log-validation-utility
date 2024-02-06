@@ -18,6 +18,7 @@ import {
   
 } from '../../../utils'
 import _ from 'lodash'
+import { compareCitywithPinCode, compareSTDwithArea } from '../util/compareSTDwithArea'
 
 export const checkOnsearch = (data: any, msgIdSet: any) => {
   
@@ -26,6 +27,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
   }
 
   const { message, context } = data
+  
+  
   if (!message || !context || !message.catalog || isObjectEmpty(message) || isObjectEmpty(message.catalog)) {
     return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
   }
@@ -86,6 +89,55 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
     )
   }
 
+  try {
+    logger.info(`Comparing STD Id and area_code for /${constants.ON_SEARCH}`)
+    const providers = data.message.catalog['bpp/providers'];
+  
+    // Check if 'providers' array exists and has at least one element
+    if (providers && providers.length > 0) {
+      const locations = providers[0].locations;
+  
+      // Check if 'locations' array exists and has at least one element
+      if (locations && locations.length > 0) {
+        const address = locations[0].address;
+  
+        // Check if 'address' object exists
+        if (address) {
+          const area_code = Number.parseInt(address.area_code);
+          const city = address.city
+  
+          // Extracting 'std' from 'city' in 'context'
+          const stdArray = context.city.split(':');
+          const std = stdArray.length > 1 ? stdArray[1] : null;
+  
+          // Check if 'std' exists
+          if (std !== null) {
+            logger.info(`Comparing area_code and std code of /${constants.ON_SEARCH}`);
+            logger.info(`Area code --> ${area_code}   and std ---> ${std}`);
+            const areaWithSTD = compareSTDwithArea(area_code, std);
+            if(!areaWithSTD){
+              logger.error(`STD code does not match with correct area_code on /${constants.ON_SEARCH}`)
+            }
+            const areaWithCity = compareCitywithPinCode(area_code, city)
+            if(!areaWithCity){
+              logger.error(`City does not match with correct area_code on /${constants.ON_SEARCH}`)
+            }
+          } else {
+            logger.error(`'std' is undefined or null.`);
+          }
+        } else {
+          logger.error(`'address' is undefined or null.`);
+        }
+      } else {
+        logger.error(`'locations' array is undefined or empty.`);
+      }
+    } else {
+      logger.error(`'bpp/providers' array is undefined or empty.`);
+    }
+  } catch (error: any) {
+    logger.error(`Error while matching area_code and std code for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`);
+  }
+  
   const onSearchCatalog: any = message.catalog
   const onSearchFFIds = new Set()
   const prvdrsId = new Set()
@@ -288,17 +340,20 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           }
 
           try {
+
             category.tags.map((tag: { code: any; list: any[] }, index: number) => {
               switch (tag.code) {
                 case 'type':
                   const codeList = tag.list.find((item) => item.code === 'type')
                   if (
+                  
                     !(
                       codeList.value === 'custom_menu' ||
                       codeList.value === 'custom_group' ||
                       codeList.value === 'variant_group'
                     )
                   ) {
+
                     const key = `prvdr${i}category${j}tags${index}`
                     errorObj[
                       key
@@ -422,7 +477,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         logger.info(`Checking items for provider (${prvdr.id}) in bpp/providers[${i}]`)
         let j = 0
         const items = onSearchCatalog['bpp/providers'][i]['items']
-
+        
         const iLen = items.length
         while (j < iLen) {
           logger.info(`Validating uniqueness for item id in bpp/providers[${i}].items[${j}]...`)

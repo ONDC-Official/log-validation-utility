@@ -14,7 +14,7 @@ export const checkSearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      errorObj[ApiSequence.SEARCH] = 'Json cannot be empty'
+      errorObj[ApiSequence.SEARCH] = 'JSON cannot be empty'
       return
     }
 
@@ -29,7 +29,7 @@ export const checkSearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
       return Object.keys(errorObj).length > 0 && errorObj
     }
 
-    msgIdSet.add(data.context.message_id)
+    // msgIdSet.add(data.context.message_id) //Duplicate db entry below
 
     const schemaValidation = validateSchema('RET11', constants.SEARCH, data)
 

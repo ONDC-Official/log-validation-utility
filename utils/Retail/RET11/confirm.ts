@@ -19,7 +19,7 @@ export const checkConfirm = (data: any) => {
   const cnfrmObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.CONFIRM]: 'Json cannot be empty' }
+      return { [ApiSequence.CONFIRM]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data

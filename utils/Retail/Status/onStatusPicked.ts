@@ -9,7 +9,7 @@ export const checkOnStatusPicked = (data: any, state: string) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.ON_STATUS_PICKED]: 'Json cannot be empty' }
+      return { [ApiSequence.ON_STATUS_PICKED]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data

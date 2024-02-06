@@ -266,13 +266,16 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           logger.error("No location detected ")
         }
         const scheduleObject = location[i].time.schedule.holidays;
-        const currentDate = new Date();
+        const timestamp = context.timestamp;
+        const [currentDate] = timestamp.split('T')[0];
 
         scheduleObject.map((date: string) => {
           const dateObj = new Date(date);
-          if (dateObj.getTime() > currentDate.getTime()) {
+          const currentDateObj = new Date(currentDate);
+          if (dateObj.getTime() > currentDateObj.getTime()) {
             const key = `loc${i}/time/schedule/holidays`;
             errorObj[key] = `Holiday dates are greater than current date time ${date}`
+            
           }
 
         }

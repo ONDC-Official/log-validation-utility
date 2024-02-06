@@ -221,6 +221,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
             const key = `bpp/providers${i}fulfillments${i}`
             errorObj[key] = `phone Number provided is incorrect${phoneNumber}`
           }
+
           if (categoriesId.has(category.id)) {
             const key = `prvdr${i}category${j}`
             errorObj[key] = `duplicate category id: ${category.id} in bpp/providers[${i}]`

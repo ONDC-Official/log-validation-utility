@@ -71,7 +71,7 @@ export const checkOnSelect = (data: any) => {
       const timeDifference = timeDiff(context.timestamp, tmpstmp)
       logger.info(timeDifference)
       if (timeDifference > 5000) {
-        errorObj.tmpstmp = `context/timestamp difference between /${constants.ON_SELECT} and /${constants.SELECT} should be smaller than 5 sec`
+        errorObj.tmpstmp = `context/timestamp difference between /${constants.ON_SELECT} and /${constants.SELECT} should be less than 5 sec`
       }
     }
 
@@ -168,7 +168,7 @@ export const checkOnSelect = (data: any) => {
       const tat = isoDurToSec(ff['@ondc/org/TAT'])
 
       if (tat < tts) {
-        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be smaller than @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
+        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be less than @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
       }
 
       if (tat === tts) {
@@ -343,6 +343,15 @@ export const checkOnSelect = (data: any) => {
     if (!noOfDeliveries && !nonServiceableFlag) {
       errorObj.deliveryLineItem = `delivery line item must be present in quote/breakup (if location is serviceable)`
     }
+
+    // Checking for delivery charges in non servicable locations 
+    if (noOfDeliveries && nonServiceableFlag) {
+      deliveryItems.map((e:any)=>{
+        if(e.price.value>0){
+          logger.error("Delivery charges not applicable for non-servicable locations")
+        }
+      })
+    }
   } catch (error: any) {
     logger.info(`!!Error occurred while checking delivery line item in /${constants.ON_SELECT}`)
   }
@@ -408,6 +417,24 @@ export const checkOnSelect = (data: any) => {
   } catch (error: any) {
     logger.error(`!!Error while storing quote object in /${constants.ON_SELECT}, ${error.stack}`)
   }
+
+  // Checking fulfillmentID with providerID for ON_SELECT
+  try{
+    logger.info(`Comparing fulfillmentID with providerID for /${constants.ON_SELECT} `)
+   const len:number = on_select.fulfillments.length;
+   let i = 0;
+   while(i<len){
+    const fulfillment_id = on_select.fulfillments[i].id;
+    const provider_id = on_select.provider.id
+    if(fulfillment_id===provider_id){
+      logger.error(`FullfillmentID can't be equal to ProviderID on ${constants.ON_SELECT}`);
+    }
+    i++;
+   }
+  }catch(error:any){
+    logger.error(`!Error while comparing fulfillmentID with providerID in /${constants.ON_SELECT}, ${error.stack}`)
+  }
+
 
   return Object.keys(errorObj).length > 0 && errorObj
 }

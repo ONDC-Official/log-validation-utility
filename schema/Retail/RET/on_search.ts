@@ -94,120 +94,120 @@ export const onSearchSchema = {
                 required: ['id', 'type'],
               },
             },
-              'bpp/descriptor': {
-                type: "object",
-                properties: {
-                  name: {
-                    type: "string"
-                  },
-                  symbol: {
-                    type: "string",
-                    pattern: "^$|^https?:\\/\\/[^\\s]*"
-                  },
-                  short_desc: {
-                    type: "string"
-                  },
-                  long_desc: {
-                    type: "string"
-                  },
-                  images: {
-                    type: "array",
-                    items: {
-                      type: "string",
-                      pattern: "^$|^https?:\\/\\/[^\\s]*"
-                    }
-                  },
-                  tags: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        code: {
-                          type: "string",
-                          enum: ["bpp_terms"]
-                        },
-                        list: {
-                          type: "array",
-                          items: {
-                            oneOf: [
-                              {
-                                if: {
-                                  properties: {
-                                    code: { const: "np_type" }
-                                  }
-                                },
-                                then: {
-                                  type: "object",
-                                  properties: {
-                                    code: {
-                                      type: "string",
-                                      enum: ["np_type"]
-                                    },
-                                    value: {
-                                      type: "string",
-                                      enum: ["MSN", "ISN"]
-                                    }
-                                  },
-                                  required: ["code", "value"],
-                                  additionalProperties: false
-                                }
-                              },
-                              {
-                                if: {
-                                  properties: {
-                                    code: { const: "accept_bap_terms" }
-                                  }
-                                },
-                                then: {
-                                  type: "object",
-                                  properties: {
-                                    code: {
-                                      type: "string",
-                                      enum: ["accept_bap_terms"]
-                                    },
-                                    value: {
-                                      type: "string",
-                                      enum: ["Y", "N"]
-                                    }
-                                  },
-                                  required: ["code", "value"],
-                                  additionalProperties: false
-                                }
-                              },
-                              {
-                                if: {
-                                  properties: {
-                                    code: { const: "collect_payment" }
-                                  }
-                                },
-                                then: {
-                                  type: "object",
-                                  properties: {
-                                    code: {
-                                      type: "string",
-                                      enum: ["collect_payment"]
-                                    },
-                                    value: {
-                                      type: "string",
-                                      enum: ["Y", "N"]
-                                    }
-                                  },
-                                  required: ["code", "value"],
-                                  additionalProperties: false
-                                }
-                              }
-                            ]
-                          },
-                          minItems: 1
-                        }
-                      },
-                      required: ["code", "list"],
-                      additionalProperties: false
-                    }
-                  }
+            'bpp/descriptor': {
+              type: 'object',
+              properties: {
+                name: {
+                  type: 'string',
                 },
-                required: ["name", "short_desc", "long_desc", "tags"],
-                additionalProperties: true
+                symbol: {
+                  type: 'string',
+                  pattern: '^$|^https?:\\/\\/[^\\s]*',
+                },
+                short_desc: {
+                  type: 'string',
+                },
+                long_desc: {
+                  type: 'string',
+                },
+                images: {
+                  type: 'array',
+                  items: {
+                    type: 'string',
+                    pattern: '^$|^https?:\\/\\/[^\\s]*',
+                  },
+                },
+                tags: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      code: {
+                        type: 'string',
+                        enum: ['bpp_terms'],
+                      },
+                      list: {
+                        type: 'array',
+                        items: {
+                          oneOf: [
+                            {
+                              if: {
+                                properties: {
+                                  code: { const: 'np_type' },
+                                },
+                              },
+                              then: {
+                                type: 'object',
+                                properties: {
+                                  code: {
+                                    type: 'string',
+                                    enum: ['np_type'],
+                                  },
+                                  value: {
+                                    type: 'string',
+                                    enum: ['MSN', 'ISN'],
+                                  },
+                                },
+                                required: ['code', 'value'],
+                                additionalProperties: false,
+                              },
+                            },
+                            {
+                              if: {
+                                properties: {
+                                  code: { const: 'accept_bap_terms' },
+                                },
+                              },
+                              then: {
+                                type: 'object',
+                                properties: {
+                                  code: {
+                                    type: 'string',
+                                    enum: ['accept_bap_terms'],
+                                  },
+                                  value: {
+                                    type: 'string',
+                                    enum: ['Y', 'N'],
+                                  },
+                                },
+                                required: ['code', 'value'],
+                                additionalProperties: false,
+                              },
+                            },
+                            {
+                              if: {
+                                properties: {
+                                  code: { const: 'collect_payment' },
+                                },
+                              },
+                              then: {
+                                type: 'object',
+                                properties: {
+                                  code: {
+                                    type: 'string',
+                                    enum: ['collect_payment'],
+                                  },
+                                  value: {
+                                    type: 'string',
+                                    enum: ['Y', 'N'],
+                                  },
+                                },
+                                required: ['code', 'value'],
+                                additionalProperties: false,
+                              },
+                            },
+                          ],
+                        },
+                        minItems: 1,
+                      },
+                    },
+                    required: ['code', 'list'],
+                    additionalProperties: false,
+                  },
+                },
+              },
+              required: ['name', 'short_desc', 'long_desc', 'tags'],
+              additionalProperties: true,
             },
             'bpp/providers': {
               type: 'array',
@@ -482,7 +482,7 @@ export const onSearchSchema = {
                             },
                             code: {
                               type: 'string',
-                              pattern:"^(\\d{8}|\\d{12}|\\d{13}|\\d{14})$",
+                              pattern: '^(\\d{8}|\\d{12}|\\d{13}|\\d{14})$',
                             },
                             symbol: {
                               type: 'string',
@@ -500,7 +500,7 @@ export const onSearchSchema = {
                               },
                             },
                           },
-                          required: ['name', 'symbol', 'short_desc', 'long_desc', 'images','code'],
+                          required: ['name', 'symbol', 'short_desc', 'long_desc', 'images', 'code'],
                         },
                         quantity: {
                           type: 'object',
@@ -711,6 +711,106 @@ export const onSearchSchema = {
                               },
                             },
                             required: ['code', 'value'],
+                            allOf: [
+                              {
+                                if: {
+                                  properties: {
+                                    code: {
+                                      const: 'catalog_link',
+                                    },
+                                  },
+                                },
+                                then: {
+                                  properties: {
+                                    value: {
+                                      pattern: '^(link|inline)$',
+                                    },
+                                  },
+                                  anyOf: [
+                                    {
+                                      if: {
+                                        properties: {
+                                          value: {
+                                            const: 'link',
+                                          },
+                                        },
+                                      },
+                                      then: {
+                                        properties: {
+                                          type_value: {
+                                            format: 'uri',
+                                          },
+                                        },
+                                        required: ['type_value'],
+                                      },
+                                    },
+                                    {
+                                      if: {
+                                        properties: {
+                                          value: {
+                                            const: 'inline',
+                                          },
+                                        },
+                                      },
+                                      then: {
+                                        not: {
+                                          required: ['type_value'],
+                                        },
+                                      },
+                                    },
+                                  ],
+                                },
+                              },
+                              {
+                                if: {
+                                  properties: {
+                                    code: {
+                                      const: 'type_validity',
+                                    },
+                                  },
+                                },
+                                then: {
+                                  properties: {
+                                    value: {
+                                      format: 'duration',
+                                    },
+                                  },
+                                },
+                              },
+                              {
+                                if: {
+                                  properties: {
+                                    code: {
+                                      const: 'last_update',
+                                    },
+                                  },
+                                },
+                                then: {
+                                  properties: {
+                                    value: {
+                                      description: 'RFC3339 UTC timestamp format',
+                                      format: 'date-time',
+                                    },
+                                  },
+                                },
+                              },
+                              {
+                                if: {
+                                  properties: {
+                                    code: {
+                                      const: 'min_value',
+                                    },
+                                  },
+                                },
+                                then: {
+                                  properties: {
+                                    value: {
+                                      pattern: '^\\d+(\\.\\d{1,2})?$',
+                                    },
+                                  },
+                                },
+                              },
+                            ],
                           },
                         },
                       },

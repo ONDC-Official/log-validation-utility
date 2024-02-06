@@ -94,6 +94,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
         if (descriptor.short_desc && !descriptor.short_desc.trim()) {
           errorObj.short_desc = `Short description cannot be empty.`
         }
+
         if (descriptor.long_desc && !descriptor.long_desc.trim()) {
           errorObj.long_desc = `Long description cannot be empty.`
         }

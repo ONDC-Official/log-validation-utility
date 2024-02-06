@@ -343,6 +343,15 @@ export const checkOnSelect = (data: any) => {
     if (!noOfDeliveries && !nonServiceableFlag) {
       errorObj.deliveryLineItem = `delivery line item must be present in quote/breakup (if location is serviceable)`
     }
+
+    // Checking for delivery charges in non servicable locations 
+    if (noOfDeliveries && nonServiceableFlag) {
+      deliveryItems.map((e:any)=>{
+        if(e.price.value>0){
+          logger.error("Delivery charges not applicable for non-servicable locations")
+        }
+      })
+    }
   } catch (error: any) {
     logger.info(`!!Error occurred while checking delivery line item in /${constants.ON_SELECT}`)
   }
@@ -423,7 +432,7 @@ export const checkOnSelect = (data: any) => {
     i++;
    }
   }catch(error:any){
-    logger.error(`!!Error while comparing fulfillmentID with providerID in /${constants.ON_SELECT}, ${error.stack}`)
+    logger.error(`!Error while comparing fulfillmentID with providerID in /${constants.ON_SELECT}, ${error.stack}`)
   }
 
 

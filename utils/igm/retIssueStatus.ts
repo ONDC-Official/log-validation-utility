@@ -10,7 +10,7 @@ const checkIssueStatus = (data: any) => {
   let res: any = {}
 
   if (!data || isObjectEmpty(data)) {
-    return { [IGMApiSequence.RET_ISSUE_STATUS]: 'Json cannot be empty' }
+    return { [IGMApiSequence.RET_ISSUE_STATUS]: 'JSON cannot be empty' }
   }
   try {
     const issueStatus: any = data

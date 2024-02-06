@@ -26,7 +26,7 @@ const tagFinder = (item: { tags: any[] }, value: string): any => {
 
 export const checkSelect = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [ApiSequence.SELECT]: 'Json cannot be empty' }
+    return { [ApiSequence.SELECT]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data

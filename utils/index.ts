@@ -4,6 +4,8 @@ import { logger } from '../shared/logger'
 import constants, { statusArray } from '../constants'
 import schemaValidator from '../shared/schemaValidator'
 
+export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
+
 export const getObjValues = (obj: any) => {
   let values = ''
   Object.values(obj).forEach((value) => {

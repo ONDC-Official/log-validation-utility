@@ -23,7 +23,7 @@ import { compareCitywithPinCode, compareSTDwithArea } from '../util/compareSTDwi
 export const checkOnsearch = (data: any, msgIdSet: any) => {
   
   if (!data || isObjectEmpty(data)) {
-    return { [ApiSequence.ON_SEARCH]: 'Json cannot be empty' }
+    return { [ApiSequence.ON_SEARCH]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data

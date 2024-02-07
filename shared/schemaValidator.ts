@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import Ajv from 'ajv'
 import fs from 'fs'
 import addFormats from 'ajv-formats'

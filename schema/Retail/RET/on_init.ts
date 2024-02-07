@@ -94,8 +94,10 @@ export const onInitSchema = {
               properties: {
                 id: {
                   type: 'string',
+                  minLength: 1,
                 },
               },
+              required: ['id'],
             },
             items: {
               type: 'array',

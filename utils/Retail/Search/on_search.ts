@@ -15,7 +15,7 @@ import {
   isSequenceValid,
 } from '../../../utils'
 import _ from 'lodash'
-import { compareCitywithPinCode, compareSTDwithArea } from '../util/compareSTDwithArea'
+import { compareCitywithPinCode, compareSTDwithArea } from '../../index'
 
 export const checkOnsearch = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
@@ -83,7 +83,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
     )
   }
 
-  // Checking Valid Area_Code with City and STD Code
   try {
     const providers = data.message.catalog['bpp/providers']
     if (providers && providers.length > 0) {
@@ -106,7 +105,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
               logger.error(`STD code does not match with correct area_code on /${constants.ON_SEARCH}`)
             }
 
-            logger.info(`Comparing area_code and city for /${constants.ON_SEARCH}`)
             const areaWithCity = compareCitywithPinCode(area_code, city)
             if (!areaWithCity) {
               logger.error(`City does not match with correct area_code on /${constants.ON_SEARCH}`)
@@ -126,25 +124,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
   } catch (error: any) {
     logger.error(
       `Error while matching area_code and std code for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
-    )
-  }
-
-  // Checking value and maximum_value constraint
-
-  try {
-    logger.info(`Comparing item_value with item_maximum_value for /${constants.ON_SEARCH}`)
-    const items = data.message.catalog['bpp/providers'][0].items
-    items.forEach((e: any) => {
-      const res = e.price.value <= e.price.maximum_value
-      if (!res) {
-        logger.error(
-          `Error while matching value with maximum_value on /${constants.ON_SEARCH} , {value > maximum_value}`,
-        )
-      }
-    })
-  } catch (error: any) {
-    logger.error(
-      `Error while matching value with maximum_value on /${constants.ON_SEARCH} , {value > maximum_value} api, ${error.stack}`,
     )
   }
 
@@ -279,14 +258,14 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
         const scheduleObject = location[i].time.schedule.holidays
         const timestamp = context.timestamp
-        const [currentDate] = timestamp.split('T')[0]
+        const [currentDate] = timestamp.split('T')
 
         scheduleObject.map((date: string) => {
           const dateObj = new Date(date)
           const currentDateObj = new Date(currentDate)
           if (dateObj.getTime() > currentDateObj.getTime()) {
-            const key = `loc${i}/time/schedule/holidays`
-            errorObj[key] = `Holiday dates are greater than current date time ${date}`
+            const key = `/message/catalog/bpp/providers/loc${i}/time/schedule/holidays`
+            errorObj[key] = `Holidays cannot be past ${currentDate}`
           }
         })
       } catch (e) {
@@ -516,6 +495,18 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           }
 
           logger.info(`Checking fulfillment_id for item id: ${item.id}`)
+
+          if ('price' in item) {
+            const upper = parseFloat(item.price.tags[0].list[1].value)
+            const lower = parseFloat(item.price.tags[0].list[0].value)
+
+            if (upper > lower) {
+              const key = `prvdr${i}item${j}Price/tags/list`
+              errorObj[
+                key
+              ] = `selling lower range of item /price/range/value with id: (${item.id}) can't be greater than the upper in /bpp/providers[${i}]/items[${j}]/`
+            }
+          }
 
           if (item.fulfillment_id && !onSearchFFIds.has(item.fulfillment_id)) {
             const key = `prvdr${i}item${j}ff`

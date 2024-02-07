@@ -3,6 +3,7 @@ import _ from 'lodash'
 import { logger } from '../shared/logger'
 import constants, { statusArray } from '../constants'
 import schemaValidator from '../shared/schemaValidator'
+import data from '../constants/csv.json'
 
 export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
 
@@ -682,6 +683,10 @@ export const isValidEmail = (value: string): boolean => {
 
 export const isValidPhoneNumber = (value: string): boolean => {
   const phoneRegex = /^(\d{10}|\d{11})$/
+  if (value.startsWith('0')) {
+    value = value.substring(1)
+  }
+
   const val = value?.replace(/[^\d]/g, '')
   return phoneRegex.test(val)
 }
@@ -748,4 +753,25 @@ export function compareObjects(obj1: any, obj2: any, parentKey?: string): string
   }
 
   return errors
+}
+
+export const checkFulfillmentID = (items: any, errObj: any, flow: string) => {
+  logger.info(`Inside Fullfillment ID function for flow ${flow}`)
+  items.reduce((acc: any, item: any) => {
+    if (item.fulfillment_id !== acc) {
+      logger.error(`Fullfillment IDs can't be different for items on flow ${flow}`)
+      errObj.flflmntID = `Fulfillment ID can't be different for items on flow ${flow}`
+    }
+
+    return item.fulfillment_id
+  }, items[0].fulfillment_id)
+  return errObj
+}
+
+export const compareSTDwithArea = (pincode: number, std: string): boolean => {
+  return data.some((e: any) => e.Pincode === pincode && e['STD Code'] === std)
+}
+
+export const compareCitywithPinCode = (pincode: number, city: string): boolean => {
+  return data.some((e: any) => e.Pincode === pincode && e.City === city.toUpperCase())
 }

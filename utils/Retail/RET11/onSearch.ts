@@ -214,12 +214,13 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
           const category = categories[j]
 
           const fulfillments = onSearchCatalog['bpp/providers'][i]['fulfillments']
-          const phoneNumber = typeof fulfillments[i].contact.phone
-          console.log('adding full', fulfillments[i].contact.phone)
+          const phoneNumber = fulfillments[i].contact.phone
 
           if (!isValidPhoneNumber(phoneNumber)) {
             const key = `bpp/providers${i}fulfillments${i}`
-            errorObj[key] = `phone Number provided is incorrect${phoneNumber}`
+            errorObj[
+              key
+            ] = `Please enter a valid phone number consisting of  10 or  11 digits without any spaces or special characters. `
           }
 
           if (categoriesId.has(category.id)) {
@@ -230,9 +231,6 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
           }
 
           try {
-            const fulfillments = onSearchCatalog['bpp/providers'][i]['fulfillments']
-            //const phoneNumber = typeof(fulfillments[i].contact.phone)
-            console.log('adding full', typeof fulfillments[i].contact.phone)
             category.tags.map((tag: { code: any; list: any[] }, index: number) => {
               switch (tag.code) {
                 case 'type':
@@ -408,11 +406,34 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
             const sPrice = parseFloat(item.price.value)
             const maxPrice = parseFloat(item.price.maximum_value)
 
+            const lower = parseFloat(item.price.tags[0].list[0].value)
+            const upper = parseFloat(item.price.tags[0].list[1].value)
+
+            const default_selection_value = parseFloat(item.price.tags[1].list[0].value)
+            const default_selection_max_value = parseFloat(item.price.tags[1].list[1].value)
+
+            console.log('value==>', default_selection_value)
+            console.log('max_value==>', default_selection_max_value)
+
             if (sPrice > maxPrice) {
               const key = `prvdr${i}item${j}Price`
               errorObj[
                 key
               ] = `selling price of item /price/value with id: (${item.id}) can't be greater than the maximum price /price/maximum_value in /bpp/providers[${i}]/items[${j}]/`
+            }
+
+            if (upper <= lower) {
+              const key = `prvdr${i}item${j}price/tags/`
+              errorObj[
+                key
+              ] = `selling lower range: ${lower} of code: range with id: (${item.id}) can't be greater than the upper range : ${upper} `
+            }
+
+            if (default_selection_max_value <= default_selection_value) {
+              const key = `prvdr${i}item${j}Price/tags`
+              errorObj[
+                key
+              ] = `value : ${default_selection_value} of code: default_selection with id: (${item.id}) can't be greater than the maximum_value : ${default_selection_max_value} `
             }
           }
 

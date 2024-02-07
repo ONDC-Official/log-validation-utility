@@ -267,19 +267,17 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         }
         const scheduleObject = location[i].time.schedule.holidays;
         const timestamp = context.timestamp;
-        const [currentDate] = timestamp.split('T')[0];
+        const [currentDate] = timestamp.split('T');
 
         scheduleObject.map((date: string) => {
           const dateObj = new Date(date);
           const currentDateObj = new Date(currentDate);
           if (dateObj.getTime() > currentDateObj.getTime()) {
-            const key = `loc${i}/time/schedule/holidays`;
-            errorObj[key] = `Holiday dates are greater than current date time ${date}`
+            const key = `/message/catalog/bpp/providers/loc${i}/time/schedule/holidays`;
+            errorObj[key] = `cannot be past this date ${currentDate}`
             
           }
-
-        }
-        )
+        })
 
       } catch (e) {
         logger.error("No Holiday", e);

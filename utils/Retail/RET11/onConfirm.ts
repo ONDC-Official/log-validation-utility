@@ -69,7 +69,7 @@ export const checkOnConfirm = (data: any) => {
         const timeDiff = timeDifference(context.timestamp, tmpstmp)
         logger.info(timeDiff)
         if (timeDiff > 5000) {
-          onCnfrmObj.tmpstmp = `context/timestamp difference between /${constants.ON_CONFIRM} and /${constants.CONFIRM} should be smaller than 5 sec`
+          onCnfrmObj.tmpstmp = `context/timestamp difference between /${constants.ON_CONFIRM} and /${constants.CONFIRM} should be less than 5 sec`
         }
       }
 

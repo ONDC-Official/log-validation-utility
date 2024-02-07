@@ -61,7 +61,6 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
             storedFulfillments.add(fulfillment.id)
           }
 
-
           if (fulfillment.type == undefined) {
             errorObj[
               `provider_${i}_fulfillment_${k}type`

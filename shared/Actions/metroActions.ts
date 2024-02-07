@@ -11,7 +11,6 @@ import { checkOnInit } from '../../utils/metro/onInit'
 import { checkConfirm } from '../../utils/metro/confirm'
 import { checkOnConfirm } from '../../utils/metro/onConfirm'
 
-
 export function validateLogsFormetro(data: any) {
   const msgIdSet = new Set()
   let logReport: any = {}
@@ -20,8 +19,6 @@ export function validateLogsFormetro(data: any) {
   } catch (error) {
     logger.error('!!Error while removing LMDB', error)
   }
-
-
 
   try {
     if (data[metroSequence.SEARCH]) {
@@ -79,7 +76,6 @@ export function validateLogsFormetro(data: any) {
         logReport = { ...logReport, [metroSequence.ON_CONFIRM]: searchResp }
       }
     }
-
 
     logger.info(logReport, 'Report Generated Successfully!!')
     return logReport

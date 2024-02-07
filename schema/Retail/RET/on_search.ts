@@ -51,10 +51,12 @@ export const onSearchSchema = {
         timestamp: {
           type: 'string',
           format: 'date-time',
+          errorMessage: 'Time must be RFC3339 UTC timestamp format.',
         },
         ttl: {
           type: 'string',
           format: 'duration',
+          errorMessage: 'Duration must be RFC3339 duration.',
         },
       },
       required: [
@@ -94,120 +96,122 @@ export const onSearchSchema = {
                 required: ['id', 'type'],
               },
             },
-              'bpp/descriptor': {
-                type: "object",
-                properties: {
-                  name: {
-                    type: "string"
-                  },
-                  symbol: {
-                    type: "string",
-                    pattern: "^$|^https?:\\/\\/[^\\s]*"
-                  },
-                  short_desc: {
-                    type: "string"
-                  },
-                  long_desc: {
-                    type: "string"
-                  },
-                  images: {
-                    type: "array",
-                    items: {
-                      type: "string",
-                      pattern: "^$|^https?:\\/\\/[^\\s]*"
-                    }
-                  },
-                  tags: {
-                    type: "array",
-                    items: {
-                      type: "object",
-                      properties: {
-                        code: {
-                          type: "string",
-                          enum: ["bpp_terms"]
-                        },
-                        list: {
-                          type: "array",
-                          items: {
-                            oneOf: [
-                              {
-                                if: {
-                                  properties: {
-                                    code: { const: "np_type" }
-                                  }
-                                },
-                                then: {
-                                  type: "object",
-                                  properties: {
-                                    code: {
-                                      type: "string",
-                                      enum: ["np_type"]
-                                    },
-                                    value: {
-                                      type: "string",
-                                      enum: ["MSN", "ISN"]
-                                    }
-                                  },
-                                  required: ["code", "value"],
-                                  additionalProperties: false
-                                }
-                              },
-                              {
-                                if: {
-                                  properties: {
-                                    code: { const: "accept_bap_terms" }
-                                  }
-                                },
-                                then: {
-                                  type: "object",
-                                  properties: {
-                                    code: {
-                                      type: "string",
-                                      enum: ["accept_bap_terms"]
-                                    },
-                                    value: {
-                                      type: "string",
-                                      enum: ["Y", "N"]
-                                    }
-                                  },
-                                  required: ["code", "value"],
-                                  additionalProperties: false
-                                }
-                              },
-                              {
-                                if: {
-                                  properties: {
-                                    code: { const: "collect_payment" }
-                                  }
-                                },
-                                then: {
-                                  type: "object",
-                                  properties: {
-                                    code: {
-                                      type: "string",
-                                      enum: ["collect_payment"]
-                                    },
-                                    value: {
-                                      type: "string",
-                                      enum: ["Y", "N"]
-                                    }
-                                  },
-                                  required: ["code", "value"],
-                                  additionalProperties: false
-                                }
-                              }
-                            ]
-                          },
-                          minItems: 1
-                        }
-                      },
-                      required: ["code", "list"],
-                      additionalProperties: false
-                    }
-                  }
+            'bpp/descriptor': {
+              type: 'object',
+              properties: {
+                name: {
+                  type: 'string',
                 },
-                required: ["name", "short_desc", "long_desc", "tags"],
-                additionalProperties: true
+                symbol: {
+                  type: 'string',
+                  pattern: '^$|^https?:\\/\\/[^\\s]*',
+                  errorMessage: 'descriptor/symbol should be URLs or can be empty strings as well',
+                },
+                short_desc: {
+                  type: 'string',
+                },
+                long_desc: {
+                  type: 'string',
+                },
+                images: {
+                  type: 'array',
+                  items: {
+                    type: 'string',
+                    pattern: '^$|^https?:\\/\\/[^\\s]*',
+                    errorMessage: 'descriptor/images [] should be URLs or can be empty strings as well',
+                  },
+                },
+                tags: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      code: {
+                        type: 'string',
+                        enum: ['bpp_terms'],
+                      },
+                      list: {
+                        type: 'array',
+                        items: {
+                          oneOf: [
+                            {
+                              if: {
+                                properties: {
+                                  code: { const: 'np_type' },
+                                },
+                              },
+                              then: {
+                                type: 'object',
+                                properties: {
+                                  code: {
+                                    type: 'string',
+                                    enum: ['np_type'],
+                                  },
+                                  value: {
+                                    type: 'string',
+                                    enum: ['MSN', 'ISN'],
+                                  },
+                                },
+                                required: ['code', 'value'],
+                                additionalProperties: false,
+                              },
+                            },
+                            {
+                              if: {
+                                properties: {
+                                  code: { const: 'accept_bap_terms' },
+                                },
+                              },
+                              then: {
+                                type: 'object',
+                                properties: {
+                                  code: {
+                                    type: 'string',
+                                    enum: ['accept_bap_terms'],
+                                  },
+                                  value: {
+                                    type: 'string',
+                                    enum: ['Y', 'N'],
+                                  },
+                                },
+                                required: ['code', 'value'],
+                                additionalProperties: false,
+                              },
+                            },
+                            {
+                              if: {
+                                properties: {
+                                  code: { const: 'collect_payment' },
+                                },
+                              },
+                              then: {
+                                type: 'object',
+                                properties: {
+                                  code: {
+                                    type: 'string',
+                                    enum: ['collect_payment'],
+                                  },
+                                  value: {
+                                    type: 'string',
+                                    enum: ['Y', 'N'],
+                                  },
+                                },
+                                required: ['code', 'value'],
+                                additionalProperties: false,
+                              },
+                            },
+                          ],
+                        },
+                        minItems: 1,
+                      },
+                    },
+                    required: ['code', 'list'],
+                    additionalProperties: false,
+                  },
+                },
+              },
+              required: ['name', 'short_desc', 'long_desc', 'tags'],
+              additionalProperties: true,
             },
             'bpp/providers': {
               type: 'array',
@@ -482,7 +486,8 @@ export const onSearchSchema = {
                             },
                             code: {
                               type: 'string',
-                              pattern:"^(\\d{8}|\\d{12}|\\d{13}|\\d{14})$",
+                              pattern: '^(\\d{8}|\\d{12}|\\d{13}|\\d{14})$',
+                              errorMessage: 'Should be EAN of 13 digits or GTIN of length- 8/12/13/14.',
                             },
                             symbol: {
                               type: 'string',
@@ -500,7 +505,7 @@ export const onSearchSchema = {
                               },
                             },
                           },
-                          required: ['name', 'symbol', 'short_desc', 'long_desc', 'images','code'],
+                          required: ['name', 'symbol', 'short_desc', 'long_desc', 'images', 'code'],
                         },
                         quantity: {
                           type: 'object',
@@ -529,6 +534,8 @@ export const onSearchSchema = {
                                 count: {
                                   type: 'string',
                                   enum: ['99', '0'],
+                                  errorMessage:
+                                    'available/count must be equal to one of the allowed values i.e 99(if in stock) or 0(if not in stock))',
                                 },
                               },
                               required: ['count'],
@@ -711,10 +718,67 @@ export const onSearchSchema = {
                               },
                             },
                             required: ['code', 'value'],
+                            additionalProperties: false,
+                            allOf: [
+                              {
+                                if: {
+                                  properties: {
+                                    code: {
+                                      const: 'type_validity',
+                                    },
+                                  },
+                                },
+                                then: {
+                                  properties: {
+                                    value: {
+                                      format: 'duration',
+                                      errorMessage: 'Duration must be RFC3339 duration.',
+                                    },
+                                  },
+                                },
+                              },
+                              {
+                                if: {
+                                  properties: {
+                                    code: {
+                                      const: 'last_update',
+                                    },
+                                  },
+                                },
+                                then: {
+                                  properties: {
+                                    value: {
+                                      description: 'RFC3339 UTC timestamp format',
+                                      format: 'date-time',
+                                      errorMessage: 'Time must be RFC3339 UTC timestamp format.',
+                                    },
+                                  },
+                                },
+                              },
+                              {
+                                if: {
+                                  properties: {
+                                    code: {
+                                      const: 'min_value',
+                                    },
+                                  },
+                                },
+                                then: {
+                                  properties: {
+                                    value: {
+                                      type: 'string',
+                                      pattern: '^\\d+(\\.\\d{1,2})?$',
+                                      errorMessage: 'Amount must be a number with up to 2 decimal places.',
+                                    },
+                                  },
+                                },
+                              },
+                            ],
                           },
                         },
                       },
                       required: ['code', 'list'],
+                      additionalProperties: false,
                     },
                   },
                 },

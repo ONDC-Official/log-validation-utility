@@ -103,6 +103,7 @@ export const onSearchSchema = {
                 symbol: {
                   type: 'string',
                   pattern: '^$|^https?:\\/\\/[^\\s]*',
+                  errorMessage: 'descriptor/symbol should be URLs or can be empty strings as well'
                 },
                 short_desc: {
                   type: 'string',
@@ -115,6 +116,7 @@ export const onSearchSchema = {
                   items: {
                     type: 'string',
                     pattern: '^$|^https?:\\/\\/[^\\s]*',
+                    errorMessage: 'descriptor/images [] should be URLs or can be empty strings as well'
                   },
                 },
                 tags: {

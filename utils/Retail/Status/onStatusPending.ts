@@ -32,6 +32,7 @@ export const checkOnStatusPending = (data: any, state: string) => {
     }
 
     setValue(`${ApiSequence.ON_STATUS_PENDING}`, data)
+    setValue('pending_message_id', context.message_id)
 
     try {
       logger.info(`Checking context for /${constants.ON_STATUS} API`) //checking context

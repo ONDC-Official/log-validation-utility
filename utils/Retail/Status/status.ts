@@ -13,6 +13,7 @@ export const checkStatus = (data: any) => {
     }
 
     const { message, context }: any = data
+    
     if (!message || !context || isObjectEmpty(message)) {
       return { missingFields: '/context, /message, is missing or empty' }
     }

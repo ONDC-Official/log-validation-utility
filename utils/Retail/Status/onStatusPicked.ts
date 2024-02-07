@@ -32,6 +32,20 @@ export const checkOnStatusPicked = (data: any, state: string) => {
     }
 
     setValue(`${ApiSequence.ON_STATUS_PICKED}`, data)
+    
+
+    const pending_message_id: string | null = getValue('pending_message_id')
+    const picked_message_id: string = context.message_id
+
+    setValue(`picked_message_id`, picked_message_id)
+    try{
+      logger.info(`Comparing message_id for unsolicited calls for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`)
+      if(pending_message_id === picked_message_id){
+        onStatusObj['invalid_message_id'] = `Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`
+      }
+    }catch(error: any){
+      logger.error(`Error while comparing message_id for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`)
+    }
 
     try {
       logger.info(`Checking context for /${constants.ON_STATUS} API`) //checking context

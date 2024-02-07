@@ -682,6 +682,9 @@ export const isValidEmail = (value: string): boolean => {
 
 export const isValidPhoneNumber = (value: string): boolean => {
   const phoneRegex = /^(\d{10}|\d{11})$/
+  if(value.startsWith('0')){
+    value = value.substring(1);
+  }
   const val = value?.replace(/[^\d]/g, '')
   return phoneRegex.test(val)
 }

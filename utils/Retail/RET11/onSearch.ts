@@ -214,7 +214,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
           const category = categories[j]
 
           const fulfillments = onSearchCatalog['bpp/providers'][i]['fulfillments']
-          const phoneNumber = typeof fulfillments[i].contact.phone
+          const phoneNumber = fulfillments[i].contact.phone
           console.log('adding full', fulfillments[i].contact.phone)
 
           if (!isValidPhoneNumber(phoneNumber)) {

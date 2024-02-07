@@ -120,12 +120,14 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         if (e.code === 'tax_number') {
           if (!e.value) {
             logger.error(`value must be present for tax_number in ${constants.ON_INIT}`)
+            onInitObj.taxNumberValue = `value must be present for tax_number in ${constants.ON_INIT}`
           }
           tax_number = e
         }
       })
       if (_.isEmpty(tax_number)) {
         logger.error(`tax_number must present in ${constants.ON_INIT}`)
+        onInitObj.taxNumber = `tax_number must be present for ${constants.ON_INIT}`
       }
     } catch (error: any) {
       logger.error(`tax_number not present in tags for ${constants.ON_INIT}`)

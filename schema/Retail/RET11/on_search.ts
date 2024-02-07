@@ -483,7 +483,7 @@ export const FnBonSearchSchema = {
                                 properties: {
                                   code: {
                                     type: "string",
-                                    enum: ["range"]
+                                    enum: ["range", "default_selection"]
                                   },
                                   list: {
                                     type: "array",
@@ -492,7 +492,7 @@ export const FnBonSearchSchema = {
                                       properties: {
                                         code: {
                                           type: "string",
-                                          enum: ["lower", "upper"]
+                                          enum: ["lower", "upper", "value", "maximum_value"]
                                         },
                                         value: {
                                           type: "string",

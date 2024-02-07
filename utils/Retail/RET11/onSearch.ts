@@ -395,8 +395,17 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
           if ('price' in item) {
             const sPrice = parseFloat(item.price.value)
             const maxPrice = parseFloat(item.price.maximum_value)
-            const upper = parseFloat(item.price.tags[0].list[1].value)
+            
             const lower = parseFloat(item.price.tags[0].list[0].value)
+            const upper = parseFloat(item.price.tags[0].list[1].value)
+            
+            const default_selection_value = parseFloat(item.price.tags[1].list[0].value)
+            const default_selection_max_value = parseFloat(item.price.tags[1].list[1].value)
+
+            console.log("value==>", default_selection_value);
+            console.log("max_value==>", default_selection_max_value);
+            
+            
 
             if (sPrice > maxPrice) {
               const key = `prvdr${i}item${j}Price`
@@ -404,10 +413,16 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
                 `selling price of item /price/value with id: (${item.id}) can't be greater than the maximum price /price/maximum_value in /bpp/providers[${i}]/items[${j}]/`
             }
 
-            if (upper < lower) {
-              const key = `prvdr${i}item${j}Price/tags/list`
+            if (upper <= lower) {
+              const key = `prvdr${i}item${j}price/tags/`
               errorObj[key] =
-                `selling lower range of item /price/range/value with id: (${item.id}) can't be greater than the upper range`
+                `selling lower range: ${lower} of code: range with id: (${item.id}) can't be greater than the upper range : ${upper} `
+            }
+
+            if (default_selection_max_value <= default_selection_value) {
+              const key = `prvdr${i}item${j}Price/tags`
+              errorObj[key] =
+                `value : ${default_selection_value} of code: default_selection with id: (${item.id}) can't be greater than the maximum_value : ${default_selection_max_value} `
             }
           }
 

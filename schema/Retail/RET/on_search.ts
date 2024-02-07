@@ -483,6 +483,7 @@ export const onSearchSchema = {
                             code: {
                               type: 'string',
                               pattern: '^(\\d{8}|\\d{12}|\\d{13}|\\d{14})$',
+                              errorMessage: 'Should be EAN of 13 digits or GTIN of length- 8/12/13/14.',
                             },
                             symbol: {
                               type: 'string',
@@ -725,6 +726,7 @@ export const onSearchSchema = {
                                   properties: {
                                     value: {
                                       format: 'duration',
+                                      errorMessage: 'Duration must be RFC3339 duration.',
                                     },
                                   },
                                 },
@@ -742,6 +744,7 @@ export const onSearchSchema = {
                                     value: {
                                       description: 'RFC3339 UTC timestamp format',
                                       format: 'date-time',
+                                      errorMessage: 'Time must be RFC3339 UTC timestamp format.',
                                     },
                                   },
                                 },
@@ -757,8 +760,9 @@ export const onSearchSchema = {
                                 then: {
                                   properties: {
                                     value: {
-                                      format:"float",
+                                      type: 'string',
                                       pattern: '^\\d+(\\.\\d{1,2})?$',
+                                      errorMessage: 'Amount must be a number with up to 2 decimal places.',
                                     },
                                   },
                                 },
@@ -768,7 +772,7 @@ export const onSearchSchema = {
                         },
                       },
                       required: ['code', 'list'],
-                      additionalProperties: false
+                      additionalProperties: false,
                     },
                   },
                 },

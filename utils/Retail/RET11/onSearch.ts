@@ -211,11 +211,11 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
           const category = categories[j]
 
           const fulfillments = onSearchCatalog['bpp/providers'][i]['fulfillments']
-          const phoneNumber = typeof fulfillments[i].contact.phone
+          const phoneNumber = fulfillments[i].contact.phone
 
           if (!isValidPhoneNumber(phoneNumber)) {
             const key = `bpp/providers${i}fulfillments${i}`
-            errorObj[key] = `phone Number provided is incorrect${phoneNumber}`
+            errorObj[key] = `Please enter a valid phone number consisting of  10 or  11 digits without any spaces or special characters. `
           }
 
           if (categoriesId.has(category.id)) {

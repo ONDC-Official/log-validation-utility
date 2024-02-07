@@ -496,7 +496,8 @@ export const FnBonSearchSchema = {
                                         },
                                         value: {
                                           type: "string",
-                                          pattern: "^\\d+(\\.\\d{2})?$"
+                                          pattern: "^\\d+(\\.\\d{2})?$",
+                                          errorMessage: "enter a valid number with exactly two decimal places."
                                         }
                                       }
                                     }
@@ -545,8 +546,8 @@ export const FnBonSearchSchema = {
                         },
                         '@ondc/org/time_to_ship': {
                           type: 'string',
-                          pattern: '^PT([1-5]?[0-9]|60)M$',
-
+                          pattern: '^PT(?:(?:60|[1-5]?[0-9]|60)M|1H)$',
+                          errorMessage: 'time to ship should be within PT0M-PT59M or PT1H'
                         },
                         '@ondc/org/available_on_cod': {
                           type: 'boolean',

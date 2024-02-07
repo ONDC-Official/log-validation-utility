@@ -433,7 +433,8 @@ export const FnBonSearchSchema = {
                                     },
                                     value: {
                                       type: 'string',
-                                      pattern: "-?^\\d*(.\\d{0,2})?$",
+                                      pattern: '-?^\\d*(.\\d{0,2})?$',
+                                      errorMessage: 'enter a valid number',
                                     },
                                   },
                                   required: ['unit', 'value'],
@@ -477,35 +478,34 @@ export const FnBonSearchSchema = {
                               type: 'string',
                             },
                             tags: {
-                              type: "array",
+                              type: 'array',
                               items: {
-                                type: "object",
+                                type: 'object',
                                 properties: {
                                   code: {
-                                    type: "string",
-                                    enum: ["range", "default_selection"]
+                                    type: 'string',
+                                    enum: ['range', 'default_selection'],
                                   },
                                   list: {
-                                    type: "array",
+                                    type: 'array',
                                     items: {
-                                      type: "object",
+                                      type: 'object',
                                       properties: {
                                         code: {
-                                          type: "string",
-                                          enum: ["lower", "upper", "value", "maximum_value"]
+                                          type: 'string',
+                                          enum: ['lower', 'upper', 'value', 'maximum_value'],
                                         },
                                         value: {
-                                          type: "string",
-                                          pattern: "^\\d+(\\.\\d{2})?$",
-                                          errorMessage: "enter a valid number with exactly two decimal places."
-                                        }
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                            
+                                          type: 'string',
+                                          pattern: '^\\d+(\\.\\d{2})?$',
+                                          errorMessage: 'enter a valid number with exactly two decimal places.',
+                                        },
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
                           },
                           required: ['currency', 'value', 'maximum_value'],
                         },
@@ -518,6 +518,7 @@ export const FnBonSearchSchema = {
                           items: {
                             type: 'string',
                             pattern: '^[a-zA-Z0-9]{1,12}:[a-zA-Z0-9]{1,12}$',
+                            errorMessage: 'category_ids should be as per API contract',
                           },
                         },
                         fulfillment_id: {
@@ -547,7 +548,7 @@ export const FnBonSearchSchema = {
                         '@ondc/org/time_to_ship': {
                           type: 'string',
                           pattern: '^PT(?:(?:60|[1-5]?[0-9]|60)M|1H)$',
-                          errorMessage: 'time to ship should be within PT0M-PT59M or PT1H'
+                          errorMessage: 'time to ship should be within PT0M-PT59M or PT1H',
                         },
                         '@ondc/org/available_on_cod': {
                           type: 'boolean',

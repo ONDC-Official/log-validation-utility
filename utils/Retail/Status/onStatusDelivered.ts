@@ -14,7 +14,7 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
     }
 
     const { message, context }: any = data
-    
+
     if (!message || !context || isObjectEmpty(message)) {
       return { missingFields: '/context, /message, is missing or empty' }
     }
@@ -38,13 +38,18 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
     const pending_message_id: string | null = getValue('pending_message_id')
     const delivered_message_id: string = context.message_id
 
-    try{
-      logger.info(`Comparing message_id for unsolicited calls for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.delivered`)
-      if(delivered_message_id === picked_message_id || delivered_message_id === pending_message_id){
-        onStatusObj['invalid_message_id'] = `Message_id cannot be same for ${constants.ON_STATUS}.delivered and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.pending `
+    try {
+      logger.info(
+        `Comparing message_id for unsolicited calls for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.delivered`,
+      )
+      if (delivered_message_id === picked_message_id || delivered_message_id === pending_message_id) {
+        onStatusObj['invalid_message_id'] =
+          `Message_id cannot be same for ${constants.ON_STATUS}.delivered and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.pending `
       }
-    }catch(error: any){
-      logger.error(`Error while comparing message_id for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.delivered`)
+    } catch (error: any) {
+      logger.error(
+        `Error while comparing message_id for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.delivered`,
+      )
     }
 
     try {
@@ -76,11 +81,6 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
         `!!Error while comparing transaction ids for /${constants.SELECT} and /${constants.ON_STATUS} api, ${error.stack}`,
       )
     }
-
-    // try{
-    //   logger.info(`Message_id should be unique for unsolicited calls`);
-    //   if()
-    // }
 
     const on_status = message.order
     try {
@@ -199,16 +199,18 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
     } catch (error) {
       logger.info(`Error while checking delivery timestamp in /${constants.ON_STATUS}_${state}.json`)
     }
-// Checking fullfillment IDs for items 
-try{
-  logger.info(`Comparing fulfillmentID for items at /${constants.ON_STATUS}_delivery`)
- const items = on_status.items;
- const flow = constants.ON_STATUS + "_delivery";
- const err = checkFulfillmentID(items, onStatusObj, flow);
-  Object.assign(onStatusObj, err)
-}catch(error:any){
-  logger.error(`!!Error occurred while checking for fulfillmentID for /${constants.ON_STATUS}_${state}, ${error.stack}`)
-}
+    // Checking fullfillment IDs for items
+    try {
+      logger.info(`Comparing fulfillmentID for items at /${constants.ON_STATUS}_delivery`)
+      const items = on_status.items
+      const flow = constants.ON_STATUS + '_delivery'
+      const err = checkFulfillmentID(items, onStatusObj, flow)
+      Object.assign(onStatusObj, err)
+    } catch (error: any) {
+      logger.error(
+        `!!Error occurred while checking for fulfillmentID for /${constants.ON_STATUS}_${state}, ${error.stack}`,
+      )
+    }
     return onStatusObj
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)

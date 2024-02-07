@@ -51,10 +51,12 @@ export const onSearchSchema = {
         timestamp: {
           type: 'string',
           format: 'date-time',
+          errorMessage: 'Time must be RFC3339 UTC timestamp format.',
         },
         ttl: {
           type: 'string',
           format: 'duration',
+          errorMessage: 'Duration must be RFC3339 duration.',
         },
       },
       required: [
@@ -103,7 +105,7 @@ export const onSearchSchema = {
                 symbol: {
                   type: 'string',
                   pattern: '^$|^https?:\\/\\/[^\\s]*',
-                  errorMessage: 'descriptor/symbol should be URLs or can be empty strings as well'
+                  errorMessage: 'descriptor/symbol should be URLs or can be empty strings as well',
                 },
                 short_desc: {
                   type: 'string',
@@ -116,7 +118,7 @@ export const onSearchSchema = {
                   items: {
                     type: 'string',
                     pattern: '^$|^https?:\\/\\/[^\\s]*',
-                    errorMessage: 'descriptor/images [] should be URLs or can be empty strings as well'
+                    errorMessage: 'descriptor/images [] should be URLs or can be empty strings as well',
                   },
                 },
                 tags: {
@@ -532,7 +534,8 @@ export const onSearchSchema = {
                                 count: {
                                   type: 'string',
                                   enum: ['99', '0'],
-                                  errorMessage:'available/count must be equal to one of the allowed values i.e 99(if in stock) or 0(if not in stock))'
+                                  errorMessage:
+                                    'available/count must be equal to one of the allowed values i.e 99(if in stock) or 0(if not in stock))',
                                 },
                               },
                               required: ['count'],

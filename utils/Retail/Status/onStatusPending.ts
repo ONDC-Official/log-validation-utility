@@ -4,7 +4,7 @@ import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
-import {checkFulfillmentID} from '../util/checkFulfillmntID' 
+import { checkFulfillmentID } from '../../index'
 
 export const checkOnStatusPending = (data: any, state: string) => {
   const onStatusObj: any = {}
@@ -102,15 +102,17 @@ export const checkOnStatusPending = (data: any, state: string) => {
       )
     }
 
-    // Checking fullfillment IDs for items 
-    try{
+    // Checking fullfillment IDs for items
+    try {
       logger.info(`Comparing fulfillmentID for items at /${constants.ON_STATUS}_${state}`)
-     const items = on_status.items;
-     const flow = constants.ON_STATUS + "_pending";
-     const err = checkFulfillmentID(items, onStatusObj, flow);
+      const items = on_status.items
+      const flow = constants.ON_STATUS + '_pending'
+      const err = checkFulfillmentID(items, onStatusObj, flow)
       Object.assign(onStatusObj, err)
-    }catch(error:any){
-      logger.error(`!!Error occurred while checking for fulfillmentID for /${constants.ON_STATUS}_${state}, ${error.stack}`)
+    } catch (error: any) {
+      logger.error(
+        `!!Error occurred while checking for fulfillmentID for /${constants.ON_STATUS}_${state}, ${error.stack}`,
+      )
     }
 
     return onStatusObj

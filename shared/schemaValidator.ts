@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import Ajv from 'ajv'
 import fs from 'fs'
 import addFormats from 'ajv-formats'
@@ -39,7 +40,8 @@ const ajv = new Ajv({
 addFormats(ajv)
 require('ajv-errors')(ajv)
 
-const formatted_error = (errors: any) => { const error_list: any = []
+const formatted_error = (errors: any) => {
+  const error_list: any = []
   let status = ''
   errors.forEach((error: any) => {
     if (!['not', 'oneOf', 'anyOf', 'allOf', 'if', 'then', 'else'].includes(error.keyword)) {

@@ -90,7 +90,7 @@ export const FnBonInitSchema = {
               },
               required: ['id'],
             },
-            
+
             items: {
               type: 'array',
               items: {

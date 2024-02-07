@@ -4,7 +4,7 @@ import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
-import { checkFulfillmentID } from '../util/checkFulfillmntID'
+import { checkFulfillmentID } from '../../index'
 
 export const checkOnStatusPicked = (data: any, state: string) => {
   const onStatusObj: any = {}
@@ -32,19 +32,26 @@ export const checkOnStatusPicked = (data: any, state: string) => {
     }
 
     setValue(`${ApiSequence.ON_STATUS_PICKED}`, data)
-    
 
     const pending_message_id: string | null = getValue('pending_message_id')
     const picked_message_id: string = context.message_id
 
     setValue(`picked_message_id`, picked_message_id)
-    try{
-      logger.info(`Comparing message_id for unsolicited calls for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`)
-      if(pending_message_id === picked_message_id){
-        onStatusObj['invalid_message_id'] = `Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`
+
+    try {
+      logger.info(
+        `Comparing message_id for unsolicited calls for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`,
+      )
+
+      if (pending_message_id === picked_message_id) {
+        onStatusObj[
+          'invalid_message_id'
+        ] = `Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`
       }
-    }catch(error: any){
-      logger.error(`Error while comparing message_id for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`)
+    } catch (error: any) {
+      logger.error(
+        `Error while comparing message_id for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`,
+      )
     }
 
     try {
@@ -185,15 +192,18 @@ export const checkOnStatusPicked = (data: any, state: string) => {
         `Error while checking pickup timestamp in /${constants.ON_STATUS}_${state}.json Error: ${error.stack}`,
       )
     }
-    // Checking fullfillment IDs for items 
-    try{
+
+    // Checking fullfillment IDs for items
+    try {
       logger.info(`Comparing fulfillmentID for items at /${constants.ON_STATUS}_picked`)
-     const items = on_status.items;
-     const flow = constants.ON_STATUS + "_picked";
-     const err = checkFulfillmentID(items, onStatusObj, flow);
+      const items = on_status.items
+      const flow = constants.ON_STATUS + '_picked'
+      const err = checkFulfillmentID(items, onStatusObj, flow)
       Object.assign(onStatusObj, err)
-    }catch(error:any){
-      logger.error(`!!Error occurred while checking for fulfillmentID for /${constants.ON_STATUS}_${state}, ${error.stack}`)
+    } catch (error: any) {
+      logger.error(
+        `!!Error occurred while checking for fulfillmentID for /${constants.ON_STATUS}_${state}, ${error.stack}`,
+      )
     }
 
     return onStatusObj

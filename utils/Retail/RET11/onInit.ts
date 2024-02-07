@@ -122,6 +122,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
             logger.error(`value must be present for tax_number in ${constants.ON_INIT}`)
             onInitObj.taxNumberValue = `value must be present for tax_number in ${constants.ON_INIT}`
           }
+
           tax_number = e
         }
       })
@@ -132,7 +133,6 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     } catch (error: any) {
       logger.error(`tax_number not present in tags for ${constants.ON_INIT}`)
     }
-
 
     try {
       logger.info(`Comparing item Ids and fulfillment Ids in /${constants.ON_SELECT} and /${constants.ON_INIT}`)
@@ -314,6 +314,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       if (on_init.payment['@ondc/org/settlement_details'][0]['settlement_counterparty'] != 'seller-app') {
         onInitObj.sttlmntcntrparty = `settlement_counterparty is expected to be 'seller-app' in @ondc/org/settlement_details`
       }
+
       logger.info(`checking payment details in /${constants.ON_INIT}`)
       const data = on_init.payment['@ondc/org/settlement_details'][0]
       if (

@@ -83,7 +83,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
     )
   }
 
-  // Checking Valid Area_Code with City and STD Code
   try {
     const providers = data.message.catalog['bpp/providers']
     if (providers && providers.length > 0) {
@@ -105,8 +104,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
             if (!areaWithSTD) {
               logger.error(`STD code does not match with correct area_code on /${constants.ON_SEARCH}`)
             }
-
-            logger.info(`Comparing area_code and city for /${constants.ON_SEARCH}`)
             const areaWithCity = compareCitywithPinCode(area_code, city)
             if (!areaWithCity) {
               logger.error(`City does not match with correct area_code on /${constants.ON_SEARCH}`)
@@ -126,25 +123,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
   } catch (error: any) {
     logger.error(
       `Error while matching area_code and std code for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
-    )
-  }
-
-  // Checking value and maximum_value constraint
-
-  try {
-    logger.info(`Comparing item_value with item_maximum_value for /${constants.ON_SEARCH}`)
-    const items = data.message.catalog['bpp/providers'][0].items
-    items.forEach((e: any) => {
-      const res = e.price.value <= e.price.maximum_value
-      if (!res) {
-        logger.error(
-          `Error while matching value with maximum_value on /${constants.ON_SEARCH} , {value > maximum_value}`,
-        )
-      }
-    })
-  } catch (error: any) {
-    logger.error(
-      `Error while matching value with maximum_value on /${constants.ON_SEARCH} , {value > maximum_value} api, ${error.stack}`,
     )
   }
 
@@ -233,9 +211,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
             day = parseInt(day)
             if (isNaN(day) || day < 1 || day > 7) {
               const key = `prvdr${i}locdays${iter}`
-              errorObj[
-                key
-              ] = `store days (bpp/providers[${i}]/locations[${iter}]/time/days) should be in the format ("1,2,3,4,5,6,7") where 1- Monday and 7- Sunday`
+              errorObj[key] =
+                `store days (bpp/providers[${i}]/locations[${iter}]/time/days) should be in the format ("1,2,3,4,5,6,7") where 1- Monday and 7- Sunday`
             }
           })
 
@@ -244,17 +221,15 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           //scenario 1: range =1 freq/times =1
           if (loc.time.range && (loc.time.schedule?.frequency || loc.time.schedule?.times)) {
             const key = `prvdr${i}loctime${iter}`
-            errorObj[
-              key
-            ] = `Either one of fixed (range) or split (frequency and times) timings should be provided in /bpp/providers[${i}]/locations[${iter}]/time`
+            errorObj[key] =
+              `Either one of fixed (range) or split (frequency and times) timings should be provided in /bpp/providers[${i}]/locations[${iter}]/time`
           }
 
           // scenario 2: range=0 freq || times =1
           if (!loc.time.range && (!loc.time.schedule?.frequency || !loc.time.schedule?.times)) {
             const key = `prvdr${i}loctime${iter}`
-            errorObj[
-              key
-            ] = `Either one of fixed timings (range) or split timings (both frequency and times) should be provided in /bpp/providers[${i}]/locations[${iter}]/time`
+            errorObj[key] =
+              `Either one of fixed timings (range) or split timings (both frequency and times) should be provided in /bpp/providers[${i}]/locations[${iter}]/time`
           }
 
           //scenario 3: range=1 (start and end not compliant) frequency=0;
@@ -279,14 +254,14 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
         const scheduleObject = location[i].time.schedule.holidays
         const timestamp = context.timestamp
-        const [currentDate] = timestamp.split('T')[0]
+        const [currentDate] = timestamp.split('T')
 
         scheduleObject.map((date: string) => {
           const dateObj = new Date(date)
           const currentDateObj = new Date(currentDate)
           if (dateObj.getTime() > currentDateObj.getTime()) {
-            const key = `loc${i}/time/schedule/holidays`
-            errorObj[key] = `Holiday dates are greater than current date time ${date}`
+            const key = `/message/catalog/bpp/providers/loc${i}/time/schedule/holidays`
+            errorObj[key] = `Holidays cannot be past ${currentDate}`
           }
         })
       } catch (e) {
@@ -322,9 +297,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
                     )
                   ) {
                     const key = `prvdr${i}category${j}tags${index}`
-                    errorObj[
-                      key
-                    ] = `list.code == type then value should be one of 'custom_menu','custom_group' and 'variant_group' in bpp/providers[${i}]`
+                    errorObj[key] =
+                      `list.code == type then value should be one of 'custom_menu','custom_group' and 'variant_group' in bpp/providers[${i}]`
                   }
 
                   if (codeList.value === 'custom_group') {
@@ -398,21 +372,18 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
                   const seqItem: any = tag.list.find((item: { code: string }) => item.code === 'seq')
 
                   if (!minItem || !maxItem) {
-                    errorObj[
-                      `customization_config_${j}`
-                    ] = `Both 'min' and 'max' values are required in 'config' at index: ${j}`
+                    errorObj[`customization_config_${j}`] =
+                      `Both 'min' and 'max' values are required in 'config' at index: ${j}`
                   }
 
                   if (!/^-?\d+(\.\d+)?$/.test(minItem.value)) {
-                    errorObj[
-                      `customization_config_min_${j}`
-                    ] = `Invalid value for ${minItem.code}: ${minItem.value} at index: ${j}`
+                    errorObj[`customization_config_min_${j}`] =
+                      `Invalid value for ${minItem.code}: ${minItem.value} at index: ${j}`
                   }
 
                   if (!/^-?\d+(\.\d+)?$/.test(maxItem.value)) {
-                    errorObj[
-                      `customization_config_max_${j}`
-                    ] = `Invalid value for ${maxItem.code}: ${maxItem.value}at index: ${j}`
+                    errorObj[`customization_config_max_${j}`] =
+                      `Invalid value for ${maxItem.code}: ${maxItem.value}at index: ${j}`
                   }
 
                   if (!/^-?\d+(\.\d+)?$/.test(seqItem.value)) {
@@ -421,9 +392,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
                   const inputEnum = ['select', 'text']
                   if (!inputEnum.includes(inputItem.value)) {
-                    errorObj[
-                      `config_input_${j}`
-                    ] = `Invalid value for 'input': ${inputItem.value}, it should be one of ${inputEnum} at index: ${j}`
+                    errorObj[`config_input_${j}`] =
+                      `Invalid value for 'input': ${inputItem.value}, it should be one of ${inputEnum} at index: ${j}`
                   }
 
                   break
@@ -487,9 +457,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
             const availCount = parseInt(item.quantity.available.count, 10)
             if (availCount !== 99 && availCount !== 0) {
               const key = `prvdr${i}item${j}availCount`
-              errorObj[
-                key
-              ] = `item.quantity.available.count should be either 99 (inventory available) or 0 (out-of-stock) in /bpp/providers[${i}]/items[${j}]`
+              errorObj[key] =
+                `item.quantity.available.count should be either 99 (inventory available) or 0 (out-of-stock) in /bpp/providers[${i}]/items[${j}]`
             }
           }
 
@@ -497,9 +466,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
             const maxCount = parseInt(item.quantity.maximum.count, 10)
             if (maxCount !== 99 && maxCount <= 0) {
               const key = `prvdr${i}item${j}maxCount`
-              errorObj[
-                key
-              ] = `item.quantity.maximum.count should be either default value 99 (no cap per order) or any other positive value (cap per order) in /bpp/providers[${i}]/items[${j}]`
+              errorObj[key] =
+                `item.quantity.maximum.count should be either default value 99 (no cap per order) or any other positive value (cap per order) in /bpp/providers[${i}]/items[${j}]`
             }
           }
 
@@ -509,9 +477,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
             if (sPrice > maxPrice) {
               const key = `prvdr${i}item${j}Price`
-              errorObj[
-                key
-              ] = `selling price of item /price/value with id: (${item.id}) can't be greater than the maximum price /price/maximum_value in /bpp/providers[${i}]/items[${j}]/`
+              errorObj[key] =
+                `selling price of item /price/value with id: (${item.id}) can't be greater than the maximum price /price/maximum_value in /bpp/providers[${i}]/items[${j}]/`
             }
           }
           
@@ -531,18 +498,16 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
           if (item.fulfillment_id && !onSearchFFIds.has(item.fulfillment_id)) {
             const key = `prvdr${i}item${j}ff`
-            errorObj[
-              key
-            ] = `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/fulfillments`
+            errorObj[key] =
+              `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/fulfillments`
           }
 
           logger.info(`Checking location_id for item id: ${item.id}`)
 
           if (item.location_id && !prvdrLocId.has(item.location_id)) {
             const key = `prvdr${i}item${j}loc`
-            errorObj[
-              key
-            ] = `location_id in /bpp/providers[${i}]/items[${j}] should be one of the locations id in /bpp/providers[${i}]/locations`
+            errorObj[key] =
+              `location_id in /bpp/providers[${i}]/items[${j}] should be one of the locations id in /bpp/providers[${i}]/locations`
           }
 
           logger.info(`Checking consumer care details for item id: ${item.id}`)
@@ -551,16 +516,14 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
             consCare = consCare.split(',')
             if (consCare.length < 3) {
               const key = `prvdr${i}consCare`
-              errorObj[
-                key
-              ] = `@ondc/org/contact_details_consumer_care should be in the format "name,email,contactno" in /bpp/providers[${i}]/items`
+              errorObj[key] =
+                `@ondc/org/contact_details_consumer_care should be in the format "name,email,contactno" in /bpp/providers[${i}]/items`
             } else {
               const checkEmail: boolean = emailRegex(consCare[1].trim())
               if (isNaN(consCare[2].trim()) || !checkEmail) {
                 const key = `prvdr${i}consCare`
-                errorObj[
-                  key
-                ] = `@ondc/org/contact_details_consumer_care should be in the format "name,email,contactno" in /bpp/providers[${i}]/items`
+                errorObj[key] =
+                  `@ondc/org/contact_details_consumer_care should be in the format "name,email,contactno" in /bpp/providers[${i}]/items`
               }
             }
           }
@@ -593,9 +556,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
                 tag.list.map((it: { code: string; value: string }, index: number) => {
                   if (!customGrpId.has(it.value)) {
                     const key = `prvdr${i}item${j}tag${index}cstmgrp_id`
-                    errorObj[
-                      key
-                    ] = `item_id: ${item.id} should have custom_group_id one of the ids passed in categories bpp/providers[${i}]`
+                    errorObj[key] =
+                      `item_id: ${item.id} should have custom_group_id one of the ids passed in categories bpp/providers[${i}]`
                   }
                 })
 
@@ -609,9 +571,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
                 if (!categoriesId.has(idList.value)) {
                   const key = `prvdr${i}item${j}tags${index}config_list`
-                  errorObj[
-                    key
-                  ] = `value in catalog/items${j}/tags${index}/config/list/ should be one of the catalog/category/ids`
+                  errorObj[key] =
+                    `value in catalog/items${j}/tags${index}/config/list/ should be one of the catalog/category/ids`
                 }
 
                 if (!/^-?\d+(\.\d+)?$/.test(minList.value)) {
@@ -686,9 +647,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
                 for (const it of tag.list) {
                   if (it.code && !allowedCodes.includes(it.code)) {
                     const key = `prvdr${i}item${j}tag${index}veg_nonveg`
-                    errorObj[
-                      key
-                    ] = `item_id: ${item.id} should have veg_nonveg one of the 'veg', 'non_veg' in bpp/providers[${i}]`
+                    errorObj[key] =
+                      `item_id: ${item.id} should have veg_nonveg one of the 'veg', 'non_veg' in bpp/providers[${i}]`
                   }
                 }
 
@@ -732,31 +692,27 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
             if ('list' in sc) {
               if (sc.list.length != 5) {
                 const key = `prvdr${i}tags${t}`
-                errorObj[
-                  key
-                ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract`
+                errorObj[key] =
+                  `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract`
               }
 
               //checking location
               const loc = sc.list.find((elem: any) => elem.code === 'location') || ''
               if (!loc) {
                 const key = `prvdr${i}tags${t}loc`
-                errorObj[
-                  key
-                ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (location is missing)`
+                errorObj[key] =
+                  `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (location is missing)`
               } else {
                 if ('value' in loc) {
                   if (!prvdrLocId.has(loc.value)) {
                     const key = `prvdr${i}tags${t}loc`
-                    errorObj[
-                      key
-                    ] = `location in serviceability construct should be one of the location ids bpp/providers[${i}]/locations`
+                    errorObj[key] =
+                      `location in serviceability construct should be one of the location ids bpp/providers[${i}]/locations`
                   }
                 } else {
                   const key = `prvdr${i}tags${t}loc`
-                  errorObj[
-                    key
-                  ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (location is missing)`
+                  errorObj[key] =
+                    `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (location is missing)`
                 }
               }
 
@@ -764,22 +720,19 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
               const ctgry = sc.list.find((elem: any) => elem.code === 'category') || ''
               if (!ctgry) {
                 const key = `prvdr${i}tags${t}ctgry`
-                errorObj[
-                  key
-                ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (category is missing)`
+                errorObj[key] =
+                  `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (category is missing)`
               } else {
                 if ('value' in ctgry) {
                   if (!itemCategory_id.has(ctgry.value)) {
                     const key = `prvdr${i}tags${t}ctgry`
-                    errorObj[
-                      key
-                    ] = `category in serviceability construct should be one of the category ids bpp/providers[${i}]/items/category_id`
+                    errorObj[key] =
+                      `category in serviceability construct should be one of the category ids bpp/providers[${i}]/items/category_id`
                   }
                 } else {
                   const key = `prvdr${i}tags${t}ctgry`
-                  errorObj[
-                    key
-                  ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (category is missing)`
+                  errorObj[key] =
+                    `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (category is missing)`
                 }
               }
 
@@ -787,9 +740,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
               const type = sc.list.find((elem: any) => elem.code === 'type') || ''
               if (!type) {
                 const key = `prvdr${i}tags${t}type`
-                errorObj[
-                  key
-                ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (type is missing)`
+                errorObj[key] =
+                  `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (type is missing)`
               } else {
                 if ('value' in type) {
                   switch (type.value) {
@@ -802,15 +754,13 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
                         if ('value' in val) {
                           if (isNaN(val.value)) {
                             const key = `prvdr${i}tags${t}valvalue`
-                            errorObj[
-                              key
-                            ] = `value should be a number (code:"val") for type 10 (hyperlocal) in /bpp/providers[${i}]/tags[${t}]`
+                            errorObj[key] =
+                              `value should be a number (code:"val") for type 10 (hyperlocal) in /bpp/providers[${i}]/tags[${t}]`
                           }
                         } else {
                           const key = `prvdr${i}tags${t}val`
-                          errorObj[
-                            key
-                          ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "val")`
+                          errorObj[key] =
+                            `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "val")`
                         }
 
                         //checking unit
@@ -818,15 +768,13 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
                         if ('value' in unit) {
                           if (unit.value != 'km') {
                             const key = `prvdr${i}tags${t}unitvalue`
-                            errorObj[
-                              key
-                            ] = `value should be "km" (code:"unit") for type 10 (hyperlocal) in /bpp/providers[${i}]/tags[${t}]`
+                            errorObj[key] =
+                              `value should be "km" (code:"unit") for type 10 (hyperlocal) in /bpp/providers[${i}]/tags[${t}]`
                           }
                         } else {
                           const key = `prvdr${i}tags${t}unit`
-                          errorObj[
-                            key
-                          ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "unit")`
+                          errorObj[key] =
+                            `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "unit")`
                         }
                       }
 
@@ -842,16 +790,14 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
                           pincodes.forEach((pincode: any) => {
                             if (isNaN(pincode) || pincode.length != 6) {
                               const key = `prvdr${i}tags${t}valvalue`
-                              errorObj[
-                                key
-                              ] = `value should be a valid range of pincodes (code:"val") for type 11 (intercity) in /bpp/providers[${i}]/tags[${t}]`
+                              errorObj[key] =
+                                `value should be a valid range of pincodes (code:"val") for type 11 (intercity) in /bpp/providers[${i}]/tags[${t}]`
                             }
                           })
                         } else {
                           const key = `prvdr${i}tags${t}val`
-                          errorObj[
-                            key
-                          ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "val")`
+                          errorObj[key] =
+                            `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "val")`
                         }
 
                         //checking unit
@@ -859,15 +805,13 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
                         if ('value' in unit) {
                           if (unit.value != 'pincode') {
                             const key = `prvdr${i}tags${t}unitvalue`
-                            errorObj[
-                              key
-                            ] = `value should be "pincode" (code:"unit") for type 11 (intercity) in /bpp/providers[${i}]/tags[${t}]`
+                            errorObj[key] =
+                              `value should be "pincode" (code:"unit") for type 11 (intercity) in /bpp/providers[${i}]/tags[${t}]`
                           }
                         } else {
                           const key = `prvdr${i}tags${t}unit`
-                          errorObj[
-                            key
-                          ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "unit")`
+                          errorObj[key] =
+                            `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "unit")`
                         }
                       }
 
@@ -881,15 +825,13 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
                         if ('value' in val) {
                           if (val.value != 'IND') {
                             const key = `prvdr${i}tags${t}valvalue`
-                            errorObj[
-                              key
-                            ] = `value should be "IND" (code:"val") for type 12 (PAN India) in /bpp/providers[${i}]tags[${t}]`
+                            errorObj[key] =
+                              `value should be "IND" (code:"val") for type 12 (PAN India) in /bpp/providers[${i}]tags[${t}]`
                           }
                         } else {
                           const key = `prvdr${i}tags${t}val`
-                          errorObj[
-                            key
-                          ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "val")`
+                          errorObj[key] =
+                            `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "val")`
                         }
 
                         //checking unit
@@ -897,31 +839,27 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
                         if ('value' in unit) {
                           if (unit.value != 'country') {
                             const key = `prvdr${i}tags${t}unitvalue`
-                            errorObj[
-                              key
-                            ] = `value should be "country" (code:"unit") for type 12 (PAN India) in /bpp/providers[${i}]tags[${t}]`
+                            errorObj[key] =
+                              `value should be "country" (code:"unit") for type 12 (PAN India) in /bpp/providers[${i}]tags[${t}]`
                           }
                         } else {
                           const key = `prvdr${i}tags${t}unit`
-                          errorObj[
-                            key
-                          ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "unit")`
+                          errorObj[key] =
+                            `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "unit")`
                         }
                       }
 
                       break
                     default: {
                       const key = `prvdr${i}tags${t}type`
-                      errorObj[
-                        key
-                      ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (invalid type "${type.value}")`
+                      errorObj[key] =
+                        `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (invalid type "${type.value}")`
                     }
                   }
                 } else {
                   const key = `prvdr${i}tags${t}type`
-                  errorObj[
-                    key
-                  ] = `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (type is missing)`
+                  errorObj[key] =
+                    `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (type is missing)`
                 }
               }
             }

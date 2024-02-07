@@ -532,6 +532,7 @@ export const onSearchSchema = {
                                 count: {
                                   type: 'string',
                                   enum: ['99', '0'],
+                                  errorMessage:'available/count must be equal to one of the allowed values i.e 99(if in stock) or 0(if not in stock))'
                                 },
                               },
                               required: ['count'],

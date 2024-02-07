@@ -146,6 +146,7 @@ export const FnBonSelectSchema = {
                   },
                   '@ondc/org/TAT': {
                     type: 'string',
+                    format: 'duration'
                   },
                   state: {
                     type: 'object',

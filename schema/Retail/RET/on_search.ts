@@ -711,56 +711,8 @@ export const onSearchSchema = {
                               },
                             },
                             required: ['code', 'value'],
+                            additionalProperties: false,
                             allOf: [
-                              {
-                                if: {
-                                  properties: {
-                                    code: {
-                                      const: 'catalog_link',
-                                    },
-                                  },
-                                },
-                                then: {
-                                  properties: {
-                                    value: {
-                                      pattern: '^(link|inline)$',
-                                    },
-                                  },
-                                  anyOf: [
-                                    {
-                                      if: {
-                                        properties: {
-                                          value: {
-                                            const: 'link',
-                                          },
-                                        },
-                                      },
-                                      then: {
-                                        properties: {
-                                          type_value: {
-                                            format: 'uri',
-                                          },
-                                        },
-                                        required: ['type_value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        properties: {
-                                          value: {
-                                            const: 'inline',
-                                          },
-                                        },
-                                      },
-                                      then: {
-                                        not: {
-                                          required: ['type_value'],
-                                        },
-                                      },
-                                    },
-                                  ],
-                                },
-                              },
                               {
                                 if: {
                                   properties: {
@@ -805,6 +757,7 @@ export const onSearchSchema = {
                                 then: {
                                   properties: {
                                     value: {
+                                      format:"float",
                                       pattern: '^\\d+(\\.\\d{1,2})?$',
                                     },
                                   },
@@ -815,6 +768,7 @@ export const onSearchSchema = {
                         },
                       },
                       required: ['code', 'list'],
+                      additionalProperties: false
                     },
                   },
                 },

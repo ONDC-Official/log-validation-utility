@@ -120,36 +120,19 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         if (e.code === 'tax_number') {
           if (!e.value) {
             logger.error(`value must be present for tax_number in ${constants.ON_INIT}`)
+            onInitObj.taxNumberValue = `value must be present for tax_number in ${constants.ON_INIT}`
           }
           tax_number = e
         }
       })
       if (_.isEmpty(tax_number)) {
         logger.error(`tax_number must present in ${constants.ON_INIT}`)
+        onInitObj.taxNumber = `tax_number must be present for ${constants.ON_INIT}`
       }
     } catch (error: any) {
       logger.error(`tax_number not present in tags for ${constants.ON_INIT}`)
     }
 
-    try {
-      logger.info(`Checking provider Id and provider_location Id in /${constants.ON_SEARCH} and /${constants.ON_INIT}`)
-      if (!on_init.provider || on_init.provider.id != getValue('providerId')) {
-        onInitObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.ON_INIT}`
-      }
-
-      if (
-        on_init.hasOwnProperty('provider_location') &&
-        (!on_init.provider_location.id || on_init.provider_location.id != getValue('providerLoc'))
-      ) {
-        onInitObj.prvdrLoc = `provider_location.id mismatches in /${constants.ON_SEARCH} and /${constants.ON_INIT}`
-      } else if (!on_init.hasOwnProperty('provider_location')) {
-        onInitObj.prvdrloc = `provider_location object is missing in /${constants.ON_INIT}`
-      }
-    } catch (error: any) {
-      logger.error(
-        `!!Error while comparing provider Id and location Id in /${constants.ON_SEARCH} and /${constants.ON_INIT}, ${error.stack}`,
-      )
-    }
 
     try {
       logger.info(`Comparing item Ids and fulfillment Ids in /${constants.ON_SELECT} and /${constants.ON_INIT}`)

@@ -14,6 +14,8 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
 --data '{
     "domain": "",
     "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
         "search_full_catalog_refresh": {},
         "on_search_full_catalog_refresh": {},
@@ -40,6 +42,8 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
 --data-raw '{
     "domain": "ONDC:RET10",
     "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
         "search_full_catalog_refresh": {
             "context": {
@@ -272,6 +276,7 @@ If your log are successfully approved, you will receive a similar response as de
     "message": "Logs were verified successfully",
     "report": {},
     "bap_id": "BUYER_APP_ID", // example: buyer-app-preprod-v2.ondc.org
+    "bpp_id": "SELLER_APP_ID", // example: seller-app-preprod-v2.ondc.org
     "domain": "DOMAIN", // example: ONDC:RET10
     "reportTimestamp": "2024-02-08T08:10:10.805Z"
   },
@@ -556,6 +561,8 @@ curl --location --request POST 'http://localhost:3006/api/validate' \
 --data '{
     "domain": "",
     "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
         "search_full_catalog_refresh": {},
         "on_search_full_catalog_refresh": {},
@@ -582,6 +589,8 @@ curl --location 'https://localhost:3006/api/validate/igm' \
 --data '{
     "domain": "",
     "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
         "ret_issue": {},
         "ret_issue_close":{},
@@ -607,6 +616,8 @@ curl --location 'https://log-validation.ondc.org/api/validate/fis/fis12' \
     "domain": "ONDC:FIS12",
     "version": "2.0.0",
     "flow": "PERSONAL",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
     "search": {},
         "on_search":{},
@@ -641,6 +652,8 @@ curl --location 'https://localhost:3006/api/validate/trv/trv10' \
     "domain": "ONDC:TRV10",
     "version": "2.0.0",
     "flow": "RIDER_CANCEL",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
         "search": {},
         "on_search":{},

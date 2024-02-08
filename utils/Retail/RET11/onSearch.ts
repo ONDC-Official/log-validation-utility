@@ -622,7 +622,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
                 const areaWithCity = compareCitywithPinCode(area_code, city)
                 if (!areaWithCity) {
                   const key = `message.catalog.bpp/providers[0]locations[0]address.city`
-                  errorObj[key] = `STD code does not match with correct area_code on /${constants.ON_SEARCH}`
+                  errorObj[key] = `City  does not match with correct area_code on /${constants.ON_SEARCH}`
                   logger.error(`City does not match with correct area_code on /${constants.ON_SEARCH}`)
                 }
               } else {

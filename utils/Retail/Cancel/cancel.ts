@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import _ from 'lodash'
-import constants, { ApiSequence, buyerCancellationRid } from '../../../constants'
+import constants, { ApiSequence, buyerCancellationRid, rtoCancellationRid } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, checkBppIdOrBapId } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
@@ -93,12 +93,18 @@ export const checkCancel = (data: any) => {
     }
 
     try {
-      logger.info('Checking the validity of cancellation reason id')
+      logger.info('Checking the validity of cancellation reason id for buyer')
       if (!buyerCancellationRid.has(cancel.cancellation_reason_id)) {
         logger.info(`cancellation_reason_id should be a valid cancellation id (buyer app initiated)`)
 
         cnclObj.cancelRid = `Cancellation reason id is not a valid reason id (buyer app initiated)`
       } else setValue('cnclRid', cancel.cancellation_reason_id)
+
+      if (!rtoCancellationRid.has(cancel.cancellation_reason_id)) {
+        logger.info(`cancellation_reason_id should be a valid cancellation id (RTO initiated)`)
+
+        cnclObj.RTOcancelRid = `Cancellation reason id is not a valid reason id (RTO initiated)`
+      } else setValue('rtoCnclRid', cancel.cancellation_reason_id)
     } catch (error: any) {
       logger.info(`Error while checking validity of cancellation reason id /${constants.CANCEL}, ${error.stack}`)
     }

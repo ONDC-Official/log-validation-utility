@@ -616,6 +616,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
                   errorObj[key] = `area_code does not match with correct STD code on /${constants.ON_SEARCH}`
                   logger.error(`STD code does not match with correct area_code on /${constants.ON_SEARCH}`)
                 }
+
                 logger.info(`Comparing area_code and city for /${constants.ON_SEARCH}`)
                 const areaWithCity = compareCitywithPinCode(area_code, city)
                 if (!areaWithCity) {

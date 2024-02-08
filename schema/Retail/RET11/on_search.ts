@@ -524,7 +524,7 @@ export const FnBonSearchSchema = {
                           items: {
                             type: 'string',
                             pattern: '^[a-zA-Z0-9]{1,12}:[a-zA-Z0-9]{1,12}$',
-                            errorMessage: 'category_ids should be as per API contract',
+                            errorMessage: 'format of category_ids must be followed as per API contract',
                           },
                         },
                         fulfillment_id: {

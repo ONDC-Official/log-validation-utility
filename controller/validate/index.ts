@@ -1,4 +1,3 @@
-/* eslint-disable no-case-declarations */
 import { Response, Request } from 'express'
 import _ from 'lodash'
 import { validateActionSchema } from '../../shared/validateLogs'
@@ -12,20 +11,11 @@ import { verify, hash } from '../../shared/crypto'
 const controller = {
   validate: async (req: Request, res: Response): Promise<Response | void> => {
     try {
-      const { domain, version, payload, flow } = req.body
+      const { domain, version, payload, flow, bap_id, bpp_id } = req.body
+
       let result: { response?: string; success?: boolean; message?: string } = {}
       const splitPath = req.originalUrl.split('/')
       const pathUrl = splitPath[splitPath.length - 1]
-
-      // Assuming 'payload' is the object you provided
-      const payloadElement = payload['search_full_catalog_refresh']
-      if (!payloadElement || !payloadElement.context) {
-        // Handle the error appropriately, e.g., throw an error or return a response with an error message
-        throw new Error('Payload structure is incorrect')
-      }
-
-      const bap_id = payloadElement.context.bap_id
-      const bpp_id = payloadElement.context.bpp_id
 
       const normalisedDomain = helper.getEnumForDomain(pathUrl)
 
@@ -56,8 +46,8 @@ const controller = {
 
           break
         case DOMAIN.IGM:
+          // eslint-disable-next-line no-case-declarations
           const { response, success, message } = await helper.validateIGM(payload, version)
-
           result = { response, success, message }
           break
         default:

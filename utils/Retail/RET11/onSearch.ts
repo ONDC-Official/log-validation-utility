@@ -17,7 +17,7 @@ import {
   compareCitywithPinCode,
   compareSTDwithArea,
 } from '../../../utils'
-import { Category_ID, fnbCategories } from '../../enum'
+import { fnbCategories } from '../../enum'
 import _ from 'lodash'
 
 export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
@@ -662,22 +662,13 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
         if (retailDomains.includes(domain)) {
           const items = onSearchCatalog['bpp/providers'][0].items
           items.forEach((e: any, index: number) => {
-            if (!Category_ID.includes(e.category_id)) {
+            if (!fnbCategories.includes(e.category_id)) {
               logger.error(
                 `Invalid catrgory ID found at item[${index}] at message/catalog/bpp/providers/0/items/${index}/category_id`,
               )
-              errorObj.inVldCtgrID = `Invalid catrgory ID found at item[${index}] at message/catalog/bpp/providers/0/items/${index}/category_id for ${constants.ON_SEARCH}`
-            } else {
-              const itemName = onSearchCatalog['bpp/providers'][0].items[index].descriptor.name
-
-              if (!fnbCategories.includes(itemName)) {
-                logger.error(
-                  `Invalid Item name  found at item[${index}] at message/catalog/bpp/providers/0/items/${index}/descriptor/name for ${constants.ON_SEARCH}`,
-                )
-                let key = `inVldItmName[${index}]`
-                errorObj[key] =
-                  `Invalid Item name  found at item[${index}] at message/catalog/bpp/providers/0/items/${index}/descriptor/name for ${constants.ON_SEARCH}`
-              }
+              let key = `inVldCtgrID[${index}]`
+              errorObj[key] =
+                `Invalid catrgory ID found at item[${index}] at message/catalog/bpp/providers/0/items/${index}/category_id for ${constants.ON_SEARCH}`
             }
           })
         } else {

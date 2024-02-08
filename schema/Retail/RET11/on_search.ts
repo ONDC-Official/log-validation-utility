@@ -1,4 +1,4 @@
-import { Category_ID } from '../../../utils/enum'
+import { fnbCategories } from '../../../utils/enum'
 
 export const FnBonSearchSchema = {
   type: 'object',
@@ -517,7 +517,7 @@ export const FnBonSearchSchema = {
                         },
                         category_id: {
                           type: 'string',
-                          enum: Category_ID,
+                          enum: fnbCategories,
                         },
                         category_ids: {
                           type: 'array',

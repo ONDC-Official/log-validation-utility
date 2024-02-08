@@ -81,6 +81,7 @@ export const fnbCategories = [
   'Waffle',
   'Wrap',
   'Yogurt',
+  'F&B',
 ]
 
 export const retailPymntTtl = {

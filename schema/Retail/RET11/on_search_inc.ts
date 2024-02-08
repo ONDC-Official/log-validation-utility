@@ -82,7 +82,7 @@ export const FnBonSearchIncSchema = {
                   },
                   type: {
                     type: 'string',
-                    enum: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
+                    enum: ['Delivery', 'Self-Pickup', 'Delivery and Self-Pickup'],
                   },
                 },
                 required: ['id', 'type'],

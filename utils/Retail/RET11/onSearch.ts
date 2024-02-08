@@ -399,14 +399,11 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
             const sPrice = parseFloat(item.price.value)
             const maxPrice = parseFloat(item.price.maximum_value)
 
-            const lower = parseFloat(item.price.tags[0].list[0].value)
-            const upper = parseFloat(item.price.tags[0].list[1].value)
+            const lower = parseFloat(item.price?.tags?.[0].list[0].value)
+            const upper = parseFloat(item.price?.tags?.[0].list[1].value)
 
-            const default_selection_value = parseFloat(item.price.tags[1].list[0].value)
-            const default_selection_max_value = parseFloat(item.price.tags[1].list[1].value)
-
-            console.log('value==>', default_selection_value)
-            console.log('max_value==>', default_selection_max_value)
+            const default_selection_value = parseFloat(item.price?.tags?.[1].list[0].value)
+            const default_selection_max_value = parseFloat(item.price?.tags?.[1].list[1].value)
 
             if (sPrice > maxPrice) {
               const key = `prvdr${i}item${j}Price`

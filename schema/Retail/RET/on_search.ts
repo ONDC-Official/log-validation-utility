@@ -486,8 +486,9 @@ export const onSearchSchema = {
                             },
                             code: {
                               type: 'string',
-                              pattern: '^(\\d{8}|\\d{12}|\\d{13}|\\d{14})$',
-                              errorMessage: 'Should be EAN of 13 digits or GTIN of length- 8/12/13/14.',
+                              pattern: '^(1|2|3|4|5):[a-zA-Z0-9]+$',
+                              errorMessage:
+                                'item/descriptor/code should be in this format - "type:code" where type is 1 - EAN, 2 - ISBN, 3 - GTIN, 4 - HSN, 5 - others',
                             },
                             symbol: {
                               type: 'string',
@@ -768,7 +769,8 @@ export const onSearchSchema = {
                                     value: {
                                       type: 'string',
                                       pattern: '^\\d+(\\.\\d{1,2})?$',
-                                      errorMessage: 'Amount must be a number with up to 2 decimal places.',
+                                      errorMessage:
+                                        'amount must be in stringified number format with up to 2 decimal places',
                                     },
                                   },
                                 },

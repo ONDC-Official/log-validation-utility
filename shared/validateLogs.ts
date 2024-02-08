@@ -34,6 +34,9 @@ import checkOnIssueStatus from '../utils/igm/retOnIssueStatus'
 import checkOnIssueStatusUnsolicited from '../utils/igm/retOnIssueStatus(unsolicited)'
 import checkLspIssueClose from '../utils/igm/lspIssue(close)'
 import checkIssueClose from '../utils/igm/retIssueClose'
+import * as schema from '../schema/RSF'
+import { validate } from './joiValidator'
+import Joi from 'joi'
 
 export const validateLogs = async (data: any, domain: string) => {
   const msgIdSet = new Set()
@@ -311,6 +314,26 @@ export const validateLogs = async (data: any, domain: string) => {
     logger.error(error.message)
     return error.message
   }
+}
+
+export const RSFValidateLogs = async (payload: Record<string, any>): Promise<Record<string, object>> => {
+  const logReport: Record<string, object> = {}
+  try {
+    const keys: Record<string, Joi.ObjectSchema> = {
+      settle: schema.settle,
+      on_settle: schema.onSettle,
+      receiver_recon: schema.receiverRecon,
+      on_receiver_recon: schema.onReceiverRecon,
+    }
+    for (let key in keys) {
+      logReport[key] = await validate(keys[key], payload[key])
+    }
+  } catch (error: any) {
+    logger.error(error)
+    return error.message
+  }
+  logger.info(logReport)
+  return logReport
 }
 
 export const IGMvalidateLogs = (data: any) => {

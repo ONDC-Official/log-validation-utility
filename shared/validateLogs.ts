@@ -47,7 +47,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
 
   try {
     if (domain === 'ONDC:RET11') {
-      if (flow === '1'){
+      if (flow === '1') {
         if (data[ApiSequence.SEARCH]) {
           const searchFullCatalogRefreshResp = checkSearchFullCatalogRefresh(data[ApiSequence.SEARCH], msgIdSet)
           if (!_.isEmpty(searchFullCatalogRefreshResp)) {
@@ -80,7 +80,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         logger.info(logReport, 'Report Generated Successfully!!')
         return logReport
       }
-      if (flow === '2'){
+      if (flow === '2') {
         if (data[ApiSequence.SEARCH]) {
           const searchFullCatalogRefreshResp = checkSearchFullCatalogRefresh(data[ApiSequence.SEARCH], msgIdSet)
           if (!_.isEmpty(searchFullCatalogRefreshResp)) {
@@ -194,7 +194,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         logger.info(logReport, 'Report Generated Successfully!!')
         return logReport
       }
-      if (flow === '3'){
+      if (flow === '3') {
         if (data[ApiSequence.SEARCH]) {
           const searchFullCatalogRefreshResp = checkSearchFullCatalogRefresh(data[ApiSequence.SEARCH], msgIdSet)
           if (!_.isEmpty(searchFullCatalogRefreshResp)) {
@@ -307,7 +307,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         logger.info(logReport, 'Report Generated Successfully!!')
         return logReport
       }
-      if (flow === '4'){
+      if (flow === '4') {
         if (data[ApiSequence.SEARCH]) {
           const searchFullCatalogRefreshResp = checkSearchFullCatalogRefresh(data[ApiSequence.SEARCH], msgIdSet)
           if (!_.isEmpty(searchFullCatalogRefreshResp)) {
@@ -393,7 +393,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       if (!retailDomains.includes(domain)) {
         return 'Domain should be one of the 1.2.0 retail domains'
       }
-      if (flow === '1'){
+      if (flow === '1') {
         if (data[ApiSequence.SEARCH]) {
           const searchFullCatalogRefreshResp = checkSearch(data[ApiSequence.SEARCH], msgIdSet)
           if (!_.isEmpty(searchFullCatalogRefreshResp)) {
@@ -422,8 +422,10 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
             logReport = { ...logReport, [ApiSequence.INC_ONSEARCH]: onSearchIncrementalRefreshResp }
           }
         }
+        logger.info(logReport, 'Report Generated Successfully!!')
+        return logReport
       }
-      if (flow === '2'){
+      if (flow === '2') {
         if (data[ApiSequence.SEARCH]) {
           const searchFullCatalogRefreshResp = checkSearch(data[ApiSequence.SEARCH], msgIdSet)
           if (!_.isEmpty(searchFullCatalogRefreshResp)) {
@@ -437,7 +439,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
             logReport = { ...logReport, [ApiSequence.ON_SEARCH]: onSearchFullCatalogRefreshResp }
           }
         }
-        
+
         if (data[ApiSequence.SELECT]) {
           const selectResp = checkSelect(data[ApiSequence.SELECT], msgIdSet)
 
@@ -521,7 +523,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         logger.info(logReport, 'Report Generated Successfully!!')
         return logReport
       }
-      if (flow === '3'){
+      if (flow === '3') {
         if (data[ApiSequence.SEARCH]) {
           const searchFullCatalogRefreshResp = checkSearch(data[ApiSequence.SEARCH], msgIdSet)
           if (!_.isEmpty(searchFullCatalogRefreshResp)) {
@@ -535,7 +537,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
             logReport = { ...logReport, [ApiSequence.ON_SEARCH]: onSearchFullCatalogRefreshResp }
           }
         }
-        
+
         if (data[ApiSequence.SELECT]) {
           const selectResp = checkSelect(data[ApiSequence.SELECT], msgIdSet)
 
@@ -619,7 +621,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         logger.info(logReport, 'Report Generated Successfully!!')
         return logReport
       }
-      if (flow === '4'){
+      if (flow === '4') {
         if (data[ApiSequence.SEARCH]) {
           const searchFullCatalogRefreshResp = checkSearch(data[ApiSequence.SEARCH], msgIdSet)
           if (!_.isEmpty(searchFullCatalogRefreshResp)) {
@@ -633,7 +635,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
             logReport = { ...logReport, [ApiSequence.ON_SEARCH]: onSearchFullCatalogRefreshResp }
           }
         }
-        
+
         if (data[ApiSequence.SELECT]) {
           const selectResp = checkSelect(data[ApiSequence.SELECT], msgIdSet)
 

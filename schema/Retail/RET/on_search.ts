@@ -90,7 +90,7 @@ export const onSearchSchema = {
                   },
                   type: {
                     type: 'string',
-                    enum: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
+                    enum: ['Delivery', 'Self-Pickup', 'Delivery and Self-Pickup'],
                   },
                 },
                 required: ['id', 'type'],
@@ -104,7 +104,7 @@ export const onSearchSchema = {
                 },
                 symbol: {
                   type: 'string',
-                  pattern: '^$|^https?:\\/\\/[^\\s]*',
+                  format: 'url',
                   errorMessage: 'descriptor/symbol should be URLs or can be empty strings as well',
                 },
                 short_desc: {

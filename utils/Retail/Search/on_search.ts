@@ -497,8 +497,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           logger.info(`Checking fulfillment_id for item id: ${item.id}`)
 
           if ('price' in item) {
-            const upper = parseFloat(item.price.tags[0].list[1].value)
-            const lower = parseFloat(item.price.tags[0].list[0].value)
+            const upper = parseFloat(item.price?.tags?.[0].list[1].value)
+            const lower = parseFloat(item.price?.tags?.[0].list[0].value)
 
             if (upper > lower) {
               const key = `prvdr${i}item${j}Price/tags/list`

@@ -85,7 +85,7 @@ export const FnBonSearchSchema = {
                   },
                   type: {
                     type: 'string',
-                    enum: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
+                    enum: ['Delivery', 'Self-Pickup', 'Delivery and Self-Pickup'],
                   },
                 },
                 required: ['id', 'type'],
@@ -140,8 +140,14 @@ export const FnBonSearchSchema = {
                   fulfillments: {
                     type: 'array',
                     items: {
-                      type: 'object',
                       properties: {
+                        id: {
+                          type: 'string',
+                        },
+                        type: {
+                          type: 'string',
+                          enum: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
+                        },
                         contact: {
                           type: 'object',
                           properties: {

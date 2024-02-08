@@ -547,6 +547,7 @@ export const FnBonInitSchema = {
             },
           },
           required: ['provider', 'items', 'billing', 'fulfillments', 'quote', 'payment', 'tags'],
+          additionalProperties: false,
         },
       },
       required: ['order'],

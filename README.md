@@ -270,9 +270,13 @@ If your log are successfully approved, you will receive a similar response as de
   "success": true,
   "response": {
     "message": "Logs were verified successfully",
-    "signature": "bM9OD0PUQ6J0vtXNST/nlLnZmDFB2FysCVc+DEficPh+Crx6uUdZhR33mbn9ePUrjn7Vl0qQWckyVxVpcYyDAQ==",
-    "signTimestamp": "2024-01-23T14:15:21.719Z"
-  }
+    "report": {},
+    "bap_id": "BUYER_APP_ID", // example: buyer-app-preprod-v2.ondc.org
+    "domain": "DOMAIN", // example: ONDC:RET10
+    "reportTimestamp": "2024-02-08T08:10:10.805Z"
+  },
+  "signature": "Ishpxpy8p3SPE1CXnMTkxKDt9S/X7v8OigL4DqVWphcr0jXTQOPotX/Y710WKZoCvWgCDOJahf7sXvJzgmRHAg==",
+  "signTimestamp": "2024-02-08T08:10:10.805Z"
 }
 ```
 

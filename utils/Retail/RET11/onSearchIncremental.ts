@@ -8,7 +8,7 @@ import _, { isEmpty } from 'lodash'
 
 export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [ApiSequence.INC_ONSEARCH]: 'Json cannot be empty' }
+    return { [ApiSequence.INC_ONSEARCH]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data
@@ -452,7 +452,7 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
                           const key = `prvdr${i}item${j}tag${index}veg_nonveg`
                           errorObj[
                             key
-                          ] = `item_id: ${item.id} should have veg_nonveg one of the 'veg', 'non_veg', 'egg' in bpp/providers[${i}]`
+                          ] = `item_id: ${item.id} should have veg_nonveg one of the 'veg', 'non_veg' or 'egg' in bpp/providers[${i}]`
                         }
                       }
 

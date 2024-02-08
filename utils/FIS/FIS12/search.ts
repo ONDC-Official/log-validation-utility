@@ -40,7 +40,6 @@ export const search = (data: any, msgIdSet: any, flow: string) => {
       logger.info(`Validating category in /${constants.SEARCH}`)
       const code = data.message.intent?.category?.descriptor?.code
       if (code) {
-        console.log('fisFlows[flow as keyof typeof fisFlows]', fisFlows[flow as keyof typeof fisFlows], code)
         if (code != fisFlows[flow as keyof typeof fisFlows]) {
           errorObj['category'] = `code must be in a standard enum format as ${
             fisFlows[flow as keyof typeof fisFlows]
@@ -69,7 +68,6 @@ export const search = (data: any, msgIdSet: any, flow: string) => {
 
       // Validate payment tags
       const tagsValidation = validatePaymentTags(payment.tags)
-      console.log('tagsValidation', tagsValidation)
       if (!tagsValidation.isValid) {
         Object.assign(errorObj, { tags: tagsValidation.errors })
       }

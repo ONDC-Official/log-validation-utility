@@ -51,10 +51,12 @@ export const onSearchSchema = {
         timestamp: {
           type: 'string',
           format: 'date-time',
+          errorMessage: 'Time must be RFC3339 UTC timestamp format.',
         },
         ttl: {
           type: 'string',
           format: 'duration',
+          errorMessage: 'Duration must be RFC3339 duration.',
         },
       },
       required: [
@@ -102,6 +104,8 @@ export const onSearchSchema = {
                 },
                 symbol: {
                   type: 'string',
+                  format: 'url',
+                  errorMessage: 'descriptor/symbol should be URLs or can be empty strings as well',
                 },
                 short_desc: {
                   type: 'string',
@@ -113,10 +117,101 @@ export const onSearchSchema = {
                   type: 'array',
                   items: {
                     type: 'string',
+                    pattern: '^$|^https?:\\/\\/[^\\s]*',
+                    errorMessage: 'descriptor/images [] should be URLs or can be empty strings as well',
+                  },
+                },
+                tags: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      code: {
+                        type: 'string',
+                        enum: ['bpp_terms'],
+                      },
+                      list: {
+                        type: 'array',
+                        items: {
+                          oneOf: [
+                            {
+                              if: {
+                                properties: {
+                                  code: { const: 'np_type' },
+                                },
+                              },
+                              then: {
+                                type: 'object',
+                                properties: {
+                                  code: {
+                                    type: 'string',
+                                    enum: ['np_type'],
+                                  },
+                                  value: {
+                                    type: 'string',
+                                    enum: ['MSN', 'ISN'],
+                                  },
+                                },
+                                required: ['code', 'value'],
+                                additionalProperties: false,
+                              },
+                            },
+                            {
+                              if: {
+                                properties: {
+                                  code: { const: 'accept_bap_terms' },
+                                },
+                              },
+                              then: {
+                                type: 'object',
+                                properties: {
+                                  code: {
+                                    type: 'string',
+                                    enum: ['accept_bap_terms'],
+                                  },
+                                  value: {
+                                    type: 'string',
+                                    enum: ['Y', 'N'],
+                                  },
+                                },
+                                required: ['code', 'value'],
+                                additionalProperties: false,
+                              },
+                            },
+                            {
+                              if: {
+                                properties: {
+                                  code: { const: 'collect_payment' },
+                                },
+                              },
+                              then: {
+                                type: 'object',
+                                properties: {
+                                  code: {
+                                    type: 'string',
+                                    enum: ['collect_payment'],
+                                  },
+                                  value: {
+                                    type: 'string',
+                                    enum: ['Y', 'N'],
+                                  },
+                                },
+                                required: ['code', 'value'],
+                                additionalProperties: false,
+                              },
+                            },
+                          ],
+                        },
+                        minItems: 1,
+                      },
+                    },
+                    required: ['code', 'list'],
+                    additionalProperties: false,
                   },
                 },
               },
-              required: ['name', 'symbol', 'short_desc', 'long_desc', 'images'],
+              required: ['name', 'short_desc', 'long_desc', 'tags'],
+              additionalProperties: true,
             },
             'bpp/providers': {
               type: 'array',
@@ -391,6 +486,9 @@ export const onSearchSchema = {
                             },
                             code: {
                               type: 'string',
+                              pattern: '^(1|2|3|4|5):[a-zA-Z0-9]+$',
+                              errorMessage:
+                                'item/descriptor/code should be in this format - "type:code" where type is 1 - EAN, 2 - ISBN, 3 - GTIN, 4 - HSN, 5 - others',
                             },
                             symbol: {
                               type: 'string',
@@ -408,7 +506,7 @@ export const onSearchSchema = {
                               },
                             },
                           },
-                          required: ['name', 'symbol', 'short_desc', 'long_desc', 'images'],
+                          required: ['name', 'symbol', 'short_desc', 'long_desc', 'images', 'code'],
                         },
                         quantity: {
                           type: 'object',
@@ -437,6 +535,8 @@ export const onSearchSchema = {
                                 count: {
                                   type: 'string',
                                   enum: ['99', '0'],
+                                  errorMessage:
+                                    'available/count must be equal to one of the allowed values i.e 99(if in stock) or 0(if not in stock))',
                                 },
                               },
                               required: ['count'],
@@ -619,10 +719,68 @@ export const onSearchSchema = {
                               },
                             },
                             required: ['code', 'value'],
+                            additionalProperties: false,
+                            allOf: [
+                              {
+                                if: {
+                                  properties: {
+                                    code: {
+                                      const: 'type_validity',
+                                    },
+                                  },
+                                },
+                                then: {
+                                  properties: {
+                                    value: {
+                                      format: 'duration',
+                                      errorMessage: 'Duration must be RFC3339 duration.',
+                                    },
+                                  },
+                                },
+                              },
+                              {
+                                if: {
+                                  properties: {
+                                    code: {
+                                      const: 'last_update',
+                                    },
+                                  },
+                                },
+                                then: {
+                                  properties: {
+                                    value: {
+                                      description: 'RFC3339 UTC timestamp format',
+                                      format: 'date-time',
+                                      errorMessage: 'Time must be RFC3339 UTC timestamp format.',
+                                    },
+                                  },
+                                },
+                              },
+                              {
+                                if: {
+                                  properties: {
+                                    code: {
+                                      const: 'min_value',
+                                    },
+                                  },
+                                },
+                                then: {
+                                  properties: {
+                                    value: {
+                                      type: 'string',
+                                      pattern: '^\\d+(\\.\\d{1,2})?$',
+                                      errorMessage:
+                                        'amount must be in stringified number format with up to 2 decimal places',
+                                    },
+                                  },
+                                },
+                              },
+                            ],
                           },
                         },
                       },
                       required: ['code', 'list'],
+                      additionalProperties: false,
                     },
                   },
                 },

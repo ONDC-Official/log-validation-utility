@@ -19,7 +19,7 @@ export const checkOnConfirm = (data: any) => {
   const onCnfrmObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.ON_CONFIRM]: 'Json cannot be empty' }
+      return { [ApiSequence.ON_CONFIRM]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -69,7 +69,7 @@ export const checkOnConfirm = (data: any) => {
         const timeDiff = timeDifference(context.timestamp, tmpstmp)
         logger.info(timeDiff)
         if (timeDiff > 5000) {
-          onCnfrmObj.tmpstmp = `context/timestamp difference between /${constants.ON_CONFIRM} and /${constants.CONFIRM} should be smaller than 5 sec`
+          onCnfrmObj.tmpstmp = `context/timestamp difference between /${constants.ON_CONFIRM} and /${constants.CONFIRM} should be less than 5 sec`
         }
       }
 

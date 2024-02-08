@@ -1,5 +1,4 @@
 /* eslint-disable no-prototype-builtins */
-// import _ from 'lodash'
 import constants, {
   mobilitySequence,
   MOB_VEHICLE_CATEGORIES as VALID_VEHICLE_CATEGORIES,
@@ -58,7 +57,6 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
         itemIdArray.push(item.id)
       })
       newItemIDSValue = itemIdArray
-      console.log('test')
     }
 
     setValue('ItmIDS', newItemIDSValue)
@@ -84,8 +82,6 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
         `!!Error while checking provider object in /${constants.CONFIRM} and /${constants.ON_CONFIRM}, ${error.stack}`,
       )
     }
-
-    console.log('on_confirm.items', on_confirm.items)
 
     try {
       on_confirm.items &&

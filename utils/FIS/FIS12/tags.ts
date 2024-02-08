@@ -1,17 +1,5 @@
 /* eslint-disable no-prototype-builtins */
-// import _ from 'lodash'
-// import constants, { FisApiSequence } from '../../../constants'
-// import { logger } from '../../../shared/logger'
-// import {
-//   validateSchema,
-//   isObjectEmpty,
-//   checkFISContext,
-//   timeDiff as timeDifference,
-//   checkBppIdOrBapId,
-//   isValidUrl,
-// } from '../../'
-// import { validateFulfillments, validateXInput } from './fisChecks'
-// import { getValue, setValue } from '../../../shared/dao'
+
 import { isValidEmail, isValidPhoneNumber, isValidUrl } from '../../index'
 
 interface Tag {

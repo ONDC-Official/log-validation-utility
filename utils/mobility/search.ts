@@ -114,7 +114,6 @@ export const search = (data: any, msgIdSet: any) => {
 
       // Validate payment tags
       const tagsValidation = validatePaymentTags(payment.tags)
-      console.log('tagsValidation', tagsValidation)
       if (!tagsValidation.isValid) {
         Object.assign(errorObj, { tags: tagsValidation.errors })
       }

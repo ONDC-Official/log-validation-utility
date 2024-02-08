@@ -1,4 +1,3 @@
-// import crypto from 'crypto'
 import * as _sodium from 'libsodium-wrappers'
 
 export const sign = async ({ message, privateKey }: { message: string; privateKey: string }) => {

@@ -35,7 +35,6 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
     const init = message.order
     const itemIDS: any = getValue('ItmIDS')
     const itemIdArray: any[] = []
-    // const storedFormIds: any = getValue('select_storedFormIds')
 
     let newItemIDSValue: any[]
 
@@ -48,7 +47,6 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
       newItemIDSValue = itemIdArray
     }
 
-    // setValue('ItmIDS', newItemIDSValue)
     try {
       logger.info(`Comparing Provider object in /${constants.ON_SELECT} and /${constants.INIT}`)
       const providerIDs = getValue('providerId')

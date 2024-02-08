@@ -68,11 +68,6 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
           ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
         }
 
-        // if (initQuotePrice !== item?.price?.value) {
-        //   errorObj[`item${index}_price`] = `Price mismatch for item: ${item.id}`
-        // }
-
-        // if (sequence !== 'on_select') {
         const itemPrice = parseFloat(item.price.value)
         const quotePrice = parseFloat(message.order.quote.price.value)
         if (itemPrice !== quotePrice) {
@@ -83,31 +78,6 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
         if (xinputValidationErrors) {
           Object.assign(errorObj, xinputValidationErrors)
         }
-        // } else {
-        //   // Check status in form_response
-        //   if (!Object.prototype.hasOwnProperty.call(item?.xinput?.form_response, 'status')) {
-        //     errorObj[
-        //       `item${index}_xinput`
-        //     ] = `/message/order/items/xinput in item: ${item.id} must have status in form_response`
-        //   } else {
-        //     const status = item?.xinput?.form_response?.status
-        //     const code = 'PENDING'
-        //     if (status !== code) {
-        //       errorObj[
-        //         `item${index}_status`
-        //       ] = `/message/order/items/xinput/form_response/status in item: ${item.id} should be '${code}'`
-        //     }
-        //   }
-
-        //   // Check submission_id in form_response
-        //   if (!Object.prototype.hasOwnProperty.call(item?.xinput?.form_response, 'submission_id')) {
-        //     errorObj[
-        //       `item${index}_xinput`
-        //     ] = `/message/order/items/xinput in item: ${item.id} must have submission_id in form_response`
-        //   } else {
-        //     setValue(`${constants.ON_SELECT}_submission_id`, item?.xinput?.form_response?.submission_id)
-        //   }
-        // }
 
         if (
           !item?.tags?.some((tag: any) => tag.descriptor.code === 'CONSENT_INFO' || tag.descriptor.code === 'LOAN_INFO')

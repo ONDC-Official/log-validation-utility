@@ -9,7 +9,7 @@ export const checkOnCancel = (data: any) => {
   const onCnclObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.ON_CANCEL]: 'Json cannot be empty' }
+      return { [ApiSequence.ON_CANCEL]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data

@@ -45,6 +45,7 @@ const validateRetail = async (domain: string, payload: string, version: string) 
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
       logger.warn('Invalid Version!!')
   }
+
   return { response, success, message }
 }
 const validateFinance = async (domain: string, payload: string, version: string, flow?: string) => {
@@ -56,7 +57,7 @@ const validateFinance = async (domain: string, payload: string, version: string,
 
   switch (version) {
     case '2.0.0':
-      response = validateLogsForFIS12(payload, domain, flow, version)
+      response = validateLogsForFIS12(payload, domain, flow)
 
       if (_.isEmpty(response)) {
         success = true
@@ -68,6 +69,7 @@ const validateFinance = async (domain: string, payload: string, version: string,
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
       logger.warn('Invalid Version!!')
   }
+
   return { response, success, message }
 }
 const validateMobility = async (domain: string, payload: string, version: string, flow?: string) => {
@@ -79,7 +81,7 @@ const validateMobility = async (domain: string, payload: string, version: string
 
   switch (version) {
     case '2.0.0':
-      response = validateLogsForMobility(payload, domain, flow, version)
+      response = validateLogsForMobility(payload, domain, flow)
 
       if (_.isEmpty(response)) {
         success = true
@@ -91,6 +93,7 @@ const validateMobility = async (domain: string, payload: string, version: string
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
       logger.warn('Invalid Version!!')
   }
+
   return { response, success, message }
 }
 const validateIGM = async (payload: string, version: string) => {
@@ -112,6 +115,7 @@ const validateIGM = async (payload: string, version: string) => {
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
       logger.warn('Invalid Version!!')
   }
+
   return { response, success, message }
 }
 const validateRSF = async (payload: any, version: string) => {

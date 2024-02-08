@@ -4,15 +4,17 @@ import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
+import { checkFulfillmentID } from '../../index'
 
 export const checkOnStatusDelivered = (data: any, state: string) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.ON_STATUS_DELIVERED]: 'Json cannot be empty' }
+      return { [ApiSequence.ON_STATUS_DELIVERED]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data
+
     if (!message || !context || isObjectEmpty(message)) {
       return { missingFields: '/context, /message, is missing or empty' }
     }
@@ -31,6 +33,25 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
     }
 
     setValue(`${ApiSequence.ON_STATUS_DELIVERED}`, data)
+
+    const picked_message_id: string | null = getValue('picked_message_id')
+    const pending_message_id: string | null = getValue('pending_message_id')
+    const delivered_message_id: string = context.message_id
+
+    try {
+      logger.info(
+        `Comparing message_id for unsolicited calls for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.delivered`,
+      )
+      if (delivered_message_id === picked_message_id || delivered_message_id === pending_message_id) {
+        onStatusObj[
+          'invalid_message_id'
+        ] = `Message_id cannot be same for ${constants.ON_STATUS}.delivered and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.pending `
+      }
+    } catch (error: any) {
+      logger.error(
+        `Error while comparing message_id for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.delivered`,
+      )
+    }
 
     try {
       logger.info(`Checking context for /${constants.ON_STATUS} API`) //checking context
@@ -132,8 +153,6 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
           const deliveryTime = fulfillment.end.time.timestamp
           deliveryTimestamps[fulfillment.id] = deliveryTime
 
-          // dao.setValue("deliveredTime",deliveryTime);
-
           try {
             //checking delivery time matching with context timestamp
             if (!_.lte(deliveryTime, contextTime)) {
@@ -180,6 +199,19 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
       }
     } catch (error) {
       logger.info(`Error while checking delivery timestamp in /${constants.ON_STATUS}_${state}.json`)
+    }
+
+    // Checking fullfillment IDs for items
+    try {
+      logger.info(`Comparing fulfillmentID for items at /${constants.ON_STATUS}_delivery`)
+      const items = on_status.items
+      const flow = constants.ON_STATUS + '_delivery'
+      const err = checkFulfillmentID(items, onStatusObj, flow)
+      Object.assign(onStatusObj, err)
+    } catch (error: any) {
+      logger.error(
+        `!!Error occurred while checking for fulfillmentID for /${constants.ON_STATUS}_${state}, ${error.stack}`,
+      )
     }
 
     return onStatusObj

@@ -13,12 +13,15 @@ import {
   checkServiceabilityType,
   validateLocations,
   isSequenceValid,
+  isValidPhoneNumber,
+  compareCitywithPinCode,
+  compareSTDwithArea,
 } from '../../../utils'
 import _ from 'lodash'
 
 export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [ApiSequence.ON_SEARCH]: 'Json cannot be empty' }
+    return { [ApiSequence.ON_SEARCH]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data
@@ -39,8 +42,10 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     Object.assign(errorObj, schemaValidation)
   }
 
+  logger.info('Initializing ---->')
   const checkBap = checkBppIdOrBapId(context.bap_id)
   const checkBpp = checkBppIdOrBapId(context.bpp_id)
+  logger.info(checkBap)
 
   if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
   if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
@@ -94,6 +99,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     let i = 0
     const bppFF = onSearchCatalog['bpp/fulfillments']
     const len = bppFF.length
+
     while (i < len) {
       onSearchFFIds.add(bppFF[i].id)
       i++
@@ -208,6 +214,16 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
         while (j < iLen) {
           logger.info(`Validating uniqueness for categories id in bpp/providers[${i}].items[${j}]...`)
           const category = categories[j]
+
+          const fulfillments = onSearchCatalog['bpp/providers'][i]['fulfillments']
+          const phoneNumber = fulfillments[i].contact.phone
+
+          if (!isValidPhoneNumber(phoneNumber)) {
+            const key = `bpp/providers${i}fulfillments${i}`
+            errorObj[
+              key
+            ] = `Please enter a valid phone number consisting of  10 or  11 digits without any spaces or special characters. `
+          }
 
           if (categoriesId.has(category.id)) {
             const key = `prvdr${i}category${j}`
@@ -392,11 +408,31 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
             const sPrice = parseFloat(item.price.value)
             const maxPrice = parseFloat(item.price.maximum_value)
 
+            const lower = parseFloat(item.price?.tags?.[0].list[0].value)
+            const upper = parseFloat(item.price?.tags?.[0].list[1].value)
+
+            const default_selection_value = parseFloat(item.price?.tags?.[1].list[0].value)
+            const default_selection_max_value = parseFloat(item.price?.tags?.[1].list[1].value)
+
             if (sPrice > maxPrice) {
               const key = `prvdr${i}item${j}Price`
               errorObj[
                 key
               ] = `selling price of item /price/value with id: (${item.id}) can't be greater than the maximum price /price/maximum_value in /bpp/providers[${i}]/items[${j}]/`
+            }
+
+            if (upper <= lower) {
+              const key = `prvdr${i}item${j}price/tags/`
+              errorObj[
+                key
+              ] = `selling lower range: ${lower} of code: range with id: (${item.id}) can't be greater than the upper range : ${upper} `
+            }
+
+            if (default_selection_max_value <= default_selection_value) {
+              const key = `prvdr${i}item${j}Price/tags`
+              errorObj[
+                key
+              ] = `value : ${default_selection_value} of code: default_selection with id: (${item.id}) can't be greater than the maximum_value : ${default_selection_max_value} `
             }
           }
 
@@ -561,7 +597,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
                     const key = `prvdr${i}item${j}tag${index}veg_nonveg`
                     errorObj[
                       key
-                    ] = `item_id: ${item.id} should have veg_nonveg one of the 'veg', 'non_veg', 'egg' in bpp/providers[${i}]`
+                    ] = `item_id: ${item.id} should have veg_nonveg one of the 'veg', 'non_veg'or 'egg' in bpp/providers[${i}]`
                   }
                 }
 
@@ -573,6 +609,55 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
         }
       } catch (error: any) {
         logger.error(`!!Errors while checking items in bpp/providers[${i}], ${error.stack}`)
+      }
+
+      try {
+        const providers = data.message.catalog['bpp/providers']
+        if (providers && providers.length > 0) {
+          const locations = providers[0].locations
+
+          if (locations && locations.length > 0) {
+            const address = locations[0].address
+
+            if (address) {
+              const area_code = Number.parseInt(address.area_code)
+              const city = address.city
+
+              const stdArray = context.city.split(':')
+              const std = stdArray.length > 1 ? stdArray[1] : null
+
+              if (std !== null) {
+                logger.info(`Comparing area_code and STD Code for /${constants.ON_SEARCH}`)
+                const areaWithSTD = compareSTDwithArea(area_code, std)
+                if (!areaWithSTD) {
+                  const key = `message.catalog.bpp/providers[0]locations[0]address.area_code`
+                  errorObj[key] = `area_code does not match with correct STD code on /${constants.ON_SEARCH}`
+                  logger.error(`STD code does not match with correct area_code on /${constants.ON_SEARCH}`)
+                }
+
+                logger.info(`Comparing area_code and city for /${constants.ON_SEARCH}`)
+                const areaWithCity = compareCitywithPinCode(area_code, city)
+                if (!areaWithCity) {
+                  const key = `message.catalog.bpp/providers[0]locations[0]address.city`
+                  errorObj[key] = `City  does not match with correct area_code on /${constants.ON_SEARCH}`
+                  logger.error(`City does not match with correct area_code on /${constants.ON_SEARCH}`)
+                }
+              } else {
+                logger.error(`'std' is undefined or null.`)
+              }
+            } else {
+              logger.error(`'address' is undefined or null.`)
+            }
+          } else {
+            logger.error(`'locations' array is undefined or empty.`)
+          }
+        } else {
+          logger.error(`'bpp/providers' array is undefined or empty.`)
+        }
+      } catch (error: any) {
+        logger.error(
+          `Error while matching area_code and std code for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
+        )
       }
 
       try {

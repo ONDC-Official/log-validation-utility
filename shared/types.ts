@@ -12,3 +12,12 @@ export enum ERROR_MESSAGE {
   LOG_VERIFICATION_SUCCESSFUL = 'Logs were verified successfully',
   LOG_VERIFICATION_INVALID_VERSION = 'Invalid Version! Please enter a valid version',
 }
+
+export interface IHttpResponse {
+  message?: string
+  report: any
+  reportTimestamp: string
+  bpp_id: string
+  bap_id: string
+  domain: string
+}

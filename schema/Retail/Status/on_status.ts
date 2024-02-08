@@ -104,7 +104,7 @@ export const onStatusSchema = {
                       minLength: 1,
                     },
                   },
-                  required: ['id'],
+                  required: ['id', 'state'],
                 },
               },
               required: ['cancelled_by', 'reason'],

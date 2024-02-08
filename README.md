@@ -14,6 +14,8 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
 --data '{
     "domain": "",
     "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
         "search_full_catalog_refresh": {},
         "on_search_full_catalog_refresh": {},
@@ -40,6 +42,8 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
 --data-raw '{
     "domain": "ONDC:RET10",
     "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
         "search_full_catalog_refresh": {
             "context": {
@@ -270,9 +274,14 @@ If your log are successfully approved, you will receive a similar response as de
   "success": true,
   "response": {
     "message": "Logs were verified successfully",
-    "signature": "bM9OD0PUQ6J0vtXNST/nlLnZmDFB2FysCVc+DEficPh+Crx6uUdZhR33mbn9ePUrjn7Vl0qQWckyVxVpcYyDAQ==",
-    "signTimestamp": "2024-01-23T14:15:21.719Z"
-  }
+    "report": {},
+    "bap_id": "BUYER_APP_ID", // example: buyer-app-preprod-v2.ondc.org
+    "bpp_id": "SELLER_APP_ID", // example: seller-app-preprod-v2.ondc.org
+    "domain": "DOMAIN", // example: ONDC:RET10
+    "reportTimestamp": "2024-02-08T08:10:10.805Z"
+  },
+  "signature": "Ishpxpy8p3SPE1CXnMTkxKDt9S/X7v8OigL4DqVWphcr0jXTQOPotX/Y710WKZoCvWgCDOJahf7sXvJzgmRHAg==",
+  "signTimestamp": "2024-02-08T08:10:10.805Z"
 }
 ```
 
@@ -511,7 +520,7 @@ You will receive `verification: true` if the signature was verified to be genera
 - The output of the utility service provides the report in a JSON format along with a success flag (true/false). Refer to the above sample payloads.
 - The service can be used to validate the entire transaction on the network or a particular schema of any payload.
   - Endpoint for the validation of the entire transaction: [https://log-validation.ondc.org/api/validate](https://log-validation.ondc.org/api/validate)
-  - Endpoint for the validation of schema: [https://log-validation.ondc.org/api/validate-schema/api-endpoint](https://log-validation.ondc.org/api/validate-schema/api-endpoint) (replace `api-endpoint` with the specific API endpoint you want to validate, e.g., search, select, on_confirm, etc.)
+  - Endpoint for the validation of schema: [https://log-validation.ondc.org/api/validate-schema](https://log-validation.ondc.org/api/validate-schema)
 - Community contributions are welcome to enhance this utility for future releases. To contribute, please raise a PR or create an issue. Contribution through either way works!
 
 ## Installation (Local Server)
@@ -552,6 +561,8 @@ curl --location --request POST 'http://localhost:3006/api/validate' \
 --data '{
     "domain": "",
     "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
         "search_full_catalog_refresh": {},
         "on_search_full_catalog_refresh": {},
@@ -578,6 +589,8 @@ curl --location 'https://localhost:3006/api/validate/igm' \
 --data '{
     "domain": "",
     "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
         "ret_issue": {},
         "ret_issue_close":{},
@@ -603,6 +616,8 @@ curl --location 'https://log-validation.ondc.org/api/validate/fis/fis12' \
     "domain": "ONDC:FIS12",
     "version": "2.0.0",
     "flow": "PERSONAL",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
     "search": {},
         "on_search":{},
@@ -637,6 +652,8 @@ curl --location 'https://localhost:3006/api/validate/trv/trv10' \
     "domain": "ONDC:TRV10",
     "version": "2.0.0",
     "flow": "RIDER_CANCEL",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
         "search": {},
         "on_search":{},

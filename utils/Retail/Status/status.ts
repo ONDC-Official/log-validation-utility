@@ -9,10 +9,11 @@ export const checkStatus = (data: any) => {
   const statusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.STATUS]: 'Json cannot be empty' }
+      return { [ApiSequence.STATUS]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data
+
     if (!message || !context || isObjectEmpty(message)) {
       return { missingFields: '/context, /message, is missing or empty' }
     }

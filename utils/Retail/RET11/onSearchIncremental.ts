@@ -112,9 +112,8 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
 
       if (onSearchPrvdrIDS && !onSearchPrvdrIDS.includes(prvdr.id)) {
         const key = `prvdr${i}id`
-        errorObj[
-          key
-        ] = `provider id: ${prvdr.id} in bpp/providers didn't matched for providers id of /${ApiSequence.ON_SEARCH}`
+        errorObj[key] =
+          `provider id: ${prvdr.id} in bpp/providers didn't matched for providers id of /${ApiSequence.ON_SEARCH}`
       } else {
         if (prvdrsId.has(prvdr.id)) {
           const key = `prvdr${i}id`
@@ -176,9 +175,8 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
                 day = parseInt(day)
                 if (isNaN(day) || day < 1 || day > 7) {
                   const key = `prvdr${i}locdays${iter}`
-                  errorObj[
-                    key
-                  ] = `store days (bpp/providers[${i}]/locations[${iter}]/time/days) should be in the format ("1,2,3,4,5,6,7") where 1- Monday and 7- Sunday`
+                  errorObj[key] =
+                    `store days (bpp/providers[${i}]/locations[${iter}]/time/days) should be in the format ("1,2,3,4,5,6,7") where 1- Monday and 7- Sunday`
                 }
               })
 
@@ -186,17 +184,15 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
               //scenario 1: range =1 freq/times =1
               if (loc.time.range && (loc.time.schedule.frequency || loc.time.schedule.times)) {
                 const key = `prvdr${i}loctime${iter}`
-                errorObj[
-                  key
-                ] = `Either one of fixed (range) or split (frequency and times) timings should be provided in /bpp/providers[${i}]/locations[${iter}]/time`
+                errorObj[key] =
+                  `Either one of fixed (range) or split (frequency and times) timings should be provided in /bpp/providers[${i}]/locations[${iter}]/time`
               }
 
               // scenario 2: range=0 freq || times =1
               if (!loc.time.range && (!loc.time.schedule.frequency || !loc.time.schedule.times)) {
                 const key = `prvdr${i}loctime${iter}`
-                errorObj[
-                  key
-                ] = `Either one of fixed timings (range) or split timings (both frequency and times) should be provided in /bpp/providers[${i}]/locations[${iter}]/time`
+                errorObj[key] =
+                  `Either one of fixed timings (range) or split timings (both frequency and times) should be provided in /bpp/providers[${i}]/locations[${iter}]/time`
               }
 
               //scenario 3: range=1 (start and end not compliant) frequency=0;
@@ -271,9 +267,8 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
 
                   if (sPrice > maxPrice) {
                     const key = `prvdr${i}item${j}Price`
-                    errorObj[
-                      key
-                    ] = `selling price of item /price/value with id: (${item.id}) can't be greater than the maximum price /price/maximum_value in /bpp/providers[${i}]/items[${j}]/`
+                    errorObj[key] =
+                      `selling price of item /price/value with id: (${item.id}) can't be greater than the maximum price /price/maximum_value in /bpp/providers[${i}]/items[${j}]/`
                   }
                 }
 
@@ -281,27 +276,24 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
 
                 if (item.fulfillment_id && !onSearchFFIds.includes(item.fulfillment_id)) {
                   const key = `prvdr${i}item${j}ff`
-                  errorObj[
-                    key
-                  ] = `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/fulfillments`
+                  errorObj[key] =
+                    `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/fulfillments`
                 }
 
                 logger.info(`Comparing fulfillment_id of /${constants.SEARCH} and /${constants.ON_SEARCH} api`)
 
                 if (item.fulfillment_id !== itemFullRefresh.fulfillment_id) {
                   const key = `prvdr${i}item${j}ff`
-                  errorObj[
-                    key
-                  ] = `fulfillment_id in /bpp/providers[${i}]/items[${j}] should be same as fulfillment_id sent in /${constants.SEARCH} api call`
+                  errorObj[key] =
+                    `fulfillment_id in /bpp/providers[${i}]/items[${j}] should be same as fulfillment_id sent in /${constants.SEARCH} api call`
                 }
 
                 logger.info(`Comparing location_id of /${constants.SEARCH} and /${constants.ON_SEARCH} api`)
 
                 if (item.location_id !== itemFullRefresh.location_id) {
                   const key = `prvdr${i}item${j}ff`
-                  errorObj[
-                    key
-                  ] = `location_id in /bpp/providers[${i}]/items[${j}] should be same as location_id sent in /${constants.SEARCH} api call`
+                  errorObj[key] =
+                    `location_id in /bpp/providers[${i}]/items[${j}] should be same as location_id sent in /${constants.SEARCH} api call`
                 }
 
                 logger.info(`Checking consumer care details for item id: ${item.id}`)
@@ -310,16 +302,14 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
                   consCare = consCare.split(',')
                   if (consCare.length < 3) {
                     const key = `prvdr${i}consCare`
-                    errorObj[
-                      key
-                    ] = `@ondc/org/contact_details_consumer_care should be in the format "name,email,contactno" in /bpp/providers[${i}]/items`
+                    errorObj[key] =
+                      `@ondc/org/contact_details_consumer_care should be in the format "name,email,contactno" in /bpp/providers[${i}]/items`
                   } else {
                     const checkEmail: boolean = emailRegex(consCare[1].trim())
                     if (isNaN(consCare[2].trim()) || !checkEmail) {
                       const key = `prvdr${i}consCare`
-                      errorObj[
-                        key
-                      ] = `@ondc/org/contact_details_consumer_care should be in the format "name,email,contactno" in /bpp/providers[${i}]/items`
+                      errorObj[key] =
+                        `@ondc/org/contact_details_consumer_care should be in the format "name,email,contactno" in /bpp/providers[${i}]/items`
                     }
                   }
                 }
@@ -352,9 +342,8 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
                       tag.list.map((it: { code: string; value: string }, index: number) => {
                         if (!customGrpId.has(it.value)) {
                           const key = `prvdr${i}item${j}tag${index}cstmgrp_id`
-                          errorObj[
-                            key
-                          ] = `item_id: ${item.id} should have custom_group_id one of the ids passed in categories bpp/providers[${i}]`
+                          errorObj[key] =
+                            `item_id: ${item.id} should have custom_group_id one of the ids passed in categories bpp/providers[${i}]`
                         }
                       })
 
@@ -368,9 +357,8 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
 
                       if (!categoriesId.has(idList.value)) {
                         const key = `prvdr${i}item${j}tags${index}config_list`
-                        errorObj[
-                          key
-                        ] = `value in catalog/items${j}/tags${index}/config/list/ should be one of the catalog/category/ids`
+                        errorObj[key] =
+                          `value in catalog/items${j}/tags${index}/config/list/ should be one of the catalog/category/ids`
                       }
 
                       if (!/^-?\d+(\.\d+)?$/.test(minList.value)) {
@@ -445,14 +433,13 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
                       break
 
                     case 'veg_nonveg':
-                      const allowedCodes = ['veg', 'non_veg']
+                      const allowedCodes = ['veg', 'non_veg', 'egg']
 
                       for (const it of tag.list) {
                         if (it.code && !allowedCodes.includes(it.code)) {
                           const key = `prvdr${i}item${j}tag${index}veg_nonveg`
-                          errorObj[
-                            key
-                          ] = `item_id: ${item.id} should have veg_nonveg one of the 'veg', 'non_veg' in bpp/providers[${i}]`
+                          errorObj[key] =
+                            `item_id: ${item.id} should have veg_nonveg one of the 'veg', 'non_veg' or 'egg' in bpp/providers[${i}]`
                         }
                       }
 

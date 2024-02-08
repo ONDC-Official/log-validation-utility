@@ -11,13 +11,11 @@ import { verify, hash } from '../../shared/crypto'
 const controller = {
   validate: async (req: Request, res: Response): Promise<Response | void> => {
     try {
-      const { domain, version, payload, flow } = req.body
+      const { domain, version, payload, flow, bap_id, bpp_id } = req.body
+
       let result: { response?: string; success?: boolean; message?: string } = {}
       const splitPath = req.originalUrl.split('/')
       const pathUrl = splitPath[splitPath.length - 1]
-
-      const bap_id = payload[Object.keys(payload)[2]].context.bap_id
-      const bpp_id = payload[Object.keys(payload)[2]].context.bpp_id
 
       const normalisedDomain = helper.getEnumForDomain(pathUrl)
 

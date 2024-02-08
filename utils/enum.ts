@@ -1,3 +1,13 @@
+export const Category_ID = [
+  'F&B',
+  'Grocery',
+  'Fashion',
+  'BPC',
+  'Electronics',
+  'Appliances',
+  'Home & Kitchen',
+  'Health & Wellness',
+]
 export const fnbCategories = [
   'Baklava',
   'Bao',
@@ -71,7 +81,6 @@ export const fnbCategories = [
   'Waffle',
   'Wrap',
   'Yogurt',
-  'F&B',
 ]
 
 export const retailPymntTtl = {

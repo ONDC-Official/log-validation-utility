@@ -2,7 +2,7 @@
 /* eslint-disable no-prototype-builtins */
 import { logger } from '../../../shared/logger'
 import { setValue, getValue } from '../../../shared/dao'
-import constants, { ApiSequence } from '../../../constants'
+import constants, { ApiSequence, retailDomains } from '../../../constants'
 import {
   validateSchema,
   isObjectEmpty,
@@ -17,6 +17,7 @@ import {
   compareCitywithPinCode,
   compareSTDwithArea,
 } from '../../../utils'
+import { Category_ID, fnbCategories } from '../../enum'
 import _ from 'lodash'
 
 export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
@@ -649,6 +650,43 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
         }
       } catch (error: any) {
         logger.error(`!!Errors while checking rank in bpp/providers[${i}].category.tags, ${error.stack}`)
+      }
+
+      // Checking for category IDs for items
+      try {
+        logger.info(
+          `Checking for categoryIds in /message/catalog/bpp/providers/items/category_id for ${constants.ON_SEARCH}`,
+        )
+        const domain = context.domain
+        if (retailDomains.includes(domain)) {
+          const items = onSearchCatalog['bpp/providers'][0].items
+          items.forEach((e: any, index: number) => {
+            if (!Category_ID.includes(e.category_id)) {
+              logger.error(
+                `Invalid catrgory ID found at item[${index}] at message/catalog/bpp/providers/0/items/${index}/category_id`,
+              )
+              errorObj.inVldCtgrID = `Invalid catrgory ID found at item[${index}] at message/catalog/bpp/providers/0/items/${index}/category_id for ${constants.ON_SEARCH}`
+            } else {
+              const itemName = onSearchCatalog['bpp/providers'][0].items[index].descriptor.name
+
+              if (!fnbCategories.includes(itemName)) {
+                logger.error(
+                  `Invalid Item name  found at item[${index}] at message/catalog/bpp/providers/0/items/${index}/descriptor/name for ${constants.ON_SEARCH}`,
+                )
+                let key = `inVldItmName[${index}]`
+                errorObj[key] =
+                  `Invalid Item name  found at item[${index}] at message/catalog/bpp/providers/0/items/${index}/descriptor/name for ${constants.ON_SEARCH}`
+              }
+            }
+          })
+        } else {
+          logger.error(`Invalid Domain found on /context/domain for ${constants.ON_SEARCH}`)
+          errorObj.inVldDmn = `Invalid Domain found on /context/domain for ${constants.ON_SEARCH}`
+        }
+      } catch (error: any) {
+        logger.error(
+          `!!Errors while checking for categoryIds in /message/catalog/bpp/providers/items/category_id for ${constants.ON_SEARCH}, ${error.stack}`,
+        )
       }
 
       // servicability Construct

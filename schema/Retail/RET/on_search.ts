@@ -1,3 +1,5 @@
+import { combinedCategory } from '../../../utils/enum'
+
 export const onSearchSchema = {
   type: 'object',
   properties: {
@@ -570,6 +572,8 @@ export const onSearchSchema = {
                         },
                         category_id: {
                           type: 'string',
+                          enum: combinedCategory,
+                          errorMessage: 'Invalid catrgory ID found for item for on_search ',
                         },
                         fulfillment_id: {
                           type: 'string',

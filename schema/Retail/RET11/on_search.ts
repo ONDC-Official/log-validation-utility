@@ -518,6 +518,7 @@ export const FnBonSearchSchema = {
                         category_id: {
                           type: 'string',
                           enum: fnbCategories,
+                          errorMessage: 'Invalid catrgory ID found for item for on_search ',
                         },
                         category_ids: {
                           type: 'array',

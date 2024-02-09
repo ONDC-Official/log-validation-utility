@@ -317,7 +317,7 @@ export const validateLogs = async (data: any, domain: string) => {
 }
 
 export const RSFValidateLogs = async (payload: Record<string, any>): Promise<Record<string, object>> => {
-  const logReport: Record<string, object> = {}
+  const logReport: Record<string, Record<string, object | string>> = {}
   try {
     const keys: Record<string, Joi.ObjectSchema> = {
       settle: schema.settle,
@@ -329,26 +329,28 @@ export const RSFValidateLogs = async (payload: Record<string, any>): Promise<Rec
       logReport[key] = await validate(keys[key], payload[key])
     }
 
-    switch(true){
+    logReport.transaction_id_mismatch = {
+      settle_and_on_settle: '',
+      receiver_and_on_receiver: '',
+    }
+    logReport.message_id_mismatch = {
+      settle_and_on_settle: '',
+      receiver_and_on_receiver: '',
+    }
+
+    switch (true) {
       case payload?.settle?.context?.transaction_id !== payload?.on_settle?.context?.transaction_id:
-        logReport.transaction_mismatch = {
-          settle_and_on_settle: "settle and on_settle transaction_id is mismatching " 
-        }
-        break;  
-    }
+        logReport.transaction_id_mismatch.settle_and_on_settle = 'settle and on_settle transaction_id is mismatching '
 
-    if (payload?.settle?.context?.transaction_id !== payload?.on_settle?.context?.transaction_id) {
-      logReport.transaction_mismatch = {
-        settle_and_on_settle: "settle and on_settle transaction_id is mismatching " 
-      }
-    }
+      case payload?.settle?.context?.message_id !== payload?.on_settle?.context?.message_id:
+        logReport.message_id_mismatch.settle_and_on_settle = 'settle and on_settle message_id is mismatching'
 
-    if (payload?.receiver_recon?.context?.transaction_id !== payload?.on_receiver_recon?.context?.transaction_id) {
-      logReport.general = {
-        receiver_and_on_receiver : "receiver and on_receiver transaction_id is mismatching " 
-      }
+      case payload?.receiver_recon?.context?.transaction_id !== payload?.on_receiver_recon?.context?.transaction_id:
+        logReport.transaction_id_mismatch.receiver_and_on_receiver =
+          'receiver and on_receiver transaction_id is mismatching '
+      case payload?.receiver_recon?.context?.message_id !== payload?.on_receiver_recon?.context?.message_id:
+        logReport.message_id_mismatch.receiver_and_on_receiver = 'receiver and on_receiver message_id is mismatching '
     }
-
   } catch (error: any) {
     logger.error(error)
     return error.message

@@ -593,6 +593,95 @@ export const FnBonSearchSchema = {
                       required: ['id', 'descriptor', 'quantity', 'price', 'category_id', 'tags'],
                     },
                   },
+                  offers: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "string"
+                        },
+                        descriptor: {
+                          type: "object",
+                          properties: {
+                            code: {
+                              type: "string"
+                            },
+                            images: {
+                              type: "array",
+                              items: {
+                                type: "string"
+                              }
+                            }
+                          },
+                          required: ["code", "images"]
+                        },
+                        location_ids: {
+                          type: "array",
+                          items: {
+                            type: "string"
+                          }
+                        },
+                        item_ids: {
+                          type: "array",
+                          items: {
+                            type: "string"
+                          }
+                        },
+                        time: {
+                          type: "object",
+                          properties: {
+                            label: {
+                              type: "string"
+                            },
+                            range: {
+                              type: "object",
+                              properties: {
+                                start: {
+                                  type: "string",
+                                  format: "date-time"
+                                },
+                                end: {
+                                  type: "string",
+                                  format: "date-time"
+                                }
+                              },
+                            }
+                          },
+                          required: ["label", "range"]
+                        },
+                        tags: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              code: {
+                                type: "string"
+                              },
+                              list: {
+                                type: "array",
+                                items: {
+                                  type: "object",
+                                  properties: {
+                                    code: {
+                                      type: "string"
+                                    },
+                                    value: {
+                                      type: "string",
+                                      pattern: "^\\d+(\\.\\d{2})?$"
+                                    }
+                                  },
+                                  required: ["code", "value"]
+                                }
+                              }
+                            },
+                            required: ["code", "list"]
+                          }
+                        }
+                      },
+                      required: ["id", "descriptor", "location_ids", "item_ids", "time", "tags"]
+                    }
+                  },
                   tags: {
                     type: 'array',
                     items: {

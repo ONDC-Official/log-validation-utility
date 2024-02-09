@@ -328,6 +328,27 @@ export const RSFValidateLogs = async (payload: Record<string, any>): Promise<Rec
     for (let key in keys) {
       logReport[key] = await validate(keys[key], payload[key])
     }
+
+    switch(true){
+      case payload?.settle?.context?.transaction_id !== payload?.on_settle?.context?.transaction_id:
+        logReport.transaction_mismatch = {
+          settle_and_on_settle: "settle and on_settle transaction_id is mismatching " 
+        }
+        break;  
+    }
+
+    if (payload?.settle?.context?.transaction_id !== payload?.on_settle?.context?.transaction_id) {
+      logReport.transaction_mismatch = {
+        settle_and_on_settle: "settle and on_settle transaction_id is mismatching " 
+      }
+    }
+
+    if (payload?.receiver_recon?.context?.transaction_id !== payload?.on_receiver_recon?.context?.transaction_id) {
+      logReport.general = {
+        receiver_and_on_receiver : "receiver and on_receiver transaction_id is mismatching " 
+      }
+    }
+
   } catch (error: any) {
     logger.error(error)
     return error.message

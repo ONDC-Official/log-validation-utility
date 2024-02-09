@@ -13,9 +13,10 @@ import {
   checkServiceabilityType,
   validateLocations,
   isSequenceValid,
+  checkMandatoryTagItems,
 } from '../../../utils'
 import _ from 'lodash'
-import { compareCitywithPinCode, compareSTDwithArea } from '../../index'
+import { compareSTDwithArea } from '../../index'
 
 export const checkOnsearch = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
@@ -85,41 +86,18 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
   try {
     const providers = data.message.catalog['bpp/providers']
-    if (providers && providers.length > 0) {
-      const locations = providers[0].locations
+    const address = providers[0].locations[0].address
 
-      if (locations && locations.length > 0) {
-        const address = locations[0].address
+    if (address) {
+      const area_code = Number.parseInt(address.area_code)
+      const std = context.city.split(':')[1]
 
-        if (address) {
-          const area_code = Number.parseInt(address.area_code)
-          const city = address.city
-
-          const stdArray = context.city.split(':')
-          const std = stdArray.length > 1 ? stdArray[1] : null
-
-          if (std !== null) {
-            logger.info(`Comparing area_code and STD Code for /${constants.ON_SEARCH}`)
-            const areaWithSTD = compareSTDwithArea(area_code, std)
-            if (!areaWithSTD) {
-              logger.error(`STD code does not match with correct area_code on /${constants.ON_SEARCH}`)
-            }
-
-            const areaWithCity = compareCitywithPinCode(area_code, city)
-            if (!areaWithCity) {
-              logger.error(`City does not match with correct area_code on /${constants.ON_SEARCH}`)
-            }
-          } else {
-            logger.error(`'std' is undefined or null.`)
-          }
-        } else {
-          logger.error(`'address' is undefined or null.`)
-        }
-      } else {
-        logger.error(`'locations' array is undefined or empty.`)
+      logger.info(`Comparing area_code and STD Code for /${constants.ON_SEARCH}`)
+      const areaWithSTD = compareSTDwithArea(area_code, std)
+      if (!areaWithSTD) {
+        logger.error(`STD code does not match with correct area_code on /${constants.ON_SEARCH}`)
+        errorObj.invldAreaCode = `STD code does not match with correct area_code on /${constants.ON_SEARCH}`
       }
-    } else {
-      logger.error(`'bpp/providers' array is undefined or empty.`)
     }
   } catch (error: any) {
     logger.error(
@@ -660,6 +638,17 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         }
       } catch (error: any) {
         logger.error(`!!Errors while checking items in bpp/providers[${i}], ${error.stack}`)
+      }
+
+      // Checking for mandatory Items in provider IDs
+      try {
+        logger.info(`Checking for item tags in bpp/providers[0].items.tags `)
+        const domain = context.domain.split(':')[1]
+        const items = onSearchCatalog['bpp/providers'][0].items
+        const errors = checkMandatoryTagItems(domain, items, errorObj)
+        Object.assign(errorObj, errors)
+      } catch (error: any) {
+        logger.error(`!!Errors while checking for items in bpp/providers/items, ${error.stack}`)
       }
 
       try {

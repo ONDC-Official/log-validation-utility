@@ -4,6 +4,7 @@ import { logger } from '../shared/logger'
 import constants, { statusArray } from '../constants'
 import schemaValidator from '../shared/schemaValidator'
 import data from '../constants/csv.json'
+import { groceryJSON } from '../constants/category'
 
 export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
 
@@ -772,6 +773,24 @@ export const compareSTDwithArea = (pincode: number, std: string): boolean => {
   return data.some((e: any) => e.Pincode === pincode && e['STD Code'] === std)
 }
 
-export const compareCitywithPinCode = (pincode: number, city: string): boolean => {
-  return data.some((e: any) => e.Pincode === pincode && e.City === city.toUpperCase())
+export const checkMandatoryTagItems = (domain: string, items: any, errorObj: any) => {
+  if (domain === 'RET10') {
+    items.forEach((item: any, index: number) => {
+      const tags = item.tags
+      const ctgrID = item.category_id
+      if (groceryJSON.hasOwnProperty(ctgrID)) {
+        if (groceryJSON[ctgrID].brand) {
+          tags[1].list.forEach((tag: any) => {
+            if (!(tag.code === 'brand')) {
+              logger.error(`Mandatory tag fields missing for item[${index}]`)
+              const key = `missingTagsItem${index}`
+              errorObj[key] = `Mandatory tag fields missing for item[${index}]`
+            }
+          })
+        }
+      }
+    })
+  }
+
+  return errorObj
 }

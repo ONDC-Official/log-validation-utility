@@ -605,7 +605,8 @@ export const FnBonSearchSchema = {
                           type: "object",
                           properties: {
                             code: {
-                              type: "string"
+                              type: "string",
+                              enum: ['disc_pct', 'disc_amt', 'buyXgetY', 'freebie'],
                             },
                             images: {
                               type: "array",

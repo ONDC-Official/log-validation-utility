@@ -776,7 +776,7 @@ export const checkMandatoryTags = (items: any, errorObj: any, categoryJSON: any,
   items.forEach((item: any, index: number) => {
     if (!item.tags[1]) {
       logger.error(`Item tags fields are missing for ${categoryName} item[${index}]`)
-      const key = `missingBrandTags${index}`
+      const key = `missingItemTags${index}`
       errorObj[key] = `Item tags fields are missing for ${categoryName} item[${index}]`
     } else {
       logger.info(`Checking for item tags for ${categoryName} item[${index}]`)

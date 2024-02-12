@@ -17,9 +17,10 @@ import {
 } from '../../../utils'
 import _ from 'lodash'
 import { compareSTDwithArea } from '../../index'
-import { BPCJSON, fashionJSON, groceryJSON, healthJSON, homeJSON } from '../../../constants/category'
+import { BPCJSON, groceryJSON, healthJSON, homeJSON } from '../../../constants/category'
 import electronicsData from '../../../constants/electronics.json'
 import applianceData from '../../../constants/appliance.json'
+import fashionJSON from '../../../constants/fashion.json'
 export const checkOnsearch = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.ON_SEARCH]: 'JSON cannot be empty' }

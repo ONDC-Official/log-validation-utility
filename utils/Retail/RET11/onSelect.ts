@@ -199,9 +199,7 @@ export const checkOnSelect = (data: any) => {
       }
     }
     const max_tts=max_time_to_ships.sort((a, b) =>  a - b)[0]
-    console.log("this is the max tts ",max_tts)
     const on_select_tat = on_select.fulfillments.map((e:any)=>isoDurToSec(e['@ondc/org/TAT']))
-    console.log("this is the on_select_tat ",on_select_tat)
 
     if (on_select_tat<max_tts) {
       errorObj.ttstat = `/fulfillments/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be less than @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
@@ -212,7 +210,7 @@ export const checkOnSelect = (data: any) => {
     }
     }
   catch (error: any) {
-    logger.error(`!!Error while checking TAT and TTS in /${constants.ON_SELECT}`)
+    logger.error(`!!Error while Checking TAT and TTS in /${constants.ON_SELECT} and /${constants.ON_SEARCH}`)
   }
 
   let nonServiceableFlag = 0

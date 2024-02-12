@@ -256,6 +256,8 @@ export const onSearchIncSchema = {
                         },
                         gps: {
                           type: 'string',
+                          pattern: '^[0-9]{2}[.][0-9]{6,}[,][0-9]{2}[.][0-9]{6,}$',
+                          errorMessage: ' The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                         },
                         address: {
                           type: 'object',
@@ -285,6 +287,9 @@ export const onSearchIncSchema = {
                           properties: {
                             gps: {
                               type: 'string',
+                              pattern: '^[0-9]{2}[.][0-9]{6,}[,][0-9]{2}[.][0-9]{6,}$',
+                              errorMessage:
+                                'The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                             },
                             radius: {
                               type: 'object',
@@ -303,7 +308,7 @@ export const onSearchIncSchema = {
                           required: ['radius', 'gps'],
                         },
                       },
-                      required: ['id', 'time'],
+                      required: ['id', 'time', 'gps', 'address', 'circle'],
                     },
                   },
                   categories: {

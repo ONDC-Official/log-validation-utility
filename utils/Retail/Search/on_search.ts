@@ -13,11 +13,13 @@ import {
   checkServiceabilityType,
   validateLocations,
   isSequenceValid,
-  checkMandatoryTagItems,
+  checkMandatoryTags,
 } from '../../../utils'
 import _ from 'lodash'
 import { compareSTDwithArea } from '../../index'
-
+import { BPCJSON, fashionJSON, groceryJSON, healthJSON, homeJSON } from '../../../constants/category'
+import electronicsData from '../../../constants/electronics.json'
+import applianceData from '../../../constants/appliance.json'
 export const checkOnsearch = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.ON_SEARCH]: 'JSON cannot be empty' }
@@ -644,9 +646,30 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
       try {
         logger.info(`Checking for item tags in bpp/providers[0].items.tags `)
         const domain = context.domain.split(':')[1]
+        logger.info(`Checking for item tags in bpp/providers[0].items.tags in ${domain}`)
         const items = onSearchCatalog['bpp/providers'][0].items
-        const errors = checkMandatoryTagItems(domain, items, errorObj)
-        Object.assign(errorObj, errors)
+        if (domain === 'RET10') {
+          const errors = checkMandatoryTags(items, errorObj, groceryJSON, 'home')
+          Object.assign(errorObj, errors)
+        } else if (domain === 'RET12') {
+          const errors = checkMandatoryTags(items, errorObj, fashionJSON, 'fashion')
+          Object.assign(errorObj, errors)
+        } else if (domain === 'RET13') {
+          const errors = checkMandatoryTags(items, errorObj, BPCJSON, 'BPC')
+          Object.assign(errorObj, errors)
+        } else if (domain === 'RET14') {
+          const errors = checkMandatoryTags(items, errorObj, electronicsData, 'Electronics')
+          Object.assign(errorObj, errors)
+        } else if (domain === 'RET15') {
+          const errors = checkMandatoryTags(items, errorObj, applianceData, 'Appliances')
+          Object.assign(errorObj, errors)
+        } else if (domain === 'RET16') {
+          const errors = checkMandatoryTags(items, errorObj, homeJSON, 'home')
+          Object.assign(errorObj, errors)
+        } else if (domain === 'RET18') {
+          const errors = checkMandatoryTags(items, errorObj, healthJSON, 'health')
+          Object.assign(errorObj, errors)
+        }
       } catch (error: any) {
         logger.error(`!!Errors while checking for items in bpp/providers/items, ${error.stack}`)
       }

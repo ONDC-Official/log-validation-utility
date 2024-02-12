@@ -3,8 +3,7 @@ import _ from 'lodash'
 import { logger } from '../shared/logger'
 import constants, { statusArray } from '../constants'
 import schemaValidator from '../shared/schemaValidator'
-import data from '../constants/csv.json'
-import { groceryJSON } from '../constants/category'
+import data from '../constants/AreacodeMap.json'
 
 export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
 
@@ -773,24 +772,29 @@ export const compareSTDwithArea = (pincode: number, std: string): boolean => {
   return data.some((e: any) => e.Pincode === pincode && e['STD Code'] === std)
 }
 
-export const checkMandatoryTagItems = (domain: string, items: any, errorObj: any) => {
-  if (domain === 'RET10') {
-    items.forEach((item: any, index: number) => {
-      const tags = item.tags
+export const checkMandatoryTags = (items: any, errorObj: any, categoryJSON: any, categoryName: string) => {
+  items.forEach((item: any, index: number) => {
+    if (!item.tags[1]) {
+      logger.error(`Item tags fields are missing for ${categoryName} item[${index}]`)
+      const key = `missingBrandTags${index}`
+      errorObj[key] = `Item tags fields are missing for ${categoryName} item[${index}]`
+    } else {
+      logger.info(`Checking for item tags for ${categoryName} item[${index}]`)
+      const tags = item.tags[1].list
       const ctgrID = item.category_id
-      if (groceryJSON.hasOwnProperty(ctgrID)) {
-        if (groceryJSON[ctgrID].brand) {
-          tags[1].list.forEach((tag: any) => {
-            if (!(tag.code === 'brand')) {
-              logger.error(`Mandatory tag fields missing for item[${index}]`)
-              const key = `missingTagsItem${index}`
-              errorObj[key] = `Mandatory tag fields missing for item[${index}]`
+      if (categoryJSON.hasOwnProperty(ctgrID)) {
+        const mandatoryTags = categoryJSON[ctgrID]
+        for (const tagKey in mandatoryTags) {
+          if (mandatoryTags[tagKey]) {
+            const tagFound = tags.some((tag: any) => tag.code.toLowerCase() === tagKey.toLowerCase())
+            if (!tagFound) {
+              logger.error(`Mandatory tag field [${tagKey}] missing for ${categoryName} item[${index}] : `)
+              const key = `missingTagsItem[${index}] : ${tagKey}`
+              errorObj[key] = `Mandatory tag field [${tagKey}] missing for ${categoryName} item[${index}]`
             }
-          })
+          }
         }
       }
-    })
-  }
-
-  return errorObj
+    }
+  })
 }

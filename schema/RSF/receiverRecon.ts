@@ -72,9 +72,9 @@ export const receiverRecon = Joi.object({
                   otherwise: Joi.number().min(0).precision(2),
                 }),
               '@ondc/org/withholding_amount': Joi.number().min(0).precision(2).allow(''),
-              '@ondc/org/withholding_amount_status': Joi.valid('Assert').optional(),
+              '@ondc/org/withholding_amount_status': string.insensitive().valid('Assert').optional(),
               '@ondc/org/return_window': string.trim().isoDuration().allow(''),
-              '@ondc/org/return_window_status': Joi.valid('Assert').optional(),
+              '@ondc/org/return_window_status': string.insensitive().valid('Assert').optional(),
               '@ondc/org/settlement_basis': Joi.when('@ondc/org/return_window', {
                 is: '',
                 then: '',
@@ -95,9 +95,9 @@ export const receiverRecon = Joi.object({
                       then: 'buyer-app',
                       otherwise: 'seller-app',
                     }),
-                    settlement_phase: Joi.valid('sale-amount', 'withholding-amount', 'refund'),
+                    settlement_phase: string.insensitive().valid('sale-amount', 'withholding-amount', 'refund'),
                     settlement_amount: Joi.number().min(0).precision(2),
-                    settlement_type: Joi.valid('upi', 'neft', 'rtgs'),
+                    settlement_type: string.insensitive().valid('upi', 'neft', 'rtgs'),
                     settlement_bank_account_no: Joi.when('upi', {
                       then: Joi.forbidden(),
                       otherwise: string

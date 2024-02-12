@@ -641,6 +641,19 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
         )
       }
 
+      try{
+        logger.info(`Checking for tags array in message/catalog/bpp/providers[0]/categories[0]/tags`);
+        const tags = message.catalog['bpp/providers'][i].categories[i].tags
+        
+        if(tags.length === 0){
+          const key = `message/catalog/bpp/providers/categories`
+          errorObj[key] = `/message/catalog/bpp/providers[${i}]/categories cannot have tags as an empty array`
+        }
+      }
+      catch(error: any){
+        logger.error(`Error while checking tags array in message/catalog/bpp/providers[${i}]/categories`)
+      }
+
       try {
         logger.info(`checking rank in bpp/providers[${i}].category.tags`)
         const rankSeq = isSequenceValid(seqSet)

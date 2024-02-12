@@ -96,17 +96,26 @@ export const receiverRecon = Joi.object({
                     settlement_phase: Joi.valid('sale-amount', 'withholding-amount', 'refund'),
                     settlement_amount: Joi.number().min(0).precision(2),
                     settlement_type: Joi.valid('upi', 'neft', 'rtgs'),
-                    settlement_bank_account_no: string
-                      .trim()
-                      .min(9)
-                      .max(18)
-                      .pattern(/^[0-9]+$/),
-                    settlement_ifsc_code: string
-                      .trim()
-                      .pattern(/^[A-Z]{4}0[A-Z0-9]{6}$/)
-                      .messages({
-                        'string.pattern.base': '{{#label}} must be valid bank account number',
-                      }),
+                    settlement_bank_account_no: Joi.when('upi', {
+                      then: Joi.forbidden(),
+                      otherwise: string
+                        .trim()
+                        .min(9)
+                        .max(18)
+                        .pattern(/^[0-9]+$/)
+                        .messages({
+                          'string.pattern.base': '{{#label}} must be valid bank account number',
+                        }),
+                    }),
+                    settlement_ifsc_code: Joi.when('upi', {
+                      then: Joi.forbidden(),
+                      otherwise: string
+                        .trim()
+                        .pattern(/^[A-Z]{4}0[A-Z0-9]{6}$/)
+                        .messages({
+                          'string.pattern.base': '{{#label}} must be valid bank account number',
+                        }),
+                    }),
                     upi_address: Joi.when('settlement_type', {
                       is: 'upi',
                       then: string.trim(),
@@ -186,7 +195,7 @@ export const receiverRecon = Joi.object({
             settlement_reference_no: string.trim(),
             transaction_id: string.trim(),
             recon_status: Joi.valid('01', '02', '03', '04'),
-            order_recon_status: Joi.valid('01', '02', '03'),
+            order_recon_status: Joi.valid('01'),
             created_at: Joi.date().iso().max(Joi.ref('/context.timestamp')),
             updated_at: Joi.date().iso().min(Joi.ref('created_at')).max(Joi.ref('/context.timestamp')),
           }),

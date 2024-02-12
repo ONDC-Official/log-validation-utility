@@ -774,27 +774,38 @@ export const compareSTDwithArea = (pincode: number, std: string): boolean => {
 
 export const checkMandatoryTags = (items: any, errorObj: any, categoryJSON: any, categoryName: string) => {
   items.forEach((item: any, index: number) => {
-    if (!item.tags[1]) {
-      logger.error(`Item tags fields are missing for ${categoryName} item[${index}]`)
-      const key = `missingItemTags${index}`
-      errorObj[key] = `Item tags fields are missing for ${categoryName} item[${index}]`
-    } else {
+    let attributeTag = null
+    for (const tag of item.tags) {
+      if (tag.code === 'attribute') {
+        attributeTag = tag
+        break
+      }
+    }
+
+    if (!attributeTag) {
+      logger.error(`Attribute tag fields are missing for ${categoryName} item[${index}]`)
+      const key = `missingAttributeTag${index}`
+      errorObj[key] = `Attribute tag fields are missing for ${categoryName} item[${index}]`
+      return
+    }
+
+    const tags = attributeTag.list
+    const ctgrID = item.category_id
+
+    if (categoryJSON.hasOwnProperty(ctgrID)) {
       logger.info(`Checking for item tags for ${categoryName} item[${index}]`)
-      const tags = item.tags[1].list
-      const ctgrID = item.category_id
-      if (categoryJSON.hasOwnProperty(ctgrID)) {
-        const mandatoryTags = categoryJSON[ctgrID]
-        for (const tagKey in mandatoryTags) {
-          if (mandatoryTags[tagKey]) {
-            const tagFound = tags.some((tag: any) => tag.code.toLowerCase() === tagKey.toLowerCase())
-            if (!tagFound) {
-              logger.error(`Mandatory tag field [${tagKey}] missing for ${categoryName} item[${index}] : `)
-              const key = `missingTagsItem[${index}] : ${tagKey}`
-              errorObj[key] = `Mandatory tag field [${tagKey}] missing for ${categoryName} item[${index}]`
-            }
+      const mandatoryTags = categoryJSON[ctgrID]
+      for (const tagKey in mandatoryTags) {
+        if (mandatoryTags[tagKey]) {
+          const tagFound = tags.some((tag: any) => tag.code.toLowerCase() === tagKey.toLowerCase())
+          if (!tagFound) {
+            logger.error(`Mandatory tag field [${tagKey}] missing for ${categoryName} item[${index}]`)
+            const key = `missingTagsItem[${index}] : ${tagKey}`
+            errorObj[key] = `Mandatory tag field [${tagKey}] missing for ${categoryName} item[${index}]`
           }
         }
       }
     }
   })
+  return errorObj
 }

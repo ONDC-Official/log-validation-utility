@@ -34,9 +34,6 @@ import checkOnIssueStatus from '../utils/igm/retOnIssueStatus'
 import checkOnIssueStatusUnsolicited from '../utils/igm/retOnIssueStatus(unsolicited)'
 import checkLspIssueClose from '../utils/igm/lspIssue(close)'
 import checkIssueClose from '../utils/igm/retIssueClose'
-import * as schema from '../schema/RSF'
-import { validate } from './joiValidator'
-import Joi from 'joi'
 
 export const validateLogs = async (data: any, domain: string) => {
   const msgIdSet = new Set()
@@ -314,49 +311,6 @@ export const validateLogs = async (data: any, domain: string) => {
     logger.error(error.message)
     return error.message
   }
-}
-
-export const RSFValidateLogs = async (payload: Record<string, any>): Promise<Record<string, object>> => {
-  const logReport: Record<string, Record<string, object | string>> = {}
-  try {
-    const keys: Record<string, Joi.ObjectSchema> = {
-      settle: schema.settle,
-      on_settle: schema.onSettle,
-      receiver_recon: schema.receiverRecon,
-      on_receiver_recon: schema.onReceiverRecon,
-    }
-    for (let key in keys) {
-      logReport[key] = await validate(keys[key], payload[key])
-    }
-
-    logReport.transaction_id_mismatch = {
-      settle_and_on_settle: '',
-      receiver_and_on_receiver: '',
-    }
-    logReport.message_id_mismatch = {
-      settle_and_on_settle: '',
-      receiver_and_on_receiver: '',
-    }
-
-    switch (true) {
-      case payload?.settle?.context?.transaction_id !== payload?.on_settle?.context?.transaction_id:
-        logReport.transaction_id_mismatch.settle_and_on_settle = 'settle and on_settle transaction_id is mismatching '
-
-      case payload?.settle?.context?.message_id !== payload?.on_settle?.context?.message_id:
-        logReport.message_id_mismatch.settle_and_on_settle = 'settle and on_settle message_id is mismatching'
-
-      case payload?.receiver_recon?.context?.transaction_id !== payload?.on_receiver_recon?.context?.transaction_id:
-        logReport.transaction_id_mismatch.receiver_and_on_receiver =
-          'receiver and on_receiver transaction_id is mismatching '
-      case payload?.receiver_recon?.context?.message_id !== payload?.on_receiver_recon?.context?.message_id:
-        logReport.message_id_mismatch.receiver_and_on_receiver = 'receiver and on_receiver message_id is mismatching '
-    }
-  } catch (error: any) {
-    logger.error(error)
-    return error.message
-  }
-  logger.info(logReport)
-  return logReport
 }
 
 export const IGMvalidateLogs = (data: any) => {

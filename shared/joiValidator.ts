@@ -8,9 +8,6 @@ export const validate = async (schema: ObjectSchema, payload: Record<string, str
       abortEarly: false,
     })
   } catch (error: any) {
-    if (error.details[0]?.path?.length === 0) {
-      return 'Key is required'
-    }
     const transformed = map(error.details, (item) => {
       const key = item.path[0]
       const value = item.message.replaceAll('\"', "'")

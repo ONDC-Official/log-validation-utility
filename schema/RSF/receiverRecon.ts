@@ -13,8 +13,8 @@ export const receiverRecon = Joi.object({
     bap_uri: string.trim().uri(),
     bpp_id: idCheck,
     bpp_uri: string.trim().uri(),
-    transaction_id: string.trim(),
-    message_id: string.trim(),
+    transaction_id: string.equal(Joi.ref('/on_receiver_recon.context.transaction_id')),
+    message_id: string.equal(Joi.ref('/on_receiver_recon.context.message_id')),
     timestamp: Joi.date().iso(),
     ttl: string.trim().isoDuration(),
     city: string
@@ -62,7 +62,7 @@ export const receiverRecon = Joi.object({
               type: Joi.valid('ON-ORDER'),
               status: Joi.valid('PAID'),
               collected_by: Joi.valid('BAP', 'BPP'),
-              '@ondc/org/collected_by_status': Joi.valid('Assert'),
+              '@ondc/org/collected_by_status': Joi.valid('Assert').optional(),
               '@ondc/org/buyer_app_finder_fee_type': string.trim().lowercase().valid('percent', 'amount'),
               '@ondc/org/buyer_app_finder_fee_amount': Joi.when('@ondc/org/buyer_app_finder_fee_type', {
                 is: 'Percent',
@@ -70,9 +70,9 @@ export const receiverRecon = Joi.object({
                 otherwise: Joi.number().min(0).precision(2),
               }),
               '@ondc/org/withholding_amount': Joi.number().min(0).precision(2).allow(''),
-              '@ondc/org/withholding_amount_status': Joi.valid('Assert'),
+              '@ondc/org/withholding_amount_status': Joi.valid('Assert').optional(),
               '@ondc/org/return_window': string.trim().isoDuration().allow(''),
-              '@ondc/org/return_window_status': Joi.valid('Assert'),
+              '@ondc/org/return_window_status': Joi.valid('Assert').optional(),
               '@ondc/org/settlement_basis': Joi.when('@ondc/org/return_window', {
                 is: '',
                 then: '',
@@ -84,7 +84,7 @@ export const receiverRecon = Joi.object({
                 then: '',
                 otherwise: string.trim().isoDuration(),
               }),
-              '@ondc/org/settlement_window_status': Joi.valid('Assert'),
+              '@ondc/org/settlement_window_status': Joi.valid('Assert').optional(),
               '@ondc/org/settlement_details': Joi.array()
                 .items(
                   Joi.object({
@@ -119,7 +119,7 @@ export const receiverRecon = Joi.object({
                     upi_address: Joi.when('settlement_type', {
                       is: 'upi',
                       then: string.trim(),
-                      otherwise: string.trim().allow(''),
+                      otherwise: string.trim().allow('').optional(),
                     }),
                     bank_name: string
                       .trim()
@@ -135,9 +135,9 @@ export const receiverRecon = Joi.object({
                       }),
                     beneficiary_address: string
                       .trim()
-                      .regex(/^[a-zA-Z ,]*$/)
+                      .regex(/^[a-zA-Z0-9 ,]*$/)
                       .messages({
-                        'string.pattern.base': "{{#label}} must be only characters, space and ','",
+                        'string.pattern.base': "{{#label}} must be only characters, space , 0-9 and ','",
                       }),
                     beneficiary_name: string
                       .trim()
@@ -146,8 +146,13 @@ export const receiverRecon = Joi.object({
                         'string.pattern.base': "{{#label}} must be only characters, space and ','",
                       }),
                     settlement_status: Joi.valid('PAID'),
-                    settlement_reference: string.trim(),
-                    settlement_timestamp: Joi.date().iso().max(Joi.ref('/context.timestamp')),
+                    settlement_reference: string
+                      .trim()
+                      .equal('/on_settle.message.settlement.settlements.settlement_reference'),
+                    settlement_timestamp: Joi.date()
+                      .iso()
+                      .max(Joi.ref('/receiver_recon.context.timestamp'))
+                      .equal('/on_settle.message.settlement.settlements.settlement_timestamp'),
                   }),
                 )
                 .min(1),
@@ -191,13 +196,15 @@ export const receiverRecon = Joi.object({
             }),
 
             settlement_reason_code: Joi.valid('01', '02', '03', '04', '05', '06'),
-            settlement_id: string.trim(),
-            settlement_reference_no: string.trim(),
+            settlement_id: string.trim().equal('/on_settle.message.settlement.settlements.settlement_id'),
+            settlement_reference_no: string
+              .trim()
+              .equal('/on_settle.message.settlement.settlements.settlement_timestamp'),
             transaction_id: string.trim(),
             recon_status: Joi.valid('01', '02', '03', '04'),
             order_recon_status: Joi.valid('01'),
-            created_at: Joi.date().iso().max(Joi.ref('/context.timestamp')),
-            updated_at: Joi.date().iso().min(Joi.ref('created_at')).max(Joi.ref('/context.timestamp')),
+            created_at: Joi.date().iso().max(Joi.ref('/receiver_recon.context.timestamp')),
+            updated_at: Joi.date().iso().min(Joi.ref('created_at')).max(Joi.ref('/receiver_recon.context.timestamp')),
           }),
         )
         .length(5),

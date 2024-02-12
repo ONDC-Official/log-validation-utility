@@ -1,5 +1,6 @@
 import Joi from 'joi'
 import { idCheck } from './settle'
+const { string } = Joi.types()
 
 export const onSettle = Joi.object({
   context: Joi.object({
@@ -8,16 +9,14 @@ export const onSettle = Joi.object({
     country: Joi.valid('IND'),
     core_version: Joi.valid('1.0.0'),
     bap_id: idCheck,
-    bap_uri: Joi.string().uri(),
+    bap_uri: string.uri(),
     bpp_id: idCheck,
-    bpp_uri: Joi.string().uri(),
-    transaction_id: Joi.string(),
-    message_id: Joi.string(),
+    bpp_uri: string.uri(),
+    transaction_id: string.equal(Joi.ref('/settle.context.transaction_id')),
+    message_id: string.equal(Joi.ref('/settle.context.message_id')),
     timestamp: Joi.date().iso(),
-    ttl: Joi.string().isoDuration(),
-    city: Joi.string()
-      .regex(/^std:\d+$|^\*$/)
-      .message('Invalid City String'),
+    ttl: string.isoDuration(),
+    city: string.regex(/^std:\d+$|^\*$/).message('Invalid City String'),
   }),
   message: Joi.object({
     settlement: Joi.object({
@@ -28,9 +27,9 @@ export const onSettle = Joi.object({
             currency: Joi.valid('INR'),
             value: Joi.number().min(0).precision(2),
           }),
-          settlement_id: Joi.string(),
+          settlement_id: string,
           state: Joi.valid('01', '02', '03'),
-          settlement_reference_no: Joi.string(),
+          settlement_reference_no: string,
           error_code: Joi.when('state', {
             is: '03',
             then: Joi.valid('01'),
@@ -38,11 +37,9 @@ export const onSettle = Joi.object({
           }),
           error_message: Joi.when('state', {
             is: '03',
-            then: Joi.string()
-              .pattern(/^[a-zA-Z -,]+$/)
-              .messages({
-                'string.pattern.base': '{{#label}} must contain characters and space',
-              }),
+            then: string.pattern(/^[a-zA-Z -,]+$/).messages({
+              'string.pattern.base': '{{#label}} must contain characters and space',
+            }),
             otherwise: Joi.forbidden(),
           }),
         }),

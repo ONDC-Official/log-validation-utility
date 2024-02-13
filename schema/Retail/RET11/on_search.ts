@@ -20,6 +20,11 @@ export const FnBonSearchSchema = {
         },
         city: {
           type: 'string',
+          minLength: 1,
+          not: {
+            pattern: "\\*"
+          },
+          errorMessage : `City Code can't be * for on_search request`
         },
         core_version: {
           type: 'string',
@@ -164,7 +169,7 @@ export const FnBonSearchSchema = {
                           required: ['phone', 'email'],
                         },
                       },
-                      required: ['contact'],
+                      required: ['id', 'type','contact'],
                     },
                   },
                   descriptor: {
@@ -375,7 +380,7 @@ export const FnBonSearchSchema = {
                           },
                         },
                       },
-                      required: ['id', 'tags'],
+                      required: ['id', 'parent_category_id','tags'],
                     },
                   },
                   items: {

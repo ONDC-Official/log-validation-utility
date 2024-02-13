@@ -14,6 +14,7 @@ import {
   validateLocations,
   isSequenceValid,
   checkMandatoryTags,
+  areTimestampsLessThanOrEqualTo,
 } from '../../../utils'
 import _ from 'lodash'
 import { compareSTDwithArea } from '../../index'
@@ -673,6 +674,26 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         }
       } catch (error: any) {
         logger.error(`!!Errors while checking for items in bpp/providers/items, ${error.stack}`)
+      }
+  
+      // Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp
+      try{
+        logger.info(`Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp`)
+       const timestamp =  context.timestamp;
+       for(let i in  onSearchCatalog['bpp/providers']){
+        const items = onSearchCatalog['bpp/providers'][i].items;
+        items.forEach((item:any, index:number)=>{
+           const itemTimeStamp = item.time.timestamp; 
+           const op = areTimestampsLessThanOrEqualTo(itemTimeStamp, timestamp )
+           if(!op){
+             const key = `bpp/providers/items/time/timestamp[${index}]`
+             errorObj[key] = `Timestamp for item[${index}] can't be grater than context.timestamp`
+             logger.error(`Timestamp for item[${index}] can't be grater than context.timestamp`)
+           }
+        })
+       }
+      }catch(error:any){
+        logger.error(`!!Errors while checking timestamp in context.timestamp and bpp/providers/items/time/timestamp, ${error.stack}`)
       }
 
       try {

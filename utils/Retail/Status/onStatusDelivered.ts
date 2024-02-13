@@ -17,8 +17,7 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
 
     if (!message || !context || isObjectEmpty(message)) {
       return { missingFields: '/context, /message, is missing or empty' }
-    }
-
+    }    
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const schemaValidation = validateSchema('RET11', constants.ON_STATUS, data)
     const select: any = getValue(`${ApiSequence.SELECT}`)

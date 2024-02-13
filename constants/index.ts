@@ -51,6 +51,7 @@ export const ApiSequence = {
   ON_STATUS_DELIVERED: 'on_status_delivered',
   UPDATE: 'update',
   ON_UPDATE: 'on_update',
+  ON_SELECT_OUT_OF_STOCK: 'on_select_out_of_stock',
 }
 
 export const FisApiSequence = {

@@ -29,6 +29,8 @@ export const checkOnSelect = (data: any) => {
   if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
+  const selectContext_OOS = getValue(`${ApiSequence.ON_SELECT_OUT_OF_STOCK}_context`)
+  console.log("checking select_oos", selectContext_OOS);
 
   const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SELECT, data)
 
@@ -52,6 +54,7 @@ export const checkOnSelect = (data: any) => {
 
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
   const select: any = getValue(`${ApiSequence.SELECT}`)
+  const searchMessage: any = getValue(`${ApiSequence.ON_SEARCH}_message`)
 
   try {
     logger.info(`Comparing city of /${constants.SEARCH} and /${constants.ON_SELECT}`)
@@ -181,6 +184,35 @@ export const checkOnSelect = (data: any) => {
     logger.error(`!!Error while checking TAT and TTS in /${constants.ON_SELECT}`)
   }
 
+  try {
+    logger.info(`Checking TAT and TTS in /${constants.ON_SELECT} and /${constants.ON_SEARCH}`)
+    const catalog = searchMessage.catalog
+    const providers = catalog['bpp/providers']
+    let max_time_to_ships = []
+    for (let providerIndex = 0; providerIndex < providers.length; providerIndex++) {
+      const providerItems = providers[providerIndex].items
+      for (let itemIndex = 0; itemIndex < providerItems.length; itemIndex++) {
+        const timeToShip = isoDurToSec(providerItems[itemIndex]['@ondc/org/time_to_ship'])
+        if (timeToShip) {
+          max_time_to_ships.push(timeToShip)
+        }
+      }
+    }
+    const max_tts=max_time_to_ships.sort((a, b) =>  a - b)[0]
+    const on_select_tat = on_select.fulfillments.map((e:any)=>isoDurToSec(e['@ondc/org/TAT']))
+
+    if (on_select_tat<max_tts) {
+      errorObj.ttstat = `/fulfillments/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be less than @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
+    }
+
+    if (on_select_tat === max_tts) {
+      errorObj.ttstat = `/fulfillments/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be equal to @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
+    }
+    }
+  catch (error: any) {
+    logger.error(`!!Error while Checking TAT and TTS in /${constants.ON_SELECT} and /${constants.ON_SEARCH}`)
+  }
+
   let nonServiceableFlag = 0
   try {
     logger.info(`Checking fulfillments' state in ${constants.ON_SELECT}`)
@@ -219,9 +251,8 @@ export const checkOnSelect = (data: any) => {
           (!on_select_error || on_select_error.type != 'DOMAIN-ERROR' || on_select_error.code != '40002')
         ) {
           const cntkey = `cnt${item['@ondc/org/item_id']}`
-          errorObj[
-            cntkey
-          ] = `Count of item with id: ${item['@ondc/org/item_id']} does not match in ${constants.SELECT} & ${constants.ON_SELECT} (suitable domain error should be provided)`
+          errorObj[cntkey] =
+            `Count of item with id: ${item['@ondc/org/item_id']} does not match in ${constants.SELECT} & ${constants.ON_SELECT} (suitable domain error should be provided)`
         }
       }
     })
@@ -246,9 +277,8 @@ export const checkOnSelect = (data: any) => {
       if (titleType === 'item') {
         if (!(element['@ondc/org/item_id'] in itemFlfllmnts)) {
           const brkupitemid = `brkupitemid${i}`
-          errorObj[
-            brkupitemid
-          ] = `item with id: ${element['@ondc/org/item_id']} in quote.breakup[${i}] does not exist in items[]`
+          errorObj[brkupitemid] =
+            `item with id: ${element['@ondc/org/item_id']} in quote.breakup[${i}] does not exist in items[]`
         }
 
         logger.info(`Comparing individual item's total price and unit price `)
@@ -268,9 +298,8 @@ export const checkOnSelect = (data: any) => {
             _.gt(parseFloat(element.item.quantity.available.count), parseFloat(element.item.quantity.maximum.count))
           ) {
             const key = `qntcnt${i}`
-            errorObj[
-              key
-            ] = `available count can't be greater than maximum count for item id: ${element['@ondc/org/item_id']}`
+            errorObj[key] =
+              `available count can't be greater than maximum count for item id: ${element['@ondc/org/item_id']}`
           }
         }
       }
@@ -288,9 +317,8 @@ export const checkOnSelect = (data: any) => {
       if (titleType === 'tax' || titleType === 'discount') {
         if (!(element['@ondc/org/item_id'] in itemFlfllmnts)) {
           const brkupitemsid = `brkupitemstitles${i}`
-          errorObj[
-            brkupitemsid
-          ] = `item with id: ${element['@ondc/org/item_id']} in quote.breakup[${i}] does not exist in items[] (should be a valid item id)`
+          errorObj[brkupitemsid] =
+            `item with id: ${element['@ondc/org/item_id']} in quote.breakup[${i}] does not exist in items[] (should be a valid item id)`
         }
       }
 
@@ -305,9 +333,8 @@ export const checkOnSelect = (data: any) => {
       if (titleType === 'packing' || titleType === 'delivery' || titleType === 'misc') {
         if (!Object.values(itemFlfllmnts).includes(element['@ondc/org/item_id'])) {
           const brkupffid = `brkupfftitles${i}`
-          errorObj[
-            brkupffid
-          ] = `invalid  id: ${element['@ondc/org/item_id']} in ${titleType} line item (should be a valid fulfillment_id)`
+          errorObj[brkupffid] =
+            `invalid  id: ${element['@ondc/org/item_id']} in ${titleType} line item (should be a valid fulfillment_id)`
         }
       }
     })

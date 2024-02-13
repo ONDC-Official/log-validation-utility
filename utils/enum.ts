@@ -575,3 +575,14 @@ export const groceryStatutory = [
     parent_category_id: 'Grocery',
   },
 ]
+
+export enum DOMAIN {
+  RET10 = 'RET10',
+  RET11 = 'RET11',
+  RET12 = 'RET12',
+  RET13 = 'RET13',
+  RET14 = 'RET14',
+  RET15 = 'RET15',
+  RET16 = 'RET16',
+  RET18 = 'RET18',
+}

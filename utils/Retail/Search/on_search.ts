@@ -22,6 +22,7 @@ import { BPCJSON, groceryJSON, healthJSON, homeJSON } from '../../../constants/c
 import electronicsData from '../../../constants/electronics.json'
 import applianceData from '../../../constants/appliance.json'
 import fashionJSON from '../../../constants/fashion.json'
+import { DOMAIN } from '../../../utils/enum'
 export const checkOnsearch = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.ON_SEARCH]: 'JSON cannot be empty' }
@@ -649,51 +650,58 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         logger.info(`Checking for item tags in bpp/providers[0].items.tags `)
         const domain = context.domain.split(':')[1]
         logger.info(`Checking for item tags in bpp/providers[0].items.tags in ${domain}`)
-        const items = onSearchCatalog['bpp/providers'][0].items
-        if (domain === 'RET10') {
-          const errors = checkMandatoryTags(items, errorObj, groceryJSON, 'home')
-          Object.assign(errorObj, errors)
-        } else if (domain === 'RET12') {
-          const errors = checkMandatoryTags(items, errorObj, fashionJSON, 'fashion')
-          Object.assign(errorObj, errors)
-        } else if (domain === 'RET13') {
-          const errors = checkMandatoryTags(items, errorObj, BPCJSON, 'BPC')
-          Object.assign(errorObj, errors)
-        } else if (domain === 'RET14') {
-          const errors = checkMandatoryTags(items, errorObj, electronicsData, 'Electronics')
-          Object.assign(errorObj, errors)
-        } else if (domain === 'RET15') {
-          const errors = checkMandatoryTags(items, errorObj, applianceData, 'Appliances')
-          Object.assign(errorObj, errors)
-        } else if (domain === 'RET16') {
-          const errors = checkMandatoryTags(items, errorObj, homeJSON, 'home')
-          Object.assign(errorObj, errors)
-        } else if (domain === 'RET18') {
-          const errors = checkMandatoryTags(items, errorObj, healthJSON, 'health')
+        for(let i in onSearchCatalog['bpp/providers']){
+          const items = onSearchCatalog['bpp/providers'][i].items
+          let errors: any
+          switch (domain) {
+            case DOMAIN.RET10:
+              errors = checkMandatoryTags(items, errorObj, groceryJSON, 'Grocery')
+              break
+            case DOMAIN.RET12:
+              errors = checkMandatoryTags(items, errorObj, fashionJSON, 'Fashion')
+              break
+            case DOMAIN.RET13:
+              errors = checkMandatoryTags(items, errorObj, BPCJSON, 'BPC')
+              break
+            case DOMAIN.RET14:
+              errors = checkMandatoryTags(items, errorObj, electronicsData, 'Electronics')
+              break
+            case DOMAIN.RET15:
+              errors = checkMandatoryTags(items, errorObj, applianceData, 'Appliances')
+              break
+            case DOMAIN.RET16:
+              errors = checkMandatoryTags(items, errorObj, homeJSON, 'Home & Kitchen')
+              break
+            case DOMAIN.RET18:
+              errors = checkMandatoryTags(items, errorObj, healthJSON, 'Health & Wellness')
+              break
+          }
           Object.assign(errorObj, errors)
         }
       } catch (error: any) {
         logger.error(`!!Errors while checking for items in bpp/providers/items, ${error.stack}`)
       }
-  
+
       // Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp
-      try{
+      try {
         logger.info(`Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp`)
-       const timestamp =  context.timestamp;
-       for(let i in  onSearchCatalog['bpp/providers']){
-        const items = onSearchCatalog['bpp/providers'][i].items;
-        items.forEach((item:any, index:number)=>{
-           const itemTimeStamp = item.time.timestamp; 
-           const op = areTimestampsLessThanOrEqualTo(itemTimeStamp, timestamp )
-           if(!op){
-             const key = `bpp/providers/items/time/timestamp[${index}]`
-             errorObj[key] = `Timestamp for item[${index}] can't be grater than context.timestamp`
-             logger.error(`Timestamp for item[${index}] can't be grater than context.timestamp`)
-           }
-        })
-       }
-      }catch(error:any){
-        logger.error(`!!Errors while checking timestamp in context.timestamp and bpp/providers/items/time/timestamp, ${error.stack}`)
+        const timestamp = context.timestamp
+        for (let i in onSearchCatalog['bpp/providers']) {
+          const items = onSearchCatalog['bpp/providers'][i].items
+          items.forEach((item: any, index: number) => {
+            const itemTimeStamp = item.time.timestamp
+            const op = areTimestampsLessThanOrEqualTo(itemTimeStamp, timestamp)
+            if (!op) {
+              const key = `bpp/providers/items/time/timestamp[${index}]`
+              errorObj[key] = `Timestamp for item[${index}] can't be grater than context.timestamp`
+              logger.error(`Timestamp for item[${index}] can't be grater than context.timestamp`)
+            }
+          })
+        }
+      } catch (error: any) {
+        logger.error(
+          `!!Errors while checking timestamp in context.timestamp and bpp/providers/items/time/timestamp, ${error.stack}`,
+        )
       }
 
       try {

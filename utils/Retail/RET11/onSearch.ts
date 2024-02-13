@@ -206,7 +206,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
       try {
         logger.info(`Checking categories for provider (${prvdr.id}) in bpp/providers[${i}]`)
         let j = 0
-        const categories = onSearchCatalog['bpp/providers'][i]['categories']
+        const categories = onSearchCatalog['bpp/providers'][i]['categories']        
         const iLen = categories.length
         while (j < iLen) {
           logger.info(`Validating uniqueness for categories id in bpp/providers[${i}].items[${j}]...`)

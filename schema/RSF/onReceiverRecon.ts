@@ -29,9 +29,9 @@ export const onReceiverRecon = Joi.object({
           receiver_app_id: idCheck,
           recon_status: Joi.valid('01', '02', '03', '04'),
           order_recon_status: Joi.valid('02'),
-          transaction_id: string.equal('/receiver_recon.message.orderbook.orders.transaction_id'),
-          settlement_id: string.equal('/receiver_recon.message.settlement.settlements.settlement_id'),
-          settlement_reference_no: string.equal('/on_settle.message.settlement.settlements.settlement_timestamp'),
+          transaction_id: string.equal(Joi.ref('/receiver_recon.message.orderbook.orders.0.transaction_id')),
+          settlement_id: string.equal(Joi.ref('/receiver_recon.message.settlement.settlements.0.settlement_id')),
+          settlement_reference_no: string.equal(Joi.ref('/on_settle.message.settlement.settlements.settlement_timestamp')),
           counterparty_recon_status: Joi.valid('01', '02', '03', '04'),
           counterparty_diff_amount: {
             currency: Joi.valid('INR'),

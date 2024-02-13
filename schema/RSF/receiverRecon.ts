@@ -63,9 +63,9 @@ export const receiverRecon = Joi.object({
               status: Joi.valid('PAID'),
               collected_by: Joi.valid('BAP', 'BPP'),
               '@ondc/org/collected_by_status': Joi.valid('Assert').optional(),
-              '@ondc/org/buyer_app_finder_fee_type': string.trim().lowercase().valid('percent', 'amount'),
+              '@ondc/org/buyer_app_finder_fee_type': string.insensitive().valid('percent', 'amount'),
               '@ondc/org/buyer_app_finder_fee_amount': Joi.when('@ondc/org/buyer_app_finder_fee_type', {
-                is: 'Percent',
+                is: string.insensitive().valid('percent'),
                 then: Joi.number().integer().max(100),
                 otherwise: Joi.number().min(0).precision(2),
               }),
@@ -148,11 +148,11 @@ export const receiverRecon = Joi.object({
                     settlement_status: Joi.valid('PAID'),
                     settlement_reference: string
                       .trim()
-                      .equal('/on_settle.message.settlement.settlements.settlement_reference'),
+                      .equal(Joi.ref('/on_settle.message.settlement.settlements.0.settlement_reference')),
                     settlement_timestamp: Joi.date()
                       .iso()
                       .max(Joi.ref('/receiver_recon.context.timestamp'))
-                      .equal('/on_settle.message.settlement.settlements.settlement_timestamp'),
+                      .equal(Joi.ref('/on_settle.message.settlement.settlements.0.settlement_timestamp')),
                   }),
                 )
                 .min(1),
@@ -196,10 +196,10 @@ export const receiverRecon = Joi.object({
             }),
 
             settlement_reason_code: Joi.valid('01', '02', '03', '04', '05', '06'),
-            settlement_id: string.trim().equal('/on_settle.message.settlement.settlements.settlement_id'),
+            settlement_id: string.trim().equal(Joi.ref('/on_settle.message.settlement.settlements.0.settlement_id')),
             settlement_reference_no: string
               .trim()
-              .equal('/on_settle.message.settlement.settlements.settlement_timestamp'),
+              .equal(Joi.ref('/on_settle.message.settlement.settlements.0.settlement_timestamp')),
             transaction_id: string.trim(),
             recon_status: Joi.valid('01', '02', '03', '04'),
             order_recon_status: Joi.valid('01'),

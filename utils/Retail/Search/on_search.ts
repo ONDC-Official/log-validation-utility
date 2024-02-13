@@ -13,6 +13,7 @@ import {
   checkServiceabilityType,
   validateLocations,
   isSequenceValid,
+  isValidPhoneNumber,
 } from '../../../utils'
 import _ from 'lodash'
 import { compareCitywithPinCode, compareSTDwithArea } from '../../index'
@@ -278,6 +279,14 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           logger.info(`Validating uniqueness for categories id in bpp/providers[${i}].items[${j}]...`)
           const category = categories[j]
 
+          const fulfillments = onSearchCatalog['bpp/providers'][i]['fulfillments']
+          const phoneNumber = fulfillments[i].contact.phone
+
+          if (!isValidPhoneNumber(phoneNumber)) {
+            const key = `bpp/providers${i}fulfillments${i}`
+            errorObj[key] = `Please enter a valid phone number consisting of  10 or  11 digits without any spaces or special characters. `
+          }
+
           if (categoriesId.has(category.id)) {
             const key = `prvdr${i}category${j}`
             errorObj[key] = `duplicate category id: ${category.id} in bpp/providers[${i}]`
@@ -453,6 +462,26 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
           logger.info(`Checking selling price and maximum price for item id: ${item.id}`)
 
+          const statutory_reqs_prepackaged_food = onSearchCatalog['bpp/providers'][i]['items'][j]['@ondc/org/statutory_reqs_prepackaged_food'];
+          console.log("checking statutary", statutory_reqs_prepackaged_food);
+          
+          if (context.domain === 'ONDC:RET18') {
+
+            if (!statutory_reqs_prepackaged_food.ingredients_info) {
+              const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
+              errorObj[key] =
+                `In ONDC:RET18 is valid key ingredients_info `
+            }
+          } else if (context.domain === 'ONDC:RET10') {
+            const mandatoryFields = ['nutritional_info', 'additives_info', 'brand_owner_FSSAI_license_no', 'imported_product_country_of_origin', 'net_quantity'];
+            mandatoryFields.forEach(field => {
+              if (!statutory_reqs_prepackaged_food[field]) {
+                const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
+                errorObj[key] =
+                  `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food is not according to api contract`
+              }
+            });
+          } 
           //check availabe and max quantity
           if (item.quantity && item.quantity.available && typeof item.quantity.available.count === 'string') {
             const availCount = parseInt(item.quantity.available.count, 10)

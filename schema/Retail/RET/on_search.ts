@@ -356,6 +356,8 @@ export const onSearchSchema = {
                         },
                         gps: {
                           type: 'string',
+                          pattern: '^[0-9]{2}[.][0-9]{6,}[,][0-9]{2}[.][0-9]{6,}$',
+                          errorMessage: ' The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                         },
                         address: {
                           type: 'object',
@@ -378,13 +380,16 @@ export const onSearchSchema = {
                               type: 'string',
                             },
                           },
-                          required: ['locality', 'street', 'city', 'area_code', 'state'],
+                          required: ['locality', 'street', 'city', 'area_code', 'state', 'circle'],
                         },
                         circle: {
                           type: 'object',
                           properties: {
                             gps: {
                               type: 'string',
+                              pattern: '^[0-9]{2}[.][0-9]{6,}[,][0-9]{2}[.][0-9]{6,}$',
+                              errorMessage:
+                                ' The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                             },
                             radius: {
                               type: 'object',
@@ -506,7 +511,7 @@ export const onSearchSchema = {
                               },
                             },
                           },
-                          required: ['name', 'symbol', 'short_desc', 'long_desc', 'images', 'code'],
+                          required: ['name', 'symbol', 'short_desc', 'long_desc', 'images'],
                         },
                         quantity: {
                           type: 'object',
@@ -522,6 +527,8 @@ export const onSearchSchema = {
                                     },
                                     value: {
                                       type: 'string',
+                                      pattern: "-?^\\d*(.\\d{0,2})?$",
+                                      errorMessage: 'enter a valid number',
                                     },
                                   },
                                   required: ['unit', 'value'],
@@ -536,7 +543,7 @@ export const onSearchSchema = {
                                   type: 'string',
                                   enum: ['99', '0'],
                                   errorMessage:
-                                    'available/count must be equal to one of the allowed values i.e 99(if in stock) or 0(if not in stock))',
+                                    'available/count must be equal to one of the allowed values i.e 99 if in stock or 0 if not in stock ',
                                 },
                               },
                               required: ['count'],
@@ -639,14 +646,10 @@ export const onSearchSchema = {
                             importer_FSSAI_license_no: {
                               type: 'string',
                             },
+                            ingredients_info:{
+                              type: 'string'
+                            }
                           },
-                          required: [
-                            'nutritional_info',
-                            'additives_info',
-                            'brand_owner_FSSAI_license_no',
-                            'other_FSSAI_license_no',
-                            'importer_FSSAI_license_no',
-                          ],
                         },
                         tags: {
                           type: 'array',
@@ -784,9 +787,9 @@ export const onSearchSchema = {
                     },
                   },
                 },
-                required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],
               },
             },
+            required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],
           },
           required: ['bpp/fulfillments', 'bpp/descriptor', 'bpp/providers'],
         },

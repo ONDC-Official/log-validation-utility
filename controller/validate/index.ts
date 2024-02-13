@@ -68,9 +68,9 @@ const controller = {
       const { signature, currentDate } = await helper.createSignature({ message: JSON.stringify(httpResponse) })
 
       if (!success)
-        return res.status(400).send({ success, response: httpResponse, signature, signTimestamp: currentDate })
+        return res.status(400).send({ success, response: httpResponse, signature , signTimestamp: currentDate })
 
-      return res.status(200).send({ success, response: httpResponse, signature, signTimestamp: currentDate })
+      return res.status(200).send({ success, response: httpResponse, signature , signTimestamp: currentDate })
     } catch (error: any) {
       logger.error(error)
       return res.status(500).send({ success: false, response: { message: error?.message || error } })

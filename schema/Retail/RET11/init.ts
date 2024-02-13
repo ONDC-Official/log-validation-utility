@@ -244,6 +244,8 @@ export const FnBinitSchema = {
                           gps: {
                             type: 'string',
                             minLength: 1,
+                            pattern: '^[0-9]{2}[.][0-9]{6,}[,][0-9]{2}[.][0-9]{6,}$',
+                            errorMessage: 'The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                           },
                           address: {
                             type: 'object',

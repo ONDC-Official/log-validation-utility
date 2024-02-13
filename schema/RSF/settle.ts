@@ -71,7 +71,7 @@ export const settle: Joi.ObjectSchema = Joi.object({
             remarks: {
               name: string,
             },
-            settlement_id: string.equal(Joi.ref('/on_settle.message.settlement.settlements.settlement_id')),
+            settlement_id: string,
           }),
         )
         .custom((array, helpers) => {

@@ -146,13 +146,8 @@ export const receiverRecon = Joi.object({
                         'string.pattern.base': "{{#label}} must be only characters, space and ','",
                       }),
                     settlement_status: Joi.valid('PAID'),
-                    settlement_reference: string
-                      .trim()
-                      .equal(Joi.ref('/on_settle.message.settlement.settlements.0.settlement_reference')),
-                    settlement_timestamp: Joi.date()
-                      .iso()
-                      .max(Joi.ref('/receiver_recon.context.timestamp'))
-                      .equal(Joi.ref('/on_settle.message.settlement.settlements.0.settlement_timestamp')),
+                    settlement_reference: string,
+                    settlement_timestamp: Joi.date().iso().max(Joi.ref('/receiver_recon.context.timestamp')),
                   }),
                 )
                 .min(1),
@@ -196,10 +191,10 @@ export const receiverRecon = Joi.object({
             }),
 
             settlement_reason_code: Joi.valid('01', '02', '03', '04', '05', '06'),
-            settlement_id: string.trim().equal(Joi.ref('/on_settle.message.settlement.settlements.0.settlement_id')),
-            settlement_reference_no: string
-              .trim()
-              .equal(Joi.ref('/on_settle.message.settlement.settlements.0.settlement_timestamp')),
+            settlement_id: string.equal(Joi.ref('/on_settle.message.settlement.settlements.0.settlement_id')),
+            settlement_reference_no: string.equal(
+              Joi.ref('/on_settle.message.settlement.settlements.0.settlement_reference_no'),
+            ),
             transaction_id: string.trim(),
             recon_status: Joi.valid('01', '02', '03', '04'),
             order_recon_status: Joi.valid('01'),

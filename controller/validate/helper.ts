@@ -5,6 +5,7 @@ import { DOMAIN, ERROR_MESSAGE } from '../../shared/types'
 import { IGMvalidateLogs, validateLogs } from '../../shared/validateLogs'
 import { validateLogsForFIS12 } from '../../shared/Actions/FIS12Actions'
 import { validateLogsForMobility } from '../../shared/Actions/mobilityActions'
+import { validateLogsForMetro } from '../../shared/Actions/metroActions'
 
 const createSignature = async ({ message }: { message: string }) => {
   const privateKey = process.env.SIGN_PRIVATE_KEY as string
@@ -77,9 +78,10 @@ const validateMobility = async (domain: string, payload: string, version: string
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
 
   if (!flow) throw new Error('Flow not defined')
+  if (version !== '2.0.0') throw new Error(ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION)
 
-  switch (version) {
-    case '2.0.0':
+  switch (domain) {
+    case 'ONDC:TRV10':
       response = validateLogsForMobility(payload, domain, flow)
 
       if (_.isEmpty(response)) {
@@ -88,8 +90,19 @@ const validateMobility = async (domain: string, payload: string, version: string
       }
 
       break
+
+    case 'ONDC:TRV11':
+      response = validateLogsForMetro(payload)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+
+      break
+
     default:
-      message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
+      message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_DOMAIN
       logger.warn('Invalid Version!!')
   }
 

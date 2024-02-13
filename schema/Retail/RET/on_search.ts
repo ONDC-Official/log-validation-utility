@@ -1,3 +1,5 @@
+import { combinedCategory } from '../../../utils/enum'
+
 export const onSearchSchema = {
   type: 'object',
   properties: {
@@ -14,11 +16,17 @@ export const onSearchSchema = {
         },
         country: {
           type: 'string',
+          pattern: '^[A-Z]{3}$',
+          errorMessage: 'Country must be in ISO 3166-1 format (three-letter country code)',
           minLength: 1,
         },
         city: {
           type: 'string',
           minLength: 1,
+          not: {
+            pattern: "\\*"
+          },
+          errorMessage : `City Code can't be * for on_search request`
         },
         core_version: {
           type: 'string',
@@ -524,6 +532,7 @@ export const onSearchSchema = {
                                   properties: {
                                     unit: {
                                       type: 'string',
+                                      enum: ['unit', 'dozen', 'gram', 'kilogram', 'tonne', 'litre', 'millilitre']
                                     },
                                     value: {
                                       type: 'string',
@@ -577,6 +586,8 @@ export const onSearchSchema = {
                         },
                         category_id: {
                           type: 'string',
+                          enum: combinedCategory,
+                          errorMessage: 'Invalid catrgory ID found for item for on_search ',
                         },
                         fulfillment_id: {
                           type: 'string',

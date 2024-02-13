@@ -13,11 +13,17 @@ import {
   checkServiceabilityType,
   validateLocations,
   isSequenceValid,
+  checkMandatoryTags,
+  areTimestampsLessThanOrEqualTo,
   isValidPhoneNumber,
 } from '../../../utils'
 import _ from 'lodash'
-import { compareCitywithPinCode, compareSTDwithArea } from '../../index'
-
+import { compareSTDwithArea } from '../../index'
+import { BPCJSON, groceryJSON, healthJSON, homeJSON } from '../../../constants/category'
+import electronicsData from '../../../constants/electronics.json'
+import applianceData from '../../../constants/appliance.json'
+import fashionJSON from '../../../constants/fashion.json'
+import { DOMAIN } from '../../../utils/enum'
 export const checkOnsearch = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.ON_SEARCH]: 'JSON cannot be empty' }
@@ -86,41 +92,18 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
   try {
     const providers = data.message.catalog['bpp/providers']
-    if (providers && providers.length > 0) {
-      const locations = providers[0].locations
+    const address = providers[0].locations[0].address
 
-      if (locations && locations.length > 0) {
-        const address = locations[0].address
+    if (address) {
+      const area_code = Number.parseInt(address.area_code)
+      const std = context.city.split(':')[1]
 
-        if (address) {
-          const area_code = Number.parseInt(address.area_code)
-          const city = address.city
-
-          const stdArray = context.city.split(':')
-          const std = stdArray.length > 1 ? stdArray[1] : null
-
-          if (std !== null) {
-            logger.info(`Comparing area_code and STD Code for /${constants.ON_SEARCH}`)
-            const areaWithSTD = compareSTDwithArea(area_code, std)
-            if (!areaWithSTD) {
-              logger.error(`STD code does not match with correct area_code on /${constants.ON_SEARCH}`)
-            }
-
-            const areaWithCity = compareCitywithPinCode(area_code, city)
-            if (!areaWithCity) {
-              logger.error(`City does not match with correct area_code on /${constants.ON_SEARCH}`)
-            }
-          } else {
-            logger.error(`'std' is undefined or null.`)
-          }
-        } else {
-          logger.error(`'address' is undefined or null.`)
-        }
-      } else {
-        logger.error(`'locations' array is undefined or empty.`)
+      logger.info(`Comparing area_code and STD Code for /${constants.ON_SEARCH}`)
+      const areaWithSTD = compareSTDwithArea(area_code, std)
+      if (!areaWithSTD) {
+        logger.error(`STD code does not match with correct area_code on /${constants.ON_SEARCH}`)
+        errorObj.invldAreaCode = `STD code does not match with correct area_code on /${constants.ON_SEARCH}`
       }
-    } else {
-      logger.error(`'bpp/providers' array is undefined or empty.`)
     }
   } catch (error: any) {
     logger.error(
@@ -689,6 +672,65 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         }
       } catch (error: any) {
         logger.error(`!!Errors while checking items in bpp/providers[${i}], ${error.stack}`)
+      }
+
+      // Checking for mandatory Items in provider IDs
+      try {
+        logger.info(`Checking for item tags in bpp/providers[0].items.tags `)
+        const domain = context.domain.split(':')[1]
+        logger.info(`Checking for item tags in bpp/providers[0].items.tags in ${domain}`)
+        for(let i in onSearchCatalog['bpp/providers']){
+          const items = onSearchCatalog['bpp/providers'][i].items
+          let errors: any
+          switch (domain) {
+            case DOMAIN.RET10:
+              errors = checkMandatoryTags(items, errorObj, groceryJSON, 'Grocery')
+              break
+            case DOMAIN.RET12:
+              errors = checkMandatoryTags(items, errorObj, fashionJSON, 'Fashion')
+              break
+            case DOMAIN.RET13:
+              errors = checkMandatoryTags(items, errorObj, BPCJSON, 'BPC')
+              break
+            case DOMAIN.RET14:
+              errors = checkMandatoryTags(items, errorObj, electronicsData, 'Electronics')
+              break
+            case DOMAIN.RET15:
+              errors = checkMandatoryTags(items, errorObj, applianceData, 'Appliances')
+              break
+            case DOMAIN.RET16:
+              errors = checkMandatoryTags(items, errorObj, homeJSON, 'Home & Kitchen')
+              break
+            case DOMAIN.RET18:
+              errors = checkMandatoryTags(items, errorObj, healthJSON, 'Health & Wellness')
+              break
+          }
+          Object.assign(errorObj, errors)
+        }
+      } catch (error: any) {
+        logger.error(`!!Errors while checking for items in bpp/providers/items, ${error.stack}`)
+      }
+
+      // Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp
+      try {
+        logger.info(`Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp`)
+        const timestamp = context.timestamp
+        for (let i in onSearchCatalog['bpp/providers']) {
+          const items = onSearchCatalog['bpp/providers'][i].items
+          items.forEach((item: any, index: number) => {
+            const itemTimeStamp = item.time.timestamp
+            const op = areTimestampsLessThanOrEqualTo(itemTimeStamp, timestamp)
+            if (!op) {
+              const key = `bpp/providers/items/time/timestamp[${index}]`
+              errorObj[key] = `Timestamp for item[${index}] can't be grater than context.timestamp`
+              logger.error(`Timestamp for item[${index}] can't be grater than context.timestamp`)
+            }
+          })
+        }
+      } catch (error: any) {
+        logger.error(
+          `!!Errors while checking timestamp in context.timestamp and bpp/providers/items/time/timestamp, ${error.stack}`,
+        )
       }
 
       try {

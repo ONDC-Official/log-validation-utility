@@ -14,8 +14,8 @@ import {
   validateLocations,
   isSequenceValid,
   isValidPhoneNumber,
-  compareCitywithPinCode,
   compareSTDwithArea,
+  areTimestampsLessThanOrEqualTo,
 } from '../../../utils'
 import _ from 'lodash'
 
@@ -594,52 +594,43 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
 
       try {
         const providers = data.message.catalog['bpp/providers']
-        if (providers && providers.length > 0) {
-          const locations = providers[0].locations
+        const address = providers[0].locations[0].address
 
-          if (locations && locations.length > 0) {
-            const address = locations[0].address
+        if (address) {
+          const area_code = Number.parseInt(address.area_code)
+          const std = context.city.split(':')[1]
 
-            if (address) {
-              const area_code = Number.parseInt(address.area_code)
-              const city = address.city
-
-              const stdArray = context.city.split(':')
-              const std = stdArray.length > 1 ? stdArray[1] : null
-
-              if (std !== null) {
-                logger.info(`Comparing area_code and STD Code for /${constants.ON_SEARCH}`)
-                const areaWithSTD = compareSTDwithArea(area_code, std)
-                if (!areaWithSTD) {
-                  const key = `message.catalog.bpp/providers[0]locations[0]address.area_code`
-                  errorObj[key] = `area_code does not match with correct STD code on /${constants.ON_SEARCH}`
-                  logger.error(`STD code does not match with correct area_code on /${constants.ON_SEARCH}`)
-                }
-
-                logger.info(`Comparing area_code and city for /${constants.ON_SEARCH}`)
-                const areaWithCity = compareCitywithPinCode(area_code, city)
-                if (!areaWithCity) {
-                  const key = `message.catalog.bpp/providers[0]locations[0]address.city`
-                  errorObj[key] = `City  does not match with correct area_code on /${constants.ON_SEARCH}`
-                  logger.error(`City does not match with correct area_code on /${constants.ON_SEARCH}`)
-                }
-              } else {
-                logger.error(`'std' is undefined or null.`)
-              }
-            } else {
-              logger.error(`'address' is undefined or null.`)
-            }
-          } else {
-            logger.error(`'locations' array is undefined or empty.`)
+          logger.info(`Comparing area_code and STD Code for /${constants.ON_SEARCH}`)
+          const areaWithSTD = compareSTDwithArea(area_code, std)
+          if (!areaWithSTD) {
+            logger.error(`STD code does not match with correct area_code on /${constants.ON_SEARCH}`)
+            errorObj.invldAreaCode = `STD code does not match with correct area_code on /${constants.ON_SEARCH}`
           }
-        } else {
-          logger.error(`'bpp/providers' array is undefined or empty.`)
         }
       } catch (error: any) {
         logger.error(
           `Error while matching area_code and std code for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
         )
       }
+            // Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp
+            try{
+              logger.info(`Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp`)
+             const timestamp =  context.timestamp;
+             for(let i in  onSearchCatalog['bpp/providers']){
+              const items = onSearchCatalog['bpp/providers'][i].items;
+              items.forEach((item:any, index:number)=>{
+                 const itemTimeStamp = item.time.timestamp; 
+                 const op = areTimestampsLessThanOrEqualTo(itemTimeStamp, timestamp )
+                 if(!op){
+                   const key = `bpp/providers/items/time/timestamp[${index}]`
+                   errorObj[key] = `Timestamp for item[${index}] can't be grater than context.timestamp`
+                   logger.error(`Timestamp for item[${index}] can't be grater than context.timestamp`)
+                 }
+              })
+             }
+            }catch(error:any){
+              logger.error(`!!Errors while checking timestamp in context.timestamp and bpp/providers/items/time/timestamp, ${error.stack}`)
+            }
 
       try{
         logger.info(`Checking for tags array in message/catalog/bpp/providers[0]/categories[0]/tags`);

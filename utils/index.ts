@@ -3,7 +3,7 @@ import _ from 'lodash'
 import { logger } from '../shared/logger'
 import constants, { statusArray } from '../constants'
 import schemaValidator from '../shared/schemaValidator'
-import data from '../constants/csv.json'
+import data from '../constants/AreacodeMap.json'
 
 export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
 
@@ -772,6 +772,40 @@ export const compareSTDwithArea = (pincode: number, std: string): boolean => {
   return data.some((e: any) => e.Pincode === pincode && e['STD Code'] === std)
 }
 
-export const compareCitywithPinCode = (pincode: number, city: string): boolean => {
-  return data.some((e: any) => e.Pincode === pincode && e.City === city.toUpperCase())
+export const checkMandatoryTags = (items: any, errorObj: any, categoryJSON: any, categoryName: string) => {
+  items.forEach((item: any, index: number) => {
+    let attributeTag = null
+    for (const tag of item.tags) {
+      if (tag.code === 'attribute') {
+        attributeTag = tag
+        break
+      }
+    }
+
+    if (!attributeTag) {
+      logger.error(`Attribute tag fields are missing for ${categoryName} item[${index}]`)
+      const key = `missingAttributeTag${index}`
+      errorObj[key] = `Attribute tag fields are missing for ${categoryName} item[${index}]`
+      return
+    }
+
+    const tags = attributeTag.list
+    const ctgrID = item.category_id
+
+    if (categoryJSON.hasOwnProperty(ctgrID)) {
+      logger.info(`Checking for item tags for ${categoryName} item[${index}]`)
+      const mandatoryTags = categoryJSON[ctgrID]
+      for (const tagKey in mandatoryTags) {
+        if (mandatoryTags[tagKey]) {
+          const tagFound = tags.some((tag: any) => tag.code.toLowerCase() === tagKey.toLowerCase())
+          if (!tagFound) {
+            logger.error(`Mandatory tag field [${tagKey}] missing for ${categoryName} item[${index}]`)
+            const key = `missingTagsItem[${index}] : ${tagKey}`
+            errorObj[key] = `Mandatory tag field [${tagKey}] missing for ${categoryName} item[${index}]`
+          }
+        }
+      }
+    }
+  })
+  return errorObj
 }

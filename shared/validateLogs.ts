@@ -34,6 +34,8 @@ import checkOnIssueStatus from '../utils/igm/retOnIssueStatus'
 import checkOnIssueStatusUnsolicited from '../utils/igm/retOnIssueStatus(unsolicited)'
 import checkLspIssueClose from '../utils/igm/lspIssue(close)'
 import checkIssueClose from '../utils/igm/retIssueClose'
+import { checkOnStatusPacked } from '../utils/Retail/Status/onStatusPacked'
+import { checkOnStatusOutForDelivery } from '../utils/Retail/Status/onStatusOutForDelivery'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
@@ -153,23 +155,35 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         }
 
         if (data[ApiSequence.ON_STATUS_PENDING]) {
-          const onStatusResp = checkOnStatusPending(data[ApiSequence.ON_STATUS_PENDING], 'pending')
+          const onStatusResp = checkOnStatusPending(data[ApiSequence.ON_STATUS_PENDING], "Accepted")
 
           if (!_.isEmpty(onStatusResp)) {
             logReport = { ...logReport, [ApiSequence.ON_STATUS_PENDING]: onStatusResp }
           }
         }
-
-        if (data[ApiSequence.ON_STATUS_PICKED]) {
-          const onStatusResp = checkOnStatusPicked(data[ApiSequence.ON_STATUS_PICKED], 'pending')
+        if (data[ApiSequence.ON_STATUS_PACKED]) {
+          const onStatusResp = checkOnStatusPacked(data[ApiSequence.ON_STATUS_PACKED], "In-progress")
 
           if (!_.isEmpty(onStatusResp)) {
             logReport = { ...logReport, [ApiSequence.ON_STATUS_PICKED]: onStatusResp }
           }
         }
+        if (data[ApiSequence.ON_STATUS_PICKED]) {
+          const onStatusResp = checkOnStatusPicked(data[ApiSequence.ON_STATUS_PICKED], "In-progress")
 
+          if (!_.isEmpty(onStatusResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_PICKED]: onStatusResp }
+          }
+        }
+        if (data[ApiSequence.ON_STATUS_OUT_FOR_DELIVERY]) {
+          const onStatusResp = checkOnStatusOutForDelivery(data[ApiSequence.ON_STATUS_OUT_FOR_DELIVERY], "In-progress")
+
+          if (!_.isEmpty(onStatusResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_PICKED]: onStatusResp }
+          }
+        }
         if (data[ApiSequence.ON_STATUS_DELIVERED]) {
-          const onStatusResp = checkOnStatusDelivered(data[ApiSequence.ON_STATUS_DELIVERED], 'pending')
+          const onStatusResp = checkOnStatusDelivered(data[ApiSequence.ON_STATUS_DELIVERED], "Completed")
 
           if (!_.isEmpty(onStatusResp)) {
             logReport = { ...logReport, [ApiSequence.ON_STATUS_DELIVERED]: onStatusResp }
@@ -497,7 +511,14 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         }
 
         if (data[ApiSequence.ON_STATUS_PENDING]) {
-          const onStatusResp = checkOnStatusPending(data[ApiSequence.ON_STATUS_PENDING], 'pending')
+          const onStatusResp = checkOnStatusPending(data[ApiSequence.ON_STATUS_PENDING], 'Accepted')
+
+          if (!_.isEmpty(onStatusResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_PENDING]: onStatusResp }
+          }
+        }
+        if (data[ApiSequence.ON_STATUS_PENDING]) {
+          const onStatusResp = checkOnStatusPacked(data[ApiSequence.ON_STATUS_PENDING], "In-progress")
 
           if (!_.isEmpty(onStatusResp)) {
             logReport = { ...logReport, [ApiSequence.ON_STATUS_PENDING]: onStatusResp }
@@ -505,15 +526,22 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         }
 
         if (data[ApiSequence.ON_STATUS_PICKED]) {
-          const onStatusResp = checkOnStatusPicked(data[ApiSequence.ON_STATUS_PICKED], 'pending')
+          const onStatusResp = checkOnStatusPicked(data[ApiSequence.ON_STATUS_PICKED], "In-progress")
 
           if (!_.isEmpty(onStatusResp)) {
             logReport = { ...logReport, [ApiSequence.ON_STATUS_PICKED]: onStatusResp }
           }
         }
+        if (data[ApiSequence.ON_STATUS_PENDING]) {
+          const onStatusResp = checkOnStatusOutForDelivery(data[ApiSequence.ON_STATUS_PENDING], "In-progress")
+
+          if (!_.isEmpty(onStatusResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_PENDING]: onStatusResp }
+          }
+        }
 
         if (data[ApiSequence.ON_STATUS_DELIVERED]) {
-          const onStatusResp = checkOnStatusDelivered(data[ApiSequence.ON_STATUS_DELIVERED], 'pending')
+          const onStatusResp = checkOnStatusDelivered(data[ApiSequence.ON_STATUS_DELIVERED], 'Completed')
 
           if (!_.isEmpty(onStatusResp)) {
             logReport = { ...logReport, [ApiSequence.ON_STATUS_DELIVERED]: onStatusResp }

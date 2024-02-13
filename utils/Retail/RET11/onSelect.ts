@@ -54,8 +54,6 @@ export const checkOnSelect = (data: any) => {
   const select: any = getValue(`${ApiSequence.SELECT}`)
   const searchMessage: any = getValue(`${ApiSequence.ON_SEARCH}_message`)
 
-  console.log('this is on_search', searchMessage)
-
   try {
     logger.info(`Comparing city of /${constants.SEARCH} and /${constants.ON_SELECT}`)
     if (!_.isEqual(searchContext.city, context.city)) {

@@ -522,6 +522,8 @@ export const onSearchSchema = {
                                     },
                                     value: {
                                       type: 'string',
+                                      pattern: "-?^\\d*(.\\d{0,2})?$",
+                                      errorMessage: 'enter a valid number',
                                     },
                                   },
                                   required: ['unit', 'value'],

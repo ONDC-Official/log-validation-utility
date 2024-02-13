@@ -13,6 +13,7 @@ import {
   checkServiceabilityType,
   validateLocations,
   isSequenceValid,
+  isValidPhoneNumber,
 } from '../../../utils'
 import _ from 'lodash'
 import { compareCitywithPinCode, compareSTDwithArea } from '../../index'
@@ -277,6 +278,14 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         while (j < iLen) {
           logger.info(`Validating uniqueness for categories id in bpp/providers[${i}].items[${j}]...`)
           const category = categories[j]
+
+          const fulfillments = onSearchCatalog['bpp/providers'][i]['fulfillments']
+          const phoneNumber = fulfillments[i].contact.phone
+
+          if (!isValidPhoneNumber(phoneNumber)) {
+            const key = `bpp/providers${i}fulfillments${i}`
+            errorObj[key] = `Please enter a valid phone number consisting of  10 or  11 digits without any spaces or special characters. `
+          }
 
           if (categoriesId.has(category.id)) {
             const key = `prvdr${i}category${j}`

@@ -5,6 +5,8 @@ import { DOMAIN, ERROR_MESSAGE } from '../../shared/types'
 import { IGMvalidateLogs, validateLogs } from '../../shared/validateLogs'
 import { validateLogsForFIS12 } from '../../shared/Actions/FIS12Actions'
 import { validateLogsForMobility } from '../../shared/Actions/mobilityActions'
+import { validate } from '../../shared/joiValidator'
+import { RSFPayload } from '../../schema/RSF'
 
 const createSignature = async ({ message }: { message: string }) => {
   const privateKey = process.env.SIGN_PRIVATE_KEY as string
@@ -19,6 +21,7 @@ const createSignature = async ({ message }: { message: string }) => {
   return { signature, currentDate }
 }
 const getEnumForDomain = (path: string) => {
+  if (path.includes('rsf')) return DOMAIN.RSF
   if (path.includes('trv')) return DOMAIN.MOBILITY
   if (path.includes('fis')) return DOMAIN.FINANCE
   if (path.includes('logistics')) return DOMAIN.LOGISTICS
@@ -101,7 +104,7 @@ const validateIGM = async (payload: string, version: string) => {
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
 
   switch (version) {
-    case '1.2.0':
+    case '1.0.0':
       response = IGMvalidateLogs(payload)
 
       if (_.isEmpty(response)) {
@@ -117,5 +120,33 @@ const validateIGM = async (payload: string, version: string) => {
 
   return { response, success, message }
 }
+const validateRSF = async (payload: any, version: string) => {
+  let response
+  let success = false
 
-export default { validateFinance, validateIGM, validateMobility, validateRetail, getEnumForDomain, createSignature }
+  let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
+  switch (version) {
+    case '1.0.0':
+      response = await validate(RSFPayload, payload)
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+
+      break
+    default:
+      message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
+      logger.warn('Invalid Version!!')
+  }
+  return { response, success, message }
+}
+
+export default {
+  validateFinance,
+  validateRSF,
+  validateIGM,
+  validateMobility,
+  validateRetail,
+  getEnumForDomain,
+  createSignature,
+}

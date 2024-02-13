@@ -13,13 +13,19 @@ const controller = {
     try {
       const { domain, version, payload, flow, bap_id, bpp_id } = req.body
 
-      let result: { response?: string; success?: boolean; message?: string } = {}
+      let result: { response?: Record<string, object> | undefined | string; success?: boolean; message?: string } = {}
       const splitPath = req.originalUrl.split('/')
       const pathUrl = splitPath[splitPath.length - 1]
 
       const normalisedDomain = helper.getEnumForDomain(pathUrl)
 
       switch (normalisedDomain) {
+        case DOMAIN.RSF:
+          {
+            const { response, success, message } = await helper.validateRSF(payload, version)
+            result = { response, success, message }
+          }
+          break
         case DOMAIN.RETAIL:
           {
             const { response, success, message } = await helper.validateRetail(domain, payload, version)
@@ -30,7 +36,6 @@ const controller = {
         case DOMAIN.LOGISTICS:
           // to-do
           throw new Error('Domain not supported yet')
-          break
         case DOMAIN.FINANCE:
           {
             const { response, success, message } = await helper.validateFinance(domain, payload, version, flow)
@@ -46,7 +51,6 @@ const controller = {
 
           break
         case DOMAIN.IGM:
-          // eslint-disable-next-line no-case-declarations
           const { response, success, message } = await helper.validateIGM(payload, version)
           result = { response, success, message }
           break
@@ -65,12 +69,12 @@ const controller = {
         reportTimestamp: new Date().toISOString(),
       }
 
-      const { signature, currentDate } = await helper.createSignature({ message: JSON.stringify(httpResponse) })
-
+      // const { signature, currentDate } = await helper.createSignature({ message: JSON.stringify(httpResponse) })
+      const currentDate = new Date()
       if (!success)
-        return res.status(400).send({ success, response: httpResponse, signature, signTimestamp: currentDate })
+        return res.status(400).send({ success, response: httpResponse, /* signature, */ signTimestamp: currentDate })
 
-      return res.status(200).send({ success, response: httpResponse, signature, signTimestamp: currentDate })
+      return res.status(200).send({ success, response: httpResponse, /* signature, */ signTimestamp: currentDate })
     } catch (error: any) {
       logger.error(error)
       return res.status(500).send({ success: false, response: { message: error?.message || error } })

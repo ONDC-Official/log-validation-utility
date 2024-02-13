@@ -1,8 +1,7 @@
-import dotenv from 'dotenv'
+import 'dotenv/config'
 import { logger } from './shared/logger'
 import createServer from './app'
 
-dotenv.config()
 const port = process.env.PORT || 3008
 
 const app = createServer()

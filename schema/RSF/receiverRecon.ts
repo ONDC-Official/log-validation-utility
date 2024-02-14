@@ -63,9 +63,9 @@ export const receiverRecon = Joi.object({
               status: Joi.valid('PAID'),
               collected_by: Joi.valid('BAP', 'BPP'),
               '@ondc/org/collected_by_status': Joi.valid('Assert').optional(),
-              '@ondc/org/buyer_app_finder_fee_type': string.insensitive().valid('percent', 'amount'),
+              '@ondc/org/buyer_app_finder_fee_type': string.valid('percent', 'amount'),
               '@ondc/org/buyer_app_finder_fee_amount': Joi.when('@ondc/org/buyer_app_finder_fee_type', {
-                is: string.valid('percent'),
+                is: 'percent',
                 then: Joi.number().integer().max(100),
                 otherwise: Joi.number().min(0).precision(2),
               }),

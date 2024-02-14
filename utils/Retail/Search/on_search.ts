@@ -722,8 +722,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
             const op = areTimestampsLessThanOrEqualTo(itemTimeStamp, timestamp)
             if (!op) {
               const key = `bpp/providers/items/time/timestamp[${index}]`
-              errorObj[key] = `Timestamp for item[${index}] can't be grater than context.timestamp`
-              logger.error(`Timestamp for item[${index}] can't be grater than context.timestamp`)
+              errorObj[key] = `Timestamp for item[${index}] can't be greater than context.timestamp`
+              logger.error(`Timestamp for item[${index}] can't be greater than context.timestamp`)
             }
           })
         }

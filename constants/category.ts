@@ -126,13 +126,13 @@ const BPCObj: ICategoryJSON = {
   Brand: true,
   Colour: false,
   'Colour_Name': false,
-  Gender: true,
-  Concern: true,
-  Ingredient: true,
-  Conscious: true,
-  Preference: true,
-  Formulation: true,
-  'Skin_Type': true,
+  Gender: false,
+  Concern: false,
+  Ingredient: false,
+  Conscious: false,
+  Preference: false,
+  Formulation: false,
+  'Skin_Type': false,
 }
 
 export const BPCJSON: { [key: string]: ICategoryJSON } = {

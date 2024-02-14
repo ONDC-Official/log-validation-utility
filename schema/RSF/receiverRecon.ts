@@ -78,10 +78,10 @@ export const receiverRecon = Joi.object({
                 then: '',
                 otherwise: Joi.valid('Collection'),
               }),
-              '@ondc/org/settlement_basis_status': Joi.valid('Assert'),
+              '@ondc/org/settlement_basis_status': Joi.valid('Assert').optional(),
               '@ondc/org/settlement_window': Joi.when('@ondc/org/return_window', {
                 is: '',
-                then: '',
+                then: Joi.allow('').optional(),
                 otherwise: string.trim().isoDuration(),
               }),
               '@ondc/org/settlement_window_status': Joi.valid('Assert').optional(),
@@ -192,9 +192,7 @@ export const receiverRecon = Joi.object({
 
             settlement_reason_code: Joi.valid('01', '02', '03', '04', '05', '06'),
             settlement_id: string.equal(Joi.ref('/on_settle.message.settlement.settlements.0.settlement_id')),
-            settlement_reference_no: string.equal(
-              Joi.ref('/on_settle.message.settlement.settlements.0.settlement_reference_no'),
-            ),
+            settlement_reference_no: string,
             transaction_id: string.trim(),
             recon_status: Joi.valid('01', '02', '03', '04'),
             order_recon_status: Joi.valid('01'),

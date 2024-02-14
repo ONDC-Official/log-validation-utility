@@ -27,19 +27,25 @@ export const onReceiverRecon = Joi.object({
           invoice_no: string,
           collector_app_id: idCheck,
           receiver_app_id: idCheck,
-          recon_status: Joi.valid('01', '02', '03', '04'),
           order_recon_status: Joi.valid('02'),
           transaction_id: string,
           settlement_id: string,
+          settlement_reference_no: string,
           counterparty_recon_status: Joi.valid('01', '02', '03', '04'),
-          counterparty_diff_amount: {
-            currency: Joi.valid('INR'),
-            value: Joi.number().integer(),
-          },
-          message: {
+          counterparty_diff_amount: Joi.when('counterparty_recon_status', {
+            switch: [
+              { is: '01', then: Joi.optional() },
+              { is: '02', then: Joi.optional() },
+            ],
+            otherwise: Joi.object({
+              currency: Joi.valid('INR'),
+              value: Joi.number().integer(),
+            }),
+          }),
+          message: Joi.object({
             name: string.regex(/^[a-zA-Z ]*$/).allow(''),
             code: string.regex(/^[a-zA-Z ]*$/).allow(''),
-          },
+          }).optional(),
         }),
       ),
     }),

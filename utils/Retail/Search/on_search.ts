@@ -684,25 +684,25 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           let errors: any
           switch (domain) {
             case DOMAIN.RET10:
-              errors = checkMandatoryTags(items, errorObj, groceryJSON, 'Grocery')
+              errors = checkMandatoryTags(Number(i), items, errorObj, groceryJSON, 'Grocery')
               break
             case DOMAIN.RET12:
-              errors = checkMandatoryTags(items, errorObj, fashionJSON, 'Fashion')
+              errors = checkMandatoryTags(Number(i),items, errorObj, fashionJSON, 'Fashion')
               break
             case DOMAIN.RET13:
-              errors = checkMandatoryTags(items, errorObj, BPCJSON, 'BPC')
+              errors = checkMandatoryTags(Number(i),items, errorObj, BPCJSON, 'BPC')
               break
             case DOMAIN.RET14:
-              errors = checkMandatoryTags(items, errorObj, electronicsData, 'Electronics')
+              errors = checkMandatoryTags(Number(i),items, errorObj, electronicsData, 'Electronics')
               break
             case DOMAIN.RET15:
-              errors = checkMandatoryTags(items, errorObj, applianceData, 'Appliances')
+              errors = checkMandatoryTags(Number(i),items, errorObj, applianceData, 'Appliances')
               break
             case DOMAIN.RET16:
-              errors = checkMandatoryTags(items, errorObj, homeJSON, 'Home & Kitchen')
+              errors = checkMandatoryTags(Number(i),items, errorObj, homeJSON, 'Home & Kitchen')
               break
             case DOMAIN.RET18:
-              errors = checkMandatoryTags(items, errorObj, healthJSON, 'Health & Wellness')
+              errors = checkMandatoryTags(Number(i),items, errorObj, healthJSON, 'Health & Wellness')
               break
           }
           Object.assign(errorObj, errors)
@@ -721,7 +721,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
             const itemTimeStamp = item.time.timestamp
             const op = areTimestampsLessThanOrEqualTo(itemTimeStamp, timestamp)
             if (!op) {
-              const key = `bpp/providers/items/time/timestamp[${index}]`
+              const key = `bpp/providers[${i}]/items/time/timestamp[${index}]`
               errorObj[key] = `Timestamp for item[${index}] can't be greater than context.timestamp`
               logger.error(`Timestamp for item[${index}] can't be greater than context.timestamp`)
             }
@@ -732,7 +732,44 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           `!!Errors while checking timestamp in context.timestamp and bpp/providers/items/time/timestamp, ${error.stack}`,
         )
       }
-
+      // Checking for long_desc and short_desc in bpp/providers/items/descriptor/
+      try {
+        logger.info(`Checking for long_desc and short_desc in bpp/providers/items/descriptor/`)
+        for (let i in onSearchCatalog['bpp/providers']) {
+          const items = onSearchCatalog['bpp/providers'][i].items
+          items.forEach((item: any, index: number) => {
+           if(!item.descriptor.short_desc || !item.descriptor.long_desc){
+           logger.error(`short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers${i}/items${index}/descriptor`)
+           const key = `bpp/providers[${i}]/items[${index}]/descriptor`
+              errorObj[key] = `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers${i}/items${index}/descriptor`
+              logger.error(`short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers${i}/items${index}/descriptor`)
+           }            
+          })
+        }
+      } catch (error: any) {
+        logger.error(
+          `!!Errors while checking timestamp in context.timestamp and bpp/providers/items/time/timestamp, ${error.stack}`,
+        )
+      }
+   
+      // Checking image array for bpp/providers/[]/categories/[]/descriptor/images[]
+      try{
+        logger.info(`Checking image array for bpp/provider/categories/descriptor/images[]`)
+        for (let i in onSearchCatalog['bpp/providers']) {
+          const categories = onSearchCatalog['bpp/providers'][i].categories
+          categories.forEach((item: any, index: number) => {
+              if(item.descriptor. images && item.descriptor.images.length <1){
+                const key = `bpp/providers[${i}]/categories[${index}]/descriptor`
+                errorObj[key] = `Images should not be provided as empty array for categories[${index}]/descriptor`
+                logger.error(`Images should not be provided as empty array for categories[${index}]/descriptor`)
+              }
+          })
+        }
+      }catch(error:any){
+        logger.error(
+          `!!Errors while checking image array for bpp/providers/[]/categories/[]/descriptor/images[], ${error.stack}`,
+        )
+      }
       try {
         logger.info(`checking rank in bpp/providers[${i}].category.tags`)
         const rankSeq = isSequenceValid(seqSet)

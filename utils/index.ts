@@ -772,7 +772,7 @@ export const compareSTDwithArea = (pincode: number, std: string): boolean => {
   return data.some((e: any) => e.Pincode === pincode && e['STD Code'] === std)
 }
 
-export const checkMandatoryTags = (items: any, errorObj: any, categoryJSON: any, categoryName: string) => {
+export const checkMandatoryTags = (i:number, items: any, errorObj: any, categoryJSON: any, categoryName: string) => {
   items.forEach((item: any, index: number) => {
     let attributeTag = null
     for (const tag of item.tags) {
@@ -784,7 +784,7 @@ export const checkMandatoryTags = (items: any, errorObj: any, categoryJSON: any,
 
     if (!attributeTag) {
       logger.error(`Attribute tag fields are missing for ${categoryName} item[${index}]`)
-      const key = `missingAttributeTag${index}`
+      const key = `missingAttributeTag[${i}][${index}]`
       errorObj[key] = `Attribute tag fields are missing for ${categoryName} item[${index}]`
       return
     }
@@ -800,7 +800,7 @@ export const checkMandatoryTags = (items: any, errorObj: any, categoryJSON: any,
           const tagFound = tags.some((tag: any) => tag.code.toLowerCase() === tagKey.toLowerCase())
           if (!tagFound) {
             logger.error(`Mandatory tag field [${tagKey}] missing for ${categoryName} item[${index}]`)
-            const key = `missingTagsItem[${index}] : ${tagKey}`
+            const key = `missingTagsItem[${i}][${index}] : ${tagKey}`
             errorObj[key] = `Mandatory tag field [${tagKey}] missing for ${categoryName} item[${index}]`
           }
         }

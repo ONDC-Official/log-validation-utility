@@ -36,6 +36,7 @@ import checkLspIssueClose from '../utils/igm/lspIssue(close)'
 import checkIssueClose from '../utils/igm/retIssueClose'
 import { checkOnStatusPacked } from '../utils/Retail/Status/onStatusPacked'
 import { checkOnStatusOutForDelivery } from '../utils/Retail/Status/onStatusOutForDelivery'
+import { checkSelect_OOS } from '../utils/Retail/Select/select_oos'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
@@ -274,6 +275,22 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
           }
         }
 
+        // if (data[ApiSequence.ON_SELECT_OUT_OF_STOCK]) {
+        //   const on_selectResp = checkOnSelect_OOS(data[ApiSequence.ON_SELECT_OUT_OF_STOCK])
+
+        //   if (!_.isEmpty(on_selectResp)) {
+        //     logReport = { ...logReport, [ApiSequence.ON_SELECT_OUT_OF_STOCK]: on_selectResp }
+        //   }
+        // }
+
+        if (data[ApiSequence.SELECT_OUT_OF_STOCK]) {
+          const on_selectResp = checkSelect_OOS(data[ApiSequence.SELECT_OUT_OF_STOCK], msgIdSet)
+
+          if (!_.isEmpty(on_selectResp)) {
+            logReport = { ...logReport, [ApiSequence.SELECT_OUT_OF_STOCK]: on_selectResp }
+          }
+        }
+        
         if (data[ApiSequence.INIT]) {
           const initResp = checkInit(data[ApiSequence.INIT])
 
@@ -608,6 +625,14 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
             logReport = { ...logReport, [ApiSequence.SELECT]: selectResp }
           }
         }
+        // if (data[ApiSequence.ON_SELECT_OUT_OF_STOCK]) {
+        //   const on_selectResp = checkOnSelect_OOS(data[ApiSequence.ON_SELECT_OUT_OF_STOCK])
+
+        //   if (!_.isEmpty(on_selectResp)) {
+        //     logReport = { ...logReport, [ApiSequence.ON_SELECT_OUT_OF_STOCK]: on_selectResp }
+        //   }
+        // }
+
 
         if (data[ApiSequence.ON_SELECT]) {
           const on_selectResp = checkOnSelect(data[ApiSequence.ON_SELECT])
@@ -616,6 +641,22 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
             logReport = { ...logReport, [ApiSequence.ON_SELECT]: on_selectResp }
           }
         }
+
+        if (data[ApiSequence.SELECT_OUT_OF_STOCK]) {
+          const on_selectResp = checkSelect_OOS(data[ApiSequence.SELECT_OUT_OF_STOCK], msgIdSet)
+
+          if (!_.isEmpty(on_selectResp)) {
+            logReport = { ...logReport, [ApiSequence.SELECT_OUT_OF_STOCK]: on_selectResp }
+          }
+        }
+
+        // if (data[ApiSequence.ON_SELECT_OUT_OF_STOCK]) {
+        //   const on_selectResp = checkSelect_OOS(data[ApiSequence.ON_SELECT_OUT_OF_STOCK], msgIdSet)
+
+        //   if (!_.isEmpty(on_selectResp)) {
+        //     logReport = { ...logReport, [ApiSequence.ON_SELECT_OUT_OF_STOCK]: on_selectResp }
+        //   }
+        // }
 
         if (data[ApiSequence.INIT]) {
           const initResp = checkInit(data[ApiSequence.INIT])

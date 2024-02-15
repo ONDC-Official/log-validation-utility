@@ -55,6 +55,7 @@ export const ApiSequence = {
   ON_STATUS_DELIVERED: 'on_status_delivered',
   UPDATE: 'update',
   ON_UPDATE: 'on_update',
+  SELECT_OUT_OF_STOCK: 'select_out_of_stock',
   ON_SELECT_OUT_OF_STOCK: 'on_select_out_of_stock',
 }
 

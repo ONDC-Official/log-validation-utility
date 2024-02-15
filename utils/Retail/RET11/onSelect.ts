@@ -29,11 +29,9 @@ export const checkOnSelect = (data: any) => {
   if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
-  const selectContext_OOS = getValue(`${ApiSequence.ON_SELECT_OUT_OF_STOCK}_context`)
-  console.log("checking select_oos", selectContext_OOS);
 
   const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SELECT, data)
-
+  console.log("checking data===>",data);
   const contextRes: any = checkContext(context, constants.ON_SELECT)
 
   const errorObj: any = {}
@@ -54,7 +52,7 @@ export const checkOnSelect = (data: any) => {
 
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
   const select: any = getValue(`${ApiSequence.SELECT}`)
-  const searchMessage: any = getValue(`${ApiSequence.ON_SEARCH}_message`)
+  const searchMessage: any = getValue(`${ApiSequence.ON_SEARCH}_message`)  
 
   try {
     logger.info(`Comparing city of /${constants.SEARCH} and /${constants.ON_SELECT}`)

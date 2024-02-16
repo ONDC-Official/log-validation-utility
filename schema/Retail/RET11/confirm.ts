@@ -328,7 +328,7 @@ export const FnBconfirmSchema = {
                     required: ['person', 'contact', 'location'],
                   },
                 },
-                required: ['id', 'type', 'end'],
+                required: ['id', 'type', 'tracking', 'end'],
               },
             },
             quote: {

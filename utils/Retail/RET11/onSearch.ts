@@ -624,8 +624,8 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
                  const op = areTimestampsLessThanOrEqualTo(itemTimeStamp, timestamp )
                  if(!op){
                    const key = `bpp/providers/items/time/timestamp[${index}]`
-                   errorObj[key] = `Timestamp for item[${index}] can't be grater than context.timestamp`
-                   logger.error(`Timestamp for item[${index}] can't be grater than context.timestamp`)
+                   errorObj[key] = `Timestamp for item[${index}] can't be greater than context.timestamp`
+                   logger.error(`Timestamp for item[${index}] can't be greater than context.timestamp`)
                  }
               })
              }
@@ -658,6 +658,25 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
       } catch (error: any) {
         logger.error(`!!Errors while checking rank in bpp/providers[${i}].category.tags, ${error.stack}`)
       }
+
+        // Checking image array for bpp/providers/[]/categories/[]/descriptor/images[]
+        try{
+          logger.info(`Checking image array for bpp/provider/categories/descriptor/images[]`)
+          for (let i in onSearchCatalog['bpp/providers']) {
+            const categories = onSearchCatalog['bpp/providers'][i].categories
+            categories.forEach((item: any, index: number) => {
+                if(item.descriptor. images && item.descriptor.images.length <1){
+                  const key = `bpp/providers[${i}]/categories[${index}]/descriptor`
+                  errorObj[key] = `Images should not be provided as empty array for categories[${index}]/descriptor`
+                  logger.error(`Images should not be provided as empty array for categories[${index}]/descriptor`)
+                }
+            })
+          }
+        }catch(error:any){
+          logger.error(
+            `!!Errors while checking image array for bpp/providers/[]/categories/[]/descriptor/images[], ${error.stack}`,
+          )
+        }
 
       // servicability Construct
       try {

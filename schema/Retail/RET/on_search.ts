@@ -432,8 +432,24 @@ export const onSearchSchema = {
                             name: {
                               type: 'string',
                             },
+                            short_desc: {
+                              type: 'string',
+                            },
+                            long_desc: {
+                              type: 'string',
+                            },
+                            images: {
+                              type: 'array',
+                              items: {
+                                type: 'array',
+                                items: {
+                                   type : 'string',
+                                   format : 'url'
+                                }
+                              },
+                            },
                           },
-                          required: ['name'],
+                          required: ['name', 'images'],
                         },
                         tags: {
                           type: 'array',
@@ -798,9 +814,10 @@ export const onSearchSchema = {
                     },
                   },
                 },
+                required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],
               },
             },
-            required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],
+
           },
           required: ['bpp/fulfillments', 'bpp/descriptor', 'bpp/providers'],
         },

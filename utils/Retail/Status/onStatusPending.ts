@@ -84,8 +84,7 @@ export const checkOnStatusPending = (data: any, state: string) => {
       if (_.gte(getValue('tmstmp'), context.timestamp)) {
         onStatusObj.tmpstmp1 = `Timestamp for /${constants.ON_CONFIRM} api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
       }
-
-      setValue('tmpstmp', on_status.context.timestamp)
+      setValue('tmpstmp', context.timestamp)
     } catch (error: any) {
       logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
     }

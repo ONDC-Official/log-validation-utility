@@ -199,7 +199,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
           const onStatusResp = checkOnStatusPacked(data[ApiSequence.ON_STATUS_PACKED], 'In-progress')
 
           if (!_.isEmpty(onStatusResp)) {
-            logReport = { ...logReport, [ApiSequence.ON_STATUS_PICKED]: onStatusResp }
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_PACKED]: onStatusResp }
           }
         }
         if (data[ApiSequence.ON_STATUS_PICKED]) {
@@ -210,10 +210,10 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
           }
         }
         if (data[ApiSequence.ON_STATUS_OUT_FOR_DELIVERY]) {
-          const onStatusResp = checkOnStatusOutForDelivery(data[ApiSequence.ON_STATUS_OUT_FOR_DELIVERY], 'In-progress')
+          const onStatusResp = checkOnStatusOutForDelivery(data[ApiSequence.ON_STATUS_OUT_FOR_DELIVERY], 'In-progress')         
 
           if (!_.isEmpty(onStatusResp)) {
-            logReport = { ...logReport, [ApiSequence.ON_STATUS_PICKED]: onStatusResp }
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_OUT_FOR_DELIVERY]: onStatusResp }
           }
         }
         if (data[ApiSequence.ON_STATUS_DELIVERED]) {
@@ -551,11 +551,11 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
             logReport = { ...logReport, [ApiSequence.ON_STATUS_PENDING]: onStatusResp }
           }
         }
-        if (data[ApiSequence.ON_STATUS_PENDING]) {
-          const onStatusResp = checkOnStatusPacked(data[ApiSequence.ON_STATUS_PENDING], 'In-progress')
+        if (data[ApiSequence.ON_STATUS_PACKED]) {
+          const onStatusResp = checkOnStatusPacked(data[ApiSequence.ON_STATUS_PACKED], 'In-progress')
 
           if (!_.isEmpty(onStatusResp)) {
-            logReport = { ...logReport, [ApiSequence.ON_STATUS_PENDING]: onStatusResp }
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_PACKED]: onStatusResp }
           }
         }
 
@@ -566,11 +566,11 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
             logReport = { ...logReport, [ApiSequence.ON_STATUS_PICKED]: onStatusResp }
           }
         }
-        if (data[ApiSequence.ON_STATUS_PENDING]) {
-          const onStatusResp = checkOnStatusOutForDelivery(data[ApiSequence.ON_STATUS_PENDING], 'In-progress')
+        if (data[ApiSequence.ON_STATUS_OUT_FOR_DELIVERY]) {
+          const onStatusResp = checkOnStatusOutForDelivery(data[ApiSequence.ON_STATUS_OUT_FOR_DELIVERY], 'In-progress')
 
           if (!_.isEmpty(onStatusResp)) {
-            logReport = { ...logReport, [ApiSequence.ON_STATUS_PENDING]: onStatusResp }
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_OUT_FOR_DELIVERY]: onStatusResp }
           }
         }
 

@@ -351,11 +351,15 @@ export const FnBonSearchSchema = {
                             images: {
                               type: 'array',
                               items: {
-                                type: 'string',
+                                type: 'array',
+                                items: {
+                                   type : 'string',
+                                   format : 'url'
+                                }
                               },
                             },
                           },
-                          required: ['name'],
+                          required: ['name', 'images'],
                         },
                         tags: {
                           type: 'array',
@@ -680,7 +684,6 @@ export const FnBonSearchSchema = {
                                     },
                                     value: {
                                       type: "string",
-                                      pattern: "^\\d+(\\.\\d{2})?$"
                                     }
                                   },
                                   required: ["code", "value"]

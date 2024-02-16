@@ -24,9 +24,9 @@ export const onSearchSchema = {
           type: 'string',
           minLength: 1,
           not: {
-            pattern: "\\*"
+            pattern: '\\*',
           },
-          errorMessage : `City Code can't be * for on_search request`
+          errorMessage: `City Code can't be * for on_search request`,
         },
         core_version: {
           type: 'string',
@@ -441,11 +441,8 @@ export const onSearchSchema = {
                             images: {
                               type: 'array',
                               items: {
-                                type: 'array',
-                                items: {
-                                   type : 'string',
-                                   format : 'url'
-                                }
+                                type: 'string',
+                                format: 'url',
                               },
                             },
                           },
@@ -548,11 +545,11 @@ export const onSearchSchema = {
                                   properties: {
                                     unit: {
                                       type: 'string',
-                                      enum: ['unit', 'dozen', 'gram', 'kilogram', 'tonne', 'litre', 'millilitre']
+                                      enum: ['unit', 'dozen', 'gram', 'kilogram', 'tonne', 'litre', 'millilitre'],
                                     },
                                     value: {
                                       type: 'string',
-                                      pattern: "-?^\\d*(.\\d{0,2})?$",
+                                      pattern: '-?^\\d*(.\\d{0,2})?$',
                                       errorMessage: 'enter a valid number',
                                     },
                                   },
@@ -673,9 +670,9 @@ export const onSearchSchema = {
                             importer_FSSAI_license_no: {
                               type: 'string',
                             },
-                            ingredients_info:{
-                              type: 'string'
-                            }
+                            ingredients_info: {
+                              type: 'string',
+                            },
                           },
                         },
                         tags: {
@@ -817,7 +814,6 @@ export const onSearchSchema = {
                 required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],
               },
             },
-
           },
           required: ['bpp/fulfillments', 'bpp/descriptor', 'bpp/providers'],
         },

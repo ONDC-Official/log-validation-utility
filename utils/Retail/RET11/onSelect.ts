@@ -29,8 +29,6 @@ export const checkOnSelect = (data: any) => {
   if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
-  const selectContext_OOS = getValue(`${ApiSequence.ON_SELECT_OUT_OF_STOCK}_context`)
-  console.log("checking select_oos", selectContext_OOS);
 
   const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SELECT, data)
 

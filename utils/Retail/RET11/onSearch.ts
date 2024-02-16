@@ -448,7 +448,8 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
               const key = `prvdr${i}consCare`
               errorObj[key] =
                 `@ondc/org/contact_details_consumer_care should be in the format "name,email,contactno" in /bpp/providers[${i}]/items`
-            } else {
+            } 
+            else {
               const checkEmail: boolean = emailRegex(consCare[1].trim())
               if (isNaN(consCare[2].trim()) || !checkEmail) {
                 const key = `prvdr${i}consCare`

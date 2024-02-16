@@ -35,8 +35,9 @@ export const checkOnStatusOutForDelivery = (data: any, state: string) => {
 
     const packed_message_id: string | null = getValue('packed_message_id')
     const out_for_delivery_message_id: string = context.message_id
-
+    
     setValue(`out_for_delivery_message_id`, out_for_delivery_message_id)
+    
 
     try {
       logger.info(

@@ -42,8 +42,8 @@ export const groceryJSON: { [key: string]: ICategoryJSON } = {
 
 const healthObj: ICategoryJSON = {
   Brand: true,
-  'Prescription_Required': true,
-  'Usage_Instruction': false,
+  Prescription_Required: true,
+  Usage_Instruction: false,
 }
 
 export const healthJSON: { [key: string]: ICategoryJSON } = {
@@ -90,7 +90,7 @@ export const healthJSON: { [key: string]: ICategoryJSON } = {
 const homeObj: ICategoryJSON = {
   Brand: true,
   Colour: true,
-  'Colour_Name': false,
+  Colour_Name: false,
   Material: true,
   Size: false,
   Weight: false,
@@ -98,9 +98,9 @@ const homeObj: ICategoryJSON = {
   Breadth: false,
   Height: false,
   Model: false,
-  'Assembly_Required': false,
-  'Care_Instructions': false,
-  'Special_Features': false,
+  Assembly_Required: false,
+  Care_Instructions: false,
+  Special_Features: false,
 }
 
 export const homeJSON: { [key: string]: ICategoryJSON } = {
@@ -125,14 +125,14 @@ export const homeJSON: { [key: string]: ICategoryJSON } = {
 const BPCObj: ICategoryJSON = {
   Brand: true,
   Colour: false,
-  'Colour_Name': false,
+  Colour_Name: false,
   Gender: false,
   Concern: false,
   Ingredient: false,
   Conscious: false,
   Preference: false,
   Formulation: false,
-  'Skin_Type': false,
+  Skin_Type: false,
 }
 
 export const BPCJSON: { [key: string]: ICategoryJSON } = {

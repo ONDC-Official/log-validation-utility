@@ -684,7 +684,6 @@ export const FnBonSearchSchema = {
                                     },
                                     value: {
                                       type: "string",
-                                      pattern: "^\\d+(\\.\\d{2})?$"
                                     }
                                   },
                                   required: ["code", "value"]

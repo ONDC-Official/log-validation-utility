@@ -72,7 +72,6 @@ export const checkOnConfirm = (data: any) => {
           onCnfrmObj.tmpstmp = `context/timestamp difference between /${constants.ON_CONFIRM} and /${constants.CONFIRM} should be less than 5 sec`
         }
       }
-
       setValue('tmpstmp', context.timestamp)
     } catch (error: any) {
       logger.info(
@@ -150,24 +149,21 @@ export const checkOnConfirm = (data: any) => {
 
         if (checkItemTag(item, select_customIdArray)) {
           const itemkey = `item${i}tags.parent_id`
-          onCnfrmObj[
-            itemkey
-          ] = `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.SELECT} and /${constants.INIT}`
+          onCnfrmObj[itemkey] =
+            `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.SELECT} and /${constants.INIT}`
         }
 
         if (!parentItemIdSet.includes(item.parent_item_id)) {
           const itemkey = `item_PrntItmId${i}`
-          onCnfrmObj[
-            itemkey
-          ] = `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_INIT}`
+          onCnfrmObj[itemkey] =
+            `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_INIT}`
         }
 
         if (itemId in itemFlfllmnts) {
           if (on_confirm.items[i].fulfillment_id != itemFlfllmnts[itemId]) {
             const itemkey = `item_FFErr${i}`
-            onCnfrmObj[
-              itemkey
-            ] = `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_CONFIRM}`
+            onCnfrmObj[itemkey] =
+              `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_CONFIRM}`
           }
         } else {
           const itemkey = `item_FFErr${i}`
@@ -190,19 +186,29 @@ export const checkOnConfirm = (data: any) => {
 
     try {
       logger.info(`Checking for number of digits in tax number in message.order.tags[0].list`)
-      const list = message.order.tags[0].list  
+      const list = message.order.tags[0].list
 
-      list.map((item: any)=> {
-        if(item.code == 'tax_number'){
-          if(item.value.length !== 15){
+      list.map((item: any) => {
+        if (item.code == 'tax_number') {
+          if (item.value.length !== 15) {
             const key = `message.order.tags[0].list`
             onCnfrmObj[key] = `Number of digits in tax number in  message.order.tags[0].list should be 15`
           }
         }
-        
       })
     } catch (error: any) {
       logger.error(`Error while checking for the number of digits in tax_number`)
+    }
+
+    try {
+      logger.info(`Comparing timestamp of context and updatedAt for /${constants.ON_CONFIRM}`)
+      if (!_.isEqual(context.timestamp, on_confirm.updated_at)) {
+        const key = `invldUpdtdTmstp`
+        onCnfrmObj[key] = `updated_at timestamp should be equal to  context timestamp for /${constants.ON_CONFIRM}`
+        logger.error(`updated_at timestamp should be equal to  context timestamp for /${constants.ON_CONFIRM}`)
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while compairing updated_at timestamp with context timestamp for ${constants.ON_CONFIRM}`)
     }
 
     try {

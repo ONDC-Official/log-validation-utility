@@ -189,6 +189,23 @@ export const checkOnConfirm = (data: any) => {
     }
 
     try {
+      logger.info(`Checking for number of digits in tax number in message.order.tags[0].list`)
+      const list = message.order.tags[0].list  
+
+      list.map((item: any)=> {
+        if(item.code == 'tax_number'){
+          if(item.value.length !== 15){
+            const key = `message.order.tags[0].list`
+            onCnfrmObj[key] = `Number of digits in tax number in  message.order.tags[0].list should be 15`
+          }
+        }
+        
+      })
+    } catch (error: any) {
+      logger.error(`Error while checking for the number of digits in tax_number`)
+    }
+
+    try {
       logger.info(`Comparing billing object in ${constants.CONFIRM} and /${constants.ON_CONFIRM}`)
       const billing = getValue('billing')
 

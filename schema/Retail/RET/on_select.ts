@@ -86,20 +86,20 @@ export const onSelectSchema = {
                   minLength: 1,
                 },
                 locations: {
-                  type: "array",
+                  type: 'array',
                   iems: {
-                    type: "object",
+                    type: 'object',
                     properties: {
                       id: {
-                        type: "string"
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: ["id"]
-                }
+                    required: ['id'],
+                  },
+                },
               },
+              required: ['id', 'locations'],
             },
-            required: ["id","locations"],
-
             items: {
               type: 'array',
               items: {
@@ -342,5 +342,4 @@ export const onSelectSchema = {
     },
   },
   required: ['context', 'message'],
-}
 }

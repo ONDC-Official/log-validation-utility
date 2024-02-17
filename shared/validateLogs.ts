@@ -508,7 +508,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         if (data[ApiSequence.INC_SEARCH]) {
           const searchIncrementalRefreshResp = checkSearchIncremental(data[ApiSequence.INC_SEARCH], msgIdSet)
 
-          if (!_.isEmpty(searchIncrementalRefreshResp)) {
+          if (!_.isEmpty(searchIncrementalRefreshResp && searchIncrementalRefreshResp.intent.tags)) {
             logReport = { ...logReport, [ApiSequence.INC_SEARCH]: searchIncrementalRefreshResp }
           }
         }

@@ -17,8 +17,7 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
 
     if (!message || !context || isObjectEmpty(message)) {
       return { missingFields: '/context, /message, is missing or empty' }
-    }
-
+    }    
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const schemaValidation = validateSchema('RET11', constants.ON_STATUS, data)
     const select: any = getValue(`${ApiSequence.SELECT}`)
@@ -43,8 +42,9 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
         `Comparing message_id for unsolicited calls for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.delivered`,
       )
       if (delivered_message_id === picked_message_id || delivered_message_id === pending_message_id) {
+        logger.error(`Message_id for ${constants.ON_STATUS}.delivered cannot be same as ${constants.ON_STATUS}.picked or  ${constants.ON_STATUS}.pending`)
         onStatusObj[
-          'invalid_message_id'
+          'invalid_message_id_delivered'
         ] = `Message_id cannot be same for ${constants.ON_STATUS}.delivered and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.pending `
       }
     } catch (error: any) {
@@ -102,8 +102,8 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
       if (_.gte(getValue('tmstmp'), context.timestamp)) {
         onStatusObj.tmpstmp1 = `Timestamp for /${constants.ON_CONFIRM} api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
       }
-
-      setValue('tmpstmp', on_status.context.timestamp)
+      
+      setValue('tmpstmp', context.timestamp)
     } catch (error: any) {
       logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
     }

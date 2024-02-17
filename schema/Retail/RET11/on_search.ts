@@ -20,6 +20,11 @@ export const FnBonSearchSchema = {
         },
         city: {
           type: 'string',
+          minLength: 1,
+          not: {
+            pattern: '\\*',
+          },
+          errorMessage: `City Code can't be * for on_search request`,
         },
         core_version: {
           type: 'string',
@@ -164,7 +169,7 @@ export const FnBonSearchSchema = {
                           required: ['phone', 'email'],
                         },
                       },
-                      required: ['contact'],
+                      required: ['id', 'type', 'contact'],
                     },
                   },
                   descriptor: {
@@ -347,6 +352,7 @@ export const FnBonSearchSchema = {
                               type: 'array',
                               items: {
                                 type: 'string',
+                                format: 'url',
                               },
                             },
                           },
@@ -380,7 +386,7 @@ export const FnBonSearchSchema = {
                           },
                         },
                       },
-                      required: ['id', 'tags'],
+                      required: ['id', 'parent_category_id', 'tags'],
                     },
                   },
                   items: {
@@ -523,6 +529,7 @@ export const FnBonSearchSchema = {
                         category_id: {
                           type: 'string',
                           enum: fnbCategories,
+                          errorMessage: 'Invalid catrgory ID found for item for on_search ',
                         },
                         category_ids: {
                           type: 'array',
@@ -599,94 +606,93 @@ export const FnBonSearchSchema = {
                     },
                   },
                   offers: {
-                    type: "array",
+                    type: 'array',
                     items: {
-                      type: "object",
+                      type: 'object',
                       properties: {
                         id: {
-                          type: "string"
+                          type: 'string',
                         },
                         descriptor: {
-                          type: "object",
+                          type: 'object',
                           properties: {
                             code: {
-                              type: "string",
+                              type: 'string',
                               enum: ['disc_pct', 'disc_amt', 'buyXgetY', 'freebie'],
                             },
                             images: {
-                              type: "array",
+                              type: 'array',
                               items: {
-                                type: "string"
-                              }
-                            }
+                                type: 'string',
+                              },
+                            },
                           },
-                          required: ["code", "images"]
+                          required: ['code', 'images'],
                         },
                         location_ids: {
-                          type: "array",
+                          type: 'array',
                           items: {
-                            type: "string"
-                          }
+                            type: 'string',
+                          },
                         },
                         item_ids: {
-                          type: "array",
+                          type: 'array',
                           items: {
-                            type: "string"
-                          }
+                            type: 'string',
+                          },
                         },
                         time: {
-                          type: "object",
+                          type: 'object',
                           properties: {
                             label: {
-                              type: "string"
+                              type: 'string',
                             },
                             range: {
-                              type: "object",
+                              type: 'object',
                               properties: {
                                 start: {
-                                  type: "string",
-                                  format: "date-time"
+                                  type: 'string',
+                                  format: 'date-time',
                                 },
                                 end: {
-                                  type: "string",
-                                  format: "date-time"
-                                }
+                                  type: 'string',
+                                  format: 'date-time',
+                                },
                               },
-                            }
+                            },
                           },
-                          required: ["label", "range"]
+                          required: ['label', 'range'],
                         },
                         tags: {
-                          type: "array",
+                          type: 'array',
                           items: {
-                            type: "object",
+                            type: 'object',
                             properties: {
                               code: {
-                                type: "string"
+                                type: 'string',
                               },
                               list: {
-                                type: "array",
+                                type: 'array',
                                 items: {
-                                  type: "object",
+                                  type: 'object',
                                   properties: {
                                     code: {
-                                      type: "string"
+                                      type: 'string',
                                     },
                                     value: {
-                                      type: "string",
-                                      pattern: "^\\d+(\\.\\d{2})?$"
-                                    }
+                                      type: 'string',
+                                    },
                                   },
-                                  required: ["code", "value"]
-                                }
-                              }
+                                  required: ['code', 'value'],
+                                },
+                              },
                             },
-                            required: ["code", "list"]
-                          }
-                        }
+                            required: ['code', 'list'],
+                          },
+                        },
                       },
-                      required: ["id", "descriptor", "location_ids", "item_ids", "time", "tags"]
-                    }
+                      required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags'],
+                    },
                   },
                   tags: {
                     type: 'array',

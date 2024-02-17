@@ -13,11 +13,17 @@ import {
   checkServiceabilityType,
   validateLocations,
   isSequenceValid,
+  checkMandatoryTags,
+  areTimestampsLessThanOrEqualTo,
   isValidPhoneNumber,
 } from '../../../utils'
 import _ from 'lodash'
-import { compareCitywithPinCode, compareSTDwithArea } from '../../index'
-
+import { compareSTDwithArea } from '../../index'
+import { BPCJSON, groceryJSON, healthJSON, homeJSON } from '../../../constants/category'
+import electronicsData from '../../../constants/electronics.json'
+import applianceData from '../../../constants/appliance.json'
+import fashionJSON from '../../../constants/fashion.json'
+import { DOMAIN } from '../../../utils/enum'
 export const checkOnsearch = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.ON_SEARCH]: 'JSON cannot be empty' }
@@ -86,41 +92,18 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
   try {
     const providers = data.message.catalog['bpp/providers']
-    if (providers && providers.length > 0) {
-      const locations = providers[0].locations
+    const address = providers[0].locations[0].address
 
-      if (locations && locations.length > 0) {
-        const address = locations[0].address
+    if (address) {
+      const area_code = Number.parseInt(address.area_code)
+      const std = context.city.split(':')[1]
 
-        if (address) {
-          const area_code = Number.parseInt(address.area_code)
-          const city = address.city
-
-          const stdArray = context.city.split(':')
-          const std = stdArray.length > 1 ? stdArray[1] : null
-
-          if (std !== null) {
-            logger.info(`Comparing area_code and STD Code for /${constants.ON_SEARCH}`)
-            const areaWithSTD = compareSTDwithArea(area_code, std)
-            if (!areaWithSTD) {
-              logger.error(`STD code does not match with correct area_code on /${constants.ON_SEARCH}`)
-            }
-
-            const areaWithCity = compareCitywithPinCode(area_code, city)
-            if (!areaWithCity) {
-              logger.error(`City does not match with correct area_code on /${constants.ON_SEARCH}`)
-            }
-          } else {
-            logger.error(`'std' is undefined or null.`)
-          }
-        } else {
-          logger.error(`'address' is undefined or null.`)
-        }
-      } else {
-        logger.error(`'locations' array is undefined or empty.`)
+      logger.info(`Comparing area_code and STD Code for /${constants.ON_SEARCH}`)
+      const areaWithSTD = compareSTDwithArea(area_code, std)
+      if (!areaWithSTD) {
+        logger.error(`STD code does not match with correct area_code on /${constants.ON_SEARCH}`)
+        errorObj.invldAreaCode = `STD code does not match with correct area_code on /${constants.ON_SEARCH}`
       }
-    } else {
-      logger.error(`'bpp/providers' array is undefined or empty.`)
     }
   } catch (error: any) {
     logger.error(
@@ -284,7 +267,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
           if (!isValidPhoneNumber(phoneNumber)) {
             const key = `bpp/providers${i}fulfillments${i}`
-            errorObj[key] = `Please enter a valid phone number consisting of  10 or  11 digits without any spaces or special characters. `
+            errorObj[key] =
+              `Please enter a valid phone number consisting of  10 or  11 digits without any spaces or special characters. `
           }
 
           if (categoriesId.has(category.id)) {
@@ -462,26 +446,31 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
           logger.info(`Checking selling price and maximum price for item id: ${item.id}`)
 
-          const statutory_reqs_prepackaged_food = onSearchCatalog['bpp/providers'][i]['items'][j]['@ondc/org/statutory_reqs_prepackaged_food'];
-          console.log("checking statutary", statutory_reqs_prepackaged_food);
-          
-          if (context.domain === 'ONDC:RET18') {
+          const statutory_reqs_prepackaged_food =
+            onSearchCatalog['bpp/providers'][i]['items'][j]['@ondc/org/statutory_reqs_prepackaged_food']
 
+          if (context.domain === 'ONDC:RET18') {
             if (!statutory_reqs_prepackaged_food.ingredients_info) {
               const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
               errorObj[key] =
-                `In ONDC:RET18 is valid key ingredients_info `
+                `In ONDC:RET18 for @ondc/org/statutory_reqs_prepackaged_food  ingredients_info is a valid field `
             }
           } else if (context.domain === 'ONDC:RET10') {
-            const mandatoryFields = ['nutritional_info', 'additives_info', 'brand_owner_FSSAI_license_no', 'imported_product_country_of_origin', 'net_quantity'];
-            mandatoryFields.forEach(field => {
-              if (!statutory_reqs_prepackaged_food[field]) {
+            const mandatoryFields = [
+              'nutritional_info',
+              'additives_info',
+              'brand_owner_FSSAI_license_no',
+              'imported_product_country_of_origin',
+              'net_quantity',
+            ]
+            mandatoryFields.forEach((field) => {
+              if (statutory_reqs_prepackaged_food && !statutory_reqs_prepackaged_food[field]) {
                 const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
                 errorObj[key] =
-                  `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food is not according to api contract`
+                  `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food following fields are valid 'nutritional_info', 'additives_info', 'brand_owner_FSSAI_license_no', 'imported_product_country_of_origin', 'net_quantity'`
               }
-            });
-          } 
+            })
+          }
           //check availabe and max quantity
           if (item.quantity && item.quantity.available && typeof item.quantity.available.count === 'string') {
             const availCount = parseInt(item.quantity.available.count, 10)
@@ -542,7 +531,15 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           logger.info(`Checking consumer care details for item id: ${item.id}`)
           if ('@ondc/org/contact_details_consumer_care' in item) {
             let consCare = item['@ondc/org/contact_details_consumer_care']
+
             consCare = consCare.split(',')
+
+            if (!isValidPhoneNumber(consCare[2])) {
+              const key = `prvdr${i}consCare`
+              errorObj[key] =
+                `@ondc/org/contact_details_consumer_care contactno should consist of  10 or  11 digits without any spaces or special characters in /bpp/providers[${i}]/items`
+            }
+
             if (consCare.length < 3) {
               const key = `prvdr${i}consCare`
               errorObj[key] =
@@ -551,8 +548,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
               const checkEmail: boolean = emailRegex(consCare[1].trim())
               if (isNaN(consCare[2].trim()) || !checkEmail) {
                 const key = `prvdr${i}consCare`
-                errorObj[key] =
-                  `@ondc/org/contact_details_consumer_care should be in the format "name,email,contactno" in /bpp/providers[${i}]/items`
+                errorObj[key] = `@ondc/org/contact_details_consumer_care email should be in /bpp/providers[${i}]/items`
               }
             }
           }
@@ -691,6 +687,107 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         logger.error(`!!Errors while checking items in bpp/providers[${i}], ${error.stack}`)
       }
 
+      // Checking for mandatory Items in provider IDs
+      try {
+        logger.info(`Checking for item tags in bpp/providers[0].items.tags `)
+        const domain = context.domain.split(':')[1]
+        logger.info(`Checking for item tags in bpp/providers[0].items.tags in ${domain}`)
+        for (let i in onSearchCatalog['bpp/providers']) {
+          const items = onSearchCatalog['bpp/providers'][i].items
+          let errors: any
+          switch (domain) {
+            case DOMAIN.RET10:
+              errors = checkMandatoryTags(Number(i), items, errorObj, groceryJSON, 'Grocery')
+              break
+            case DOMAIN.RET12:
+              errors = checkMandatoryTags(Number(i), items, errorObj, fashionJSON, 'Fashion')
+              break
+            case DOMAIN.RET13:
+              errors = checkMandatoryTags(Number(i), items, errorObj, BPCJSON, 'BPC')
+              break
+            case DOMAIN.RET14:
+              errors = checkMandatoryTags(Number(i), items, errorObj, electronicsData, 'Electronics')
+              break
+            case DOMAIN.RET15:
+              errors = checkMandatoryTags(Number(i), items, errorObj, applianceData, 'Appliances')
+              break
+            case DOMAIN.RET16:
+              errors = checkMandatoryTags(Number(i), items, errorObj, homeJSON, 'Home & Kitchen')
+              break
+            case DOMAIN.RET18:
+              errors = checkMandatoryTags(Number(i), items, errorObj, healthJSON, 'Health & Wellness')
+              break
+          }
+          Object.assign(errorObj, errors)
+        }
+      } catch (error: any) {
+        logger.error(`!!Errors while checking for items in bpp/providers/items, ${error.stack}`)
+      }
+
+      // Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp
+      try {
+        logger.info(`Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp`)
+        const timestamp = context.timestamp
+        for (let i in onSearchCatalog['bpp/providers']) {
+          const items = onSearchCatalog['bpp/providers'][i].items
+          items.forEach((item: any, index: number) => {
+            const itemTimeStamp = item.time.timestamp
+            const op = areTimestampsLessThanOrEqualTo(itemTimeStamp, timestamp)
+            if (!op) {
+              const key = `bpp/providers[${i}]/items/time/timestamp[${index}]`
+              errorObj[key] = `Timestamp for item[${index}] can't be greater than context.timestamp`
+              logger.error(`Timestamp for item[${index}] can't be greater than context.timestamp`)
+            }
+          })
+        }
+      } catch (error: any) {
+        logger.error(
+          `!!Errors while checking timestamp in context.timestamp and bpp/providers/items/time/timestamp, ${error.stack}`,
+        )
+      }
+      // Checking for long_desc and short_desc in bpp/providers/items/descriptor/
+      try {
+        logger.info(`Checking for long_desc and short_desc in bpp/providers/items/descriptor/`)
+        for (let i in onSearchCatalog['bpp/providers']) {
+          const items = onSearchCatalog['bpp/providers'][i].items
+          items.forEach((item: any, index: number) => {
+            if (!item.descriptor.short_desc || !item.descriptor.long_desc) {
+              logger.error(
+                `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers${i}/items${index}/descriptor`,
+              )
+              const key = `bpp/providers[${i}]/items[${index}]/descriptor`
+              errorObj[key] =
+                `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers${i}/items${index}/descriptor`
+              logger.error(
+                `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers${i}/items${index}/descriptor`,
+              )
+            }
+          })
+        }
+      } catch (error: any) {
+        logger.error(
+          `!!Errors while checking timestamp in context.timestamp and bpp/providers/items/time/timestamp, ${error.stack}`,
+        )
+      }
+
+      // Checking image array for bpp/providers/[]/categories/[]/descriptor/images[]
+      try {
+        logger.info(`Checking image array for bpp/provider/categories/descriptor/images[]`)
+        for (let i in onSearchCatalog['bpp/providers']) {
+          const categories = onSearchCatalog['bpp/providers'][i].categories
+          categories.forEach((item: any, index: number) => {
+            if (item.descriptor.images && item.descriptor.images.length < 1) {
+              const key = `bpp/providers[${i}]/categories[${index}]/descriptor`
+              errorObj[key] = `Images should not be provided as empty array for categories[${index}]/descriptor`
+              logger.error(`Images should not be provided as empty array for categories[${index}]/descriptor`)
+            }
+          })
+        }
+      } catch (error: any) {
+        logger.error(
+          `!!Errors while checking image array for bpp/providers/[]/categories/[]/descriptor/images[], ${error.stack}`,
+        )
+      }
       try {
         logger.info(`checking rank in bpp/providers[${i}].category.tags`)
         const rankSeq = isSequenceValid(seqSet)

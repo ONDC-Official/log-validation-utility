@@ -1,3 +1,5 @@
+import { combinedCategory } from '../../../utils/enum'
+
 export const onSearchSchema = {
   type: 'object',
   properties: {
@@ -14,11 +16,17 @@ export const onSearchSchema = {
         },
         country: {
           type: 'string',
+          pattern: '^[A-Z]{3}$',
+          errorMessage: 'Country must be in ISO 3166-1 format (three-letter country code)',
           minLength: 1,
         },
         city: {
           type: 'string',
           minLength: 1,
+          not: {
+            pattern: '\\*',
+          },
+          errorMessage: `City Code can't be * for on_search request`,
         },
         core_version: {
           type: 'string',
@@ -424,6 +432,19 @@ export const onSearchSchema = {
                             name: {
                               type: 'string',
                             },
+                            short_desc: {
+                              type: 'string',
+                            },
+                            long_desc: {
+                              type: 'string',
+                            },
+                            images: {
+                              type: 'array',
+                              items: {
+                                type: 'string',
+                                format: 'url',
+                              },
+                            },
                           },
                           required: ['name'],
                         },
@@ -524,10 +545,11 @@ export const onSearchSchema = {
                                   properties: {
                                     unit: {
                                       type: 'string',
+                                      enum: ['unit', 'dozen', 'gram', 'kilogram', 'tonne', 'litre', 'millilitre'],
                                     },
                                     value: {
                                       type: 'string',
-                                      pattern: "-?^\\d*(.\\d{0,2})?$",
+                                      pattern: '-?^\\d*(.\\d{0,2})?$',
                                       errorMessage: 'enter a valid number',
                                     },
                                   },
@@ -577,6 +599,8 @@ export const onSearchSchema = {
                         },
                         category_id: {
                           type: 'string',
+                          enum: combinedCategory,
+                          errorMessage: 'Invalid catrgory ID found for item for on_search ',
                         },
                         fulfillment_id: {
                           type: 'string',
@@ -646,9 +670,9 @@ export const onSearchSchema = {
                             importer_FSSAI_license_no: {
                               type: 'string',
                             },
-                            ingredients_info:{
-                              type: 'string'
-                            }
+                            ingredients_info: {
+                              type: 'string',
+                            },
                           },
                         },
                         tags: {
@@ -787,9 +811,9 @@ export const onSearchSchema = {
                     },
                   },
                 },
+                required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],
               },
             },
-            required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],
           },
           required: ['bpp/fulfillments', 'bpp/descriptor', 'bpp/providers'],
         },

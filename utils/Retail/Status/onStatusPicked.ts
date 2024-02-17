@@ -42,11 +42,10 @@ export const checkOnStatusPicked = (data: any, state: string) => {
       logger.info(
         `Comparing message_id for unsolicited calls for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`,
       )
-
       if (pending_message_id === picked_message_id) {
-        onStatusObj[
-          'invalid_message_id'
-        ] = `Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`
+        logger.error(`Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`)
+        onStatusObj['invalid_message_id_picked'] =
+          `Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`
       }
     } catch (error: any) {
       logger.error(
@@ -104,7 +103,7 @@ export const checkOnStatusPicked = (data: any, state: string) => {
         onStatusObj.tmpstmp1 = `Timestamp for /${constants.ON_CONFIRM} api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
       }
 
-      setValue('tmpstmp', on_status.context.timestamp)
+      setValue('tmpstmp', context.timestamp)
     } catch (error: any) {
       logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
     }

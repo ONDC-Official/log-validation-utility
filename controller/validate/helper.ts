@@ -32,7 +32,7 @@ const validateRetail = async (domain: string, payload: string, version: string, 
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
   switch (version) {
     case '1.2.0':
-      response = await validateLogs(payload, domain, flow)
+      response = await validateLogs(payload, domain,flow)
 
       if (_.isEmpty(response)) {
         success = true

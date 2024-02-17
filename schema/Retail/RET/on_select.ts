@@ -86,20 +86,20 @@ export const onSelectSchema = {
                   minLength: 1,
                 },
                 locations: {
-                  type: "array",
-                  iems: {
-                    type: "object",
+                  type: 'array',
+                  items: {
+                    type: 'object',
                     properties: {
                       id: {
-                        type: "string"
-                      }
+                        type: 'string',
+                      },
                     },
-                    required: ["id"]
-                }
+                    required: ['id'],
+                  },
+                },
               },
+              required: ['id', 'locations'],
             },
-            required: ["id","locations"],
-
             items: {
               type: 'array',
               items: {
@@ -166,6 +166,7 @@ export const onSelectSchema = {
                   },
                   '@ondc/org/TAT': {
                     type: 'string',
+                    format: 'duration',
                   },
                   state: {
                     type: 'object',
@@ -342,5 +343,4 @@ export const onSelectSchema = {
     },
   },
   required: ['context', 'message'],
-}
 }

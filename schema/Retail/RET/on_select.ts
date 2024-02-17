@@ -87,7 +87,7 @@ export const onSelectSchema = {
                 },
                 locations: {
                   type: 'array',
-                  iems: {
+                  items: {
                     type: 'object',
                     properties: {
                       id: {
@@ -166,6 +166,7 @@ export const onSelectSchema = {
                   },
                   '@ondc/org/TAT': {
                     type: 'string',
+                    format: 'duration',
                   },
                   state: {
                     type: 'object',

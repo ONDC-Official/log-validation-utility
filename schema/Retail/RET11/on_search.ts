@@ -351,11 +351,8 @@ export const FnBonSearchSchema = {
                             images: {
                               type: 'array',
                               items: {
-                                type: 'array',
-                                items: {
-                                  type: 'string',
-                                  format: 'url',
-                                },
+                                type: 'string',
+                                format: 'url',
                               },
                             },
                           },

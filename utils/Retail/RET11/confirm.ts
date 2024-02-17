@@ -120,27 +120,22 @@ export const checkConfirm = (data: any) => {
       while (i < len) {
         const itemId = confirm.items[i].id
         const item = confirm.items[i]
-
         if (checkItemTag(item, select_customIdArray)) {
           const itemkey = `item${i}tags.parent_id`
-          cnfrmObj[
-            itemkey
-          ] = `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.SELECT} and /${constants.CONFIRM}`
+          cnfrmObj[itemkey] =
+            `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.SELECT} and /${constants.CONFIRM}`
         }
 
         if (!parentItemIdSet.includes(item.parent_item_id)) {
           const itemkey = `item_PrntItmId${i}`
-          cnfrmObj[
-            itemkey
-          ] = `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.CONFIRM}`
+          cnfrmObj[itemkey] =
+            `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.CONFIRM}`
         }
-
         if (itemId in itemFlfllmnts) {
           if (confirm.items[i].fulfillment_id != itemFlfllmnts[itemId]) {
             const itemkey = `item_FFErr${i}`
-            cnfrmObj[
-              itemkey
-            ] = `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.CONFIRM}`
+            cnfrmObj[itemkey] =
+              `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.CONFIRM}`
           }
         } else {
           const itemkey = `item_FFErr${i}`
@@ -171,14 +166,13 @@ export const checkConfirm = (data: any) => {
       logger.info(`Checking for number of digits in tax number in message.order.tags[0].list`)
       const list = message.order.tags[0].list
 
-      list.map((item: any)=> {
-        if(item.code == 'tax_number'){
-          if(item.value.length !== 15){
+      list.map((item: any) => {
+        if (item.code == 'tax_number') {
+          if (item.value.length !== 15) {
             const key = `message.order.tags[0].list`
             cnfrmObj[key] = `Number of digits in tax number in  message.order.tags[0].list should be 15`
           }
         }
-        
       })
     } catch (error: any) {
       logger.error(`Error while checking for the number of digits in tax_number`)

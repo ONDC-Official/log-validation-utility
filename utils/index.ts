@@ -646,7 +646,7 @@ export function areTimestampsLessThanOrEqualTo(timestamp1: string, timestamp2: s
 
 export function validateStatusOrderAndTimestamp(set: any) {
   const errObj: any = {}
-  let previousTimestamp = null
+  let previousTimestamp: any = null
   let previousStatusIndex = -1
 
   for (const obj of set) {
@@ -772,7 +772,7 @@ export const compareSTDwithArea = (pincode: number, std: string): boolean => {
   return data.some((e: any) => e.Pincode === pincode && e['STD Code'] === std)
 }
 
-export const checkMandatoryTags = (i:number, items: any, errorObj: any, categoryJSON: any, categoryName: string) => {
+export const checkMandatoryTags = (i: number, items: any, errorObj: any, categoryJSON: any, categoryName: string) => {
   items.forEach((item: any, index: number) => {
     let attributeTag = null
     for (const tag of item.tags) {

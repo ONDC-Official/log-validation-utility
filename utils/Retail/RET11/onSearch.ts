@@ -16,6 +16,7 @@ import {
   isValidPhoneNumber,
   compareSTDwithArea,
   areTimestampsLessThanOrEqualTo,
+  areTimestampsLessThanOrEqualTo,
 } from '../../../utils'
 import _ from 'lodash'
 
@@ -595,7 +596,11 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
       try {
         const providers = data.message.catalog['bpp/providers']
         const address = providers[0].locations[0].address
+        const address = providers[0].locations[0].address
 
+        if (address) {
+          const area_code = Number.parseInt(address.area_code)
+          const std = context.city.split(':')[1]
         if (address) {
           const area_code = Number.parseInt(address.area_code)
           const std = context.city.split(':')[1]

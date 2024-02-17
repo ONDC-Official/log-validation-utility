@@ -26,7 +26,7 @@ const getEnumForDomain = (path: string) => {
   if (path.includes('igm')) return DOMAIN.IGM
   throw new Error('Domain could not be detected')
 }
-const validateRetail = async (domain: string, payload: string, version: string, flow:string) => {
+const validateRetail = async (domain: string, payload: string, version: string, flow:string, flow:string) => {
   let response
   let success = false
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL

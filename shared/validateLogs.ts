@@ -419,24 +419,72 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
           }
         }
 
-        if (data[ApiSequence.CANCEL]) {
-          const cancelResp = checkCancel(data[ApiSequence.CANCEL])
+      if (data[ApiSequence.CANCEL]) {
+        const cancelResp = checkCancel(data[ApiSequence.CANCEL])
 
-          if (!_.isEmpty(cancelResp)) {
-            logReport = { ...logReport, [ApiSequence.CANCEL]: cancelResp }
-          }
+        if (!_.isEmpty(cancelResp)) {
+          logReport = { ...logReport, [ApiSequence.CANCEL]: cancelResp }
         }
-
-        if (data[ApiSequence.ON_CANCEL]) {
-          const onCancelResp = checkOnCancel(data[ApiSequence.ON_CANCEL])
-
-          if (!_.isEmpty(onCancelResp)) {
-            logReport = { ...logReport, [ApiSequence.ON_CANCEL]: onCancelResp }
-          }
-        }
-        logger.info(logReport, 'Report Generated Successfully!!')
-        return logReport
       }
+
+      if (data[ApiSequence.ON_CANCEL]) {
+        const onCancelResp = checkOnCancel(data[ApiSequence.ON_CANCEL])
+
+        if (!_.isEmpty(onCancelResp)) {
+          logReport = { ...logReport, [ApiSequence.ON_CANCEL]: onCancelResp }
+        }
+      }
+
+      if (data[ApiSequence.STATUS]) {
+        const statusResp = checkStatus(data[ApiSequence.STATUS])
+
+        if (!_.isEmpty(statusResp)) {
+          logReport = { ...logReport, [ApiSequence.STATUS]: statusResp }
+        }
+      }
+
+      if (data[ApiSequence.ON_STATUS_PENDING]) {
+        const onStatusResp = checkOnStatusPending(data[ApiSequence.ON_STATUS_PENDING], 'pending')
+
+        if (!_.isEmpty(onStatusResp)) {
+          logReport = { ...logReport, [ApiSequence.ON_STATUS_PENDING]: onStatusResp }
+        }
+      }
+
+      if (data[ApiSequence.ON_STATUS_PICKED]) {
+        const onStatusResp = checkOnStatusPicked(data[ApiSequence.ON_STATUS_PICKED], 'pending')
+
+        if (!_.isEmpty(onStatusResp)) {
+          logReport = { ...logReport, [ApiSequence.ON_STATUS_PICKED]: onStatusResp }
+        }
+      }
+
+      if (data[ApiSequence.ON_STATUS_DELIVERED]) {
+        const onStatusResp = checkOnStatusDelivered(data[ApiSequence.ON_STATUS_DELIVERED], 'pending')
+
+        if (!_.isEmpty(onStatusResp)) {
+          logReport = { ...logReport, [ApiSequence.ON_STATUS_DELIVERED]: onStatusResp }
+        }
+      }
+
+      if (data[ApiSequence.TRACK]) {
+        const TrackResp = checkTrack(data[ApiSequence.TRACK])
+
+        if (!_.isEmpty(TrackResp)) {
+          logReport = { ...logReport, [ApiSequence.TRACK]: TrackResp }
+        }
+      }
+
+      if (data[ApiSequence.ON_TRACK]) {
+        const onTrackResp = checkOnTrack(data[ApiSequence.ON_TRACK])
+
+        if (!_.isEmpty(onTrackResp)) {
+          logReport = { ...logReport, [ApiSequence.ON_TRACK]: onTrackResp }
+        }
+      }
+
+      logger.info(logReport, 'Report Generated Successfully!!')
+      return logReport
     } else {
       if (!retailDomains.includes(domain)) {
         return 'Domain should be one of the 1.2.0 retail domains'
@@ -574,8 +622,8 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
           }
         }
 
-        if (data[ApiSequence.ON_STATUS_DELIVERED]) {
-          const onStatusResp = checkOnStatusDelivered(data[ApiSequence.ON_STATUS_DELIVERED], 'Completed')
+      if (data[ApiSequence.ON_STATUS_DELIVERED]) {
+        const onStatusResp = checkOnStatusDelivered(data[ApiSequence.ON_STATUS_DELIVERED], 'pending')
 
           if (!_.isEmpty(onStatusResp)) {
             logReport = { ...logReport, [ApiSequence.ON_STATUS_DELIVERED]: onStatusResp }

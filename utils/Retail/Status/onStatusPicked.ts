@@ -44,9 +44,8 @@ export const checkOnStatusPicked = (data: any, state: string) => {
       )
       if (pending_message_id === picked_message_id) {
         logger.error(`Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`)
-        onStatusObj[
-          'invalid_message_id_picked'
-        ] = `Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`
+        onStatusObj['invalid_message_id_picked'] =
+          `Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`
       }
     } catch (error: any) {
       logger.error(

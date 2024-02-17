@@ -646,7 +646,7 @@ export function areTimestampsLessThanOrEqualTo(timestamp1: string, timestamp2: s
 
 export function validateStatusOrderAndTimestamp(set: any) {
   const errObj: any = {}
-  let previousTimestamp = null
+  let previousTimestamp: any = null
   let previousStatusIndex = -1
 
   for (const obj of set) {

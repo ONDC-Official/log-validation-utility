@@ -356,7 +356,7 @@ export const FnBonSearchSchema = {
                               },
                             },
                           },
-                          required: ['name', 'images'],
+                          required: ['name'],
                         },
                         tags: {
                           type: 'array',

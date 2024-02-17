@@ -453,7 +453,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
             if (!statutory_reqs_prepackaged_food.ingredients_info) {
               const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
               errorObj[key] =
-                `In ONDC:RET18 is valid key ingredients_info `
+                `In ONDC:RET18 for @ondc/org/statutory_reqs_prepackaged_food  ingredients_info is a valid field `
             }
           } else if (context.domain === 'ONDC:RET10') {
             const mandatoryFields = ['nutritional_info', 'additives_info', 'brand_owner_FSSAI_license_no', 'imported_product_country_of_origin', 'net_quantity'];
@@ -461,7 +461,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
               if (!statutory_reqs_prepackaged_food[field]) {
                 const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
                 errorObj[key] =
-                  `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food is not according to api contract`
+                  `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food following fields are valid 'nutritional_info', 'additives_info', 'brand_owner_FSSAI_license_no', 'imported_product_country_of_origin', 'net_quantity'`
               }
             });
           } 
@@ -525,7 +525,16 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           logger.info(`Checking consumer care details for item id: ${item.id}`)
           if ('@ondc/org/contact_details_consumer_care' in item) {
             let consCare = item['@ondc/org/contact_details_consumer_care']
+            
+            
             consCare = consCare.split(',')
+            
+            if(!isValidPhoneNumber(consCare[2])){
+              const key = `prvdr${i}consCare`
+              errorObj[key] =
+                `@ondc/org/contact_details_consumer_care contactno should consist of  10 or  11 digits without any spaces or special characters in /bpp/providers[${i}]/items`
+            }
+  
             if (consCare.length < 3) {
               const key = `prvdr${i}consCare`
               errorObj[key] =
@@ -535,7 +544,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
               if (isNaN(consCare[2].trim()) || !checkEmail) {
                 const key = `prvdr${i}consCare`
                 errorObj[key] =
-                  `@ondc/org/contact_details_consumer_care should be in the format "name,email,contactno" in /bpp/providers[${i}]/items`
+                  `@ondc/org/contact_details_consumer_care email should be in /bpp/providers[${i}]/items`
               }
             }
           }

@@ -16,7 +16,6 @@ import {
   isValidPhoneNumber,
   compareSTDwithArea,
   areTimestampsLessThanOrEqualTo,
-  areTimestampsLessThanOrEqualTo,
 } from '../../../utils'
 import _ from 'lodash'
 
@@ -596,11 +595,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
       try {
         const providers = data.message.catalog['bpp/providers']
         const address = providers[0].locations[0].address
-        const address = providers[0].locations[0].address
 
-        if (address) {
-          const area_code = Number.parseInt(address.area_code)
-          const std = context.city.split(':')[1]
         if (address) {
           const area_code = Number.parseInt(address.area_code)
           const std = context.city.split(':')[1]
@@ -617,6 +612,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
           `Error while matching area_code and std code for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
         )
       }
+
       // Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp
       try {
         logger.info(`Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp`)

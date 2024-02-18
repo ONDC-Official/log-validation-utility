@@ -800,13 +800,31 @@ export const checkMandatoryTags = (i: number, items: any, errorObj: any, categor
       if (categoryJSON.hasOwnProperty(ctgrID)) {
         logger.info(`Checking for item tags for ${categoryName} item[${index}]`)
         const mandatoryTags = categoryJSON[ctgrID]
-        for (const tagKey in mandatoryTags) {
-          if (mandatoryTags[tagKey]) {
-            const tagFound = tags.some((tag: any) => tag.code.toLowerCase() === tagKey.toLowerCase())
-            if (!tagFound) {
-              logger.error(`Mandatory tag field [${tagKey}] missing for ${categoryName} item[${index}]`)
-              const key = `missingTagsItem[${i}][${index}] : ${tagKey}`
-              errorObj[key] = `Mandatory tag field [${tagKey}] missing for ${categoryName} item[${index}]`
+        for (const tagName in mandatoryTags) {
+          if (mandatoryTags.hasOwnProperty(tagName)) {
+            const tagInfo = mandatoryTags[tagName]
+            const isTagMandatory = tagInfo.mandatory
+            if (isTagMandatory) {
+              let tagValue = null
+              const tagFound = tags.some((tag: any) => {
+                const res = tag.code.toLowerCase() === tagName.toLowerCase()
+                if (res) {
+                  tagValue = tag.value.toLowerCase()
+                }
+
+                return res
+              })
+              if (!tagFound) {
+                logger.error(`Mandatory tag field [${tagName}] missing for ${categoryName} item[${index}]`)
+                const key = `missingTagsItem[${i}][${index}] : ${tagName}`
+                errorObj[key] = `Mandatory tag field [${tagName}] missing for ${categoryName} item[${index}]`
+              } else {
+                if (tagInfo.value.length > 0 && !tagInfo.value.includes(tagValue)) {
+                  logger.error(`The item value can only be of possible values.`)
+                  const key = `InvldValueforItem[${i}][${index}] : ${tagName}`
+                  errorObj[key] = `The item value can only be of possible values.`
+                }
+              }
             }
           }
         }

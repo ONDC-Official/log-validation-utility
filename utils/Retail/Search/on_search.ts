@@ -22,7 +22,7 @@ import { compareSTDwithArea } from '../../index'
 import { BPCJSON, groceryJSON, healthJSON, homeJSON } from '../../../constants/category'
 import electronicsData from '../../../constants/electronics.json'
 import applianceData from '../../../constants/appliance.json'
-import fashionJSON from '../../../constants/fashion.json'
+import { fashion } from '../../../constants/fashion'
 import { DOMAIN } from '../../../utils/enum'
 export const checkOnsearch = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
@@ -700,7 +700,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
               errors = checkMandatoryTags(Number(i), items, errorObj, groceryJSON, 'Grocery')
               break
             case DOMAIN.RET12:
-              errors = checkMandatoryTags(Number(i), items, errorObj, fashionJSON, 'Fashion')
+              errors = checkMandatoryTags(Number(i), items, errorObj, fashion, 'Fashion')
               break
             case DOMAIN.RET13:
               errors = checkMandatoryTags(Number(i), items, errorObj, BPCJSON, 'BPC')

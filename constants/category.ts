@@ -1,9 +1,14 @@
 interface ICategoryJSON {
-  [key: string]: boolean
+  [key: string]: {
+    [key: string]: boolean | String[]
+  }
 }
 
 const groceryObj: ICategoryJSON = {
-  brand: false,
+  brand: {
+    mandatory: false,
+    value: [],
+  },
 }
 
 export const groceryJSON: { [key: string]: ICategoryJSON } = {
@@ -41,9 +46,18 @@ export const groceryJSON: { [key: string]: ICategoryJSON } = {
 }
 
 const healthObj: ICategoryJSON = {
-  Brand: true,
-  Prescription_Required: true,
-  Usage_Instruction: false,
+  Brand: {
+    mandatory: true,
+    value: [],
+  },
+  Prescription_Required: {
+    mandatory: true,
+    value: [],
+  },
+  Usage_Instruction: {
+    mandatory: false,
+    value: [],
+  },
 }
 
 export const healthJSON: { [key: string]: ICategoryJSON } = {
@@ -88,19 +102,58 @@ export const healthJSON: { [key: string]: ICategoryJSON } = {
 }
 
 const homeObj: ICategoryJSON = {
-  Brand: true,
-  Colour: true,
-  Colour_Name: false,
-  Material: true,
-  Size: false,
-  Weight: false,
-  Length: false,
-  Breadth: false,
-  Height: false,
-  Model: false,
-  Assembly_Required: false,
-  Care_Instructions: false,
-  Special_Features: false,
+  Brand: {
+    mandatory: true,
+    value: [],
+  },
+  Colour: {
+    mandatory: true,
+    value: [],
+  },
+  Colour_Name: {
+    mandatory: false,
+    value: [],
+  },
+  Material: {
+    mandatory: true,
+    value: [],
+  },
+  Size: {
+    mandatory: false,
+    value: [],
+  },
+  Weight: {
+    mandatory: false,
+    value: [],
+  },
+  Length: {
+    mandatory: false,
+    value: [],
+  },
+  Breadth: {
+    mandatory: false,
+    value: [],
+  },
+  Height: {
+    mandatory: false,
+    value: [],
+  },
+  Model: {
+    mandatory: false,
+    value: [],
+  },
+  Assembly_Required: {
+    mandatory: false,
+    value: [],
+  },
+  Care_Instructions: {
+    mandatory: false,
+    value: [],
+  },
+  Special_Features: {
+    mandatory: false,
+    value: [],
+  },
 }
 
 export const homeJSON: { [key: string]: ICategoryJSON } = {
@@ -123,16 +176,46 @@ export const homeJSON: { [key: string]: ICategoryJSON } = {
 }
 
 const BPCObj: ICategoryJSON = {
-  Brand: true,
-  Colour: false,
-  Colour_Name: false,
-  Gender: false,
-  Concern: false,
-  Ingredient: false,
-  Conscious: false,
-  Preference: false,
-  Formulation: false,
-  Skin_Type: false,
+  Brand: {
+    mandatory: true,
+    value: [],
+  },
+  Colour: {
+    mandatory: false,
+    value: [],
+  },
+  Colour_Name: {
+    mandatory: false,
+    value: [],
+  },
+  Gender: {
+    mandatory: false,
+    value: [],
+  },
+  Concern: {
+    mandatory: false,
+    value: [],
+  },
+  Ingredient: {
+    mandatory: false,
+    value: [],
+  },
+  Conscious: {
+    mandatory: false,
+    value: [],
+  },
+  Preference: {
+    mandatory: false,
+    value: [],
+  },
+  Formulation: {
+    mandatory: false,
+    value: [],
+  },
+  Skin_Type: {
+    mandatory: false,
+    value: [],
+  },
 }
 
 export const BPCJSON: { [key: string]: ICategoryJSON } = {

@@ -775,33 +775,39 @@ export const compareSTDwithArea = (pincode: number, std: string): boolean => {
 export const checkMandatoryTags = (i: number, items: any, errorObj: any, categoryJSON: any, categoryName: string) => {
   items.forEach((item: any, index: number) => {
     let attributeTag = null
+    let originTag = null
     for (const tag of item.tags) {
-      if (tag.code === 'attribute') {
-        attributeTag = tag
-        break
-      }
+      originTag = tag.code === 'origin' ? tag : originTag
+      attributeTag = tag.code === 'attribute' ? tag : attributeTag
     }
 
-    if (!attributeTag) {
+    if (!originTag) {
+      logger.error(`Origin tag fields are missing for ${categoryName} item[${index}]`)
+      const key = `missingOriginTag[${i}][${index}]`
+      errorObj[key] = `Origin tag fields are missing for ${categoryName} item[${index}]`
+    }
+
+    if (!attributeTag && categoryName !== 'Grocery') {
       logger.error(`Attribute tag fields are missing for ${categoryName} item[${index}]`)
       const key = `missingAttributeTag[${i}][${index}]`
       errorObj[key] = `Attribute tag fields are missing for ${categoryName} item[${index}]`
       return
     }
+    if (attributeTag) {
+      const tags = attributeTag.list
+      const ctgrID = item.category_id
 
-    const tags = attributeTag.list
-    const ctgrID = item.category_id
-
-    if (categoryJSON.hasOwnProperty(ctgrID)) {
-      logger.info(`Checking for item tags for ${categoryName} item[${index}]`)
-      const mandatoryTags = categoryJSON[ctgrID]
-      for (const tagKey in mandatoryTags) {
-        if (mandatoryTags[tagKey]) {
-          const tagFound = tags.some((tag: any) => tag.code.toLowerCase() === tagKey.toLowerCase())
-          if (!tagFound) {
-            logger.error(`Mandatory tag field [${tagKey}] missing for ${categoryName} item[${index}]`)
-            const key = `missingTagsItem[${i}][${index}] : ${tagKey}`
-            errorObj[key] = `Mandatory tag field [${tagKey}] missing for ${categoryName} item[${index}]`
+      if (categoryJSON.hasOwnProperty(ctgrID)) {
+        logger.info(`Checking for item tags for ${categoryName} item[${index}]`)
+        const mandatoryTags = categoryJSON[ctgrID]
+        for (const tagKey in mandatoryTags) {
+          if (mandatoryTags[tagKey]) {
+            const tagFound = tags.some((tag: any) => tag.code.toLowerCase() === tagKey.toLowerCase())
+            if (!tagFound) {
+              logger.error(`Mandatory tag field [${tagKey}] missing for ${categoryName} item[${index}]`)
+              const key = `missingTagsItem[${i}][${index}] : ${tagKey}`
+              errorObj[key] = `Mandatory tag field [${tagKey}] missing for ${categoryName} item[${index}]`
+            }
           }
         }
       }

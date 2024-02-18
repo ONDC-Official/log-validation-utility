@@ -206,7 +206,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
       try {
         logger.info(`Checking categories for provider (${prvdr.id}) in bpp/providers[${i}]`)
         let j = 0
-        const categories = onSearchCatalog['bpp/providers'][i]['categories']        
+        const categories = onSearchCatalog['bpp/providers'][i]['categories']
         const iLen = categories.length
         while (j < iLen) {
           logger.info(`Validating uniqueness for categories id in bpp/providers[${i}].items[${j}]...`)
@@ -448,8 +448,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
               const key = `prvdr${i}consCare`
               errorObj[key] =
                 `@ondc/org/contact_details_consumer_care should be in the format "name,email,contactno" in /bpp/providers[${i}]/items`
-            } 
-            else {
+            } else {
               const checkEmail: boolean = emailRegex(consCare[1].trim())
               if (isNaN(consCare[2].trim()) || !checkEmail) {
                 const key = `prvdr${i}consCare`
@@ -613,38 +612,40 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
           `Error while matching area_code and std code for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
         )
       }
-            // Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp
-            try{
-              logger.info(`Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp`)
-             const timestamp =  context.timestamp;
-             for(let i in  onSearchCatalog['bpp/providers']){
-              const items = onSearchCatalog['bpp/providers'][i].items;
-              items.forEach((item:any, index:number)=>{
-                 const itemTimeStamp = item.time.timestamp; 
-                 const op = areTimestampsLessThanOrEqualTo(itemTimeStamp, timestamp )
-                 if(!op){
-                   const key = `bpp/providers/items/time/timestamp[${index}]`
-                   errorObj[key] = `Timestamp for item[${index}] can't be greater than context.timestamp`
-                   logger.error(`Timestamp for item[${index}] can't be greater than context.timestamp`)
-                 }
-              })
-             }
-            }catch(error:any){
-              logger.error(`!!Errors while checking timestamp in context.timestamp and bpp/providers/items/time/timestamp, ${error.stack}`)
-            }
 
-      try{
-        logger.info(`Checking for tags array in message/catalog/bpp/providers[0]/categories[0]/tags`);
+      // Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp
+      try {
+        logger.info(`Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp`)
+        const timestamp = context.timestamp
+        for (let i in onSearchCatalog['bpp/providers']) {
+          const items = onSearchCatalog['bpp/providers'][i].items
+          items.forEach((item: any, index: number) => {
+            const itemTimeStamp = item.time.timestamp
+            const op = areTimestampsLessThanOrEqualTo(itemTimeStamp, timestamp)
+            if (!op) {
+              const key = `bpp/providers/items/time/timestamp[${index}]`
+              errorObj[key] = `Timestamp for item[${index}] can't be greater than context.timestamp`
+              logger.error(`Timestamp for item[${index}] can't be greater than context.timestamp`)
+            }
+          })
+        }
+      } catch (error: any) {
+        logger.error(
+          `!!Errors while checking timestamp in context.timestamp and bpp/providers/items/time/timestamp, ${error.stack}`,
+        )
+      }
+
+      try {
+        logger.info(`Checking for tags array in message/catalog/bpp/providers[0]/categories[0]/tags`)
         const categories = message.catalog['bpp/providers'][i].categories
-        categories.forEach((item:any)=>{
-          const tags = item.tags;
-          if(tags.length<1){
+        categories.forEach((item: any) => {
+          const tags = item.tags
+          if (tags.length < 1) {
             const key = `message/catalog/bpp/providers/categories`
             errorObj[key] = `/message/catalog/bpp/providers[${i}]/categories cannot have tags as an empty array`
           }
         })
-      }
-      catch(error: any){
+      } catch (error: any) {
         logger.error(`Error while checking tags array in message/catalog/bpp/providers[${i}]/categories`)
       }
 
@@ -659,24 +660,48 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
         logger.error(`!!Errors while checking rank in bpp/providers[${i}].category.tags, ${error.stack}`)
       }
 
-        // Checking image array for bpp/providers/[]/categories/[]/descriptor/images[]
-        try{
-          logger.info(`Checking image array for bpp/provider/categories/descriptor/images[]`)
-          for (let i in onSearchCatalog['bpp/providers']) {
-            const categories = onSearchCatalog['bpp/providers'][i].categories
-            categories.forEach((item: any, index: number) => {
-                if(item.descriptor. images && item.descriptor.images.length <1){
-                  const key = `bpp/providers[${i}]/categories[${index}]/descriptor`
-                  errorObj[key] = `Images should not be provided as empty array for categories[${index}]/descriptor`
-                  logger.error(`Images should not be provided as empty array for categories[${index}]/descriptor`)
-                }
-            })
-          }
-        }catch(error:any){
-          logger.error(
-            `!!Errors while checking image array for bpp/providers/[]/categories/[]/descriptor/images[], ${error.stack}`,
-          )
+      // Checking image array for bpp/providers/[]/categories/[]/descriptor/images[]
+      try {
+        logger.info(`Checking image array for bpp/provider/categories/descriptor/images[]`)
+        for (let i in onSearchCatalog['bpp/providers']) {
+          const categories = onSearchCatalog['bpp/providers'][i].categories
+          categories.forEach((item: any, index: number) => {
+            if (item.descriptor.images && item.descriptor.images.length < 1) {
+              const key = `bpp/providers[${i}]/categories[${index}]/descriptor`
+              errorObj[key] = `Images should not be provided as empty array for categories[${index}]/descriptor`
+              logger.error(`Images should not be provided as empty array for categories[${index}]/descriptor`)
+            }
+          })
         }
+      } catch (error: any) {
+        logger.error(
+          `!!Errors while checking image array for bpp/providers/[]/categories/[]/descriptor/images[], ${error.stack}`,
+        )
+      }
+
+      // Checking for origin in bpp/providers/[]/items/[]/tags/code
+      try {
+        const providers: any = onSearchCatalog['bpp/providers']
+        for (let i in providers) {
+          const items = providers[i].items
+          items.forEach((item: any, index: number) => {
+            let originTag = null
+            for (const tag of item.tags) {
+              if (tag.code === 'origin') {
+                originTag = tag
+              }
+            }
+
+            if (!originTag) {
+              logger.error(`Origin tag fields are missing for item[${index}]`)
+              const key = `missingOriginTag[${i}][${index}]`
+              errorObj[key] = `Origin tag fields are missing for item[${index}]`
+            }
+          })
+        }
+      } catch (error: any) {
+        logger.error(`!!Errors while checking for origin in bpp/providers/[]/items/[]/tags/code, ${error.stack}`)
+      }
 
       // servicability Construct
       try {

@@ -388,7 +388,7 @@ export const onSearchSchema = {
                               type: 'string',
                             },
                           },
-                          required: ['locality', 'street', 'city', 'area_code', 'state', 'circle'],
+                          required: ['locality', 'street', 'city', 'area_code', 'state'],
                         },
                         circle: {
                           type: 'object',
@@ -441,11 +441,8 @@ export const onSearchSchema = {
                             images: {
                               type: 'array',
                               items: {
-                                type: 'array',
-                                items: {
-                                  type: 'string',
-                                  format: 'url',
-                                },
+                                type: 'string',
+                                format: 'url',
                               },
                             },
                           },

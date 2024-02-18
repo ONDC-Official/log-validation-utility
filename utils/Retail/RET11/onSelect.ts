@@ -31,7 +31,7 @@ export const checkOnSelect = (data: any) => {
   }
 
   const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SELECT, data)
-  console.log("checking data===>",data);
+
   const contextRes: any = checkContext(context, constants.ON_SELECT)
 
   const errorObj: any = {}

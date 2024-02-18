@@ -272,7 +272,6 @@ export const checkSelect = (data: any, msgIdSet: any) => {
         setValue('itemsCtgrs', itemsCtgrs)
         setValue('selectedPrice', selectedPrice)
         setValue('parentItemIdSet', parentItemIdSet)
-        console.log("select===>",data);
         
 
         logger.info(`Provider Id in /${constants.ON_SEARCH} and /${constants.SELECT} matched`)

@@ -34,9 +34,6 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  console.log("oos====>", data);
-  
-
   const schemaValidation = validateSchema(context.domain.split(':')[1], constants.SELECT, data)
 
   const contextRes: any = checkContext(context, constants.SELECT)

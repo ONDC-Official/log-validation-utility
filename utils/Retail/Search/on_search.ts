@@ -460,14 +460,13 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
               'nutritional_info',
               'additives_info',
               'brand_owner_FSSAI_license_no',
-              'imported_product_country_of_origin',
               'net_quantity',
             ]
             mandatoryFields.forEach((field) => {
               if (statutory_reqs_prepackaged_food && !statutory_reqs_prepackaged_food[field]) {
                 const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
                 errorObj[key] =
-                  `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food following fields are valid 'nutritional_info', 'additives_info', 'brand_owner_FSSAI_license_no', 'imported_product_country_of_origin', 'net_quantity'`
+                  `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food following fields are valid 'nutritional_info', 'additives_info', 'brand_owner_FSSAI_license_no', 'net_quantity'`
               }
             })
           }
@@ -753,14 +752,11 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           items.forEach((item: any, index: number) => {
             if (!item.descriptor.short_desc || !item.descriptor.long_desc) {
               logger.error(
-                `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers${i}/items${index}/descriptor`,
+                `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor`,
               )
               const key = `bpp/providers[${i}]/items[${index}]/descriptor`
               errorObj[key] =
-                `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers${i}/items${index}/descriptor`
-              logger.error(
-                `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers${i}/items${index}/descriptor`,
-              )
+                `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor`
             }
           })
         }

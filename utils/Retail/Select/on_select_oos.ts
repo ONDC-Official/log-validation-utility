@@ -1,4 +1,3 @@
-/* eslint-disable no-prototype-builtins */
 import { getValue, setValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
 import { validateSchema, isObjectEmpty, checkContext, timeDiff, isoDurToSec, checkBppIdOrBapId } from '../../../utils'
@@ -20,26 +19,24 @@ const retailPymntTtl: { [key: string]: string } = {
   discount: 'discount',
   'convenience fee': 'misc',
 }
-export const checkOnSelect = (data: any) => {
+export const checkOnSelect_OOS = (data: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [ApiSequence.ON_SELECT]: 'JSON cannot be empty' }
+    return { [ApiSequence.ON_SELECT_OUT_OF_STOCK]: 'JSON cannot be empty' }
   }
 
-  const { message, context } = data
+  const { message, context, error } = data
   if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
-  const selectContext_OOS = getValue(`${ApiSequence.ON_SELECT_OUT_OF_STOCK}_context`)
-  console.log("checking select_oos", selectContext_OOS);
 
   const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SELECT, data)
-
   const contextRes: any = checkContext(context, constants.ON_SELECT)
 
   const errorObj: any = {}
 
   const checkBap = checkBppIdOrBapId(context.bap_id)
   const checkBpp = checkBppIdOrBapId(context.bpp_id)
+
 
   if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
   if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
@@ -107,23 +104,30 @@ export const checkOnSelect = (data: any) => {
     )
   }
 
-  let on_select_error: any = {}
+  let ON_SELECT_OUT_OF_STOCK_error: any = {}
   try {
     logger.info(`Checking domain-error in /${constants.ON_SELECT}`)
     if (data.hasOwnProperty('error')) {
-      on_select_error = data.error
+      ON_SELECT_OUT_OF_STOCK_error = data.error
     }
   } catch (error: any) {
     logger.info(`Error while checking domain-error in /${constants.ON_SELECT}, ${error.stack}`)
   }
 
-  const on_select: any = message.order
+  const ON_SELECT_OUT_OF_STOCK: any = message.order
+  const oos_context : any = context
+  const error_oos: any = error
+  console.log("checking context",oos_context);
+  console.log("checking msg",ON_SELECT_OUT_OF_STOCK);
+  console.log("checking error", error_oos);
+  
+  
 
   const itemFlfllmnts: any = {}
 
   try {
     logger.info(`Checking provider id in /${constants.ON_SEARCH} and /${constants.ON_SELECT}`)
-    if (getValue('providerId') != on_select.provider.id) {
+    if (getValue('providerId') != ON_SELECT_OUT_OF_STOCK.provider.id) {
       errorObj.prvdrId = `provider.id mismatches in /${constants.ON_SEARCH} and /${constants.ON_SELECT}`
     }
   } catch (error: any) {
@@ -133,14 +137,14 @@ export const checkOnSelect = (data: any) => {
   }
 
   try {
-    logger.info(`Item Id and Fulfillment Id Mapping in /on_select`)
+    logger.info(`Item Id and Fulfillment Id Mapping in /ON_SELECT_OUT_OF_STOCK`)
     let i = 0
-    const len = on_select.items.length
+    const len = ON_SELECT_OUT_OF_STOCK.items.length
     while (i < len) {
-      const found = on_select.fulfillments.some((fId: { id: any }) => fId.id === on_select.items[i].fulfillment_id)
+      const found = ON_SELECT_OUT_OF_STOCK.fulfillments.some((fId: { id: any }) => fId.id === ON_SELECT_OUT_OF_STOCK.items[i].fulfillment_id)
       if (!found) {
         const key = `fId${i}`
-        errorObj[key] = `fulfillment_id for item ${on_select.items[i].id} does not exist in order.fulfillments[]`
+        errorObj[key] = `fulfillment_id for item ${ON_SELECT_OUT_OF_STOCK.items[i].id} does not exist in order.fulfillments[]`
       }
 
       i++
@@ -152,10 +156,10 @@ export const checkOnSelect = (data: any) => {
   try {
     logger.info('Mapping and storing item Id and fulfillment Id')
     let i = 0
-    const len = on_select.items.length
+    const len = ON_SELECT_OUT_OF_STOCK.items.length
     while (i < len) {
-      const id = on_select.items[i].id
-      itemFlfllmnts[id] = on_select.items[i].fulfillment_id
+      const id = ON_SELECT_OUT_OF_STOCK.items[i].id
+      itemFlfllmnts[id] = ON_SELECT_OUT_OF_STOCK.items[i].fulfillment_id
       i++
     }
 
@@ -167,7 +171,7 @@ export const checkOnSelect = (data: any) => {
   try {
     logger.info(`Checking TAT and TTS in /${constants.ON_SELECT}`)
     const tts: any = getValue('timeToShip')
-    on_select.fulfillments.forEach((ff: { [x: string]: any }, indx: any) => {
+    ON_SELECT_OUT_OF_STOCK.fulfillments.forEach((ff: { [x: string]: any }, indx: any) => {
       const tat = isoDurToSec(ff['@ondc/org/TAT'])
 
       if (tat < tts) {
@@ -199,13 +203,13 @@ export const checkOnSelect = (data: any) => {
       }
     }
     const max_tts=max_time_to_ships.sort((a, b) =>  a - b)[0]
-    const on_select_tat = on_select.fulfillments.map((e:any)=>isoDurToSec(e['@ondc/org/TAT']))
+    const ON_SELECT_OUT_OF_STOCK_tat = ON_SELECT_OUT_OF_STOCK.fulfillments.map((e:any)=>isoDurToSec(e['@ondc/org/TAT']))
 
-    if (on_select_tat<max_tts) {
+    if (ON_SELECT_OUT_OF_STOCK_tat<max_tts) {
       errorObj.ttstat = `/fulfillments/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be less than @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
     }
 
-    if (on_select_tat === max_tts) {
+    if (ON_SELECT_OUT_OF_STOCK_tat === max_tts) {
       errorObj.ttstat = `/fulfillments/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be equal to @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
     }
     }
@@ -216,7 +220,7 @@ export const checkOnSelect = (data: any) => {
   let nonServiceableFlag = 0
   try {
     logger.info(`Checking fulfillments' state in ${constants.ON_SELECT}`)
-    const ffState = on_select.fulfillments.every((ff: { state: { descriptor: any } }) => {
+    const ffState = ON_SELECT_OUT_OF_STOCK.fulfillments.every((ff: { state: { descriptor: any } }) => {
       const ffDesc = ff.state.descriptor
       if (ffDesc.code === 'Non-serviceable') {
         nonServiceableFlag = 1
@@ -229,7 +233,7 @@ export const checkOnSelect = (data: any) => {
       errorObj.ffStateCode = `Pre-order fulfillment state codes should be used in fulfillments[].state.descriptor.code`
     else if (
       nonServiceableFlag &&
-      (!on_select_error || !(on_select_error.type === 'DOMAIN-ERROR' && on_select_error.code === '30009'))
+      (!ON_SELECT_OUT_OF_STOCK_error || !(ON_SELECT_OUT_OF_STOCK_error.type === 'DOMAIN-ERROR' && ON_SELECT_OUT_OF_STOCK_error.code === '30009'))
     ) {
       errorObj.notServiceable = `Non Serviceable Domain error should be provided when fulfillment is not serviceable`
     }
@@ -237,18 +241,36 @@ export const checkOnSelect = (data: any) => {
     logger.error(`!!Error while checking fulfillments' state in /${constants.ON_SELECT}, ${error.stack}`)
   }
 
-  let onSelectPrice: any = 0 //Net price after discounts and tax in /on_select
-  let onSelectItemsPrice = 0 //Price of only items in /on_select
+  try {
+    logger.info(`Item Id and  error.message.item_id Mapping in /ON_SELECT_OUT_OF_STOCK`);
+    let i =  0;
+    const len = ON_SELECT_OUT_OF_STOCK.items.length;
+    const errorItems = error.message; 
+
+    while (i < len) {
+      const found = errorItems.find((errorObj: any) => errorObj.item_id === ON_SELECT_OUT_OF_STOCK.items[i].id);
+      if (!found) {
+        const key = `message/error/message/items_id${i}`;
+        errorObj[key] = `message/order/items for item ${ON_SELECT_OUT_OF_STOCK.items[i].id} does not match in error.message.items_id `;
+      }
+      i++;
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while checking Item Id and  Mapping in ${error.message}`);
+  }
+
+  let onSelectPrice: any = 0 //Net price after discounts and tax in /ON_SELECT_OUT_OF_STOCK
+  let onSelectItemsPrice = 0 //Price of only items in /ON_SELECT_OUT_OF_STOCK
 
   try {
     logger.info(`Comparing count of items in ${constants.SELECT} and ${constants.ON_SELECT}`)
     const itemsIdList: any = getValue('itemsIdList') || {}
     logger.info('itemsIdList', itemsIdList)
-    on_select.quote.breakup.forEach((item: { [x: string]: any }) => {
-      if (item['@ondc/org/item_id'] in itemsIdList && item['@ondc/org/title_type'] === 'item') {
+    ON_SELECT_OUT_OF_STOCK.quote.breakup.forEach((item: { [x: string]: any }) => {
+       if (item['@ondc/org/item_id'] in itemsIdList && item['@ondc/org/title_type'] === 'item') {
         if (
           itemsIdList[item['@ondc/org/item_id']] != item['@ondc/org/item_quantity'].count &&
-          (!on_select_error || on_select_error.type != 'DOMAIN-ERROR' || on_select_error.code != '40002')
+          (!ON_SELECT_OUT_OF_STOCK_error || ON_SELECT_OUT_OF_STOCK_error.type != 'DOMAIN-ERROR' || ON_SELECT_OUT_OF_STOCK_error.code != '40002')
         ) {
           const cntkey = `cnt${item['@ondc/org/item_id']}`
           errorObj[cntkey] =
@@ -267,7 +289,7 @@ export const checkOnSelect = (data: any) => {
     logger.info(`-x-x-x-x-Quote Breakup ${constants.ON_SELECT} all checks-x-x-x-x`)
     const itemsIdList: any = getValue('itemsIdList')
     const itemsCtgrs: any = getValue('itemsCtgrs')
-    on_select.quote.breakup.forEach((element: any, i: any) => {
+    ON_SELECT_OUT_OF_STOCK.quote.breakup.forEach((element: any, i: any) => {
       const titleType = element['@ondc/org/title_type']
       // logger.info(element.price.value);
 
@@ -339,12 +361,12 @@ export const checkOnSelect = (data: any) => {
       }
     })
 
-    setValue('onSelectPrice', on_select.quote.price.value)
+    setValue('onSelectPrice', ON_SELECT_OUT_OF_STOCK.quote.price.value)
     onSelectPrice = onSelectPrice.toFixed(2)
 
-    logger.info(`Matching quoted Price ${parseFloat(on_select.quote.price.value)} with Breakup Price ${onSelectPrice}`)
-    if (onSelectPrice != parseFloat(on_select.quote.price.value)) {
-      errorObj.quoteBrkup = `quote.price.value ${on_select.quote.price.value} does not match with the price breakup ${onSelectPrice}`
+    logger.info(`Matching quoted Price ${parseFloat(ON_SELECT_OUT_OF_STOCK.quote.price.value)} with Breakup Price ${onSelectPrice}`)
+    if (onSelectPrice != parseFloat(ON_SELECT_OUT_OF_STOCK.quote.price.value)) {
+      errorObj.quoteBrkup = `quote.price.value ${ON_SELECT_OUT_OF_STOCK.quote.price.value} does not match with the price breakup ${onSelectPrice}`
     }
 
     const selectedPrice = getValue('selectedPrice')
@@ -362,7 +384,7 @@ export const checkOnSelect = (data: any) => {
 
   try {
     // checking if delivery line item present in case of Serviceable
-    const quoteBreakup = on_select.quote.breakup
+    const quoteBreakup = ON_SELECT_OUT_OF_STOCK.quote.breakup
     const deliveryItems = quoteBreakup.filter(
       (item: { [x: string]: string }) => item['@ondc/org/title_type'] === 'delivery',
     )
@@ -385,7 +407,7 @@ export const checkOnSelect = (data: any) => {
 
   try {
     logger.info(`Checking payment breakup title & type in /${constants.ON_SELECT}`)
-    on_select.quote.breakup.forEach((item: { [x: string]: any; title: string }) => {
+    ON_SELECT_OUT_OF_STOCK.quote.breakup.forEach((item: { [x: string]: any; title: string }) => {
       if (
         item['@ondc/org/title_type'] != 'item' &&
         !Object.values(retailPymntTtl).includes(item['@ondc/org/title_type'])
@@ -411,7 +433,7 @@ export const checkOnSelect = (data: any) => {
   try {
     //matching fulfillments TAT
     logger.info('Checking Fulfillment TAT...')
-    on_select.fulfillments.forEach((ff: { [x: string]: any; id: any }) => {
+    ON_SELECT_OUT_OF_STOCK.fulfillments.forEach((ff: { [x: string]: any; id: any }) => {
       if (!ff['@ondc/org/TAT']) {
         logger.info(`Fulfillment TAT must be present for Fulfillment ID: ${ff.id}`)
         errorObj.ffTAT = `Fulfillment TAT must be present for fulfillment ID: ${ff.id}`
@@ -423,7 +445,7 @@ export const checkOnSelect = (data: any) => {
 
   try {
     logger.info('Checking quote validity quote.ttl')
-    if (!on_select.quote.hasOwnProperty('ttl')) {
+    if (!ON_SELECT_OUT_OF_STOCK.quote.hasOwnProperty('ttl')) {
       errorObj.qtTtl = 'quote.ttl: Validity of the quote is missing'
     }
   } catch (error: any) {
@@ -432,7 +454,7 @@ export const checkOnSelect = (data: any) => {
 
   try {
     logger.info(`Storing Quote object in /${constants.ON_SELECT}`)
-    on_select.quote.breakup.forEach((element: BreakupElement) => {
+    ON_SELECT_OUT_OF_STOCK.quote.breakup.forEach((element: BreakupElement) => {
       if (element['@ondc/org/title_type'] === 'item') {
         if (element.item && element.item.hasOwnProperty('quantity')) {
           delete element.item.quantity
@@ -440,19 +462,19 @@ export const checkOnSelect = (data: any) => {
       }
     })
     //saving on select quote
-    setValue('quoteObj', on_select.quote)
+    setValue('quoteObj', ON_SELECT_OUT_OF_STOCK.quote)
   } catch (error: any) {
     logger.error(`!!Error while storing quote object in /${constants.ON_SELECT}, ${error.stack}`)
   }
 
-  // Checking fulfillmentID with providerID for ON_SELECT
+  // Checking fulfillmentID with providerID for ON_SELECT_OUT_OF_STOCK
   try {
     logger.info(`Comparing fulfillmentID with providerID for /${constants.ON_SELECT} `)
-    const len: number = on_select.fulfillments.length
+    const len: number = ON_SELECT_OUT_OF_STOCK.fulfillments.length
     let i = 0
     while (i < len) {
-      const fulfillment_id = on_select.fulfillments[i].id
-      const provider_id = on_select.provider.id
+      const fulfillment_id = ON_SELECT_OUT_OF_STOCK.fulfillments[i].id
+      const provider_id = ON_SELECT_OUT_OF_STOCK.provider.id
       if (fulfillment_id === provider_id) {
         logger.error(`FullfillmentID can't be equal to ProviderID on ${constants.ON_SELECT}`)
       }

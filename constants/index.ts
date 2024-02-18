@@ -4,7 +4,7 @@ export default Object.freeze({
   DB_PATH: 'dbfiles',
   DECIMAL_PRECISION: 6,
   ORDER_PICKED: 'Order-picked-up',
-  ORDER_PACKED:'Order-packed-up',
+  ORDER_PACKED: 'Order-packed-up',
   ORDER_OUT_FOR_DELIVERY: 'Order-out-for-delivery',
   ORDER_DELIVERED: 'Order-delivered',
   SEARCH: 'search',
@@ -55,6 +55,7 @@ export const ApiSequence = {
   ON_STATUS_DELIVERED: 'on_status_delivered',
   UPDATE: 'update',
   ON_UPDATE: 'on_update',
+  SELECT_OUT_OF_STOCK: 'select_out_of_stock',
   ON_SELECT_OUT_OF_STOCK: 'on_select_out_of_stock',
 }
 

@@ -446,7 +446,7 @@ export const onSearchSchema = {
                               },
                             },
                           },
-                          required: ['name', 'images'],
+                          required: ['name'],
                         },
                         tags: {
                           type: 'array',

@@ -16,6 +16,8 @@ import {
   checkMandatoryTags,
   areTimestampsLessThanOrEqualTo,
   isValidPhoneNumber,
+  checkDuplicateParentIdItems,
+  checkForDuplicates,
 } from '../../../utils'
 import _ from 'lodash'
 import { compareSTDwithArea } from '../../index'
@@ -696,25 +698,25 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           let errors: any
           switch (domain) {
             case DOMAIN.RET10:
-              errors = checkMandatoryTags(Number(i), items, errorObj, groceryJSON, 'Grocery')
+              errors = checkMandatoryTags(i, items, errorObj, groceryJSON, 'Grocery')
               break
             case DOMAIN.RET12:
-              errors = checkMandatoryTags(Number(i), items, errorObj, fashion, 'Fashion')
+              errors = checkMandatoryTags(i, items, errorObj, fashion, 'Fashion')
               break
             case DOMAIN.RET13:
-              errors = checkMandatoryTags(Number(i), items, errorObj, BPCJSON, 'BPC')
+              errors = checkMandatoryTags(i, items, errorObj, BPCJSON, 'BPC')
               break
             case DOMAIN.RET14:
-              errors = checkMandatoryTags(Number(i), items, errorObj, electronicsData, 'Electronics')
+              errors = checkMandatoryTags(i, items, errorObj, electronicsData, 'Electronics')
               break
             case DOMAIN.RET15:
-              errors = checkMandatoryTags(Number(i), items, errorObj, applianceData, 'Appliances')
+              errors = checkMandatoryTags(i, items, errorObj, applianceData, 'Appliances')
               break
             case DOMAIN.RET16:
-              errors = checkMandatoryTags(Number(i), items, errorObj, homeJSON, 'Home & Kitchen')
+              errors = checkMandatoryTags(i, items, errorObj, homeJSON, 'Home & Kitchen')
               break
             case DOMAIN.RET18:
-              errors = checkMandatoryTags(Number(i), items, errorObj, healthJSON, 'Health & Wellness')
+              errors = checkMandatoryTags(i, items, errorObj, healthJSON, 'Health & Wellness')
               break
           }
           Object.assign(errorObj, errors)
@@ -782,6 +784,27 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
       } catch (error: any) {
         logger.error(
           `!!Errors while checking image array for bpp/providers/[]/categories/[]/descriptor/images[], ${error.stack}`,
+        )
+      }
+      try {
+        logger.info(`Checking for duplicate varient in bpp/providers/items for on_search`)
+        for (let i in onSearchCatalog['bpp/providers']) {
+          const items = onSearchCatalog['bpp/providers'][i].items
+          const map = checkDuplicateParentIdItems(items)
+          for (let key in map) {
+            if (map[key].length > 1) {
+              const measures = map[key].map((item: any) => {
+                const unit = item.quantity.unitized.measure.unit
+                const value = parseInt(item.quantity.unitized.measure.value)
+                return { unit, value }
+              })
+              checkForDuplicates(measures, errorObj)
+            }
+          }
+        }
+      } catch (error: any) {
+        logger.error(
+          `!!Errors while checking parent_item_id in bpp/providers/[]/items/[]/parent_item_id/, ${error.stack}`,
         )
       }
       try {

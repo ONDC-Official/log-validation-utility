@@ -316,19 +316,9 @@ export const FnBonSelectSchema = {
           type: 'string',
         },
         message: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              item_id: {
-                type: "string"
-              },
-              error: {
-                type: "string"
-              }
-            },
-            required: ["item_id", "error"]
-          }
+          type: "string",
+          pattern: '\[{"item_id":"[^"]+","error":"\d+"}\]',
+          errorMessage: 'order/error/message  should follow this format "[{\"item_id\":\"I1\",\"error\":\"40002\"}]"'
         },
       },
       required: ['type', 'code', 'message'],

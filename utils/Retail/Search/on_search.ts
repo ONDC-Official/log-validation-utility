@@ -786,6 +786,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           `!!Errors while checking image array for bpp/providers/[]/categories/[]/descriptor/images[], ${error.stack}`,
         )
       }
+      // Checking for duplicate varient in bpp/providers/items for on_search
       try {
         logger.info(`Checking for duplicate varient in bpp/providers/items for on_search`)
         for (let i in onSearchCatalog['bpp/providers']) {

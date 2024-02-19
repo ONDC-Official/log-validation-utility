@@ -73,6 +73,7 @@ export const checkOnConfirm = (data: any) => {
         }
       }
       setValue('tmpstmp', context.timestamp)
+      setValue('onCnfrmtmpstmp', context.timestamp)
     } catch (error: any) {
       logger.info(
         `Error while comparing timestamp for /${constants.CONFIRM} and /${constants.ON_CONFIRM} api, ${error.stack}`,

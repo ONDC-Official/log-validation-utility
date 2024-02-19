@@ -466,8 +466,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
             mandatoryFields.forEach((field) => {
               if (statutory_reqs_prepackaged_food && !statutory_reqs_prepackaged_food[field]) {
                 const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
-                errorObj[key] =
-                  `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food following fields are valid 'nutritional_info', 'additives_info', 'brand_owner_FSSAI_license_no', 'imported_product_country_of_origin', 'net_quantity'`
+                errorObj[key] = `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food ${field} is missing'`
               }
             })
           }
@@ -487,6 +486,16 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
               const key = `prvdr${i}item${j}maxCount`
               errorObj[key] =
                 `item.quantity.maximum.count should be either default value 99 (no cap per order) or any other positive value (cap per order) in /bpp/providers[${i}]/items[${j}]`
+            }
+          }
+          if (item.quantity && item.quantity.available && item.quantity.maximum ) {
+            console.log("m yahaaaaaaa huuuuuuuuuuuuuuuuu")
+            const maxCount = parseInt(item.quantity.maximum.count, 10)
+            const availCount = parseInt(item.quantity.available.count, 10)
+            if (availCount == 0 && maxCount > 0) {
+              const key = `prvdr${i}item${j}maxCount`
+              errorObj[key] =
+                `item.quantity.maximum.count cant be more than 0 if available count is 0 in /bpp/providers[${i}]/items[${j}]`
             }
           }
 

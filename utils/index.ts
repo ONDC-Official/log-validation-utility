@@ -822,7 +822,7 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
                 if (tagInfo.value.length > 0 && !tagInfo.value.includes(tagValue)) {
                   logger.error(`The item value can only be of possible values.`)
                   const key = `InvldValueforItem[${i}][${index}] : ${tagName}`
-                  errorObj[key] = `The item value can only be of possible values.`
+                  errorObj[key] = `The item value can only be of possible values ${tagInfo.value}.`
                 }
               }
             }

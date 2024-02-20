@@ -88,6 +88,7 @@ export const FnBconfirmSchema = {
             id: {
               type: 'string',
               minLength: 1,
+              pattern: '^[a-zA-Z0-9]{1,32}$'
             },
             state: {
               type: 'string',

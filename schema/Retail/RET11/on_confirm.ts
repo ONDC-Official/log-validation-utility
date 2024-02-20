@@ -82,6 +82,7 @@ export const FnBonConfirmSchema = {
           properties: {
             id: {
               type: 'string',
+              pattern: '^[a-zA-Z0-9]{1,32}$'
             },
             state: {
               type: 'string',
@@ -726,25 +727,83 @@ export const FnBonConfirmSchema = {
                 properties: {
                   code: {
                     type: 'string',
+                    enum: ['bpp_terms'],
                   },
                   list: {
                     type: 'array',
                     items: {
-                      type: 'object',
-                      properties: {
-                        code: {
-                          type: 'string',
+                      allOf: [
+                        {
+                          if: {
+                            properties: {
+                              code: { const: 'np_type' },
+                            },
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                                enum: ['np_type'],
+                              },
+                              value: {
+                                type: 'string',
+                                enum: ['MSN', 'ISN'],
+                              },
+                              
+                            },
+                            required: ['code', 'value'],
+                            additionalProperties: false,
+                          },
+                        
                         },
-                        value: {
-                          type: 'string',
-                          minLength: 1,
+                        {
+                          if: {
+                            properties: {
+                              code: { const: 'tax_number' },
+                            },
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                              },
+                              value: {
+                                type: 'string',
+                              },
+                            },
+                            required: ['code', 'value'],
+                            additionalProperties: false,
+                          },
                         },
-                      },
-                      required: ['code', 'value'],
+                        {
+                          if: {
+                            properties: {
+                              code: { const: 'provider_tax_number' },
+                            },
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                              },
+                              value: {
+                                type: 'string',
+                              },
+                            },
+                            required: ['code', 'value'],
+                            additionalProperties: false,
+                          },
+                        },
+                      ],
                     },
+                    minItems: 1,
                   },
                 },
                 required: ['code', 'list'],
+                additionalProperties: false,
               },
             },
             created_at: {

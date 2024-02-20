@@ -855,7 +855,6 @@ export const checkForDuplicates = (arr: any, errorObj: any) => {
   const seen = new Set()
   for (const value of arr) {
     const stringValue = JSON.stringify(value)
-    console.log('Value------->', stringValue)
     if (seen.has(stringValue)) {
       const key = `DuplicateVarient[${index}]`
       errorObj[key] = `Duplicate varient found for item in bpp/providers/items`

@@ -722,10 +722,12 @@ export const FnBonConfirmSchema = {
             tags: {
               type: 'array',
               items: {
-                type: 'object',
+                type: 'object', 
                 properties: {
                   code: {
                     type: 'string',
+                    enum: ['bpp_terms', 'bap_terms'],
+          
                   },
                   list: {
                     type: 'array',
@@ -734,6 +736,7 @@ export const FnBonConfirmSchema = {
                       properties: {
                         code: {
                           type: 'string',
+                          enum: ['tax_number', 'provider_tax_number', 'np_type']
                         },
                         value: {
                           type: 'string',
@@ -741,6 +744,35 @@ export const FnBonConfirmSchema = {
                         },
                       },
                       required: ['code', 'value'],
+                      allOf: [
+                        {
+                          properties: {
+                            code: {
+                              contains: {
+                                const: 'tax_number'
+                              }
+                            }
+                          }
+                        },
+                        {
+                          properties: {
+                            code: {
+                              contains: {
+                                const: 'provider_tax_number'
+                              }
+                            }
+                          }
+                        },
+                        {
+                          properties: {
+                            code: {
+                              contains: {
+                                const: 'np_type'
+                              }
+                            }
+                          }
+                        },
+                      ]
                     },
                   },
                 },

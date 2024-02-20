@@ -446,6 +446,7 @@ export const onCancelSchema = {
                       properties: {
                         code: {
                           type: 'string',
+                          enum: ['cancel_request','igm_request','precancel_state'],
                         },
                         list: {
                           type: 'array',
@@ -454,6 +455,7 @@ export const onCancelSchema = {
                             properties: {
                               code: {
                                 type: 'string',
+                                enum:['reason_id','initiated_by','fulfillment_state','updated_at']                               
                               },
                               value: {
                                 type: 'string',

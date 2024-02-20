@@ -13,9 +13,9 @@ import {
   checkServiceabilityType,
   validateLocations,
   isSequenceValid,
+  isValidPhoneNumber,
   checkMandatoryTags,
   areTimestampsLessThanOrEqualTo,
-  isValidPhoneNumber,
   checkDuplicateParentIdItems,
   checkForDuplicates,
 } from '../../../utils'
@@ -234,6 +234,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
       })
 
       try {
+        logger.info(`Checking for upcoming holidays`)
         const location = onSearchCatalog['bpp/providers'][i]['locations']
         if (!location) {
           logger.error('No location detected ')
@@ -246,7 +247,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         scheduleObject.map((date: string) => {
           const dateObj = new Date(date)
           const currentDateObj = new Date(currentDate)
-          if (dateObj.getTime() > currentDateObj.getTime()) {
+          if (dateObj.getTime() < currentDateObj.getTime()) {
             const key = `/message/catalog/bpp/providers/loc${i}/time/schedule/holidays`
             errorObj[key] = `Holidays cannot be past ${currentDate}`
           }

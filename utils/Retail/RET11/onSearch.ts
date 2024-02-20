@@ -113,6 +113,29 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
   }
 
   try {
+    logger.info(`Checking for upcoming holidays`)
+    const location = onSearchCatalog['bpp/providers'][0]['locations']
+    if (!location) {
+      logger.error('No location detected ')
+    }
+
+    const scheduleObject = location[0].time.schedule.holidays
+    const timestamp = context.timestamp
+    const [currentDate] = timestamp.split('T')
+
+    scheduleObject.map((date: string) => {
+      const dateObj = new Date(date)
+      const currentDateObj = new Date(currentDate)
+      if (dateObj.getTime() < currentDateObj.getTime()) {
+        const key = `/message/catalog/bpp/providers/loc${0}/time/schedule/holidays`
+        errorObj[key] = `Holidays cannot be past ${currentDate}`
+      }
+    })
+  } catch (e) {
+    logger.error('No Holiday', e)
+  }
+
+  try {
     logger.info(`Checking Providers info (bpp/providers) in /${constants.ON_SEARCH}`)
     let i = 0
     const bppPrvdrs = onSearchCatalog['bpp/providers']
@@ -614,6 +637,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
           `Error while matching area_code and std code for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
         )
       }
+
       // Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp
       try {
         logger.info(`Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp`)

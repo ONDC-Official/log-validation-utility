@@ -772,7 +772,7 @@ export const compareSTDwithArea = (pincode: number, std: string): boolean => {
   return data.some((e: any) => e.Pincode === pincode && e['STD Code'] === std)
 }
 
-export const checkMandatoryTags = (i: number, items: any, errorObj: any, categoryJSON: any, categoryName: string) => {
+export const checkMandatoryTags = (i: string, items: any, errorObj: any, categoryJSON: any, categoryName: string) => {
   items.forEach((item: any, index: number) => {
     let attributeTag = null
     let originTag = null
@@ -800,13 +800,31 @@ export const checkMandatoryTags = (i: number, items: any, errorObj: any, categor
       if (categoryJSON.hasOwnProperty(ctgrID)) {
         logger.info(`Checking for item tags for ${categoryName} item[${index}]`)
         const mandatoryTags = categoryJSON[ctgrID]
-        for (const tagKey in mandatoryTags) {
-          if (mandatoryTags[tagKey]) {
-            const tagFound = tags.some((tag: any) => tag.code.toLowerCase() === tagKey.toLowerCase())
-            if (!tagFound) {
-              logger.error(`Mandatory tag field [${tagKey}] missing for ${categoryName} item[${index}]`)
-              const key = `missingTagsItem[${i}][${index}] : ${tagKey}`
-              errorObj[key] = `Mandatory tag field [${tagKey}] missing for ${categoryName} item[${index}]`
+        for (const tagName in mandatoryTags) {
+          if (mandatoryTags.hasOwnProperty(tagName)) {
+            const tagInfo = mandatoryTags[tagName]
+            const isTagMandatory = tagInfo.mandatory
+            if (isTagMandatory) {
+              let tagValue = null
+              const tagFound = tags.some((tag: any) => {
+                const res = tag.code.toLowerCase() === tagName.toLowerCase()
+                if (res) {
+                  tagValue = tag.value.toLowerCase()
+                }
+
+                return res
+              })
+              if (!tagFound) {
+                logger.error(`Mandatory tag field [${tagName}] missing for ${categoryName} item[${index}]`)
+                const key = `missingTagsItem[${i}][${index}] : ${tagName}`
+                errorObj[key] = `Mandatory tag field [${tagName}] missing for ${categoryName} item[${index}]`
+              } else {
+                if (tagInfo.value.length > 0 && !tagInfo.value.includes(tagValue)) {
+                  logger.error(`The item value can only be of possible values.`)
+                  const key = `InvldValueforItem[${i}][${index}] : ${tagName}`
+                  errorObj[key] = `The item value can only be of possible values.`
+                }
+              }
             }
           }
         }
@@ -814,4 +832,35 @@ export const checkMandatoryTags = (i: number, items: any, errorObj: any, categor
     }
   })
   return errorObj
+}
+
+export const checkDuplicateParentIdItems = (items: any) => {
+  const map: any = {}
+
+  items.forEach((item: any) => {
+    const parent_item_id = item.parent_item_id
+    if (parent_item_id) {
+      if (!map[parent_item_id]) {
+        map[parent_item_id] = [item]
+      } else {
+        map[parent_item_id].push(item)
+      }
+    }
+  })
+  return map
+}
+
+export const checkForDuplicates = (arr: any, errorObj: any) => {
+  let index = 0
+  const seen = new Set()
+  for (const value of arr) {
+    const stringValue = JSON.stringify(value)
+    if (seen.has(stringValue)) {
+      const key = `DuplicateVarient[${index}]`
+      errorObj[key] = `Duplicate varient found for item in bpp/providers/items`
+      logger.error(`Error: Duplicate value '${stringValue}' found in the array.`)
+      index++
+    }
+    seen.add(stringValue)
+  }
 }

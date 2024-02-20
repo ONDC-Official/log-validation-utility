@@ -16,13 +16,15 @@ import {
   isValidPhoneNumber,
   checkMandatoryTags,
   areTimestampsLessThanOrEqualTo,
+  checkDuplicateParentIdItems,
+  checkForDuplicates,
 } from '../../../utils'
 import _ from 'lodash'
 import { compareSTDwithArea } from '../../index'
 import { BPCJSON, groceryJSON, healthJSON, homeJSON } from '../../../constants/category'
 import electronicsData from '../../../constants/electronics.json'
 import applianceData from '../../../constants/appliance.json'
-import fashionJSON from '../../../constants/fashion.json'
+import { fashion } from '../../../constants/fashion'
 import { DOMAIN } from '../../../utils/enum'
 export const checkOnsearch = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
@@ -232,6 +234,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
       })
 
       try {
+        logger.info(`Checking for upcoming holidays`)
         const location = onSearchCatalog['bpp/providers'][i]['locations']
         if (!location) {
           logger.error('No location detected ')
@@ -244,7 +247,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         scheduleObject.map((date: string) => {
           const dateObj = new Date(date)
           const currentDateObj = new Date(currentDate)
-          if (dateObj.getTime() > currentDateObj.getTime()) {
+          if (dateObj.getTime() < currentDateObj.getTime()) {
             const key = `/message/catalog/bpp/providers/loc${i}/time/schedule/holidays`
             errorObj[key] = `Holidays cannot be past ${currentDate}`
           }
@@ -466,7 +469,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
               if (statutory_reqs_prepackaged_food && !statutory_reqs_prepackaged_food[field]) {
                 const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
                 errorObj[key] =
-                  `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food following fields are valid 'nutritional_info', 'additives_info', 'brand_owner_FSSAI_license_no',  'net_quantity'`
+                  `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food following fields are valid 'nutritional_info', 'additives_info', 'brand_owner_FSSAI_license_no', 'net_quantity'`
               }
             })
           }
@@ -696,25 +699,25 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           let errors: any
           switch (domain) {
             case DOMAIN.RET10:
-              errors = checkMandatoryTags(Number(i), items, errorObj, groceryJSON, 'Grocery')
+              errors = checkMandatoryTags(i, items, errorObj, groceryJSON, 'Grocery')
               break
             case DOMAIN.RET12:
-              errors = checkMandatoryTags(Number(i), items, errorObj, fashionJSON, 'Fashion')
+              errors = checkMandatoryTags(i, items, errorObj, fashion, 'Fashion')
               break
             case DOMAIN.RET13:
-              errors = checkMandatoryTags(Number(i), items, errorObj, BPCJSON, 'BPC')
+              errors = checkMandatoryTags(i, items, errorObj, BPCJSON, 'BPC')
               break
             case DOMAIN.RET14:
-              errors = checkMandatoryTags(Number(i), items, errorObj, electronicsData, 'Electronics')
+              errors = checkMandatoryTags(i, items, errorObj, electronicsData, 'Electronics')
               break
             case DOMAIN.RET15:
-              errors = checkMandatoryTags(Number(i), items, errorObj, applianceData, 'Appliances')
+              errors = checkMandatoryTags(i, items, errorObj, applianceData, 'Appliances')
               break
             case DOMAIN.RET16:
-              errors = checkMandatoryTags(Number(i), items, errorObj, homeJSON, 'Home & Kitchen')
+              errors = checkMandatoryTags(i, items, errorObj, homeJSON, 'Home & Kitchen')
               break
             case DOMAIN.RET18:
-              errors = checkMandatoryTags(Number(i), items, errorObj, healthJSON, 'Health & Wellness')
+              errors = checkMandatoryTags(i, items, errorObj, healthJSON, 'Health & Wellness')
               break
           }
           Object.assign(errorObj, errors)
@@ -752,14 +755,11 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           items.forEach((item: any, index: number) => {
             if (!item.descriptor.short_desc || !item.descriptor.long_desc) {
               logger.error(
-                `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers${i}/items${index}/descriptor`,
+                `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor`,
               )
               const key = `bpp/providers[${i}]/items[${index}]/descriptor`
               errorObj[key] =
-                `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers${i}/items${index}/descriptor`
-              logger.error(
-                `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers${i}/items${index}/descriptor`,
-              )
+                `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor`
             }
           })
         }
@@ -785,6 +785,28 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
       } catch (error: any) {
         logger.error(
           `!!Errors while checking image array for bpp/providers/[]/categories/[]/descriptor/images[], ${error.stack}`,
+        )
+      }
+      // Checking for duplicate varient in bpp/providers/items for on_search
+      try {
+        logger.info(`Checking for duplicate varient in bpp/providers/items for on_search`)
+        for (let i in onSearchCatalog['bpp/providers']) {
+          const items = onSearchCatalog['bpp/providers'][i].items
+          const map = checkDuplicateParentIdItems(items)
+          for (let key in map) {
+            if (map[key].length > 1) {
+              const measures = map[key].map((item: any) => {
+                const unit = item.quantity.unitized.measure.unit
+                const value = parseInt(item.quantity.unitized.measure.value)
+                return { unit, value }
+              })
+              checkForDuplicates(measures, errorObj)
+            }
+          }
+        }
+      } catch (error: any) {
+        logger.error(
+          `!!Errors while checking parent_item_id in bpp/providers/[]/items/[]/parent_item_id/, ${error.stack}`,
         )
       }
       try {

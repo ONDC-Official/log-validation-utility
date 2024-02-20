@@ -114,15 +114,7 @@ export const checkOnSelect_OOS = (data: any) => {
     logger.info(`Error while checking domain-error in /${constants.ON_SELECT}, ${error.stack}`)
   }
 
-  const ON_SELECT_OUT_OF_STOCK: any = message.order
-  const oos_context : any = context
-  const error_oos: any = error
-  console.log("checking context",oos_context);
-  console.log("checking msg",ON_SELECT_OUT_OF_STOCK);
-  console.log("checking error", error_oos);
-  
-  
-
+  const ON_SELECT_OUT_OF_STOCK: any = message.order  
   const itemFlfllmnts: any = {}
 
   try {

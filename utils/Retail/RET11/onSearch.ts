@@ -16,6 +16,8 @@ import {
   isValidPhoneNumber,
   compareSTDwithArea,
   areTimestampsLessThanOrEqualTo,
+  checkDuplicateParentIdItems,
+  checkForDuplicates,
 } from '../../../utils'
 import _ from 'lodash'
 
@@ -724,6 +726,28 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
         }
       } catch (error: any) {
         logger.error(`!!Errors while checking for origin in bpp/providers/[]/items/[]/tags/code, ${error.stack}`)
+      }
+
+      // Checking for same parent_item_id
+      try {
+        for (let i in onSearchCatalog['bpp/providers']) {
+          const items = onSearchCatalog['bpp/providers'][i].items
+          const map = checkDuplicateParentIdItems(items)
+          for (let key in map) {
+            if (map[key].length > 1) {
+              const measures = map[key].map((item: any) => {
+                const unit = item.quantity.unitized.measure.unit
+                const value = parseInt(item.quantity.unitized.measure.value)
+                return { unit, value }
+              })
+              checkForDuplicates(measures, errorObj)
+            }
+          }
+        }
+      } catch (error: any) {
+        logger.error(
+          `!!Errors while checking parent_item_id in bpp/providers/[]/items/[]/parent_item_id/, ${error.stack}`,
+        )
       }
 
       // servicability Construct

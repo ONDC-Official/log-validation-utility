@@ -81,7 +81,7 @@ export const checkOnStatusPending = (data: any, state: string) => {
 
     try {
       logger.info(`Comparing timestamp of /${constants.ON_CONFIRM} and /${constants.ON_STATUS}_${state} API`)
-      if (_.gte(getValue('tmstmp'), context.timestamp)) {
+      if (_.gte(getValue('onCnfrmtmpstmp'), context.timestamp)) {
         onStatusObj.tmpstmp1 = `Timestamp for /${constants.ON_CONFIRM} api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
       }
       setValue('tmpstmp', context.timestamp)

@@ -13,9 +13,9 @@ import {
   checkServiceabilityType,
   validateLocations,
   isSequenceValid,
+  isValidPhoneNumber,
   checkMandatoryTags,
   areTimestampsLessThanOrEqualTo,
-  isValidPhoneNumber,
 } from '../../../utils'
 import _ from 'lodash'
 import { compareSTDwithArea } from '../../index'
@@ -461,13 +461,13 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
               'nutritional_info',
               'additives_info',
               'brand_owner_FSSAI_license_no',
-              'imported_product_country_of_origin',
               'net_quantity',
             ]
             mandatoryFields.forEach((field) => {
               if (statutory_reqs_prepackaged_food && !statutory_reqs_prepackaged_food[field]) {
                 const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
-                errorObj[key] = `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food ${field} is missing'`
+                errorObj[key] =
+                  `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food following fields are valid 'nutritional_info', 'additives_info', 'brand_owner_FSSAI_license_no',  'net_quantity'`
               }
             })
           }

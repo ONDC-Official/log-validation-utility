@@ -635,6 +635,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
           `Error while matching area_code and std code for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
         )
       }
+
       // Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp
       try {
         logger.info(`Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp`)

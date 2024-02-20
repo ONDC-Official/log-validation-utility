@@ -388,7 +388,7 @@ export const onSearchSchema = {
                               type: 'string',
                             },
                           },
-                          required: ['locality', 'street', 'city', 'area_code', 'state']
+                          required: ['locality', 'street', 'city', 'area_code', 'state'],
                         },
                         circle: {
                           type: 'object',

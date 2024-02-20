@@ -232,6 +232,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
       })
 
       try {
+        logger.info(`Checking for upcoming holidays`)
         const location = onSearchCatalog['bpp/providers'][i]['locations']
         if (!location) {
           logger.error('No location detected ')
@@ -244,7 +245,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         scheduleObject.map((date: string) => {
           const dateObj = new Date(date)
           const currentDateObj = new Date(currentDate)
-          if (dateObj.getTime() > currentDateObj.getTime()) {
+          if (dateObj.getTime() < currentDateObj.getTime()) {
             const key = `/message/catalog/bpp/providers/loc${i}/time/schedule/holidays`
             errorObj[key] = `Holidays cannot be past ${currentDate}`
           }
@@ -486,6 +487,16 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
               const key = `prvdr${i}item${j}maxCount`
               errorObj[key] =
                 `item.quantity.maximum.count should be either default value 99 (no cap per order) or any other positive value (cap per order) in /bpp/providers[${i}]/items[${j}]`
+            }
+          }
+          if (item.quantity && item.quantity.available && item.quantity.maximum ) {
+            console.log("m yahaaaaaaa huuuuuuuuuuuuuuuuu")
+            const maxCount = parseInt(item.quantity.maximum.count, 10)
+            const availCount = parseInt(item.quantity.available.count, 10)
+            if (availCount == 0 && maxCount > 0) {
+              const key = `prvdr${i}item${j}maxCount`
+              errorObj[key] =
+                `item.quantity.maximum.count cant be more than 0 if available count is 0 in /bpp/providers[${i}]/items[${j}]`
             }
           }
 

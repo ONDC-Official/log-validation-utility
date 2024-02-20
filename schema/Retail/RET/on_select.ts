@@ -336,7 +336,9 @@ export const onSelectSchema = {
           type: 'string',
         },
         message: {
-          type: 'string',
+          type: "string",
+          pattern: '\[{"item_id":"[^"]+","error":"\d+"}\]',
+          errorMessage: 'order/error/message  should follow this format "[{\"item_id\":\"I1\",\"error\":\"40002\"}]"'
         },
       },
       required: ['type', 'code', 'message'],

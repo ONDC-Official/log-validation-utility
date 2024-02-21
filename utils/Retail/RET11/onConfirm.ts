@@ -12,6 +12,7 @@ import {
   checkBppIdOrBapId,
   areGSTNumbersMatching,
   compareObjects,
+  sumQuoteBreakUp,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -73,6 +74,7 @@ export const checkOnConfirm = (data: any) => {
         }
       }
       setValue('tmpstmp', context.timestamp)
+      setValue('onCnfrmtmpstmp', context.timestamp)
     } catch (error: any) {
       logger.info(
         `Error while comparing timestamp for /${constants.CONFIRM} and /${constants.ON_CONFIRM} api, ${error.stack}`,
@@ -295,6 +297,7 @@ export const checkOnConfirm = (data: any) => {
 
     try {
       logger.info(`Comparing /${constants.ON_CONFIRM} quoted Price and Payment Params amount`)
+      setValue('quotePrice', on_confirm.quote.price.value)
       if (parseFloat(on_confirm.payment.params.amount) != parseFloat(on_confirm.quote.price.value)) {
         onCnfrmObj.onConfirmedAmount = `Quoted price (/${constants.ON_CONFIRM}) doesn't match with the amount in payment.params`
       }
@@ -302,6 +305,17 @@ export const checkOnConfirm = (data: any) => {
       logger.error(
         `!!Error while Comparing /${constants.ON_CONFIRM} quoted Price and Payment Params amount, ${error.stack}`,
       )
+    }
+
+    try {
+      logger.info(`Checking quote breakup prices for /${constants.ON_CONFIRM}`)
+      if (!sumQuoteBreakUp(on_confirm.quote)) {
+        const key = `invldCancellationPrices`
+        onCnfrmObj[key] = `item quote breakup prices for ${constants.ON_CONFIRM} should be equal to the total price.`
+        logger.error(`item quote breakup prices for ${constants.ON_CONFIRM} should be equal to the total price`)
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while Comparing Quote object for /${constants.ON_CONFIRM}`)
     }
 
     try {

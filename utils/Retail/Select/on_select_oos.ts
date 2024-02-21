@@ -108,21 +108,12 @@ export const checkOnSelect_OOS = (data: any) => {
   try {
     logger.info(`Checking domain-error in /${constants.ON_SELECT}`)
     if (data.hasOwnProperty('error')) {
-      ON_SELECT_OUT_OF_STOCK_error = data.error
-    }
+      ON_SELECT_OUT_OF_STOCK_error = data.error    }
   } catch (error: any) {
     logger.info(`Error while checking domain-error in /${constants.ON_SELECT}, ${error.stack}`)
   }
 
-  const ON_SELECT_OUT_OF_STOCK: any = message.order
-  const oos_context : any = context
-  const error_oos: any = error
-  console.log("checking context",oos_context);
-  console.log("checking msg",ON_SELECT_OUT_OF_STOCK);
-  console.log("checking error", error_oos);
-  
-  
-
+  const ON_SELECT_OUT_OF_STOCK: any = message.order  
   const itemFlfllmnts: any = {}
 
   try {
@@ -233,7 +224,7 @@ export const checkOnSelect_OOS = (data: any) => {
       errorObj.ffStateCode = `Pre-order fulfillment state codes should be used in fulfillments[].state.descriptor.code`
     else if (
       nonServiceableFlag &&
-      (!ON_SELECT_OUT_OF_STOCK_error || !(ON_SELECT_OUT_OF_STOCK_error.type === 'DOMAIN-ERROR' && ON_SELECT_OUT_OF_STOCK_error.code === '30009'))
+      (!ON_SELECT_OUT_OF_STOCK_error && !(ON_SELECT_OUT_OF_STOCK_error.type === 'DOMAIN-ERROR' && ON_SELECT_OUT_OF_STOCK_error.code === '30009'))
     ) {
       errorObj.notServiceable = `Non Serviceable Domain error should be provided when fulfillment is not serviceable`
     }

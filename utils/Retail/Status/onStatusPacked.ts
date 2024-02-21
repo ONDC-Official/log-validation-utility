@@ -98,12 +98,19 @@ export const checkOnStatusPacked = (data: any, state: string) => {
     }
 
     try {
-      logger.info(`Comparing timestamp of /${constants.ON_CONFIRM} and /${constants.ON_STATUS}_${state} API`)
+      logger.info(`Comparing timestamp of /${constants.ON_STATUS}_Pending and /${constants.ON_STATUS}_${state} API`)
       if (_.gte(getValue('tmstmp'), context.timestamp)) {
+        onStatusObj.inVldTmstmp = `Timestamp for /${constants.ON_STATUS}_Pending api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
+      }
+      setValue('tmpstmp', context.timestamp)
+    } catch (error: any) {
+      logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
+    }
+    try {
+      logger.info(`Comparing timestamp of /${constants.ON_CONFIRM} and /${constants.ON_STATUS}_${state} API`)
+      if (_.gte(getValue('onCnfrmtmpstmp'), context.timestamp)) {
         onStatusObj.tmpstmp1 = `Timestamp for /${constants.ON_CONFIRM} api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
       }
-
-      setValue('tmpstmp', context.timestamp)
     } catch (error: any) {
       logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
     }

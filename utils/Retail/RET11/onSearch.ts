@@ -16,6 +16,8 @@ import {
   isValidPhoneNumber,
   compareSTDwithArea,
   areTimestampsLessThanOrEqualTo,
+  checkDuplicateParentIdItems,
+  checkForDuplicates,
 } from '../../../utils'
 import _ from 'lodash'
 
@@ -108,6 +110,29 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     setValue('onSearchFFIds', onSearchFFIds)
   } catch (error: any) {
     logger.info(`Error while saving static fulfillment ids in /${constants.ON_SEARCH}, ${error.stack}`)
+  }
+
+  try {
+    logger.info(`Checking for upcoming holidays`)
+    const location = onSearchCatalog['bpp/providers'][0]['locations']
+    if (!location) {
+      logger.error('No location detected ')
+    }
+
+    const scheduleObject = location[0].time.schedule.holidays
+    const timestamp = context.timestamp
+    const [currentDate] = timestamp.split('T')
+
+    scheduleObject.map((date: string) => {
+      const dateObj = new Date(date)
+      const currentDateObj = new Date(currentDate)
+      if (dateObj.getTime() < currentDateObj.getTime()) {
+        const key = `/message/catalog/bpp/providers/loc${0}/time/schedule/holidays`
+        errorObj[key] = `Holidays cannot be past ${currentDate}`
+      }
+    })
+  } catch (e) {
+    logger.error('No Holiday', e)
   }
 
   try {
@@ -612,6 +637,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
           `Error while matching area_code and std code for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
         )
       }
+
       // Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp
       try {
         logger.info(`Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp`)
@@ -700,6 +726,29 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
         }
       } catch (error: any) {
         logger.error(`!!Errors while checking for origin in bpp/providers/[]/items/[]/tags/code, ${error.stack}`)
+      }
+
+      // Checking for same parent_item_id
+      try {
+        logger.info(`Checking for duplicate varient in bpp/providers/items for on_search`)
+        for (let i in onSearchCatalog['bpp/providers']) {
+          const items = onSearchCatalog['bpp/providers'][i].items
+          const map = checkDuplicateParentIdItems(items)
+          for (let key in map) {
+            if (map[key].length > 1) {
+              const measures = map[key].map((item: any) => {
+                const unit = item.quantity.unitized.measure.unit
+                const value = parseInt(item.quantity.unitized.measure.value)
+                return { unit, value }
+              })
+              checkForDuplicates(measures, errorObj)
+            }
+          }
+        }
+      } catch (error: any) {
+        logger.error(
+          `!!Errors while checking parent_item_id in bpp/providers/[]/items/[]/parent_item_id/, ${error.stack}`,
+        )
       }
 
       // servicability Construct

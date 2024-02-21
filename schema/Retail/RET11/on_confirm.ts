@@ -723,11 +723,12 @@ export const FnBonConfirmSchema = {
             tags: {
               type: 'array',
               items: {
-                type: 'object',
+                type: 'object', 
                 properties: {
                   code: {
                     type: 'string',
-                    enum: ['bpp_terms'],
+                    enum: ['bpp_terms', 'bap_terms'],
+          
                   },
                   list: {
                     type: 'array',

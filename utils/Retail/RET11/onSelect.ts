@@ -52,7 +52,7 @@ export const checkOnSelect = (data: any) => {
 
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
   const select: any = getValue(`${ApiSequence.SELECT}`)
-  const searchMessage: any = getValue(`${ApiSequence.ON_SEARCH}_message`)  
+  const searchMessage: any = getValue(`${ApiSequence.ON_SEARCH}_message`)
 
   try {
     logger.info(`Comparing city of /${constants.SEARCH} and /${constants.ON_SELECT}`)
@@ -196,18 +196,17 @@ export const checkOnSelect = (data: any) => {
         }
       }
     }
-    const max_tts=max_time_to_ships.sort((a, b) =>  a - b)[0]
-    const on_select_tat = on_select.fulfillments.map((e:any)=>isoDurToSec(e['@ondc/org/TAT']))
+    const max_tts = max_time_to_ships.sort((a, b) => a - b)[0]
+    const on_select_tat = on_select.fulfillments.map((e: any) => isoDurToSec(e['@ondc/org/TAT']))
 
-    if (on_select_tat<max_tts) {
+    if (on_select_tat < max_tts) {
       errorObj.ttstat = `/fulfillments/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be less than @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
     }
 
     if (on_select_tat === max_tts) {
       errorObj.ttstat = `/fulfillments/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be equal to @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
     }
-    }
-  catch (error: any) {
+  } catch (error: any) {
     logger.error(`!!Error while Checking TAT and TTS in /${constants.ON_SELECT} and /${constants.ON_SEARCH}`)
   }
 

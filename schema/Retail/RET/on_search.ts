@@ -388,7 +388,7 @@ export const onSearchSchema = {
                               type: 'string',
                             },
                           },
-                          required: ['locality', 'street', 'city', 'area_code', 'state', 'circle'],
+                          required: ['locality', 'street', 'city', 'area_code', 'state'],
                         },
                         circle: {
                           type: 'object',
@@ -602,7 +602,7 @@ export const onSearchSchema = {
                         category_id: {
                           type: 'string',
                           enum: combinedCategory,
-                          errorMessage: 'Invalid catrgory ID found for item for on_search ',
+                          errorMessage: `Invalid catrgory ID found for item for on_search${combinedCategory}`,
                         },
                         fulfillment_id: {
                           type: 'string',

@@ -316,19 +316,7 @@ export const FnBonSelectSchema = {
           type: 'string',
         },
         message: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              item_id: {
-                type: "string"
-              },
-              error: {
-                type: "string"
-              }
-            },
-            required: ["item_id", "error"]
-          }
+          type: "string",
         },
       },
       required: ['type', 'code', 'message'],

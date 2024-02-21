@@ -12,6 +12,7 @@ import {
   isTagsValid,
   areGSTNumbersDifferent,
   compareObjects,
+  sumQuoteBreakUp,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -282,6 +283,17 @@ export const checkConfirm = (data: any) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while Comparing Quote object for /${constants.ON_SELECT} and /${constants.CONFIRM}`)
+    }
+
+    try {
+      logger.info(`Checking quote breakup prices for /${constants.CONFIRM}`)
+      if (!sumQuoteBreakUp(confirm.quote)) {
+        const key = `invldCancellationPrices`
+        cnfrmObj[key] = `item quote breakup prices for ${constants.CONFIRM} should be equal to the total price.`
+        logger.error(`item quote breakup prices for ${constants.CONFIRM} should be equal to the total price`)
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while Comparing Quote object for /${constants.CONFIRM}`)
     }
 
     try {

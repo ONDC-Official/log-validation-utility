@@ -12,22 +12,21 @@ import {
 
 export const checkSearchIncremental = (data: any, msgIdSet: any) => {
   try {
+    const errorObj: any = {}
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.INC_SEARCH]: 'JSON cannot be empty' }
+      errorObj[ApiSequence.INC_SEARCH] = 'JSON cannot be empty'
+      return
     }
 
     const { message, context } = data
-
     if (!message || !context || !message.intent || isObjectEmpty(message) || isObjectEmpty(message.intent)) {
       return { missingFields: '/context, /message, /intent or /message/intent is missing or empty' }
     }
-
     const schemaValidation = validateSchema(context.domain.split(':')[1] || 'RET11', constants.SEARCH, data)
     const contextRes: any = checkContext(context, constants.SEARCH)
     setValue(`${ApiSequence.INC_SEARCH}_context`, context)
     msgIdSet.add(context.message_id)
 
-    const errorObj: any = {}
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)

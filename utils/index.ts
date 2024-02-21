@@ -211,24 +211,28 @@ const validate_schema_for_retail_json = (vertical: string, api: string, data: an
 }
 
 export const validateSchema = (domain: string, api: string, data: any) => {
-  logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
-  const errObj: any = {}
+  try {
+    logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
+    const errObj: any = {}
 
-  const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
+    const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
 
-  const datavld = schmaVldtr
-  if (datavld.status === 'fail') {
-    const res = datavld.errors
-    let i = 0
-    const len = res.length
-    while (i < len) {
-      const key = `schemaErr${i}`
-      errObj[key] = `${res[i].details} ${res[i].message}`
-      i++
-    }
+    const datavld = schmaVldtr
+    if (datavld.status === 'fail') {
+      const res = datavld.errors
+      let i = 0
+      const len = res.length
+      while (i < len) {
+        const key = `schemaErr${i}`
+        errObj[key] = `${res[i].details} ${res[i].message}`
+        i++
+      }
 
-    return errObj
-  } else return 'error'
+      return errObj
+    } else return 'error'
+  } catch (e: any) {
+    logger.error(`Some error occured while validating schema, ${e.stack}`)
+  }
 }
 
 const getDecimalPrecision = (numberString: string) => {
@@ -863,4 +867,15 @@ export const checkForDuplicates = (arr: any, errorObj: any) => {
     }
     seen.add(stringValue)
   }
+}
+
+export const sumQuoteBreakUp = (quote: any) => {
+  logger.info(`Checking for quote breakup price sum and total Price`)
+  const totalPrice = Number(quote.price.value)
+  let currentPrice = 0
+  quote.breakup.forEach((item: any) => {
+    currentPrice += Number(item.price.value)
+  })
+  console.log(`Total ---> ${totalPrice},,,,, Current---->, ${currentPrice}`)
+  return totalPrice === currentPrice
 }

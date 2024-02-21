@@ -82,6 +82,7 @@ export const FnBonConfirmSchema = {
           properties: {
             id: {
               type: 'string',
+              pattern: '^[a-zA-Z0-9]{1,32}$'
             },
             state: {
               type: 'string',
@@ -732,51 +733,78 @@ export const FnBonConfirmSchema = {
                   list: {
                     type: 'array',
                     items: {
-                      type: 'object',
-                      properties: {
-                        code: {
-                          type: 'string',
-                          enum: ['tax_number', 'provider_tax_number', 'np_type']
-                        },
-                        value: {
-                          type: 'string',
-                          minLength: 1,
-                        },
-                      },
-                      required: ['code', 'value'],
                       allOf: [
                         {
-                          properties: {
-                            code: {
-                              contains: {
-                                const: 'tax_number'
-                              }
-                            }
-                          }
+                          if: {
+                            properties: {
+                              code: { const: 'np_type' },
+                            },
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                                enum: ['np_type'],
+                              },
+                              value: {
+                                type: 'string',
+                                enum: ['MSN', 'ISN'],
+                              },
+                              
+                            },
+                            required: ['code', 'value'],
+                            additionalProperties: false,
+                          },
+                        
                         },
                         {
-                          properties: {
-                            code: {
-                              contains: {
-                                const: 'provider_tax_number'
-                              }
-                            }
-                          }
+                          if: {
+                            properties: {
+                              code: { const: 'tax_number' },
+                            },
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                              },
+                              value: {
+                                type: 'string',
+                              },
+                            },
+                            required: ['code', 'value'],
+                            additionalProperties: false,
+                          },
                         },
                         {
-                          properties: {
-                            code: {
-                              contains: {
-                                const: 'np_type'
-                              }
-                            }
-                          }
+                          if: {
+                            properties: {
+                              code: { const: 'provider_tax_number' },
+                            },
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                              },
+                              value: {
+                                type: 'string',
+                              },
+                            },
+                            required: ['code', 'value'],
+                            additionalProperties: false,
+                          },
                         },
-                      ]
+                      ],
                     },
+                    minItems: 1,
                   },
                 },
                 required: ['code', 'list'],
+                additionalProperties: false,
               },
             },
             created_at: {

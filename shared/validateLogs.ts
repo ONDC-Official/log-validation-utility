@@ -679,14 +679,14 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       }
       if (flow === '3') {
         if (data[ApiSequence.SEARCH]) {
-          const searchFullCatalogRefreshResp = checkSearchFullCatalogRefresh(data[ApiSequence.SEARCH], msgIdSet)
+          const searchFullCatalogRefreshResp = checkSearch(data[ApiSequence.SEARCH], msgIdSet)
           if (!_.isEmpty(searchFullCatalogRefreshResp)) {
             logReport = { ...logReport, [ApiSequence.SEARCH]: searchFullCatalogRefreshResp }
           }
         }
 
         if (data[ApiSequence.ON_SEARCH]) {
-          const onSearchFullCatalogRefreshResp = checkOnsearchFullCatalogRefresh(data[ApiSequence.ON_SEARCH], msgIdSet)
+          const onSearchFullCatalogRefreshResp = checkOnsearch(data[ApiSequence.ON_SEARCH], msgIdSet)
 
           if (!_.isEmpty(onSearchFullCatalogRefreshResp)) {
             logReport = { ...logReport, [ApiSequence.ON_SEARCH]: onSearchFullCatalogRefreshResp }

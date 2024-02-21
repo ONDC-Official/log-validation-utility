@@ -862,7 +862,7 @@ export const checkForDuplicates = (arr: any, errorObj: any) => {
     if (seen.has(stringValue)) {
       const key = `DuplicateVarient[${index}]`
       errorObj[key] = `Duplicate varient found for item in bpp/providers/items`
-      logger.error(`Error: Duplicate value '${stringValue}' found in the array.`)
+      logger.error(`Error: Duplicate varient of item found in bpp/providers/items`)
       index++
     }
     seen.add(stringValue)
@@ -876,6 +876,30 @@ export const sumQuoteBreakUp = (quote: any) => {
   quote.breakup.forEach((item: any) => {
     currentPrice += Number(item.price.value)
   })
-  console.log(`Total ---> ${totalPrice},,,,, Current---->, ${currentPrice}`)
   return totalPrice === currentPrice
+}
+
+export const findVariantPath = (arr: any) => {
+  const groupedByItemID = _.groupBy(arr, 'id')
+
+  // Map over the grouped items and collect attribute paths for each item_id into an array
+  const variantPath = _.map(groupedByItemID, (group, item_id) => {
+    let paths = _.chain(group).flatMap('tags').filter({ code: 'attr' }).map('list[0].value').value()
+
+    return { item_id, paths }
+  })
+
+  return variantPath
+}
+
+export const findValueAtPath = (path: string, item: any) => {
+  const key = path.split('.').pop()
+  let value = null
+  item.tags[1].list.forEach((item: any) => {
+    if (item.code === key) {
+      value = item.value
+    }
+  })
+
+  return { key, value }
 }

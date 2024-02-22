@@ -25,7 +25,7 @@ export const checkOnCancel = (data: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const schemaValidation = validateSchema('RET11', constants.ON_CANCEL, data)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_CANCEL, data)
     const select: any = getValue(`${ApiSequence.SELECT}`)
     const contextRes: any = checkContext(context, constants.ON_CANCEL)
     const checkBap = checkBppIdOrBapId(context.bap_id)

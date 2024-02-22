@@ -186,7 +186,6 @@ export const checkSelect = (data: any, msgIdSet: any) => {
                 errorObj.itemDisabled = `disabled item with id ${baseItem.id} cannot be selected`
               }
             }
-
             const itemTag = tagFinder(item, 'item')
             if (itemTag) {
               if (!itemMap[item.parent_item_id]) {
@@ -197,9 +196,8 @@ export const checkSelect = (data: any, msgIdSet: any) => {
 
               if (!itemIdArray.includes(item.id)) {
                 const key = `item${index}item_id`
-                errorObj[
-                  key
-                ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in on_search`
+                errorObj[key] =
+                  `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in on_search`
               }
             }
 
@@ -218,17 +216,15 @@ export const checkSelect = (data: any, msgIdSet: any) => {
 
               if (!parentTag) {
                 const key = `item${index}customization_id`
-                errorObj[
-                  key
-                ] = `/message/order/items/tags/customization/value in item: ${item.id} should be one of the customizations id mapped in on_search`
+                errorObj[key] =
+                  `/message/order/items/tags/customization/value in item: ${item.id} should be one of the customizations id mapped in on_search`
               }
             }
 
             if (!parentItemIdSet.has(item.parent_item_id)) parentItemIdSet.add(item.parent_item_id)
 
             if (!itemIdSet.has(item.id)) itemIdSet.add(item.id)
-
-            if (itemMap[item.parent_item_id].location_id !== item.location_id) {
+            if (itemMap[item.parent_item_id] && itemMap[item.parent_item_id].location_id !== item.location_id) {
               const key = `item${index}location_id`
               errorObj[key] = `Inconsistent location_id for parent_item_id ${item.parent_item_id}`
             }
@@ -272,7 +268,6 @@ export const checkSelect = (data: any, msgIdSet: any) => {
         setValue('itemsCtgrs', itemsCtgrs)
         setValue('selectedPrice', selectedPrice)
         setValue('parentItemIdSet', parentItemIdSet)
-        
 
         logger.info(`Provider Id in /${constants.ON_SEARCH} and /${constants.SELECT} matched`)
       } catch (error: any) {

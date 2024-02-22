@@ -903,3 +903,12 @@ export const findValueAtPath = (path: string, item: any) => {
 
   return { key, value }
 }
+
+export const payment_status = (payment: any) => {
+  if(payment.status == "PAID"){
+    if(!payment.params.transaction_id){
+      return false;
+    }
+  }
+  return true;
+}

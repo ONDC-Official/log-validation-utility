@@ -467,7 +467,7 @@ export const onCancelSchema = {
                       },
                       required: ['code', 'list'],
                     },
-                    additionalProperties:"false"
+                    additionalProperties: false,
                   },
                 },
                 required: ['id', '@ondc/org/provider_name', 'state', 'type', 'tracking', 'start', 'end', 'tags'],
@@ -659,6 +659,7 @@ export const onCancelSchema = {
             'created_at',
             'updated_at',
           ],
+        additionalProperties: false,
         },
       },
       required: ['order'],

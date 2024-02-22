@@ -86,8 +86,9 @@ export const confirmSchema = {
           properties: {
             id: {
               type: 'string',
-              minLength: 1,
-              pattern: '^[a-zA-Z0-9]{1,32}$'
+              minLength: 2,
+              pattern: '^[a-zA-Z0-9]{1,32}$',
+              errorMessage: 'Should be alphanumeric upto 32 letters max'
             },
             state: {
               type: 'string',
@@ -461,7 +462,7 @@ export const confirmSchema = {
                   properties: {
                     currency: {
                       type: 'string',
-                      pattern: '^(?!s*$).+',
+                      pattern: '^(?!\s*$).+',
                     },
                     transaction_id: {
                       type: 'string',

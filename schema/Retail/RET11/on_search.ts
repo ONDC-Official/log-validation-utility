@@ -474,9 +474,7 @@ export const FnBonSearchSchema = {
                               type: 'object',
                               properties: {
                                 count: {
-                                  type: 'string',
-                                  enum: ['0','99'],
-                                  errorMessage: 'maximum/count must be equal to one of the allowed values i.e either 99 or 0'
+                                  type: 'string',                                
                                 },
                               },
                               required: ['count'],

@@ -134,6 +134,12 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       logger.error(`tax_number not present in tags for ${constants.ON_INIT}`)
     }
 
+    setValue('bpp_tags', on_init.tags.forEach((data: any) => {
+      if(data.code == 'bpp_terms'){
+        setValue('list_ON_INIT', data.list)
+      }
+    }))
+
     try {
       logger.info(`Comparing item Ids and fulfillment Ids in /${constants.ON_SELECT} and /${constants.ON_INIT}`)
       const itemFlfllmnts: any = getValue('itemFlfllmnts')

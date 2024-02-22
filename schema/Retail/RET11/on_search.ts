@@ -464,8 +464,9 @@ export const FnBonSearchSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
-                                  enum: ['0','99'],
-                                  errorMessage: 'maximum/count must be equal to one of the allowed values i.e either 99 or 0'
+                                  enum: ['0', '99'],
+                                  errorMessage:
+                                    'maximum/count must be equal to one of the allowed values i.e either 99 or 0',
                                 },
                               },
                               required: ['count'],
@@ -474,7 +475,7 @@ export const FnBonSearchSchema = {
                               type: 'object',
                               properties: {
                                 count: {
-                                  type: 'string',                                
+                                  type: 'string',
                                 },
                               },
                               required: ['count'],
@@ -530,7 +531,7 @@ export const FnBonSearchSchema = {
                         category_id: {
                           type: 'string',
                           enum: fnbCategories,
-                          errorMessage: 'Invalid catrgory ID found for item for on_search ',
+                          errorMessage: 'Invalid category ID found for item for on_search ',
                         },
                         category_ids: {
                           type: 'array',

@@ -1,3 +1,5 @@
+import { combinedCategory } from '../../../utils/enum'
+
 export const onSearchSchema = {
   type: 'object',
   properties: {
@@ -14,11 +16,17 @@ export const onSearchSchema = {
         },
         country: {
           type: 'string',
+          pattern: '^[A-Z]{3}$',
+          errorMessage: 'Country must be in ISO 3166-1 format (three-letter country code)',
           minLength: 1,
         },
         city: {
           type: 'string',
           minLength: 1,
+          not: {
+            pattern: '\\*',
+          },
+          errorMessage: `City Code can't be * for on_search request`,
         },
         core_version: {
           type: 'string',
@@ -356,6 +364,8 @@ export const onSearchSchema = {
                         },
                         gps: {
                           type: 'string',
+                          pattern: '^[0-9]{2}[.][0-9]{6,}[,][0-9]{2}[.][0-9]{6,}$',
+                          errorMessage: ' The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                         },
                         address: {
                           type: 'object',
@@ -385,6 +395,9 @@ export const onSearchSchema = {
                           properties: {
                             gps: {
                               type: 'string',
+                              pattern: '^[0-9]{2}[.][0-9]{6,}[,][0-9]{2}[.][0-9]{6,}$',
+                              errorMessage:
+                                ' The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                             },
                             radius: {
                               type: 'object',
@@ -418,6 +431,19 @@ export const onSearchSchema = {
                           properties: {
                             name: {
                               type: 'string',
+                            },
+                            short_desc: {
+                              type: 'string',
+                            },
+                            long_desc: {
+                              type: 'string',
+                            },
+                            images: {
+                              type: 'array',
+                              items: {
+                                type: 'string',
+                                format: 'url',
+                              },
                             },
                           },
                           required: ['name'],
@@ -506,7 +532,7 @@ export const onSearchSchema = {
                               },
                             },
                           },
-                          required: ['name', 'symbol', 'short_desc', 'long_desc', 'images', 'code'],
+                          required: ['name', 'symbol', 'short_desc', 'long_desc', 'images'],
                         },
                         quantity: {
                           type: 'object',
@@ -519,9 +545,12 @@ export const onSearchSchema = {
                                   properties: {
                                     unit: {
                                       type: 'string',
+                                      enum: ['unit', 'dozen', 'gram', 'kilogram', 'tonne', 'litre', 'millilitre'],
                                     },
                                     value: {
                                       type: 'string',
+                                      pattern: '-?^\\d*(.\\d{0,2})?$',
+                                      errorMessage: 'enter a valid number',
                                     },
                                   },
                                   required: ['unit', 'value'],
@@ -536,7 +565,7 @@ export const onSearchSchema = {
                                   type: 'string',
                                   enum: ['99', '0'],
                                   errorMessage:
-                                    'available/count must be equal to one of the allowed values i.e 99(if in stock) or 0(if not in stock))',
+                                    'available/count must be equal to one of the allowed values i.e 99 if in stock or 0 if not in stock ',
                                 },
                               },
                               required: ['count'],
@@ -546,6 +575,9 @@ export const onSearchSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
+                                  enum: ['0', '99'],
+                                  errorMessage:
+                                    'maximum/count must be equal to one of the allowed values i.e either 99 or 0',
                                 },
                               },
                               required: ['count'],
@@ -570,6 +602,8 @@ export const onSearchSchema = {
                         },
                         category_id: {
                           type: 'string',
+                          enum: combinedCategory,
+                          errorMessage: `Invalid catrgory ID found for item for on_search${combinedCategory}`,
                         },
                         fulfillment_id: {
                           type: 'string',
@@ -639,14 +673,10 @@ export const onSearchSchema = {
                             importer_FSSAI_license_no: {
                               type: 'string',
                             },
+                            ingredients_info: {
+                              type: 'string',
+                            },
                           },
-                          required: [
-                            'nutritional_info',
-                            'additives_info',
-                            'brand_owner_FSSAI_license_no',
-                            'other_FSSAI_license_no',
-                            'importer_FSSAI_license_no',
-                          ],
                         },
                         tags: {
                           type: 'array',

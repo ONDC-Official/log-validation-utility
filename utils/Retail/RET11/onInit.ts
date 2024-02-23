@@ -134,6 +134,15 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       logger.error(`tax_number not present in tags for ${constants.ON_INIT}`)
     }
 
+    setValue(
+      'bpp_tags',
+      on_init.tags.forEach((data: any) => {
+        if (data.code == 'bpp_terms') {
+          setValue('list_ON_INIT', data.list)
+        }
+      }),
+    )
+
     try {
       logger.info(`Comparing item Ids and fulfillment Ids in /${constants.ON_SELECT} and /${constants.ON_INIT}`)
       const itemFlfllmnts: any = getValue('itemFlfllmnts')
@@ -146,24 +155,21 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
         if (checkItemTag(item, select_customIdArray)) {
           const itemkey = `item${i}tags.parent_id`
-          onInitObj[
-            itemkey
-          ] = `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.SELECT} and /${constants.INIT}`
+          onInitObj[itemkey] =
+            `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.SELECT} and /${constants.INIT}`
         }
 
         if (!parentItemIdSet.includes(item.parent_item_id)) {
           const itemkey = `item_PrntItmId${i}`
-          onInitObj[
-            itemkey
-          ] = `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_INIT}`
+          onInitObj[itemkey] =
+            `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_INIT}`
         }
 
         if (itemId in itemFlfllmnts) {
           if (on_init.items[i].fulfillment_id != itemFlfllmnts[itemId]) {
             const itemkey = `item_FFErr${i}`
-            onInitObj[
-              itemkey
-            ] = `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_INIT}`
+            onInitObj[itemkey] =
+              `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_INIT}`
           }
         } else {
           const itemkey = `item_FFErr${i}`
@@ -226,16 +232,14 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
         if (!_.isEqual(on_init.fulfillments[i].end.location.gps, getValue('buyerGps'))) {
           const gpskey = `gpsKey${i}`
-          onInitObj[
-            gpskey
-          ] = `gps coordinates in fulfillments[${i}].end.location mismatch in /${constants.SELECT} & /${constants.ON_INIT}`
+          onInitObj[gpskey] =
+            `gps coordinates in fulfillments[${i}].end.location mismatch in /${constants.SELECT} & /${constants.ON_INIT}`
         }
 
         if (!_.isEqual(on_init.fulfillments[i].end.location.address.area_code, getValue('buyerAddr'))) {
           const addrkey = `addrKey${i}`
-          onInitObj[
-            addrkey
-          ] = `address.area_code in fulfillments[${i}].end.location mismatch in /${constants.SELECT} & /${constants.ON_INIT}`
+          onInitObj[addrkey] =
+            `address.area_code in fulfillments[${i}].end.location mismatch in /${constants.SELECT} & /${constants.ON_INIT}`
         }
 
         i++

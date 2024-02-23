@@ -6,11 +6,11 @@ import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqu
 import { getValue, setValue } from '../../../shared/dao'
 import { checkFulfillmentID } from '../../index'
 
-export const checkOnStatusPicked = (data: any, state: string) => {
+export const checkOnStatusOutForDelivery = (data: any, state: string) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.ON_STATUS_PICKED]: 'JSON cannot be empty' }
+      return { [ApiSequence.ON_STATUS_OUT_FOR_DELIVERY]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -31,25 +31,25 @@ export const checkOnStatusPicked = (data: any, state: string) => {
       Object.assign(onStatusObj, contextRes.ERRORS)
     }
 
-    setValue(`${ApiSequence.ON_STATUS_PICKED}`, data)
+    setValue(`${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}`, data)
 
-    const pending_message_id: string | null = getValue('pending_message_id')
-    const picked_message_id: string = context.message_id
+    const packed_message_id: string | null = getValue('packed_message_id')
+    const out_for_delivery_message_id: string = context.message_id
 
-    setValue(`picked_message_id`, picked_message_id)
+    setValue(`out_for_delivery_message_id`, out_for_delivery_message_id)
 
     try {
       logger.info(
-        `Comparing message_id for unsolicited calls for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`,
+        `Comparing message_id for unsolicited calls for ${constants.ON_STATUS}.packed and ${constants.ON_STATUS}.out_for_delivery`,
       )
-      if (pending_message_id === picked_message_id) {
-        logger.error(`Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`)
-        onStatusObj['invalid_message_id_picked'] =
-          `Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`
+
+      if (packed_message_id === out_for_delivery_message_id) {
+        onStatusObj['invalid_message_id'] =
+          `Message_id cannot be same for ${constants.ON_STATUS}.packed and ${constants.ON_STATUS}.out_for_delivery`
       }
     } catch (error: any) {
       logger.error(
-        `Error while comparing message_id for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`,
+        `Error while comparing message_id for ${constants.ON_STATUS}.packed and ${constants.ON_STATUS}.out_for_delivery`,
       )
     }
 
@@ -98,20 +98,20 @@ export const checkOnStatusPicked = (data: any, state: string) => {
     }
 
     try {
-      logger.info(`Comparing timestamp of /${constants.ON_STATUS}_Packed and /${constants.ON_STATUS}_${state} API`)
-      if (_.gte(getValue('tmpstmp'), context.timestamp)) {
-        onStatusObj.inVldTmstmp = `Timestamp for /${constants.ON_STATUS}_Packed api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
-      }
-
-      setValue('tmpstmp', context.timestamp)
-    } catch (error: any) {
-      logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
-    }
-    try {
       logger.info(`Comparing timestamp of /${constants.ON_CONFIRM} and /${constants.ON_STATUS}_${state} API`)
       if (_.gte(getValue('onCnfrmtmpstmp'), context.timestamp)) {
         onStatusObj.tmpstmp1 = `Timestamp for /${constants.ON_CONFIRM} api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
       }
+    } catch (error: any) {
+      logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
+    }
+    try {
+      logger.info(`Comparing timestamp of /${constants.ON_STATUS}_Picked and /${constants.ON_STATUS}_${state} API`)
+      if (_.gte(getValue('tmstmp'), context.timestamp)) {
+        onStatusObj.inVldTmstmp = `Timestamp for /${constants.ON_STATUS}_Picked api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
+      }
+
+      setValue('tmpstmp', context.timestamp)
     } catch (error: any) {
       logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
     }
@@ -141,7 +141,7 @@ export const checkOnStatusPicked = (data: any, state: string) => {
     try {
       logger.info(`Checking pickup timestamp in /${constants.ON_STATUS}_${state}`)
       const noOfFulfillments = on_status.fulfillments.length
-      let orderPicked = false
+      let orderOut_for_delivery = false
       let i = 0
       const pickupTimestamps: any = {}
 
@@ -155,8 +155,8 @@ export const checkOnStatusPicked = (data: any, state: string) => {
           continue
         }
 
-        if (ffState === constants.ORDER_PICKED) {
-          orderPicked = true
+        if (ffState === constants.ORDER_OUT_FOR_DELIVERY) {
+          orderOut_for_delivery = true
           const pickUpTime = fulfillment.start?.time.timestamp
           pickupTimestamps[fulfillment.id] = pickUpTime
 
@@ -191,8 +191,8 @@ export const checkOnStatusPicked = (data: any, state: string) => {
 
       setValue('pickupTimestamps', pickupTimestamps)
 
-      if (!orderPicked) {
-        onStatusObj.noOrdrPicked = `fulfillments/state should be Order-picked-up for /${constants.ON_STATUS}_${state}`
+      if (!orderOut_for_delivery) {
+        onStatusObj.noOrdrOut_for_delivery = `fulfillments/state should be Order-out_for_delivery for /${constants.ON_STATUS}_${state}`
       }
     } catch (error: any) {
       logger.info(
@@ -202,9 +202,9 @@ export const checkOnStatusPicked = (data: any, state: string) => {
 
     // Checking fullfillment IDs for items
     try {
-      logger.info(`Comparing fulfillmentID for items at /${constants.ON_STATUS}_picked`)
+      logger.info(`Comparing fulfillmentID for items at /${constants.ON_STATUS}_out_for_delivery`)
       const items = on_status.items
-      const flow = constants.ON_STATUS + '_picked'
+      const flow = constants.ON_STATUS + '_out_for_delivery'
       const err = checkFulfillmentID(items, onStatusObj, flow)
       Object.assign(onStatusObj, err)
     } catch (error: any) {

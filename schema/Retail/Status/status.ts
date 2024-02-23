@@ -82,6 +82,7 @@ export const statusSchema = {
         order_id: {
           type: 'string',
           minLength: 1,
+          pattern: '^[a-zA-Z0-9]{1,32}$',
         },
       },
       required: ['order_id'],

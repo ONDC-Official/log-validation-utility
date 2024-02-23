@@ -88,6 +88,7 @@ export const FnBconfirmSchema = {
             id: {
               type: 'string',
               minLength: 1,
+              pattern: '^[a-zA-Z0-9]{1,32}$',
             },
             state: {
               type: 'string',
@@ -283,6 +284,8 @@ export const FnBconfirmSchema = {
                           gps: {
                             type: 'string',
                             minLength: 1,
+                            pattern: '^[0-9]{2}[.][0-9]{6,}[,][0-9]{2}[.][0-9]{6,}$',
+                            errorMessage: 'The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                           },
                           address: {
                             type: 'object',
@@ -326,7 +329,7 @@ export const FnBconfirmSchema = {
                     required: ['person', 'contact', 'location'],
                   },
                 },
-                required: ['id', 'type', 'end'],
+                required: ['id', 'type', 'tracking', 'end'],
               },
             },
             quote: {
@@ -504,38 +507,67 @@ export const FnBconfirmSchema = {
                       },
                       settlement_phase: {
                         type: 'string',
+                        const: 'sale-amount',
                       },
                       settlement_type: {
                         type: 'string',
+                        enum: ['upi', 'neft', 'rtgs'],
                       },
-                      upi_address: {
-                        type: 'string',
-                      },
+                      upi_address: { type: 'string' },
                       settlement_bank_account_no: {
                         type: 'string',
                       },
                       settlement_ifsc_code: {
                         type: 'string',
                       },
+                      bank_name: { type: 'string' },
                       beneficiary_name: {
                         type: 'string',
                       },
-                      bank_name: {
-                        type: 'string',
-                      },
-                      branch_name: {
-                        type: 'string',
-                      },
+                      branch_name: { type: 'string' },
                     },
-                    required: [
-                      'settlement_counterparty',
-                      'settlement_phase',
-                      'settlement_type',
-                      'settlement_bank_account_no',
-                      'settlement_ifsc_code',
-                      'bank_name',
-                      'branch_name',
+                    allOf: [
+                      {
+                        if: {
+                          properties: {
+                            settlement_type: {
+                              const: 'upi',
+                            },
+                          },
+                        },
+                        then: {
+                          properties: {
+                            upi_address: {
+                              type: 'string',
+                            },
+                          },
+                          required: ['upi_address'],
+                        },
+                      },
+                      {
+                        if: {
+                          properties: {
+                            settlement_type: {
+                              enum: ['rtgs', 'neft'],
+                            },
+                          },
+                        },
+                        then: {
+                          properties: {
+                            settlement_bank_account_no: {
+                              type: 'string',
+                            },
+                            settlement_ifsc_code: {
+                              type: 'string',
+                            },
+                            bank_name: { type: 'string' },
+                            branch_name: { type: 'string' },
+                          },
+                          required: ['settlement_ifsc_code', 'settlement_bank_account_no', 'bank_name', 'branch_name'],
+                        },
+                      },
                     ],
+                    required: ['settlement_counterparty', 'settlement_phase', 'settlement_type'],
                   },
                 },
               },

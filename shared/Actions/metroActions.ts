@@ -11,7 +11,7 @@ import { checkOnInit } from '../../utils/metro/onInit'
 import { checkConfirm } from '../../utils/metro/confirm'
 import { checkOnConfirm } from '../../utils/metro/onConfirm'
 
-export function validateLogsForMetro(data: any) {
+export function validateLogsFormetro(data: any) {
   const msgIdSet = new Set()
   let logReport: any = {}
   try {

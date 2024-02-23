@@ -575,6 +575,9 @@ export const onSearchSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
+                                  enum: ['0', '99'],
+                                  errorMessage:
+                                    'maximum/count must be equal to one of the allowed values i.e either 99 or 0',
                                 },
                               },
                               required: ['count'],
@@ -600,7 +603,7 @@ export const onSearchSchema = {
                         category_id: {
                           type: 'string',
                           enum: combinedCategory,
-                          errorMessage: 'Invalid catrgory ID found for item for on_search ',
+                          errorMessage: `Invalid catrgory ID found for item for on_search${combinedCategory}`,
                         },
                         fulfillment_id: {
                           type: 'string',

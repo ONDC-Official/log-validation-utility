@@ -12,6 +12,7 @@ import {
   checkBppIdOrBapId,
   areGSTNumbersMatching,
   compareObjects,
+  sumQuoteBreakUp,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -296,6 +297,7 @@ export const checkOnConfirm = (data: any) => {
 
     try {
       logger.info(`Comparing /${constants.ON_CONFIRM} quoted Price and Payment Params amount`)
+      setValue('quotePrice', on_confirm.quote.price.value)
       if (parseFloat(on_confirm.payment.params.amount) != parseFloat(on_confirm.quote.price.value)) {
         onCnfrmObj.onConfirmedAmount = `Quoted price (/${constants.ON_CONFIRM}) doesn't match with the amount in payment.params`
       }
@@ -303,6 +305,17 @@ export const checkOnConfirm = (data: any) => {
       logger.error(
         `!!Error while Comparing /${constants.ON_CONFIRM} quoted Price and Payment Params amount, ${error.stack}`,
       )
+    }
+
+    try {
+      logger.info(`Checking quote breakup prices for /${constants.ON_CONFIRM}`)
+      if (!sumQuoteBreakUp(on_confirm.quote)) {
+        const key = `invldCancellationPrices`
+        onCnfrmObj[key] = `item quote breakup prices for ${constants.ON_CONFIRM} should be equal to the total price.`
+        logger.error(`item quote breakup prices for ${constants.ON_CONFIRM} should be equal to the total price`)
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while Comparing Quote object for /${constants.ON_CONFIRM}`)
     }
 
     try {
@@ -364,6 +377,34 @@ export const checkOnConfirm = (data: any) => {
       }
     } catch (error: any) {
       logger.info(`!Error while comparing buyer app finder fee in /${constants.ON_CONFIRM}, ${error.stack}`)
+    }
+
+    const list_ON_INIT: any = getValue('list_ON_INIT')
+    let ON_INIT_val: string
+    list_ON_INIT.map((data: any) => {
+      if (data.code == 'tax_number') {
+        ON_INIT_val = data.value
+      }
+    })
+
+    try {
+      logger.info(`Checking if tax_number in bpp_terms in ON_CONFIRM and ON_INIT is same`)
+      let list_ON_CONFIRM: any
+      message.order.tags.forEach((data: any) => {
+        if (data.code == 'bpp_terms') {
+          list_ON_CONFIRM = data.list
+        }
+      })
+      list_ON_CONFIRM.map((data: any) => {
+        if (data.code == 'tax_number') {
+          if (data.value != ON_INIT_val) {
+            onCnfrmObj['message/order/tags/bpp_terms'] =
+              `Value of tax Number mismatched in message/order/tags/bpp_terms for ON_INIT and ON_CONFIRM`
+          }
+        }
+      })
+    } catch (error: any) {
+      logger.error(`Error while matching the tax_number in ON_CONFIRM and ON_INIT`)
     }
 
     try {

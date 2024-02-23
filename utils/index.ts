@@ -211,24 +211,28 @@ const validate_schema_for_retail_json = (vertical: string, api: string, data: an
 }
 
 export const validateSchema = (domain: string, api: string, data: any) => {
-  logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
-  const errObj: any = {}
+  try {
+    logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
+    const errObj: any = {}
 
-  const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
+    const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
 
-  const datavld = schmaVldtr
-  if (datavld.status === 'fail') {
-    const res = datavld.errors
-    let i = 0
-    const len = res.length
-    while (i < len) {
-      const key = `schemaErr${i}`
-      errObj[key] = `${res[i].details} ${res[i].message}`
-      i++
-    }
+    const datavld = schmaVldtr
+    if (datavld.status === 'fail') {
+      const res = datavld.errors
+      let i = 0
+      const len = res.length
+      while (i < len) {
+        const key = `schemaErr${i}`
+        errObj[key] = `${res[i].details} ${res[i].message}`
+        i++
+      }
 
-    return errObj
-  } else return 'error'
+      return errObj
+    } else return 'error'
+  } catch (e: any) {
+    logger.error(`Some error occured while validating schema, ${e.stack}`)
+  }
 }
 
 const getDecimalPrecision = (numberString: string) => {
@@ -822,7 +826,7 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
                 if (tagInfo.value.length > 0 && !tagInfo.value.includes(tagValue)) {
                   logger.error(`The item value can only be of possible values.`)
                   const key = `InvldValueforItem[${i}][${index}] : ${tagName}`
-                  errorObj[key] = `The item value can only be of possible values.`
+                  errorObj[key] = `The item value can only be of possible values ${tagInfo.value}.`
                 }
               }
             }
@@ -858,9 +862,44 @@ export const checkForDuplicates = (arr: any, errorObj: any) => {
     if (seen.has(stringValue)) {
       const key = `DuplicateVarient[${index}]`
       errorObj[key] = `Duplicate varient found for item in bpp/providers/items`
-      logger.error(`Error: Duplicate value '${stringValue}' found in the array.`)
+      logger.error(`Error: Duplicate varient of item found in bpp/providers/items`)
       index++
     }
     seen.add(stringValue)
   }
+}
+
+export const sumQuoteBreakUp = (quote: any) => {
+  logger.info(`Checking for quote breakup price sum and total Price`)
+  const totalPrice = Number(quote.price.value)
+  let currentPrice = 0
+  quote.breakup.forEach((item: any) => {
+    currentPrice += Number(item.price.value)
+  })
+  return totalPrice === currentPrice
+}
+
+export const findVariantPath = (arr: any) => {
+  const groupedByItemID = _.groupBy(arr, 'id')
+
+  // Map over the grouped items and collect attribute paths for each item_id into an array
+  const variantPath = _.map(groupedByItemID, (group, item_id) => {
+    let paths = _.chain(group).flatMap('tags').filter({ code: 'attr' }).map('list[0].value').value()
+
+    return { item_id, paths }
+  })
+
+  return variantPath
+}
+
+export const findValueAtPath = (path: string, item: any) => {
+  const key = path.split('.').pop()
+  let value = null
+  item.tags[1].list.forEach((item: any) => {
+    if (item.code === key) {
+      value = item.value
+    }
+  })
+
+  return { key, value }
 }

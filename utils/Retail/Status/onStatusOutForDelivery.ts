@@ -192,7 +192,7 @@ export const checkOnStatusOutForDelivery = (data: any, state: string) => {
       setValue('pickupTimestamps', pickupTimestamps)
 
       if (!orderOut_for_delivery) {
-        onStatusObj.noOrdrOut_for_delivery = `fulfillments/state should be Order-out_for_delivery for /${constants.ON_STATUS}_${state}`
+        onStatusObj.noOrdrOut_for_delivery = `fulfillments/state Should be ${constants.ORDER_OUT_FOR_DELIVERY} for /${constants.ON_STATUS}_${constants.ORDER_OUT_FOR_DELIVERY}`
       }
     } catch (error: any) {
       logger.info(

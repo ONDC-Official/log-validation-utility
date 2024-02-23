@@ -83,7 +83,7 @@ export const FnBonConfirmSchema = {
             id: {
               type: 'string',
               pattern: '^[a-zA-Z0-9]{1,32}$',
-              errorMessage: 'Should be alphanumeric upto 32 letters max'
+              errorMessage: 'Should be alphanumeric upto 32 letters max',
             },
             state: {
               type: 'string',
@@ -724,12 +724,11 @@ export const FnBonConfirmSchema = {
             tags: {
               type: 'array',
               items: {
-                type: 'object', 
+                type: 'object',
                 properties: {
                   code: {
                     type: 'string',
                     enum: ['bpp_terms', 'bap_terms'],
-          
                   },
                   list: {
                     type: 'array',
@@ -752,12 +751,10 @@ export const FnBonConfirmSchema = {
                                 type: 'string',
                                 enum: ['MSN', 'ISN'],
                               },
-                              
                             },
                             required: ['code', 'value'],
                             additionalProperties: false,
                           },
-                        
                         },
                         {
                           if: {

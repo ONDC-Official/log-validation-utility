@@ -192,7 +192,7 @@ export const checkOnStatusPicked = (data: any, state: string) => {
       setValue('pickupTimestamps', pickupTimestamps)
 
       if (!orderPicked) {
-        onStatusObj.noOrdrPicked = `fulfillments/state should be Order-picked-up for /${constants.ON_STATUS}_${state}`
+        onStatusObj.noOrdrPicked = `fulfillments/state should be ${constants.ORDER_PICKED} for /${constants.ON_STATUS}_${constants.ORDER_PICKED}`
       }
     } catch (error: any) {
       logger.info(

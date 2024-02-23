@@ -137,7 +137,7 @@ export const onTrackSchema = {
                         },
                         value: {
                           type: 'string',
-                          minLength: 1,                          
+                          minLength: 1,
                         },
                       },
                       required: ['code', 'value'],

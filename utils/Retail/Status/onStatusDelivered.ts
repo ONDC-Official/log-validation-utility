@@ -190,7 +190,7 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
 
           try {
             //checking order/updated_at timestamp
-            if (!_.gte(on_status.updated_at, deliveryTime)) {
+            if (_.gte(on_status.updated_at, deliveryTime)) {
               onStatusObj.updatedAt = `order/updated_at timestamp can't be less than the delivery time`
             }
 

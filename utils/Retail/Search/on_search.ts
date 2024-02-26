@@ -487,12 +487,13 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
           if (item.quantity && item.quantity.maximum && typeof item.quantity.maximum.count === 'string') {
             const maxCount = parseInt(item.quantity.maximum.count, 10)
-            if (maxCount !== 99 && maxCount <= 0) {
-              const key = `prvdr${i}item${j}maxCount`
-              errorObj[key] =
-                `item.quantity.maximum.count should be either default value 99 (no cap per order) or any other positive value (cap per order) in /bpp/providers[${i}]/items[${j}]`
+            const availCount = parseInt(item.quantity.available.count, 10)
+            if (availCount == 99 && maxCount <= 0){
+                const key = `prvdr${i}item${j}maxCount`
+                errorObj[key] =
+                  `item.quantity.maximum.count should be either default value 99 (no cap per order) or any other positive value (cap per order) in /bpp/providers[${i}]/items[${j}]`
+              }
             }
-          }
 
           if ('price' in item) {
             const sPrice = parseFloat(item.price.value)

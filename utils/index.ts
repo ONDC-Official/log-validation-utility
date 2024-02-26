@@ -403,11 +403,13 @@ export const isObjectEqual = (obj1: any, obj2: any, parentKey: string = ''): str
 }
 
 export function checkItemTag(item: any, itemArray: any[]) {
-  for (const tag of item.tags) {
-    if (tag.code === 'parent') {
-      for (const list of tag.list) {
-        if (list.code === 'id' && !itemArray.includes(list.value)) {
-          return true
+  if (item.tags) {
+    for (const tag of item.tags) {
+      if (tag.code === 'parent') {
+        for (const list of tag.list) {
+          if (list.code === 'id' && !itemArray.includes(list.value)) {
+            return true
+          }
         }
       }
     }

@@ -32,6 +32,8 @@ import issueStatusSchema from '../schema/Igm/issueStatusSchema'
 import onIssueStatusSchema from '../schema/Igm/onIssueStatusSchema'
 import issueCloseSchema from '../schema/Igm/issueCloseSchema'
 import { onSearchIncSchema } from '../schema/Retail/RET/on_search_inc'
+import { onUpdateSchema } from '../schema/Retail/Update/on_update'
+import { updateSchema } from '../schema/Retail/Update/update'
 
 const ajv = new Ajv({
   allErrors: true,
@@ -554,6 +556,14 @@ const validate_schema_on_cancel_RET10_for_json = (data: any) => {
   const error_list = validate_schema(data, onCancelSchema)
   return formatted_error(error_list)
 }
+const validate_schema_update_RET18_for_json = (data: any) => {
+  const error_list = validate_schema(data, updateSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_update_RET18_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateSchema)
+  return formatted_error(error_list)
+}
 
 const validate_schema_track_RET10_for_json = (data: any) => {
   const error_list = validate_schema(data, trackSchema)
@@ -801,6 +811,8 @@ export default {
   validate_schema_status_RET10_for_json,
   validate_schema_cancel_RET10_for_json,
   validate_schema_on_cancel_RET10_for_json,
+  validate_schema_on_update_RET18_for_json,
+  validate_schema_update_RET18_for_json,
   validate_schema_track_RET10_for_json,
   validate_schema_on_track_RET10_for_json,
   ...FIS12Validator,

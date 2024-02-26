@@ -595,7 +595,7 @@ export const onSearchSchema = {
                         category_id: {
                           type: 'string',
                           enum: combinedCategory,
-                          errorMessage: `Invalid catrgory ID found for item for on_search${combinedCategory}`,
+                          errorMessage: `Invalid category ID found for item for on_search${combinedCategory}`,
                         },
                         fulfillment_id: {
                           type: 'string',

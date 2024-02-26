@@ -11,6 +11,7 @@ import {
   checkBppIdOrBapId,
   isTagsValid,
   compareObjects,
+  payment_status
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -133,6 +134,12 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     } catch (error: any) {
       logger.error(`tax_number not present in tags for ${constants.ON_INIT}`)
     }
+
+    setValue('bpp_tags', on_init.tags.forEach((data: any) => {
+      if(data.code == 'bpp_terms'){
+        setValue('list_ON_INIT', data.list)
+      }
+    }))
 
     try {
       logger.info(`Comparing item Ids and fulfillment Ids in /${constants.ON_SELECT} and /${constants.ON_INIT}`)
@@ -375,6 +382,17 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while checking tags in /${constants.ON_INIT} ${error.stack}`)
+    }
+
+    try {
+      logger.info(`Checking if transaction_id is present in message.order.payment`)
+      const payment = on_init.payment
+      const status = payment_status(payment);
+      if(!status){
+        onInitObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
+      }
+    } catch (err: any) {
+      logger.error(`Error while checking transaction is in message.order.payment`)
     }
 
     return onInitObj

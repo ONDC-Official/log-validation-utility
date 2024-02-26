@@ -4,6 +4,7 @@ import { logger } from '../shared/logger'
 import constants, { statusArray } from '../constants'
 import schemaValidator from '../shared/schemaValidator'
 import data from '../constants/AreacodeMap.json'
+import { reasonCodes } from '../constants/reasonCode'
 
 export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
 
@@ -211,24 +212,28 @@ const validate_schema_for_retail_json = (vertical: string, api: string, data: an
 }
 
 export const validateSchema = (domain: string, api: string, data: any) => {
-  logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
-  const errObj: any = {}
+  try {
+    logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
+    const errObj: any = {}
 
-  const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
+    const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
 
-  const datavld = schmaVldtr
-  if (datavld.status === 'fail') {
-    const res = datavld.errors
-    let i = 0
-    const len = res.length
-    while (i < len) {
-      const key = `schemaErr${i}`
-      errObj[key] = `${res[i].details} ${res[i].message}`
-      i++
-    }
+    const datavld = schmaVldtr
+    if (datavld.status === 'fail') {
+      const res = datavld.errors
+      let i = 0
+      const len = res.length
+      while (i < len) {
+        const key = `schemaErr${i}`
+        errObj[key] = `${res[i].details} ${res[i].message}`
+        i++
+      }
 
-    return errObj
-  } else return 'error'
+      return errObj
+    } else return 'error'
+  } catch (e: any) {
+    logger.error(`Some error occured while validating schema, ${e.stack}`)
+  }
 }
 
 const getDecimalPrecision = (numberString: string) => {
@@ -462,7 +467,12 @@ export const checkBppIdOrBapId = (input: string, type?: string) => {
       return `${type} Id is not present`
     }
 
-    if (input?.includes('https://') || input.includes('www') || input.includes('https:') || input.includes('http'))
+    if (
+      input?.startsWith('https://') ||
+      input.startsWith('www') ||
+      input.startsWith('https:') ||
+      input.startsWith('http')
+    )
       return `context/${type}_id should not be a url`
   } catch (e) {
     return e
@@ -858,9 +868,65 @@ export const checkForDuplicates = (arr: any, errorObj: any) => {
     if (seen.has(stringValue)) {
       const key = `DuplicateVarient[${index}]`
       errorObj[key] = `Duplicate varient found for item in bpp/providers/items`
-      logger.error(`Error: Duplicate value '${stringValue}' found in the array.`)
+      logger.error(`Error: Duplicate varient of item found in bpp/providers/items`)
       index++
     }
     seen.add(stringValue)
   }
+}
+
+export const sumQuoteBreakUp = (quote: any) => {
+  logger.info(`Checking for quote breakup price sum and total Price`)
+  const totalPrice = Number(quote.price.value)
+  let currentPrice = 0
+  quote.breakup.forEach((item: any) => {
+    currentPrice += Number(item.price.value)
+  })
+  return totalPrice === currentPrice
+}
+
+export const findVariantPath = (arr: any) => {
+  const groupedByItemID = _.groupBy(arr, 'id')
+
+  // Map over the grouped items and collect attribute paths for each item_id into an array
+  const variantPath = _.map(groupedByItemID, (group, item_id) => {
+    let paths = _.chain(group).flatMap('tags').filter({ code: 'attr' }).map('list[0].value').value()
+
+    return { item_id, paths }
+  })
+
+  return variantPath
+}
+
+export const findValueAtPath = (path: string, item: any) => {
+  const key = path.split('.').pop()
+  let value = null
+  item.tags[1].list.forEach((item: any) => {
+    if (item.code === key) {
+      value = item.value
+    }
+  })
+
+  return { key, value }
+}
+
+export const mapCancellationID = (cancelled_by: string, reason_id: string, errorObj: any) => {
+  logger.info(`Mapping cancellationID with valid ReasonID`)
+  if (reason_id in reasonCodes && reasonCodes[reason_id].USED_BY.includes(cancelled_by)) {
+    logger.info(`CancellationID ${reason_id} mapped with valid ReasonID for ${cancelled_by}`)
+    return true
+  } else {
+    logger.error(`Invalid CancellationID ${reason_id} or not allowed for ${cancelled_by}`)
+    errorObj['invldCancellationID'] = `Invalid CancellationID ${reason_id} or not allowed for ${cancelled_by}`
+    return false
+  }
+}
+
+export const payment_status = (payment: any) => {
+  if (payment.status == 'PAID') {
+    if (!payment.params.transaction_id) {
+      return false
+    }
+  }
+  return true
 }

@@ -82,6 +82,8 @@ export const FnBonConfirmSchema = {
           properties: {
             id: {
               type: 'string',
+              pattern: '^[a-zA-Z0-9]{1,32}$',
+              errorMessage: 'Should be alphanumeric upto 32 letters max',
             },
             state: {
               type: 'string',
@@ -280,8 +282,6 @@ export const FnBonConfirmSchema = {
                           },
                           gps: {
                             type: 'string',
-                            pattern: '^[0-9]{2}[.][0-9]{6,}[,][0-9]{2}[.][0-9]{6,}$',
-                            errorMessage: 'The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                           },
                           address: {
                             type: 'object',
@@ -377,8 +377,6 @@ export const FnBonConfirmSchema = {
                         properties: {
                           gps: {
                             type: 'string',
-                            pattern: '^[0-9]{2}[.][0-9]{6,}[,][0-9]{2}[.][0-9]{6,}$',
-                            errorMessage: 'The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                           },
                           address: {
                             type: 'object',
@@ -722,61 +720,85 @@ export const FnBonConfirmSchema = {
             tags: {
               type: 'array',
               items: {
-                type: 'object', 
+                type: 'object',
                 properties: {
                   code: {
                     type: 'string',
                     enum: ['bpp_terms', 'bap_terms'],
-          
                   },
                   list: {
                     type: 'array',
                     items: {
-                      type: 'object',
-                      properties: {
-                        code: {
-                          type: 'string',
-                          enum: ['tax_number', 'provider_tax_number', 'np_type']
-                        },
-                        value: {
-                          type: 'string',
-                          minLength: 1,
-                        },
-                      },
-                      required: ['code', 'value'],
                       allOf: [
                         {
-                          properties: {
-                            code: {
-                              contains: {
-                                const: 'tax_number'
-                              }
-                            }
-                          }
+                          if: {
+                            properties: {
+                              code: { const: 'np_type' },
+                            },
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                                enum: ['np_type'],
+                              },
+                              value: {
+                                type: 'string',
+                                enum: ['MSN', 'ISN'],
+                              },
+                            },
+                            required: ['code', 'value'],
+                            additionalProperties: false,
+                          },
                         },
                         {
-                          properties: {
-                            code: {
-                              contains: {
-                                const: 'provider_tax_number'
-                              }
-                            }
-                          }
+                          if: {
+                            properties: {
+                              code: { const: 'tax_number' },
+                            },
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                              },
+                              value: {
+                                type: 'string',
+                              },
+                            },
+                            required: ['code', 'value'],
+                            additionalProperties: false,
+                          },
                         },
                         {
-                          properties: {
-                            code: {
-                              contains: {
-                                const: 'np_type'
-                              }
-                            }
-                          }
+                          if: {
+                            properties: {
+                              code: { const: 'provider_tax_number' },
+                            },
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                              },
+                              value: {
+                                type: 'string',
+                              },
+                            },
+                            required: ['code', 'value'],
+                            additionalProperties: false,
+                          },
                         },
-                      ]
+                      ],
                     },
+                    minItems: 1,
                   },
                 },
                 required: ['code', 'list'],
+                additionalProperties: false,
               },
             },
             created_at: {

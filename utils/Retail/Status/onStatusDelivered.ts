@@ -135,7 +135,7 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
     try {
       logger.info(`Checking order state in /${constants.ON_STATUS}_${state}`)
       if (on_status.state != 'Completed') {
-        onStatusObj.ordrState = `order/state should be "In-progress" for /${constants.ON_STATUS}_${state}`
+        onStatusObj.ordrState = `order/state should be "Completed" for /${constants.ON_STATUS}_${state}`
       }
     } catch (error) {
       logger.error(`!!Error while checking order state in /${constants.ON_STATUS}_${state}`)
@@ -206,7 +206,7 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
       }
 
       if (!orderDelivered) {
-        onStatusObj.noOrdrDelivered = `fulfillments/state should be Order-delivered for /${constants.ON_STATUS}_${state}`
+        onStatusObj.noOrdrDelivered = `fulfillments/state should be ${constants.ORDER_DELIVERED} for /${constants.ON_STATUS}_${constants.ORDER_DELIVERED}`
       }
     } catch (error) {
       logger.info(`Error while checking delivery timestamp in /${constants.ON_STATUS}_${state}.json`)

@@ -730,6 +730,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
 
       // Checking for same parent_item_id
       try {
+        logger.info(`Checking for duplicate varient in bpp/providers/items for on_search`)
         for (let i in onSearchCatalog['bpp/providers']) {
           const items = onSearchCatalog['bpp/providers'][i].items
           const map = checkDuplicateParentIdItems(items)

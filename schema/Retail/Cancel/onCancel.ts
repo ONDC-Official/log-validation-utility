@@ -83,6 +83,7 @@ export const onCancelSchema = {
               type: 'string',
               minLength: 1,
               pattern: '^[a-zA-Z0-9]{1,32}$',
+              errorMessage: 'Should be alphanumeric upto 32 letters max',
             },
             state: {
               type: 'string',
@@ -276,8 +277,6 @@ export const onCancelSchema = {
                           },
                           gps: {
                             type: 'string',
-                            pattern: '^[0-9]{2}[.][0-9]{6,}[,][0-9]{2}[.][0-9]{6,}$',
-                            errorMessage: ' The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                           },
                           address: {
                             type: 'object',
@@ -352,8 +351,6 @@ export const onCancelSchema = {
                           gps: {
                             type: 'string',
                             minLength: 1,
-                            pattern: '^[0-9]{2}[.][0-9]{6,}[,][0-9]{2}[.][0-9]{6,}$',
-                            errorMessage: ' The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                           },
                           address: {
                             type: 'object',
@@ -468,7 +465,7 @@ export const onCancelSchema = {
                       },
                       required: ['code', 'list'],
                     },
-                    additionalProperties: 'false',
+                    additionalProperties: false,
                   },
                 },
                 required: ['id', '@ondc/org/provider_name', 'state', 'type', 'tracking', 'start', 'end', 'tags'],
@@ -660,6 +657,7 @@ export const onCancelSchema = {
             'created_at',
             'updated_at',
           ],
+          additionalProperties: false,
         },
       },
       required: ['order'],

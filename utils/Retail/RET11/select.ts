@@ -186,7 +186,6 @@ export const checkSelect = (data: any, msgIdSet: any) => {
                 errorObj.itemDisabled = `disabled item with id ${baseItem.id} cannot be selected`
               }
             }
-
             const itemTag = tagFinder(item, 'item')
             if (itemTag) {
               if (!itemMap[item.parent_item_id]) {
@@ -225,8 +224,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
             if (!parentItemIdSet.has(item.parent_item_id)) parentItemIdSet.add(item.parent_item_id)
 
             if (!itemIdSet.has(item.id)) itemIdSet.add(item.id)
-
-            if (itemMap[item.parent_item_id].location_id !== item.location_id) {
+            if (itemMap[item.parent_item_id] && itemMap[item.parent_item_id].location_id !== item.location_id) {
               const key = `item${index}location_id`
               errorObj[key] = `Inconsistent location_id for parent_item_id ${item.parent_item_id}`
             }

@@ -71,9 +71,7 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
       errorObj[key] = `City code mismatch in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK}`
     }
   } catch (error: any) {
-    logger.info(
-      `Error while comparing city in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK}, ${error.stack}`,
-    )
+    logger.info(`Error while comparing city in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK}, ${error.stack}`)
   }
 
   try {
@@ -83,9 +81,7 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
       errorObj[key] = `City code mismatch in /${ApiSequence.ON_SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK}`
     }
   } catch (error: any) {
-    logger.info(
-      `Error while comparing city in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK}, ${error.stack}`,
-    )
+    logger.info(`Error while comparing city in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK}, ${error.stack}`)
   }
 
   try {
@@ -105,8 +101,7 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
     logger.info(`Comparing Message Ids of /${constants.ON_SEARCH} and /${constants.SELECT}`)
     if (_.isEqual(onSearchContext.message_id, context.message_id)) {
       const key = `${ApiSequence.ON_SEARCH}_msgId`
-      errorObj[key] =
-        `Message Id for /${ApiSequence.ON_SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK} api cannot be same`
+      errorObj[key] = `Message Id for /${ApiSequence.ON_SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK} api cannot be same`
     }
 
     if (_.isEqual(searchContext.message_id, context.message_id)) {
@@ -202,8 +197,9 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
 
               if (!itemIdArray.includes(item.id)) {
                 const key = `item${index}item_id`
-                errorObj[key] =
-                  `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in on_search`
+                errorObj[
+                  key
+                ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in on_search`
               }
             }
 
@@ -222,8 +218,9 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
 
               if (!parentTag) {
                 const key = `item${index}customization_id`
-                errorObj[key] =
-                  `/message/order/items/tags/customization/value in item: ${item.id} should be one of the customizations id mapped in on_search`
+                errorObj[
+                  key
+                ] = `/message/order/items/tags/customization/value in item: ${item.id} should be one of the customizations id mapped in on_search`
               }
             }
 

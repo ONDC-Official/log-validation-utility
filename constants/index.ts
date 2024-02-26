@@ -4,7 +4,7 @@ export default Object.freeze({
   DB_PATH: 'dbfiles',
   DECIMAL_PRECISION: 6,
   ORDER_PICKED: 'Order-picked-up',
-  ORDER_PACKED:'Order-packed-up',
+  ORDER_PACKED: 'Order-packed-up',
   ORDER_OUT_FOR_DELIVERY: 'Order-out-for-delivery',
   ORDER_DELIVERED: 'Order-delivered',
   SEARCH: 'search',

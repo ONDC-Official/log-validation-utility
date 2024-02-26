@@ -27,6 +27,7 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
     setValue(`${ApiSequence.INC_SEARCH}_context`, context)
     msgIdSet.add(context.message_id)
 
+
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
     }

@@ -947,6 +947,30 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
         logger.error(`!!Error while checking serviceability construct for bpp/providers[${i}], ${error.stack}`)
       }
 
+      try {
+        logger.info(`Checking if catalog_link type in message/catalog/bpp/providers[${i}]/tags[1]/list[0] is link or inline`)
+        const tags = bppPrvdrs[i].tags
+
+        let list: any = []
+        tags.map((data: any) => {
+          if(data.code == 'catalog_link'){
+            list = data.list
+          }
+        })
+        
+        list.map((data: any) => {
+          if(data.code === 'type'){
+            if(data.value === 'link'){
+              if(bppPrvdrs[0].items){
+                errorObj[`message/catalog/bpp/providers[0]`] = `Items arrays should not be present in message/catalog/bpp/providers[${i}]`
+              }
+            }
+          }
+        })
+      } catch(error: any) {
+        logger.error(`Error while checking the type of catalog_link`)
+      }
+
       i++
     }
 

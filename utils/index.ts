@@ -466,7 +466,7 @@ export const checkBppIdOrBapId = (input: string, type?: string) => {
       return `${type} Id is not present`
     }
 
-    if (input?.includes('https://') || input.includes('www') || input.includes('https:') || input.includes('http'))
+    if (input?.startsWith('https://') || input.startsWith('www') || input.startsWith('https:') || input.startsWith('http'))
       return `context/${type}_id should not be a url`
   } catch (e) {
     return e

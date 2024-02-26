@@ -52,7 +52,7 @@ const healthObj: ICategoryJSON = {
   },
   Prescription_Required: {
     mandatory: true,
-    value: [],
+    value: ['yes','no'],
   },
   Usage_Instruction: {
     mandatory: false,

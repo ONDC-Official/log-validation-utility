@@ -13,6 +13,7 @@ import {
   areGSTNumbersDifferent,
   compareObjects,
   sumQuoteBreakUp,
+  payment_status
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -288,7 +289,7 @@ export const checkConfirm = (data: any) => {
     try {
       logger.info(`Checking quote breakup prices for /${constants.CONFIRM}`)
       if (!sumQuoteBreakUp(confirm.quote)) {
-        const key = `invldCancellationPrices`
+        const key = `invldPrices`
         cnfrmObj[key] = `item quote breakup prices for ${constants.CONFIRM} should be equal to the total price.`
         logger.error(`item quote breakup prices for ${constants.CONFIRM} should be equal to the total price`)
       }
@@ -361,6 +362,17 @@ export const checkConfirm = (data: any) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while Comparing tags in /${constants.ON_INIT} and /${constants.CONFIRM} ${error.stack}`)
+    }
+
+    try {
+      logger.info(`Checking if transaction_id is present in message.order.payment`)
+      const payment = confirm.payment
+      const status = payment_status(payment);
+      if(!status){
+        cnfrmObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
+      }
+    } catch (err: any) {
+      logger.error(`Error while checking transaction is in message.order.payment`)
     }
 
     return cnfrmObj

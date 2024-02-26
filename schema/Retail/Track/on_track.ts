@@ -94,8 +94,6 @@ export const onTrackSchema = {
                 gps: {
                   type: 'string',
                   minLength: 1,
-                  pattern: '^[0-9]{2}[.][0-9]{6,}[,][0-9]{2}[.][0-9]{6,}$',
-                  errorMessage: 'The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                 },
                 time: {
                   type: 'object',
@@ -137,7 +135,7 @@ export const onTrackSchema = {
                         },
                         value: {
                           type: 'string',
-                          minLength: 1,                          
+                          minLength: 1,
                         },
                       },
                       required: ['code', 'value'],

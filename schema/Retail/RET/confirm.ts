@@ -88,7 +88,7 @@ export const confirmSchema = {
               type: 'string',
               minLength: 2,
               pattern: '^[a-zA-Z0-9]{1,32}$',
-              errorMessage: 'Should be alphanumeric upto 32 letters max'
+              errorMessage: 'Should be alphanumeric upto 32 letters max',
             },
             state: {
               type: 'string',
@@ -284,8 +284,6 @@ export const confirmSchema = {
                           gps: {
                             type: 'string',
                             minLength: 1,
-                            pattern: '^[0-9]{2}[.][0-9]{6,}[,][0-9]{2}[.][0-9]{6,}$',
-                            errorMessage: ' The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                           },
                           address: {
                             type: 'object',
@@ -462,7 +460,7 @@ export const confirmSchema = {
                   properties: {
                     currency: {
                       type: 'string',
-                      pattern: '^(?!\s*$).+',
+                      pattern: '^(?!s*$).+',
                     },
                     transaction_id: {
                       type: 'string',

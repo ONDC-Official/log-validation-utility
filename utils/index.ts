@@ -469,7 +469,12 @@ export const checkBppIdOrBapId = (input: string, type?: string) => {
       return `${type} Id is not present`
     }
 
-    if (input?.includes('https://') || input.includes('www') || input.includes('https:') || input.includes('http'))
+    if (
+      input?.startsWith('https://') ||
+      input.startsWith('www') ||
+      input.startsWith('https:') ||
+      input.startsWith('http')
+    )
       return `context/${type}_id should not be a url`
   } catch (e) {
     return e
@@ -917,4 +922,13 @@ export const mapCancellationID = (cancelled_by: string, reason_id: string, error
     errorObj['invldCancellationID'] = `Invalid CancellationID ${reason_id} or not allowed for ${cancelled_by}`
     return false
   }
+}
+
+export const payment_status = (payment: any) => {
+  if (payment.status == 'PAID') {
+    if (!payment.params.transaction_id) {
+      return false
+    }
+  }
+  return true
 }

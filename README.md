@@ -32,7 +32,7 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
         "on_status_picked": {},
         "on_status_out_for_delivery": {},
         "on_status_delivered": {}
-    }
+    }, 
     "flow":""
 }'
 ```

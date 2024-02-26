@@ -191,7 +191,7 @@ export const checkOnStatusPacked = (data: any, state: string) => {
       setValue('pickupTimestamps', pickupTimestamps)
 
       if (!orderPacked) {
-        onStatusObj.noOrdrPacked = `fulfillments/state should be Order-packed-up for /${constants.ON_STATUS}_${state}`
+        onStatusObj.noOrdrPacked = `fulfillments/state should be ${constants.ORDER_PACKED} for /${constants.ON_STATUS}_${constants.ORDER_PACKED}`
       }
     } catch (error: any) {
       logger.info(

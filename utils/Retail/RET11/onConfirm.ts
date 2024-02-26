@@ -311,7 +311,7 @@ export const checkOnConfirm = (data: any) => {
     try {
       logger.info(`Checking quote breakup prices for /${constants.ON_CONFIRM}`)
       if (!sumQuoteBreakUp(on_confirm.quote)) {
-        const key = `invldCancellationPrices`
+        const key = `invldPrices`
         onCnfrmObj[key] = `item quote breakup prices for ${constants.ON_CONFIRM} should be equal to the total price.`
         logger.error(`item quote breakup prices for ${constants.ON_CONFIRM} should be equal to the total price`)
       }

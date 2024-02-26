@@ -83,7 +83,7 @@ export const onCancelSchema = {
               type: 'string',
               minLength: 1,
               pattern: '^[a-zA-Z0-9]{1,32}$',
-              errorMessage: 'Should be alphanumeric upto 32 letters max'
+              errorMessage: 'Should be alphanumeric upto 32 letters max',
             },
             state: {
               type: 'string',
@@ -277,8 +277,6 @@ export const onCancelSchema = {
                           },
                           gps: {
                             type: 'string',
-                            pattern: '^[0-9]{2}[.][0-9]{6,}[,][0-9]{2}[.][0-9]{6,}$',
-                            errorMessage: ' The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                           },
                           address: {
                             type: 'object',
@@ -353,8 +351,6 @@ export const onCancelSchema = {
                           gps: {
                             type: 'string',
                             minLength: 1,
-                            pattern: '^[0-9]{2}[.][0-9]{6,}[,][0-9]{2}[.][0-9]{6,}$',
-                            errorMessage: ' The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                           },
                           address: {
                             type: 'object',
@@ -448,7 +444,7 @@ export const onCancelSchema = {
                       properties: {
                         code: {
                           type: 'string',
-                          enum: ['cancel_request','igm_request','precancel_state'],
+                          enum: ['cancel_request', 'igm_request', 'precancel_state'],
                         },
                         list: {
                           type: 'array',
@@ -457,7 +453,7 @@ export const onCancelSchema = {
                             properties: {
                               code: {
                                 type: 'string',
-                                enum:['reason_id','initiated_by','fulfillment_state','updated_at']                               
+                                enum: ['reason_id', 'initiated_by', 'fulfillment_state', 'updated_at'],
                               },
                               value: {
                                 type: 'string',
@@ -469,7 +465,7 @@ export const onCancelSchema = {
                       },
                       required: ['code', 'list'],
                     },
-                    additionalProperties:"false"
+                    additionalProperties: 'false',
                   },
                 },
                 required: ['id', '@ondc/org/provider_name', 'state', 'type', 'tracking', 'start', 'end', 'tags'],

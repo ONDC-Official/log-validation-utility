@@ -4,6 +4,7 @@ import { logger } from '../shared/logger'
 import constants, { statusArray } from '../constants'
 import schemaValidator from '../shared/schemaValidator'
 import data from '../constants/AreacodeMap.json'
+import { reasonCodes } from '../constants/reasonCode'
 
 export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
 
@@ -466,7 +467,12 @@ export const checkBppIdOrBapId = (input: string, type?: string) => {
       return `${type} Id is not present`
     }
 
-    if (input?.startsWith('https://') || input.startsWith('www') || input.startsWith('https:') || input.startsWith('http'))
+    if (
+      input?.startsWith('https://') ||
+      input.startsWith('www') ||
+      input.startsWith('https:') ||
+      input.startsWith('http')
+    )
       return `context/${type}_id should not be a url`
   } catch (e) {
     return e
@@ -904,11 +910,23 @@ export const findValueAtPath = (path: string, item: any) => {
   return { key, value }
 }
 
+export const mapCancellationID = (cancelled_by: string, reason_id: string, errorObj: any) => {
+  logger.info(`Mapping cancellationID with valid ReasonID`)
+  if (reason_id in reasonCodes && reasonCodes[reason_id].USED_BY.includes(cancelled_by)) {
+    logger.info(`CancellationID ${reason_id} mapped with valid ReasonID for ${cancelled_by}`)
+    return true
+  } else {
+    logger.error(`Invalid CancellationID ${reason_id} or not allowed for ${cancelled_by}`)
+    errorObj['invldCancellationID'] = `Invalid CancellationID ${reason_id} or not allowed for ${cancelled_by}`
+    return false
+  }
+}
+
 export const payment_status = (payment: any) => {
-  if(payment.status == "PAID"){
-    if(!payment.params.transaction_id){
-      return false;
+  if (payment.status == 'PAID') {
+    if (!payment.params.transaction_id) {
+      return false
     }
   }
-  return true;
+  return true
 }

@@ -9,7 +9,8 @@ import {
   checkBppIdOrBapId,
   compareObjects,
   sumQuoteBreakUp,
-  payment_status
+  payment_status,
+  mapCancellationID,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -101,24 +102,25 @@ export const checkOnCancel = (data: any) => {
         logger.info(`Checking for quote_trail price and item quote price sum for ${constants.ON_CANCEL}`)
         const price = Number(on_cancel.quote.price.value)
         const priceAtConfirm = Number(getValue('quotePrice'))
-        const tagsArray = on_cancel.fulfillments[0].tags
-        let quoteTrailSum = 0
-        for (let item of tagsArray) {
-          if (item.code === 'quote_trail') {
+        const cancelFulfillments = _.filter(on_cancel.fulfillments, { type: 'Cancel' })
+        for (let obj of cancelFulfillments) {
+          let quoteTrailSum = 0
+          const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
+          for (let item of quoteTrailItems) {
             for (let val of item.list) {
               if (val.code === 'value') {
                 quoteTrailSum += Math.abs(val.value)
               }
             }
           }
-        }
-        if (priceAtConfirm != price + quoteTrailSum) {
-          const key = `invldCancellationPrices`
-          onCnclObj[key] =
-            `quote_trail price and item quote price sum for ${constants.ON_CANCEL} should be equal to the price as in ${constants.ON_CONFIRM}`
-          logger.error(
-            `quote_trail price and item quote price sum for ${constants.ON_CANCEL} should be equal to the price as in ${constants.ON_CONFIRM} `,
-          )
+          if (priceAtConfirm != price + quoteTrailSum) {
+            const key = `invldCancellationPrices`
+            onCnclObj[key] =
+              `quote_trail price and item quote price sum for ${constants.ON_CANCEL} should be equal to the price as in ${constants.ON_CONFIRM}`
+            logger.error(
+              `quote_trail price and item quote price sum for ${constants.ON_CANCEL} should be equal to the price as in ${constants.ON_CONFIRM} `,
+            )
+          }
         }
       } else {
         logger.error(`The price breakdown in brakup does not match with the total_price for ${constants.ON_CANCEL} `)
@@ -127,6 +129,33 @@ export const checkOnCancel = (data: any) => {
       logger.error(`!!Error while Comparing Quote_Trail object for /${constants.ON_CANCEL}`)
     }
 
+    try {
+      logger.info(`Checking for preCancel_state in fulfillments of /${constants.ON_CANCEL}`)
+      const fulfillments = message.order.fulfillments
+      const op = _.some(fulfillments, { type: 'Delivery', tags: [{ code: 'precancel_state' }] })
+
+      if (!op) {
+        const key = `invldPrecancelState`
+        onCnclObj[key] = `precancel_state not found in fulfillments for ${constants.ON_CANCEL}`
+        logger.error(`precancel_state not found in fulfillments for ${constants.ON_CANCEL}`)
+      }
+    } catch (error) {
+      logger.error(`!!Error while Checking for precancel_state for /${constants.ON_CANCEL}`)
+    }
+
+    try {
+      logger.info(`Mapping valid cancellation_reason_id with the buyerNP or sellerNP in ${constants.ON_CANCEL}`)
+      const cancellationObj = on_cancel.cancellation
+      const cancelled_by = cancellationObj.cancelled_by
+      const reason_id = cancellationObj.reason.id
+      if (cancelled_by === context.bap_id) {
+        mapCancellationID('BNP', reason_id, onCnclObj)
+      } else {
+        mapCancellationID('SNP', reason_id, onCnclObj)
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while mapping cancellation_reason_id in ${constants.ON_CANCEL}`)
+    }
     try {
       logger.info(`Comparing order ids in /${constants.ON_CANCEL} and /${constants.ON_CONFIRM}`)
       if (getValue('cnfrmOrdrId') != on_cancel.id) {
@@ -278,8 +307,8 @@ export const checkOnCancel = (data: any) => {
     try {
       logger.info(`Checking if transaction_id is present in message.order.payment`)
       const payment = on_cancel.payment
-      const status = payment_status(payment);
-      if(!status){
+      const status = payment_status(payment)
+      if (!status) {
         onCnclObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
       }
     } catch (err: any) {

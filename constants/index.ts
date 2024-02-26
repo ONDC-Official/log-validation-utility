@@ -5,7 +5,7 @@ export default Object.freeze({
   DECIMAL_PRECISION: 6,
   ORDER_PICKED: 'Order-picked-up',
   ORDER_PACKED:'Order-packed-up',
-  ORDER_OUT_FOR_DELIVERY: 'Order-out-for-delivery',
+  ORDER_OUT_FOR_DELIVERY: 'Out-for-delivery',
   ORDER_DELIVERED: 'Order-delivered',
   SEARCH: 'search',
   ON_SEARCH: 'on_search',

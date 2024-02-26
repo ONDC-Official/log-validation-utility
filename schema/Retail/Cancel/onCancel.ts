@@ -453,11 +453,11 @@ export const onCancelSchema = {
                             properties: {
                               code: {
                                 type: 'string',
-                                enum: ['reason_id', 'initiated_by', 'fulfillment_state', 'updated_at'],
+                                enum: ['reason_id', 'initiated_by', 'fulfillment_state', 'updated_at','retry_count','rto_id','id'],
                               },
                               value: {
                                 type: 'string',
-                              },
+                              },                 
                             },
                             required: ['code', 'value'],
                           },

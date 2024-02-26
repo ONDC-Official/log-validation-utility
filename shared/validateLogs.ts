@@ -1264,12 +1264,41 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
             logReport = { ...logReport, [ApiSequence.ON_CONFIRM]: on_confirmResps }
           }
         }
+        if (data[ApiSequence.STATUS]) {
+          const statusResp = checkStatus(data[ApiSequence.STATUS])
 
-        if (data[ApiSequence.CANCEL]) {
-          const cancelResp = checkCancel(data[ApiSequence.CANCEL])
+          if (!_.isEmpty(statusResp)) {
+            logReport = { ...logReport, [ApiSequence.STATUS]: statusResp }
+          }
+        }
 
-          if (!_.isEmpty(cancelResp)) {
-            logReport = { ...logReport, [ApiSequence.CANCEL]: cancelResp }
+        if (data[ApiSequence.ON_STATUS_PENDING]) {
+          const onStatusResp = checkOnStatusPending(data[ApiSequence.ON_STATUS_PENDING], 'pending')
+
+          if (!_.isEmpty(onStatusResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_PENDING]: onStatusResp }
+          }
+        }
+
+        if (data[ApiSequence.ON_STATUS_PACKED]) {
+          const onStatusResp = checkOnStatusPacked(data[ApiSequence.ON_STATUS_PACKED], 'In-progress')
+
+          if (!_.isEmpty(onStatusResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_PACKED]: onStatusResp }
+          }
+        }
+        if (data[ApiSequence.ON_STATUS_PICKED]) {
+          const onStatusResp = checkOnStatusPicked(data[ApiSequence.ON_STATUS_PICKED], 'In-progress')
+
+          if (!_.isEmpty(onStatusResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_PICKED]: onStatusResp }
+          }
+        }
+        if (data[ApiSequence.ON_STATUS_OUT_FOR_DELIVERY]) {
+          const onStatusResp = checkOnStatusOutForDelivery(data[ApiSequence.ON_STATUS_OUT_FOR_DELIVERY], 'In-progress')
+
+          if (!_.isEmpty(onStatusResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_OUT_FOR_DELIVERY]: onStatusResp }
           }
         }
 

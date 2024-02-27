@@ -43,7 +43,7 @@ export const checkOnCancel = (data: any) => {
     }
 
     setValue(`${ApiSequence.CANCEL}`, data)
-    //Done
+
     try {
       logger.info(`Checking context for /${constants.ON_CANCEL} API`) //checking context
       const res: any = checkContext(context, constants.ON_CANCEL)
@@ -53,7 +53,7 @@ export const checkOnCancel = (data: any) => {
     } catch (error: any) {
       logger.error(`!!Some error occurred while checking /${constants.ON_CANCEL} context, ${error.stack}`)
     }
-    // Done
+
     try {
       logger.info(`Comparing city of /${constants.SEARCH} and /${constants.ON_CANCEL}`)
       if (!_.isEqual(searchContext.city, context.city)) {
@@ -62,7 +62,7 @@ export const checkOnCancel = (data: any) => {
     } catch (error: any) {
       logger.error(`!!Error while comparing city in /${constants.SEARCH} and /${constants.ON_CANCEL}, ${error.stack}`)
     }
-    //Done
+
     try {
       logger.info(`Comparing timestamp of /${constants.ON_INIT} and /${constants.ON_CANCEL}`)
       if (_.gte(getValue('tmpstmp'), context.timestamp)) {
@@ -75,7 +75,7 @@ export const checkOnCancel = (data: any) => {
         `!!Error while comparing timestamp for /${constants.ON_INIT} and /${constants.ON_CANCEL} api, ${error.stack}`,
       )
     }
-    //Done
+
     try {
       logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_CANCEL}`)
       if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
@@ -88,18 +88,18 @@ export const checkOnCancel = (data: any) => {
     }
 
     const on_cancel = message.order
-    //Done
+
     try {
       logger.info(`Checking quote breakup prices for /${constants.ON_CANCEL}`)
       if (!sumQuoteBreakUp(on_cancel.quote)) {
-        const key = `invldCancellationPrices`
+        const key = `invldQuotePrices`
         onCnclObj[key] = `item quote breakup prices for ${constants.ON_CANCEL} should be equal to the total price.`
         logger.error(`item quote breakup prices for ${constants.ON_CANCEL} should be equal to the net price`)
       }
     } catch (error: any) {
       logger.error(`!!Error while Comparing Quote object for /${constants.ON_CANCEL}`)
     }
-    //Done
+
     try {
       if (sumQuoteBreakUp(on_cancel.quote)) {
         logger.info(`Checking for quote_trail price and item quote price sum for ${constants.ON_CANCEL}`)
@@ -117,7 +117,7 @@ export const checkOnCancel = (data: any) => {
             }
           }
           if (priceAtConfirm != price + quoteTrailSum) {
-            const key = `invldCancellationPrices`
+            const key = `invldQuoteTrailPrices`
             onCnclObj[key] =
               `quote_trail price and item quote price sum for ${constants.ON_CANCEL} should be equal to the price as in ${constants.ON_CONFIRM}`
             logger.error(
@@ -299,7 +299,6 @@ export const checkOnCancel = (data: any) => {
       logger.error(`!!Error while storing payment object in /${constants.ON_CANCEL}, ${error.stack}`)
     }
 
-    //Done
     try {
       logger.info(`Comparing Quote object for /${constants.ON_SELECT} and /${constants.ON_CANCEL}`)
       if (!_.isEqual(getValue('quoteObj'), on_cancel.quote)) {
@@ -348,38 +347,6 @@ export const checkOnCancel = (data: any) => {
         }
       } catch (error: any) {
         logger.error(`!!Error while comparing `)
-      }
-
-      try {
-        if (sumQuoteBreakUp(on_cancel.quote)) {
-          logger.info(`Checking for quote_trail price and item quote price sum for ${constants.ON_CANCEL}`)
-          const price = Number(on_cancel.quote.price.value)
-          const priceAtConfirm = Number(getValue('quotePrice'))
-          const cancelFulfillments = _.filter(on_cancel.fulfillments, { type: 'RTO' })
-          for (let obj of cancelFulfillments) {
-            let quoteTrailSum = 0
-            const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
-            for (let item of quoteTrailItems) {
-              for (let val of item.list) {
-                if (val.code === 'value') {
-                  quoteTrailSum += Math.abs(val.value)
-                }
-              }
-            }
-            if (priceAtConfirm != price + quoteTrailSum) {
-              const key = `invldCancellationPrices`
-              onCnclObj[key] =
-                `quote_trail price and item quote price sum for ${constants.ON_CANCEL} should be equal to the price as in ${constants.ON_CONFIRM}`
-              logger.error(
-                `quote_trail price and item quote price sum for ${constants.ON_CANCEL} should be equal to the price as in ${constants.ON_CONFIRM} `,
-              )
-            }
-          }
-        } else {
-          logger.error(`The price breakdown in brakup does not match with the total_price for ${constants.ON_CANCEL} `)
-        }
-      } catch (error: any) {
-        logger.error(`!!Error while Comparing Quote_Trail object for /${constants.ON_CANCEL}`)
       }
     }
 

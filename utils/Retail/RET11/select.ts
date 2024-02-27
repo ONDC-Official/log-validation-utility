@@ -306,6 +306,8 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     } catch (error: any) {
       logger.error(`!!Error while checking GPS Precision in /${constants.SELECT}, ${error.stack}`)
     }
+
+    setValue('items', select.items)
   } catch (error: any) {
     logger.error(`!!Error occcurred while checking providers info in /${constants.SELECT},  ${error.message}`)
   }

@@ -556,14 +556,6 @@ const validate_schema_on_cancel_RET10_for_json = (data: any) => {
   const error_list = validate_schema(data, onCancelSchema)
   return formatted_error(error_list)
 }
-const validate_schema_update_RET18_for_json = (data: any) => {
-  const error_list = validate_schema(data, updateSchema)
-  return formatted_error(error_list)
-}
-const validate_schema_on_update_RET18_for_json = (data: any) => {
-  const error_list = validate_schema(data, onUpdateSchema)
-  return formatted_error(error_list)
-}
 
 const validate_schema_track_RET10_for_json = (data: any) => {
   const error_list = validate_schema(data, trackSchema)
@@ -601,6 +593,73 @@ const validate_schema_on_status_RET11_for_json = (data: any) => {
 }
 const validate_schema_on_status_RET10_for_json = (data: any) => {
   const error_list = validate_schema(data, onStatusSchema)
+  return formatted_error(error_list)
+}
+
+// Update
+
+const validate_schema_update_RET10_for_json = (data: any) => {
+  const error_list = validate_schema(data, updateSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_update_RET10_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_update_RET11_for_json = (data: any) => {
+  const error_list = validate_schema(data, updateSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_update_RET11_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_update_RET12_for_json = (data: any) => {
+  const error_list = validate_schema(data, updateSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_update_RET12_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_update_RET13_for_json = (data: any) => {
+  const error_list = validate_schema(data, updateSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_update_RET13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_update_RET14_for_json = (data: any) => {
+  const error_list = validate_schema(data, updateSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_update_RET14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_update_RET15_for_json = (data: any) => {
+  const error_list = validate_schema(data, updateSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_update_RET15_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_update_RET16_for_json = (data: any) => {
+  const error_list = validate_schema(data, updateSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_update_RET16_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_update_RET18_for_json = (data: any) => {
+  const error_list = validate_schema(data, updateSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_update_RET18_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateSchema)
   return formatted_error(error_list)
 }
 
@@ -811,6 +870,20 @@ export default {
   validate_schema_status_RET10_for_json,
   validate_schema_cancel_RET10_for_json,
   validate_schema_on_cancel_RET10_for_json,
+  validate_schema_on_update_RET10_for_json,
+  validate_schema_update_RET10_for_json,
+  validate_schema_on_update_RET11_for_json,
+  validate_schema_update_RET11_for_json,
+  validate_schema_on_update_RET12_for_json,
+  validate_schema_update_RET12_for_json,
+  validate_schema_on_update_RET13_for_json,
+  validate_schema_update_RET13_for_json,
+  validate_schema_on_update_RET14_for_json,
+  validate_schema_update_RET14_for_json,
+  validate_schema_on_update_RET15_for_json,
+  validate_schema_update_RET15_for_json,
+  validate_schema_on_update_RET16_for_json,
+  validate_schema_update_RET16_for_json,
   validate_schema_on_update_RET18_for_json,
   validate_schema_update_RET18_for_json,
   validate_schema_track_RET10_for_json,

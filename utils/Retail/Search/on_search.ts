@@ -465,13 +465,16 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
               'nutritional_info',
               'additives_info',
               'brand_owner_FSSAI_license_no',
-              'net_quantity',
+              'other_FSSAI_license_no',
+              'brand_owner_FSSAI_license_no',
+              'importer_FSSAI_license_no'
             ]
             mandatoryFields.forEach((field) => {
               if (statutory_reqs_prepackaged_food && !statutory_reqs_prepackaged_food[field]) {
                 const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
                 errorObj[key] =
-                  `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food following fields are valid 'nutritional_info', 'additives_info', 'brand_owner_FSSAI_license_no', 'net_quantity'`
+                  `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food following fields are valid 'nutritional_info', 'additives_info', 'brand_owner_FSSAI_license_no','other_FSSAI_license_no',
+                  'brand_owner_FSSAI_license_no','importer_FSSAI_license_no'`
               }
             })
           }
@@ -487,12 +490,13 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
           if (item.quantity && item.quantity.maximum && typeof item.quantity.maximum.count === 'string') {
             const maxCount = parseInt(item.quantity.maximum.count, 10)
-            if (maxCount !== 99 && maxCount <= 0) {
-              const key = `prvdr${i}item${j}maxCount`
-              errorObj[key] =
-                `item.quantity.maximum.count should be either default value 99 (no cap per order) or any other positive value (cap per order) in /bpp/providers[${i}]/items[${j}]`
+            const availCount = parseInt(item.quantity.available.count, 10)
+            if (availCount == 99 && maxCount <= 0){
+                const key = `prvdr${i}item${j}maxCount`
+                errorObj[key] =
+                  `item.quantity.maximum.count should be either default value 99 (no cap per order) or any other positive value (cap per order) in /bpp/providers[${i}]/items[${j}]`
+              }
             }
-          }
 
           if ('price' in item) {
             const sPrice = parseFloat(item.price.value)
@@ -1032,6 +1036,30 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         })
       } catch (error: any) {
         logger.error(`!!Error while checking serviceability construct for bpp/providers[${i}], ${error.stack}`)
+      }
+
+      try {
+        logger.info(`Checking if catalog_link type in message/catalog/bpp/providers[${i}]/tags[1]/list[0] is link or inline`)
+        const tags = bppPrvdrs[i].tags
+
+        let list: any = []
+        tags.map((data: any) => {
+          if(data.code == 'catalog_link'){
+            list = data.list
+          }
+        })
+        
+        list.map((data: any) => {
+          if(data.code === 'type'){
+            if(data.value === 'link'){
+              if(bppPrvdrs[0].items){
+                errorObj[`message/catalog/bpp/providers[0]`] = `Items arrays should not be present in message/catalog/bpp/providers[${i}]`
+              }
+            }
+          }
+        })
+      } catch(error: any) {
+        logger.error(`Error while checking the type of catalog_link`)
       }
 
       i++

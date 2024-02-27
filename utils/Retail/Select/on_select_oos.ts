@@ -196,7 +196,7 @@ export const checkOnSelect_OOS = (data: any) => {
         }
       }
     }
-    const max_tts = max_time_to_ships.sort((a, b) => a - b)[0]
+    const max_tts = max_time_to_ships.sort((a: number, b: number) => a - b)[0]
     const ON_SELECT_OUT_OF_STOCK_tat = ON_SELECT_OUT_OF_STOCK.fulfillments.map((e: any) =>
       isoDurToSec(e['@ondc/org/TAT']),
     )

@@ -196,7 +196,7 @@ export const checkOnSelect = (data: any) => {
         }
       }
     }
-    const max_tts = max_time_to_ships.sort((a, b) => a - b)[0]
+    const max_tts = max_time_to_ships.sort((a: number, b: number) => a - b)[0]
     const on_select_tat = on_select.fulfillments.map((e: any) => isoDurToSec(e['@ondc/org/TAT']))
 
     if (on_select_tat < max_tts) {

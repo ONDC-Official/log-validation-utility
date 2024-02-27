@@ -324,17 +324,21 @@ export const checkOnCancel = (data: any) => {
       try {
         // Checking for igm_request inside fulfillments for /on_cancel
         const DeliveryObj = _.filter(on_cancel.fulfillments, { type: 'Delivery' })
-        let retry_count_flag = 0
+        let reasonID_flag = 0
         let rto_id_flag = 0
+        let initiated_by_flag = 0
         for (let item of DeliveryObj) {
           const cancel_request = _.filter(item.tags, { code: 'cancel_request' })
           cancel_request.forEach((tag: any) => {
             tag.list.some((i: any) => {
-              if (i.code === 'retry_count') {
-                retry_count_flag = 1
+              if (i.code === 'reason_id') {
+                reasonID_flag = 1
               }
               if (i.code === 'rto_id') {
                 rto_id_flag = 1
+              }
+              if (i.code === 'initiated_by') {
+                initiated_by_flag = 1
               }
             })
           })
@@ -343,11 +347,23 @@ export const checkOnCancel = (data: any) => {
             logger.error(`IGM Request is mandatory for ${constants.ON_CANCEL}`)
           }
         }
-        if (!retry_count_flag || !rto_id_flag) {
-          logger.error(`Retry Count and RTO Id are mandatory fields for ${constants.ON_CANCEL}`)
+        if (!reasonID_flag ) {
+          logger.error(`Reason ID is mandatory field for ${constants.ON_CANCEL}`)
+          let key = `missingReasonID`
+          onCnclObj[key] = `Reason ID is mandatory field for ${constants.ON_CANCEL}`
+        }
+        if (!rto_id_flag ) {
+          logger.error(`RTO Id is mandatory field for ${constants.ON_CANCEL}`)
+          let key = `missingRTOvalues`
+          onCnclObj[key] = `RTO Id is mandatory field for ${constants.ON_CANCEL}`
+        }
+        if (!initiated_by_flag) {
+          logger.error(`Initiated_by is mandatory field for ${constants.ON_CANCEL}`)
+          let key = `missingInitiatedBy`
+          onCnclObj[key] = `Initiated_by is mandatory field for ${constants.ON_CANCEL}`
         }
       } catch (error: any) {
-        logger.error(`!!Error while comparing `)
+        logger.error(`!!Error while checking Reason ID ,RTO Id and Initiated_by for ${constants.ON_CANCEL}`)
       }
 
       try {

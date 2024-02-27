@@ -488,5 +488,7 @@ export const checkOnSelect = (data: any) => {
     logger.error(`!Error while comparing fulfillmentID with providerID in /${constants.ON_SELECT}, ${error.stack}`)
   }
 
+  setValue('quote_price', on_select.quote.price.value)
+
   return Object.keys(errorObj).length > 0 && errorObj
 }

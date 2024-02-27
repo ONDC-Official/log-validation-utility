@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, checkContext, checkBppIdOrBapId, sumQuoteBreakUp } from '../../../utils'
+import { validateSchema, isObjectEmpty, checkContext, checkBppIdOrBapId, sumQuoteBreakUp, payment_status, mapCancellationID } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const checkOnUpdate = (data: any) => {
@@ -125,6 +125,114 @@ export const checkOnUpdate = (data: any) => {
     } catch (error: any) {
       logger.error(`!!Error while Comparing Quote object for /${constants.ON_SELECT} and /${constants.ON_UPDATE}`)
     }
+
+    //Comparing item count in /on_update and /select
+    const select_items: any = getValue('items')
+    try {
+      logger.info(`Matching the item count in message/order/items with that in /select`)
+      const onUpdate_items = on_update.items
+      let onUpdate_count = 0
+      onUpdate_items.map((data: any) => {
+        data.tags.map((data2: any) => {
+          data2.list.map((data3: any) => {
+            if(data3.code === 'type'){
+              if(data3.value === 'item'){
+                onUpdate_count++;
+              }
+            }
+          })
+        })
+      })
+
+      select_items.map((data: any) => {
+        if(data.quantity.count != onUpdate_count){
+          onUpdateObj[`on_update/message/order/items/count`] = `Item count in /on_update/message/order/items doesn't match with previous count of items`
+        }
+      })
+    } catch (error: any) {
+      logger.error(`Error while matching the count of items in /on_update and /select`)
+    }
+
+    //Comparing the sum of quote_trail items and quote.price with that of net price of previous calls
+    try {
+      const fulfillments = on_update.fulfillments
+      let onUpdate_price: any = "0";
+      fulfillments.map((data: any) => {
+        if(data.type == 'Cancel'){
+          const tags = data.tags
+          tags.map((data1: any) => {
+            if(data1.code == 'quote_trail') {
+              const list = data1.list
+              list.map((data3: any) => {
+                if(data3.code == 'value'){
+                  onUpdate_price = parseFloat(onUpdate_price) - parseFloat(data3.value) 
+                }
+              })
+            }
+          })
+        }
+      })
+      onUpdate_price = parseFloat(onUpdate_price) + parseFloat(on_update.quote.price.value)
+      const onSelect_price: any = getValue('quote_price')
+      if(parseFloat(onUpdate_price) != parseFloat(onSelect_price)){
+        onUpdateObj[`/on_update/message/order/fulfillments`] = `Sum of quote_trail price and quote.price doesnot match the net price of previous calls`
+      }
+    } catch (error: any) {
+      logger.error(`Error while matching the sum of quote_trail items and quote_price in on_update/message/order/fulfillments with that net price in previous calls`)
+    }
+
+    //Check for status (Paid and Unpaid) and transaction_id available
+    try {
+      logger.info(`Checking if payment status is Paid or Unpaid and availability of transaction_id`)
+      const payment = on_update.payment
+      const status = payment_status(payment)
+      if (!status) {
+        onUpdateObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
+      }
+    } catch (error: any) {
+      logger.error(`Error while checking the payment status`)
+    }
+
+    //Comparing the updated_at timestamp with of context.timestamp
+    try {
+      if(!_.gte(context.timestamp, on_update.updated_at)){
+        onUpdateObj[`context/timestamp`] = `context/timestamp cannot be greater than message/order/updated_at timestamp`
+      }
+    } catch (error: any) {
+      logger.error(`Error while comparing context/timestamp and updated_at timestamp`)
+    }
+
+    //Reason_id mapping
+    try {
+      logger.info(`Reason_id mapping for cancel_request`)
+      const fulfillments = on_update.fulfillments
+      fulfillments.map((fulfillment: any) => {
+        if(fulfillment.type == "Cancel"){
+          const tags = fulfillment.tags
+          tags.map((tag: any) => {
+            if(tag.code == "cancel_request"){
+              const lists = tag.list
+              let reason_id = ""
+              lists.map((list: any) => {
+                if(list.code == "reason_id"){
+                  reason_id = list.value
+                }
+                if(list.code == "initiated_by"){
+                  if(list.value === context.bpp_id){
+                    mapCancellationID('SNP', reason_id, onUpdateObj)
+                  }
+                }
+              })
+            }
+          })
+        }
+      })
+    } catch (error: any) {
+      logger.error(`!!Error while mapping cancellation_reason_id in ${constants.ON_CANCEL}`)
+    }
+
+    
+
     return onUpdateObj
   } catch (error: any) {
     logger.error(`!!Some error occurred while checking /${constants.ON_UPDATE}, ${error.stack} `)

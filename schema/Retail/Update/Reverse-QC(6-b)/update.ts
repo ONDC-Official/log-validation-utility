@@ -1,4 +1,4 @@
-export const updateSchema = {
+export const updateRQCSchema = {
   type: 'object',
   properties: {
     context: {

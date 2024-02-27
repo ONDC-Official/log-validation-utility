@@ -704,30 +704,6 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
         )
       }
 
-      // Checking for origin in bpp/providers/[]/items/[]/tags/code
-      try {
-        const providers: any = onSearchCatalog['bpp/providers']
-        for (let i in providers) {
-          const items = providers[i].items
-          items.forEach((item: any, index: number) => {
-            let originTag = null
-            for (const tag of item.tags) {
-              if (tag.code === 'origin') {
-                originTag = tag
-              }
-            }
-
-            if (!originTag) {
-              logger.error(`Origin tag fields are missing for item[${index}]`)
-              const key = `missingOriginTag[${i}][${index}]`
-              errorObj[key] = `Origin tag fields are missing for item[${index}]`
-            }
-          })
-        }
-      } catch (error: any) {
-        logger.error(`!!Errors while checking for origin in bpp/providers/[]/items/[]/tags/code, ${error.stack}`)
-      }
-
       // Checking for same parent_item_id
       try {
         logger.info(`Checking for duplicate varient in bpp/providers/items for on_search`)

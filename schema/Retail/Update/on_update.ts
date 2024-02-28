@@ -133,7 +133,7 @@ export const onUpdateSchema = {
                 properties: {
                   id: { type: 'string' },
                   '@ondc/org/provider_name': { type: 'string' },
-                  type: { type: 'string' },
+                  type: { type: 'string', enum: ['Cancel', 'Delivery', 'Return'] },
                   tracking: { type: 'boolean' },
                   '@ondc/org/TAT': { type: 'string' },
                   state: {
@@ -142,7 +142,21 @@ export const onUpdateSchema = {
                       descriptor: {
                         type: 'object',
                         properties: {
-                          code: { type: 'string' },
+                          code: {
+                            type: 'string',
+                            enum: [
+                              'Cancelled',
+                              'Pending',
+                              'Order-delivered',
+                              'Return_Initiated',
+                              'Return_Pick_Failed',
+                              'Return_Approved',
+                              'Return_Picked',
+                              'Return_Delivered',
+                              'Liquidated',
+                              'Return_Rejected',
+                            ],
+                          },
                           short_desc: {
                             type: 'string',
                             enum: ['001', '002', '003', '004', '005', '006', '007', '008', '009', '010'],

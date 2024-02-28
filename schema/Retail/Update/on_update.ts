@@ -75,11 +75,11 @@ export const onUpdateSchema = {
           type: 'object',
           properties: {
             id: { type: 'string' },
-            state: { type: 'string', enum: ['Created', 'Accepted', 'Cancelled'] },
+            state: { type: 'string', enum: ['Created', 'Accepted', 'Cancelled', 'Completed', 'Delivered'] },
             provider: {
               type: 'object',
               properties: {
-                id: { type: 'string' }, //alphanumeric
+                id: { type: 'string' },
                 locations: {
                   type: 'array',
                   items: { type: 'object', properties: { id: { type: 'string' } } },
@@ -143,6 +143,10 @@ export const onUpdateSchema = {
                         type: 'object',
                         properties: {
                           code: { type: 'string' },
+                          short_desc: {
+                            type: 'string',
+                            enum: ['001', '002', '003', '004', '005', '006', '007', '008', '009', '010'],
+                          },
                         },
                       },
                     },
@@ -414,7 +418,6 @@ export const onUpdateSchema = {
                   },
                 },
               },
-              required: ['uri', 'tl_method', 'params', 'status', 'type', 'collected_by'],
             },
             documents: {
               type: 'array',
@@ -439,7 +442,6 @@ export const onUpdateSchema = {
             'fulfillments',
             'quote',
             'payment',
-            'documents',
             'created_at',
             'updated_at',
           ],

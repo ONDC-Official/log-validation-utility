@@ -231,23 +231,39 @@ export const checkOnSelect_OOS = (data: any) => {
   } catch (error: any) {
     logger.error(`!!Error while checking fulfillments' state in /${constants.ON_SELECT}, ${error.stack}`)
   }
+  console.log("checking item count==>", message.order.quote.breakup);
+  
+console.log("checking==>", error.message);
+const breakup_msg = message.order.quote.breakup
+const itemsWithCountZero = breakup_msg.filter((item:any) => item['@ondc/org/item_quantity'] && item['@ondc/org/item_quantity'].count ===  0);
+console.log("checking ghdgck===>", itemsWithCountZero);
+
+
 
   try {
-    logger.info(`Item Id and  error.message.item_id Mapping in /ON_SELECT_OUT_OF_STOCK`);
-    let i =  0;
-    const len = ON_SELECT_OUT_OF_STOCK.items.length;
-    const errorItems = error.message; 
+    const breakup_msg = message.order.quote.breakup;
+    const msg_err = error.message
+    console.log("checking==>", msg_err);
+   
 
-    while (i < len) {
-      const found = errorItems.find((errorObj: any) => errorObj.item_id === ON_SELECT_OUT_OF_STOCK.items[i].id);
-      if (!found) {
+    logger.info(`Item Id and error.message.item_id Mapping in /ON_SELECT_OUT_OF_STOCK`);
+
+    const errorArray = JSON.parse(msg_err);
+    let i =  0;
+  
+    const itemsWithCountZero = breakup_msg.filter((item :any) => item['@ondc/org/item_quantity'] && item['@ondc/org/item_quantity'].count ===  0);
+    console.log("checking ghdgck===>", itemsWithCountZero);
+    itemsWithCountZero.forEach((item:any) => {
+      const isPresent = errorArray.some((errorItem:any) => errorItem.item_id === item['@ondc/org/item_id']);
+  
+      if (!isPresent) {
         const key = `message/error/message/items_id${i}`;
-        errorObj[key] = `message/order/items for item ${ON_SELECT_OUT_OF_STOCK.items[i].id} does not match in error.message.items_id `;
+        errorObj[key] = `message/order/items for item ${item['@ondc/org/item_id']} does not match in ${msg_err} `;
+        i++;
       }
-      i++;
-    }
+    });
   } catch (error: any) {
-    logger.error(`!!Error while checking Item Id and  Mapping in ${error.message}`);
+    logger.error(`!!Error while checking Item Id and Mapping in ${error.message}`);
   }
 
   let onSelectPrice: any = 0 //Net price after discounts and tax in /ON_SELECT_OUT_OF_STOCK

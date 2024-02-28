@@ -675,8 +675,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         logger.info(logReport, 'Report Generated Successfully!!')
         return logReport
       }
-      if (flow === '6') {
-        console.log('Checking flow 6')
+      if (flow === '6-a') {
         if (data[ApiSequence.SEARCH]) {
           const searchFullCatalogRefreshResp = checkSearchFullCatalogRefresh(data[ApiSequence.SEARCH], msgIdSet)
           if (!_.isEmpty(searchFullCatalogRefreshResp)) {
@@ -811,6 +810,162 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
           const onStatusResp = checkOnUpdate(data[ApiSequence.ON_UPDATE])
           if (!_.isEmpty(onStatusResp)) {
             logReport = { ...logReport, [ApiSequence.ON_STATUS_DELIVERED]: onStatusResp }
+          }
+        }
+        if (data[ApiSequence.TRACK]) {
+          const TrackResp = checkTrack(data[ApiSequence.TRACK])
+
+          if (!_.isEmpty(TrackResp)) {
+            logReport = { ...logReport, [ApiSequence.TRACK]: TrackResp }
+          }
+        }
+
+        if (data[ApiSequence.ON_TRACK]) {
+          const onTrackResp = checkOnTrack(data[ApiSequence.ON_TRACK])
+
+          if (!_.isEmpty(onTrackResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_TRACK]: onTrackResp }
+          }
+        }
+
+        logger.info(logReport, 'Report Generated Successfully!!')
+        return logReport
+      }
+      if (flow === '6-b') {
+        if (data[ApiSequence.SEARCH]) {
+          const searchFullCatalogRefreshResp = checkSearch(data[ApiSequence.SEARCH], msgIdSet)
+          if (!_.isEmpty(searchFullCatalogRefreshResp)) {
+            logReport = { ...logReport, [ApiSequence.SEARCH]: searchFullCatalogRefreshResp }
+          }
+        }
+
+        if (data[ApiSequence.ON_SEARCH]) {
+          const onSearchFullCatalogRefreshResp = checkOnsearch(data[ApiSequence.ON_SEARCH], msgIdSet)
+
+          if (!_.isEmpty(onSearchFullCatalogRefreshResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_SEARCH]: onSearchFullCatalogRefreshResp }
+          }
+        }
+
+        if (data[ApiSequence.SELECT]) {
+          const selectResp = checkSelect(data[ApiSequence.SELECT], msgIdSet)
+
+          if (!_.isEmpty(selectResp)) {
+            logReport = { ...logReport, [ApiSequence.SELECT]: selectResp }
+          }
+        }
+
+        if (data[ApiSequence.ON_SELECT]) {
+          const on_selectResp = checkOnSelect(data[ApiSequence.ON_SELECT])
+
+          if (!_.isEmpty(on_selectResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_SELECT]: on_selectResp }
+          }
+        }
+
+        if (data[ApiSequence.INIT]) {
+          const initResp = checkInit(data[ApiSequence.INIT])
+
+          if (!_.isEmpty(initResp)) {
+            logReport = { ...logReport, [ApiSequence.INIT]: initResp }
+          }
+        }
+
+        if (data[ApiSequence.ON_INIT]) {
+          const on_initResp = checkOnInit(data[ApiSequence.ON_INIT], msgIdSet)
+
+          if (!_.isEmpty(on_initResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_INIT]: on_initResp }
+          }
+        }
+
+        if (data[ApiSequence.CONFIRM]) {
+          const confirmResps = checkConfirm(data[ApiSequence.CONFIRM])
+
+          if (!_.isEmpty(confirmResps)) {
+            logReport = { ...logReport, [ApiSequence.CONFIRM]: confirmResps }
+          }
+        }
+
+        if (data[ApiSequence.ON_CONFIRM]) {
+          const on_confirmResps = checkOnConfirm(data[ApiSequence.ON_CONFIRM])
+
+          if (!_.isEmpty(on_confirmResps)) {
+            logReport = { ...logReport, [ApiSequence.ON_CONFIRM]: on_confirmResps }
+          }
+        }
+
+        if (data[ApiSequence.CANCEL]) {
+          const cancelResp = checkCancel(data[ApiSequence.CANCEL])
+
+          if (!_.isEmpty(cancelResp)) {
+            logReport = { ...logReport, [ApiSequence.CANCEL]: cancelResp }
+          }
+        }
+
+        if (data[ApiSequence.ON_CANCEL]) {
+          const onCancelResp = checkOnCancel(data[ApiSequence.ON_CANCEL])
+
+          if (!_.isEmpty(onCancelResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_CANCEL]: onCancelResp }
+          }
+        }
+
+        if (data[ApiSequence.STATUS]) {
+          const statusResp = checkStatus(data[ApiSequence.STATUS])
+
+          if (!_.isEmpty(statusResp)) {
+            logReport = { ...logReport, [ApiSequence.STATUS]: statusResp }
+          }
+        }
+
+        if (data[ApiSequence.ON_STATUS_PENDING]) {
+          const onStatusResp = checkOnStatusPending(data[ApiSequence.ON_STATUS_PENDING], 'pending')
+
+          if (!_.isEmpty(onStatusResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_PENDING]: onStatusResp }
+          }
+        }
+
+        if (data[ApiSequence.ON_STATUS_PACKED]) {
+          const onStatusResp = checkOnStatusPacked(data[ApiSequence.ON_STATUS_PACKED], 'In-progress')
+
+          if (!_.isEmpty(onStatusResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_PACKED]: onStatusResp }
+          }
+        }
+        if (data[ApiSequence.ON_STATUS_PICKED]) {
+          const onStatusResp = checkOnStatusPicked(data[ApiSequence.ON_STATUS_PICKED], 'In-progress')
+
+          if (!_.isEmpty(onStatusResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_PICKED]: onStatusResp }
+          }
+        }
+        if (data[ApiSequence.ON_STATUS_OUT_FOR_DELIVERY]) {
+          const onStatusResp = checkOnStatusOutForDelivery(data[ApiSequence.ON_STATUS_OUT_FOR_DELIVERY], 'In-progress')
+
+          if (!_.isEmpty(onStatusResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_OUT_FOR_DELIVERY]: onStatusResp }
+          }
+        }
+        if (data[ApiSequence.ON_STATUS_DELIVERED]) {
+          const onStatusResp = checkOnStatusDelivered(data[ApiSequence.ON_STATUS_DELIVERED], 'Completed')
+
+          if (!_.isEmpty(onStatusResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_DELIVERED]: onStatusResp }
+          }
+        }
+        if (data[ApiSequence.UPDATE]) {
+          const updateResp = checkUpdate(data[ApiSequence.UPDATE])
+
+          if (!_.isEmpty(updateResp)) {
+            logReport = { ...logReport, [ApiSequence.UPDATE]: updateResp }
+          }
+        }
+        if (data[ApiSequence.ON_UPDATE]) {
+          const onUpdateResp = checkOnUpdate(data[ApiSequence.ON_UPDATE])
+          if (!_.isEmpty(onUpdateResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_UPDATE]: onUpdateResp }
           }
         }
         if (data[ApiSequence.TRACK]) {
@@ -1469,7 +1624,162 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         return logReport
       }
       if (flow === '6-b') {
-        console.log('Checking flow 6-b for RQC')
+        if (data[ApiSequence.SEARCH]) {
+          const searchFullCatalogRefreshResp = checkSearch(data[ApiSequence.SEARCH], msgIdSet)
+          if (!_.isEmpty(searchFullCatalogRefreshResp)) {
+            logReport = { ...logReport, [ApiSequence.SEARCH]: searchFullCatalogRefreshResp }
+          }
+        }
+
+        if (data[ApiSequence.ON_SEARCH]) {
+          const onSearchFullCatalogRefreshResp = checkOnsearch(data[ApiSequence.ON_SEARCH], msgIdSet)
+
+          if (!_.isEmpty(onSearchFullCatalogRefreshResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_SEARCH]: onSearchFullCatalogRefreshResp }
+          }
+        }
+
+        if (data[ApiSequence.SELECT]) {
+          const selectResp = checkSelect(data[ApiSequence.SELECT], msgIdSet)
+
+          if (!_.isEmpty(selectResp)) {
+            logReport = { ...logReport, [ApiSequence.SELECT]: selectResp }
+          }
+        }
+
+        if (data[ApiSequence.ON_SELECT]) {
+          const on_selectResp = checkOnSelect(data[ApiSequence.ON_SELECT])
+
+          if (!_.isEmpty(on_selectResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_SELECT]: on_selectResp }
+          }
+        }
+
+        if (data[ApiSequence.INIT]) {
+          const initResp = checkInit(data[ApiSequence.INIT])
+
+          if (!_.isEmpty(initResp)) {
+            logReport = { ...logReport, [ApiSequence.INIT]: initResp }
+          }
+        }
+
+        if (data[ApiSequence.ON_INIT]) {
+          const on_initResp = checkOnInit(data[ApiSequence.ON_INIT], msgIdSet)
+
+          if (!_.isEmpty(on_initResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_INIT]: on_initResp }
+          }
+        }
+
+        if (data[ApiSequence.CONFIRM]) {
+          const confirmResps = checkConfirm(data[ApiSequence.CONFIRM])
+
+          if (!_.isEmpty(confirmResps)) {
+            logReport = { ...logReport, [ApiSequence.CONFIRM]: confirmResps }
+          }
+        }
+
+        if (data[ApiSequence.ON_CONFIRM]) {
+          const on_confirmResps = checkOnConfirm(data[ApiSequence.ON_CONFIRM])
+
+          if (!_.isEmpty(on_confirmResps)) {
+            logReport = { ...logReport, [ApiSequence.ON_CONFIRM]: on_confirmResps }
+          }
+        }
+
+        if (data[ApiSequence.CANCEL]) {
+          const cancelResp = checkCancel(data[ApiSequence.CANCEL])
+
+          if (!_.isEmpty(cancelResp)) {
+            logReport = { ...logReport, [ApiSequence.CANCEL]: cancelResp }
+          }
+        }
+
+        if (data[ApiSequence.ON_CANCEL]) {
+          const onCancelResp = checkOnCancel(data[ApiSequence.ON_CANCEL])
+
+          if (!_.isEmpty(onCancelResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_CANCEL]: onCancelResp }
+          }
+        }
+
+        if (data[ApiSequence.STATUS]) {
+          const statusResp = checkStatus(data[ApiSequence.STATUS])
+
+          if (!_.isEmpty(statusResp)) {
+            logReport = { ...logReport, [ApiSequence.STATUS]: statusResp }
+          }
+        }
+
+        if (data[ApiSequence.ON_STATUS_PENDING]) {
+          const onStatusResp = checkOnStatusPending(data[ApiSequence.ON_STATUS_PENDING], 'pending')
+
+          if (!_.isEmpty(onStatusResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_PENDING]: onStatusResp }
+          }
+        }
+
+        if (data[ApiSequence.ON_STATUS_PACKED]) {
+          const onStatusResp = checkOnStatusPacked(data[ApiSequence.ON_STATUS_PACKED], 'In-progress')
+
+          if (!_.isEmpty(onStatusResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_PACKED]: onStatusResp }
+          }
+        }
+        if (data[ApiSequence.ON_STATUS_PICKED]) {
+          const onStatusResp = checkOnStatusPicked(data[ApiSequence.ON_STATUS_PICKED], 'In-progress')
+
+          if (!_.isEmpty(onStatusResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_PICKED]: onStatusResp }
+          }
+        }
+        if (data[ApiSequence.ON_STATUS_OUT_FOR_DELIVERY]) {
+          const onStatusResp = checkOnStatusOutForDelivery(data[ApiSequence.ON_STATUS_OUT_FOR_DELIVERY], 'In-progress')
+
+          if (!_.isEmpty(onStatusResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_OUT_FOR_DELIVERY]: onStatusResp }
+          }
+        }
+        if (data[ApiSequence.ON_STATUS_DELIVERED]) {
+          const onStatusResp = checkOnStatusDelivered(data[ApiSequence.ON_STATUS_DELIVERED], 'Completed')
+
+          if (!_.isEmpty(onStatusResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_STATUS_DELIVERED]: onStatusResp }
+          }
+        }
+        if (data[ApiSequence.UPDATE]) {
+          const updateResp = checkUpdate(data[ApiSequence.UPDATE])
+
+          if (!_.isEmpty(updateResp)) {
+            logReport = { ...logReport, [ApiSequence.UPDATE]: updateResp }
+          }
+        }
+        if (data[ApiSequence.ON_UPDATE]) {
+          const onUpdateResp = checkOnUpdate(data[ApiSequence.ON_UPDATE])
+          if (!_.isEmpty(onUpdateResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_UPDATE]: onUpdateResp }
+          }
+        }
+        if (data[ApiSequence.TRACK]) {
+          const TrackResp = checkTrack(data[ApiSequence.TRACK])
+
+          if (!_.isEmpty(TrackResp)) {
+            logReport = { ...logReport, [ApiSequence.TRACK]: TrackResp }
+          }
+        }
+
+        if (data[ApiSequence.ON_TRACK]) {
+          const onTrackResp = checkOnTrack(data[ApiSequence.ON_TRACK])
+
+          if (!_.isEmpty(onTrackResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_TRACK]: onTrackResp }
+          }
+        }
+
+        logger.info(logReport, 'Report Generated Successfully!!')
+        return logReport
+      }
+      if (flow === '6-c') {
         if (data[ApiSequence.SEARCH]) {
           const searchFullCatalogRefreshResp = checkSearch(data[ApiSequence.SEARCH], msgIdSet)
           if (!_.isEmpty(searchFullCatalogRefreshResp)) {

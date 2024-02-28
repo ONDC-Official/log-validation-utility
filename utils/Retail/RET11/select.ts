@@ -292,7 +292,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
           const gps = ff.end.location.gps.split(',')
           const gpsLat = gps[0]
           const gpsLong = gps[1]
-          // logger.info(gpsLat, " sfsfdsf ", gpsLong);
+
           if (!gpsLat || !gpsLong) {
             errorObj.gpsErr = `fulfillments location.gps is not as per the API contract`
           }
@@ -306,6 +306,8 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     } catch (error: any) {
       logger.error(`!!Error while checking GPS Precision in /${constants.SELECT}, ${error.stack}`)
     }
+
+    setValue('items', select.items)
   } catch (error: any) {
     logger.error(`!!Error occcurred while checking providers info in /${constants.SELECT},  ${error.message}`)
   }

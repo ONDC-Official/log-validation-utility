@@ -123,7 +123,6 @@ export const checkOnUpdate = (data: any) => {
           onUpdateItemCount += item.quantity.count
         }
       })
-      console.log('SELECT___>', select_items)
       select_items.forEach((selectItem: any) => {
         if (selectItem.quantity && selectItem.quantity.count !== onUpdateItemCount) {
           onupdtObj[`on_update/message/order/items/count`] =
@@ -231,7 +230,7 @@ export const checkOnUpdate = (data: any) => {
               }
             })
 
-            const requestObjectErr = compareObjects(obj, return_request_obj)
+            const requestObjectErr = obj && return_request_obj ? compareObjects(obj, return_request_obj) : null
 
             if (requestObjectErr) {
               let i = 0

@@ -40,8 +40,6 @@ import { checkSelect_OOS } from '../utils/Retail/Select/select_oos'
 import { checkOnSelect_OOS } from '../utils/Retail/Select/on_select_oos'
 import { checkUpdate } from '../utils/Retail/Update/update'
 import { checkOnUpdate } from '../utils/Retail/Update/onUpdate'
-import { checkUpdateRQC } from '../utils/Retail/Update/Update(6-b)/update'
-import { checkOnUpdateRQC } from '../utils/Retail/Update/Update(6-b)/on_update'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
@@ -1596,14 +1594,14 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
           }
         }
         if (data[ApiSequence.UPDATE]) {
-          const updateResp = checkUpdateRQC(data[ApiSequence.UPDATE])
+          const updateResp = checkUpdate(data[ApiSequence.UPDATE])
 
           if (!_.isEmpty(updateResp)) {
             logReport = { ...logReport, [ApiSequence.UPDATE]: updateResp }
           }
         }
         if (data[ApiSequence.ON_UPDATE]) {
-          const onUpdateResp = checkOnUpdateRQC(data[ApiSequence.ON_UPDATE])
+          const onUpdateResp = checkOnUpdate(data[ApiSequence.ON_UPDATE])
           if (!_.isEmpty(onUpdateResp)) {
             logReport = { ...logReport, [ApiSequence.ON_UPDATE]: onUpdateResp }
           }

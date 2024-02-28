@@ -38,7 +38,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
   if (!message || !context || !message.catalog || isObjectEmpty(message) || isObjectEmpty(message.catalog)) {
     return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
   }
-  console.log('DOMAIN-->', data.context.domain.split(':')[1])
   const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SEARCH, data)
 
   const contextRes: any = checkContext(context, constants.ON_SEARCH)

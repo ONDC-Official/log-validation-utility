@@ -205,7 +205,7 @@ export const checkOnCancel = (data: any) => {
         if (itemId in itemsIdList) {
           if (on_cancel.items[i].quantity.count != itemsIdList[itemId]) {
             itemsIdList[itemId] = on_cancel.items[i].quantity.count
-            onCnclObj.cntErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
+            onCnclObj.countErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
           }
         }
 
@@ -346,12 +346,12 @@ export const checkOnCancel = (data: any) => {
             logger.error(`IGM Request is mandatory for ${constants.ON_CANCEL}`)
           }
         }
-        if (!reasonID_flag ) {
+        if (!reasonID_flag) {
           logger.error(`Reason ID is mandatory field for ${constants.ON_CANCEL}`)
           let key = `missingReasonID`
           onCnclObj[key] = `Reason ID is mandatory field for ${constants.ON_CANCEL}`
         }
-        if (!rto_id_flag ) {
+        if (!rto_id_flag) {
           logger.error(`RTO Id is mandatory field for ${constants.ON_CANCEL}`)
           let key = `missingRTOvalues`
           onCnclObj[key] = `RTO Id is mandatory field for ${constants.ON_CANCEL}`

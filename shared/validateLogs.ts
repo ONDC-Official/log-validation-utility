@@ -1165,20 +1165,19 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
             logReport = { ...logReport, [ApiSequence.ON_SELECT_OUT_OF_STOCK]: on_selectResp }
           }
         }
+        if (data[ApiSequence.SELECT_OUT_OF_STOCK]) {
+          const on_selectResp = checkSelect_OOS(data[ApiSequence.SELECT_OUT_OF_STOCK], msgIdSet)
+
+          if (!_.isEmpty(on_selectResp)) {
+            logReport = { ...logReport, [ApiSequence.SELECT_OUT_OF_STOCK]: on_selectResp }
+          }
+        }
 
         if (data[ApiSequence.ON_SELECT]) {
           const on_selectResp = checkOnSelect(data[ApiSequence.ON_SELECT])
 
           if (!_.isEmpty(on_selectResp)) {
             logReport = { ...logReport, [ApiSequence.ON_SELECT]: on_selectResp }
-          }
-        }
-
-        if (data[ApiSequence.SELECT_OUT_OF_STOCK]) {
-          const on_selectResp = checkSelect_OOS(data[ApiSequence.SELECT_OUT_OF_STOCK], msgIdSet)
-
-          if (!_.isEmpty(on_selectResp)) {
-            logReport = { ...logReport, [ApiSequence.SELECT_OUT_OF_STOCK]: on_selectResp }
           }
         }
 
@@ -1754,10 +1753,35 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
             logReport = { ...logReport, [ApiSequence.UPDATE]: updateResp }
           }
         }
-        if (data[ApiSequence.ON_UPDATE]) {
-          const onUpdateResp = checkOnUpdate(data[ApiSequence.ON_UPDATE])
+        if (data[ApiSequence.ON_UPDATE_INTERIM]) {
+          const onUpdateResp = checkOnUpdate(data[ApiSequence.ON_UPDATE_INTERIM])
           if (!_.isEmpty(onUpdateResp)) {
-            logReport = { ...logReport, [ApiSequence.ON_UPDATE]: onUpdateResp }
+            logReport = { ...logReport, [ApiSequence.ON_UPDATE_INTERIM]: onUpdateResp }
+          }
+        }
+        if (data[ApiSequence.ON_UPDATE_APPROVAL]) {
+          const onUpdateResp = checkOnUpdate(data[ApiSequence.ON_UPDATE_APPROVAL])
+          if (!_.isEmpty(onUpdateResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_UPDATE_APPROVAL]: onUpdateResp }
+          }
+        }
+        if (data[ApiSequence.ON_UPDATE_PICKED]) {
+          const onUpdateResp = checkOnUpdate(data[ApiSequence.ON_UPDATE_PICKED])
+          if (!_.isEmpty(onUpdateResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_UPDATE_PICKED]: onUpdateResp }
+          }
+        }
+        if (data[ApiSequence.ON_UPDATE_DELIVERED]) {
+          const onUpdateResp = checkOnUpdate(data[ApiSequence.ON_UPDATE_DELIVERED])
+          if (!_.isEmpty(onUpdateResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_UPDATE_DELIVERED]: onUpdateResp }
+          }
+        }
+        if (data[ApiSequence.UPDATE_SETTLEMENT]) {
+          const updateResp = checkUpdate(data[ApiSequence.UPDATE_SETTLEMENT])
+
+          if (!_.isEmpty(updateResp)) {
+            logReport = { ...logReport, [ApiSequence.UPDATE_SETTLEMENT]: updateResp }
           }
         }
         if (data[ApiSequence.TRACK]) {
@@ -1910,10 +1934,23 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
             logReport = { ...logReport, [ApiSequence.UPDATE]: updateResp }
           }
         }
-        if (data[ApiSequence.ON_UPDATE]) {
-          const onUpdateResp = checkOnUpdate(data[ApiSequence.ON_UPDATE])
+        if (data[ApiSequence.ON_UPDATE_INTERIM]) {
+          const onUpdateResp = checkOnUpdate(data[ApiSequence.ON_UPDATE_INTERIM])
           if (!_.isEmpty(onUpdateResp)) {
-            logReport = { ...logReport, [ApiSequence.ON_UPDATE]: onUpdateResp }
+            logReport = { ...logReport, [ApiSequence.ON_UPDATE_INTERIM]: onUpdateResp }
+          }
+        }
+        if (data[ApiSequence.ON_UPDATE_LIQUIDATED]) {
+          const onUpdateResp = checkOnUpdate(data[ApiSequence.ON_UPDATE_LIQUIDATED])
+          if (!_.isEmpty(onUpdateResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_UPDATE_LIQUIDATED]: onUpdateResp }
+          }
+        }
+        if (data[ApiSequence.UPDATE_SETTLEMENT]) {
+          const updateResp = checkUpdate(data[ApiSequence.UPDATE_SETTLEMENT])
+
+          if (!_.isEmpty(updateResp)) {
+            logReport = { ...logReport, [ApiSequence.UPDATE_SETTLEMENT]: updateResp }
           }
         }
         if (data[ApiSequence.TRACK]) {

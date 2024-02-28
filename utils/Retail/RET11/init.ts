@@ -170,24 +170,21 @@ export const checkInit = (data: any) => {
 
         if (checkItemTag(item, select_customIdArray)) {
           const itemkey = `item${i}tags.parent_id`
-          initObj[
-            itemkey
-          ] = `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.SELECT} and /${constants.INIT}`
+          initObj[itemkey] =
+            `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.SELECT} and /${constants.INIT}`
         }
 
         if (!parentItemIdSet.includes(item.parent_item_id)) {
           const itemkey = `item_PrntItmId${i}`
-          initObj[
-            itemkey
-          ] = `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.INIT}`
+          initObj[itemkey] =
+            `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.INIT}`
         }
 
         if (itemId in itemFlfllmnts) {
           if (init.items[i].fulfillment_id != itemFlfllmnts[itemId]) {
             const itemkey = `item_FFErr${i}`
-            initObj[
-              itemkey
-            ] = `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.INIT}`
+            initObj[itemkey] =
+              `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.INIT}`
           }
         } else {
           const itemkey = `item_FFErr${i}`
@@ -196,7 +193,7 @@ export const checkInit = (data: any) => {
 
         if (itemId in itemsIdList) {
           if (init.items[i].quantity.count != itemsIdList[itemId]) {
-            initObj.cntErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
+            initObj.countErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
           }
         }
 
@@ -223,16 +220,14 @@ export const checkInit = (data: any) => {
 
           if (!_.isEqual(init.fulfillments[i].end.location.gps, getValue('buyerGps'))) {
             const gpskey = `gpsKey${i}`
-            initObj[
-              gpskey
-            ] = `gps coordinates in fulfillments[${i}].end.location mismatch in /${constants.SELECT} & /${constants.INIT}`
+            initObj[gpskey] =
+              `gps coordinates in fulfillments[${i}].end.location mismatch in /${constants.SELECT} & /${constants.INIT}`
           }
 
           if (!_.isEqual(init.fulfillments[i].end.location.address.area_code, getValue('buyerAddr'))) {
             const addrkey = `addrKey${i}`
-            initObj[
-              addrkey
-            ] = `address.area_code in fulfillments[${i}].end.location mismatch in /${constants.SELECT} & /${constants.INIT}`
+            initObj[addrkey] =
+              `address.area_code in fulfillments[${i}].end.location mismatch in /${constants.SELECT} & /${constants.INIT}`
           }
         } else {
           initObj.ffId = `fulfillments[${i}].id is missing in /${constants.INIT}`

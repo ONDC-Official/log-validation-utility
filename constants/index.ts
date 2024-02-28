@@ -54,7 +54,13 @@ export const ApiSequence = {
   ON_STATUS_OUT_FOR_DELIVERY: 'on_status_out_for_delivery',
   ON_STATUS_DELIVERED: 'on_status_delivered',
   UPDATE: 'update',
+  UPDATE_SETTLEMENT: 'update_settlement',
   ON_UPDATE: 'on_update',
+  ON_UPDATE_INTERIM: 'on_update_interim',
+  ON_UPDATE_PICKED: 'on_update_picked',
+  ON_UPDATE_DELIVERED: 'on_update_delivered',
+  ON_UPDATE_APPROVAL: 'on_update_approval',
+  ON_UPDATE_LIQUIDATED: 'on_update_liquidated',
   SELECT_OUT_OF_STOCK: 'select_out_of_stock',
   ON_SELECT_OUT_OF_STOCK: 'on_select_out_of_stock',
 }

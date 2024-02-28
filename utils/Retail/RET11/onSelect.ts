@@ -65,7 +65,7 @@ export const checkOnSelect = (data: any) => {
 
   try {
     logger.info(`Comparing timestamp of /${constants.SELECT} and /${constants.ON_SELECT}`)
-    const tmpstmp = select.context.timestamp
+    const tmpstmp = getValue('tmpstmp')
     if (_.gte(tmpstmp, context.timestamp)) {
       errorObj.tmpstmp = `Timestamp for /${constants.SELECT} api cannot be greater than or equal to /${constants.ON_SELECT} api`
     } else {
@@ -84,6 +84,9 @@ export const checkOnSelect = (data: any) => {
   }
 
   try {
+  } catch (error: any) {}
+
+  try {
     logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
     if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
       errorObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
@@ -96,7 +99,8 @@ export const checkOnSelect = (data: any) => {
 
   try {
     logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
-    if (!_.isEqual(select.context.message_id, context.message_id)) {
+    const msgId = getValue('msgId')
+    if (!_.isEqual(msgId, context.message_id)) {
       errorObj.msgId = `Message Id for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
     }
   } catch (error: any) {

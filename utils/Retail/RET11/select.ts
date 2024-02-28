@@ -91,6 +91,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     }
 
     setValue('tmpstmp', context.timestamp)
+    setValue('msgId', context.message_id)
   } catch (error: any) {
     logger.info(
       `Error while comparing timestamp for /${constants.ON_SEARCH} and /${constants.SELECT} api, ${error.stack}`,

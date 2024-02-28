@@ -31,6 +31,7 @@ export const checkSearch = (data: any, msgIdSet: any) => {
 
     msgIdSet.add(data.context.message_id)
 
+    console.log('DOMAIN-->', data.context.domain.split(':')[1])
     const schemaValidation = validateSchema(data.context.domain.split(':')[1], constants.SEARCH, data)
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)

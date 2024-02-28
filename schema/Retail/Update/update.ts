@@ -71,7 +71,10 @@ export const updateSchema = {
     message: {
       type: 'object',
       properties: {
-        update_target: { type: 'string', enum: ['payment', 'item'] },
+        update_target: {
+          type: 'string',
+          enum: ['payment', 'item'],
+        },
         order: {
           type: 'object',
           properties: {
@@ -81,9 +84,7 @@ export const updateSchema = {
               items: {
                 type: 'object',
                 properties: {
-                  id: {
-                    type: 'string',
-                  },
+                  id: { type: 'string' },
                   type: { type: 'string' },
                   tags: {
                     type: 'array',
@@ -107,7 +108,6 @@ export const updateSchema = {
                     },
                   },
                 },
-                required: ['type'],
               },
             },
             payment: {

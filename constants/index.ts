@@ -8,6 +8,7 @@ export default Object.freeze({
   ORDER_OUT_FOR_DELIVERY: 'Out-for-delivery',
   ORDER_DELIVERED: 'Order-delivered',
   SEARCH: 'search',
+  INC_SEARCH: 'inc_search',
   ON_SEARCH: 'on_search',
   ON_SEARCHINC: 'on_search_inc',
   SELECT: 'select',

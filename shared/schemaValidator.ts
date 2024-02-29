@@ -125,6 +125,42 @@ const validate_schema_search_52110_for_json = (data: any) => {
   const error_list = validate_schema(data, searchSchema)
   return formatted_error(error_list)
 }
+const validate_schema_inc_search_RET10_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_inc_search_RET11_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_inc_search_RET12_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_inc_search_RET13_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_inc_search_RET14_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_inc_search_RET15_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_inc_search_RET16_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_inc_search_RET18_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_inc_search_RET20_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchSchema)
+  return formatted_error(error_list)
+}
 
 // On search
 
@@ -800,6 +836,15 @@ export default {
   validate_schema_search_RET17_for_json,
   validate_schema_search_RET18_for_json,
   validate_schema_search_RET20_for_json,
+  validate_schema_inc_search_RET10_for_json,
+  validate_schema_inc_search_RET11_for_json,
+  validate_schema_inc_search_RET12_for_json,
+  validate_schema_inc_search_RET13_for_json,
+  validate_schema_inc_search_RET14_for_json,
+  validate_schema_inc_search_RET15_for_json,
+  validate_schema_inc_search_RET16_for_json,
+  validate_schema_inc_search_RET18_for_json,
+  validate_schema_inc_search_RET20_for_json,
   validate_schema_on_search_RET13_for_json,
   validate_schema_on_search_RET14_for_json,
   validate_schema_on_search_RET15_for_json,

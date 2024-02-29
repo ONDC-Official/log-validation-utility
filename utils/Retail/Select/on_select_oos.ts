@@ -236,17 +236,10 @@ export const checkOnSelect_OOS = (data: any) => {
   } catch (error: any) {
     logger.error(`!!Error while checking fulfillments' state in /${constants.ON_SELECT}, ${error.stack}`)
   }
-  console.log('checking==>', error.message)
-  const breakup_msg = message.order.quote.breakup
-  const itemsWithCountZero = breakup_msg.filter(
-    (item: any) => item['@ondc/org/item_quantity'] && item['@ondc/org/item_quantity'].count === 0,
-  )
-  console.log('checking ghdgck===>', itemsWithCountZero)
 
   try {
     const breakup_msg = message.order.quote.breakup
     const msg_err = error.message
-    console.log('checking==>', msg_err)
 
     logger.info(`Item Id and error.message.item_id Mapping in /ON_SELECT_OUT_OF_STOCK`)
 
@@ -256,7 +249,6 @@ export const checkOnSelect_OOS = (data: any) => {
     const itemsWithCountZero = breakup_msg.filter(
       (item: any) => item['@ondc/org/item_quantity'] && item['@ondc/org/item_quantity'].count === 0,
     )
-    console.log('checking ghdgck===>', itemsWithCountZero)
     itemsWithCountZero.forEach((item: any) => {
       const isPresent = errorArray.some((errorItem: any) => errorItem.item_id === item['@ondc/org/item_id'])
 

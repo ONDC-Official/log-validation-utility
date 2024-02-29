@@ -300,15 +300,6 @@ export const checkOnCancel = (data: any) => {
     }
 
     try {
-      logger.info(`Comparing Quote object for /${constants.ON_SELECT} and /${constants.ON_CANCEL}`)
-      if (!_.isEqual(getValue('quoteObj'), on_cancel.quote)) {
-        onCnclObj.quoteObj = `Discrepancies between the quote object in /${constants.ON_SELECT} and /${constants.ON_CANCEL}`
-      }
-    } catch (error: any) {
-      logger.error(`!!Error while Comparing Quote object for /${constants.ON_SELECT} and /${constants.ON_CANCEL}`)
-    }
-
-    try {
       logger.info(`Checking if transaction_id is present in message.order.payment`)
       const payment = on_cancel.payment
       const status = payment_status(payment)

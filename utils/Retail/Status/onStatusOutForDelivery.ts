@@ -106,9 +106,9 @@ export const checkOnStatusOutForDelivery = (data: any, state: string) => {
       logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
     }
     try {
-      logger.info(`Comparing timestamp of /${constants.ON_STATUS}_Picked and /${constants.ON_STATUS}_${state} API`)
+      logger.info(`Comparing timestamp of /${constants.ON_STATUS}_Out_for_delivery and /${constants.ON_STATUS}_${state} API`)
       if (_.gte(getValue('tmstmp'), context.timestamp)) {
-        onStatusObj.inVldTmstmp = `Timestamp for /${constants.ON_STATUS}_Picked api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
+        onStatusObj.inVldTmstmp = `Timestamp for /${constants.ON_STATUS}_Out_for_delivery api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
       }
 
       setValue('tmpstmp', context.timestamp)
@@ -139,11 +139,11 @@ export const checkOnStatusOutForDelivery = (data: any, state: string) => {
     }
 
     try {
-      logger.info(`Checking pickup timestamp in /${constants.ON_STATUS}_${state}`)
+      logger.info(`Checking Out_for_delivery timestamp in /${constants.ON_STATUS}_${state}`)
       const noOfFulfillments = on_status.fulfillments.length
       let orderOut_for_delivery = false
       let i = 0
-      const pickupTimestamps: any = {}
+      const outforDeliveryTimestamps: any = {}
 
       while (i < noOfFulfillments) {
         const fulfillment = on_status.fulfillments[i]
@@ -157,46 +157,50 @@ export const checkOnStatusOutForDelivery = (data: any, state: string) => {
 
         if (ffState === constants.ORDER_OUT_FOR_DELIVERY) {
           orderOut_for_delivery = true
-          const pickUpTime = fulfillment.start?.time.timestamp
-          pickupTimestamps[fulfillment.id] = pickUpTime
-
-          try {
-            //checking pickup time matching with context timestamp
-            if (!_.lte(pickUpTime, contextTime)) {
-              onStatusObj.pickupTime = `pickup timestamp should match context/timestamp and can't be future dated`
-            }
-          } catch (error) {
-            logger.error(
-              `!!Error while checking pickup time matching with context timestamp in /${constants.ON_STATUS}_${state}`,
-              error,
-            )
+          const out_for_delivery_time = fulfillment.start.time.timestamp
+          outforDeliveryTimestamps[fulfillment.id] = out_for_delivery_time
+          if (!out_for_delivery_time) {
+            onStatusObj.out_for_delivery_time = `Out_for_delivery timestamp is missing`
           }
-
-          try {
-            //checking order/updated_at timestamp
-            if (!_.gte(on_status.updated_at, pickUpTime)) {
-              onStatusObj.updatedAt = `order/updated_at timestamp can't be less than the pickup time`
+          else{
+            try {
+              //checking out for delivery time matching with context timestamp
+              if (!_.lte(out_for_delivery_time, contextTime)) {
+                onStatusObj.out_for_delivery_time = `Out_for_delivery timestamp should match context/timestamp and can't be future dated`
+              }
+            } catch (error) {
+              logger.error(
+                `!!Error while checking Out_for_delivery time matching with context timestamp in /${constants.ON_STATUS}_${state}`,
+                error,
+              )
             }
 
-            if (!_.gte(contextTime, on_status.updated_at)) {
-              onStatusObj.updatedAtTime = `order/updated_at timestamp can't be future dated (should match context/timestamp)`
+            try {
+              //checking order/updated_at timestamp
+              if (!_.gte(on_status.updated_at, out_for_delivery_time)) {
+                onStatusObj.updatedAt = `order/updated_at timestamp can't be less than the Out_for_delivery time`
+              }
+
+              if (!_.gte(contextTime, on_status.updated_at)) {
+                onStatusObj.updatedAtTime = `order/updated_at timestamp can't be future dated (should match context/timestamp)`
+              }
+            } catch (error) {
+              logger.error(`!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`, error)
             }
-          } catch (error) {
-            logger.error(`!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`, error)
           }
         }
 
         i++
       }
 
-      setValue('pickupTimestamps', pickupTimestamps)
+      setValue('outforDeliveryTimestamps', outforDeliveryTimestamps)
 
       if (!orderOut_for_delivery) {
         onStatusObj.noOrdrOut_for_delivery = `fulfillments/state Should be ${constants.ORDER_OUT_FOR_DELIVERY} for /${constants.ON_STATUS}_${constants.ORDER_OUT_FOR_DELIVERY}`
       }
     } catch (error: any) {
       logger.info(
-        `Error while checking pickup timestamp in /${constants.ON_STATUS}_${state}.json Error: ${error.stack}`,
+        `Error while checking out for delivery timestamp in /${constants.ON_STATUS}_${state}.json Error: ${error.stack}`,
       )
     }
 

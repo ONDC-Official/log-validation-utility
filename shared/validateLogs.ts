@@ -1166,19 +1166,20 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
           }
         }
 
-        if (data[ApiSequence.ON_SELECT]) {
-          const on_selectResp = checkOnSelect(data[ApiSequence.ON_SELECT])
-
-          if (!_.isEmpty(on_selectResp)) {
-            logReport = { ...logReport, [ApiSequence.ON_SELECT]: on_selectResp }
-          }
-        }
-
+        
         if (data[ApiSequence.SELECT_OUT_OF_STOCK]) {
           const on_selectResp = checkSelect_OOS(data[ApiSequence.SELECT_OUT_OF_STOCK], msgIdSet)
 
           if (!_.isEmpty(on_selectResp)) {
             logReport = { ...logReport, [ApiSequence.SELECT_OUT_OF_STOCK]: on_selectResp }
+          }
+        }
+
+        if (data[ApiSequence.ON_SELECT]) {
+          const on_selectResp = checkOnSelect(data[ApiSequence.ON_SELECT])
+
+          if (!_.isEmpty(on_selectResp)) {
+            logReport = { ...logReport, [ApiSequence.ON_SELECT]: on_selectResp }
           }
         }
 

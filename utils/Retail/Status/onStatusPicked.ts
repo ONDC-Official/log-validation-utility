@@ -159,30 +159,32 @@ export const checkOnStatusPicked = (data: any, state: string) => {
           orderPicked = true
           const pickUpTime = fulfillment.start?.time.timestamp
           pickupTimestamps[fulfillment.id] = pickUpTime
-
-          try {
-            //checking pickup time matching with context timestamp
-            if (!_.lte(pickUpTime, contextTime)) {
-              onStatusObj.pickupTime = `pickup timestamp should match context/timestamp and can't be future dated`
+          if (!pickUpTime) {
+            onStatusObj.pickUpTime = `packed timestamp is missing`
             }
-          } catch (error) {
-            logger.error(
-              `!!Error while checking pickup time matching with context timestamp in /${constants.ON_STATUS}_${state}`,
-              error,
-            )
-          }
-
-          try {
-            //checking order/updated_at timestamp
-            if (!_.gte(on_status.updated_at, pickUpTime)) {
-              onStatusObj.updatedAt = `order/updated_at timestamp can't be less than the pickup time`
+            try {
+              //checking pickup time matching with context timestamp
+              if (!_.lte(pickUpTime, contextTime)) {
+                onStatusObj.pickupTime = `pickup timestamp should match context/timestamp and can't be future dated`
+              }
+            } catch (error) {
+              logger.error(
+                `!!Error while checking pickup time matching with context timestamp in /${constants.ON_STATUS}_${state}`,
+                error,
+              )
             }
 
-            if (!_.gte(contextTime, on_status.updated_at)) {
-              onStatusObj.updatedAtTime = `order/updated_at timestamp can't be future dated (should match context/timestamp)`
-            }
-          } catch (error) {
-            logger.error(`!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`, error)
+            try {
+              //checking order/updated_at timestamp
+              if (!_.gte(on_status.updated_at, pickUpTime)) {
+                onStatusObj.updatedAt = `order/updated_at timestamp can't be less than the pickup time`
+              }
+
+              if (!_.gte(contextTime, on_status.updated_at)) {
+                onStatusObj.updatedAtTime = `order/updated_at timestamp can't be future dated (should match context/timestamp)`
+              }
+            } catch (error) {
+              logger.error(`!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`, error)
           }
         }
 

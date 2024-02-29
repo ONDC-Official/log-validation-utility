@@ -71,7 +71,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     try {
       logger.info(`Comparing timestamp of ${constants.INIT} & ${constants.ON_INIT}`)
       const tmpstmp = getValue('tmpstmp')
-      if (_.gte(tmpstmp, context.timestamp)) {
+      if (_.gt(tmpstmp, context.timestamp)) {
         onInitObj.tmpstmp = `Timestamp for ${constants.INIT} api cannot be greater than or equal to ${constants.ON_INIT} api`
       } else {
         const timeDiff = timeDifference(context.timestamp, tmpstmp)

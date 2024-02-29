@@ -170,8 +170,6 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       if (validFlows.includes(flow)) {
         apiSequence.forEach((apiSeq: any) => {
           if (data[apiSeq]) {
-            console.log('SEQ--->', apiSeq)
-            console.log('DATA--->', data[apiSeq])
             const resp = getResponse(apiSeq, data[apiSeq], msgIdSet)
             if (!_.isEmpty(resp)) {
               logReport = { ...logReport, [apiSeq]: resp }

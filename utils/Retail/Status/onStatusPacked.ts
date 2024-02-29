@@ -162,6 +162,7 @@ export const checkOnStatusPacked = (data: any, state: string) => {
           if (!packedTime) {
             onStatusObj.packedTime = `packed timestamp is missing`
             }
+          else{
           try {
             //checking packed time matching with context timestamp
             if (!_.lte(packedTime, contextTime)) {
@@ -186,6 +187,7 @@ export const checkOnStatusPacked = (data: any, state: string) => {
           } catch (error) {
             logger.error(`!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`, error)
           }
+        }
         }
 
         i++

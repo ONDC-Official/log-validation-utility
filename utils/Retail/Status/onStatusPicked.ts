@@ -96,11 +96,10 @@ export const checkOnStatusPicked = (data: any, state: string) => {
         error,
       )
     }
-
     try {
-      logger.info(`Comparing timestamp of /${constants.ON_STATUS}_Packed and /${constants.ON_STATUS}_${state} API`)
+      logger.info(`Comparing timestamp of /${constants.ON_STATUS}_picked and /${constants.ON_STATUS}_${state} API`)
       if (_.gte(getValue('tmpstmp'), context.timestamp)) {
-        onStatusObj.inVldTmstmp = `Timestamp for /${constants.ON_STATUS}_Packed api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
+        onStatusObj.inVldTmstmp = `Timestamp for /${constants.ON_STATUS}_picked api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
       }
 
       setValue('tmpstmp', context.timestamp)
@@ -160,8 +159,9 @@ export const checkOnStatusPicked = (data: any, state: string) => {
           const pickUpTime = fulfillment.start?.time.timestamp
           pickupTimestamps[fulfillment.id] = pickUpTime
           if (!pickUpTime) {
-            onStatusObj.pickUpTime = `packed timestamp is missing`
+            onStatusObj.pickUpTime = `picked timestamp is missing`
             }
+          else{
             try {
               //checking pickup time matching with context timestamp
               if (!_.lte(pickUpTime, contextTime)) {
@@ -185,6 +185,7 @@ export const checkOnStatusPicked = (data: any, state: string) => {
               }
             } catch (error) {
               logger.error(`!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`, error)
+          }
           }
         }
 

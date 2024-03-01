@@ -289,8 +289,8 @@ export const checkOnCancel = (data: any) => {
       if (!on_cancel.hasOwnProperty('created_at') || !on_cancel.hasOwnProperty('updated_at')) {
         onCnclObj.ordertmpstmp = `order created and updated timestamps are mandatory in /${constants.ON_CANCEL}`
       } else {
-        if (!_.isEqual(on_cancel.created_at, on_cancel.updated_at)) {
-          onCnclObj.ordrupdtd = `order.updated_at timestamp should match order.created_at timestamp`
+        if (_.isEqual(on_cancel.created_at, on_cancel.updated_at)) {
+          onCnclObj.ordrupdtd = `order.updated_at timestamp should not match order.created_at timestamp`
         }
       }
     } catch (error: any) {

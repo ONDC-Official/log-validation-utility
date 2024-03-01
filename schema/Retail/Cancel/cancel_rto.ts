@@ -215,7 +215,7 @@ properties: {
                        required: ["phone", "email"]
                      }
                    },
-                   required: ["id", "type", "tracking", "state", "start", "end", "person", "contact"]
+                   required: ["id", "type", "tracking", "state", "start", "contact"]
                 }
                }
              }

@@ -25,6 +25,8 @@ const tagFinder = (item: { tags: any[] }, value: string): any => {
 }
 
 export const checkSelect_OOS = (data: any, msgIdSet: any) => {
+  const flow = getValue('flow')
+  if (flow === '3') {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.SELECT_OUT_OF_STOCK]: 'JSON cannot be empty' }
   }
@@ -148,6 +150,8 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
       provider = provider[0]
 
       setValue('providerId', provider.id)
+      console.log("xgjash", provider.id);
+      
       setValue('providerLoc', provider.locations[0].id)
       setValue('providerGps', provider.locations[0].gps)
       setValue('providerName', provider.descriptor.name)
@@ -318,5 +322,7 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
     logger.error(`!!Error occcurred while checking providers info in /${constants.SELECT},  ${error.message}`)
   }
 
+
   return Object.keys(errorObj).length > 0 && errorObj
+}
 }

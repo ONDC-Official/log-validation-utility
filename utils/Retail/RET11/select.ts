@@ -240,7 +240,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
             }
 
             if (!itemMapper[item.id]) {
-              // If the item is not in the map, add it
+              // If the item is not in the map, add it                                                                                                                                                                                             
               itemMapper[item.id] = item.parent_item_id
             } else {
               if (itemMapper[item.id] === item.parent_item_id) {

@@ -197,7 +197,7 @@ export const checkOnCancel = (data: any) => {
         const itemId = on_cancel.items[i].id
 
         if (itemId in itemFlfllmnts) {
-          if (on_cancel.items[i].fulfillment_id != itemFlfllmnts[itemId]) {
+          if ((on_cancel.items[i].fulfillment_id != itemFlfllmnts[itemId]) && flow !== '5') {
             const itemkey = `item_FFErr${i}`
             onCnclObj[itemkey] =
               `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_CANCEL}`
@@ -208,9 +208,9 @@ export const checkOnCancel = (data: any) => {
         }
 
         if (itemId in itemsIdList) {
-          if (on_cancel.items[i].quantity.count != itemsIdList[itemId]) {
+          if (on_cancel.items[i].quantity.count != itemsIdList[itemId] && flow !== '5') {
             itemsIdList[itemId] = on_cancel.items[i].quantity.count
-            onCnclObj.cntErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
+            onCnclObj.countErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
           }
         }
 
@@ -226,7 +226,7 @@ export const checkOnCancel = (data: any) => {
       logger.info(`Comparing billing object in /${constants.INIT} and /${constants.ON_CANCEL}`)
       const billing = getValue('billing')
 
-      const billingErrors = compareObjects(billing, onCnclObj.billing)
+      const billingErrors = compareObjects(billing, on_cancel.billing)
 
       if (billingErrors) {
         let i = 0
@@ -248,7 +248,7 @@ export const checkOnCancel = (data: any) => {
       const itemFlfllmnts: any = getValue('itemFlfllmnts')
       let i = 0
       const len = on_cancel.fulfillments.length
-      while (i < len) {
+      while (i < len && flow !== '5' && on_cancel.fulfillments[i].type !== 'Cancel') {
         //Comparing fulfillment Ids
         if (on_cancel.fulfillments[i].id) {
           const id = on_cancel.fulfillments[i].id
@@ -261,7 +261,7 @@ export const checkOnCancel = (data: any) => {
           onCnclObj.ffId = `fulfillments[${i}].id is missing in /${constants.CONFIRM}`
         }
 
-        if (!on_cancel.fulfillments[i].end || !on_cancel.fulfillments[i].end.person) {
+        if ((!on_cancel.fulfillments[i].end || !on_cancel.fulfillments[i].end.person)) {
           onCnclObj.ffprsn = `fulfillments[${i}].end.person object is missing`
         }
 
@@ -289,8 +289,8 @@ export const checkOnCancel = (data: any) => {
       if (!on_cancel.hasOwnProperty('created_at') || !on_cancel.hasOwnProperty('updated_at')) {
         onCnclObj.ordertmpstmp = `order created and updated timestamps are mandatory in /${constants.ON_CANCEL}`
       } else {
-        if (_.isEqual(on_cancel.created_at, on_cancel.updated_at)) {
-          onCnclObj.ordrupdtd = `order.updated_at timestamp should not match order.created_at timestamp`
+        if (!_.gt(on_cancel.updated_at, on_cancel.created_at )) {
+          onCnclObj.ordrupdtd = `order.updated_at timestamp should be greater than order.created_at timestamp`
         }
       }
     } catch (error: any) {
@@ -302,15 +302,6 @@ export const checkOnCancel = (data: any) => {
       setValue('cnfrmpymnt', on_cancel.payment)
     } catch (error: any) {
       logger.error(`!!Error while storing payment object in /${constants.ON_CANCEL}, ${error.stack}`)
-    }
-
-    try {
-      logger.info(`Comparing Quote object for /${constants.ON_SELECT} and /${constants.ON_CANCEL}`)
-      if (!_.isEqual(getValue('quoteObj'), on_cancel.quote)) {
-        onCnclObj.quoteObj = `Discrepancies between the quote object in /${constants.ON_SELECT} and /${constants.ON_CANCEL}`
-      }
-    } catch (error: any) {
-      logger.error(`!!Error while Comparing Quote object for /${constants.ON_SELECT} and /${constants.ON_CANCEL}`)
     }
 
     try {
@@ -351,12 +342,12 @@ export const checkOnCancel = (data: any) => {
             logger.error(`IGM Request is mandatory for ${constants.ON_CANCEL}`)
           }
         }
-        if (!reasonID_flag ) {
+        if (!reasonID_flag) {
           logger.error(`Reason ID is mandatory field for ${constants.ON_CANCEL}`)
           let key = `missingReasonID`
           onCnclObj[key] = `Reason ID is mandatory field for ${constants.ON_CANCEL}`
         }
-        if (!rto_id_flag ) {
+        if (!rto_id_flag) {
           logger.error(`RTO Id is mandatory field for ${constants.ON_CANCEL}`)
           let key = `missingRTOvalues`
           onCnclObj[key] = `RTO Id is mandatory field for ${constants.ON_CANCEL}`

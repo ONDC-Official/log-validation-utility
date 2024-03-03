@@ -27,8 +27,8 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
         "on_init": {},
         "confirm": {},
         "on_confirm": {},
-        "on_status_pending": {},
-        "on_status_packed":{},
+        "update(initiated)": {},
+        "on_update(interim)":{},
         "on_status_picked": {},
         "on_status_out_for_delivery": {},
         "on_status_delivered": {}

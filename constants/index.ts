@@ -22,6 +22,7 @@ export default Object.freeze({
   ON_STATUS: 'on_status',
   CANCEL: 'cancel',
   ON_CANCEL: 'on_cancel',
+  ON_CANCEL_RTO: 'on_cancel_rto',
   TRACK: 'track',
   ON_TRACK: 'on_track',
   SUPPORT: 'support',

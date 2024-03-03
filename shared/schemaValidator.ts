@@ -13,6 +13,7 @@ import { FnBconfirmSchema } from '../schema/Retail/RET11/confirm'
 import { FnBonConfirmSchema } from '../schema/Retail/RET11/on_confirm'
 import { cancelSchema } from '../schema/Retail/Cancel/cancel'
 import { onCancelSchema } from '../schema/Retail/Cancel/onCancel'
+import { cancel_RTO_Schema } from '../schema/Retail/Cancel/cancel_rto'
 import { statusSchema } from '../schema/Retail/Status/status'
 import { onStatusSchema } from '../schema/Retail/Status/on_status'
 import { onTrackSchema } from '../schema/Retail/Track/on_track'
@@ -556,6 +557,51 @@ const validate_schema_on_cancel_RET10_for_json = (data: any) => {
   const error_list = validate_schema(data, onCancelSchema)
   return formatted_error(error_list)
 }
+const validate_schema_on_cancel_RTO__RET10_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancel_RTO_Schema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_cancel_RTO__RET11_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancel_RTO_Schema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_RTO__RET12_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancel_RTO_Schema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_RTO__RET13_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancel_RTO_Schema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_RTO__RET14_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancel_RTO_Schema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_RTO__RET15_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancel_RTO_Schema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_RTO__RET16_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancel_RTO_Schema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_RTO__RET17_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancel_RTO_Schema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_RTO__RET18_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancel_RTO_Schema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_RTO__RET19_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancel_RTO_Schema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_RTO__RET20_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancel_RTO_Schema)
+  return formatted_error(error_list)
+}
 
 const validate_schema_track_RET10_for_json = (data: any) => {
   const error_list = validate_schema(data, trackSchema)
@@ -870,6 +916,18 @@ export default {
   validate_schema_status_RET10_for_json,
   validate_schema_cancel_RET10_for_json,
   validate_schema_on_cancel_RET10_for_json,
+  validate_schema_on_cancel_RTO__RET10_for_json,
+  validate_schema_on_cancel_RTO__RET11_for_json,
+  validate_schema_on_cancel_RTO__RET12_for_json,
+  validate_schema_on_cancel_RTO__RET13_for_json,
+  validate_schema_on_cancel_RTO__RET14_for_json,
+  validate_schema_on_cancel_RTO__RET15_for_json,
+  validate_schema_on_cancel_RTO__RET16_for_json,
+  validate_schema_on_cancel_RTO__RET17_for_json,
+  validate_schema_on_cancel_RTO__RET18_for_json,
+  validate_schema_on_cancel_RTO__RET19_for_json,
+  validate_schema_on_cancel_RTO__RET20_for_json,
+  
   validate_schema_on_update_RET10_for_json,
   validate_schema_update_RET10_for_json,
   validate_schema_on_update_RET11_for_json,

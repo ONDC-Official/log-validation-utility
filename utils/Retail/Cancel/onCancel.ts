@@ -27,7 +27,12 @@ export const checkOnCancel = (data: any) => {
     }
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const flow = getValue('flow')
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_CANCEL, data)
+    let schemaValidation:any
+    if(flow === '5'){
+      schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_CANCEL_RTO, data)
+    }else {
+      schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_CANCEL, data)
+    }
     const select: any = getValue(`${ApiSequence.SELECT}`)
     const contextRes: any = checkContext(context, constants.ON_CANCEL)
     const checkBap = checkBppIdOrBapId(context.bap_id)
@@ -284,8 +289,8 @@ export const checkOnCancel = (data: any) => {
       if (!on_cancel.hasOwnProperty('created_at') || !on_cancel.hasOwnProperty('updated_at')) {
         onCnclObj.ordertmpstmp = `order created and updated timestamps are mandatory in /${constants.ON_CANCEL}`
       } else {
-        if (!_.isEqual(on_cancel.created_at, on_cancel.updated_at)) {
-          onCnclObj.ordrupdtd = `order.updated_at timestamp should match order.created_at timestamp`
+        if (_.isEqual(on_cancel.created_at, on_cancel.updated_at)) {
+          onCnclObj.ordrupdtd = `order.updated_at timestamp should not match order.created_at timestamp`
         }
       }
     } catch (error: any) {

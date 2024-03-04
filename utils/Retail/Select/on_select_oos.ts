@@ -271,19 +271,13 @@ export const checkOnSelect_OOS = (data: any) => {
 
   try {
     logger.info(`Comparing count of items in ${constants.SELECT} and ${constants.ON_SELECT}`)
-    const itemsIdList: any = getValue('itemsIdList') || {}
-    logger.info('itemsIdList', itemsIdList)
+    const itemsIdList: any = getValue('itemsIdList')
     ON_SELECT_OUT_OF_STOCK.quote.breakup.forEach((item: { [x: string]: any }) => {
       if (item['@ondc/org/item_id'] in itemsIdList && item['@ondc/org/title_type'] === 'item') {
-        if (
-          itemsIdList[item['@ondc/org/item_id']] != item['@ondc/org/item_quantity'].count &&
-          (!ON_SELECT_OUT_OF_STOCK_error ||
-            ON_SELECT_OUT_OF_STOCK_error.type != 'DOMAIN-ERROR' ||
-            ON_SELECT_OUT_OF_STOCK_error.code != '40002')
-        ) {
-          const cntkey = `cnt${item['@ondc/org/item_id']}`
-          errorObj[cntkey] =
-            `Count of item with id: ${item['@ondc/org/item_id']} does not match in ${constants.SELECT} & ${constants.ON_SELECT} (suitable domain error should be provided)`
+        if (itemsIdList[item['@ondc/org/item_id']] != item['@ondc/org/item_quantity'].count) {
+          const countkey = `invldCount[${item['@ondc/org/item_id']}]`
+          errorObj[countkey] =
+            `Count of item with id: ${item['@ondc/org/item_id']} does not match in ${constants.SELECT} & ${constants.ON_SELECT}`
         }
       }
     })
@@ -409,7 +403,6 @@ export const checkOnSelect_OOS = (data: any) => {
     logger.info(
       `Matching price breakup of items ${onSelectItemsPrice} (/${constants.ON_SELECT}) with selected items price ${selectedPrice} (${constants.SELECT})`,
     )
-    console.log('checking val==>', onSelectItemsPrice)
 
     if (typeof selectedPrice === 'number' && onSelectItemsPrice !== selectedPrice) {
       errorObj.priceErr = `Warning: Quoted Price in /${constants.ON_SELECT} INR ${onSelectItemsPrice} does not match with the total price of items in /${constants.SELECT} INR ${selectedPrice}`

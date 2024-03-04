@@ -122,6 +122,9 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     let provider = onSearch?.message?.catalog['bpp/providers'].filter(
       (provider: { id: any }) => provider.id === select.provider.id,
     )
+    if (provider.length === 0) {
+      errorObj.providerId = `provider with provider.id: ${select.provider.id} does not exist in on_search`
+    }
     if (provider[0].time.label === 'disable') {
       errorObj.disbledProvider = `provider with provider.id: ${provider[0].id} was disabled in on_search `
     }
@@ -164,7 +167,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
           }
         })
       } catch (error: any) {
-        logger.error(`Error while checking for item IDs for /${constants.ON_CANCEL}`, error.stack)
+        logger.error(`Error while checking for item IDs for /${constants.SELECT}`, error.stack)
       }
 
       logger.info(
@@ -187,8 +190,8 @@ export const checkSelect = (data: any, msgIdSet: any) => {
             },
             index: number,
           ) => {
-            const itemOnSearch = provider.items.find((it: { id: any }) => it.id === item.id)
-
+            const onSearchItems: any = getValue('onSearchItems')
+            const itemOnSearch = onSearchItems.find((it: any) => it.id === item.id)
             const baseItem = findItemByItemType(item)
             if (baseItem) {
               const searchBaseItem = provider.items.find((it: { id: any }) => it.id === baseItem.id)
@@ -235,14 +238,10 @@ export const checkSelect = (data: any, msgIdSet: any) => {
 
             if (!itemIdSet.has(item.id)) itemIdSet.add(item.id)
 
-            const onSearchItems: any = getValue('onSearchItems')
-            select.items.forEach((item: any, index: number) => {
-              onSearchItems.forEach((it: any) => {
-                if (it.id === item.id && it.location_id !== item.location_id) {
-                  errorObj[`location_id[${index}]`] =
-                    `location_id should be same for the item ${item.id}] as in on_search`
-                }
-              })
+            onSearchItems.forEach((it: any) => {
+              if (it.id === item.id && it.location_id !== item.location_id) {
+                errorObj[`location_id[${index}]`] = `location_id should be same for the item ${item.id} as in on_search`
+              }
             })
 
             if (itemOnSearch) {

@@ -276,18 +276,14 @@ export const checkOnSelect = (data: any) => {
 
   try {
     logger.info(`Comparing count of items in ${constants.SELECT} and ${constants.ON_SELECT}`)
-    const itemsIdList: any = getValue('itemsIdList') || {}
-    logger.info('itemsIdList', itemsIdList)
+    const itemsIdList: any = getValue('itemsIdList')
     if (on_select.quote) {
       on_select.quote.breakup.forEach((item: { [x: string]: any }) => {
         if (item['@ondc/org/item_id'] in itemsIdList && item['@ondc/org/title_type'] === 'item') {
-          if (
-            itemsIdList[item['@ondc/org/item_id']] != item['@ondc/org/item_quantity'].count &&
-            (!on_select_error || on_select_error.type != 'DOMAIN-ERROR' || on_select_error.code != '40002')
-          ) {
-            const cntkey = `cnt${item['@ondc/org/item_id']}`
-            errorObj[cntkey] =
-              `Count of item with id: ${item['@ondc/org/item_id']} does not match in ${constants.SELECT} & ${constants.ON_SELECT} (suitable domain error should be provided)`
+          if (itemsIdList[item['@ondc/org/item_id']] != item['@ondc/org/item_quantity'].count) {
+            const countkey = `invldCount[${item['@ondc/org/item_id']}]`
+            errorObj[countkey] =
+              `Count of item with id: ${item['@ondc/org/item_id']} does not match in ${constants.SELECT} & ${constants.ON_SELECT}`
           }
         }
       })

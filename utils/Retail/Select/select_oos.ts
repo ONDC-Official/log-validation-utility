@@ -126,6 +126,9 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
       let provider = onSearch?.message?.catalog['bpp/providers'].filter(
         (provider: { id: any }) => provider.id === select_oos.provider.id,
       )
+      if (provider.length === 0) {
+        errorObj.providerId = `provider with provider.id: ${select_oos.provider.id} does not exist in on_search`
+      }
       if (provider[0].time.label === 'disable') {
         errorObj.disbledProvider = `provider with provider.id: ${provider[0].id} was disabled in on_search `
       }
@@ -157,6 +160,20 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
           )
         }
 
+        try {
+          // Checking for valid item ids in /on_select
+          const itemsOnSearch = getValue('ItemList')
+          const itemsList = message.order.items
+          itemsList.forEach((item: any, index: number) => {
+            if (!itemsOnSearch?.includes(item.id)) {
+              const key = `inVldItemId[${index}]`
+              errorObj[key] = `Invalid Item Id provided in /${constants.SELECT}: ${item.id}`
+            }
+          })
+        } catch (error: any) {
+          logger.error(`Error while checking for item IDs for /${constants.SELECT}`, error.stack)
+        }
+
         logger.info(
           `Mapping Item Ids with their counts, categories and prices /${constants.ON_SEARCH} and /${constants.SELECT}`,
         )
@@ -177,6 +194,7 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
               },
               index: number,
             ) => {
+              const onSearchItems: any = getValue('onSearchItems')
               const itemOnSearch = provider.items.find((it: { id: any }) => it.id === item.id)
 
               const baseItem = findItemByItemType(item)
@@ -229,6 +247,13 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
                 const key = `item${index}location_id`
                 errorObj[key] = `Inconsistent location_id for parent_item_id ${item.parent_item_id}`
               }
+
+              onSearchItems.forEach((it: any) => {
+                if (it.id === item.id && it.location_id !== item.location_id) {
+                  errorObj[`location_id[${index}]`] =
+                    `location_id should be same for the item ${item.id} as in on_search`
+                }
+              })
 
               if (itemOnSearch) {
                 logger.info(`ITEM ID: ${item.id}, Price: ${itemOnSearch.price.value}, Count: ${item.quantity.count}`)

@@ -676,6 +676,230 @@ curl --location 'https://localhost:3006/api/validate/trv/trv10' \
 }'
 ```
 
+### FOR FLOW 1
+
+```shell
+curl --location 'https://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET18",
+    "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search":{},
+        "search_inc": {},
+        "on_search_inc": {}
+    },
+    "flow": "1"
+}'
+```
+### FOR FLOW 2
+
+```shell
+curl --location 'https://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET18",
+    "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search":{},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {}
+    },
+    "flow": "2"
+}'
+```
+
+### FOR FLOW 3
+
+```shell
+curl --location 'https://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET18",
+    "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search":{},
+        "select": {},
+        "on_select_out_of_stock": {},
+        "select_out_of_stock": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {}
+    },
+    "flow": "3"
+}'
+```
+
+### FOR FLOW 4
+
+```shell
+curl --location 'https://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET18",
+    "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search":{},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "cancel": {},
+        "on_cancel": {}
+    },
+    "flow": "4"
+}'
+```
+
+### FOR FLOW 5
+
+```shell
+curl --location 'https://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET18",
+    "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search":{},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_cancel": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {}
+    },
+    "flow": "5"
+}'
+```
+
+### FOR FLOW 6-a (Part cancel)
+
+```shell
+curl --location 'https://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "",
+    "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search":{},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_update": {},
+        "update": {}
+    },
+    "flow": "6-a"
+}'
+```
+
+### FOR FLOW 6-b (reverseQC)
+
+```shell
+curl --location 'https://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "",
+    "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search":{},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "update": {},
+        "on_update_interim": {},
+        "on_update_approval": {},
+        "on_update_picked": {},
+        "update_settlement": {},
+        "on_update_delivered": {}
+    },
+    "flow": "6-b"
+}'
+```
+
+### FOR FLOW 6-c (Liquidation)
+
+```shell
+curl --location 'https://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "",
+    "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search":{},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {},
+        "update": {},
+        "on_update_interim": {},
+        "on_update_liquidated": {},
+        "update_settlement": {},
+    },
+    "flow": "6-c"
+}'
+```
+
+
 Using Postman, you can import the above `curl` command into Postman and replace the empty objects in the payload with your actual data. This allows for easy testing and validation of transaction logs on your local environment.
 
 With these instructions, you can start using the Retail Logs Validation Utility for local log validation.

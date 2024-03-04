@@ -329,16 +329,32 @@ export const checkOnSelect = (data: any) => {
           }
 
           logger.info(`checking available and maximum count in ${constants.ON_SELECT}`)
-
-          if (element.item.hasOwnProperty('quantity')) {
-            if (
-              _.gt(parseFloat(element.item.quantity.available.count), parseFloat(element.item.quantity.maximum.count))
-            ) {
-              const key = `qntcnt${i}`
-              errorObj[key] =
-                `available count can't be greater than maximum count for item id: ${element['@ondc/org/item_id']}`
-            }
+        if (element.item.quantity && element.item.quantity.available && typeof element.item.quantity.available.count === 'string') {
+          const availCount = parseInt(element.item.quantity.available.count, 10)
+          if (availCount !== 99 && availCount !== 0) {
+            const key = `qntcnt${i}`
+            errorObj[key] =
+              `item.quantity.available.count should be either 99 (inventory available) or 0 (out-of-stock)]`
           }
+        }
+
+        if (element.item.quantity && element.item.quantity.maximum && typeof element.item.quantity.maximum.count === 'string' 
+        && element.item.quantity.available && typeof element.item.quantity.available.count === 'string') {
+          const maxCount = parseInt(element.item.quantity.maximum.count, 10)
+          const availCount = parseInt(element.item.quantity.available.count, 10)
+          if (availCount == 99 && maxCount <= 0) {
+            const key = `qntcnt${i}`
+            errorObj[key] =`item.quantity.maximum.count cant be 0 if item is in stock `          }
+        }
+        if (element.item.quantity && element.item.quantity.maximum && element.item.quantity.available) {
+          const maxCount = parseInt(element.item.quantity.maximum.count, 10)
+          const availCount = parseInt(element.item.quantity.available.count, 10)
+          if (availCount == 0 && maxCount > 0) {
+            const key = `qntcnt${i}`
+            errorObj[key] =
+              `item.quantity.maximum.count be greater than 0 if item.quantity.available.count is 0 `
+          }
+        }
         }
 
         logger.info(`Calculating Items' prices in /${constants.ON_SELECT}`)

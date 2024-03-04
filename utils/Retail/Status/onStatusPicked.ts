@@ -19,8 +19,7 @@ export const checkOnStatusPicked = (data: any, state: string) => {
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const schemaValidation = validateSchema('RET11', constants.ON_STATUS, data)
-    const select: any = getValue(`${ApiSequence.SELECT}`)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_STATUS, data)
     const contextRes: any = checkContext(context, constants.ON_STATUS)
 
     if (schemaValidation !== 'error') {
@@ -74,7 +73,7 @@ export const checkOnStatusPicked = (data: any, state: string) => {
 
     try {
       logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_STATUS}`)
-      if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
+      if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
         onStatusObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
       }
     } catch (error: any) {
@@ -160,8 +159,7 @@ export const checkOnStatusPicked = (data: any, state: string) => {
           pickupTimestamps[fulfillment.id] = pickUpTime
           if (!pickUpTime) {
             onStatusObj.pickUpTime = `picked timestamp is missing`
-            }
-          else{
+          } else {
             try {
               //checking pickup time matching with context timestamp
               if (!_.lte(pickUpTime, contextTime)) {
@@ -184,8 +182,11 @@ export const checkOnStatusPicked = (data: any, state: string) => {
                 onStatusObj.updatedAtTime = `order/updated_at timestamp can't be future dated (should match context/timestamp)`
               }
             } catch (error) {
-              logger.error(`!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`, error)
-          }
+              logger.error(
+                `!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`,
+                error,
+              )
+            }
           }
         }
 

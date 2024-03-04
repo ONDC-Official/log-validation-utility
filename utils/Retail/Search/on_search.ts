@@ -454,7 +454,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
             onSearchCatalog['bpp/providers'][i]['items'][j]['@ondc/org/statutory_reqs_prepackaged_food']
 
           if (context.domain === 'ONDC:RET18') {
-            if (statutory_reqs_prepackaged_food && !statutory_reqs_prepackaged_food.ingredients_info) {
+            if (!statutory_reqs_prepackaged_food.ingredients_info) {
               const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
               errorObj[key] =
                 `In ONDC:RET18 for @ondc/org/statutory_reqs_prepackaged_food  ingredients_info is a valid field `

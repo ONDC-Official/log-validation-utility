@@ -19,8 +19,7 @@ export const checkOnStatusOutForDelivery = (data: any, state: string) => {
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const schemaValidation = validateSchema('RET11', constants.ON_STATUS, data)
-    const select: any = getValue(`${ApiSequence.SELECT}`)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_STATUS, data)
     const contextRes: any = checkContext(context, constants.ON_STATUS)
 
     if (schemaValidation !== 'error') {
@@ -74,7 +73,7 @@ export const checkOnStatusOutForDelivery = (data: any, state: string) => {
 
     try {
       logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_STATUS}`)
-      if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
+      if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
         onStatusObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
       }
     } catch (error: any) {
@@ -106,7 +105,9 @@ export const checkOnStatusOutForDelivery = (data: any, state: string) => {
       logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
     }
     try {
-      logger.info(`Comparing timestamp of /${constants.ON_STATUS}_Out_for_delivery and /${constants.ON_STATUS}_${state} API`)
+      logger.info(
+        `Comparing timestamp of /${constants.ON_STATUS}_Out_for_delivery and /${constants.ON_STATUS}_${state} API`,
+      )
       if (_.gte(getValue('tmstmp'), context.timestamp)) {
         onStatusObj.inVldTmstmp = `Timestamp for /${constants.ON_STATUS}_Out_for_delivery api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
       }
@@ -161,8 +162,7 @@ export const checkOnStatusOutForDelivery = (data: any, state: string) => {
           outforDeliveryTimestamps[fulfillment.id] = out_for_delivery_time
           if (!out_for_delivery_time) {
             onStatusObj.out_for_delivery_time = `Out_for_delivery timestamp is missing`
-          }
-          else{
+          } else {
             try {
               //checking out for delivery time matching with context timestamp
               if (!_.lte(out_for_delivery_time, contextTime)) {
@@ -185,7 +185,10 @@ export const checkOnStatusOutForDelivery = (data: any, state: string) => {
                 onStatusObj.updatedAtTime = `order/updated_at timestamp can't be future dated (should match context/timestamp)`
               }
             } catch (error) {
-              logger.error(`!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`, error)
+              logger.error(
+                `!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`,
+                error,
+              )
             }
           }
         }

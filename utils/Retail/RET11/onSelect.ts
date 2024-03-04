@@ -51,7 +51,6 @@ export const checkOnSelect = (data: any) => {
   }
 
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-  const select: any = getValue(`${ApiSequence.SELECT}`)
   const searchMessage: any = getValue(`${ApiSequence.ON_SEARCH}_message`)
 
   try {
@@ -88,7 +87,8 @@ export const checkOnSelect = (data: any) => {
 
   try {
     logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
-    if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
+    const txnId = getValue('txnId')
+    if (!_.isEqual(txnId, context.transaction_id)) {
       errorObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
     }
   } catch (error: any) {

@@ -12,7 +12,6 @@ export const checkOnStatusPending = (data: any, state: string) => {
     if (!data || isObjectEmpty(data)) {
       return { [ApiSequence.ON_STATUS_PENDING]: 'JSON cannot be empty' }
     }
-    
 
     const { message, context }: any = data
     if (!message || !context || isObjectEmpty(message)) {
@@ -20,8 +19,7 @@ export const checkOnStatusPending = (data: any, state: string) => {
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const schemaValidation = validateSchema('RET11', constants.ON_STATUS, data)
-    const select: any = getValue(`${ApiSequence.SELECT}`)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_STATUS, data)
     const contextRes: any = checkContext(context, constants.ON_STATUS)
 
     if (schemaValidation !== 'error') {
@@ -56,7 +54,7 @@ export const checkOnStatusPending = (data: any, state: string) => {
 
     try {
       logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_STATUS}`)
-      if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
+      if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
         onStatusObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
       }
     } catch (error: any) {
@@ -118,8 +116,8 @@ export const checkOnStatusPending = (data: any, state: string) => {
     try {
       logger.info(`Checking if transaction_id is present in message.order.payment`)
       const payment = on_status.payment
-      const status = payment_status(payment);
-      if(!status){
+      const status = payment_status(payment)
+      if (!status) {
         onStatusObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
       }
     } catch (err: any) {

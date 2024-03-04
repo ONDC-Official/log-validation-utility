@@ -191,7 +191,7 @@ export const onUpdateSchema = {
                             required: ['locality', 'city', 'area_code', 'state'],
                           },
                         },
-                        required: ['id', 'descriptor', 'gps', 'address'],
+                        required: ['id', 'gps', 'address'],
                       },
                       time: {
                         type: 'object',
@@ -372,13 +372,7 @@ export const onUpdateSchema = {
                         },
                       },
                     },
-                    required: [
-                      '@ondc/org/item_id',
-                      '@ondc/org/item_quantity',
-                      'title',
-                      '@ondc/org/title_type',
-                      'price',
-                    ],
+                    required: ['@ondc/org/item_id', 'title', '@ondc/org/title_type', 'price'],
                   },
                 },
                 ttl: { type: 'string' },
@@ -388,50 +382,136 @@ export const onUpdateSchema = {
             payment: {
               type: 'object',
               properties: {
-                uri: { type: 'string' },
-                tl_method: { type: 'string' },
+                uri: {
+                  type: 'string',
+                },
+                tl_method: {
+                  type: 'string',
+                },
                 params: {
                   type: 'object',
                   properties: {
-                    currency: { type: 'string' },
-                    transaction_id: { type: 'string' },
-                    amount: { type: 'string' },
+                    currency: {
+                      type: 'string',
+                      pattern: '^(?!s*$).+',
+                    },
+                    transaction_id: {
+                      type: 'string',
+                    },
+                    amount: {
+                      type: 'string',
+                    },
                   },
+                  required: ['currency', 'transaction_id', 'amount'],
                 },
-                status: { type: 'string' },
-                type: { type: 'string' },
-                collected_by: { type: 'string' },
-                '@ondc/org/buyer_app_finder_fee_type': { type: 'string' },
-                '@ondc/org/buyer_app_finder_fee_amount': { type: 'string' },
+                status: {
+                  type: 'string',
+                  enum: ['PAID', 'NOT-PAID'],
+                },
+                type: {
+                  type: 'string',
+                  enum: ['ON-ORDER', 'ON-FULFILLMENT'],
+                },
+                collected_by: {
+                  type: 'string',
+                  enum: ['BAP', 'BPP'],
+                },
+                '@ondc/org/buyer_app_finder_fee_type': {
+                  type: 'string',
+                },
+                '@ondc/org/buyer_app_finder_fee_amount': {
+                  type: 'string',
+                },
+                '@ondc/org/settlement_basis': {
+                  type: 'string',
+                  enum: ['shipment', 'delivery', 'return_window_expiry'],
+                },
+                '@ondc/org/settlement_window': {
+                  type: 'string',
+                },
+                '@ondc/org/withholding_amount': {
+                  type: 'string',
+                },
                 '@ondc/org/settlement_details': {
                   type: 'array',
                   items: {
                     type: 'object',
                     properties: {
-                      settlement_counterparty: { type: 'string' },
-                      settlement_phase: { type: 'string' },
-                      beneficiary_name: { type: 'string' },
-                      settlement_type: { type: 'string' },
+                      settlement_counterparty: {
+                        type: 'string',
+                      },
+                      settlement_phase: {
+                        type: 'string',
+                      },
+                      settlement_type: {
+                        type: 'string',
+                        enum: ['upi', 'neft', 'rtgs'],
+                      },
                       upi_address: { type: 'string' },
-                      settlement_bank_account_no: { type: 'string' },
-                      settlement_ifsc_code: { type: 'string' },
+                      settlement_bank_account_no: {
+                        type: 'string',
+                      },
+                      settlement_ifsc_code: {
+                        type: 'string',
+                      },
                       bank_name: { type: 'string' },
+                      beneficiary_name: {
+                        type: 'string',
+                      },
                       branch_name: { type: 'string' },
                     },
-                    required: [
-                      'settlement_counterparty',
-                      'settlement_phase',
-                      'beneficiary_name',
-                      'settlement_type',
-                      'upi_address',
-                      'settlement_bank_account_no',
-                      'settlement_ifsc_code',
-                      'bank_name',
-                      'branch_name',
+                    allOf: [
+                      {
+                        if: {
+                          properties: {
+                            settlement_type: {
+                              const: 'upi',
+                            },
+                          },
+                        },
+                        then: {
+                          properties: {
+                            upi_address: {
+                              type: 'string',
+                            },
+                          },
+                        },
+                      },
+                      {
+                        if: {
+                          properties: {
+                            settlement_type: {
+                              enum: ['rtgs', 'neft'],
+                            },
+                          },
+                        },
+                        then: {
+                          properties: {
+                            settlement_bank_account_no: {
+                              type: 'string',
+                            },
+                            settlement_ifsc_code: {
+                              type: 'string',
+                            },
+                            bank_name: { type: 'string' },
+                            branch_name: { type: 'string' },
+                          },
+                          required: ['settlement_ifsc_code', 'settlement_bank_account_no', 'bank_name', 'branch_name'],
+                        },
+                      },
                     ],
+                    required: ['settlement_counterparty', 'settlement_phase', 'settlement_type'],
                   },
                 },
               },
+              required: [
+                'params',
+                'status',
+                'type',
+                'collected_by',
+                '@ondc/org/buyer_app_finder_fee_type',
+                '@ondc/org/buyer_app_finder_fee_amount',
+              ],
             },
             documents: {
               type: 'array',

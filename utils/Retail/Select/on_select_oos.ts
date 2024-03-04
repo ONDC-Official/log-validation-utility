@@ -122,6 +122,9 @@ export const checkOnSelect_OOS = (data: any) => {
     if (getValue('providerId') != ON_SELECT_OUT_OF_STOCK.provider.id) {
       errorObj.prvdrId = `provider.id mismatches in /${constants.ON_SEARCH} and /${constants.ON_SELECT}`
     }
+    if (ON_SELECT_OUT_OF_STOCK.provider.locations[0].id != getValue('providerLoc')) {
+      errorObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.ON_SELECT} and /${constants.SELECT}`
+    }
   } catch (error: any) {
     logger.info(
       `Error while comparing provider ids in /${constants.ON_SEARCH} and /${constants.ON_SELECT}, ${error.stack}`,
@@ -344,8 +347,7 @@ export const checkOnSelect_OOS = (data: any) => {
           const availCount = parseInt(element.item.quantity.available.count, 10)
           if (availCount == 99 && maxCount == 0) {
             const key = `qntcnt${i}`
-            errorObj[key] =
-              `item.quantity.maximum.count cant be 0 if item is in stock `
+            errorObj[key] = `item.quantity.maximum.count cant be 0 if item is in stock `
           }
         }
         if (element.item.quantity && element.item.quantity.maximum && element.item.quantity.available) {
@@ -356,7 +358,6 @@ export const checkOnSelect_OOS = (data: any) => {
             errorObj[key] = `item.quantity.maximum.count be greater than 0 if item.quantity.available.count is 0 `
           }
         }
-
       }
 
       logger.info(`Calculating Items' prices in /${constants.ON_SELECT}`)

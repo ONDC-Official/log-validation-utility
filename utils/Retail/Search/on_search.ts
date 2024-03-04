@@ -99,6 +99,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
     if (address) {
       const area_code = Number.parseInt(address.area_code)
+      setValue('area_code', address.area_code)
       const std = context.city.split(':')[1]
 
       logger.info(`Comparing area_code and STD Code for /${constants.ON_SEARCH}`)
@@ -412,6 +413,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
       try {
         // Adding items in a list
         const items = prvdr.items
+        setValue('onSearchItems', items)
         items.forEach((item: any) => {
           itemIdList.push(item.id)
         })
@@ -514,7 +516,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
             const availCount = parseInt(item.quantity.available.count, 10)
             if (availCount == 99 && maxCount == 0) {
               const key = `prvdr${i}item${j}maxCount`
-              errorObj[key] =`item.quantity.maximum.count cant be 0 if item is in stock `            }
+              errorObj[key] = `item.quantity.maximum.count cant be 0 if item is in stock `
+            }
           }
           if ('price' in item) {
             const sPrice = parseFloat(item.price.value)

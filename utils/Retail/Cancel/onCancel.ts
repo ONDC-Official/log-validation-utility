@@ -259,7 +259,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
     try {
       logger.info(`Checking provider id and location in /${constants.ON_CANCEL}`)
       if (on_cancel.provider.id != getValue('providerId')) {
-        onCnclObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.ON_CANCEL}`
+        onCnclObj.prvdrId = `Provider Id mismatches in /${constants.ON_SELECT} and /${constants.ON_CANCEL}`
       }
 
       if (on_cancel.provider.locations[0].id != getValue('providerLoc')) {

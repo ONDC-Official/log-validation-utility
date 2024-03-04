@@ -234,14 +234,16 @@ export const checkSelect = (data: any, msgIdSet: any) => {
             if (!parentItemIdSet.has(item.parent_item_id)) parentItemIdSet.add(item.parent_item_id)
 
             if (!itemIdSet.has(item.id)) itemIdSet.add(item.id)
-            if (
-              itemTag &&
-              itemMap[item.parent_item_id] &&
-              itemMap[item.parent_item_id].location_id !== item.location_id
-            ) {
-              const key = `item${index}location_id`
-              errorObj[key] = `Inconsistent location_id for parent_item_id ${item.parent_item_id}`
-            }
+
+            const onSearchItems: any = getValue('onSearchItems')
+            select.items.forEach((item: any, index: number) => {
+              onSearchItems.forEach((it: any) => {
+                if (it.id === item.id && it.location_id !== item.location_id) {
+                  errorObj[`location_id[${index}]`] =
+                    `location_id should be same for the item ${item.id}] as in on_search`
+                }
+              })
+            })
 
             if (itemOnSearch) {
               logger.info(`ITEM ID: ${item.id}, Price: ${itemOnSearch.price.value}, Count: ${item.quantity.count}`)
@@ -303,9 +305,22 @@ export const checkSelect = (data: any, msgIdSet: any) => {
         if (ff.hasOwnProperty('end')) {
           setValue('buyerGps', ff.end.location.gps)
           setValue('buyerAddr', ff.end.location.address.area_code)
+          if (!_.isEqual(ff.end.location.address.area_code, getValue('area_code'))) {
+            errorObj.areaCode = `address.area_code should not be same as in /${constants.ON_SEARCH}`
+          }
           const gps = ff.end.location.gps.split(',')
-          const gpsLat = gps[0]
+          const gpsLat: string = gps[0]
+          Array.from(gpsLat).forEach((char: any) => {
+            if (char !== '.' && isNaN(parseInt(char))) {
+              errorObj.gpsErr = `fulfillments location.gps is not as per the API contract`
+            }
+          })
           const gpsLong = gps[1]
+          Array.from(gpsLong).forEach((char: any) => {
+            if (char !== '.' && isNaN(parseInt(char))) {
+              errorObj.gpsErr = `fulfillments location.gps is not as per the API contract`
+            }
+          })
 
           if (!gpsLat || !gpsLong) {
             errorObj.gpsErr = `fulfillments location.gps is not as per the API contract`

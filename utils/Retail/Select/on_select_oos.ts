@@ -37,6 +37,7 @@ export const checkOnSelect_OOS = (data: any) => {
   const checkBap = checkBppIdOrBapId(context.bap_id)
   const checkBpp = checkBppIdOrBapId(context.bpp_id)
 
+
   if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
   if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
 
@@ -50,7 +51,7 @@ export const checkOnSelect_OOS = (data: any) => {
 
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
   const select: any = getValue(`${ApiSequence.SELECT}`)
-  const searchMessage: any = getValue(`${ApiSequence.ON_SEARCH}_message`)
+  const searchMessage: any = getValue(`${ApiSequence.ON_SEARCH}_message`)  
 
   try {
     logger.info(`Comparing city of /${constants.SEARCH} and /${constants.ON_SELECT}`)
@@ -107,13 +108,12 @@ export const checkOnSelect_OOS = (data: any) => {
   try {
     logger.info(`Checking domain-error in /${constants.ON_SELECT}`)
     if (data.hasOwnProperty('error')) {
-      ON_SELECT_OUT_OF_STOCK_error = data.error
-    }
+      ON_SELECT_OUT_OF_STOCK_error = data.error    }
   } catch (error: any) {
     logger.info(`Error while checking domain-error in /${constants.ON_SELECT}, ${error.stack}`)
   }
 
-  const ON_SELECT_OUT_OF_STOCK: any = message.order
+  const ON_SELECT_OUT_OF_STOCK: any = message.order  
   const itemFlfllmnts: any = {}
 
   try {
@@ -132,13 +132,10 @@ export const checkOnSelect_OOS = (data: any) => {
     let i = 0
     const len = ON_SELECT_OUT_OF_STOCK.items.length
     while (i < len) {
-      const found = ON_SELECT_OUT_OF_STOCK.fulfillments.some(
-        (fId: { id: any }) => fId.id === ON_SELECT_OUT_OF_STOCK.items[i].fulfillment_id,
-      )
+      const found = ON_SELECT_OUT_OF_STOCK.fulfillments.some((fId: { id: any }) => fId.id === ON_SELECT_OUT_OF_STOCK.items[i].fulfillment_id)
       if (!found) {
         const key = `fId${i}`
-        errorObj[key] =
-          `fulfillment_id for item ${ON_SELECT_OUT_OF_STOCK.items[i].id} does not exist in order.fulfillments[]`
+        errorObj[key] = `fulfillment_id for item ${ON_SELECT_OUT_OF_STOCK.items[i].id} does not exist in order.fulfillments[]`
       }
 
       i++
@@ -196,19 +193,18 @@ export const checkOnSelect_OOS = (data: any) => {
         }
       }
     }
-    const max_tts = max_time_to_ships.sort((a, b) => a - b)[0]
-    const ON_SELECT_OUT_OF_STOCK_tat = ON_SELECT_OUT_OF_STOCK.fulfillments.map((e: any) =>
-      isoDurToSec(e['@ondc/org/TAT']),
-    )
+    const max_tts=max_time_to_ships.sort((a, b) =>  a - b)[0]
+    const ON_SELECT_OUT_OF_STOCK_tat = ON_SELECT_OUT_OF_STOCK.fulfillments.map((e:any)=>isoDurToSec(e['@ondc/org/TAT']))
 
-    if (ON_SELECT_OUT_OF_STOCK_tat < max_tts) {
+    if (ON_SELECT_OUT_OF_STOCK_tat<max_tts) {
       errorObj.ttstat = `/fulfillments/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be less than @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
     }
 
     if (ON_SELECT_OUT_OF_STOCK_tat === max_tts) {
       errorObj.ttstat = `/fulfillments/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be equal to @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
     }
-  } catch (error: any) {
+    }
+  catch (error: any) {
     logger.error(`!!Error while Checking TAT and TTS in /${constants.ON_SELECT} and /${constants.ON_SEARCH}`)
   }
 
@@ -228,8 +224,7 @@ export const checkOnSelect_OOS = (data: any) => {
       errorObj.ffStateCode = `Pre-order fulfillment state codes should be used in fulfillments[].state.descriptor.code`
     else if (
       nonServiceableFlag &&
-      !ON_SELECT_OUT_OF_STOCK_error &&
-      !(ON_SELECT_OUT_OF_STOCK_error.type === 'DOMAIN-ERROR' && ON_SELECT_OUT_OF_STOCK_error.code === '30009')
+      (!ON_SELECT_OUT_OF_STOCK_error && !(ON_SELECT_OUT_OF_STOCK_error.type === 'DOMAIN-ERROR' && ON_SELECT_OUT_OF_STOCK_error.code === '30009'))
     ) {
       errorObj.notServiceable = `Non Serviceable Domain error should be provided when fulfillment is not serviceable`
     }
@@ -238,22 +233,21 @@ export const checkOnSelect_OOS = (data: any) => {
   }
 
   try {
-    logger.info(`Item Id and  error.message.item_id Mapping in /ON_SELECT_OUT_OF_STOCK`)
-    let i = 0
-    const len = ON_SELECT_OUT_OF_STOCK.items.length
-    const errorItems = error.message
+    logger.info(`Item Id and  error.message.item_id Mapping in /ON_SELECT_OUT_OF_STOCK`);
+    let i =  0;
+    const len = ON_SELECT_OUT_OF_STOCK.items.length;
+    const errorItems = error.message; 
 
     while (i < len) {
-      const found = errorItems.find((errorObj: any) => errorObj.item_id === ON_SELECT_OUT_OF_STOCK.items[i].id)
+      const found = errorItems.find((errorObj: any) => errorObj.item_id === ON_SELECT_OUT_OF_STOCK.items[i].id);
       if (!found) {
-        const key = `message/error/message/items_id${i}`
-        errorObj[key] =
-          `message/order/items for item ${ON_SELECT_OUT_OF_STOCK.items[i].id} does not match in error.message.items_id `
+        const key = `message/error/message/items_id${i}`;
+        errorObj[key] = `message/order/items for item ${ON_SELECT_OUT_OF_STOCK.items[i].id} does not match in error.message.items_id `;
       }
-      i++
+      i++;
     }
   } catch (error: any) {
-    logger.error(`!!Error while checking Item Id and  Mapping in ${error.message}`)
+    logger.error(`!!Error while checking Item Id and  Mapping in ${error.message}`);
   }
 
   let onSelectPrice: any = 0 //Net price after discounts and tax in /ON_SELECT_OUT_OF_STOCK
@@ -264,12 +258,10 @@ export const checkOnSelect_OOS = (data: any) => {
     const itemsIdList: any = getValue('itemsIdList') || {}
     logger.info('itemsIdList', itemsIdList)
     ON_SELECT_OUT_OF_STOCK.quote.breakup.forEach((item: { [x: string]: any }) => {
-      if (item['@ondc/org/item_id'] in itemsIdList && item['@ondc/org/title_type'] === 'item') {
+       if (item['@ondc/org/item_id'] in itemsIdList && item['@ondc/org/title_type'] === 'item') {
         if (
           itemsIdList[item['@ondc/org/item_id']] != item['@ondc/org/item_quantity'].count &&
-          (!ON_SELECT_OUT_OF_STOCK_error ||
-            ON_SELECT_OUT_OF_STOCK_error.type != 'DOMAIN-ERROR' ||
-            ON_SELECT_OUT_OF_STOCK_error.code != '40002')
+          (!ON_SELECT_OUT_OF_STOCK_error || ON_SELECT_OUT_OF_STOCK_error.type != 'DOMAIN-ERROR' || ON_SELECT_OUT_OF_STOCK_error.code != '40002')
         ) {
           const cntkey = `cnt${item['@ondc/org/item_id']}`
           errorObj[cntkey] =
@@ -363,9 +355,7 @@ export const checkOnSelect_OOS = (data: any) => {
     setValue('onSelectPrice', ON_SELECT_OUT_OF_STOCK.quote.price.value)
     onSelectPrice = onSelectPrice.toFixed(2)
 
-    logger.info(
-      `Matching quoted Price ${parseFloat(ON_SELECT_OUT_OF_STOCK.quote.price.value)} with Breakup Price ${onSelectPrice}`,
-    )
+    logger.info(`Matching quoted Price ${parseFloat(ON_SELECT_OUT_OF_STOCK.quote.price.value)} with Breakup Price ${onSelectPrice}`)
     if (onSelectPrice != parseFloat(ON_SELECT_OUT_OF_STOCK.quote.price.value)) {
       errorObj.quoteBrkup = `quote.price.value ${ON_SELECT_OUT_OF_STOCK.quote.price.value} does not match with the price breakup ${onSelectPrice}`
     }

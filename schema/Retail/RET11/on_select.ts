@@ -316,7 +316,7 @@ export const FnBonSelectSchema = {
           type: 'string',
         },
         message: {
-          type: 'string',
+          type: "string",
         },
       },
       required: ['type', 'code', 'message'],

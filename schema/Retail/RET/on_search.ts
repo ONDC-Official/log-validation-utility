@@ -364,8 +364,6 @@ export const onSearchSchema = {
                         },
                         gps: {
                           type: 'string',
-                          pattern: '^[0-9]{2}[.][0-9]{6,}[,][0-9]{2}[.][0-9]{6,}$',
-                          errorMessage: ' The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                         },
                         address: {
                           type: 'object',
@@ -395,9 +393,6 @@ export const onSearchSchema = {
                           properties: {
                             gps: {
                               type: 'string',
-                              pattern: '^[0-9]{2}[.][0-9]{6,}[,][0-9]{2}[.][0-9]{6,}$',
-                              errorMessage:
-                                ' The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                             },
                             radius: {
                               type: 'object',
@@ -575,9 +570,6 @@ export const onSearchSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
-                                  enum: ['0', '99'],
-                                  errorMessage:
-                                    'maximum/count must be equal to one of the allowed values i.e either 99 or 0',
                                 },
                               },
                               required: ['count'],
@@ -603,7 +595,7 @@ export const onSearchSchema = {
                         category_id: {
                           type: 'string',
                           enum: combinedCategory,
-                          errorMessage: `Invalid catrgory ID found for item for on_search${combinedCategory}`,
+                          errorMessage: `Invalid category ID found for item for on_search${combinedCategory}`,
                         },
                         fulfillment_id: {
                           type: 'string',

@@ -13,6 +13,7 @@ import {
   areGSTNumbersMatching,
   compareObjects,
   sumQuoteBreakUp,
+  payment_status
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -30,7 +31,7 @@ export const checkOnConfirm = (data: any) => {
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const parentItemIdSet: any = getValue(`parentItemIdSet`)
-    const select_customIdArray: any = getValue(`select_customIdArray`)
+    const select_customIdArray: any = getValue(`select_customIdArray`)    
 
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_CONFIRM, data)
 
@@ -310,7 +311,7 @@ export const checkOnConfirm = (data: any) => {
     try {
       logger.info(`Checking quote breakup prices for /${constants.ON_CONFIRM}`)
       if (!sumQuoteBreakUp(on_confirm.quote)) {
-        const key = `invldCancellationPrices`
+        const key = `invldPrices`
         onCnfrmObj[key] = `item quote breakup prices for ${constants.ON_CONFIRM} should be equal to the total price.`
         logger.error(`item quote breakup prices for ${constants.ON_CONFIRM} should be equal to the total price`)
       }
@@ -380,26 +381,25 @@ export const checkOnConfirm = (data: any) => {
     }
 
     const list_ON_INIT: any = getValue('list_ON_INIT')
-    let ON_INIT_val: string
+    let ON_INIT_val: string;
     list_ON_INIT.map((data: any) => {
-      if (data.code == 'tax_number') {
-        ON_INIT_val = data.value
+      if(data.code == 'tax_number'){
+        ON_INIT_val = data.value;
       }
     })
-
+    
     try {
       logger.info(`Checking if tax_number in bpp_terms in ON_CONFIRM and ON_INIT is same`)
-      let list_ON_CONFIRM: any
+      let list_ON_CONFIRM: any;
       message.order.tags.forEach((data: any) => {
-        if (data.code == 'bpp_terms') {
+        if(data.code == 'bpp_terms'){
           list_ON_CONFIRM = data.list
         }
       })
       list_ON_CONFIRM.map((data: any) => {
-        if (data.code == 'tax_number') {
-          if (data.value != ON_INIT_val) {
-            onCnfrmObj['message/order/tags/bpp_terms'] =
-              `Value of tax Number mismatched in message/order/tags/bpp_terms for ON_INIT and ON_CONFIRM`
+        if(data.code == 'tax_number'){
+          if(data.value != ON_INIT_val){
+            onCnfrmObj['message/order/tags/bpp_terms'] = `Value of tax Number mismatched in message/order/tags/bpp_terms for ON_INIT and ON_CONFIRM`
           }
         }
       })
@@ -427,6 +427,17 @@ export const checkOnConfirm = (data: any) => {
         `!!Error while Comparing tags in /${constants.CONFIRM} and /${constants.ON_CONFIRM}
         ${error.stack}`,
       )
+    }
+
+    try {
+      logger.info(`Checking if transaction_id is present in message.order.payment`)
+      const payment = on_confirm.payment
+      const status = payment_status(payment);
+      if(!status){
+        onCnfrmObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
+      }
+    } catch (err: any) {
+      logger.error(`Error while checking transaction is in message.order.payment`)
     }
 
     return onCnfrmObj

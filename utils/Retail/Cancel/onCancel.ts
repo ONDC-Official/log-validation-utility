@@ -273,26 +273,13 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
     try {
       logger.info(`Comparing item Ids and fulfillment ids in /${constants.ON_SELECT} and /${constants.ON_CANCEL}`)
       const itemFlfllmnts: any = getValue('itemFlfllmnts')
-      const itemsIdList: any = getValue('itemsIdList')
       let i = 0
       const len = on_cancel.items.length
       while (i < len) {
         const itemId = on_cancel.items[i].id
         if (itemId in itemFlfllmnts) {
-          if (on_cancel.items[i].fulfillment_id != itemFlfllmnts[itemId] && flow !== '5') {
             Ids.push(itemId)
             Flfmntid.push(on_cancel.items[i].fulfillment_id)
-          }
-        } else {
-          const itemkey = `item_FFErr${i}`
-          onCnclObj[itemkey] = `Item Id ${itemId} does not exist in /${constants.ON_SELECT}`
-        }
-
-        if (itemId in itemsIdList) {
-          if (on_cancel.items[i].quantity.count != itemsIdList[itemId] && flow !== '5') {
-            itemsIdList[itemId] = on_cancel.items[i].quantity.count
-            onCnclObj.countErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
-          }
         }
         i++
       }
@@ -337,9 +324,10 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
             //MM->Mismatch
             onCnclObj[key] = `fulfillment id ${id} does not exist in /${constants.ON_CANCEL} items.fulfillment_id`
 
-            i++
+            
           }
         }
+        i++
       }
 
       while (i < len && flow !== '5' && on_cancel.fulfillments[i].type !== 'Cancel') {

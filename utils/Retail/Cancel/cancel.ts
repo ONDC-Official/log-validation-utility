@@ -104,7 +104,7 @@ export const checkCancel = (data: any, msgIdSet: any) => {
         cnclObj.cancelRid = `Cancellation reason id is not a valid reason id (buyer app initiated)`
       } else setValue('cnclRid', cancel.cancellation_reason_id)
 
-      if (!rtoCancellationRid.has(cancel.cancellation_reason_id)) {
+      if (!rtoCancellationRid.has(cancel.cancellation_reason_id) && getValue('flow')==='5') {
         logger.info(`cancellation_reason_id should be a valid cancellation id (RTO initiated)`)
 
         cnclObj.RTOcancelRid = `Cancellation reason id is not a valid reason id (RTO initiated)`

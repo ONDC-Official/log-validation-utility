@@ -186,7 +186,7 @@ export const checkOnSelect = (data: any) => {
     logger.info(`Checking TAT and TTS in /${constants.ON_SELECT} and /${constants.ON_SEARCH}`)
     const catalog = searchMessage.catalog
     const providers = catalog['bpp/providers']
-    let max_time_to_ships = []
+    let max_time_to_ships: any = []
     for (let providerIndex = 0; providerIndex < providers.length; providerIndex++) {
       const providerItems = providers[providerIndex].items
       for (let itemIndex = 0; itemIndex < providerItems.length; itemIndex++) {
@@ -196,7 +196,7 @@ export const checkOnSelect = (data: any) => {
         }
       }
     }
-    const max_tts = max_time_to_ships.sort((a, b) => a - b)[0]
+    const max_tts = max_time_to_ships.sort((a: number, b: number) => a - b)[0]
     const on_select_tat = on_select.fulfillments.map((e: any) => isoDurToSec(e['@ondc/org/TAT']))
 
     if (on_select_tat < max_tts) {
@@ -487,6 +487,8 @@ export const checkOnSelect = (data: any) => {
   } catch (error: any) {
     logger.error(`!Error while comparing fulfillmentID with providerID in /${constants.ON_SELECT}, ${error.stack}`)
   }
+
+  setValue('quote_price', on_select.quote.price.value)
 
   return Object.keys(errorObj).length > 0 && errorObj
 }

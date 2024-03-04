@@ -142,6 +142,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
     const bppPrvdrs = onSearchCatalog['bpp/providers']
     const len = bppPrvdrs.length
     const tmpstmp = context.timestamp
+    let itemIdList: any = []
     while (i < len) {
       const categoriesId = new Set()
       const customGrpId = new Set()
@@ -406,6 +407,17 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         }
       } catch (error: any) {
         logger.error(`!!Errors while checking categories in bpp/providers[${i}], ${error.stack}`)
+      }
+
+      try {
+        // Adding items in a list
+        const items = prvdr.items
+        items.forEach((item: any) => {
+          itemIdList.push(item.id)
+        })
+        setValue('ItemList', itemIdList)
+      } catch (error: any) {
+        logger.error(`Error while adding items in a list, ${error.stack}`)
       }
 
       try {

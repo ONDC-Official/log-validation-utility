@@ -83,7 +83,33 @@ export const checkOnSelect = (data: any) => {
   }
 
   try {
-  } catch (error: any) {}
+    // Checking for valid item ids in /on_select
+    const itemsOnSearch = getValue('ItemList')
+    const itemsList = message.order.items
+    const itemsOnSelect: any = []
+    itemsList.forEach((item: any, index: number) => {
+      if (!itemsOnSearch?.includes(item.id)) {
+        const key = `inVldItemId[${index}]`
+        errorObj[key] = `Invalid Item Id provided in /${constants.ON_SELECT}: ${item.id}`
+      } else {
+        itemsOnSelect.push(item.id)
+      }
+    })
+    setValue('ItemList', itemsOnSelect)
+  } catch (error: any) {
+    logger.error(`Error while checking for item IDs for /${constants.ON_SELECT}`, error.stack)
+  }
+
+  try {
+    const fulfillments = message.order.fulfillments
+    const selectFlflmntSet: any = []
+    fulfillments.forEach((flflmnt: any) => {
+      selectFlflmntSet.push(flflmnt.id)
+    })
+    setValue('selectFlflmntSet', selectFlflmntSet)
+  } catch (error: any) {
+    logger.error(`Error while checking for fulfillment IDs for /${constants.ON_SELECT}`, error.stack)
+  }
 
   try {
     logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)

@@ -141,6 +141,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     const bppPrvdrs = onSearchCatalog['bpp/providers']
     const len = bppPrvdrs.length
     const tmpstmp = context.timestamp
+    let itemIdList: any = []
     while (i < len) {
       const categoriesId = new Set()
       const customGrpId = new Set()
@@ -227,6 +228,17 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
           }
         }
       })
+
+      try {
+        // Adding items in a list
+        const items = prvdr.items
+        items.forEach((item: any) => {
+          itemIdList.push(item.id)
+        })
+        setValue('ItemList', itemIdList)
+      } catch (error: any) {
+        logger.error(`Error while adding items in a list, ${error.stack}`)
+      }
 
       try {
         logger.info(`Checking categories for provider (${prvdr.id}) in bpp/providers[${i}]`)
@@ -924,26 +936,29 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
       }
 
       try {
-        logger.info(`Checking if catalog_link type in message/catalog/bpp/providers[${i}]/tags[1]/list[0] is link or inline`)
+        logger.info(
+          `Checking if catalog_link type in message/catalog/bpp/providers[${i}]/tags[1]/list[0] is link or inline`,
+        )
         const tags = bppPrvdrs[i].tags
 
         let list: any = []
         tags.map((data: any) => {
-          if(data.code == 'catalog_link'){
+          if (data.code == 'catalog_link') {
             list = data.list
           }
         })
-        
+
         list.map((data: any) => {
-          if(data.code === 'type'){
-            if(data.value === 'link'){
-              if(bppPrvdrs[0].items){
-                errorObj[`message/catalog/bpp/providers[0]`] = `Items arrays should not be present in message/catalog/bpp/providers[${i}]`
+          if (data.code === 'type') {
+            if (data.value === 'link') {
+              if (bppPrvdrs[0].items) {
+                errorObj[`message/catalog/bpp/providers[0]`] =
+                  `Items arrays should not be present in message/catalog/bpp/providers[${i}]`
               }
             }
           }
         })
-      } catch(error: any) {
+      } catch (error: any) {
         logger.error(`Error while checking the type of catalog_link`)
       }
 

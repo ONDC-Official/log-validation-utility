@@ -27,10 +27,10 @@ export const checkOnCancel = (data: any) => {
     }
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const flow = getValue('flow')
-    let schemaValidation:any
-    if(flow === '5'){
+    let schemaValidation: any
+    if (flow === '5') {
       schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_CANCEL_RTO, data)
-    }else {
+    } else {
       schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_CANCEL, data)
     }
     const select: any = getValue(`${ApiSequence.SELECT}`)
@@ -93,6 +93,72 @@ export const checkOnCancel = (data: any) => {
     }
 
     const on_cancel = message.order
+
+    try {
+      // Checking for valid item ids in /on_select
+      const itemsOnSelect = getValue('ItemList')
+      const itemsList = message.order.items
+      itemsList.forEach((item: any, index: number) => {
+        if (!itemsOnSelect?.includes(item.id)) {
+          const key = `inVldItemId[${index}]`
+          onCnclObj[key] = `Invalid Item Id provided in /${constants.ON_SELECT}: ${item.id}`
+        }
+      })
+    } catch (error: any) {
+      logger.error(`Error while checking for item IDs for /${constants.ON_CANCEL}`, error.stack)
+    }
+
+    try {
+      //Checking for valid fulfillment ids in /on_select and 0 item count in /on_cancel
+      const fulfillmentIdsOnSelect = getValue('selectFlflmntSet')
+      const itemList = message.order.items
+      itemList.forEach((item: any, index: number) => {
+        if (fulfillmentIdsOnSelect) {
+          if (fulfillmentIdsOnSelect.includes(item.fulfillment_id) && item.quantity.count !== 0) {
+            onCnclObj[`itemCount[${index}]`] = `Item count should be 0 for /${constants.ON_CANCEL} in forward shipment`
+          } else if (!fulfillmentIdsOnSelect.includes(item.fulfillment_id) && item.quantity.count === 0) {
+            onCnclObj[`itemCount[${index}]`] = `Item count can't be 0 for /${constants.ON_CANCEL} in cancel shipment`
+          }
+        }
+      })
+    } catch (error: any) {
+      logger.error(`Error while checking for fulfillment IDs for /${constants.ON_CANCEL}`, error.stack)
+    }
+    //Comparing item count in /on_update and /select
+    const select_items: any = getValue('items')
+    try {
+      logger.info(`Matching the item count in message/order/items with that in /select`)
+      const onCancelItems: any[] = on_cancel.items
+      let onCancelItemCount: number = 0
+      let onSelectItemCount: number = 0
+      let selectItems: any = {}
+      const fulfillmentIdsOnSelect = getValue('selectFlflmntSet')
+
+      select_items.forEach((selectItem: any) => {
+        console.log('Select Item-->', selectItem)
+        onSelectItemCount += selectItem.quantity.count
+        selectItems[selectItem.id] = selectItem.quantity.count
+      })
+
+      onCancelItems.forEach((item: any, index: number) => {
+        if (
+          selectItems.hasOwnProperty(item.id) &&
+          !fulfillmentIdsOnSelect?.includes(item.fulfillment_id) &&
+          selectItems[item.id] !== item.quantity.count
+        ) {
+          onCnclObj[`itemQuantity[${index}]`] =
+            `Total item count in message/order/items doesn't match with item count of /${constants.ON_SELECT}`
+        }
+        onCancelItemCount += item.quantity.count
+      })
+
+      if (onSelectItemCount !== onCancelItemCount) {
+        onCnclObj[`itemCount`] =
+          `Total item count in message/order/items doesn't match with item count of /${constants.ON_SELECT}`
+      }
+    } catch (error: any) {
+      logger.error(`Error while matching the count of items in /on_update and /select: ${error.message}`)
+    }
 
     try {
       logger.info(`Checking quote breakup prices for /${constants.ON_CANCEL}`)
@@ -188,41 +254,6 @@ export const checkOnCancel = (data: any) => {
     }
 
     try {
-      logger.info(`Comparing item Ids and fulfillment ids in /${constants.ON_SELECT} and /${constants.ON_CANCEL}`)
-      const itemFlfllmnts: any = getValue('itemFlfllmnts')
-      const itemsIdList: any = getValue('itemsIdList')
-      let i = 0
-      const len = on_cancel.items.length
-      while (i < len) {
-        const itemId = on_cancel.items[i].id
-
-        if (itemId in itemFlfllmnts) {
-          if ((on_cancel.items[i].fulfillment_id != itemFlfllmnts[itemId]) && flow !== '5') {
-            const itemkey = `item_FFErr${i}`
-            onCnclObj[itemkey] =
-              `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_CANCEL}`
-          }
-        } else {
-          const itemkey = `item_FFErr${i}`
-          onCnclObj[itemkey] = `Item Id ${itemId} does not exist in /${constants.ON_SELECT}`
-        }
-
-        if (itemId in itemsIdList) {
-          if (on_cancel.items[i].quantity.count != itemsIdList[itemId] && flow !== '5') {
-            itemsIdList[itemId] = on_cancel.items[i].quantity.count
-            onCnclObj.countErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
-          }
-        }
-
-        i++
-      }
-    } catch (error: any) {
-      logger.error(
-        `!!Error while comparing Item and Fulfillment Id in /${constants.ON_SELECT} and /${constants.ON_CANCEL}, ${error.stack}`,
-      )
-    }
-
-    try {
       logger.info(`Comparing billing object in /${constants.INIT} and /${constants.ON_CANCEL}`)
       const billing = getValue('billing')
 
@@ -261,7 +292,7 @@ export const checkOnCancel = (data: any) => {
           onCnclObj.ffId = `fulfillments[${i}].id is missing in /${constants.CONFIRM}`
         }
 
-        if ((!on_cancel.fulfillments[i].end || !on_cancel.fulfillments[i].end.person)) {
+        if (!on_cancel.fulfillments[i].end || !on_cancel.fulfillments[i].end.person) {
           onCnclObj.ffprsn = `fulfillments[${i}].end.person object is missing`
         }
 
@@ -289,7 +320,7 @@ export const checkOnCancel = (data: any) => {
       if (!on_cancel.hasOwnProperty('created_at') || !on_cancel.hasOwnProperty('updated_at')) {
         onCnclObj.ordertmpstmp = `order created and updated timestamps are mandatory in /${constants.ON_CANCEL}`
       } else {
-        if (!_.gt(on_cancel.updated_at, on_cancel.created_at )) {
+        if (!_.gt(on_cancel.updated_at, on_cancel.created_at)) {
           onCnclObj.ordrupdtd = `order.updated_at timestamp should be greater than order.created_at timestamp`
         }
       }

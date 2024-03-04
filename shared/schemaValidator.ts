@@ -669,11 +669,47 @@ export const validate_schema_status_RET19_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+const validate_schema_on_status_RET10_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusSchema)
+  return formatted_error(error_list)
+}
 const validate_schema_on_status_RET11_for_json = (data: any) => {
   const error_list = validate_schema(data, onStatusSchema)
   return formatted_error(error_list)
 }
-const validate_schema_on_status_RET10_for_json = (data: any) => {
+const validate_schema_on_status_RET12_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_status_RET13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_status_RET14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_status_RET15_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_status_RET16_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_status_RET17_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_status_RET18_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_status_RET19_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_status_RET20_for_json = (data: any) => {
   const error_list = validate_schema(data, onStatusSchema)
   return formatted_error(error_list)
 }
@@ -958,6 +994,15 @@ export default {
   validate_schema_on_confirm_52110_for_json,
   validate_schema_on_search_inc_52110_for_json,
   validate_schema_on_status_RET10_for_json,
+  validate_schema_on_status_RET12_for_json,
+  validate_schema_on_status_RET13_for_json,
+  validate_schema_on_status_RET14_for_json,
+  validate_schema_on_status_RET15_for_json,
+  validate_schema_on_status_RET16_for_json,
+  validate_schema_on_status_RET17_for_json,
+  validate_schema_on_status_RET18_for_json,
+  validate_schema_on_status_RET19_for_json,
+  validate_schema_on_status_RET20_for_json,
   validate_schema_status_RET10_for_json,
   validate_schema_cancel_RET10_for_json,
   validate_schema_on_cancel_RET10_for_json,
@@ -972,7 +1017,7 @@ export default {
   validate_schema_on_cancel_RTO__RET18_for_json,
   validate_schema_on_cancel_RTO__RET19_for_json,
   validate_schema_on_cancel_RTO__RET20_for_json,
-  
+
   validate_schema_on_update_RET10_for_json,
   validate_schema_update_RET10_for_json,
   validate_schema_on_update_RET11_for_json,

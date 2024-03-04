@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import _ from 'lodash'
-import constants, { ApiSequence, buyerCancellationRid, rtoCancellationRid } from '../../../constants'
+import constants, { ApiSequence, buyerCancellationRid } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, checkBppIdOrBapId } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
@@ -103,12 +103,6 @@ export const checkCancel = (data: any, msgIdSet: any) => {
 
         cnclObj.cancelRid = `Cancellation reason id is not a valid reason id (buyer app initiated)`
       } else setValue('cnclRid', cancel.cancellation_reason_id)
-
-      if (!rtoCancellationRid.has(cancel.cancellation_reason_id) && getValue('flow')==='5') {
-        logger.info(`cancellation_reason_id should be a valid cancellation id (RTO initiated)`)
-
-        cnclObj.RTOcancelRid = `Cancellation reason id is not a valid reason id (RTO initiated)`
-      } else setValue('rtoCnclRid', cancel.cancellation_reason_id)
     } catch (error: any) {
       logger.info(`Error while checking validity of cancellation reason id /${constants.CANCEL}, ${error.stack}`)
     }

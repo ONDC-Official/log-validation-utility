@@ -63,7 +63,7 @@ export const checkOnSelect_OOS = (data: any) => {
 
   try {
     logger.info(`Comparing timestamp of /${constants.SELECT} and /${constants.ON_SELECT}`)
-    const tmpstmp = select.context.timestamp
+    const tmpstmp = getValue('tmpstmp')
     if (_.gte(tmpstmp, context.timestamp)) {
       errorObj.tmpstmp = `Timestamp for /${constants.SELECT} api cannot be greater than or equal to /${constants.ON_SELECT} api`
     } else {
@@ -320,7 +320,11 @@ export const checkOnSelect_OOS = (data: any) => {
         }
 
         logger.info(`checking available and maximum count in ${constants.ON_SELECT}`)
-        if (element.item.quantity && element.item.quantity.available && typeof element.item.quantity.available.count === 'string') {
+        if (
+          element.item.quantity &&
+          element.item.quantity.available &&
+          typeof element.item.quantity.available.count === 'string'
+        ) {
           const availCount = parseInt(element.item.quantity.available.count, 10)
           if (availCount !== 99 && availCount !== 0) {
             const key = `qntcnt${i}`
@@ -329,8 +333,13 @@ export const checkOnSelect_OOS = (data: any) => {
           }
         }
 
-        if (element.item.quantity && element.item.quantity.maximum && typeof element.item.quantity.maximum.count === 'string' 
-        && element.item.quantity.available && typeof element.item.quantity.available.count === 'string') {
+        if (
+          element.item.quantity &&
+          element.item.quantity.maximum &&
+          typeof element.item.quantity.maximum.count === 'string' &&
+          element.item.quantity.available &&
+          typeof element.item.quantity.available.count === 'string'
+        ) {
           const maxCount = parseInt(element.item.quantity.maximum.count, 10)
           const availCount = parseInt(element.item.quantity.available.count, 10)
           if (availCount == 99 && maxCount <= 0) {
@@ -344,8 +353,7 @@ export const checkOnSelect_OOS = (data: any) => {
           const availCount = parseInt(element.item.quantity.available.count, 10)
           if (availCount == 0 && maxCount > 0) {
             const key = `qntcnt${i}`
-            errorObj[key] =
-              `item.quantity.maximum.count be greater than 0 if item.quantity.available.count is 0 `
+            errorObj[key] = `item.quantity.maximum.count be greater than 0 if item.quantity.available.count is 0 `
           }
         }
 
@@ -409,8 +417,7 @@ export const checkOnSelect_OOS = (data: any) => {
     logger.info(
       `Matching price breakup of items ${onSelectItemsPrice} (/${constants.ON_SELECT}) with selected items price ${selectedPrice} (${constants.SELECT})`,
     )
-console.log("checking val==>", onSelectItemsPrice);
-
+    console.log('checking val==>', onSelectItemsPrice)
 
     if (typeof selectedPrice === 'number' && onSelectItemsPrice !== selectedPrice) {
       errorObj.priceErr = `Warning: Quoted Price in /${constants.ON_SELECT} INR ${onSelectItemsPrice} does not match with the total price of items in /${constants.SELECT} INR ${selectedPrice}`

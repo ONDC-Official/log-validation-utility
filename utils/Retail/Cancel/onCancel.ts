@@ -139,7 +139,6 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       const fulfillmentIdsOnSelect = getValue('selectFlflmntSet')
 
       select_items.forEach((selectItem: any) => {
-        console.log('Select Item-->', selectItem)
         onSelectItemCount += selectItem.quantity.count
         selectItems[selectItem.id] = selectItem.quantity.count
       })
@@ -211,6 +210,19 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       logger.info(`Checking for preCancel_state in fulfillments of /${constants.ON_CANCEL}`)
       const fulfillments = message.order.fulfillments
       const op = _.some(fulfillments, { type: 'Delivery', tags: [{ code: 'precancel_state' }] })
+      const cnclReqObj = _.find(fulfillments, { type: 'Delivery', tags: [{ code: 'cancel_request' }] })
+      cnclReqObj?.tags.forEach((tag: any) => {
+        if (tag.code === 'cancel_request') {
+          tag.list.forEach((i: any) => {
+            if (i.code === 'reason_id') {
+              if (i.value !== on_cancel.cancellation.reason.id) {
+                onCnclObj['reason_id'] =
+                  `reason_id in cancel_request does not match with cancellation objext in /${constants.ON_CANCEL}`
+              }
+            }
+          })
+        }
+      })
 
       if (!op) {
         const key = `invldPrecancelState`

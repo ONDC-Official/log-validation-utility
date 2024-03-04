@@ -71,7 +71,10 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
     }
 
     if (message.intent?.tags) {
-      errorObj.intent = { ...errorObj.intent, tags: checkTagConditions(message, context) }
+      let tags = checkTagConditions(message, context)
+      if (tags) {
+        errorObj.intent = { ...errorObj.intent, tags }
+      }
     } else {
       errorObj.intent = '/message/intent should have a required property tags'
     }

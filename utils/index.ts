@@ -302,7 +302,6 @@ export const checkTagConditions = (message: any, context: any) => {
   } else {
     tags.push('/message/intent should have a required property tags')
   }
-
   return tags.length ? tags : null
 }
 
@@ -476,6 +475,7 @@ export const checkBppIdOrBapId = (input: string, type?: string) => {
       input.startsWith('http')
     )
       return `context/${type}_id should not be a url`
+    return
   } catch (e) {
     return e
   }

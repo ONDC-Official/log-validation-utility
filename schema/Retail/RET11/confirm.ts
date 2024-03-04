@@ -474,12 +474,15 @@ export const FnBconfirmSchema = {
                 },
                 status: {
                   type: 'string',
+                  enum:["PAID","NOT-PAID"]
                 },
                 type: {
                   type: 'string',
+                  enum:["ON-ORDER","ON-FULFILLMENT"]
                 },
                 collected_by: {
                   type: 'string',
+                  enum:["BAP","BPP"]
                 },
                 '@ondc/org/buyer_app_finder_fee_type': {
                   type: 'string',
@@ -489,6 +492,7 @@ export const FnBconfirmSchema = {
                 },
                 '@ondc/org/settlement_basis': {
                   type: 'string',
+                  enum:['shipment','delivery','return_window_expiry']
                 },
                 '@ondc/org/settlement_window': {
                   type: 'string',

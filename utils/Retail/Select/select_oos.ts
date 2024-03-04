@@ -107,6 +107,9 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
       }
 
       setValue('msgId', context.message_id)
+      if (_.isEqual(getValue('txnId'), context.transaction_id)) {
+        errorObj.txnId = `Transaction Id should be different for flow 3 after /${ApiSequence.SELECT_OUT_OF_STOCK} onwards`
+      }
       setValue('txnId', context.transaction_id)
     } catch (error: any) {
       logger.info(
@@ -139,8 +142,6 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
         provider = provider[0]
 
         setValue('providerId', provider.id)
-        console.log('xgjash', provider.id)
-
         setValue('providerLoc', provider.locations[0].id)
         setValue('providerGps', provider.locations[0].gps)
         setValue('providerName', provider.descriptor.name)
@@ -224,8 +225,7 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
               if (!parentItemIdSet.has(item.parent_item_id)) parentItemIdSet.add(item.parent_item_id)
 
               if (!itemIdSet.has(item.id)) itemIdSet.add(item.id)
-
-              if (itemMap[item.parent_item_id].location_id !== item.location_id) {
+              if (itemTag && itemMap[item.parent_item_id].location_id !== item.location_id) {
                 const key = `item${index}location_id`
                 errorObj[key] = `Inconsistent location_id for parent_item_id ${item.parent_item_id}`
               }

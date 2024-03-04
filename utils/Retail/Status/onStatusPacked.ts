@@ -20,7 +20,6 @@ export const checkOnStatusPacked = (data: any, state: string) => {
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const schemaValidation = validateSchema('RET11', constants.ON_STATUS, data)
-    const select: any = getValue(`${ApiSequence.SELECT}`)
     const contextRes: any = checkContext(context, constants.ON_STATUS)
 
     if (schemaValidation !== 'error') {
@@ -74,7 +73,7 @@ export const checkOnStatusPacked = (data: any, state: string) => {
 
     try {
       logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_STATUS}`)
-      if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
+      if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
         onStatusObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
       }
     } catch (error: any) {

@@ -492,7 +492,7 @@ export const FnBconfirmSchema = {
                 },
                 '@ondc/org/settlement_basis': {
                   type: 'string',
-                  enum:['shipment','delivery']
+                  enum:['shipment','delivery','return_window_expiry']
                 },
                 '@ondc/org/settlement_window': {
                   type: 'string',

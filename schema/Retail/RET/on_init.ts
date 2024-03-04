@@ -103,16 +103,6 @@ export const onInitSchema = {
               },
               required: ['id', 'locations'],
             },
-            provider_location: {
-              type: 'object',
-              properties: {
-                id: {
-                  type: 'string',
-                  minLength: 1,
-                },
-              },
-              required: ['id'],
-            },
             items: {
               type: 'array',
               items: {

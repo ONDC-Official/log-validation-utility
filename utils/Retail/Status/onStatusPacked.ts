@@ -6,18 +6,18 @@ import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqu
 import { getValue, setValue } from '../../../shared/dao'
 import { checkFulfillmentID } from '../../index'
 
-export const checkOnStatusDelivered = (data: any, state: string) => {
+export const checkOnStatusPacked = (data: any, state: string) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.ON_STATUS_DELIVERED]: 'JSON cannot be empty' }
+      return { [ApiSequence.ON_STATUS_PACKED]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data
-
     if (!message || !context || isObjectEmpty(message)) {
       return { missingFields: '/context, /message, is missing or empty' }
     }
+
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const schemaValidation = validateSchema('RET11', constants.ON_STATUS, data)
     const select: any = getValue(`${ApiSequence.SELECT}`)
@@ -31,26 +31,25 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
       Object.assign(onStatusObj, contextRes.ERRORS)
     }
 
-    setValue(`${ApiSequence.ON_STATUS_DELIVERED}`, data)
+    setValue(`${ApiSequence.ON_STATUS_PACKED}`, data)
 
-    const picked_message_id: string | null = getValue('picked_message_id')
     const pending_message_id: string | null = getValue('pending_message_id')
-    const delivered_message_id: string = context.message_id
+    const packed_message_id: string = context.message_id
+
+    setValue(`packed_message_id`, packed_message_id)
 
     try {
       logger.info(
-        `Comparing message_id for unsolicited calls for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.delivered`,
+        `Comparing message_id for unsolicited calls for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.packed`,
       )
-      if (delivered_message_id === picked_message_id || delivered_message_id === pending_message_id) {
-        logger.error(
-          `Message_id for ${constants.ON_STATUS}.delivered cannot be same as ${constants.ON_STATUS}.picked or  ${constants.ON_STATUS}.pending`,
-        )
-        onStatusObj['invalid_message_id_delivered'] =
-          `Message_id cannot be same for ${constants.ON_STATUS}.delivered and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.pending `
+
+      if (pending_message_id === packed_message_id) {
+        onStatusObj['invalid_message_id'] =
+          `Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.packed`
       }
     } catch (error: any) {
       logger.error(
-        `Error while comparing message_id for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.delivered`,
+        `Error while comparing message_id for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.packed`,
       )
     }
 
@@ -99,13 +98,10 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
     }
 
     try {
-      logger.info(
-        `Comparing timestamp of /${constants.ON_STATUS}_OutForDelivery and /${constants.ON_STATUS}_${state} API`,
-      )
+      logger.info(`Comparing timestamp of /${constants.ON_STATUS}_Pending and /${constants.ON_STATUS}_${state} API`)
       if (_.gte(getValue('tmstmp'), context.timestamp)) {
-        onStatusObj.inVldTmstmp = `Timestamp for /${constants.ON_STATUS}_OutForDelivery api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
+        onStatusObj.inVldTmstmp = `Timestamp for /${constants.ON_STATUS}_Pending api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
       }
-
       setValue('tmpstmp', context.timestamp)
     } catch (error: any) {
       logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
@@ -134,19 +130,19 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
 
     try {
       logger.info(`Checking order state in /${constants.ON_STATUS}_${state}`)
-      if (on_status.state != 'Completed') {
-        onStatusObj.ordrState = `order/state should be "Completed" for /${constants.ON_STATUS}_${state}`
+      if (on_status.state != 'In-progress') {
+        onStatusObj.ordrState = `order/state should be "In-progress" for /${constants.ON_STATUS}_${state}`
       }
-    } catch (error) {
-      logger.error(`!!Error while checking order state in /${constants.ON_STATUS}_${state}`)
+    } catch (error: any) {
+      logger.error(`!!Error while checking order state in /${constants.ON_STATUS}_${state} Error: ${error.stack}`)
     }
 
     try {
-      logger.info(`Checking delivery timestamp in /${constants.ON_STATUS}_${state}`)
+      logger.info(`Checking pickup timestamp in /${constants.ON_STATUS}_${state}`)
       const noOfFulfillments = on_status.fulfillments.length
-      let orderDelivered = false
+      let orderPacked = false
       let i = 0
-      const deliveryTimestamps: any = {}
+      const pickupTimestamps: any = {}
 
       while (i < noOfFulfillments) {
         const fulfillment = on_status.fulfillments[i]
@@ -158,65 +154,56 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
           continue
         }
 
-        if (ffState === constants.ORDER_DELIVERED) {
-          orderDelivered = true
-          const pickUpTime = fulfillment.start.time.timestamp
-          const deliveryTime = fulfillment.end.time.timestamp
-          deliveryTimestamps[fulfillment.id] = deliveryTime
+        if (ffState === constants.ORDER_PACKED) {
+          orderPacked = true
+          const pickUpTime = fulfillment.start?.time.timestamp
+          pickupTimestamps[fulfillment.id] = pickUpTime
 
           try {
-            //checking delivery time matching with context timestamp
-            if (!_.lte(deliveryTime, contextTime)) {
-              onStatusObj.deliveryTime = `delivery timestamp should match context/timestamp and can't be future dated`
+            //checking pickup time matching with context timestamp
+            if (!_.lte(pickUpTime, contextTime)) {
+              onStatusObj.pickupTime = `pickup timestamp should match context/timestamp and can't be future dated`
             }
           } catch (error) {
             logger.error(
-              `!!Error while checking delivery time matching with context timestamp in /${constants.ON_STATUS}_${state}`,
-              error,
-            )
-          }
-
-          try {
-            //checking delivery time and pickup time
-            if (_.gte(pickUpTime, deliveryTime)) {
-              onStatusObj.delPickTime = `delivery timestamp (/end/time/timestamp) can't be less than or equal to the pickup timestamp (start/time/timestamp)`
-            }
-          } catch (error) {
-            logger.error(
-              `!!Error while checking delivery time and pickup time in /${constants.ON_STATUS}_${state}`,
+              `!!Error while checking pickup time matching with context timestamp in /${constants.ON_STATUS}_${state}`,
               error,
             )
           }
 
           try {
             //checking order/updated_at timestamp
-            if (!_.gte(on_status.updated_at, deliveryTime)) {
-              onStatusObj.updatedAt = `order/updated_at timestamp can't be less than the delivery time`
+            if (!_.gte(on_status.updated_at, pickUpTime)) {
+              onStatusObj.updatedAt = `order/updated_at timestamp can't be less than the pickup time`
             }
 
             if (!_.gte(contextTime, on_status.updated_at)) {
               onStatusObj.updatedAtTime = `order/updated_at timestamp can't be future dated (should match context/timestamp)`
             }
           } catch (error) {
-            logger.info(`!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`, error)
+            logger.error(`!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`, error)
           }
         }
 
         i++
       }
 
-      if (!orderDelivered) {
-        onStatusObj.noOrdrDelivered = `fulfillments/state should be ${constants.ORDER_DELIVERED} for /${constants.ON_STATUS}_${constants.ORDER_DELIVERED}`
+      setValue('pickupTimestamps', pickupTimestamps)
+
+      if (!orderPacked) {
+        onStatusObj.noOrdrPacked = `fulfillments/state should be ${constants.ORDER_PACKED} for /${constants.ON_STATUS}_${constants.ORDER_PACKED}`
       }
-    } catch (error) {
-      logger.info(`Error while checking delivery timestamp in /${constants.ON_STATUS}_${state}.json`)
+    } catch (error: any) {
+      logger.info(
+        `Error while checking pickup timestamp in /${constants.ON_STATUS}_${state}.json Error: ${error.stack}`,
+      )
     }
 
     // Checking fullfillment IDs for items
     try {
-      logger.info(`Comparing fulfillmentID for items at /${constants.ON_STATUS}_delivery`)
+      logger.info(`Comparing fulfillmentID for items at /${constants.ON_STATUS}_packed`)
       const items = on_status.items
-      const flow = constants.ON_STATUS + '_delivery'
+      const flow = constants.ON_STATUS + '_packed'
       const err = checkFulfillmentID(items, onStatusObj, flow)
       Object.assign(onStatusObj, err)
     } catch (error: any) {

@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo } from '../..'
+import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, payment_status } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { checkFulfillmentID } from '../../index'
 
@@ -12,6 +12,7 @@ export const checkOnStatusPending = (data: any, state: string) => {
     if (!data || isObjectEmpty(data)) {
       return { [ApiSequence.ON_STATUS_PENDING]: 'JSON cannot be empty' }
     }
+    
 
     const { message, context }: any = data
     if (!message || !context || isObjectEmpty(message)) {
@@ -80,11 +81,10 @@ export const checkOnStatusPending = (data: any, state: string) => {
 
     try {
       logger.info(`Comparing timestamp of /${constants.ON_CONFIRM} and /${constants.ON_STATUS}_${state} API`)
-      if (_.gte(getValue('tmstmp'), context.timestamp)) {
+      if (_.gte(getValue('onCnfrmtmpstmp'), context.timestamp)) {
         onStatusObj.tmpstmp1 = `Timestamp for /${constants.ON_CONFIRM} api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
       }
-
-      setValue('tmpstmp', on_status.context.timestamp)
+      setValue('tmpstmp', context.timestamp)
     } catch (error: any) {
       logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
     }
@@ -113,6 +113,17 @@ export const checkOnStatusPending = (data: any, state: string) => {
       logger.error(
         `!!Error occurred while checking for fulfillmentID for /${constants.ON_STATUS}_${state}, ${error.stack}`,
       )
+    }
+
+    try {
+      logger.info(`Checking if transaction_id is present in message.order.payment`)
+      const payment = on_status.payment
+      const status = payment_status(payment);
+      if(!status){
+        onStatusObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
+      }
+    } catch (err: any) {
+      logger.error(`Error while checking transaction is in message.order.payment`)
     }
 
     return onStatusObj

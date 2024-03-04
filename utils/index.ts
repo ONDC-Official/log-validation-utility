@@ -3,7 +3,8 @@ import _ from 'lodash'
 import { logger } from '../shared/logger'
 import constants, { statusArray } from '../constants'
 import schemaValidator from '../shared/schemaValidator'
-import data from '../constants/csv.json'
+import data from '../constants/AreacodeMap.json'
+import { reasonCodes } from '../constants/reasonCode'
 
 export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
 
@@ -211,24 +212,28 @@ const validate_schema_for_retail_json = (vertical: string, api: string, data: an
 }
 
 export const validateSchema = (domain: string, api: string, data: any) => {
-  logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
-  const errObj: any = {}
+  try {
+    logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
+    const errObj: any = {}
 
-  const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
+    const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
 
-  const datavld = schmaVldtr
-  if (datavld.status === 'fail') {
-    const res = datavld.errors
-    let i = 0
-    const len = res.length
-    while (i < len) {
-      const key = `schemaErr${i}`
-      errObj[key] = `${res[i].details} ${res[i].message}`
-      i++
-    }
+    const datavld = schmaVldtr
+    if (datavld.status === 'fail') {
+      const res = datavld.errors
+      let i = 0
+      const len = res.length
+      while (i < len) {
+        const key = `schemaErr${i}`
+        errObj[key] = `${res[i].details} ${res[i].message}`
+        i++
+      }
 
-    return errObj
-  } else return 'error'
+      return errObj
+    } else return 'error'
+  } catch (e: any) {
+    logger.error(`Some error occured while validating schema, ${e.stack}`)
+  }
 }
 
 const getDecimalPrecision = (numberString: string) => {
@@ -398,11 +403,13 @@ export const isObjectEqual = (obj1: any, obj2: any, parentKey: string = ''): str
 }
 
 export function checkItemTag(item: any, itemArray: any[]) {
-  for (const tag of item.tags) {
-    if (tag.code === 'parent') {
-      for (const list of tag.list) {
-        if (list.code === 'id' && !itemArray.includes(list.value)) {
-          return true
+  if (item.tags) {
+    for (const tag of item.tags) {
+      if (tag.code === 'parent') {
+        for (const list of tag.list) {
+          if (list.code === 'id' && !itemArray.includes(list.value)) {
+            return true
+          }
         }
       }
     }
@@ -462,7 +469,12 @@ export const checkBppIdOrBapId = (input: string, type?: string) => {
       return `${type} Id is not present`
     }
 
-    if (input?.includes('https://') || input.includes('www') || input.includes('https:') || input.includes('http'))
+    if (
+      input?.startsWith('https://') ||
+      input.startsWith('www') ||
+      input.startsWith('https:') ||
+      input.startsWith('http')
+    )
       return `context/${type}_id should not be a url`
   } catch (e) {
     return e
@@ -646,7 +658,7 @@ export function areTimestampsLessThanOrEqualTo(timestamp1: string, timestamp2: s
 
 export function validateStatusOrderAndTimestamp(set: any) {
   const errObj: any = {}
-  let previousTimestamp = null
+  let previousTimestamp: any = null
   let previousStatusIndex = -1
 
   for (const obj of set) {
@@ -772,6 +784,151 @@ export const compareSTDwithArea = (pincode: number, std: string): boolean => {
   return data.some((e: any) => e.Pincode === pincode && e['STD Code'] === std)
 }
 
-export const compareCitywithPinCode = (pincode: number, city: string): boolean => {
-  return data.some((e: any) => e.Pincode === pincode && e.City === city.toUpperCase())
+export const checkMandatoryTags = (i: string, items: any, errorObj: any, categoryJSON: any, categoryName: string) => {
+  items.forEach((item: any, index: number) => {
+    let attributeTag = null
+    let originTag = null
+    for (const tag of item.tags) {
+      originTag = tag.code === 'origin' ? tag : originTag
+      attributeTag = tag.code === 'attribute' ? tag : attributeTag
+    }
+
+    if (!originTag) {
+      logger.error(`Origin tag fields are missing for ${categoryName} item[${index}]`)
+      const key = `missingOriginTag[${i}][${index}]`
+      errorObj[key] = `Origin tag fields are missing for ${categoryName} item[${index}]`
+    }
+
+    if (!attributeTag && categoryName !== 'Grocery') {
+      logger.error(`Attribute tag fields are missing for ${categoryName} item[${index}]`)
+      const key = `missingAttributeTag[${i}][${index}]`
+      errorObj[key] = `Attribute tag fields are missing for ${categoryName} item[${index}]`
+      return
+    }
+    if (attributeTag) {
+      const tags = attributeTag.list
+      const ctgrID = item.category_id
+
+      if (categoryJSON.hasOwnProperty(ctgrID)) {
+        logger.info(`Checking for item tags for ${categoryName} item[${index}]`)
+        const mandatoryTags = categoryJSON[ctgrID]
+        for (const tagName in mandatoryTags) {
+          if (mandatoryTags.hasOwnProperty(tagName)) {
+            const tagInfo = mandatoryTags[tagName]
+            const isTagMandatory = tagInfo.mandatory
+            if (isTagMandatory) {
+              let tagValue = null
+              const tagFound = tags.some((tag: any) => {
+                const res = tag.code.toLowerCase() === tagName.toLowerCase()
+                if (res) {
+                  tagValue = tag.value.toLowerCase()
+                }
+
+                return res
+              })
+              if (!tagFound) {
+                logger.error(`Mandatory tag field [${tagName}] missing for ${categoryName} item[${index}]`)
+                const key = `missingTagsItem[${i}][${index}] : ${tagName}`
+                errorObj[key] = `Mandatory tag field [${tagName}] missing for ${categoryName} item[${index}]`
+              } else {
+                if (tagInfo.value.length > 0 && !tagInfo.value.includes(tagValue)) {
+                  logger.error(`The item value can only be of possible values.`)
+                  const key = `InvldValueforItem[${i}][${index}] : ${tagName}`
+                  errorObj[key] = `The item value can only be of possible values ${tagInfo.value}.`
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  })
+  return errorObj
+}
+
+export const checkDuplicateParentIdItems = (items: any) => {
+  const map: any = {}
+
+  items.forEach((item: any) => {
+    const parent_item_id = item.parent_item_id
+    if (parent_item_id) {
+      if (!map[parent_item_id]) {
+        map[parent_item_id] = [item]
+      } else {
+        map[parent_item_id].push(item)
+      }
+    }
+  })
+  return map
+}
+
+export const checkForDuplicates = (arr: any, errorObj: any) => {
+  let index = 0
+  const seen = new Set()
+  for (const value of arr) {
+    const stringValue = JSON.stringify(value)
+    if (seen.has(stringValue)) {
+      const key = `DuplicateVarient[${index}]`
+      errorObj[key] = `Duplicate varient found for item in bpp/providers/items`
+      logger.error(`Error: Duplicate varient of item found in bpp/providers/items`)
+      index++
+    }
+    seen.add(stringValue)
+  }
+}
+
+export const sumQuoteBreakUp = (quote: any) => {
+  logger.info(`Checking for quote breakup price sum and total Price`)
+  const totalPrice = Number(quote.price.value)
+  let currentPrice = 0
+  quote.breakup.forEach((item: any) => {
+    currentPrice += Number(item.price.value)
+  })
+  return totalPrice === currentPrice
+}
+
+export const findVariantPath = (arr: any) => {
+  const groupedByItemID = _.groupBy(arr, 'id')
+
+  // Map over the grouped items and collect attribute paths for each item_id into an array
+  const variantPath = _.map(groupedByItemID, (group, item_id) => {
+    let paths = _.chain(group).flatMap('tags').filter({ code: 'attr' }).map('list[0].value').value()
+
+    return { item_id, paths }
+  })
+
+  return variantPath
+}
+
+export const findValueAtPath = (path: string, item: any) => {
+  const key = path.split('.').pop()
+  let value = null
+  item.tags[1].list.forEach((item: any) => {
+    if (item.code === key) {
+      value = item.value
+    }
+  })
+
+  return { key, value }
+}
+
+export const mapCancellationID = (cancelled_by: string, reason_id: string, errorObj: any) => {
+  logger.info(`Mapping cancellationID with valid ReasonID`)
+  if (reason_id in reasonCodes && reasonCodes[reason_id].USED_BY.includes(cancelled_by)) {
+    logger.info(`CancellationID ${reason_id} mapped with valid ReasonID for ${cancelled_by}`)
+    return true
+  } else {
+    logger.error(`Invalid CancellationID ${reason_id} or not allowed for ${cancelled_by}`)
+    errorObj['invldCancellationID'] = `Invalid CancellationID ${reason_id} or not allowed for ${cancelled_by}`
+    return false
+  }
+}
+
+export const payment_status = (payment: any) => {
+  if (payment.status == 'PAID') {
+    if (!payment.params.transaction_id) {
+      return false
+    }
+  }
+  return true
 }

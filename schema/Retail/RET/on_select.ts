@@ -168,6 +168,7 @@ export const onSelectSchema = {
                   },
                   '@ondc/org/TAT': {
                     type: 'string',
+                    format: 'duration',
                   },
                   state: {
                     type: 'object',
@@ -337,7 +338,7 @@ export const onSelectSchema = {
           type: 'string',
         },
         message: {
-          type: 'string',
+          type: "string",
         },
       },
       required: ['type', 'code', 'message'],

@@ -20,6 +20,11 @@ export const FnBonSearchSchema = {
         },
         city: {
           type: 'string',
+          minLength: 1,
+          not: {
+            pattern: '\\*',
+          },
+          errorMessage: `City Code can't be * for on_search request`,
         },
         core_version: {
           type: 'string',
@@ -164,7 +169,7 @@ export const FnBonSearchSchema = {
                           required: ['phone', 'email'],
                         },
                       },
-                      required: ['contact'],
+                      required: ['id', 'type', 'contact'],
                     },
                   },
                   descriptor: {
@@ -294,6 +299,9 @@ export const FnBonSearchSchema = {
                           properties: {
                             gps: {
                               type: 'string',
+
+                              errorMessage:
+                                'The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                             },
                             radius: {
                               type: 'object',
@@ -342,6 +350,7 @@ export const FnBonSearchSchema = {
                               type: 'array',
                               items: {
                                 type: 'string',
+                                format: 'url',
                               },
                             },
                           },
@@ -375,7 +384,7 @@ export const FnBonSearchSchema = {
                           },
                         },
                       },
-                      required: ['id', 'tags'],
+                      required: ['id', 'parent_category_id', 'tags'],
                     },
                   },
                   items: {
@@ -453,7 +462,9 @@ export const FnBonSearchSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
-                                  enum: ['99', '0'],
+                                  enum: ['0', '99'],
+                                  errorMessage:
+                                    'maximum/count must be equal to one of the allowed values i.e either 99 or 0',
                                 },
                               },
                               required: ['count'],
@@ -518,6 +529,7 @@ export const FnBonSearchSchema = {
                         category_id: {
                           type: 'string',
                           enum: fnbCategories,
+                          errorMessage: 'Invalid category ID found for item for on_search ',
                         },
                         category_ids: {
                           type: 'array',
@@ -591,6 +603,95 @@ export const FnBonSearchSchema = {
                         },
                       },
                       required: ['id', 'descriptor', 'quantity', 'price', 'category_id', 'tags'],
+                    },
+                  },
+                  offers: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        id: {
+                          type: 'string',
+                        },
+                        descriptor: {
+                          type: 'object',
+                          properties: {
+                            code: {
+                              type: 'string',
+                              enum: ['disc_pct', 'disc_amt', 'buyXgetY', 'freebie'],
+                            },
+                            images: {
+                              type: 'array',
+                              items: {
+                                type: 'string',
+                              },
+                            },
+                          },
+                          required: ['code', 'images'],
+                        },
+                        location_ids: {
+                          type: 'array',
+                          items: {
+                            type: 'string',
+                          },
+                        },
+                        item_ids: {
+                          type: 'array',
+                          items: {
+                            type: 'string',
+                          },
+                        },
+                        time: {
+                          type: 'object',
+                          properties: {
+                            label: {
+                              type: 'string',
+                            },
+                            range: {
+                              type: 'object',
+                              properties: {
+                                start: {
+                                  type: 'string',
+                                  format: 'date-time',
+                                },
+                                end: {
+                                  type: 'string',
+                                  format: 'date-time',
+                                },
+                              },
+                            },
+                          },
+                          required: ['label', 'range'],
+                        },
+                        tags: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                              },
+                              list: {
+                                type: 'array',
+                                items: {
+                                  type: 'object',
+                                  properties: {
+                                    code: {
+                                      type: 'string',
+                                    },
+                                    value: {
+                                      type: 'string',
+                                    },
+                                  },
+                                  required: ['code', 'value'],
+                                },
+                              },
+                            },
+                            required: ['code', 'list'],
+                          },
+                        },
+                      },
+                      required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags'],
                     },
                   },
                   tags: {

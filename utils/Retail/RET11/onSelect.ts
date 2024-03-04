@@ -52,6 +52,7 @@ export const checkOnSelect = (data: any) => {
 
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
   const select: any = getValue(`${ApiSequence.SELECT}`)
+  const searchMessage: any = getValue(`${ApiSequence.ON_SEARCH}_message`)
 
   try {
     logger.info(`Comparing city of /${constants.SEARCH} and /${constants.ON_SELECT}`)
@@ -181,16 +182,50 @@ export const checkOnSelect = (data: any) => {
     logger.error(`!!Error while checking TAT and TTS in /${constants.ON_SELECT}`)
   }
 
+  try {
+    logger.info(`Checking TAT and TTS in /${constants.ON_SELECT} and /${constants.ON_SEARCH}`)
+    const catalog = searchMessage.catalog
+    const providers = catalog['bpp/providers']
+    let max_time_to_ships = []
+    for (let providerIndex = 0; providerIndex < providers.length; providerIndex++) {
+      const providerItems = providers[providerIndex].items
+      for (let itemIndex = 0; itemIndex < providerItems.length; itemIndex++) {
+        const timeToShip = isoDurToSec(providerItems[itemIndex]['@ondc/org/time_to_ship'])
+        if (timeToShip) {
+          max_time_to_ships.push(timeToShip)
+        }
+      }
+    }
+    const max_tts = max_time_to_ships.sort((a, b) => a - b)[0]
+    const on_select_tat = on_select.fulfillments.map((e: any) => isoDurToSec(e['@ondc/org/TAT']))
+
+    if (on_select_tat < max_tts) {
+      errorObj.ttstat = `/fulfillments/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be less than @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
+    }
+
+    if (on_select_tat === max_tts) {
+      errorObj.ttstat = `/fulfillments/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be equal to @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while Checking TAT and TTS in /${constants.ON_SELECT} and /${constants.ON_SEARCH}`)
+  }
+
   let nonServiceableFlag = 0
   try {
     logger.info(`Checking fulfillments' state in ${constants.ON_SELECT}`)
     const ffState = on_select.fulfillments.every((ff: { state: { descriptor: any } }) => {
-      const ffDesc = ff.state.descriptor
-      if (ffDesc.code === 'Non-serviceable') {
-        nonServiceableFlag = 1
-      }
+      if (ff.state) {
+        const ffDesc = ff.state.descriptor
 
-      return ffDesc.hasOwnProperty('code') ? ffDesc.code === 'Serviceable' || ffDesc.code === 'Non-serviceable' : false
+        if (ffDesc.code === 'Non-serviceable') {
+          nonServiceableFlag = 1
+        }
+
+        return ffDesc.hasOwnProperty('code')
+          ? ffDesc.code === 'Serviceable' || ffDesc.code === 'Non-serviceable'
+          : false
+      }
+      return
     })
 
     if (!ffState)
@@ -212,19 +247,23 @@ export const checkOnSelect = (data: any) => {
     logger.info(`Comparing count of items in ${constants.SELECT} and ${constants.ON_SELECT}`)
     const itemsIdList: any = getValue('itemsIdList') || {}
     logger.info('itemsIdList', itemsIdList)
-    on_select.quote.breakup.forEach((item: { [x: string]: any }) => {
-      if (item['@ondc/org/item_id'] in itemsIdList && item['@ondc/org/title_type'] === 'item') {
-        if (
-          itemsIdList[item['@ondc/org/item_id']] != item['@ondc/org/item_quantity'].count &&
-          (!on_select_error || on_select_error.type != 'DOMAIN-ERROR' || on_select_error.code != '40002')
-        ) {
-          const cntkey = `cnt${item['@ondc/org/item_id']}`
-          errorObj[
-            cntkey
-          ] = `Count of item with id: ${item['@ondc/org/item_id']} does not match in ${constants.SELECT} & ${constants.ON_SELECT} (suitable domain error should be provided)`
+    if (on_select.quote) {
+      on_select.quote.breakup.forEach((item: { [x: string]: any }) => {
+        if (item['@ondc/org/item_id'] in itemsIdList && item['@ondc/org/title_type'] === 'item') {
+          if (
+            itemsIdList[item['@ondc/org/item_id']] != item['@ondc/org/item_quantity'].count &&
+            (!on_select_error || on_select_error.type != 'DOMAIN-ERROR' || on_select_error.code != '40002')
+          ) {
+            const cntkey = `cnt${item['@ondc/org/item_id']}`
+            errorObj[cntkey] =
+              `Count of item with id: ${item['@ondc/org/item_id']} does not match in ${constants.SELECT} & ${constants.ON_SELECT} (suitable domain error should be provided)`
+          }
         }
-      }
-    })
+      })
+    } else {
+      logger.error(`Missing quote object in ${constants.ON_SELECT}`)
+      errorObj.missingQuote = `Missing quote object in ${constants.ON_SELECT}`
+    }
   } catch (error: any) {
     // errorObj.countErr = `Count of item does not match with the count in /select`;
     logger.error(
@@ -236,98 +275,100 @@ export const checkOnSelect = (data: any) => {
     logger.info(`-x-x-x-x-Quote Breakup ${constants.ON_SELECT} all checks-x-x-x-x`)
     const itemsIdList: any = getValue('itemsIdList')
     const itemsCtgrs: any = getValue('itemsCtgrs')
-    on_select.quote.breakup.forEach((element: any, i: any) => {
-      const titleType = element['@ondc/org/title_type']
-      // logger.info(element.price.value);
+    if (on_select.quote) {
+      on_select.quote.breakup.forEach((element: any, i: any) => {
+        const titleType = element['@ondc/org/title_type']
+        // logger.info(element.price.value);
 
-      logger.info(`Calculating quoted Price Breakup for element ${element.title}`)
-      onSelectPrice += parseFloat(element.price.value)
+        logger.info(`Calculating quoted Price Breakup for element ${element.title}`)
+        onSelectPrice += parseFloat(element.price.value)
 
-      if (titleType === 'item') {
-        if (!(element['@ondc/org/item_id'] in itemFlfllmnts)) {
-          const brkupitemid = `brkupitemid${i}`
-          errorObj[
-            brkupitemid
-          ] = `item with id: ${element['@ondc/org/item_id']} in quote.breakup[${i}] does not exist in items[]`
-        }
+        if (titleType === 'item') {
+          if (!(element['@ondc/org/item_id'] in itemFlfllmnts)) {
+            const brkupitemid = `brkupitemid${i}`
+            errorObj[brkupitemid] =
+              `item with id: ${element['@ondc/org/item_id']} in quote.breakup[${i}] does not exist in items[]`
+          }
 
-        logger.info(`Comparing individual item's total price and unit price `)
-        if (!element.hasOwnProperty('item')) {
-          errorObj.priceBreakup = `Item's unit price missing in quote.breakup for item id ${element['@ondc/org/item_id']}`
-        } else if (
-          parseFloat(element.item.price.value) * element['@ondc/org/item_quantity'].count !=
-          element.price.value
-        ) {
-          errorObj.priceBreakup = `Item's unit and total price mismatch for id: ${element['@ondc/org/item_id']}`
-        }
-
-        logger.info(`checking available and maximum count in ${constants.ON_SELECT}`)
-
-        if (element.item.hasOwnProperty('quantity')) {
-          if (
-            _.gt(parseFloat(element.item.quantity.available.count), parseFloat(element.item.quantity.maximum.count))
+          logger.info(`Comparing individual item's total price and unit price `)
+          if (!element.hasOwnProperty('item')) {
+            errorObj.priceBreakup = `Item's unit price missing in quote.breakup for item id ${element['@ondc/org/item_id']}`
+          } else if (
+            parseFloat(element.item.price.value) * element['@ondc/org/item_quantity'].count !=
+            element.price.value
           ) {
-            const key = `qntcnt${i}`
-            errorObj[
-              key
-            ] = `available count can't be greater than maximum count for item id: ${element['@ondc/org/item_id']}`
+            errorObj.priceBreakup = `Item's unit and total price mismatch for id: ${element['@ondc/org/item_id']}`
+          }
+
+          logger.info(`checking available and maximum count in ${constants.ON_SELECT}`)
+
+          if (element.item.hasOwnProperty('quantity')) {
+            if (
+              _.gt(parseFloat(element.item.quantity.available.count), parseFloat(element.item.quantity.maximum.count))
+            ) {
+              const key = `qntcnt${i}`
+              errorObj[key] =
+                `available count can't be greater than maximum count for item id: ${element['@ondc/org/item_id']}`
+            }
           }
         }
-      }
 
-      logger.info(`Calculating Items' prices in /${constants.ON_SELECT}`)
-      if (typeof itemsIdList === 'object' && itemsIdList && element['@ondc/org/item_id'] in itemsIdList) {
-        if (
-          titleType === 'item' ||
-          (titleType === 'tax' && !taxNotInlcusive.includes(itemsCtgrs[element['@ondc/org/item_id']]))
-        ) {
-          onSelectItemsPrice += parseFloat(element.price.value)
+        logger.info(`Calculating Items' prices in /${constants.ON_SELECT}`)
+        if (typeof itemsIdList === 'object' && itemsIdList && element['@ondc/org/item_id'] in itemsIdList) {
+          if (
+            titleType === 'item' ||
+            (titleType === 'tax' && !taxNotInlcusive.includes(itemsCtgrs[element['@ondc/org/item_id']]))
+          ) {
+            onSelectItemsPrice += parseFloat(element.price.value)
+          }
         }
-      }
 
-      if (titleType === 'tax' || titleType === 'discount') {
-        if (!(element['@ondc/org/item_id'] in itemFlfllmnts)) {
-          const brkupitemsid = `brkupitemstitles${i}`
-          errorObj[
-            brkupitemsid
-          ] = `item with id: ${element['@ondc/org/item_id']} in quote.breakup[${i}] does not exist in items[] (should be a valid item id)`
+        if (titleType === 'tax' || titleType === 'discount') {
+          if (!(element['@ondc/org/item_id'] in itemFlfllmnts)) {
+            const brkupitemsid = `brkupitemstitles${i}`
+            errorObj[brkupitemsid] =
+              `item with id: ${element['@ondc/org/item_id']} in quote.breakup[${i}] does not exist in items[] (should be a valid item id)`
+          }
         }
-      }
 
-      // TODO:
-      // if (['tax', 'discount', 'packing', 'misc'].includes(titleType)) {
-      //   if (parseFloat(element.price.value) == 0) {
-      //     const key = `breakupItem${titleType}`
-      //     errorObj[key] = `${titleType} line item should not be present if price=0`
-      //   }
-      // }
+        // TODO:
+        // if (['tax', 'discount', 'packing', 'misc'].includes(titleType)) {
+        //   if (parseFloat(element.price.value) == 0) {
+        //     const key = `breakupItem${titleType}`
+        //     errorObj[key] = `${titleType} line item should not be present if price=0`
+        //   }
+        // }
 
-      if (titleType === 'packing' || titleType === 'delivery' || titleType === 'misc') {
-        if (!Object.values(itemFlfllmnts).includes(element['@ondc/org/item_id'])) {
-          const brkupffid = `brkupfftitles${i}`
-          errorObj[
-            brkupffid
-          ] = `invalid  id: ${element['@ondc/org/item_id']} in ${titleType} line item (should be a valid fulfillment_id)`
+        if (titleType === 'packing' || titleType === 'delivery' || titleType === 'misc') {
+          if (!Object.values(itemFlfllmnts).includes(element['@ondc/org/item_id'])) {
+            const brkupffid = `brkupfftitles${i}`
+            errorObj[brkupffid] =
+              `invalid  id: ${element['@ondc/org/item_id']} in ${titleType} line item (should be a valid fulfillment_id)`
+          }
         }
+      })
+
+      setValue('onSelectPrice', on_select.quote.price.value)
+      onSelectPrice = onSelectPrice.toFixed(2)
+
+      logger.info(
+        `Matching quoted Price ${parseFloat(on_select.quote.price.value)} with Breakup Price ${onSelectPrice}`,
+      )
+      if (onSelectPrice != parseFloat(on_select.quote.price.value)) {
+        errorObj.quoteBrkup = `quote.price.value ${on_select.quote.price.value} does not match with the price breakup ${onSelectPrice}`
       }
-    })
 
-    setValue('onSelectPrice', on_select.quote.price.value)
-    onSelectPrice = onSelectPrice.toFixed(2)
+      const selectedPrice = getValue('selectedPrice')
+      logger.info(
+        `Matching price breakup of items ${onSelectItemsPrice} (/${constants.ON_SELECT}) with selected items price ${selectedPrice} (${constants.SELECT})`,
+      )
 
-    logger.info(`Matching quoted Price ${parseFloat(on_select.quote.price.value)} with Breakup Price ${onSelectPrice}`)
-    if (onSelectPrice != parseFloat(on_select.quote.price.value)) {
-      errorObj.quoteBrkup = `quote.price.value ${on_select.quote.price.value} does not match with the price breakup ${onSelectPrice}`
-    }
-
-    const selectedPrice = getValue('selectedPrice')
-    logger.info(
-      `Matching price breakup of items ${onSelectItemsPrice} (/${constants.ON_SELECT}) with selected items price ${selectedPrice} (${constants.SELECT})`,
-    )
-
-    if (typeof selectedPrice === 'number' && onSelectItemsPrice !== selectedPrice) {
-      errorObj.priceErr = `Warning: Quoted Price in /${constants.ON_SELECT} INR ${onSelectItemsPrice} does not match with the total price of items in /${constants.SELECT} INR ${selectedPrice}`
-      logger.info('Quoted Price and Selected Items price mismatch')
+      if (typeof selectedPrice === 'number' && onSelectItemsPrice !== selectedPrice) {
+        errorObj.priceErr = `Warning: Quoted Price in /${constants.ON_SELECT} INR ${onSelectItemsPrice} does not match with the total price of items in /${constants.SELECT} INR ${selectedPrice}`
+        logger.info('Quoted Price and Selected Items price mismatch')
+      }
+    } else {
+      logger.error(`Missing quote object in ${constants.ON_SELECT}`)
     }
   } catch (error: any) {
     logger.error(`!!Error while checking and comparing the quoted price in /${constants.ON_SELECT}, ${error.stack}`)
@@ -335,48 +376,57 @@ export const checkOnSelect = (data: any) => {
 
   try {
     // checking if delivery line item present in case of Serviceable
-    const quoteBreakup = on_select.quote.breakup
-    const deliveryItems = quoteBreakup.filter(
-      (item: { [x: string]: string }) => item['@ondc/org/title_type'] === 'delivery',
-    )
-    const noOfDeliveries = deliveryItems.length
-    if (!noOfDeliveries && !nonServiceableFlag) {
-      errorObj.deliveryLineItem = `delivery line item must be present in quote/breakup (if location is serviceable)`
-    }
+    logger.info(`Checking if delivery line item present in case of Serviceable for ${constants.ON_SELECT}`)
+    if (on_select.quote) {
+      const quoteBreakup = on_select.quote.breakup
+      const deliveryItems = quoteBreakup.filter(
+        (item: { [x: string]: string }) => item['@ondc/org/title_type'] === 'delivery',
+      )
+      const noOfDeliveries = deliveryItems.length
+      if (!noOfDeliveries && !nonServiceableFlag) {
+        errorObj.deliveryLineItem = `delivery line item must be present in quote/breakup (if location is serviceable)`
+      }
 
-    // Checking for delivery charges in non servicable locations
-    if (noOfDeliveries && nonServiceableFlag) {
-      deliveryItems.map((e: any) => {
-        if (e.price.value > 0) {
-          logger.error('Delivery charges not applicable for non-servicable locations')
-        }
-      })
+      // Checking for delivery charges in non servicable locations
+      if (noOfDeliveries && nonServiceableFlag) {
+        deliveryItems.map((e: any) => {
+          if (e.price.value > 0) {
+            logger.error('Delivery charges not applicable for non-servicable locations')
+          }
+        })
+      }
+    } else {
+      logger.error(`Missing quote object in ${constants.ON_SELECT}`)
     }
   } catch (error: any) {
-    logger.info(`!!Error occurred while checking delivery line item in /${constants.ON_SELECT}`)
+    logger.info(`!!Error occurred while checking delivery line item in /${constants.ON_SELECT}, ${error.stack}`)
   }
 
   try {
     logger.info(`Checking payment breakup title & type in /${constants.ON_SELECT}`)
-    on_select.quote.breakup.forEach((item: { [x: string]: any; title: string }) => {
-      if (
-        item['@ondc/org/title_type'] != 'item' &&
-        !Object.values(retailPymntTtl).includes(item['@ondc/org/title_type'])
-      ) {
-        errorObj.pymntttltyp = `Quote breakup Payment title type "${item['@ondc/org/title_type']}" is not as per the API contract`
-      }
+    if (on_select.quote) {
+      on_select.quote.breakup.forEach((item: { [x: string]: any; title: string }) => {
+        if (
+          item['@ondc/org/title_type'] != 'item' &&
+          !Object.values(retailPymntTtl).includes(item['@ondc/org/title_type'])
+        ) {
+          errorObj.pymntttltyp = `Quote breakup Payment title type "${item['@ondc/org/title_type']}" is not as per the API contract`
+        }
 
-      if (item['@ondc/org/title_type'] !== 'item' && !(item.title.toLowerCase().trim() in retailPymntTtl)) {
-        errorObj.pymntttl = `Quote breakup Payment title "${item.title}" is not as per the API Contract`
-      } else if (
-        item['@ondc/org/title_type'] !== 'item' &&
-        retailPymntTtl[item.title.toLowerCase().trim()] !== item['@ondc/org/title_type']
-      ) {
-        errorObj.pymntttlmap = `Quote breakup Payment title "${item.title}" comes under the title type "${
-          retailPymntTtl[item.title.toLowerCase().trim()]
-        }"`
-      }
-    })
+        if (item['@ondc/org/title_type'] !== 'item' && !(item.title.toLowerCase().trim() in retailPymntTtl)) {
+          errorObj.pymntttl = `Quote breakup Payment title "${item.title}" is not as per the API Contract`
+        } else if (
+          item['@ondc/org/title_type'] !== 'item' &&
+          retailPymntTtl[item.title.toLowerCase().trim()] !== item['@ondc/org/title_type']
+        ) {
+          errorObj.pymntttlmap = `Quote breakup Payment title "${item.title}" comes under the title type "${
+            retailPymntTtl[item.title.toLowerCase().trim()]
+          }"`
+        }
+      })
+    } else {
+      logger.error(`Missing quote object in ${constants.ON_SELECT}`)
+    }
   } catch (error: any) {
     logger.error(`!!Error while checking payment breakup title & type in /${constants.ON_SELECT}, ${error.stack}`)
   }
@@ -404,16 +454,18 @@ export const checkOnSelect = (data: any) => {
   }
 
   try {
-    logger.info(`Storing Quote object in /${constants.ON_SELECT}`)
-    on_select.quote.breakup.forEach((element: BreakupElement) => {
-      if (element['@ondc/org/title_type'] === 'item') {
-        if (element.item && element.item.hasOwnProperty('quantity')) {
-          delete element.item.quantity
+    if (on_select.quote) {
+      logger.info(`Storing Quote object in /${constants.ON_SELECT}`)
+      on_select.quote.breakup.forEach((element: BreakupElement) => {
+        if (element['@ondc/org/title_type'] === 'item') {
+          if (element.item && element.item.hasOwnProperty('quantity')) {
+            delete element.item.quantity
+          }
         }
-      }
-    })
-    //saving on select quote
-    setValue('quoteObj', on_select.quote)
+      })
+      //saving on select quote
+      setValue('quoteObj', on_select.quote)
+    }
   } catch (error: any) {
     logger.error(`!!Error while storing quote object in /${constants.ON_SELECT}, ${error.stack}`)
   }

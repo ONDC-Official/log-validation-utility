@@ -22,7 +22,7 @@ const controller = {
       switch (normalisedDomain) {
         case DOMAIN.RETAIL:
           {
-            const { response, success, message } = await helper.validateRetail(domain, payload, version)
+            const { response, success, message } = await helper.validateRetail(domain, payload, version, flow)
             result = { response, success, message }
           }
 

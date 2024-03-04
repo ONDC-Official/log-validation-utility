@@ -42,11 +42,10 @@ export const checkOnStatusPicked = (data: any, state: string) => {
       logger.info(
         `Comparing message_id for unsolicited calls for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`,
       )
-
       if (pending_message_id === picked_message_id) {
-        onStatusObj[
-          'invalid_message_id'
-        ] = `Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`
+        logger.error(`Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`)
+        onStatusObj['invalid_message_id_picked'] =
+          `Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`
       }
     } catch (error: any) {
       logger.error(
@@ -99,12 +98,20 @@ export const checkOnStatusPicked = (data: any, state: string) => {
     }
 
     try {
-      logger.info(`Comparing timestamp of /${constants.ON_CONFIRM} and /${constants.ON_STATUS}_${state} API`)
-      if (_.gte(getValue('tmstmp'), context.timestamp)) {
-        onStatusObj.tmpstmp1 = `Timestamp for /${constants.ON_CONFIRM} api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
+      logger.info(`Comparing timestamp of /${constants.ON_STATUS}_Packed and /${constants.ON_STATUS}_${state} API`)
+      if (_.gte(getValue('tmpstmp'), context.timestamp)) {
+        onStatusObj.inVldTmstmp = `Timestamp for /${constants.ON_STATUS}_Packed api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
       }
 
-      setValue('tmpstmp', on_status.context.timestamp)
+      setValue('tmpstmp', context.timestamp)
+    } catch (error: any) {
+      logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
+    }
+    try {
+      logger.info(`Comparing timestamp of /${constants.ON_CONFIRM} and /${constants.ON_STATUS}_${state} API`)
+      if (_.gte(getValue('onCnfrmtmpstmp'), context.timestamp)) {
+        onStatusObj.tmpstmp1 = `Timestamp for /${constants.ON_CONFIRM} api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
+      }
     } catch (error: any) {
       logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
     }
@@ -185,7 +192,7 @@ export const checkOnStatusPicked = (data: any, state: string) => {
       setValue('pickupTimestamps', pickupTimestamps)
 
       if (!orderPicked) {
-        onStatusObj.noOrdrPicked = `fulfillments/state should be Order-picked-up for /${constants.ON_STATUS}_${state}`
+        onStatusObj.noOrdrPicked = `fulfillments/state should be ${constants.ORDER_PICKED} for /${constants.ON_STATUS}_${constants.ORDER_PICKED}`
       }
     } catch (error: any) {
       logger.info(

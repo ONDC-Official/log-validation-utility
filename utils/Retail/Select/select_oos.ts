@@ -24,9 +24,9 @@ const tagFinder = (item: { tags: any[] }, value: string): any => {
   return res
 }
 
-export const checkSelect = (data: any, msgIdSet: any) => {
+export const checkSelect_OOS = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [ApiSequence.SELECT]: 'JSON cannot be empty' }
+    return { [ApiSequence.SELECT_OUT_OF_STOCK]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data
@@ -40,7 +40,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   msgIdSet.add(context.message_id)
 
   const errorObj: any = {}
-  let selectedPrice = 0
+  let SELECT_OUT_OF_STOCKedPrice = 0
   const itemsIdList: any = {}
   const itemsCtgrs: any = {}
   const itemsTat: any[] = []
@@ -59,7 +59,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     Object.assign(errorObj, contextRes.ERRORS)
   }
 
-  setValue(`${ApiSequence.SELECT}`, data)
+  setValue(`${ApiSequence.SELECT_OUT_OF_STOCK}`, data)
 
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
   const onSearchContext: any = getValue(`${ApiSequence.ON_SEARCH}_context`)
@@ -68,20 +68,20 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     logger.info(`Comparing city of /${constants.SEARCH} and /${constants.SELECT}`)
     if (!_.isEqual(searchContext.city, context.city)) {
       const key = `${ApiSequence.SEARCH}_city`
-      errorObj[key] = `City code mismatch in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT}`
+      errorObj[key] = `City code mismatch in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK}`
     }
   } catch (error: any) {
-    logger.info(`Error while comparing city in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT}, ${error.stack}`)
+    logger.info(`Error while comparing city in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK}, ${error.stack}`)
   }
 
   try {
     logger.info(`Comparing city of /${constants.ON_SEARCH} and /${constants.SELECT}`)
     if (!_.isEqual(onSearchContext.city, context.city)) {
       const key = `${ApiSequence.ON_SEARCH}_city`
-      errorObj[key] = `City code mismatch in /${ApiSequence.ON_SEARCH} and /${ApiSequence.SELECT}`
+      errorObj[key] = `City code mismatch in /${ApiSequence.ON_SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK}`
     }
   } catch (error: any) {
-    logger.info(`Error while comparing city in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT}, ${error.stack}`)
+    logger.info(`Error while comparing city in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK}, ${error.stack}`)
   }
 
   try {
@@ -101,12 +101,12 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     logger.info(`Comparing Message Ids of /${constants.ON_SEARCH} and /${constants.SELECT}`)
     if (_.isEqual(onSearchContext.message_id, context.message_id)) {
       const key = `${ApiSequence.ON_SEARCH}_msgId`
-      errorObj[key] = `Message Id for /${ApiSequence.ON_SEARCH} and /${ApiSequence.SELECT} api cannot be same`
+      errorObj[key] = `Message Id for /${ApiSequence.ON_SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK} api cannot be same`
     }
 
     if (_.isEqual(searchContext.message_id, context.message_id)) {
       const key = `${ApiSequence.SEARCH}_msgId`
-      errorObj[key] = `Message Id for /${ApiSequence.SEARCH} and /${ApiSequence.SELECT} api cannot be same`
+      errorObj[key] = `Message Id for /${ApiSequence.SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK} api cannot be same`
     }
 
     setValue('msgId', context.message_id)
@@ -120,11 +120,11 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   try {
     const customIdArray: any[] = []
     const itemIdArray: any[] = []
-    const select = message.order
+    const select_oos = message.order
     const onSearch: any = getValue(`${ApiSequence.ON_SEARCH}`)
 
     let provider = onSearch?.message?.catalog['bpp/providers'].filter(
-      (provider: { id: any }) => provider.id === select.provider.id,
+      (provider: { id: any }) => provider.id === select_oos.provider.id,
     )
     if (provider[0].time.label === 'disable') {
       errorObj.disbledProvider = `provider with provider.id: ${provider[0].id} was disabled in on_search `
@@ -148,7 +148,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
 
       try {
         logger.info(`Comparing provider location in /${constants.ON_SEARCH} and /${constants.SELECT}`)
-        if (provider.locations[0].id != select.provider.locations[0].id) {
+        if (provider.locations[0].id != select_oos.provider.locations[0].id) {
           errorObj.prvdLoc = `provider.locations[0].id ${provider.locations[0].id} mismatches in /${constants.ON_SEARCH} and /${constants.SELECT}`
         }
       } catch (error: any) {
@@ -166,7 +166,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
         const itemMapper: any = {}
         const parentItemIdSet = new Set()
         const itemIdSet = new Set()
-        select.items.forEach(
+        select_oos.items.forEach(
           (
             item: {
               id: string | number
@@ -183,9 +183,10 @@ export const checkSelect = (data: any, msgIdSet: any) => {
             if (baseItem) {
               const searchBaseItem = provider.items.find((it: { id: any }) => it.id === baseItem.id)
               if (searchBaseItem && searchBaseItem.time.label === 'disable') {
-                errorObj.itemDisabled = `disabled item with id ${baseItem.id} cannot be selected`
+                errorObj.itemDisabled = `disabled item with id ${baseItem.id} cannot be SELECT_OUT_OF_STOCKed`
               }
             }
+
             const itemTag = tagFinder(item, 'item')
             if (itemTag) {
               if (!itemMap[item.parent_item_id]) {
@@ -196,8 +197,9 @@ export const checkSelect = (data: any, msgIdSet: any) => {
 
               if (!itemIdArray.includes(item.id)) {
                 const key = `item${index}item_id`
-                errorObj[key] =
-                  `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in on_search`
+                errorObj[
+                  key
+                ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in on_search`
               }
             }
 
@@ -216,15 +218,17 @@ export const checkSelect = (data: any, msgIdSet: any) => {
 
               if (!parentTag) {
                 const key = `item${index}customization_id`
-                errorObj[key] =
-                  `/message/order/items/tags/customization/value in item: ${item.id} should be one of the customizations id mapped in on_search`
+                errorObj[
+                  key
+                ] = `/message/order/items/tags/customization/value in item: ${item.id} should be one of the customizations id mapped in on_search`
               }
             }
 
             if (!parentItemIdSet.has(item.parent_item_id)) parentItemIdSet.add(item.parent_item_id)
 
             if (!itemIdSet.has(item.id)) itemIdSet.add(item.id)
-            if (itemMap[item.parent_item_id] && itemMap[item.parent_item_id].location_id !== item.location_id) {
+
+            if (itemMap[item.parent_item_id].location_id !== item.location_id) {
               const key = `item${index}location_id`
               errorObj[key] = `Inconsistent location_id for parent_item_id ${item.parent_item_id}`
             }
@@ -235,7 +239,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
               itemsIdList[item.id] = item.quantity.count
               itemsCtgrs[item.id] = itemOnSearch.category_id
               itemsTat.push(itemOnSearch['@ondc/org/time_to_ship'])
-              selectedPrice += itemOnSearch.price.value * item.quantity.count
+              SELECT_OUT_OF_STOCKedPrice += itemOnSearch.price.value * item.quantity.count
             }
 
             if (!itemMapper[item.id]) {
@@ -266,7 +270,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
 
         setValue('itemsIdList', itemsIdList)
         setValue('itemsCtgrs', itemsCtgrs)
-        setValue('selectedPrice', selectedPrice)
+        setValue('SELECT_OUT_OF_STOCKedPrice', SELECT_OUT_OF_STOCKedPrice)
         setValue('parentItemIdSet', parentItemIdSet)
 
         logger.info(`Provider Id in /${constants.ON_SEARCH} and /${constants.SELECT} matched`)
@@ -277,12 +281,12 @@ export const checkSelect = (data: any, msgIdSet: any) => {
       }
     } else {
       logger.info(`Provider Ids in /${constants.ON_SEARCH} and /${constants.SELECT} mismatch`)
-      errorObj.prvdrIdMatch = `Provider Id ${select.provider.id} in /${constants.SELECT} does not exist in /${constants.ON_SEARCH}`
+      errorObj.prvdrIdMatch = `Provider Id ${select_oos.provider.id} in /${constants.SELECT} does not exist in /${constants.ON_SEARCH}`
     }
 
-    setValue('select_customIdArray', customIdArray)
+    setValue('SELECT_OUT_OF_STOCK_customIdArray', customIdArray)
     try {
-      select.fulfillments.forEach((ff: any) => {
+      select_oos.fulfillments.forEach((ff: any) => {
         logger.info(`Checking GPS Precision in /${constants.SELECT}`)
 
         // eslint-disable-next-line no-prototype-builtins

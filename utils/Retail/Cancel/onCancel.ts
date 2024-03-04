@@ -14,7 +14,7 @@ import {
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkOnCancel = (data: any) => {
+export const checkOnCancel = (data: any, msgIdSet: any) => {
   const onCnclObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -45,6 +45,10 @@ export const checkOnCancel = (data: any) => {
     }
     if (!contextRes?.valid) {
       Object.assign(onCnclObj, contextRes.ERRORS)
+    }
+
+    if (!msgIdSet.add(context.message_id)) {
+      onCnclObj['messageId'] = 'message_id should be unique'
     }
 
     setValue(`${ApiSequence.CANCEL}`, data)
@@ -252,6 +256,39 @@ export const checkOnCancel = (data: any) => {
     } catch (error: any) {
       logger.error(`!!Error while checking provider id and location in /${constants.ON_CANCEL}, ${error.stack}`)
     }
+    let Ids = []
+    let Flfmntid = []
+    try {
+      logger.info(`Comparing item Ids and fulfillment ids in /${constants.ON_SELECT} and /${constants.ON_CANCEL}`)
+      const itemFlfllmnts: any = getValue('itemFlfllmnts')
+      const itemsIdList: any = getValue('itemsIdList')
+      let i = 0
+      const len = on_cancel.items.length
+      while (i < len) {
+        const itemId = on_cancel.items[i].id
+        if (itemId in itemFlfllmnts) {
+          if (on_cancel.items[i].fulfillment_id != itemFlfllmnts[itemId] && flow !== '5') {
+            Ids.push(itemId)
+            Flfmntid.push(on_cancel.items[i].fulfillment_id)
+          }
+        } else {
+          const itemkey = `item_FFErr${i}`
+          onCnclObj[itemkey] = `Item Id ${itemId} does not exist in /${constants.ON_SELECT}`
+        }
+
+        if (itemId in itemsIdList) {
+          if (on_cancel.items[i].quantity.count != itemsIdList[itemId] && flow !== '5') {
+            itemsIdList[itemId] = on_cancel.items[i].quantity.count
+            onCnclObj.countErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
+          }
+        }
+        i++
+      }
+    } catch (error: any) {
+      logger.error(
+        `!!Error while comparing Item and Fulfillment Id in /${constants.ON_SELECT} and /${constants.ON_CANCEL}, ${error.stack}`,
+      )
+    }
 
     try {
       logger.info(`Comparing billing object in /${constants.INIT} and /${constants.ON_CANCEL}`)
@@ -279,6 +316,20 @@ export const checkOnCancel = (data: any) => {
       const itemFlfllmnts: any = getValue('itemFlfllmnts')
       let i = 0
       const len = on_cancel.fulfillments.length
+      while (i < len) {
+        if (on_cancel.fulfillments[i].id) {
+          const id = on_cancel.fulfillments[i].id
+          const nonMatchingFlfmntid = new Set(Flfmntid)
+          if (!nonMatchingFlfmntid.has(id)) {
+            const key = `ffID${id}`
+            //MM->Mismatch
+            onCnclObj[key] = `fulfillment id ${id} does not exist in /${constants.ON_CANCEL} items.fulfillment_id`
+
+            i++
+          }
+        }
+      }
+
       while (i < len && flow !== '5' && on_cancel.fulfillments[i].type !== 'Cancel') {
         //Comparing fulfillment Ids
         if (on_cancel.fulfillments[i].id) {

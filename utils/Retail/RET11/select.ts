@@ -38,12 +38,18 @@ export const checkSelect = (data: any, msgIdSet: any) => {
 
   const contextRes: any = checkContext(context, constants.SELECT)
   msgIdSet.add(context.message_id)
-
+  
   const errorObj: any = {}
   let selectedPrice = 0
   const itemsIdList: any = {}
   const itemsCtgrs: any = {}
   const itemsTat: any[] = []
+
+  if (!msgIdSet.add(context.message_id)) {
+    errorObj['messageId'] = 'message_id should be unique'
+  }
+  console.log("msgid select==>", msgIdSet);
+  
 
   const checkBap = checkBppIdOrBapId(context.bap_id)
   const checkBpp = checkBppIdOrBapId(context.bpp_id)

@@ -209,29 +209,29 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         case ApiSequence.ON_SELECT_OUT_OF_STOCK:
           return checkOnSelect_OOS(data)
         case ApiSequence.INIT:
-          return checkInit(data)
+          return checkInit(data,msgIdSet)
         case ApiSequence.ON_INIT:
           return checkOnInit(data, msgIdSet)
         case ApiSequence.CONFIRM:
-          return checkConfirm(data)
+          return checkConfirm(data,msgIdSet)
         case ApiSequence.ON_CONFIRM:
           return checkOnConfirm(data)
         case ApiSequence.CANCEL:
-          return checkCancel(data)
+          return checkCancel(data,msgIdSet)
         case ApiSequence.ON_CANCEL:
-          return checkOnCancel(data)
+          return checkOnCancel(data, msgIdSet)
         case ApiSequence.STATUS:
           return checkStatus(data)
         case ApiSequence.ON_STATUS_PENDING:
-          return checkOnStatusPending(data, 'pending')
+          return checkOnStatusPending(data, 'pending',msgIdSet)
         case ApiSequence.ON_STATUS_PACKED:
-          return checkOnStatusPacked(data, 'packed')
+          return checkOnStatusPacked(data, 'packed',msgIdSet)
         case ApiSequence.ON_STATUS_PICKED:
-          return checkOnStatusPicked(data, 'picked')
+          return checkOnStatusPicked(data, 'picked',msgIdSet)
         case ApiSequence.ON_STATUS_OUT_FOR_DELIVERY:
-          return checkOnStatusOutForDelivery(data, 'out-for-delivery')
+          return checkOnStatusOutForDelivery(data, 'out-for-delivery',msgIdSet)
         case ApiSequence.ON_STATUS_DELIVERED:
-          return checkOnStatusDelivered(data, 'delivered')
+          return checkOnStatusDelivered(data, 'delivered',msgIdSet)
         case ApiSequence.UPDATE:
           return checkUpdate(data)
         case ApiSequence.UPDATE_SETTLEMENT:

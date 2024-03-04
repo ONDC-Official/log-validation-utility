@@ -17,7 +17,7 @@ import {
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkConfirm = (data: any) => {
+export const checkConfirm = (data: any,msgIdSet:any) => {
   const cnfrmObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -43,6 +43,10 @@ export const checkConfirm = (data: any) => {
     if (checkBpp) Object.assign(cnfrmObj, { bpp_id: 'context/bpp_id should not be a url' })
     if (schemaValidation !== 'error') {
       Object.assign(cnfrmObj, schemaValidation)
+    }
+
+    if (!msgIdSet.add(context.message_id)) {
+      cnfrmObj['messageId'] = 'message_id should be unique'
     }
 
     if (!contextRes?.valid) {

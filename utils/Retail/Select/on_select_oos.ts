@@ -381,6 +381,8 @@ export const checkOnSelect_OOS = (data: any) => {
     logger.info(
       `Matching price breakup of items ${onSelectItemsPrice} (/${constants.ON_SELECT}) with selected items price ${selectedPrice} (${constants.SELECT})`,
     )
+console.log("checking val==>", onSelectItemsPrice);
+
 
     if (typeof selectedPrice === 'number' && onSelectItemsPrice !== selectedPrice) {
       errorObj.priceErr = `Warning: Quoted Price in /${constants.ON_SELECT} INR ${onSelectItemsPrice} does not match with the total price of items in /${constants.SELECT} INR ${selectedPrice}`

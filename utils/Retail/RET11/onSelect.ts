@@ -29,13 +29,11 @@ export const checkOnSelect = (data: any) => {
   if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
-
   const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SELECT, data)
 
   const contextRes: any = checkContext(context, constants.ON_SELECT)
 
   const errorObj: any = {}
-
   const checkBap = checkBppIdOrBapId(context.bap_id)
   const checkBpp = checkBppIdOrBapId(context.bpp_id)
 

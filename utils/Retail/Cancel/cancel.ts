@@ -5,7 +5,7 @@ import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, checkBppIdOrBapId } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkCancel = (data: any) => {
+export const checkCancel = (data: any, msgIdSet: any) => {
   const cnclObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -33,6 +33,10 @@ export const checkCancel = (data: any) => {
 
     if (!contextRes?.valid) {
       Object.assign(cnclObj, contextRes.ERRORS)
+    }
+
+    if (!msgIdSet.add(context.message_id)) {
+      cnclObj['messageId'] = 'message_id should be unique'
     }
 
     setValue(`${ApiSequence.CANCEL}`, data)

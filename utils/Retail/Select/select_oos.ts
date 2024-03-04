@@ -267,7 +267,7 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
 
           setValue('itemsIdList', itemsIdList)
           setValue('itemsCtgrs', itemsCtgrs)
-          setValue('SELECT_OUT_OF_STOCKedPrice', SELECT_OUT_OF_STOCKedPrice)
+          setValue('selectedPrice', SELECT_OUT_OF_STOCKedPrice)
           setValue('parentItemIdSet', parentItemIdSet)
 
           logger.info(`Provider Id in /${constants.ON_SEARCH} and /${constants.SELECT} matched`)

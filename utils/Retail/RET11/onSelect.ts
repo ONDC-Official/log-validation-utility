@@ -368,7 +368,7 @@ export const checkOnSelect = (data: any) => {
       )
 
       if (typeof selectedPrice === 'number' && onSelectItemsPrice !== selectedPrice) {
-        errorObj.priceErr = `Warning: Quoted Price in /${constants.ON_SELECT} INR ${onSelectItemsPrice} does not match with the total price of items in /${constants.SELECT} INR ${selectedPrice}`
+        // errorObj.priceErr = `Warning: Quoted Price in /${constants.ON_SELECT} INR ${onSelectItemsPrice} does not match with the total price of items in /${constants.SELECT} INR ${selectedPrice}`
         logger.info('Quoted Price and Selected Items price mismatch')
       }
     } else {

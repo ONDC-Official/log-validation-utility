@@ -65,16 +65,6 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   const onSearchContext: any = getValue(`${ApiSequence.ON_SEARCH}_context`)
 
   try {
-    logger.info(`Comparing city of /${constants.SEARCH} and /${constants.SELECT}`)
-    if (!_.isEqual(searchContext.city, context.city)) {
-      const key = `${ApiSequence.SEARCH}_city`
-      errorObj[key] = `City code mismatch in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT}`
-    }
-  } catch (error: any) {
-    logger.info(`Error while comparing city in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT}, ${error.stack}`)
-  }
-
-  try {
     logger.info(`Comparing city of /${constants.ON_SEARCH} and /${constants.SELECT}`)
     if (!_.isEqual(onSearchContext.city, context.city)) {
       const key = `${ApiSequence.ON_SEARCH}_city`
@@ -240,7 +230,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
             }
 
             if (!itemMapper[item.id]) {
-              // If the item is not in the map, add it                                                                                                                                                                                             
+              // If the item is not in the map, add it
               itemMapper[item.id] = item.parent_item_id
             } else {
               if (itemMapper[item.id] === item.parent_item_id) {

@@ -30,7 +30,6 @@ export const checkConfirm = (data: any) => {
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const select: any = getValue(`${ApiSequence.SELECT}`)
     const parentItemIdSet: any = getValue(`parentItemIdSet`)
     const select_customIdArray: any = getValue(`select_customIdArray`)
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.CONFIRM, data)
@@ -76,7 +75,7 @@ export const checkConfirm = (data: any) => {
 
     try {
       logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.CONFIRM}`)
-      if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
+      if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
         cnfrmObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
       }
     } catch (error: any) {

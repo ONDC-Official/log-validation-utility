@@ -71,7 +71,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     try {
       logger.info(`Comparing timestamp of ${constants.INIT} & ${constants.ON_INIT}`)
       const tmpstmp = getValue('tmpstmp')
-      if (_.gte(tmpstmp, context.timestamp)) {
+      if (_.gt(tmpstmp, context.timestamp)) {
         onInitObj.tmpstmp = `Timestamp for ${constants.INIT} api cannot be greater than or equal to ${constants.ON_INIT} api`
       } else {
         const timeDiff = timeDifference(context.timestamp, tmpstmp)
@@ -179,7 +179,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
         if (itemId in itemsIdList) {
           if (on_init.items[i].quantity.count != itemsIdList[itemId]) {
-            onInitObj.cntErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
+            onInitObj.countErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
           }
         }
 

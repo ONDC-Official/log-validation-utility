@@ -38,7 +38,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
   if (!message || !context || !message.catalog || isObjectEmpty(message) || isObjectEmpty(message.catalog)) {
     return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
   }
-
   const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SEARCH, data)
 
   const contextRes: any = checkContext(context, constants.ON_SEARCH)
@@ -455,7 +454,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
             onSearchCatalog['bpp/providers'][i]['items'][j]['@ondc/org/statutory_reqs_prepackaged_food']
 
           if (context.domain === 'ONDC:RET18') {
-            if (!statutory_reqs_prepackaged_food.ingredients_info) {
+            if (statutory_reqs_prepackaged_food && !statutory_reqs_prepackaged_food.ingredients_info) {
               const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
               errorObj[key] =
                 `In ONDC:RET18 for @ondc/org/statutory_reqs_prepackaged_food  ingredients_info is a valid field `
@@ -780,13 +779,15 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         logger.info(`Checking image array for bpp/provider/categories/descriptor/images[]`)
         for (let i in onSearchCatalog['bpp/providers']) {
           const categories = onSearchCatalog['bpp/providers'][i].categories
-          categories.forEach((item: any, index: number) => {
-            if (item.descriptor.images && item.descriptor.images.length < 1) {
-              const key = `bpp/providers[${i}]/categories[${index}]/descriptor`
-              errorObj[key] = `Images should not be provided as empty array for categories[${index}]/descriptor`
-              logger.error(`Images should not be provided as empty array for categories[${index}]/descriptor`)
-            }
-          })
+          if (categories) {
+            categories.forEach((item: any, index: number) => {
+              if (item.descriptor.images && item.descriptor.images.length < 1) {
+                const key = `bpp/providers[${i}]/categories[${index}]/descriptor`
+                errorObj[key] = `Images should not be provided as empty array for categories[${index}]/descriptor`
+                logger.error(`Images should not be provided as empty array for categories[${index}]/descriptor`)
+              }
+            })
+          }
         }
       } catch (error: any) {
         logger.error(
@@ -806,7 +807,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
                 return item.item_id === key
               })
               const pathForVarient = item.paths
-              let valueArray: any = []
+              let valueArray = []
               for (let j = 0; j < map[key].length; j++) {
                 let itemValues: any = {}
                 for (let path of pathForVarient) {

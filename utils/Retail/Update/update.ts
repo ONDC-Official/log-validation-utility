@@ -1,8 +1,7 @@
-/* eslint-disable no-prototype-builtins */
 import _ from 'lodash'
-import constants, { ApiSequence, buyerCancellationRid, rtoCancellationRid } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, checkContext, checkBppIdOrBapId } from '../../../utils'
+import constants, { ApiSequence, buyerCancellationRid } from '../../../constants'
+import { validateSchema, isObjectEmpty, checkBppIdOrBapId, checkContext, isValidUrl } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const checkUpdate = (data: any) => {
@@ -13,31 +12,41 @@ export const checkUpdate = (data: any) => {
     }
 
     const { message, context }: any = data
+    const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
+    const select: any = getValue(`${ApiSequence.SELECT}`)
+
     if (!message || !context || isObjectEmpty(message)) {
       return { missingFields: '/context, /message, is missing or empty' }
     }
 
-    const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
+    const update = message.order
+
+    // Validating Schema
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.UPDATE, data)
-    const select: any = getValue(`${ApiSequence.SELECT}`)
-    const contextRes: any = checkContext(context, constants.UPDATE)
 
-    const checkBap = checkBppIdOrBapId(context.bap_id)
-    const checkBpp = checkBppIdOrBapId(context.bpp_id)
-
-    if (checkBap) Object.assign(updtObj, { bap_id: 'context/bap_id should not be a url' })
-    if (checkBpp) Object.assign(updtObj, { bpp_id: 'context/bpp_id should not be a url' })
     if (schemaValidation !== 'error') {
       Object.assign(updtObj, schemaValidation)
     }
 
-    if (!contextRes?.valid) {
-      Object.assign(updtObj, contextRes.ERRORS)
-    }
+    // Checking bap_id and bpp_id format
+    const checkBap = checkBppIdOrBapId(context.bap_id)
+    const checkBpp = checkBppIdOrBapId(context.bpp_id)
+    if (checkBap) Object.assign(updtObj, { bap_id: 'context/bap_id should not be a url' })
+    if (checkBpp) Object.assign(updtObj, { bpp_id: 'context/bpp_id should not be a url' })
 
     setValue(`${ApiSequence.UPDATE}`, data)
+    // Checkinf for valid context object
+    try {
+      logger.info(`Checking context for /${constants.UPDATE} API`) //checking context
+      const res: any = checkContext(context, constants.UPDATE)
+      if (!res.valid) {
+        Object.assign(updtObj, res.ERRORS)
+      }
+    } catch (error: any) {
+      logger.error(`!!Some error occurred while checking /${constants.UPDATE} context, ${error.stack}`)
+    }
 
-    // Comaring city of ON_UPDATE with ON_SEARCH
+    // Comparing context.city with /search city
     try {
       logger.info(`Comparing city of /${constants.SEARCH} and /${constants.UPDATE}`)
       if (!_.isEqual(searchContext.city, context.city)) {
@@ -47,6 +56,7 @@ export const checkUpdate = (data: any) => {
       logger.error(`!!Error while comparing city in /${constants.SEARCH} and /${constants.UPDATE}, ${error.stack}`)
     }
 
+    // Comaring Timestamp of /update with /init API
     try {
       logger.info(`Comparing timestamp of /${constants.ON_INIT} and /${constants.UPDATE}`)
       if (_.gte(getValue('tmpstmp'), context.timestamp)) {
@@ -60,6 +70,7 @@ export const checkUpdate = (data: any) => {
       )
     }
 
+    // Comparing transaction ID with /select API
     try {
       logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.UPDATE}`)
       if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
@@ -71,37 +82,71 @@ export const checkUpdate = (data: any) => {
       )
     }
 
-    const cancel = message
+    setValue('updtMsgIdRQC', context.message_id)
 
+    // Checking for payment object in message.order
     try {
-      logger.info(`Comparing order Id in /${constants.UPDATE} and /${constants.CONFIRM}`)
-      if (cancel.order_id != getValue('cnfrmOrdrId')) {
-        updtObj.cancelOrdrId = `Order Id in /${constants.UPDATE} and /${constants.CONFIRM} do not match`
-        logger.info(`Order Id mismatch in /${constants.UPDATE} and /${constants.CONFIRM}`)
+      const payment = update.payment
+      if (payment) {
+        const settlement_details = payment['@ondc/org/settlement_details']
+        for (let item of settlement_details) {
+          let settlement_amount = item.settlement_amount
+          setValue('settlement_amount', settlement_amount)
+        }
       }
     } catch (error: any) {
-      logger.info(`Error while comparing order id in /${constants.UPDATE} and /${constants.CONFIRM}, ${error.stack}`)
+      logger.error(`!!Error occurred while checking for payment object in /${constants.UPDATE} API`, error.stack)
     }
 
-    try {
-      logger.info('Checking the validity of cancellation reason id for buyer')
-      if (!buyerCancellationRid.has(cancel.cancellation_reason_id)) {
-        logger.info(`cancellation_reason_id should be a valid cancellation id (buyer app initiated)`)
+    // Check for message.order.fulfillments.tags --> code: images & format:url, code: ttl_approval , & format: duration
 
-        updtObj.cancelRid = `Cancellation reason id is not a valid reason id (buyer app initiated)`
-      } else setValue('cnclRid', cancel.cancellation_reason_id)
+    // Checking for return_request object in /Update
+    if (update.fulfillments.tags) {
+      try {
+        logger.info(`Checking for return_request object in /${constants.UPDATE}`)
+        let return_request_obj = null
+        update.fulfillments.forEach((item: any) => {
+          item.tags.forEach((tag: any) => {
+            if (tag.code === 'return_request') {
+              return_request_obj = tag
+              tag.list.forEach((item: any) => {
+                if (item.code === 'item_id') {
+                  setValue('updatedItemID', item.value)
+                }
+                if (item.code === 'reason_id') {
+                  logger.info(`Checking for valid buyer reasonID for /${constants.UPDATE}`)
+                  let reasonId = item.value
 
-      if (!rtoCancellationRid.has(cancel.cancellation_reason_id)) {
-        logger.info(`cancellation_reason_id should be a valid cancellation id (RTO initiated)`)
+                  if (!buyerCancellationRid.has(reasonId)) {
+                    logger.info(`reason_id should be a valid cancellation id (buyer app initiated)`)
 
-        updtObj.RTOcancelRid = `Cancellation reason id is not a valid reason id (RTO initiated)`
-      } else setValue('rtoCnclRid', cancel.cancellation_reason_id)
-    } catch (error: any) {
-      logger.info(`Error while checking validity of cancellation reason id /${constants.UPDATE}, ${error.stack}`)
+                    updtObj.updateRid = `reason_id is not a valid reason id (buyer app initiated)`
+                  }
+                }
+                if (item.code === 'images') {
+                  const images = item.value.split(',')
+                  const allurls = images.every(isValidUrl)
+                  if (!allurls) {
+                    logger.error(
+                      `Images array should be prvided as comma seperated values and each image should be an url`,
+                    )
+                    const key = `invldImageURL`
+                    updtObj[key] =
+                      `Images array should be prvided as comma seperated values and each image should be an url for /${constants.UPDATE}`
+                  }
+                }
+              })
+            }
+          })
+        })
+        setValue('return_request_obj', return_request_obj)
+      } catch (error: any) {
+        logger.error(`Error while checking for return_request_obj for /${constants.UPDATE} , ${error}`)
+      }
     }
 
     return updtObj
-  } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.UPDATE} API`, err)
+  } catch (error: any) {
+    logger.error(`!!Some error occurred while checking /${constants.UPDATE} API`, error.stack)
   }
 }

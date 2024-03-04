@@ -25,6 +25,8 @@ const tagFinder = (item: { tags: any[] }, value: string): any => {
 }
 
 export const checkSelect_OOS = (data: any, msgIdSet: any) => {
+  const flow = getValue('flow')
+  if (flow === '3') {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.SELECT_OUT_OF_STOCK]: 'JSON cannot be empty' }
   }
@@ -71,7 +73,9 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
       errorObj[key] = `City code mismatch in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK}`
     }
   } catch (error: any) {
-    logger.info(`Error while comparing city in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK}, ${error.stack}`)
+    logger.info(
+      `Error while comparing city in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK}, ${error.stack}`,
+    )
   }
 
   try {
@@ -81,7 +85,9 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
       errorObj[key] = `City code mismatch in /${ApiSequence.ON_SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK}`
     }
   } catch (error: any) {
-    logger.info(`Error while comparing city in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK}, ${error.stack}`)
+    logger.info(
+      `Error while comparing city in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK}, ${error.stack}`,
+    )
   }
 
   try {
@@ -91,6 +97,7 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
     }
 
     setValue('tmpstmp', context.timestamp)
+    setValue('msgId', context.message_id)
   } catch (error: any) {
     logger.info(
       `Error while comparing timestamp for /${constants.ON_SEARCH} and /${constants.SELECT} api, ${error.stack}`,
@@ -101,7 +108,8 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
     logger.info(`Comparing Message Ids of /${constants.ON_SEARCH} and /${constants.SELECT}`)
     if (_.isEqual(onSearchContext.message_id, context.message_id)) {
       const key = `${ApiSequence.ON_SEARCH}_msgId`
-      errorObj[key] = `Message Id for /${ApiSequence.ON_SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK} api cannot be same`
+      errorObj[key] =
+        `Message Id for /${ApiSequence.ON_SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK} api cannot be same`
     }
 
     if (_.isEqual(searchContext.message_id, context.message_id)) {
@@ -142,6 +150,8 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
       provider = provider[0]
 
       setValue('providerId', provider.id)
+      console.log("xgjash", provider.id);
+      
       setValue('providerLoc', provider.locations[0].id)
       setValue('providerGps', provider.locations[0].gps)
       setValue('providerName', provider.descriptor.name)
@@ -197,9 +207,8 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
 
               if (!itemIdArray.includes(item.id)) {
                 const key = `item${index}item_id`
-                errorObj[
-                  key
-                ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in on_search`
+                errorObj[key] =
+                  `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in on_search`
               }
             }
 
@@ -218,9 +227,8 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
 
               if (!parentTag) {
                 const key = `item${index}customization_id`
-                errorObj[
-                  key
-                ] = `/message/order/items/tags/customization/value in item: ${item.id} should be one of the customizations id mapped in on_search`
+                errorObj[key] =
+                  `/message/order/items/tags/customization/value in item: ${item.id} should be one of the customizations id mapped in on_search`
               }
             }
 
@@ -314,5 +322,7 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
     logger.error(`!!Error occcurred while checking providers info in /${constants.SELECT},  ${error.message}`)
   }
 
+
   return Object.keys(errorObj).length > 0 && errorObj
+}
 }

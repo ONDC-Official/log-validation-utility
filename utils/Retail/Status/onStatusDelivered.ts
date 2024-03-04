@@ -167,7 +167,8 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
             //checking delivery time exists or not
             if (!deliveryTime) {
               onStatusObj.deliverytime = `delivery timestamp is missing`
-            } else {
+            }
+            else{
               try {
                 //checking delivery time matching with context timestamp
                 if (!_.lte(deliveryTime, contextTime)) {
@@ -190,25 +191,25 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
                   error,
                 )
               }
-
+    
               try {
                 //checking order/updated_at timestamp
                 if (!_.gte(on_status.updated_at, deliveryTime)) {
                   onStatusObj.updatedAt = `order/updated_at timestamp can't be less than the delivery time`
                 }
-
+    
                 if (!_.gte(contextTime, on_status.updated_at)) {
                   onStatusObj.updatedAtTime = `order/updated_at timestamp can't be future dated (should match context/timestamp)`
                 }
               } catch (error) {
-                logger.info(
-                  `!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`,
-                  error,
-                )
+                logger.info(`!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`, error)
               }
             }
           } catch (error) {
-            logger.error(`!!Error delivery timestamp is missing /${constants.ON_STATUS}_${state}`, error)
+            logger.error(
+              `!!Error delivery timestamp is missing /${constants.ON_STATUS}_${state}`,
+              error,
+            )
           }
         }
 

@@ -320,6 +320,34 @@ export const checkOnSelect_OOS = (data: any) => {
         }
 
         logger.info(`checking available and maximum count in ${constants.ON_SELECT}`)
+        if (element.item.quantity && element.item.quantity.available && typeof element.item.quantity.available.count === 'string') {
+          const availCount = parseInt(element.item.quantity.available.count, 10)
+          if (availCount !== 99 && availCount !== 0) {
+            const key = `qntcnt${i}`
+            errorObj[key] =
+              `item.quantity.available.count should be either 99 (inventory available) or 0 (out-of-stock)]`
+          }
+        }
+
+        if (element.item.quantity && element.item.quantity.maximum && typeof element.item.quantity.maximum.count === 'string' 
+        && element.item.quantity.available && typeof element.item.quantity.available.count === 'string') {
+          const maxCount = parseInt(element.item.quantity.maximum.count, 10)
+          const availCount = parseInt(element.item.quantity.available.count, 10)
+          if (availCount == 99 && maxCount <= 0) {
+            const key = `qntcnt${i}`
+            errorObj[key] =
+              `item.quantity.maximum.count should be either default value 99 (no cap per order) or any other positive value (cap per order)]`
+          }
+        }
+        if (element.item.quantity && element.item.quantity.maximum && element.item.quantity.available) {
+          const maxCount = parseInt(element.item.quantity.maximum.count, 10)
+          const availCount = parseInt(element.item.quantity.available.count, 10)
+          if (availCount == 0 && maxCount > 0) {
+            const key = `qntcnt${i}`
+            errorObj[key] =
+              `item.quantity.maximum.count be greater than 0 if item.quantity.available.count is 0 `
+          }
+        }
 
         if (element.item.hasOwnProperty('quantity')) {
           if (

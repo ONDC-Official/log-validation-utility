@@ -107,7 +107,6 @@ properties: {
                        required: ["code"]
                      }
                    },
-                   required: ["descriptor"]
                 },
                 start: {
                    type: "object",

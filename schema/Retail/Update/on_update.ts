@@ -191,7 +191,7 @@ export const onUpdateSchema = {
                             required: ['locality', 'city', 'area_code', 'state'],
                           },
                         },
-                        required: ['id', 'descriptor', 'gps', 'address'],
+                        required: ['id', 'gps', 'address'],
                       },
                       time: {
                         type: 'object',
@@ -443,7 +443,6 @@ export const onUpdateSchema = {
                       },
                       settlement_phase: {
                         type: 'string',
-                        const: 'sale-amount',
                       },
                       settlement_type: {
                         type: 'string',
@@ -477,7 +476,6 @@ export const onUpdateSchema = {
                               type: 'string',
                             },
                           },
-                          required: ['upi_address'],
                         },
                       },
                       {

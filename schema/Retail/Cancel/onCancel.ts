@@ -479,7 +479,7 @@ export const onCancelSchema = {
                     additionalProperties: false,
                   },
                 },
-                required: ['id', '@ondc/org/provider_name', 'state', 'type', 'tracking', 'start', 'end', 'tags'],
+                required: ['id', 'state', 'type', 'tags'],
               },
             },
             quote: {

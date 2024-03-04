@@ -145,8 +145,16 @@ export const checkOnUpdate = (data: any) => {
       logger.error(`Error while checking the payment status`)
     }
 
-    //Comparing the updated_at timestamp with of context.timestamp
     try {
+      // Comparing the providerId with /select providerId
+      if (getValue('providerId') != on_update.provider.id) {
+        onupdtObj.prvdrId = `provider.id mismatches in /${constants.ON_UPDATE} and /${constants.ON_SELECT}`
+      }
+      // Comparing the providerLoc with /select providerLoc
+      if (on_update.provider.locations[0].id != getValue('providerLoc')) {
+        onupdtObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.ON_SELECT} and /${constants.ON_UPDATE}`
+      }
+      //Comparing the updated_at timestamp with of context.timestamp
       if (!_.gte(context.timestamp, on_update.updated_at)) {
         onupdtObj[`context/timestamp`] = `context/timestamp should be greater than message/order/updated_at timestamp`
       }
@@ -154,6 +162,24 @@ export const checkOnUpdate = (data: any) => {
       logger.error(`Error while comparing context/timestamp and updated_at timestamp`)
     }
 
+    try {
+      // Checking for valid item ids in /on_select
+      const itemsOnSearch = getValue('ItemList')
+      const itemsList = message.order.items
+      const flflmntSet = new Set()
+      itemsList.forEach((item: any, index: number) => {
+        if (!itemsOnSearch?.includes(item.id)) {
+          const key = `inVldItemId[${index}]`
+          onupdtObj[key] = `Invalid Item Id provided in /${constants.ON_UPDATE}: ${item.id}`
+        }
+        if (flflmntSet.has(item.fulfillment_id)) {
+          onupdtObj[`dplctFlflmts[${index}]`] = `Duplicate fulfillment ids are not allowed in /${constants.ON_UPDATE}`
+        }
+        flflmntSet.add(item.fulfillment_id)
+      })
+    } catch (error: any) {
+      logger.error(`Error while checking for item IDs for /${constants.ON_UPDATE}, ${error.stack}`)
+    }
     //checking for settlement details in payment
     try {
       logger.info(`Checking for settlement_details in /message/order/payment`)

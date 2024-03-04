@@ -186,7 +186,7 @@ export const checkOnSelect_OOS = (data: any) => {
     logger.info(`Checking TAT and TTS in /${constants.ON_SELECT} and /${constants.ON_SEARCH}`)
     const catalog = searchMessage.catalog
     const providers = catalog['bpp/providers']
-    let max_time_to_ships: any = []
+    let max_time_to_ships = []
     for (let providerIndex = 0; providerIndex < providers.length; providerIndex++) {
       const providerItems = providers[providerIndex].items
       for (let itemIndex = 0; itemIndex < providerItems.length; itemIndex++) {
@@ -196,7 +196,7 @@ export const checkOnSelect_OOS = (data: any) => {
         }
       }
     }
-    const max_tts = max_time_to_ships.sort((a: number, b: number) => a - b)[0]
+    const max_tts = max_time_to_ships.sort((a, b) => a - b)[0]
     const ON_SELECT_OUT_OF_STOCK_tat = ON_SELECT_OUT_OF_STOCK.fulfillments.map((e: any) =>
       isoDurToSec(e['@ondc/org/TAT']),
     )
@@ -236,19 +236,10 @@ export const checkOnSelect_OOS = (data: any) => {
   } catch (error: any) {
     logger.error(`!!Error while checking fulfillments' state in /${constants.ON_SELECT}, ${error.stack}`)
   }
-  console.log('checking item count==>', message.order.quote.breakup)
-
-  console.log('checking==>', error.message)
-  const breakup_msg = message.order.quote.breakup
-  const itemsWithCountZero = breakup_msg.filter(
-    (item: any) => item['@ondc/org/item_quantity'] && item['@ondc/org/item_quantity'].count === 0,
-  )
-  console.log('checking ghdgck===>', itemsWithCountZero)
 
   try {
     const breakup_msg = message.order.quote.breakup
     const msg_err = error.message
-    console.log('checking==>', msg_err)
 
     logger.info(`Item Id and error.message.item_id Mapping in /ON_SELECT_OUT_OF_STOCK`)
 
@@ -258,7 +249,6 @@ export const checkOnSelect_OOS = (data: any) => {
     const itemsWithCountZero = breakup_msg.filter(
       (item: any) => item['@ondc/org/item_quantity'] && item['@ondc/org/item_quantity'].count === 0,
     )
-    console.log('checking ghdgck===>', itemsWithCountZero)
     itemsWithCountZero.forEach((item: any) => {
       const isPresent = errorArray.some((errorItem: any) => errorItem.item_id === item['@ondc/org/item_id'])
 

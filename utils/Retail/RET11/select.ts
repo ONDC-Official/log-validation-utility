@@ -91,6 +91,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     }
 
     setValue('tmpstmp', context.timestamp)
+    setValue('msgId', context.message_id)
   } catch (error: any) {
     logger.info(
       `Error while comparing timestamp for /${constants.ON_SEARCH} and /${constants.SELECT} api, ${error.stack}`,
@@ -239,7 +240,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
             }
 
             if (!itemMapper[item.id]) {
-              // If the item is not in the map, add it
+              // If the item is not in the map, add it                                                                                                                                                                                             
               itemMapper[item.id] = item.parent_item_id
             } else {
               if (itemMapper[item.id] === item.parent_item_id) {
@@ -292,7 +293,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
           const gps = ff.end.location.gps.split(',')
           const gpsLat = gps[0]
           const gpsLong = gps[1]
-          // logger.info(gpsLat, " sfsfdsf ", gpsLong);
+
           if (!gpsLat || !gpsLong) {
             errorObj.gpsErr = `fulfillments location.gps is not as per the API contract`
           }

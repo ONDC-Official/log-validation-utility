@@ -586,3 +586,14 @@ export enum DOMAIN {
   RET16 = 'RET16',
   RET18 = 'RET18',
 }
+
+export enum FLOW {
+  FLOW1 = '1',
+  FLOW2 = '2',
+  FLOW3 = '3',
+  FLOW4 = '4',
+  FLOW5 = '5',
+  FLOW6A = '6-a',
+  FLOW6B = '6-b',
+  FLOW6C = '6-c',
+}

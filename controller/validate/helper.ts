@@ -27,7 +27,7 @@ const getEnumForDomain = (path: string) => {
   throw new Error('Domain could not be detected')
 }
 const validateRetail = async (domain: string, payload: string, version: string, flow: string) => {
-  let response
+  let response: any
   let success = false
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
   switch (version) {

@@ -65,7 +65,7 @@ export const checkOnSelect = (data: any) => {
 
   try {
     logger.info(`Comparing timestamp of /${constants.SELECT} and /${constants.ON_SELECT}`)
-    const tmpstmp = select.context.timestamp
+    const tmpstmp = getValue('tmpstmp')
     if (_.gte(tmpstmp, context.timestamp)) {
       errorObj.tmpstmp = `Timestamp for /${constants.SELECT} api cannot be greater than or equal to /${constants.ON_SELECT} api`
     } else {
@@ -84,6 +84,9 @@ export const checkOnSelect = (data: any) => {
   }
 
   try {
+  } catch (error: any) {}
+
+  try {
     logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
     if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
       errorObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
@@ -96,7 +99,8 @@ export const checkOnSelect = (data: any) => {
 
   try {
     logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
-    if (!_.isEqual(select.context.message_id, context.message_id)) {
+    const msgId = getValue('msgId')
+    if (!_.isEqual(msgId, context.message_id)) {
       errorObj.msgId = `Message Id for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
     }
   } catch (error: any) {
@@ -169,11 +173,11 @@ export const checkOnSelect = (data: any) => {
       const tat = isoDurToSec(ff['@ondc/org/TAT'])
 
       if (tat < tts) {
-        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be less than @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
+        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be less than @ondc/org/time_to_ship (O2S) in /${constants.ON_SEARCH}`
       }
 
       if (tat === tts) {
-        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be equal to @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
+        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be equal to @ondc/org/time_to_ship (O2S) in /${constants.ON_SEARCH}`
       }
 
       logger.info(tat, 'asdfasdf', tts)
@@ -186,7 +190,7 @@ export const checkOnSelect = (data: any) => {
     logger.info(`Checking TAT and TTS in /${constants.ON_SELECT} and /${constants.ON_SEARCH}`)
     const catalog = searchMessage.catalog
     const providers = catalog['bpp/providers']
-    let max_time_to_ships: any = []
+    let max_time_to_ships = []
     for (let providerIndex = 0; providerIndex < providers.length; providerIndex++) {
       const providerItems = providers[providerIndex].items
       for (let itemIndex = 0; itemIndex < providerItems.length; itemIndex++) {
@@ -196,7 +200,7 @@ export const checkOnSelect = (data: any) => {
         }
       }
     }
-    const max_tts = max_time_to_ships.sort((a: number, b: number) => a - b)[0]
+    const max_tts = max_time_to_ships.sort((a, b) => a - b)[0]
     const on_select_tat = on_select.fulfillments.map((e: any) => isoDurToSec(e['@ondc/org/TAT']))
 
     if (on_select_tat < max_tts) {

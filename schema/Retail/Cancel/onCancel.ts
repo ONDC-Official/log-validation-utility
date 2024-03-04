@@ -463,7 +463,7 @@ export const onCancelSchema = {
                                   'id',
                                   'currency',
                                   'value',
-                                  'type',
+                                  'type'
                                 ],
                               },
                               value: {

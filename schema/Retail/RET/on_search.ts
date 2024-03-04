@@ -617,6 +617,8 @@ export const onSearchSchema = {
                         },
                         '@ondc/org/time_to_ship': {
                           type: 'string',
+                          pattern: '^PT(?:(?:60|[1-5]?[0-9]|60)M|1H)$',
+                          errorMessage: 'time to ship should be within PT0M-PT59M or PT1H',
                         },
                         '@ondc/org/available_on_cod': {
                           type: 'boolean',

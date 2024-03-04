@@ -509,6 +509,13 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
             }
           }
 
+          if (item.quantity && item.quantity.maximum && typeof item.quantity.maximum.count === 'string') {
+            const maxCount = parseInt(item.quantity.maximum.count, 10)
+            const availCount = parseInt(item.quantity.available.count, 10)
+            if (availCount == 99 && maxCount == 0) {
+              const key = `prvdr${i}item${j}maxCount`
+              errorObj[key] =`item.quantity.maximum.count cant be 0 if item is in stock `            }
+          }
           if ('price' in item) {
             const sPrice = parseFloat(item.price.value)
             const maxPrice = parseFloat(item.price.maximum_value)

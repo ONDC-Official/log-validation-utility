@@ -342,10 +342,10 @@ export const checkOnSelect_OOS = (data: any) => {
         ) {
           const maxCount = parseInt(element.item.quantity.maximum.count, 10)
           const availCount = parseInt(element.item.quantity.available.count, 10)
-          if (availCount == 99 && maxCount <= 0) {
+          if (availCount == 99 && maxCount == 0) {
             const key = `qntcnt${i}`
             errorObj[key] =
-              `item.quantity.maximum.count should be either default value 99 (no cap per order) or any other positive value (cap per order)]`
+              `item.quantity.maximum.count cant be 0 if item is in stock `
           }
         }
         if (element.item.quantity && element.item.quantity.maximum && element.item.quantity.available) {
@@ -357,15 +357,6 @@ export const checkOnSelect_OOS = (data: any) => {
           }
         }
 
-        if (element.item.hasOwnProperty('quantity')) {
-          if (
-            _.gt(parseFloat(element.item.quantity.available.count), parseFloat(element.item.quantity.maximum.count))
-          ) {
-            const key = `qntcnt${i}`
-            errorObj[key] =
-              `available count can't be greater than maximum count for item id: ${element['@ondc/org/item_id']}`
-          }
-        }
       }
 
       logger.info(`Calculating Items' prices in /${constants.ON_SELECT}`)

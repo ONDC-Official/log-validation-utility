@@ -14,7 +14,7 @@ import {
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkOnCancel = (data: any) => {
+export const checkOnCancel = (data: any, msgIdSet:any) => {
   const onCnclObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -46,6 +46,12 @@ export const checkOnCancel = (data: any) => {
     if (!contextRes?.valid) {
       Object.assign(onCnclObj, contextRes.ERRORS)
     }
+
+    if (!msgIdSet.add(context.message_id)) {
+      onCnclObj['messageId'] = 'message_id should be unique'
+    }
+
+    
 
     setValue(`${ApiSequence.CANCEL}`, data)
 

@@ -236,6 +236,10 @@ export const onConfirmSchema = {
                     type: 'string',
                     minLength: 1,
                   },
+                  '@ondc/org/TAT': {
+                    type: 'string',
+                    minLength: 1,
+                  },
                   state: {
                     type: 'object',
                     properties: {
@@ -463,7 +467,16 @@ export const onConfirmSchema = {
                     required: ['location', 'person', 'contact'],
                   },
                 },
-                required: ['id', '@ondc/org/provider_name', 'state', 'type', 'tracking', 'start', 'end'],
+                required: [
+                  'id',
+                  '@ondc/org/provider_name',
+                  '@ondc/org/TAT',
+                  'state',
+                  'type',
+                  'tracking',
+                  'start',
+                  'end',
+                ],
               },
             },
             quote: {

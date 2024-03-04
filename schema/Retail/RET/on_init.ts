@@ -86,8 +86,22 @@ export const onInitSchema = {
                   type: 'string',
                   minLength: 1,
                 },
+                locations: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      id: {
+                        type: 'string',
+                        minLength: 1,
+                      },
+                    },
+                    required: ['id'],
+                  },
+                  minItems: 1,
+                },
               },
-              required: ['id'],
+              required: ['id', 'locations'],
             },
             items: {
               type: 'array',

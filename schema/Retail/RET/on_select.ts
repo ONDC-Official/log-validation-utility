@@ -92,10 +92,12 @@ export const onSelectSchema = {
                     properties: {
                       id: {
                         type: 'string',
+                        minLength: 1,
                       },
                     },
                     required: ['id'],
                   },
+                  minItems: 1,
                 },
               },
               required: ['id', 'locations'],

@@ -192,7 +192,8 @@ export const checkOnCancel = (data: any, msgIdSet:any) => {
     } catch (error: any) {
       logger.error(`!!Error while checking provider id and location in /${constants.ON_CANCEL}, ${error.stack}`)
     }
-
+    let Ids = []
+    let Flfmntid = []
     try {
       logger.info(`Comparing item Ids and fulfillment ids in /${constants.ON_SELECT} and /${constants.ON_CANCEL}`)
       const itemFlfllmnts: any = getValue('itemFlfllmnts')
@@ -201,13 +202,10 @@ export const checkOnCancel = (data: any, msgIdSet:any) => {
       const len = on_cancel.items.length
       while (i < len) {
         const itemId = on_cancel.items[i].id
-
         if (itemId in itemFlfllmnts) {
-          if ((on_cancel.items[i].fulfillment_id != itemFlfllmnts[itemId]) && flow !== '5') {
-            const itemkey = `item_FFErr${i}`
-            onCnclObj[itemkey] =
-              `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_CANCEL}`
-          }
+          if ((on_cancel.items[i].fulfillment_id != itemFlfllmnts[itemId]) && flow !== '5'){
+            Ids.push(itemId)
+            Flfmntid.push(on_cancel.items[i].fulfillment_id)}
         } else {
           const itemkey = `item_FFErr${i}`
           onCnclObj[itemkey] = `Item Id ${itemId} does not exist in /${constants.ON_SELECT}`
@@ -219,7 +217,6 @@ export const checkOnCancel = (data: any, msgIdSet:any) => {
             onCnclObj.countErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
           }
         }
-
         i++
       }
     } catch (error: any) {
@@ -253,16 +250,32 @@ export const checkOnCancel = (data: any, msgIdSet:any) => {
       logger.info(`Checking fulfillments objects in /${constants.ON_CANCEL}`)
       const itemFlfllmnts: any = getValue('itemFlfllmnts')
       let i = 0
-      const len = on_cancel.fulfillments.length
+      const len = on_cancel.fulfillments.length  
+      while (i < len) {
+        if (on_cancel.fulfillments[i].id) {  
+          const id = on_cancel.fulfillments[i].id  
+          const nonMatchingFlfmntid =new Set(Flfmntid)
+        if (!nonMatchingFlfmntid.has(id)) {
+          const key = `ffID${id}`
+            //MM->Mismatch
+          onCnclObj[key] = `fulfillment id ${id} does not exist in /${constants.ON_CANCEL} items.fulfillment_id`
+          
+        i++
+      }  
+      }
+      } 
+
+
       while (i < len && flow !== '5' && on_cancel.fulfillments[i].type !== 'Cancel') {
         //Comparing fulfillment Ids
         if (on_cancel.fulfillments[i].id) {
-          const id = on_cancel.fulfillments[i].id
+          const id = on_cancel.fulfillments[i].id          
           if (!Object.values(itemFlfllmnts).includes(id)) {
             const key = `ffID${id}`
             //MM->Mismatch
             onCnclObj[key] = `fulfillment id ${id} does not exist in /${constants.ON_SELECT}`
           }
+          
         } else {
           onCnclObj.ffId = `fulfillments[${i}].id is missing in /${constants.CONFIRM}`
         }

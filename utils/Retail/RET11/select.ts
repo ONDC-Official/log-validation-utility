@@ -38,7 +38,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
 
   const contextRes: any = checkContext(context, constants.SELECT)
   msgIdSet.add(context.message_id)
-  
+
   const errorObj: any = {}
   let selectedPrice = 0
   const itemsIdList: any = {}
@@ -48,8 +48,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   if (!msgIdSet.add(context.message_id)) {
     errorObj['messageId'] = 'message_id should be unique'
   }
-  console.log("msgid select==>", msgIdSet);
-  
+  console.log('msgid select==>', msgIdSet)
 
   const checkBap = checkBppIdOrBapId(context.bap_id)
   const checkBpp = checkBppIdOrBapId(context.bpp_id)
@@ -152,6 +151,20 @@ export const checkSelect = (data: any, msgIdSet: any) => {
         logger.error(
           `!!Error while comparing provider's location id in /${constants.ON_SEARCH} and /${constants.SELECT}, ${error.stack}`,
         )
+      }
+
+      try {
+        // Checking for valid item ids in /on_select
+        const itemsOnSearch = getValue('ItemList')
+        const itemsList = message.order.items
+        itemsList.forEach((item: any, index: number) => {
+          if (!itemsOnSearch?.includes(item.id)) {
+            const key = `inVldItemId[${index}]`
+            errorObj[key] = `Invalid Item Id provided in /${constants.SELECT}: ${item.id}`
+          }
+        })
+      } catch (error: any) {
+        logger.error(`Error while checking for item IDs for /${constants.ON_CANCEL}`, error.stack)
       }
 
       logger.info(

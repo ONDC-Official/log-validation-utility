@@ -105,7 +105,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       itemsList.forEach((item: any, index: number) => {
         if (!itemsOnSelect?.includes(item.id)) {
           const key = `inVldItemId[${index}]`
-          onCnclObj[key] = `Invalid Item Id provided in /${constants.ON_SELECT}: ${item.id}`
+          onCnclObj[key] = `Invalid Item Id provided in /${constants.ON_CANCEL}: ${item.id}`
         }
       })
     } catch (error: any) {
@@ -278,8 +278,8 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       while (i < len) {
         const itemId = on_cancel.items[i].id
         if (itemId in itemFlfllmnts) {
-            Ids.push(itemId)
-            Flfmntid.push(on_cancel.items[i].fulfillment_id)
+          Ids.push(itemId)
+          Flfmntid.push(on_cancel.items[i].fulfillment_id)
         }
         i++
       }
@@ -323,8 +323,6 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
             const key = `ffID${id}`
             //MM->Mismatch
             onCnclObj[key] = `fulfillment id ${id} does not exist in /${constants.ON_CANCEL} items.fulfillment_id`
-
-            
           }
         }
         i++

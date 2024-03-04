@@ -491,6 +491,7 @@ export const confirmSchema = {
                 },
                 '@ondc/org/settlement_basis': {
                   type: 'string',
+                  enum:['shipment','delivery']
                 },
                 '@ondc/org/settlement_window': {
                   type: 'string',

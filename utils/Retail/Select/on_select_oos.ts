@@ -49,7 +49,7 @@ export const checkOnSelect_OOS = (data: any) => {
   }
 
   if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-    errorObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+    errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
   }
 
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)

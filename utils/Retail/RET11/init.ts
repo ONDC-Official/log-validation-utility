@@ -33,7 +33,7 @@ export const checkInit = (data: any, msgIdSet: any) => {
       Object.assign(initObj, schemaValidation)
     }
     if (_.isEqual(data.context, getValue(`domain`))) {
-      initObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+      initObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     if (!contextRes?.valid) {

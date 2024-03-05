@@ -51,7 +51,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       onCnclObj['messageId'] = 'message_id should be unique'
     }
     if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-      onCnclObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+      onCnclObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     setValue(`${ApiSequence.CANCEL}`, data)
@@ -280,9 +280,11 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       const len = on_cancel.items.length
       while (i < len) {
         const itemId = on_cancel.items[i].id
-        if (itemId in itemFlfllmnts) {
-          Ids.push(itemId)
-          Flfmntid.push(on_cancel.items[i].fulfillment_id)
+        Ids.push(itemId)
+        Flfmntid.push(on_cancel.items[i].fulfillment_id)
+        if (!(itemId in itemFlfllmnts)) {
+          const key = `ITEM_ID${itemId}`
+          onCnclObj[key] = `${itemId} itemID not found in ${constants.ON_SELECT}`
         }
         i++
       }

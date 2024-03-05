@@ -310,6 +310,20 @@ export const checkOnSelect = (data: any) => {
   }
 
   try {
+    const itemPrices = new Map()
+
+    on_select.quote.breakup.forEach((item: { [x: string]: any; price: { value: any } }) => {
+      if (item['@ondc/org/item_id'] && item.price && item.price.value) {
+        itemPrices.set(item['@ondc/org/item_id'], Math.abs(item.price.value))
+      }
+    })
+
+    setValue('selectPriceMap', itemPrices)
+  } catch (error: any) {
+    logger.error(`!!Error while checking and comparing the quoted price in /${constants.ON_SELECT}, ${error.stack}`)
+  }
+
+  try {
     logger.info(`-x-x-x-x-Quote Breakup ${constants.ON_SELECT} all checks-x-x-x-x`)
     const itemsIdList: any = getValue('itemsIdList')
     const itemsCtgrs: any = getValue('itemsCtgrs')

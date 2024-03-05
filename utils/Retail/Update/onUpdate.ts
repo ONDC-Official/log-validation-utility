@@ -266,22 +266,60 @@ export const checkOnUpdate = (data: any) => {
     try {
       // Checking for valid item ids inside on_update
       const items = on_update.items
-      const updateItemList: any = getValue('updateItemList')
       const itemSet: any = new Set()
       items.forEach((item: any) => {
-        if (!updateItemList.includes(item.id)) {
-          const key = `inVldItemId[${item.id}]`
-          onupdtObj[key] = `Item ID should be present in /${constants.UPDATE} API`
-        }
         if (itemSet.has(JSON.stringify(item))) {
           onupdtObj[`DuplicateItem[${item.id}]`] = `Duplicate item found in /${constants.ON_UPDATE}`
         } else {
           itemSet.add(JSON.stringify(item)) // Add the item to the set if it's not already present
         }
       })
-      console.log('sdfasdfa', itemSet)
+      let updateItemList: any = null
+      if (getValue('flow') === '6-a') {
+        updateItemList = getValue('SelectItemList')
+      } else {
+        updateItemList = getValue('updateItemList')
+      }
+      if (updateItemList) {
+        items.forEach((item: any) => {
+          if (!updateItemList.includes(item.id)) {
+            const key = `inVldItemId[${item.id}]`
+            onupdtObj[key] = `Item ID should be present in /${constants.UPDATE} API`
+          }
+        })
+      }
     } catch (error: any) {
       logger.error(`Error while checking for item IDs for /${constants.ON_UPDATE}, ${error.stack}`)
+    }
+
+    //Checkign for valid item prices in /on_update
+    try {
+      logger.info(`Checking for valid item prices in /on_update`)
+      const cancelFulfillments = _.filter(on_update.fulfillments, { type: 'Cancel' })
+      const quoteTrailMap = new Map()
+
+      cancelFulfillments.forEach((fulfillment) => {
+        const tags = fulfillment.tags || []
+        tags.forEach((tag: any) => {
+          if (tag.code === 'quote_trail') {
+            const idItem = tag.list.find((item: any) => item.code === 'id')
+            const priceItem = tag.list.find((item: any) => item.code === 'value')
+            if (idItem && priceItem) {
+              quoteTrailMap.set(idItem.value, Math.abs(parseFloat(priceItem.value)))
+            }
+          }
+        })
+      })
+      const selectPriceMap: any = getValue('selectPriceMap')
+
+      for (let [item, quoteTrailPrice] of quoteTrailMap) {
+        if (selectPriceMap.get(item) && selectPriceMap.get(item) !== quoteTrailPrice) {
+          onupdtObj[`message/order/fulfillments/tags`] =
+            `The price of the item ${item} in quote_trail does not match with the price in /${constants.ON_SELECT}`
+        }
+      }
+    } catch (error: any) {
+      logger.error(`Error while checking for valid item prices in /on_update`)
     }
     // Compare return_request object
     if (flow === '6-b') {

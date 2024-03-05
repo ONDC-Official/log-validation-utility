@@ -22,7 +22,6 @@ export const checkUpdate = (data: any) => {
     const update = message.order
     const selectItemList: any = getValue('SelectItemList')
 
-    console.log('SELECT items--->', selectItemList)
     // Validating Schema
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.UPDATE, data)
 

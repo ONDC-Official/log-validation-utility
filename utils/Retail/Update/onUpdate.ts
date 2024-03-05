@@ -169,9 +169,14 @@ export const checkOnUpdate = (data: any) => {
     try {
       // Checking for valid item ids in /on_select
       const itemsList = message.order.items
-      const updatedItems: any = getValue('updateItemSet')
+      let updatedItems: any = null
+      if (getValue('flow') === '6-a') {
+        updatedItems = getValue('SelectItemList')
+      } else {
+        updatedItems = getValue('updateItemSet')
+      }
       itemsList.forEach((item: any, index: number) => {
-        if (!updatedItems?.hasOwnProperty(item.id)) {
+        if (!updatedItems?.includes(item.id)) {
           const key = `inVldItemId[${index}]`
           onupdtObj[key] = `Invalid Item Id provided in /${constants.ON_UPDATE}: ${item.id}`
         } else if (!updatedItems[item.id] === item.quantity.count) {
@@ -372,26 +377,27 @@ export const checkOnUpdate = (data: any) => {
       }
     }
 
-      try {
-        logger.info(`Checking for the availability of initiated_by code in ${constants.ON_UPDATE}`)
-        const fulfillments = on_update.fulfillments
-        fulfillments.map((fulfillment: any) => {
-          if(fulfillment.tags){
-            const tags = fulfillment.tags;
-            tags.map((tag: any) => {
-              if(tag.code === "cancel_request"){
-                const list = tag.list
-                const tags_initiated = list.find((data :any) => data.code === 'initiated_by')
-                if(!tags_initiated){
-                  onupdtObj[`message/order/fulfillments/tags`] = `${constants.ON_UPDATE} must have initiated_by code in fulfillments/tags/list`
-                }
+    try {
+      logger.info(`Checking for the availability of initiated_by code in ${constants.ON_UPDATE}`)
+      const fulfillments = on_update.fulfillments
+      fulfillments.map((fulfillment: any) => {
+        if (fulfillment.tags) {
+          const tags = fulfillment.tags
+          tags.map((tag: any) => {
+            if (tag.code === 'cancel_request') {
+              const list = tag.list
+              const tags_initiated = list.find((data: any) => data.code === 'initiated_by')
+              if (!tags_initiated) {
+                onupdtObj[`message/order/fulfillments/tags`] =
+                  `${constants.ON_UPDATE} must have initiated_by code in fulfillments/tags/list`
               }
-            })
-          }
-        })
-      } catch (error: any) {
-        logger.error(`Error while checking for the availability of initiated_by in ${constants.ON_UPDATE}`)
-      }
+            }
+          })
+        }
+      })
+    } catch (error: any) {
+      logger.error(`Error while checking for the availability of initiated_by in ${constants.ON_UPDATE}`)
+    }
 
     return onupdtObj
   } catch (error: any) {

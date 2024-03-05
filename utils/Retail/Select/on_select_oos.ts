@@ -20,7 +20,6 @@ const retailPymntTtl: { [key: string]: string } = {
   'convenience fee': 'misc',
 }
 export const checkOnSelect_OOS = (data: any) => {
-  console.log('dfjadsfajk')
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.ON_SELECT_OUT_OF_STOCK]: 'JSON cannot be empty' }
   }
@@ -376,7 +375,6 @@ export const checkOnSelect_OOS = (data: any) => {
         if (element.item.quantity && element.item.quantity.maximum && element.item.quantity.available) {
           const maxCount = parseInt(element.item.quantity.maximum.count, 10)
           const availCount = parseInt(element.item.quantity.available.count, 10)
-          console.log('checking count ==>')
 
           if (availCount == 99 && maxCount < 0) {
             const key = `qntcnt${i}`

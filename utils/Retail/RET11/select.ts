@@ -49,7 +49,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     errorObj['messageId'] = 'message_id should be unique'
   }
   if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-    errorObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+    errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
   }
 
   const checkBap = checkBppIdOrBapId(context.bap_id)
@@ -127,7 +127,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     if (provider.length === 0) {
       errorObj.providerId = `provider with provider.id: ${select.provider.id} does not exist in on_search`
     }
-    if (provider[0].time.label === 'disable') {
+    if (provider.time && provider[0].time.label === 'disable') {
       errorObj.disbledProvider = `provider with provider.id: ${provider[0].id} was disabled in on_search `
     }
 
@@ -196,8 +196,11 @@ export const checkSelect = (data: any, msgIdSet: any) => {
             },
             index: number,
           ) => {
-            const onSearchItems: any = getValue('onSearchItems')
-            const itemOnSearch = onSearchItems.find((it: any) => it.id === item.id)
+            const allOnSearchItems: any = getValue('onSearchItems')
+            let onSearchItems = allOnSearchItems.flat()
+            const itemOnSearch = onSearchItems.find((it: any) => {
+              return it.id === item.id
+            })
             const baseItem = findItemByItemType(item)
             if (baseItem) {
               const searchBaseItem = provider.items.find((it: { id: any }) => it.id === baseItem.id)

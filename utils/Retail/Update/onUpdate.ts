@@ -47,7 +47,7 @@ export const checkOnUpdate = (data: any) => {
     if (checkBpp) Object.assign(onupdtObj, { bpp_id: 'context/bpp_id should not be a url' })
 
     if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-      onupdtObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+      onupdtObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     // Checkinf for valid context object
@@ -168,18 +168,21 @@ export const checkOnUpdate = (data: any) => {
 
     try {
       // Checking for valid item ids in /on_select
-      const itemsOnSelect = getValue('SelectItemList')
       const itemsList = message.order.items
-      const flflmntSet = new Set()
+      let updatedItems: any = null
+      if (getValue('flow') === '6-a') {
+        updatedItems = getValue('SelectItemList')
+      } else {
+        updatedItems = getValue('updateItemSet')
+      }
       itemsList.forEach((item: any, index: number) => {
-        if (!itemsOnSelect?.includes(item.id)) {
+        if (!updatedItems?.includes(item.id)) {
           const key = `inVldItemId[${index}]`
           onupdtObj[key] = `Invalid Item Id provided in /${constants.ON_UPDATE}: ${item.id}`
+        } else if (!updatedItems[item.id] === item.quantity.count) {
+          const key = `inVldItemCount[${index}]`
+          onupdtObj[key] = `Count provide for Item Id in /${constants.ON_UPDATE} should be same as /${constants.UPDATE}`
         }
-        if (flflmntSet.has(item.fulfillment_id)) {
-          onupdtObj[`dplctFlflmts[${index}]`] = `Duplicate fulfillment ids are not allowed in /${constants.ON_UPDATE}`
-        }
-        flflmntSet.add(item.fulfillment_id)
       })
     } catch (error: any) {
       logger.error(`Error while checking for item IDs for /${constants.ON_UPDATE}, ${error.stack}`)
@@ -372,6 +375,28 @@ export const checkOnUpdate = (data: any) => {
           `Error occuerred while checking for quote_trail price and quote breakup price on /${constants.ON_UPDATE}`,
         )
       }
+    }
+
+    try {
+      logger.info(`Checking for the availability of initiated_by code in ${constants.ON_UPDATE}`)
+      const fulfillments = on_update.fulfillments
+      fulfillments.map((fulfillment: any) => {
+        if (fulfillment.tags) {
+          const tags = fulfillment.tags
+          tags.map((tag: any) => {
+            if (tag.code === 'cancel_request') {
+              const list = tag.list
+              const tags_initiated = list.find((data: any) => data.code === 'initiated_by')
+              if (!tags_initiated) {
+                onupdtObj[`message/order/fulfillments/tags`] =
+                  `${constants.ON_UPDATE} must have initiated_by code in fulfillments/tags/list`
+              }
+            }
+          })
+        }
+      })
+    } catch (error: any) {
+      logger.error(`Error while checking for the availability of initiated_by in ${constants.ON_UPDATE}`)
     }
 
     return onupdtObj

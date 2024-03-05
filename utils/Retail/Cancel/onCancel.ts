@@ -51,7 +51,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       onCnclObj['messageId'] = 'message_id should be unique'
     }
     if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-      onCnclObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+      onCnclObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     setValue(`${ApiSequence.CANCEL}`, data)
@@ -278,13 +278,34 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       const itemFlfllmnts: any = getValue('itemFlfllmnts')
       let i = 0
       const len = on_cancel.items.length
+      let forwardFulfillmentCount = 0 // Counter for forward fulfillment
+      let cancellationFulfillmentCount = 0 // Counter for cancellation fulfillment
       while (i < len) {
         const itemId = on_cancel.items[i].id
-        if (itemId in itemFlfllmnts) {
-          Ids.push(itemId)
-          Flfmntid.push(on_cancel.items[i].fulfillment_id)
+        Ids.push(itemId)
+        Flfmntid.push(on_cancel.items[i].fulfillment_id)
+        if (!(itemId in itemFlfllmnts)) {
+          const key = `ITEM_ID ${itemId}`
+          onCnclObj[key] = `${itemId} itemID not found in ${constants.ON_SELECT}`
+        }
+        if (itemId in itemFlfllmnts && Object.values(itemFlfllmnts).includes(on_cancel.items[i].fulfillment_id)) {
+          const key = `FF_ID ${on_cancel.items[i].fulfillment_id}`
+          logger.info(`forward fulfillment found ${key}`)
+          forwardFulfillmentCount++
+        }
+        if (itemId in itemFlfllmnts && !Object.values(itemFlfllmnts).includes(on_cancel.items[i].fulfillment_id)) {
+          const key = `FF_ID ${on_cancel.items[i].fulfillment_id}`
+          logger.info(`Cancellation fulfillment found ${key}`)
+          cancellationFulfillmentCount++
         }
         i++
+      }
+      if (cancellationFulfillmentCount != forwardFulfillmentCount) {
+        const key = `Fulfillment_mismatch`
+        onCnclObj[key] =
+          `The count of cancellation fulfillmentsn is not equal to the count of forward fulfillments or invalid fulfillment id.`
+      } else {
+        logger.info(`The count of cancellation fulfillments is equal to the count of forward fulfillments.`)
       }
     } catch (error: any) {
       logger.error(

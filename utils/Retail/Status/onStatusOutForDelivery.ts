@@ -33,7 +33,7 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
     }
 
     if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-      onStatusObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+      onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     setValue(`${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}`, data)

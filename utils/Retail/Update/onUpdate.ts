@@ -47,7 +47,7 @@ export const checkOnUpdate = (data: any) => {
     if (checkBpp) Object.assign(onupdtObj, { bpp_id: 'context/bpp_id should not be a url' })
 
     if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-      onupdtObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+      onupdtObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     // Checkinf for valid context object
@@ -168,18 +168,16 @@ export const checkOnUpdate = (data: any) => {
 
     try {
       // Checking for valid item ids in /on_select
-      const itemsOnSelect = getValue('SelectItemList')
       const itemsList = message.order.items
-      const flflmntSet = new Set()
+      const updatedItems: any = getValue('updateItemSet')
       itemsList.forEach((item: any, index: number) => {
-        if (!itemsOnSelect?.includes(item.id)) {
+        if (!updatedItems?.hasOwnProperty(item.id)) {
           const key = `inVldItemId[${index}]`
           onupdtObj[key] = `Invalid Item Id provided in /${constants.ON_UPDATE}: ${item.id}`
+        } else if (!updatedItems[item.id] === item.quantity.count) {
+          const key = `inVldItemCount[${index}]`
+          onupdtObj[key] = `Count provide for Item Id in /${constants.ON_UPDATE} should be same as /${constants.UPDATE}`
         }
-        if (flflmntSet.has(item.fulfillment_id)) {
-          onupdtObj[`dplctFlflmts[${index}]`] = `Duplicate fulfillment ids are not allowed in /${constants.ON_UPDATE}`
-        }
-        flflmntSet.add(item.fulfillment_id)
       })
     } catch (error: any) {
       logger.error(`Error while checking for item IDs for /${constants.ON_UPDATE}, ${error.stack}`)

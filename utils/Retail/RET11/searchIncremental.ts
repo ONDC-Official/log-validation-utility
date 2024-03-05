@@ -36,7 +36,7 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
       Object.assign(errorObj, contextRes.ERRORS)
     }
     if (_.isEqual(data.context, getValue(`domain`))) {
-      errorObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+      errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     if (context.city !== '*') {

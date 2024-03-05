@@ -313,8 +313,12 @@ export const checkOnUpdate = (data: any) => {
       const selectPriceMap: any = getValue('selectPriceMap')
 
       for (let [item, quoteTrailPrice] of quoteTrailMap) {
+        if (!selectPriceMap.get(item)) {
+          onupdtObj[`order/fulfillments/tags/id`] =
+            `The price of the item ${item} in quote_trail does not match with the price in /${constants.ON_SELECT}`
+        }
         if (selectPriceMap.get(item) && selectPriceMap.get(item) !== quoteTrailPrice) {
-          onupdtObj[`message/order/fulfillments/tags`] =
+          onupdtObj[`order/fulfillments/tags`] =
             `The price of the item ${item} in quote_trail does not match with the price in /${constants.ON_SELECT}`
         }
       }

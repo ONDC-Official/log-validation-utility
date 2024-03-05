@@ -313,7 +313,7 @@ export const checkOnSelect = (data: any) => {
     const itemPrices = new Map()
 
     on_select.quote.breakup.forEach((item: { [x: string]: any; price: { value: any } }) => {
-      if (item['@ondc/org/item_id'] && item.price && item.price.value) {
+      if (item['@ondc/org/item_id'] && item.price && item.price.value && item['@ondc/org/title_type'] === 'item') {
         itemPrices.set(item['@ondc/org/item_id'], Math.abs(item.price.value))
       }
     })

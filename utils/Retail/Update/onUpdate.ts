@@ -372,6 +372,27 @@ export const checkOnUpdate = (data: any) => {
       }
     }
 
+      try {
+        logger.info(`Checking for the availability of initiated_by code in ${constants.ON_UPDATE}`)
+        const fulfillments = on_update.fulfillments
+        fulfillments.map((fulfillment: any) => {
+          if(fulfillment.tags){
+            const tags = fulfillment.tags;
+            tags.map((tag: any) => {
+              if(tag.code === "cancel_request"){
+                const list = tag.list
+                const tags_initiated = list.find((data :any) => data.code === 'initiated_by')
+                if(!tags_initiated){
+                  onupdtObj[`message/order/fulfillments/tags`] = `${constants.ON_UPDATE} must have initiated_by code in fulfillments/tags/list`
+                }
+              }
+            })
+          }
+        })
+      } catch (error: any) {
+        logger.error(`Error while checking for the availability of initiated_by in ${constants.ON_UPDATE}`)
+      }
+
     return onupdtObj
   } catch (error: any) {
     logger.error(`!!Some error occurred while checking /${constants.ON_UPDATE} API`, error.stack)

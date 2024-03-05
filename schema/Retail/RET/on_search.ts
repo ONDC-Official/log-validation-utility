@@ -313,7 +313,7 @@ export const onSearchSchema = {
                           properties: {
                             label: {
                               type: 'string',
-                              enum: ['enable', 'disable'],
+                              enum: ['enable', 'disable', 'open', 'close'],
                             },
                             timestamp: {
                               type: 'string',

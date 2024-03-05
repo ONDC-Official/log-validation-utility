@@ -202,7 +202,8 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
               },
               index: number,
             ) => {
-              const onSearchItems: any = getValue('onSearchItems')
+              const allOnSearchItems: any = getValue('onSearchItems')
+              let onSearchItems = allOnSearchItems.flat()
               const itemOnSearch = provider.items.find((it: { id: any }) => it.id === item.id)
 
               const baseItem = findItemByItemType(item)

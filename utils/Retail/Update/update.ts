@@ -120,7 +120,6 @@ export const checkUpdate = (data: any) => {
               tag.list.forEach((item: any) => {
                 if (item.code === 'item_id') {
                   key = item.value
-                  console.log('IREMMM', item.value, selectItemList)
                   if (!selectItemList.includes(key)) {
                     logger.error(`Item code should be present in /${constants.SELECT} API`)
                     const key = `itemCode[${item.code}]`

@@ -124,10 +124,11 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     let provider = onSearch?.message?.catalog['bpp/providers'].filter(
       (provider: { id: any }) => provider.id === select.provider.id,
     )
+    console.log('PRovider-->', provider)
     if (provider.length === 0) {
       errorObj.providerId = `provider with provider.id: ${select.provider.id} does not exist in on_search`
     }
-    if (provider[0].time.label === 'disable') {
+    if (provider.time && provider[0].time.label === 'disable') {
       errorObj.disbledProvider = `provider with provider.id: ${provider[0].id} was disabled in on_search `
     }
 
@@ -161,6 +162,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
       try {
         // Checking for valid item ids in /on_select
         const itemsOnSearch = getValue('ItemList')
+        console.log('ItemOnsearch-->', itemsOnSearch)
         const itemsList = message.order.items
         const itemsOnSelect: any = []
         itemsList.forEach((item: any, index: number) => {
@@ -171,6 +173,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
             itemsOnSelect.push(item.id)
           }
         })
+        console.log('ITEMSDMF', itemsOnSelect)
         setValue('SelectItemList', itemsOnSelect)
       } catch (error: any) {
         logger.error(`Error while checking for item IDs for /${constants.SELECT}`, error.stack)
@@ -196,8 +199,14 @@ export const checkSelect = (data: any, msgIdSet: any) => {
             },
             index: number,
           ) => {
-            const onSearchItems: any = getValue('onSearchItems')
-            const itemOnSearch = onSearchItems.find((it: any) => it.id === item.id)
+            const allOnSearchItems: any = getValue('onSearchItems')
+            let onSearchItems = allOnSearchItems.flat()
+            console.log('onSearchsdfasdfItems', onSearchItems)
+            const itemOnSearch = onSearchItems.find((it: any) => {
+              console.log('ITEM ON SEARCH---dfads', it.id, item.id)
+              return it.id === item.id
+            })
+            console.log('ITEM ON SDSDSFDS', itemOnSearch)
             const baseItem = findItemByItemType(item)
             if (baseItem) {
               const searchBaseItem = provider.items.find((it: { id: any }) => it.id === baseItem.id)

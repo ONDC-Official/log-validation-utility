@@ -87,6 +87,7 @@ export const checkOnSelect = (data: any) => {
   try {
     // Checking for valid item ids in /on_select
     const itemsOnSelect = getValue('SelectItemList')
+    console.log('ItemsOnSelect-->', itemsOnSelect)
     const itemsList = message.order.items
     const selectItems: any = []
     itemsList.forEach((item: any, index: number) => {
@@ -281,6 +282,7 @@ export const checkOnSelect = (data: any) => {
   try {
     logger.info(`Comparing count of items in ${constants.SELECT} and ${constants.ON_SELECT}`)
     const itemsIdList: any = getValue('itemsIdList')
+    console.log('objasdfasdfject', itemsIdList)
     if (on_select.quote) {
       on_select.quote.breakup.forEach((item: { [x: string]: any }) => {
         if (item['@ondc/org/item_id'] in itemsIdList) {

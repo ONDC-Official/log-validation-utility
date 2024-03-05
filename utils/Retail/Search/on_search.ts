@@ -148,6 +148,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
     const len = bppPrvdrs.length
     const tmpstmp = context.timestamp
     let itemIdList: any = []
+    let itemsArray = []
     while (i < len) {
       const categoriesId = new Set()
       const customGrpId = new Set()
@@ -166,11 +167,16 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
       }
 
       logger.info(`Checking store enable/disable timestamp in bpp/providers[${i}]`)
-      const providerTime = new Date(prvdr.time.timestamp).getTime()
-      const contextTimestamp = new Date(tmpstmp).getTime()
-
-      if (providerTime > contextTimestamp) {
-        errorObj.StoreEnableDisable = `store enable/disable timestamp (/bpp/providers/time/timestamp) should be less then or equal to context.timestamp`
+      try {
+        if (prvdr.time) {
+          const providerTime = new Date(prvdr.time.timestamp).getTime()
+          const contextTimestamp = new Date(tmpstmp).getTime()
+          if (providerTime > contextTimestamp) {
+            errorObj.StoreEnableDisable = `store enable/disable timestamp (/bpp/providers/time/timestamp) should be less then or equal to context.timestamp`
+          }
+        }
+      } catch (error: any) {
+        logger.error(`Error while checking store enable/disable timestamp in bpp/providers[${i}]`, error)
       }
 
       logger.info(`Checking store timings in bpp/providers[${i}]`)
@@ -417,7 +423,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
       try {
         // Adding items in a list
         const items = prvdr.items
-        setValue('onSearchItems', items)
+        itemsArray.push(items)
         items.forEach((item: any) => {
           itemIdList.push(item.id)
         })
@@ -1094,6 +1100,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
       i++
     }
+    setValue('onSearchItems', itemsArray)
 
     setValue(`${ApiSequence.ON_SEARCH}prvdrsId`, prvdrsId)
     setValue(`${ApiSequence.ON_SEARCH}prvdrLocId`, prvdrLocId)

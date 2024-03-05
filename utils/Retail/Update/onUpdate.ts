@@ -164,11 +164,11 @@ export const checkOnUpdate = (data: any) => {
 
     try {
       // Checking for valid item ids in /on_select
-      const itemsOnSearch = getValue('ItemList')
+      const itemsOnSelect = getValue('SelectItemList')
       const itemsList = message.order.items
       const flflmntSet = new Set()
       itemsList.forEach((item: any, index: number) => {
-        if (!itemsOnSearch?.includes(item.id)) {
+        if (!itemsOnSelect?.includes(item.id)) {
           const key = `inVldItemId[${index}]`
           onupdtObj[key] = `Invalid Item Id provided in /${constants.ON_UPDATE}: ${item.id}`
         }

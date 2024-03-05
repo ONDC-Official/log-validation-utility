@@ -279,12 +279,19 @@ export const checkOnSelect = (data: any) => {
     const itemsIdList: any = getValue('itemsIdList')
     if (on_select.quote) {
       on_select.quote.breakup.forEach((item: { [x: string]: any }) => {
-        if (item['@ondc/org/item_id'] in itemsIdList && item['@ondc/org/title_type'] === 'item') {
-          if (itemsIdList[item['@ondc/org/item_id']] != item['@ondc/org/item_quantity'].count) {
+        if (item['@ondc/org/item_id'] in itemsIdList) {
+          if (
+            item['@ondc/org/title_type'] === 'item' &&
+            itemsIdList[item['@ondc/org/item_id']] != item['@ondc/org/item_quantity'].count
+          ) {
             const countkey = `invldCount[${item['@ondc/org/item_id']}]`
             errorObj[countkey] =
               `Count of item with id: ${item['@ondc/org/item_id']} does not match in ${constants.SELECT} & ${constants.ON_SELECT}`
           }
+        } else if (item['@ondc/org/title_type'] === 'item') {
+          errorObj[`InvldQuoteId[${item['@ondc/org/item_id']}]`] = [
+            `Item with id: ${item['@ondc/org/item_id']} does not exist in items list of ${constants.SELECT}`,
+          ]
         }
       })
     } else {

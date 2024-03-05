@@ -253,7 +253,7 @@ export const checkOnSelect_OOS = (data: any) => {
       } else {
         itemsOnSelect.push(item.id)
       }
-      setValue('ItemList', itemsOnSelect)
+      setValue('SelectItemList', itemsOnSelect)
     })
   } catch (error: any) {
     logger.error(`Error while checking for item IDs for /${constants.ON_SELECT}`, error.stack)
@@ -291,16 +291,22 @@ export const checkOnSelect_OOS = (data: any) => {
     logger.info(`Comparing count of items in ${constants.SELECT} and ${constants.ON_SELECT}`)
     const itemsIdList: any = getValue('itemsIdList')
     ON_SELECT_OUT_OF_STOCK.quote.breakup.forEach((item: { [x: string]: any }) => {
-      if (item['@ondc/org/item_id'] in itemsIdList && item['@ondc/org/title_type'] === 'item') {
-        if (itemsIdList[item['@ondc/org/item_id']] != item['@ondc/org/item_quantity'].count) {
+      if (item['@ondc/org/item_id'] in itemsIdList) {
+        if (
+          item['@ondc/org/title_type'] === 'item' &&
+          itemsIdList[item['@ondc/org/item_id']] != item['@ondc/org/item_quantity'].count
+        ) {
           const countkey = `invldCount[${item['@ondc/org/item_id']}]`
           errorObj[countkey] =
             `Count of item with id: ${item['@ondc/org/item_id']} does not match in ${constants.SELECT} & ${constants.ON_SELECT}`
         }
+      } else if (item['@ondc/org/title_type'] === 'item') {
+        errorObj[`InvldQuoteId[${item['@ondc/org/item_id']}]`] = [
+          `Item with id: ${item['@ondc/org/item_id']} does not exist in items list of ${constants.SELECT}`,
+        ]
       }
     })
   } catch (error: any) {
-    // errorObj.countErr = `Count of item does not match with the count in /select`;
     logger.error(
       `!!Error while comparing count items in ${constants.SELECT} and ${constants.ON_SELECT}, ${error.stack}`,
     )

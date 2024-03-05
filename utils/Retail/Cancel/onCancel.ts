@@ -100,7 +100,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
 
     try {
       // Checking for valid item ids in /on_select
-      const itemsOnSelect = getValue('ItemList')
+      const itemsOnSelect = getValue('SelectItemList')
       const itemsList = message.order.items
       itemsList.forEach((item: any, index: number) => {
         if (!itemsOnSelect?.includes(item.id)) {

@@ -371,9 +371,25 @@ export const checkOnSelect_OOS = (data: any) => {
         if (element.item.quantity && element.item.quantity.maximum && element.item.quantity.available) {
           const maxCount = parseInt(element.item.quantity.maximum.count, 10)
           const availCount = parseInt(element.item.quantity.available.count, 10)
+          console.log("checking count ==>", );
+
+          if (availCount == 99 && maxCount < 0) {
+            const key = `qntcnt${i}`
+            errorObj[key] = `item.quantity.maximum.count cannont be greater than 0 if item.quantity.available.count is 99 `
+          }
+          
           if (availCount == 0 && maxCount > 0) {
             const key = `qntcnt${i}`
-            errorObj[key] = `item.quantity.maximum.count be greater than 0 if item.quantity.available.count is 0 `
+            errorObj[key] = `item.quantity.maximum.count cannont be greater than 0 if item.quantity.available.count is 0 `
+          }
+          if (availCount < element["@ondc/org/item_quantity"].count) {
+            const key = `brkcnt${i}`
+            errorObj[key] = `Available count can't be less than @ondc/org/item_quantity.count `
+          }
+
+          if (element["@ondc/org/item_quantity"].count == 0 && maxCount > 0 && availCount > 0){
+            const key = `qntcnt${i}`
+            errorObj[key] = `item.quantity.maximum.count and item.quantity.available.count is cannot be greater than zero if "@ondc/org/item_quantity" is 0 `
           }
         }
       }

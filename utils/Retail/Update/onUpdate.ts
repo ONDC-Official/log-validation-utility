@@ -46,6 +46,10 @@ export const checkOnUpdate = (data: any) => {
     if (checkBap) Object.assign(onupdtObj, { bap_id: 'context/bap_id should not be a url' })
     if (checkBpp) Object.assign(onupdtObj, { bpp_id: 'context/bpp_id should not be a url' })
 
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      onupdtObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+    }
+
     // Checkinf for valid context object
     try {
       logger.info(`Checking context for /${constants.ON_UPDATE} API`)

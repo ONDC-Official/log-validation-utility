@@ -6,7 +6,7 @@ import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqu
 import { getValue, setValue } from '../../../shared/dao'
 import { checkFulfillmentID } from '../../index'
 
-export const checkOnStatusDelivered = (data: any, state: string, msgIdSet:any) => {
+export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -29,12 +29,16 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet:any) =
     if (!msgIdSet.add(context.message_id)) {
       onStatusObj['messageId'] = 'message_id should be unique'
     }
-    
+
     if (!contextRes?.valid) {
       Object.assign(onStatusObj, contextRes.ERRORS)
     }
 
     setValue(`${ApiSequence.ON_STATUS_DELIVERED}`, data)
+
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      onStatusObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+    }
 
     // const picked_message_id: string | null = getValue('picked_message_id')
     // const pending_message_id: string | null = getValue('pending_message_id')

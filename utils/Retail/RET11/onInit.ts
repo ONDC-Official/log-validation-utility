@@ -45,6 +45,9 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     if (!contextRes?.valid) {
       Object.assign(onInitObj, contextRes.ERRORS)
     }
+    if (_.isEqual(data.context, getValue(`domain`))) {
+      onInitObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+    }
 
     setValue(`${ApiSequence.ON_INIT}`, data)
     msgIdSet.add(context.message_id)

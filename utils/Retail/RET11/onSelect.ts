@@ -37,6 +37,10 @@ export const checkOnSelect = (data: any) => {
   const checkBap = checkBppIdOrBapId(context.bap_id)
   const checkBpp = checkBppIdOrBapId(context.bpp_id)
 
+  if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+    errorObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+  }
+
   if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
   if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
 

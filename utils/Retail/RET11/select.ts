@@ -48,6 +48,9 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   if (!msgIdSet.add(context.message_id)) {
     errorObj['messageId'] = 'message_id should be unique'
   }
+  if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+    errorObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+  }
 
   const checkBap = checkBppIdOrBapId(context.bap_id)
   const checkBpp = checkBppIdOrBapId(context.bpp_id)

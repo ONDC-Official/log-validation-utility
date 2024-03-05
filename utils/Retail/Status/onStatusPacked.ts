@@ -6,7 +6,7 @@ import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqu
 import { getValue, setValue } from '../../../shared/dao'
 import { checkFulfillmentID } from '../../index'
 
-export const checkOnStatusPacked = (data: any, state: string) => {
+export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -18,9 +18,12 @@ export const checkOnStatusPacked = (data: any, state: string) => {
       return { missingFields: '/context, /message, is missing or empty' }
     }
 
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      onStatusObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+    }
+
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const schemaValidation = validateSchema('RET11', constants.ON_STATUS, data)
-    const select: any = getValue(`${ApiSequence.SELECT}`)
     const contextRes: any = checkContext(context, constants.ON_STATUS)
 
     if (schemaValidation !== 'error') {
@@ -29,6 +32,10 @@ export const checkOnStatusPacked = (data: any, state: string) => {
 
     if (!contextRes?.valid) {
       Object.assign(onStatusObj, contextRes.ERRORS)
+    }
+
+    if (!msgIdSet.add(context.message_id)) {
+      onStatusObj['messageId'] = 'message_id should be unique'
     }
 
     setValue(`${ApiSequence.ON_STATUS_PACKED}`, data)
@@ -74,7 +81,7 @@ export const checkOnStatusPacked = (data: any, state: string) => {
 
     try {
       logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_STATUS}`)
-      if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
+      if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
         onStatusObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
       }
     } catch (error: any) {

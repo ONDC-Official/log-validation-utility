@@ -6,7 +6,7 @@ import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqu
 import { getValue, setValue } from '../../../shared/dao'
 import { checkFulfillmentID } from '../../index'
 
-export const checkOnStatusPicked = (data: any, state: string) => {
+export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -30,27 +30,35 @@ export const checkOnStatusPicked = (data: any, state: string) => {
       Object.assign(onStatusObj, contextRes.ERRORS)
     }
 
+    if (!msgIdSet.add(context.message_id)) {
+      onStatusObj['messageId'] = 'message_id should be unique'
+    }
+
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      onStatusObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+    }
+
     setValue(`${ApiSequence.ON_STATUS_PICKED}`, data)
 
-    const pending_message_id: string | null = getValue('pending_message_id')
-    const picked_message_id: string = context.message_id
+    // const pending_message_id: string | null = getValue('pending_message_id')
+    // const picked_message_id: string = context.message_id
 
-    setValue(`picked_message_id`, picked_message_id)
+    // setValue(`picked_message_id`, picked_message_id)
 
-    try {
-      logger.info(
-        `Comparing message_id for unsolicited calls for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`,
-      )
-      if (pending_message_id === picked_message_id) {
-        logger.error(`Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`)
-        onStatusObj['invalid_message_id_picked'] =
-          `Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`
-      }
-    } catch (error: any) {
-      logger.error(
-        `Error while comparing message_id for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`,
-      )
-    }
+    // try {
+    //   logger.info(
+    //     `Comparing message_id for unsolicited calls for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`,
+    //   )
+    //   if (pending_message_id === picked_message_id) {
+    //     logger.error(`Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`)
+    //     onStatusObj['invalid_message_id_picked'] =
+    //       `Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`
+    //   }
+    // } catch (error: any) {
+    //   logger.error(
+    //     `Error while comparing message_id for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`,
+    //   )
+    // }
 
     try {
       logger.info(`Checking context for /${constants.ON_STATUS} API`) //checking context

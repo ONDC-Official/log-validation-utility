@@ -46,6 +46,10 @@ export const checkOnUpdate = (data: any) => {
     if (checkBap) Object.assign(onupdtObj, { bap_id: 'context/bap_id should not be a url' })
     if (checkBpp) Object.assign(onupdtObj, { bpp_id: 'context/bpp_id should not be a url' })
 
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      onupdtObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+    }
+
     // Checkinf for valid context object
     try {
       logger.info(`Checking context for /${constants.ON_UPDATE} API`)
@@ -145,8 +149,16 @@ export const checkOnUpdate = (data: any) => {
       logger.error(`Error while checking the payment status`)
     }
 
-    //Comparing the updated_at timestamp with of context.timestamp
     try {
+      // Comparing the providerId with /select providerId
+      if (getValue('providerId') != on_update.provider.id) {
+        onupdtObj.prvdrId = `provider.id mismatches in /${constants.ON_UPDATE} and /${constants.ON_SELECT}`
+      }
+      // Comparing the providerLoc with /select providerLoc
+      if (on_update.provider.locations[0].id != getValue('providerLoc')) {
+        onupdtObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.ON_SELECT} and /${constants.ON_UPDATE}`
+      }
+      //Comparing the updated_at timestamp with of context.timestamp
       if (!_.gte(context.timestamp, on_update.updated_at)) {
         onupdtObj[`context/timestamp`] = `context/timestamp should be greater than message/order/updated_at timestamp`
       }
@@ -154,6 +166,24 @@ export const checkOnUpdate = (data: any) => {
       logger.error(`Error while comparing context/timestamp and updated_at timestamp`)
     }
 
+    try {
+      // Checking for valid item ids in /on_select
+      const itemsOnSelect = getValue('SelectItemList')
+      const itemsList = message.order.items
+      const flflmntSet = new Set()
+      itemsList.forEach((item: any, index: number) => {
+        if (!itemsOnSelect?.includes(item.id)) {
+          const key = `inVldItemId[${index}]`
+          onupdtObj[key] = `Invalid Item Id provided in /${constants.ON_UPDATE}: ${item.id}`
+        }
+        if (flflmntSet.has(item.fulfillment_id)) {
+          onupdtObj[`dplctFlflmts[${index}]`] = `Duplicate fulfillment ids are not allowed in /${constants.ON_UPDATE}`
+        }
+        flflmntSet.add(item.fulfillment_id)
+      })
+    } catch (error: any) {
+      logger.error(`Error while checking for item IDs for /${constants.ON_UPDATE}, ${error.stack}`)
+    }
     //checking for settlement details in payment
     try {
       logger.info(`Checking for settlement_details in /message/order/payment`)

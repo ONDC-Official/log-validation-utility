@@ -29,15 +29,17 @@ export const checkOnSelect = (data: any) => {
   if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
-
   const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SELECT, data)
 
   const contextRes: any = checkContext(context, constants.ON_SELECT)
 
   const errorObj: any = {}
-
   const checkBap = checkBppIdOrBapId(context.bap_id)
   const checkBpp = checkBppIdOrBapId(context.bpp_id)
+
+  if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+    errorObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+  }
 
   if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
   if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
@@ -83,7 +85,33 @@ export const checkOnSelect = (data: any) => {
   }
 
   try {
-  } catch (error: any) {}
+    // Checking for valid item ids in /on_select
+    const itemsOnSelect = getValue('SelectItemList')
+    const itemsList = message.order.items
+    const selectItems: any = []
+    itemsList.forEach((item: any, index: number) => {
+      if (!itemsOnSelect?.includes(item.id)) {
+        const key = `inVldItemId[${index}]`
+        errorObj[key] = `Invalid Item Id provided in /${constants.ON_SELECT}: ${item.id}`
+      } else {
+        selectItems.push(item.id)
+      }
+    })
+    setValue('SelectItemList', selectItems)
+  } catch (error: any) {
+    logger.error(`Error while checking for item IDs for /${constants.ON_SELECT}`, error.stack)
+  }
+
+  try {
+    const fulfillments = message.order.fulfillments
+    const selectFlflmntSet: any = []
+    fulfillments.forEach((flflmnt: any) => {
+      selectFlflmntSet.push(flflmnt.id)
+    })
+    setValue('selectFlflmntSet', selectFlflmntSet)
+  } catch (error: any) {
+    logger.error(`Error while checking for fulfillment IDs for /${constants.ON_SELECT}`, error.stack)
+  }
 
   try {
     logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
@@ -127,6 +155,9 @@ export const checkOnSelect = (data: any) => {
     logger.info(`Checking provider id in /${constants.ON_SEARCH} and /${constants.ON_SELECT}`)
     if (getValue('providerId') != on_select.provider.id) {
       errorObj.prvdrId = `provider.id mismatches in /${constants.ON_SEARCH} and /${constants.ON_SELECT}`
+    }
+    if (on_select.provider.locations[0].id != getValue('providerLoc')) {
+      errorObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.SELECT} and /${constants.ON_SELECT}`
     }
   } catch (error: any) {
     logger.info(
@@ -249,19 +280,22 @@ export const checkOnSelect = (data: any) => {
 
   try {
     logger.info(`Comparing count of items in ${constants.SELECT} and ${constants.ON_SELECT}`)
-    const itemsIdList: any = getValue('itemsIdList') || {}
-    logger.info('itemsIdList', itemsIdList)
+    const itemsIdList: any = getValue('itemsIdList')
     if (on_select.quote) {
       on_select.quote.breakup.forEach((item: { [x: string]: any }) => {
-        if (item['@ondc/org/item_id'] in itemsIdList && item['@ondc/org/title_type'] === 'item') {
+        if (item['@ondc/org/item_id'] in itemsIdList) {
           if (
-            itemsIdList[item['@ondc/org/item_id']] != item['@ondc/org/item_quantity'].count &&
-            (!on_select_error || on_select_error.type != 'DOMAIN-ERROR' || on_select_error.code != '40002')
+            item['@ondc/org/title_type'] === 'item' &&
+            itemsIdList[item['@ondc/org/item_id']] != item['@ondc/org/item_quantity'].count
           ) {
-            const cntkey = `cnt${item['@ondc/org/item_id']}`
-            errorObj[cntkey] =
-              `Count of item with id: ${item['@ondc/org/item_id']} does not match in ${constants.SELECT} & ${constants.ON_SELECT} (suitable domain error should be provided)`
+            const countkey = `invldCount[${item['@ondc/org/item_id']}]`
+            errorObj[countkey] =
+              `Count of item with id: ${item['@ondc/org/item_id']} does not match in ${constants.SELECT} & ${constants.ON_SELECT}`
           }
+        } else if (item['@ondc/org/title_type'] === 'item') {
+          errorObj[`InvldQuoteId[${item['@ondc/org/item_id']}]`] = [
+            `Item with id: ${item['@ondc/org/item_id']} does not exist in items list of ${constants.SELECT}`,
+          ]
         }
       })
     } else {
@@ -305,14 +339,39 @@ export const checkOnSelect = (data: any) => {
           }
 
           logger.info(`checking available and maximum count in ${constants.ON_SELECT}`)
-
-          if (element.item.hasOwnProperty('quantity')) {
-            if (
-              _.gt(parseFloat(element.item.quantity.available.count), parseFloat(element.item.quantity.maximum.count))
-            ) {
+          if (
+            element.item.quantity &&
+            element.item.quantity.available &&
+            typeof element.item.quantity.available.count === 'string'
+          ) {
+            const availCount = parseInt(element.item.quantity.available.count, 10)
+            if (availCount !== 99 && availCount !== 0) {
               const key = `qntcnt${i}`
               errorObj[key] =
-                `available count can't be greater than maximum count for item id: ${element['@ondc/org/item_id']}`
+                `item.quantity.available.count should be either 99 (inventory available) or 0 (out-of-stock)]`
+            }
+          }
+
+          if (
+            element.item.quantity &&
+            element.item.quantity.maximum &&
+            typeof element.item.quantity.maximum.count === 'string' &&
+            element.item.quantity.available &&
+            typeof element.item.quantity.available.count === 'string'
+          ) {
+            const maxCount = parseInt(element.item.quantity.maximum.count, 10)
+            const availCount = parseInt(element.item.quantity.available.count, 10)
+            if (availCount == 99 && maxCount <= 0) {
+              const key = `qntcnt${i}`
+              errorObj[key] = `item.quantity.maximum.count cant be 0 if item is in stock `
+            }
+          }
+          if (element.item.quantity && element.item.quantity.maximum && element.item.quantity.available) {
+            const maxCount = parseInt(element.item.quantity.maximum.count, 10)
+            const availCount = parseInt(element.item.quantity.available.count, 10)
+            if (availCount == 0 && maxCount > 0) {
+              const key = `qntcnt${i}`
+              errorObj[key] = `item.quantity.maximum.count be greater than 0 if item.quantity.available.count is 0 `
             }
           }
         }
@@ -368,7 +427,7 @@ export const checkOnSelect = (data: any) => {
       )
 
       if (typeof selectedPrice === 'number' && onSelectItemsPrice !== selectedPrice) {
-        errorObj.priceErr = `Warning: Quoted Price in /${constants.ON_SELECT} INR ${onSelectItemsPrice} does not match with the total price of items in /${constants.SELECT} INR ${selectedPrice}`
+        // errorObj.priceErr = `Warning: Quoted Price in /${constants.ON_SELECT} INR ${onSelectItemsPrice} does not match with the total price of items in /${constants.SELECT} INR ${selectedPrice}`
         logger.info('Quoted Price and Selected Items price mismatch')
       }
     } else {

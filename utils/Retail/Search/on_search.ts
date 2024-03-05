@@ -50,6 +50,10 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
     Object.assign(errorObj, schemaValidation)
   }
 
+  if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+    errorObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+  }
+
   const checkBap = checkBppIdOrBapId(context.bap_id)
   const checkBpp = checkBppIdOrBapId(context.bpp_id)
 
@@ -99,6 +103,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
     if (address) {
       const area_code = Number.parseInt(address.area_code)
+      setValue('area_code', address.area_code)
       const std = context.city.split(':')[1]
 
       logger.info(`Comparing area_code and STD Code for /${constants.ON_SEARCH}`)
@@ -142,6 +147,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
     const bppPrvdrs = onSearchCatalog['bpp/providers']
     const len = bppPrvdrs.length
     const tmpstmp = context.timestamp
+    let itemIdList: any = []
     while (i < len) {
       const categoriesId = new Set()
       const customGrpId = new Set()
@@ -409,6 +415,18 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
       }
 
       try {
+        // Adding items in a list
+        const items = prvdr.items
+        setValue('onSearchItems', items)
+        items.forEach((item: any) => {
+          itemIdList.push(item.id)
+        })
+        setValue('ItemList', itemIdList)
+      } catch (error: any) {
+        logger.error(`Error while adding items in a list, ${error.stack}`)
+      }
+
+      try {
         logger.info(`Checking items for provider (${prvdr.id}) in bpp/providers[${i}]`)
         let j = 0
         const items = onSearchCatalog['bpp/providers'][i]['items']
@@ -497,6 +515,14 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
             }
           }
 
+          if (item.quantity && item.quantity.maximum && typeof item.quantity.maximum.count === 'string') {
+            const maxCount = parseInt(item.quantity.maximum.count, 10)
+            const availCount = parseInt(item.quantity.available.count, 10)
+            if (availCount == 99 && maxCount == 0) {
+              const key = `prvdr${i}item${j}maxCount`
+              errorObj[key] = `item.quantity.maximum.count cant be 0 if item is in stock `
+            }
+          }
           if ('price' in item) {
             const sPrice = parseFloat(item.price.value)
             const maxPrice = parseFloat(item.price.maximum_value)

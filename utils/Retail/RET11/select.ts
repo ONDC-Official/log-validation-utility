@@ -45,6 +45,13 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   const itemsCtgrs: any = {}
   const itemsTat: any[] = []
 
+  if (!msgIdSet.add(context.message_id)) {
+    errorObj['messageId'] = 'message_id should be unique'
+  }
+  if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+    errorObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+  }
+
   const checkBap = checkBppIdOrBapId(context.bap_id)
   const checkBpp = checkBppIdOrBapId(context.bpp_id)
 
@@ -117,6 +124,9 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     let provider = onSearch?.message?.catalog['bpp/providers'].filter(
       (provider: { id: any }) => provider.id === select.provider.id,
     )
+    if (provider.length === 0) {
+      errorObj.providerId = `provider with provider.id: ${select.provider.id} does not exist in on_search`
+    }
     if (provider[0].time.label === 'disable') {
       errorObj.disbledProvider = `provider with provider.id: ${provider[0].id} was disabled in on_search `
     }
@@ -148,6 +158,24 @@ export const checkSelect = (data: any, msgIdSet: any) => {
         )
       }
 
+      try {
+        // Checking for valid item ids in /on_select
+        const itemsOnSearch = getValue('ItemList')
+        const itemsList = message.order.items
+        const itemsOnSelect: any = []
+        itemsList.forEach((item: any, index: number) => {
+          if (!itemsOnSearch?.includes(item.id)) {
+            const key = `inVldItemId[${index}]`
+            errorObj[key] = `Invalid Item Id provided in /${constants.SELECT}: ${item.id}`
+          } else {
+            itemsOnSelect.push(item.id)
+          }
+        })
+        setValue('SelectItemList', itemsOnSelect)
+      } catch (error: any) {
+        logger.error(`Error while checking for item IDs for /${constants.SELECT}`, error.stack)
+      }
+
       logger.info(
         `Mapping Item Ids with their counts, categories and prices /${constants.ON_SEARCH} and /${constants.SELECT}`,
       )
@@ -168,8 +196,8 @@ export const checkSelect = (data: any, msgIdSet: any) => {
             },
             index: number,
           ) => {
-            const itemOnSearch = provider.items.find((it: { id: any }) => it.id === item.id)
-
+            const onSearchItems: any = getValue('onSearchItems')
+            const itemOnSearch = onSearchItems.find((it: any) => it.id === item.id)
             const baseItem = findItemByItemType(item)
             if (baseItem) {
               const searchBaseItem = provider.items.find((it: { id: any }) => it.id === baseItem.id)
@@ -215,10 +243,12 @@ export const checkSelect = (data: any, msgIdSet: any) => {
             if (!parentItemIdSet.has(item.parent_item_id)) parentItemIdSet.add(item.parent_item_id)
 
             if (!itemIdSet.has(item.id)) itemIdSet.add(item.id)
-            if (itemMap[item.parent_item_id] && itemMap[item.parent_item_id].location_id !== item.location_id) {
-              const key = `item${index}location_id`
-              errorObj[key] = `Inconsistent location_id for parent_item_id ${item.parent_item_id}`
-            }
+
+            onSearchItems.forEach((it: any) => {
+              if (it.id === item.id && it.location_id !== item.location_id) {
+                errorObj[`location_id[${index}]`] = `location_id should be same for the item ${item.id} as in on_search`
+              }
+            })
 
             if (itemOnSearch) {
               logger.info(`ITEM ID: ${item.id}, Price: ${itemOnSearch.price.value}, Count: ${item.quantity.count}`)
@@ -280,9 +310,22 @@ export const checkSelect = (data: any, msgIdSet: any) => {
         if (ff.hasOwnProperty('end')) {
           setValue('buyerGps', ff.end.location.gps)
           setValue('buyerAddr', ff.end.location.address.area_code)
+          if (!_.isEqual(ff.end.location.address.area_code, getValue('area_code'))) {
+            errorObj.areaCode = `address.area_code should not be same as in /${constants.ON_SEARCH}`
+          }
           const gps = ff.end.location.gps.split(',')
-          const gpsLat = gps[0]
+          const gpsLat: string = gps[0]
+          Array.from(gpsLat).forEach((char: any) => {
+            if (char !== '.' && isNaN(parseInt(char))) {
+              errorObj.gpsErr = `fulfillments location.gps is not as per the API contract`
+            }
+          })
           const gpsLong = gps[1]
+          Array.from(gpsLong).forEach((char: any) => {
+            if (char !== '.' && isNaN(parseInt(char))) {
+              errorObj.gpsErr = `fulfillments location.gps is not as per the API contract`
+            }
+          })
 
           if (!gpsLat || !gpsLong) {
             errorObj.gpsErr = `fulfillments location.gps is not as per the API contract`

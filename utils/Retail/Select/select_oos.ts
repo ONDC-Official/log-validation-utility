@@ -61,6 +61,10 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
       Object.assign(errorObj, contextRes.ERRORS)
     }
 
+    if (_.isEqual(data.context, getValue(`domain`))) {
+      errorObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+    }
+
     setValue(`${ApiSequence.SELECT_OUT_OF_STOCK}`, data)
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
@@ -107,6 +111,9 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
       }
 
       setValue('msgId', context.message_id)
+      if (_.isEqual(getValue('txnId'), context.transaction_id)) {
+        errorObj.txnId = `Transaction Id should be different for flow 3 after /${ApiSequence.SELECT_OUT_OF_STOCK} onwards`
+      }
       setValue('txnId', context.transaction_id)
     } catch (error: any) {
       logger.info(
@@ -123,6 +130,9 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
       let provider = onSearch?.message?.catalog['bpp/providers'].filter(
         (provider: { id: any }) => provider.id === select_oos.provider.id,
       )
+      if (provider.length === 0) {
+        errorObj.providerId = `provider with provider.id: ${select_oos.provider.id} does not exist in on_search`
+      }
       if (provider[0].time.label === 'disable') {
         errorObj.disbledProvider = `provider with provider.id: ${provider[0].id} was disabled in on_search `
       }
@@ -139,8 +149,6 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
         provider = provider[0]
 
         setValue('providerId', provider.id)
-        console.log('xgjash', provider.id)
-
         setValue('providerLoc', provider.locations[0].id)
         setValue('providerGps', provider.locations[0].gps)
         setValue('providerName', provider.descriptor.name)
@@ -154,6 +162,24 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
           logger.error(
             `!!Error while comparing provider's location id in /${constants.ON_SEARCH} and /${constants.SELECT}, ${error.stack}`,
           )
+        }
+
+        try {
+          // Checking for valid item ids in /on_select
+          const itemsOnSearch = getValue('ItemList')
+          const itemsList = message.order.items
+          const itemsOnSelect: any = []
+          itemsList.forEach((item: any, index: number) => {
+            if (!itemsOnSearch?.includes(item.id)) {
+              const key = `inVldItemId[${index}]`
+              errorObj[key] = `Invalid Item Id provided in /${constants.SELECT}: ${item.id}`
+            } else {
+              itemsOnSelect.push(item.id)
+            }
+          })
+          setValue('SelectItemList', itemsOnSelect)
+        } catch (error: any) {
+          logger.error(`Error while checking for item IDs for /${constants.SELECT}`, error.stack)
         }
 
         logger.info(
@@ -176,6 +202,7 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
               },
               index: number,
             ) => {
+              const onSearchItems: any = getValue('onSearchItems')
               const itemOnSearch = provider.items.find((it: { id: any }) => it.id === item.id)
 
               const baseItem = findItemByItemType(item)
@@ -224,11 +251,17 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
               if (!parentItemIdSet.has(item.parent_item_id)) parentItemIdSet.add(item.parent_item_id)
 
               if (!itemIdSet.has(item.id)) itemIdSet.add(item.id)
-
-              if (itemMap[item.parent_item_id].location_id !== item.location_id) {
+              if (itemTag && itemMap[item.parent_item_id].location_id !== item.location_id) {
                 const key = `item${index}location_id`
                 errorObj[key] = `Inconsistent location_id for parent_item_id ${item.parent_item_id}`
               }
+
+              onSearchItems.forEach((it: any) => {
+                if (it.id === item.id && it.location_id !== item.location_id) {
+                  errorObj[`location_id[${index}]`] =
+                    `location_id should be same for the item ${item.id} as in on_search`
+                }
+              })
 
               if (itemOnSearch) {
                 logger.info(`ITEM ID: ${item.id}, Price: ${itemOnSearch.price.value}, Count: ${item.quantity.count}`)
@@ -267,7 +300,7 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
 
           setValue('itemsIdList', itemsIdList)
           setValue('itemsCtgrs', itemsCtgrs)
-          setValue('SELECT_OUT_OF_STOCKedPrice', SELECT_OUT_OF_STOCKedPrice)
+          setValue('selectedPrice', SELECT_OUT_OF_STOCKedPrice)
           setValue('parentItemIdSet', parentItemIdSet)
 
           logger.info(`Provider Id in /${constants.ON_SEARCH} and /${constants.SELECT} matched`)
@@ -290,10 +323,22 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
           if (ff.hasOwnProperty('end')) {
             setValue('buyerGps', ff.end.location.gps)
             setValue('buyerAddr', ff.end.location.address.area_code)
+            if (!_.isEqual(ff.end.location.address.area_code, getValue('area_code'))) {
+              errorObj.areaCode = `address.area_code should not be same as in /${constants.ON_SEARCH}`
+            }
             const gps = ff.end.location.gps.split(',')
             const gpsLat = gps[0]
+            Array.from(gpsLat).forEach((char: any) => {
+              if (char !== '.' && isNaN(parseInt(char))) {
+                errorObj.gpsErr = `fulfillments location.gps is not as per the API contract`
+              }
+            })
             const gpsLong = gps[1]
-            // logger.info(gpsLat, " sfsfdsf ", gpsLong);
+            Array.from(gpsLong).forEach((char: any) => {
+              if (char !== '.' && isNaN(parseInt(char))) {
+                errorObj.gpsErr = `fulfillments location.gps is not as per the API contract`
+              }
+            })
             if (!gpsLat || !gpsLong) {
               errorObj.gpsErr = `fulfillments location.gps is not as per the API contract`
             }

@@ -630,6 +630,7 @@ export const FnBonConfirmSchema = {
                 },
                 '@ondc/org/settlement_basis': {
                   type: 'string',
+                  enum:['shipment','delivery','return_window_expiry']
                 },
                 '@ondc/org/settlement_window': {
                   type: 'string',

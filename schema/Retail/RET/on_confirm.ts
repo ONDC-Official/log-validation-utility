@@ -606,7 +606,7 @@ export const onConfirmSchema = {
                       type: 'string',
                     },
                   },
-                  required: ['currency', 'transaction_id', 'amount'],
+                  required: ['currency', 'amount'],
                 },
                 status: {
                   type: 'string',
@@ -628,6 +628,7 @@ export const onConfirmSchema = {
                 },
                 '@ondc/org/settlement_basis': {
                   type: 'string',
+                  enum:['shipment','delivery','return_window_expiry']
                 },
                 '@ondc/org/settlement_window': {
                   type: 'string',

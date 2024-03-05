@@ -1,11 +1,11 @@
 /* eslint-disable no-prototype-builtins */
 import _ from 'lodash'
-import constants, { ApiSequence, buyerCancellationRid, rtoCancellationRid } from '../../../constants'
+import constants, { ApiSequence, buyerCancellationRid } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, checkBppIdOrBapId } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkCancel = (data: any) => {
+export const checkCancel = (data: any, msgIdSet: any) => {
   const cnclObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -35,6 +35,13 @@ export const checkCancel = (data: any) => {
       Object.assign(cnclObj, contextRes.ERRORS)
     }
 
+    if (!msgIdSet.add(context.message_id)) {
+      cnclObj['messageId'] = 'message_id should be unique'
+    }
+
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      cnclObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+    }
     setValue(`${ApiSequence.CANCEL}`, data)
 
     try {
@@ -99,12 +106,6 @@ export const checkCancel = (data: any) => {
 
         cnclObj.cancelRid = `Cancellation reason id is not a valid reason id (buyer app initiated)`
       } else setValue('cnclRid', cancel.cancellation_reason_id)
-
-      if (!rtoCancellationRid.has(cancel.cancellation_reason_id)) {
-        logger.info(`cancellation_reason_id should be a valid cancellation id (RTO initiated)`)
-
-        cnclObj.RTOcancelRid = `Cancellation reason id is not a valid reason id (RTO initiated)`
-      } else setValue('rtoCnclRid', cancel.cancellation_reason_id)
     } catch (error: any) {
       logger.info(`Error while checking validity of cancellation reason id /${constants.CANCEL}, ${error.stack}`)
     }

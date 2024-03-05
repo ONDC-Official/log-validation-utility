@@ -48,6 +48,10 @@ export const checkOnSelect_OOS = (data: any) => {
     Object.assign(errorObj, contextRes.ERRORS)
   }
 
+  if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+    errorObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+  }
+
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
   const select: any = getValue(`${ApiSequence.SELECT}`)
   const searchMessage: any = getValue(`${ApiSequence.ON_SEARCH}_message`)
@@ -63,7 +67,7 @@ export const checkOnSelect_OOS = (data: any) => {
 
   try {
     logger.info(`Comparing timestamp of /${constants.SELECT} and /${constants.ON_SELECT}`)
-    const tmpstmp = select.context.timestamp
+    const tmpstmp = getValue('tmpstmp')
     if (_.gte(tmpstmp, context.timestamp)) {
       errorObj.tmpstmp = `Timestamp for /${constants.SELECT} api cannot be greater than or equal to /${constants.ON_SELECT} api`
     } else {
@@ -121,6 +125,9 @@ export const checkOnSelect_OOS = (data: any) => {
     logger.info(`Checking provider id in /${constants.ON_SEARCH} and /${constants.ON_SELECT}`)
     if (getValue('providerId') != ON_SELECT_OUT_OF_STOCK.provider.id) {
       errorObj.prvdrId = `provider.id mismatches in /${constants.ON_SEARCH} and /${constants.ON_SELECT}`
+    }
+    if (ON_SELECT_OUT_OF_STOCK.provider.locations[0].id != getValue('providerLoc')) {
+      errorObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.ON_SELECT} and /${constants.SELECT}`
     }
   } catch (error: any) {
     logger.info(
@@ -239,6 +246,24 @@ export const checkOnSelect_OOS = (data: any) => {
   }
 
   try {
+    // Checking for valid item ids in /on_select
+    const itemsOnSearch = getValue('SelectItemList')
+    const itemsList = message.order.items
+    const itemsOnSelect: any = []
+    itemsList.forEach((item: any, index: number) => {
+      if (!itemsOnSearch?.includes(item.id)) {
+        const key = `inVldItemId[${index}]`
+        errorObj[key] = `Invalid Item Id provided in /${constants.ON_SELECT}: ${item.id}`
+      } else {
+        itemsOnSelect.push(item.id)
+      }
+      setValue('SelectItemList', itemsOnSelect)
+    })
+  } catch (error: any) {
+    logger.error(`Error while checking for item IDs for /${constants.ON_SELECT}`, error.stack)
+  }
+
+  try {
     const breakup_msg = message.order.quote.breakup
     const msg_err = error.message
 
@@ -268,24 +293,24 @@ export const checkOnSelect_OOS = (data: any) => {
 
   try {
     logger.info(`Comparing count of items in ${constants.SELECT} and ${constants.ON_SELECT}`)
-    const itemsIdList: any = getValue('itemsIdList') || {}
-    logger.info('itemsIdList', itemsIdList)
+    const itemsIdList: any = getValue('itemsIdList')
     ON_SELECT_OUT_OF_STOCK.quote.breakup.forEach((item: { [x: string]: any }) => {
-      if (item['@ondc/org/item_id'] in itemsIdList && item['@ondc/org/title_type'] === 'item') {
+      if (item['@ondc/org/item_id'] in itemsIdList) {
         if (
-          itemsIdList[item['@ondc/org/item_id']] != item['@ondc/org/item_quantity'].count &&
-          (!ON_SELECT_OUT_OF_STOCK_error ||
-            ON_SELECT_OUT_OF_STOCK_error.type != 'DOMAIN-ERROR' ||
-            ON_SELECT_OUT_OF_STOCK_error.code != '40002')
+          item['@ondc/org/title_type'] === 'item' &&
+          itemsIdList[item['@ondc/org/item_id']] != item['@ondc/org/item_quantity'].count
         ) {
-          const cntkey = `cnt${item['@ondc/org/item_id']}`
-          errorObj[cntkey] =
-            `Count of item with id: ${item['@ondc/org/item_id']} does not match in ${constants.SELECT} & ${constants.ON_SELECT} (suitable domain error should be provided)`
+          const countkey = `invldCount[${item['@ondc/org/item_id']}]`
+          errorObj[countkey] =
+            `Count of item with id: ${item['@ondc/org/item_id']} does not match in ${constants.SELECT} & ${constants.ON_SELECT}`
         }
+      } else if (item['@ondc/org/title_type'] === 'item') {
+        errorObj[`InvldQuoteId[${item['@ondc/org/item_id']}]`] = [
+          `Item with id: ${item['@ondc/org/item_id']} does not exist in items list of ${constants.SELECT}`,
+        ]
       }
     })
   } catch (error: any) {
-    // errorObj.countErr = `Count of item does not match with the count in /select`;
     logger.error(
       `!!Error while comparing count items in ${constants.SELECT} and ${constants.ON_SELECT}, ${error.stack}`,
     )
@@ -320,14 +345,55 @@ export const checkOnSelect_OOS = (data: any) => {
         }
 
         logger.info(`checking available and maximum count in ${constants.ON_SELECT}`)
-
-        if (element.item.hasOwnProperty('quantity')) {
-          if (
-            _.gt(parseFloat(element.item.quantity.available.count), parseFloat(element.item.quantity.maximum.count))
-          ) {
+        if (
+          element.item.quantity &&
+          element.item.quantity.available &&
+          typeof element.item.quantity.available.count === 'string'
+        ) {
+          const availCount = parseInt(element.item.quantity.available.count, 10)
+          if (availCount !== 99 && availCount !== 0) {
             const key = `qntcnt${i}`
             errorObj[key] =
-              `available count can't be greater than maximum count for item id: ${element['@ondc/org/item_id']}`
+              `item.quantity.available.count should be either 99 (inventory available) or 0 (out-of-stock)]`
+          }
+        }
+
+        if (
+          element.item.quantity &&
+          element.item.quantity.maximum &&
+          typeof element.item.quantity.maximum.count === 'string' &&
+          element.item.quantity.available &&
+          typeof element.item.quantity.available.count === 'string'
+        ) {
+          const maxCount = parseInt(element.item.quantity.maximum.count, 10)
+          const availCount = parseInt(element.item.quantity.available.count, 10)
+          if (availCount == 99 && maxCount == 0) {
+            const key = `qntcnt${i}`
+            errorObj[key] = `item.quantity.maximum.count cant be 0 if item is in stock `
+          }
+        }
+        if (element.item.quantity && element.item.quantity.maximum && element.item.quantity.available) {
+          const maxCount = parseInt(element.item.quantity.maximum.count, 10)
+          const availCount = parseInt(element.item.quantity.available.count, 10)
+          console.log("checking count ==>", );
+
+          if (availCount == 99 && maxCount < 0) {
+            const key = `qntcnt${i}`
+            errorObj[key] = `item.quantity.maximum.count cannont be greater than 0 if item.quantity.available.count is 99 `
+          }
+          
+          if (availCount == 0 && maxCount > 0) {
+            const key = `qntcnt${i}`
+            errorObj[key] = `item.quantity.maximum.count cannont be greater than 0 if item.quantity.available.count is 0 `
+          }
+          if (availCount < element["@ondc/org/item_quantity"].count) {
+            const key = `brkcnt${i}`
+            errorObj[key] = `Available count can't be less than @ondc/org/item_quantity.count `
+          }
+
+          if (element["@ondc/org/item_quantity"].count == 0 && maxCount > 0 && availCount > 0){
+            const key = `qntcnt${i}`
+            errorObj[key] = `item.quantity.maximum.count and item.quantity.available.count is cannot be greater than zero if "@ondc/org/item_quantity" is 0 `
           }
         }
       }

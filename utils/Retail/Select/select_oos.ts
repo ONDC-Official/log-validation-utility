@@ -61,6 +61,10 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
       Object.assign(errorObj, contextRes.ERRORS)
     }
 
+    if (_.isEqual(data.context, getValue(`domain`))) {
+      errorObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+    }
+
     setValue(`${ApiSequence.SELECT_OUT_OF_STOCK}`, data)
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)

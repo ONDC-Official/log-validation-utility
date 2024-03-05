@@ -43,6 +43,9 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
   if (schemaValidation !== 'error') {
     Object.assign(errorObj, schemaValidation)
   }
+  if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+    errorObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+  }
 
   logger.info('Initializing ---->')
   const checkBap = checkBppIdOrBapId(context.bap_id)

@@ -50,6 +50,9 @@ export const checkOnConfirm = (data: any) => {
     if (!contextRes?.valid) {
       Object.assign(onCnfrmObj, contextRes.ERRORS)
     }
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      onCnfrmObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+    }
 
     setValue(`${ApiSequence.ON_CONFIRM}`, data)
 

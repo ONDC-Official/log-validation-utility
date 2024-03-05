@@ -34,6 +34,10 @@ export const checkUpdate = (data: any) => {
     if (checkBap) Object.assign(updtObj, { bap_id: 'context/bap_id should not be a url' })
     if (checkBpp) Object.assign(updtObj, { bpp_id: 'context/bpp_id should not be a url' })
 
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      updtObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+    }
+
     setValue(`${ApiSequence.UPDATE}`, data)
     // Checkinf for valid context object
     try {

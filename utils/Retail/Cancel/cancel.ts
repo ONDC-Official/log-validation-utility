@@ -39,6 +39,9 @@ export const checkCancel = (data: any, msgIdSet: any) => {
       cnclObj['messageId'] = 'message_id should be unique'
     }
 
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      cnclObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+    }
     setValue(`${ApiSequence.CANCEL}`, data)
 
     try {

@@ -593,6 +593,34 @@ const validate_schema_on_cancel_RET10_for_json = (data: any) => {
   const error_list = validate_schema(data, onCancelSchema)
   return formatted_error(error_list)
 }
+const validate_schema_on_cancel_RET12_for_json = (data: any) => {
+  const error_list = validate_schema(data, onCancelSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_RET13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onCancelSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_RET14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onCancelSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_RET15_for_json = (data: any) => {
+  const error_list = validate_schema(data, onCancelSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_RET16_for_json = (data: any) => {
+  const error_list = validate_schema(data, onCancelSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_RET17_for_json = (data: any) => {
+  const error_list = validate_schema(data, onCancelSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_RET18_for_json = (data: any) => {
+  const error_list = validate_schema(data, onCancelSchema)
+  return formatted_error(error_list)
+}
 const validate_schema_on_cancel_RTO__RET10_for_json = (data: any) => {
   const error_list = validate_schema(data, cancel_RTO_Schema)
   return formatted_error(error_list)
@@ -1006,6 +1034,14 @@ export default {
   validate_schema_status_RET10_for_json,
   validate_schema_cancel_RET10_for_json,
   validate_schema_on_cancel_RET10_for_json,
+  validate_schema_on_cancel_RET12_for_json,
+  validate_schema_on_cancel_RET13_for_json,
+  validate_schema_on_cancel_RET14_for_json,
+  validate_schema_on_cancel_RET15_for_json,
+  validate_schema_on_cancel_RET16_for_json,
+  validate_schema_on_cancel_RET17_for_json,
+  validate_schema_on_cancel_RET18_for_json,
+  
   validate_schema_on_cancel_RTO__RET10_for_json,
   validate_schema_on_cancel_RTO__RET11_for_json,
   validate_schema_on_cancel_RTO__RET12_for_json,

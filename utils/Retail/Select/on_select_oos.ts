@@ -418,14 +418,6 @@ export const checkOnSelect_OOS = (data: any) => {
         }
       }
 
-      // TODO:
-      // if (['tax', 'discount', 'packing', 'misc'].includes(titleType)) {
-      //   if (parseFloat(element.price.value) == 0) {
-      //     const key = `breakupItem${titleType}`
-      //     errorObj[key] = `${titleType} line item should not be present if price=0`
-      //   }
-      // }
-
       if (titleType === 'packing' || titleType === 'delivery' || titleType === 'misc') {
         if (!Object.values(itemFlfllmnts).includes(element['@ondc/org/item_id'])) {
           const brkupffid = `brkupfftitles${i}`
@@ -444,16 +436,8 @@ export const checkOnSelect_OOS = (data: any) => {
     if (onSelectPrice != parseFloat(ON_SELECT_OUT_OF_STOCK.quote.price.value)) {
       errorObj.quoteBrkup = `quote.price.value ${ON_SELECT_OUT_OF_STOCK.quote.price.value} does not match with the price breakup ${onSelectPrice}`
     }
-
-    const selectedPrice = getValue('selectedPrice')
-    logger.info(
-      `Matching price breakup of items ${onSelectItemsPrice} (/${constants.ON_SELECT}) with selected items price ${selectedPrice} (${constants.SELECT})`,
-    )
-
-    if (typeof selectedPrice === 'number' && onSelectItemsPrice !== selectedPrice) {
-      errorObj.priceErr = `Warning: Quoted Price in /${constants.ON_SELECT} INR ${onSelectItemsPrice} does not match with the total price of items in /${constants.SELECT} INR ${selectedPrice}`
-      logger.info('Quoted Price and Selected Items price mismatch')
-    }
+    console.log(onSelectItemsPrice);
+    
   } catch (error: any) {
     logger.error(`!!Error while checking and comparing the quoted price in /${constants.ON_SELECT}, ${error.stack}`)
   }

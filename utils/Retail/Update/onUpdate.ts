@@ -6,7 +6,6 @@ import {
   isObjectEmpty,
   checkBppIdOrBapId,
   checkContext,
-  compareObjects,
   sumQuoteBreakUp,
   mapCancellationID,
   payment_status,
@@ -127,12 +126,27 @@ export const checkOnUpdate = (data: any) => {
           onUpdateItemCount += item.quantity.count
         }
       })
-      select_items.forEach((selectItem: any) => {
-        if (selectItem.quantity && selectItem.quantity.count !== onUpdateItemCount) {
-          onupdtObj[`on_update/message/order/items/count`] =
+      if (flow === '6-a') {
+        select_items.forEach((selectItem: any) => {
+          if (selectItem.quantity && selectItem.quantity.count !== onUpdateItemCount) {
+            onupdtObj[`on_update/message/order/items/count`] =
+              `Item count in /on_update/message/order/items doesn't match with previous count of items`
+          }
+        })
+      } else {
+        const updateItemSet: any = getValue('updateItemSet')
+        let onUpdateCount: number = 0
+        for (let item in updateItemSet) {
+          onUpdateCount += parseInt(updateItemSet[item])
+        }
+
+        console.log('asdfadsfs', onUpdateCount)
+
+        if (onUpdateItemCount !== onUpdateCount) {
+          onupdtObj[`inValidItemCount`] =
             `Item count in /on_update/message/order/items doesn't match with previous count of items`
         }
-      })
+      }
     } catch (error: any) {
       logger.error(`Error while matching the count of items in /on_update and /select: ${error.message}`)
     }
@@ -173,7 +187,7 @@ export const checkOnUpdate = (data: any) => {
       if (getValue('flow') === '6-a') {
         updatedItems = getValue('SelectItemList')
       } else {
-        updatedItems = getValue('updateItemSet')
+        updatedItems = getValue('updateItemList')
       }
       itemsList.forEach((item: any, index: number) => {
         if (!updatedItems?.includes(item.id)) {
@@ -249,37 +263,28 @@ export const checkOnUpdate = (data: any) => {
       }
     }
 
+    try {
+      // Checking for valid item ids inside on_update
+      const items = on_update.items
+      const updateItemList: any = getValue('updateItemList')
+      const itemSet: any = new Set()
+      items.forEach((item: any) => {
+        if (!updateItemList.includes(item.id)) {
+          const key = `inVldItemId[${item.id}]`
+          onupdtObj[key] = `Item ID should be present in /${constants.UPDATE} API`
+        }
+        if (itemSet.has(JSON.stringify(item))) {
+          onupdtObj[`DuplicateItem[${item.id}]`] = `Duplicate item found in /${constants.ON_UPDATE}`
+        } else {
+          itemSet.add(JSON.stringify(item)) // Add the item to the set if it's not already present
+        }
+      })
+      console.log('sdfasdfa', itemSet)
+    } catch (error: any) {
+      logger.error(`Error while checking for item IDs for /${constants.ON_UPDATE}, ${error.stack}`)
+    }
     // Compare return_request object
     if (flow === '6-b') {
-      try {
-        logger.info(`Checking for return_request object in /${constants.ON_UPDATE}`)
-        const obj = getValue('return_request_obj')
-        let return_request_obj: any = null
-        on_update.fulfillments.forEach((item: any) => {
-          if (item.tags) {
-            item.tags.forEach((tag: any) => {
-              if (tag.code === 'return_request') {
-                return_request_obj = tag
-              }
-            })
-
-            const requestObjectErr = obj && return_request_obj ? compareObjects(obj, return_request_obj) : null
-
-            if (requestObjectErr) {
-              let i = 0
-              const len = requestObjectErr.length
-              while (i < len) {
-                const key = `returnRequestObjectErr[${i}]`
-                onupdtObj[key] = `${requestObjectErr[i]}`
-                i++
-              }
-            }
-          }
-        })
-      } catch (error: any) {
-        logger.error(`Error while checking for return_request_obj for /${constants.UPDATE}`)
-      }
-
       // Checking for quote_trail price and item quote price
       try {
         if (sumQuoteBreakUp(on_update.quote)) {
@@ -385,6 +390,14 @@ export const checkOnUpdate = (data: any) => {
           const tags = fulfillment.tags
           tags.map((tag: any) => {
             if (tag.code === 'cancel_request') {
+              const list = tag.list
+              const tags_initiated = list.find((data: any) => data.code === 'initiated_by')
+              if (!tags_initiated) {
+                onupdtObj[`message/order/fulfillments/tags`] =
+                  `${constants.ON_UPDATE} must have initiated_by code in fulfillments/tags/list`
+              }
+            }
+            if (tag.code === 'return_request') {
               const list = tag.list
               const tags_initiated = list.find((data: any) => data.code === 'initiated_by')
               if (!tags_initiated) {

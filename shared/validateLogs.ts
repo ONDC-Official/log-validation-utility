@@ -117,11 +117,11 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       ApiSequence.ON_INIT,
       ApiSequence.CONFIRM,
       ApiSequence.ON_CONFIRM,
-      ApiSequence.ON_CANCEL,
       ApiSequence.ON_STATUS_PENDING,
       ApiSequence.ON_STATUS_PACKED,
       ApiSequence.ON_STATUS_PICKED,
       ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
+      ApiSequence.ON_CANCEL,
     ]
     const flowSixASequence = [
       ApiSequence.SEARCH,

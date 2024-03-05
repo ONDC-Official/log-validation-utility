@@ -110,6 +110,7 @@ export const checkUpdate = (data: any) => {
       try {
         logger.info(`Checking for return_request object in /${constants.UPDATE}`)
         const updateItemSet: any = {}
+        const updateItemList: any = []
         let return_request_obj = null
         update.fulfillments.forEach((item: any) => {
           item.tags.forEach((tag: any) => {
@@ -121,10 +122,11 @@ export const checkUpdate = (data: any) => {
                   key = item.value
                   if (!selectItemList.includes(key)) {
                     logger.error(`Item code should be present in /${constants.SELECT} API`)
-                    const key = `itemCode[${item.code}]`
-                    updtObj[key] = `Item code should be present in /${constants.SELECT} API for /${constants.UPDATE}`
+                    const key = `inVldItemId[${item.value}]`
+                    updtObj[key] = `Item ID should be present in /${constants.SELECT} API for /${constants.UPDATE}`
                   } else {
                     updateItemSet[item.value] = item.value
+                    updateItemList.push(item.value)
                     setValue('updatedItemID', item.value)
                   }
                 }
@@ -143,8 +145,8 @@ export const checkUpdate = (data: any) => {
                   }
                 }
                 if (item.code === 'images') {
-                  const images = item.value.split(',')
-                  const allurls = images.every(isValidUrl)
+                  const images = item.value
+                  const allurls = images.every((img: string) => isValidUrl(img))
                   if (!allurls) {
                     logger.error(
                       `Images array should be prvided as comma seperated values and each image should be an url`,
@@ -159,6 +161,7 @@ export const checkUpdate = (data: any) => {
           })
         })
         setValue('updateItemSet', updateItemSet)
+        setValue('updateItemList', updateItemList)
         setValue('return_request_obj', return_request_obj)
       } catch (error: any) {
         logger.error(`Error while checking for return_request_obj for /${constants.UPDATE} , ${error}`)

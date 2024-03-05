@@ -243,7 +243,7 @@ export const checkOnSelect_OOS = (data: any) => {
 
   try {
     // Checking for valid item ids in /on_select
-    const itemsOnSearch = getValue('ItemList')
+    const itemsOnSearch = getValue('SelectItemList')
     const itemsList = message.order.items
     const itemsOnSelect: any = []
     itemsList.forEach((item: any, index: number) => {

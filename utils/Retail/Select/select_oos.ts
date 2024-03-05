@@ -164,12 +164,16 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
           // Checking for valid item ids in /on_select
           const itemsOnSearch = getValue('ItemList')
           const itemsList = message.order.items
+          const itemsOnSelect: any = []
           itemsList.forEach((item: any, index: number) => {
             if (!itemsOnSearch?.includes(item.id)) {
               const key = `inVldItemId[${index}]`
               errorObj[key] = `Invalid Item Id provided in /${constants.SELECT}: ${item.id}`
+            } else {
+              itemsOnSelect.push(item.id)
             }
           })
+          setValue('SelectItemList', itemsOnSelect)
         } catch (error: any) {
           logger.error(`Error while checking for item IDs for /${constants.SELECT}`, error.stack)
         }

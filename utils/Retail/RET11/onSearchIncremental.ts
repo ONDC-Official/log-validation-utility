@@ -60,9 +60,11 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
   }
 
   try {
-    logger.info(`Comparing Message Ids of /${ApiSequence.INC_SEARCH} and /${ApiSequence.INC_ONSEARCH}`)
-    if (!_.isEqual(incSearchContext.message_id, context.message_id)) {
-      errorObj.message_id = `Message Id for /${ApiSequence.INC_SEARCH} and /${ApiSequence.INC_ONSEARCH} api should be same`
+    if (getValue('multiIncSearch') !== 'true' && getValue('multiIncSearch') !== undefined) {
+      logger.info(`Comparing Message Ids of /${ApiSequence.INC_SEARCH} and /${ApiSequence.INC_ONSEARCH}`)
+      if (!_.isEqual(incSearchContext.message_id, context.message_id)) {
+        errorObj.message_id = `Message Id for /${ApiSequence.INC_SEARCH} and /${ApiSequence.INC_ONSEARCH} api should be same`
+      }
     }
   } catch (error: any) {
     logger.info(

@@ -204,7 +204,7 @@ export const onSearchIncSchema = {
                           properties: {
                             label: {
                               type: 'string',
-                              enum: ['enable', 'disable', 'close'],
+                              enum: ['enable', 'disable', 'open', 'close'],
                             },
                             timestamp: {
                               type: 'string',

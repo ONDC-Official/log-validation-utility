@@ -5,6 +5,7 @@ import constants, { statusArray } from '../constants'
 import schemaValidator from '../shared/schemaValidator'
 import data from '../constants/AreacodeMap.json'
 import { reasonCodes } from '../constants/reasonCode'
+import { setValue } from '../shared/dao'
 
 export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
 
@@ -275,6 +276,9 @@ export const checkTagConditions = (message: any, context: any) => {
 
       const modeTag = catalogIncTags.list.find((tag: { code: string; value: string }) => tag.code === 'mode')
 
+      if (modeTag) {
+        setValue('multiIncSearch', 'true')
+      }
       if (modeTag && modeTag.value !== 'start' && modeTag.value !== 'stop') {
         tags.push('/message/intent/tags/list/value should be one of start or stop')
       }

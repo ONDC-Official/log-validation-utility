@@ -280,9 +280,11 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       const len = on_cancel.items.length
       while (i < len) {
         const itemId = on_cancel.items[i].id
-        if (itemId in itemFlfllmnts) {
-          Ids.push(itemId)
-          Flfmntid.push(on_cancel.items[i].fulfillment_id)
+        Ids.push(itemId)
+        Flfmntid.push(on_cancel.items[i].fulfillment_id)
+        if (!(itemId in itemFlfllmnts)) {
+          const key = `ITEM_ID${itemId}`
+          onCnclObj[key] = `${itemId} itemID not found in ${constants.ON_SELECT}`
         }
         i++
       }

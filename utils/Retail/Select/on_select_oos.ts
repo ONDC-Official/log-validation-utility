@@ -309,7 +309,7 @@ export const checkOnSelect_OOS = (data: any) => {
       const isPresent = itemsReduced.some((item: any) => item['@ondc/org/item_id'] === errorItem.item_id);
       if (!isPresent) {
          const key = `msg/err/items_id${i}`;
-         errorObj[key] = `message/order/items for item ${errorItem.item_id} does not match in ${msg_err} `;
+         errorObj[key] = `Item isn't reduced ${errorItem.item_id} in ${msg_err} is not present in fullfillments/items `;
          i++;
       }
      });

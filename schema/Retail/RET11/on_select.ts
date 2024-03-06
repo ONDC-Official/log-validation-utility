@@ -96,6 +96,10 @@ export const FnBonSelectSchema = {
                   parent_item_id: {
                     type: 'string',
                   },
+                  quantity:{type:'object',
+                  properties:{
+                    count :{type:'string'}}
+                  },
                   tags: {
                     type: 'array',
                     items: {
@@ -124,7 +128,7 @@ export const FnBonSelectSchema = {
                     },
                   },
                 },
-                required: ['id', 'fulfillment_id'],
+                required: ['id', 'fulfillment_id','quantity'],
               },
             },
             fulfillments: {

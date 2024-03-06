@@ -958,3 +958,33 @@ export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAt
     }
   }
 }
+
+export const checkQuoteTrail = (quoteTrailItems: any[], errorObj: any, selectPriceMap: any, itemSet: any) => {
+  try {
+    for (let item of quoteTrailItems) {
+      let value = null
+      let itemValue = null
+      let itemID = null
+      let type = null
+      for (let val of item.list) {
+        if (val.code === 'id' && !itemSet.has(val.value)) {
+          const key = `invalidID[${val.value}]`
+          errorObj[key] = `Invalid Item ID [${val.value}]provided in quote object in /${constants.ON_CANCEL}`
+        } else if (val.code === 'id') {
+          itemID = val.value
+          value = selectPriceMap.get(val.value)
+        } else if (val.code === 'value') {
+          itemValue = Math.abs(parseInt(val.value))
+        } else if (val.code === 'type') {
+          type = val.value
+        }
+      }
+      if (value && itemValue && value !== itemValue && type === 'item') {
+        const key = `invalidPrice[${itemID}]`
+        errorObj[key] = `Price mismatch for  [${itemID}] provided in quote object '[${value}]' /${constants.ON_CANCEL}`
+      }
+    }
+  } catch (error: any) {
+    logger.error(error)
+  }
+}

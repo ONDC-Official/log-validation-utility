@@ -314,7 +314,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
           setValue('buyerGps', ff.end.location.gps)
           setValue('buyerAddr', ff.end.location.address.area_code)
           if (!_.isEqual(ff.end.location.address.area_code, getValue('area_code'))) {
-            errorObj.areaCode = `address.area_code should not be same as in /${constants.ON_SEARCH}`
+            errorObj.areaCode = `address.area_code should be same as in /${constants.ON_SEARCH}`
           }
           const gps = ff.end.location.gps.split(',')
           const gpsLat: string = gps[0]

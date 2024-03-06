@@ -298,14 +298,24 @@ export const checkOnSelect_OOS = (data: any) => {
    
     logger.info(`Item Id and error.message.item_id Mapping in /ON_SELECT_OUT_OF_STOCK`);
    
-    const errorArray = JSON.parse(msg_err);
+    const errorArray = JSON.parse(msg_err);    
     let i = 0;
-   
-    const itemsWithCountZero = breakup_msg.filter(
+
+    const itemsReduced = breakup_msg.filter(
        (item: any) => item['@ondc/org/item_quantity'] && item['@ondc/org/item_quantity'].count < itemsIdList[item['@ondc/org/item_id']],
     );
-    itemsWithCountZero.forEach((item: any) => {
-       const isPresentForward = errorArray.some((errorItem: any) => errorItem.item_id === item['@ondc/org/item_id']);
+
+    errorArray.forEach((errorItem: any) => {
+      const isPresent = itemsReduced.some((item: any) => item['@ondc/org/item_id'] === errorItem.item_id);
+      if (!isPresent) {
+         const key = `msg/err/items_id${i}`;
+         errorObj[key] = `message/order/items for item ${errorItem.item_id} does not match in ${msg_err} `;
+         i++;
+      }
+     });
+    
+    itemsReduced.forEach((item: any) => {
+       const isPresentForward = errorArray.some((errorItem: any) => errorItem.item_id === item['@ondc/org/item_id']); 
        if (!isPresentForward ) {
          const key = `msg/err/items_id${i}`;
          errorObj[key] = `message/order/items for item ${item['@ondc/org/item_id']} does not match in ${msg_err} `;

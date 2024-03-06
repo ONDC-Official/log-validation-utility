@@ -82,9 +82,9 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
     const flowThreeSequence = [
       ApiSequence.SEARCH,
       ApiSequence.ON_SEARCH,
-      ApiSequence.SELECT,
-      ApiSequence.ON_SELECT_OUT_OF_STOCK,
       ApiSequence.SELECT_OUT_OF_STOCK,
+      ApiSequence.ON_SELECT_OUT_OF_STOCK,
+      ApiSequence.SELECT,
       ApiSequence.ON_SELECT,
       ApiSequence.INIT,
       ApiSequence.ON_INIT,
@@ -186,13 +186,13 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
     const getResponse = (apiSeq: any, data: any, msgIdSet: any) => {
       switch (apiSeq) {
         case ApiSequence.SEARCH:
-          if (domain === 'RET11') {
+          if (domain === 'ONDC:RET11') {
             return checkSearchFullCatalogRefresh(data, msgIdSet)
           } else {
             return checkSearch(data, msgIdSet)
           }
         case ApiSequence.ON_SEARCH:
-          if (domain === 'RET11') {
+          if (domain === 'ONDC:RET11') {
             return checkOnsearchFullCatalogRefresh(data, msgIdSet)
           } else {
             return checkOnsearch(data, msgIdSet)

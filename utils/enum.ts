@@ -584,7 +584,10 @@ export enum DOMAIN {
   RET14 = 'RET14',
   RET15 = 'RET15',
   RET16 = 'RET16',
+  RET17 = 'RET17',
   RET18 = 'RET18',
+  RET19 = 'RET19',
+  RET20 = 'RET20',
 }
 
 export enum FLOW {

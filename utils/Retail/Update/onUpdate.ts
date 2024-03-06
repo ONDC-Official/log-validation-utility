@@ -141,7 +141,7 @@ export const checkOnUpdate = (data: any) => {
       // Checking for valid item ids in /on_select
       const itemsList = message.order.items
       let updatedItems: any = getValue('SelectItemList')
-      console.log('sdasfdsa', updatedItems)
+
       itemsList.forEach((item: any, index: number) => {
         if (!updatedItems?.includes(item.id)) {
           const key = `inVldItemId[${index}]`

@@ -292,40 +292,42 @@ export const checkOnSelect_OOS = (data: any) => {
   }
 
   try {
-    const breakup_msg = message.order.quote.breakup;
-    const msg_err = error.message;
-    const itemsIdList: any = getValue('itemsIdList') 
-   
-    logger.info(`Item Id and error.message.item_id Mapping in /ON_SELECT_OUT_OF_STOCK`);
-   
-    const errorArray = JSON.parse(msg_err);    
-    let i = 0;
+    const breakup_msg = message.order.quote.breakup
+    const msg_err = error.message
+    const itemsIdList: any = getValue('itemsIdList')
+
+    logger.info(`Item Id and error.message.item_id Mapping in /ON_SELECT_OUT_OF_STOCK`)
+
+    const errorArray = JSON.parse(msg_err)
+    let i = 0
 
     const itemsReduced = breakup_msg.filter(
-       (item: any) => item['@ondc/org/item_quantity'] && item['@ondc/org/item_quantity'].count < itemsIdList[item['@ondc/org/item_id']],
-    );
+      (item: any) =>
+        item['@ondc/org/item_quantity'] &&
+        item['@ondc/org/item_quantity'].count < itemsIdList[item['@ondc/org/item_id']],
+    )
 
     errorArray.forEach((errorItem: any) => {
-      const isPresent = itemsReduced.some((item: any) => item['@ondc/org/item_id'] === errorItem.item_id);
+      const isPresent = itemsReduced.some((item: any) => item['@ondc/org/item_id'] === errorItem.item_id)
       if (!isPresent) {
-         const key = `msg/err/items_id${i}`;
-         errorObj[key] = `Item isn't reduced ${errorItem.item_id} in ${msg_err} is not present in fullfillments/items `;
-         i++;
+        const key = `msg/err/items_id${i}`
+        errorObj[key] = `Invalid item ${errorItem.item_id} present in in ${msg_err}`
+        i++
       }
-     });
-    
+    })
+
     itemsReduced.forEach((item: any) => {
-       const isPresentForward = errorArray.some((errorItem: any) => errorItem.item_id === item['@ondc/org/item_id']); 
-       if (!isPresentForward ) {
-         const key = `msg/err/items_id${i}`;
-         errorObj[key] = `message/order/items for item ${item['@ondc/org/item_id']} does not match in ${msg_err} `;
-         i++;
-       }
-    });
-   } catch (error: any) {
-    logger.error(`!!Error while checking Item Id and Mapping in ${error.message}`);
-   }
-   
+      const isPresentForward = errorArray.some((errorItem: any) => errorItem.item_id === item['@ondc/org/item_id'])
+      if (!isPresentForward) {
+        const key = `msg/err/items_id${i}`
+        errorObj[key] = `message/order/items for item ${item['@ondc/org/item_id']} does not match in ${msg_err} `
+        i++
+      }
+    })
+  } catch (error: any) {
+    logger.error(`!!Error while checking Item Id and Mapping in ${error.message}`)
+  }
+
   try {
     logger.info(`-x-x-x-x-Quote Breakup ${constants.ON_SELECT} all checks-x-x-x-x`)
     const itemsIdList: any = getValue('itemsIdList')
@@ -419,6 +421,7 @@ export const checkOnSelect_OOS = (data: any) => {
           onSelectItemsPrice += parseFloat(element.price.value)
         }
       }
+      console.log(onSelectItemsPrice)
 
       if (titleType === 'tax' || titleType === 'discount') {
         if (!(element['@ondc/org/item_id'] in itemFlfllmnts)) {
@@ -446,7 +449,6 @@ export const checkOnSelect_OOS = (data: any) => {
     if (onSelectPrice != parseFloat(ON_SELECT_OUT_OF_STOCK.quote.price.value)) {
       errorObj.quoteBrkup = `quote.price.value ${ON_SELECT_OUT_OF_STOCK.quote.price.value} does not match with the price breakup ${onSelectPrice}`
     }
-    console.log(onSelectItemsPrice)
   } catch (error: any) {
     logger.error(`!!Error while checking and comparing the quoted price in /${constants.ON_SELECT}, ${error.stack}`)
   }

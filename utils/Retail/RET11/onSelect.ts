@@ -87,7 +87,7 @@ export const checkOnSelect = (data: any) => {
   try {
     // Checking for valid item ids in /on_select
     const itemsOnSelect = getValue('SelectItemList')
-    console.log('fasdfasdfdsafsda', itemsOnSelect)
+    const itemsIdList: any = getValue('itemsIdList')
     const itemsList = message.order.items
     const selectItems: any = []
     itemsList.forEach((item: any, index: number) => {
@@ -95,6 +95,10 @@ export const checkOnSelect = (data: any) => {
         const key = `inVldItemId[${index}]`
         errorObj[key] = `Invalid Item Id provided in /${constants.ON_SELECT}: ${item.id}`
       } else {
+        if (itemsIdList[item.id] != item.quantity.count) {
+          const key = `inVldItemCount[${index}]`
+          errorObj[key] = `Invalid Item Count provided in /${constants.ON_SELECT}: ${item.id}`
+        }
         selectItems.push(item.id)
       }
     })
@@ -155,7 +159,7 @@ export const checkOnSelect = (data: any) => {
   try {
     logger.info(`Checking provider id in /${constants.ON_SEARCH} and /${constants.ON_SELECT}`)
     if (getValue('providerId') != on_select.provider.id) {
-      errorObj.prvdrId = `provider.id mismatches in /${constants.ON_SEARCH} and /${constants.ON_SELECT}`
+      errorObj.prvdrId = `provider.id mismatches in /${constants.SELECT} and /${constants.ON_SELECT}`
     }
     if (on_select.provider.locations[0].id != getValue('providerLoc')) {
       errorObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.SELECT} and /${constants.ON_SELECT}`
@@ -282,7 +286,7 @@ export const checkOnSelect = (data: any) => {
   try {
     logger.info(`Comparing count of items in ${constants.SELECT} and ${constants.ON_SELECT}`)
     const itemsIdList: any = getValue('itemsIdList')
-    console.log('dasfdsafdsafdsf', itemsIdList)
+    console.log('dasasd', itemsIdList)
     if (on_select.quote) {
       on_select.quote.breakup.forEach((item: { [x: string]: any }) => {
         if (item['@ondc/org/item_id'] in itemsIdList) {

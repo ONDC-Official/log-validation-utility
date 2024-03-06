@@ -116,13 +116,14 @@ export const onSelectSchema = {
                   parent_item_id: {
                     type: 'string',
                   },
-                  quantity:{type:'object',
-                  properties:{
-                    count :{type:'string'}
-                  }
-                }
+                  quantity: {
+                    type: 'object',
+                    properties: {
+                      count: { type: 'integer' },
+                    },
+                  },
                 },
-                required: ['id', 'fulfillment_id','quantity'],
+                required: ['id', 'fulfillment_id', 'quantity'],
               },
             },
             fulfillments: {
@@ -314,7 +315,7 @@ export const onSelectSchema = {
           type: 'string',
         },
         message: {
-          type: "string",
+          type: 'string',
         },
       },
       required: ['type', 'code', 'message'],

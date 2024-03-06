@@ -421,6 +421,20 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
     } catch (err: any) {
       logger.error(`Error while checking transaction is in message.order.payment`)
     }
+    if (flow === '4') {
+      try {
+        logger.info(`Checking for valid cancellation reason ID in cancellation object of /${constants.ON_CANCEL}`)
+        const reason_id = on_cancel.cancellation.reason.id
+        if (reason_id !== getValue('cnclRid')) {
+          onCnclObj['reason_id'] =
+            `reason_id is different in cancellation object of /${constants.ON_CANCEL} from /${constants.CANCEL}`
+        }
+      } catch (err: any) {
+        logger.error(
+          `Error while checking for valid cancellation reason ID in cancellation object of /${constants.ON_CANCEL}`,
+        )
+      }
+    }
 
     if (flow === '5') {
       try {
@@ -469,19 +483,30 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
         let initiated_by_flag = 0
         for (let item of DeliveryObj) {
           const cancel_request = _.filter(item.tags, { code: 'cancel_request' })
-          cancel_request.forEach((tag: any) => {
-            tag.list.some((i: any) => {
-              if (i.code === 'reason_id') {
-                reasonID_flag = 1
+          if (!cancel_request.length) {
+            logger.error(`Cancel Request is mandatory for ${constants.ON_CANCEL}`)
+            const key = `missingCancelRequest`
+            onCnclObj[key] = `Cancel Request is mandatory for ${constants.ON_CANCEL}`
+          } else {
+            cancel_request.forEach((tag: any) => {
+              if (!tag.list) {
+                const key = `missingListObj`
+                onCnclObj[key] = `List object is mandatory for cancel_request`
+                return
               }
-              if (i.code === 'rto_id') {
-                rto_id_flag = 1
-              }
-              if (i.code === 'initiated_by') {
-                initiated_by_flag = 1
-              }
+              tag.list.some((i: any) => {
+                if (i.code === 'reason_id') {
+                  reasonID_flag = 1
+                }
+                if (i.code === 'rto_id') {
+                  rto_id_flag = 1
+                }
+                if (i.code === 'initiated_by') {
+                  initiated_by_flag = 1
+                }
+              })
             })
-          })
+          }
           const igm_request = _.filter(item.tags, { code: 'igm_request' })
           if (!igm_request) {
             logger.error(`IGM Request is mandatory for ${constants.ON_CANCEL}`)

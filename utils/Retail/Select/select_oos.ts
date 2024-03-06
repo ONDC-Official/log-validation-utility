@@ -112,7 +112,7 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
 
       setValue('msgId', context.message_id)
       if (_.isEqual(getValue('txnId'), context.transaction_id)) {
-        errorObj.txnId = `Transaction Id should be different for flow 3 after /${ApiSequence.SELECT_OUT_OF_STOCK} onwards`
+        errorObj.txnId = `Transaction Id should be different for flow 3 from /${ApiSequence.SELECT_OUT_OF_STOCK} onwards`
       }
       setValue('txnId', context.transaction_id)
     } catch (error: any) {

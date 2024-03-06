@@ -199,27 +199,6 @@ export const cancel_RTO_Schema = {
               },
               required: ['name', 'address', 'phone', 'created_at', 'updated_at'],
             },
-            cancellation: {
-              type: 'object',
-              properties: {
-                cancelled_by: {
-                  type: 'string',
-                  minLength: 1,
-                },
-                reason: {
-                  type: 'object',
-                  properties: {
-                    id: {
-                      type: 'string',
-                      minLength: 3,
-                      maxLength: 3,
-                    },
-                  },
-                  required: ['id'],
-                },
-              },
-              required: ['cancelled_by', 'reason'],
-            },
             fulfillments: {
               type: 'array',
               items: {
@@ -659,7 +638,6 @@ export const cancel_RTO_Schema = {
             'provider',
             'items',
             'billing',
-            'cancellation',
             'fulfillments',
             'quote',
             'payment',

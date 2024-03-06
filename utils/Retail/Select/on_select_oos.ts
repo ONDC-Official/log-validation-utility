@@ -292,7 +292,6 @@ export const checkOnSelect_OOS = (data: any) => {
   }
 
   try {
-<<<<<<< HEAD
     const breakup_msg = message.order.quote.breakup;
     const msg_err = error.message;
     const itemsIdList: any = getValue('itemsIdList') 
@@ -327,34 +326,6 @@ export const checkOnSelect_OOS = (data: any) => {
     logger.error(`!!Error while checking Item Id and Mapping in ${error.message}`);
    }
    
-=======
-    const breakup_msg = message.order.quote.breakup
-    const msg_err = error.message
-    const itemsIdList: any = getValue('itemsIdList')
-
-    logger.info(`Item Id and error.message.item_id Mapping in /ON_SELECT_OUT_OF_STOCK`)
-
-    const errorArray = JSON.parse(msg_err)
-    let i = 0
-
-    const itemsWithCountZero = breakup_msg.filter(
-      (item: any) =>
-        item['@ondc/org/item_quantity'] &&
-        item['@ondc/org/item_quantity'].count < itemsIdList[item['@ondc/org/item_id']],
-    )
-    itemsWithCountZero.forEach((item: any) => {
-      const isPresentForward = errorArray.some((errorItem: any) => errorItem.item_id === item['@ondc/org/item_id'])
-      if (!isPresentForward) {
-        const key = `msg/err/items_id${i}`
-        errorObj[key] = `message/order/items for item ${item['@ondc/org/item_id']} does not match in ${msg_err} `
-        i++
-      }
-    })
-  } catch (error: any) {
-    logger.error(`!!Error while checking Item Id and Mapping in ${error.message}`)
-  }
-
->>>>>>> a97165e134c5505c6707a8b5d6c5b60e98636e2b
   try {
     logger.info(`-x-x-x-x-Quote Breakup ${constants.ON_SELECT} all checks-x-x-x-x`)
     const itemsIdList: any = getValue('itemsIdList')

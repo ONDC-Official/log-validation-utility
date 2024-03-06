@@ -376,11 +376,6 @@ export const checkOnSelect_OOS = (data: any) => {
           const maxCount = parseInt(element.item.quantity.maximum.count, 10)
           const availCount = parseInt(element.item.quantity.available.count, 10)
 
-          if (availCount == 99 && maxCount < 0) {
-            const key = `qntcnt${i}`
-            errorObj[key] =
-              `item.quantity.maximum.count cannont be greater than 0 if item.quantity.available.count is 99 `
-          }
 
           if (availCount == 0 && maxCount > 0) {
             const key = `qntcnt${i}`

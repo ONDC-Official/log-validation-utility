@@ -244,6 +244,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
             }
 
             if (!parentItemIdSet.has(item.parent_item_id)) parentItemIdSet.add(item.parent_item_id)
+            console.log(item,'-------------------------')
 
             if (!itemIdSet.has(item.id)) itemIdSet.add(item.id)
 

@@ -359,10 +359,16 @@ export const checkOnSelect = (data: any) => {
             typeof element.item.quantity.available.count === 'string'
           ) {
             const availCount = parseInt(element.item.quantity.available.count, 10)
-            if (availCount !== 99 && availCount !== 0) {
+            const maxCount = parseInt(element.item.quantity.maximum.count, 10)
+            if (availCount < 0 || maxCount < 0) {
               const key = `qntcnt${i}`
               errorObj[key] =
-                `item.quantity.available.count should be either 99 (inventory available) or 0 (out-of-stock)]`
+                `Available and Maximum count should be greater than 0 for item id: ${element['@ondc/org/item_id']} in quote.breakup[${i}]`
+            }
+            if (availCount > maxCount) {
+              const key = `qntcnt${i}`
+              errorObj[key] =
+                `Available count should not be greater than maximum count for item id: ${element['@ondc/org/item_id']} in quote.breakup[${i}]`
             }
           }
 

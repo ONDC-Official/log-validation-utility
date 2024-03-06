@@ -103,7 +103,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
     if (address) {
       const area_code = Number.parseInt(address.area_code)
-      setValue('area_code', address.area_code)
       const std = context.city.split(':')[1]
 
       logger.info(`Comparing area_code and STD Code for /${constants.ON_SEARCH}`)

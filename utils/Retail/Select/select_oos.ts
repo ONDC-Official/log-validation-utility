@@ -324,9 +324,6 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
           if (ff.hasOwnProperty('end')) {
             setValue('buyerGps', ff.end.location.gps)
             setValue('buyerAddr', ff.end.location.address.area_code)
-            if (!_.isEqual(ff.end.location.address.area_code, getValue('area_code'))) {
-              errorObj.areaCode = `address.area_code should not be same as in /${constants.ON_SEARCH}`
-            }
             const gps = ff.end.location.gps.split(',')
             const gpsLat = gps[0]
             Array.from(gpsLat).forEach((char: any) => {

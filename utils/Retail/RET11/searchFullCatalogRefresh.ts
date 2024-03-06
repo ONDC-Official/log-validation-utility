@@ -38,7 +38,7 @@ export const checkSearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
       Object.assign(errorObj, schemaValidation)
     }
     if (_.isEqual(data.context, getValue(`domain`))) {
-      errorObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+      errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     const contextRes: any = checkContext(data.context, constants.SEARCH)

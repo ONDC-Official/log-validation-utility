@@ -49,7 +49,7 @@ export const checkOnSelect_OOS = (data: any) => {
   }
 
   if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-    errorObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+    errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
   }
 
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
@@ -263,31 +263,6 @@ export const checkOnSelect_OOS = (data: any) => {
     logger.error(`Error while checking for item IDs for /${constants.ON_SELECT}`, error.stack)
   }
 
-  try {
-    const breakup_msg = message.order.quote.breakup
-    const msg_err = error.message
-
-    logger.info(`Item Id and error.message.item_id Mapping in /ON_SELECT_OUT_OF_STOCK`)
-
-    const errorArray = JSON.parse(msg_err)
-    let i = 0
-
-    const itemsWithCountZero = breakup_msg.filter(
-      (item: any) => item['@ondc/org/item_quantity'] && item['@ondc/org/item_quantity'].count === 0,
-    )
-    itemsWithCountZero.forEach((item: any) => {
-      const isPresent = errorArray.some((errorItem: any) => errorItem.item_id === item['@ondc/org/item_id'])
-
-      if (!isPresent) {
-        const key = `message/error/message/items_id${i}`
-        errorObj[key] = `message/order/items for item ${item['@ondc/org/item_id']} does not match in ${msg_err} `
-        i++
-      }
-    })
-  } catch (error: any) {
-    logger.error(`!!Error while checking Item Id and Mapping in ${error.message}`)
-  }
-
   let onSelectPrice: any = 0 //Net price after discounts and tax in /ON_SELECT_OUT_OF_STOCK
   let onSelectItemsPrice = 0 //Price of only items in /ON_SELECT_OUT_OF_STOCK
 
@@ -298,11 +273,11 @@ export const checkOnSelect_OOS = (data: any) => {
       if (item['@ondc/org/item_id'] in itemsIdList) {
         if (
           item['@ondc/org/title_type'] === 'item' &&
-          itemsIdList[item['@ondc/org/item_id']] != item['@ondc/org/item_quantity'].count
+          itemsIdList[item['@ondc/org/item_id']] < item['@ondc/org/item_quantity'].count
         ) {
-          const countkey = `invldCount[${item['@ondc/org/item_id']}]`
-          errorObj[countkey] =
-            `Count of item with id: ${item['@ondc/org/item_id']} does not match in ${constants.SELECT} & ${constants.ON_SELECT}`
+          errorObj[`InvldQuoteId[${item['@ondc/org/item_id']}]`] = [
+            `Item with id: ${item['@ondc/org/item_id']} count is greater than or equal to  ${constants.SELECT}`,
+          ]
         }
       } else if (item['@ondc/org/title_type'] === 'item') {
         errorObj[`InvldQuoteId[${item['@ondc/org/item_id']}]`] = [
@@ -314,6 +289,43 @@ export const checkOnSelect_OOS = (data: any) => {
     logger.error(
       `!!Error while comparing count items in ${constants.SELECT} and ${constants.ON_SELECT}, ${error.stack}`,
     )
+  }
+
+  try {
+    const breakup_msg = message.order.quote.breakup
+    const msg_err = error.message
+    const itemsIdList: any = getValue('itemsIdList')
+
+    logger.info(`Item Id and error.message.item_id Mapping in /ON_SELECT_OUT_OF_STOCK`)
+
+    const errorArray = JSON.parse(msg_err)
+    let i = 0
+
+    const itemsReduced = breakup_msg.filter(
+      (item: any) =>
+        item['@ondc/org/item_quantity'] &&
+        item['@ondc/org/item_quantity'].count < itemsIdList[item['@ondc/org/item_id']],
+    )
+
+    errorArray.forEach((errorItem: any) => {
+      const isPresent = itemsReduced.some((item: any) => item['@ondc/org/item_id'] === errorItem.item_id)
+      if (!isPresent) {
+        const key = `msg/err/items_id${i}`
+        errorObj[key] = `Invalid item ${errorItem.item_id} present in in ${msg_err}`
+        i++
+      }
+    })
+
+    itemsReduced.forEach((item: any) => {
+      const isPresentForward = errorArray.some((errorItem: any) => errorItem.item_id === item['@ondc/org/item_id'])
+      if (!isPresentForward) {
+        const key = `msg/err/items_id${i}`
+        errorObj[key] = `message/order/items for item ${item['@ondc/org/item_id']} does not match in ${msg_err} `
+        i++
+      }
+    })
+  } catch (error: any) {
+    logger.error(`!!Error while checking Item Id and Mapping in ${error.message}`)
   }
 
   try {
@@ -351,10 +363,16 @@ export const checkOnSelect_OOS = (data: any) => {
           typeof element.item.quantity.available.count === 'string'
         ) {
           const availCount = parseInt(element.item.quantity.available.count, 10)
-          if (availCount !== 99 && availCount !== 0) {
+          const maxCount = parseInt(element.item.quantity.maximum.count, 10)
+          if (availCount < 0 || maxCount < 0) {
             const key = `qntcnt${i}`
             errorObj[key] =
-              `item.quantity.available.count should be either 99 (inventory available) or 0 (out-of-stock)]`
+              `Available and Maximum count should be greater than 0 for item id: ${element['@ondc/org/item_id']} in quote.breakup[${i}]`
+          }
+          if (availCount > maxCount) {
+            const key = `qntcnt${i}`
+            errorObj[key] =
+              `Available count should not be greater than maximum count for item id: ${element['@ondc/org/item_id']} in quote.breakup[${i}]`
           }
         }
 
@@ -375,25 +393,21 @@ export const checkOnSelect_OOS = (data: any) => {
         if (element.item.quantity && element.item.quantity.maximum && element.item.quantity.available) {
           const maxCount = parseInt(element.item.quantity.maximum.count, 10)
           const availCount = parseInt(element.item.quantity.available.count, 10)
-          console.log("checking count ==>", );
 
-          if (availCount == 99 && maxCount < 0) {
-            const key = `qntcnt${i}`
-            errorObj[key] = `item.quantity.maximum.count cannont be greater than 0 if item.quantity.available.count is 99 `
-          }
-          
           if (availCount == 0 && maxCount > 0) {
             const key = `qntcnt${i}`
-            errorObj[key] = `item.quantity.maximum.count cannont be greater than 0 if item.quantity.available.count is 0 `
+            errorObj[key] =
+              `item.quantity.maximum.count cannont be greater than 0 if item.quantity.available.count is 0 `
           }
-          if (availCount < element["@ondc/org/item_quantity"].count) {
+          if (availCount < element['@ondc/org/item_quantity'].count) {
             const key = `brkcnt${i}`
             errorObj[key] = `Available count can't be less than @ondc/org/item_quantity.count `
           }
 
-          if (element["@ondc/org/item_quantity"].count == 0 && maxCount > 0 && availCount > 0){
+          if (element['@ondc/org/item_quantity'].count == 0 && maxCount > 0 && availCount > 0) {
             const key = `qntcnt${i}`
-            errorObj[key] = `item.quantity.maximum.count and item.quantity.available.count is cannot be greater than zero if "@ondc/org/item_quantity" is 0 `
+            errorObj[key] =
+              `item.quantity.maximum.count and item.quantity.available.count is cannot be greater than zero if "@ondc/org/item_quantity" is 0 `
           }
         }
       }
@@ -407,6 +421,7 @@ export const checkOnSelect_OOS = (data: any) => {
           onSelectItemsPrice += parseFloat(element.price.value)
         }
       }
+      console.log(onSelectItemsPrice)
 
       if (titleType === 'tax' || titleType === 'discount') {
         if (!(element['@ondc/org/item_id'] in itemFlfllmnts)) {
@@ -415,14 +430,6 @@ export const checkOnSelect_OOS = (data: any) => {
             `item with id: ${element['@ondc/org/item_id']} in quote.breakup[${i}] does not exist in items[] (should be a valid item id)`
         }
       }
-
-      // TODO:
-      // if (['tax', 'discount', 'packing', 'misc'].includes(titleType)) {
-      //   if (parseFloat(element.price.value) == 0) {
-      //     const key = `breakupItem${titleType}`
-      //     errorObj[key] = `${titleType} line item should not be present if price=0`
-      //   }
-      // }
 
       if (titleType === 'packing' || titleType === 'delivery' || titleType === 'misc') {
         if (!Object.values(itemFlfllmnts).includes(element['@ondc/org/item_id'])) {
@@ -441,16 +448,6 @@ export const checkOnSelect_OOS = (data: any) => {
     )
     if (onSelectPrice != parseFloat(ON_SELECT_OUT_OF_STOCK.quote.price.value)) {
       errorObj.quoteBrkup = `quote.price.value ${ON_SELECT_OUT_OF_STOCK.quote.price.value} does not match with the price breakup ${onSelectPrice}`
-    }
-
-    const selectedPrice = getValue('selectedPrice')
-    logger.info(
-      `Matching price breakup of items ${onSelectItemsPrice} (/${constants.ON_SELECT}) with selected items price ${selectedPrice} (${constants.SELECT})`,
-    )
-
-    if (typeof selectedPrice === 'number' && onSelectItemsPrice !== selectedPrice) {
-      errorObj.priceErr = `Warning: Quoted Price in /${constants.ON_SELECT} INR ${onSelectItemsPrice} does not match with the total price of items in /${constants.SELECT} INR ${selectedPrice}`
-      logger.info('Quoted Price and Selected Items price mismatch')
     }
   } catch (error: any) {
     logger.error(`!!Error while checking and comparing the quoted price in /${constants.ON_SELECT}, ${error.stack}`)

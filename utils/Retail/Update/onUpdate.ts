@@ -6,17 +6,18 @@ import {
   isObjectEmpty,
   checkBppIdOrBapId,
   checkContext,
-  compareObjects,
   sumQuoteBreakUp,
   mapCancellationID,
   payment_status,
   checkQuoteTrailSum,
+  checkQuoteTrail,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const checkOnUpdate = (data: any) => {
   const onupdtObj: any = {}
   const flow = getValue('flow')
+  const quoteItemSet: any = new Set()
   try {
     if (!data || isObjectEmpty(data)) {
       return { [ApiSequence.ON_UPDATE]: 'JSON cannot be empty' }
@@ -47,7 +48,7 @@ export const checkOnUpdate = (data: any) => {
     if (checkBpp) Object.assign(onupdtObj, { bpp_id: 'context/bpp_id should not be a url' })
 
     if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-      onupdtObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+      onupdtObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     // Checkinf for valid context object
@@ -107,36 +108,6 @@ export const checkOnUpdate = (data: any) => {
       logger.error(`Error occurred while checking for valid quote breakup in ON_UPDATE`)
     }
 
-    //Comparing item count in /on_update and /select
-    const select_items: any = getValue('items')
-    try {
-      logger.info(`Matching the item count in message/order/items with that in /select`)
-      const onUpdateItems: any[] = _.get(on_update, 'items', [])
-      let onUpdateItemCount: number = 0
-
-      onUpdateItems.forEach((item: any) => {
-        if (item.tags) {
-          item.tags.forEach((tag: any) => {
-            tag.list.forEach((tagData: any) => {
-              if (tagData.code === 'type' && tagData.value === 'item') {
-                onUpdateItemCount++
-              }
-            })
-          })
-        } else if (item.quantity && item.quantity.count) {
-          onUpdateItemCount += item.quantity.count
-        }
-      })
-      select_items.forEach((selectItem: any) => {
-        if (selectItem.quantity && selectItem.quantity.count !== onUpdateItemCount) {
-          onupdtObj[`on_update/message/order/items/count`] =
-            `Item count in /on_update/message/order/items doesn't match with previous count of items`
-        }
-      })
-    } catch (error: any) {
-      logger.error(`Error while matching the count of items in /on_update and /select: ${error.message}`)
-    }
-
     //Check for status (Paid and Unpaid) and transaction_id available
     try {
       logger.info(`Checking if payment status is Paid or Unpaid and availability of transaction_id`)
@@ -168,18 +139,17 @@ export const checkOnUpdate = (data: any) => {
 
     try {
       // Checking for valid item ids in /on_select
-      const itemsOnSelect = getValue('SelectItemList')
       const itemsList = message.order.items
-      const flflmntSet = new Set()
+      let updatedItems: any = getValue('SelectItemList')
+
       itemsList.forEach((item: any, index: number) => {
-        if (!itemsOnSelect?.includes(item.id)) {
+        if (!updatedItems?.includes(item.id)) {
           const key = `inVldItemId[${index}]`
           onupdtObj[key] = `Invalid Item Id provided in /${constants.ON_UPDATE}: ${item.id}`
+        } else if (!updatedItems[item.id] === item.quantity.count) {
+          const key = `inVldItemCount[${index}]`
+          onupdtObj[key] = `Count provide for Item Id in /${constants.ON_UPDATE} should be same as /${constants.UPDATE}`
         }
-        if (flflmntSet.has(item.fulfillment_id)) {
-          onupdtObj[`dplctFlflmts[${index}]`] = `Duplicate fulfillment ids are not allowed in /${constants.ON_UPDATE}`
-        }
-        flflmntSet.add(item.fulfillment_id)
       })
     } catch (error: any) {
       logger.error(`Error while checking for item IDs for /${constants.ON_UPDATE}, ${error.stack}`)
@@ -246,37 +216,52 @@ export const checkOnUpdate = (data: any) => {
       }
     }
 
-    // Compare return_request object
-    if (flow === '6-b') {
-      try {
-        logger.info(`Checking for return_request object in /${constants.ON_UPDATE}`)
-        const obj = getValue('return_request_obj')
-        let return_request_obj: any = null
-        on_update.fulfillments.forEach((item: any) => {
-          if (item.tags) {
-            item.tags.forEach((tag: any) => {
-              if (tag.code === 'return_request') {
-                return_request_obj = tag
-              }
-            })
-
-            const requestObjectErr = obj && return_request_obj ? compareObjects(obj, return_request_obj) : null
-
-            if (requestObjectErr) {
-              let i = 0
-              const len = requestObjectErr.length
-              while (i < len) {
-                const key = `returnRequestObjectErr[${i}]`
-                onupdtObj[key] = `${requestObjectErr[i]}`
-                i++
-              }
-            }
+    try {
+      // Checking for valid item ids inside on_update
+      const items = on_update.items
+      const itemSet: any = new Set()
+      items.forEach((item: any) => {
+        if (itemSet.has(JSON.stringify(item))) {
+          onupdtObj[`DuplicateItem[${item.id}]`] = `Duplicate item found in /${constants.ON_UPDATE}`
+        } else {
+          itemSet.add(JSON.stringify(item)) // Add the item to the set if it's not already present
+        }
+      })
+      let updateItemList: any = null
+      if (getValue('flow') === '6-a') {
+        updateItemList = getValue('SelectItemList')
+      } else {
+        updateItemList = getValue('updateItemList')
+      }
+      if (updateItemList) {
+        items.forEach((item: any) => {
+          if (!updateItemList.includes(item.id)) {
+            const key = `inVldItemId[${item.id}]`
+            onupdtObj[key] = `Item ID should be present in /${constants.UPDATE} API`
+          } else {
+            quoteItemSet.add(item.id)
           }
         })
-      } catch (error: any) {
-        logger.error(`Error while checking for return_request_obj for /${constants.UPDATE}`)
       }
+    } catch (error: any) {
+      logger.error(`Error while checking for item IDs for /${constants.ON_UPDATE}, ${error.stack}`)
+    }
 
+    //Checkign for valid item prices in /on_update
+    try {
+      logger.info(`Checking for valid item prices in /on_update`)
+      const cancelFulfillments = _.filter(on_update.fulfillments, { type: 'Cancel' })
+      const selectPriceMap: any = getValue('selectPriceMap')
+
+      for (let obj of cancelFulfillments) {
+        const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
+        checkQuoteTrail(quoteTrailItems, onupdtObj, selectPriceMap, quoteItemSet)
+      }
+    } catch (error: any) {
+      logger.error(`Error while checking for valid item prices in /on_update`)
+    }
+    // Compare return_request object
+    if (flow === '6-b') {
       // Checking for quote_trail price and item quote price
       try {
         if (sumQuoteBreakUp(on_update.quote)) {
@@ -372,6 +357,36 @@ export const checkOnUpdate = (data: any) => {
           `Error occuerred while checking for quote_trail price and quote breakup price on /${constants.ON_UPDATE}`,
         )
       }
+    }
+
+    try {
+      logger.info(`Checking for the availability of initiated_by code in ${constants.ON_UPDATE}`)
+      const fulfillments = on_update.fulfillments
+      fulfillments.map((fulfillment: any) => {
+        if (fulfillment.tags) {
+          const tags = fulfillment.tags
+          tags.map((tag: any) => {
+            if (tag.code === 'cancel_request') {
+              const list = tag.list
+              const tags_initiated = list.find((data: any) => data.code === 'initiated_by')
+              if (!tags_initiated) {
+                onupdtObj[`message/order/fulfillments/tags`] =
+                  `${constants.ON_UPDATE} must have initiated_by code in fulfillments/tags/list`
+              }
+            }
+            if (tag.code === 'return_request') {
+              const list = tag.list
+              const tags_initiated = list.find((data: any) => data.code === 'initiated_by')
+              if (!tags_initiated) {
+                onupdtObj[`message/order/fulfillments/tags`] =
+                  `${constants.ON_UPDATE} must have initiated_by code in fulfillments/tags/list`
+              }
+            }
+          })
+        }
+      })
+    } catch (error: any) {
+      logger.error(`Error while checking for the availability of initiated_by in ${constants.ON_UPDATE}`)
     }
 
     return onupdtObj

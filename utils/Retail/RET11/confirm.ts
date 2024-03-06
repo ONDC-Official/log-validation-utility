@@ -45,7 +45,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       Object.assign(cnfrmObj, schemaValidation)
     }
     if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-      cnfrmObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+      cnfrmObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     if (!msgIdSet.add(context.message_id)) {

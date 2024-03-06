@@ -31,7 +31,7 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any) =>
     }
 
     if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-      onStatusObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+      onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     if (!msgIdSet.add(context.message_id)) {

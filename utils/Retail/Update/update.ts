@@ -20,6 +20,7 @@ export const checkUpdate = (data: any) => {
     }
 
     const update = message.order
+    const selectItemList: any = getValue('SelectItemList')
 
     // Validating Schema
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.UPDATE, data)
@@ -35,7 +36,7 @@ export const checkUpdate = (data: any) => {
     if (checkBpp) Object.assign(updtObj, { bpp_id: 'context/bpp_id should not be a url' })
 
     if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-      updtObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+      updtObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     setValue(`${ApiSequence.UPDATE}`, data)
@@ -105,17 +106,33 @@ export const checkUpdate = (data: any) => {
     // Check for message.order.fulfillments.tags --> code: images & format:url, code: ttl_approval , & format: duration
 
     // Checking for return_request object in /Update
-    if (update.fulfillments.tags) {
+    if (update.fulfillments[0].tags) {
       try {
         logger.info(`Checking for return_request object in /${constants.UPDATE}`)
+        const updateItemSet: any = {}
+        const updateItemList: any = []
         let return_request_obj = null
         update.fulfillments.forEach((item: any) => {
           item.tags.forEach((tag: any) => {
             if (tag.code === 'return_request') {
               return_request_obj = tag
+              let key: any = null
               tag.list.forEach((item: any) => {
                 if (item.code === 'item_id') {
-                  setValue('updatedItemID', item.value)
+                  key = item.value
+                  if (!selectItemList.includes(key)) {
+                    logger.error(`Item code should be present in /${constants.SELECT} API`)
+                    const key = `inVldItemId[${item.value}]`
+                    updtObj[key] = `Item ID should be present in /${constants.SELECT} API for /${constants.UPDATE}`
+                  } else {
+                    updateItemSet[item.value] = item.value
+                    updateItemList.push(item.value)
+                    setValue('updatedItemID', item.value)
+                  }
+                }
+                if (item.code === 'item_quantity') {
+                  let val = item.value
+                  updateItemSet[key] = val
                 }
                 if (item.code === 'reason_id') {
                   logger.info(`Checking for valid buyer reasonID for /${constants.UPDATE}`)
@@ -128,8 +145,8 @@ export const checkUpdate = (data: any) => {
                   }
                 }
                 if (item.code === 'images') {
-                  const images = item.value.split(',')
-                  const allurls = images.every(isValidUrl)
+                  const images = item.value
+                  const allurls = images.every((img: string) => isValidUrl(img))
                   if (!allurls) {
                     logger.error(
                       `Images array should be prvided as comma seperated values and each image should be an url`,
@@ -143,6 +160,8 @@ export const checkUpdate = (data: any) => {
             }
           })
         })
+        setValue('updateItemSet', updateItemSet)
+        setValue('updateItemList', updateItemList)
         setValue('return_request_obj', return_request_obj)
       } catch (error: any) {
         logger.error(`Error while checking for return_request_obj for /${constants.UPDATE} , ${error}`)

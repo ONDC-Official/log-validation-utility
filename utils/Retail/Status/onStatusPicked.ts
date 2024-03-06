@@ -35,7 +35,7 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any) => 
     }
 
     if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-      onStatusObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+      onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     setValue(`${ApiSequence.ON_STATUS_PICKED}`, data)
@@ -106,7 +106,7 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any) => 
     try {
       logger.info(`Comparing timestamp of /${constants.ON_STATUS}_picked and /${constants.ON_STATUS}_${state} API`)
       if (_.gte(getValue('tmpstmp'), context.timestamp)) {
-        onStatusObj.inVldTmstmp = `Timestamp for /${constants.ON_STATUS}_picked api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
+        onStatusObj.inVldTmstmp = `Timestamp in previous /${constants.ON_STATUS} api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
       }
 
       setValue('tmpstmp', context.timestamp)

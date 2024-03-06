@@ -98,7 +98,7 @@ export const updateSchema = {
                             type: 'object',
                             properties: {
                               code: { type: 'string' },
-                              value: { type: 'string' },
+                              value: { type: ['array', 'string'], items: { type: 'string' } },
                             },
                             required: ['code', 'value'],
                           },

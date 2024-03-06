@@ -32,7 +32,7 @@ export const checkSearch = (data: any, msgIdSet: any) => {
 
     msgIdSet.add(data.context.message_id)
     if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-      errorObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+      errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     const schemaValidation = validateSchema(data.context.domain.split(':')[1], constants.SEARCH, data)

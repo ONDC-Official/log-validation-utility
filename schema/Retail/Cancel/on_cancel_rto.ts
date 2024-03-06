@@ -1,4 +1,4 @@
-export const onCancelSchema = {
+export const cancel_RTO_Schema = {
   type: 'object',
   properties: {
     context: {
@@ -242,7 +242,7 @@ export const onCancelSchema = {
                           code: {
                             type: 'string',
                             minLength: 1,
-                            enum: ['Cancelled'],
+                            enum: ['Cancelled', 'RTO-Initiated', 'RTO-Delivered', 'RTO-Disposed'],
                           },
                         },
                         required: ['code'],
@@ -322,7 +322,6 @@ export const onCancelSchema = {
                             required: ['start', 'end'],
                           },
                         },
-                        required: ['range'],
                       },
                       contact: {
                         type: 'object',
@@ -340,7 +339,6 @@ export const onCancelSchema = {
                         required: ['phone'],
                       },
                     },
-                    required: ['location', 'time', 'contact'],
                   },
                   end: {
                     type: 'object',
@@ -463,7 +461,7 @@ export const onCancelSchema = {
                                   'id',
                                   'currency',
                                   'value',
-                                  'type',
+                                  'type'
                                 ],
                               },
                               value: {
@@ -661,7 +659,6 @@ export const onCancelSchema = {
             'provider',
             'items',
             'billing',
-            'cancellation',
             'fulfillments',
             'quote',
             'payment',

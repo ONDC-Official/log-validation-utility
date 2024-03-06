@@ -888,7 +888,7 @@ export const sumQuoteBreakUp = (quote: any) => {
   quote.breakup.forEach((item: any) => {
     currentPrice += Number(item.price.value)
   })
-  return totalPrice === currentPrice
+  return Math.round(totalPrice) === Math.round(currentPrice)
 }
 
 export const findVariantPath = (arr: any) => {
@@ -948,7 +948,7 @@ export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAt
         }
       }
     }
-    if (priceAtConfirm != price + quoteTrailSum) {
+    if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
       const key = `invldQuoteTrailPrices`
       errorObj[key] =
         `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM}`
@@ -956,5 +956,35 @@ export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAt
         `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM} `,
       )
     }
+  }
+}
+
+export const checkQuoteTrail = (quoteTrailItems: any[], errorObj: any, selectPriceMap: any, itemSet: any) => {
+  try {
+    for (let item of quoteTrailItems) {
+      let value = null
+      let itemValue = null
+      let itemID = null
+      let type = null
+      for (let val of item.list) {
+        if (val.code === 'id' && !itemSet.has(val.value)) {
+          const key = `invalidID[${val.value}]`
+          errorObj[key] = `Invalid Item ID [${val.value}]provided in quote object in /${constants.ON_CANCEL}`
+        } else if (val.code === 'id') {
+          itemID = val.value
+          value = selectPriceMap.get(val.value)
+        } else if (val.code === 'value') {
+          itemValue = Math.abs(parseInt(val.value))
+        } else if (val.code === 'type') {
+          type = val.value
+        }
+      }
+      if (value && itemValue && value !== itemValue && type === 'item') {
+        const key = `invalidPrice[${itemID}]`
+        errorObj[key] = `Price mismatch for  [${itemID}] provided in quote object '[${value}]' /${constants.ON_CANCEL}`
+      }
+    }
+  } catch (error: any) {
+    logger.error(error)
   }
 }

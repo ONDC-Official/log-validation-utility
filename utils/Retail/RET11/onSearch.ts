@@ -44,7 +44,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     Object.assign(errorObj, schemaValidation)
   }
   if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-    errorObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+    errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
   }
 
   logger.info('Initializing ---->')
@@ -165,6 +165,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
       logger.info(`Checking store enable/disable timestamp in bpp/providers[${i}]`)
       const providerTime = new Date(prvdr.time.timestamp).getTime()
       const contextTimestamp = new Date(tmpstmp).getTime()
+      setValue('tmpstmp', context.timestamp)
 
       if (providerTime > contextTimestamp) {
         errorObj.StoreEnableDisable = `store enable/disable timestamp (/bpp/providers/time/timestamp) should be less then or equal to context.timestamp`
@@ -638,6 +639,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
 
         if (address) {
           const area_code = Number.parseInt(address.area_code)
+          setValue('area_code', area_code)
           const std = context.city.split(':')[1]
 
           logger.info(`Comparing area_code and STD Code for /${constants.ON_SEARCH}`)

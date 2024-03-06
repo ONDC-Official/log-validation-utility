@@ -38,7 +38,7 @@ export const checkOnSelect = (data: any) => {
   const checkBpp = checkBppIdOrBapId(context.bpp_id)
 
   if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-    errorObj[`Domain[${data.context.action}]`] = `Domain should not be same in each action`
+    errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
   }
 
   if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
@@ -87,6 +87,7 @@ export const checkOnSelect = (data: any) => {
   try {
     // Checking for valid item ids in /on_select
     const itemsOnSelect = getValue('SelectItemList')
+    const itemsIdList: any = getValue('itemsIdList')
     const itemsList = message.order.items
     const selectItems: any = []
     itemsList.forEach((item: any, index: number) => {
@@ -94,6 +95,10 @@ export const checkOnSelect = (data: any) => {
         const key = `inVldItemId[${index}]`
         errorObj[key] = `Invalid Item Id provided in /${constants.ON_SELECT}: ${item.id}`
       } else {
+        if (itemsIdList[item.id] != item.quantity.count) {
+          const key = `inVldItemCount[${index}]`
+          errorObj[key] = `Invalid Item Count provided in /${constants.ON_SELECT}: ${item.id}`
+        }
         selectItems.push(item.id)
       }
     })
@@ -154,7 +159,7 @@ export const checkOnSelect = (data: any) => {
   try {
     logger.info(`Checking provider id in /${constants.ON_SEARCH} and /${constants.ON_SELECT}`)
     if (getValue('providerId') != on_select.provider.id) {
-      errorObj.prvdrId = `provider.id mismatches in /${constants.ON_SEARCH} and /${constants.ON_SELECT}`
+      errorObj.prvdrId = `provider.id mismatches in /${constants.SELECT} and /${constants.ON_SELECT}`
     }
     if (on_select.provider.locations[0].id != getValue('providerLoc')) {
       errorObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.SELECT} and /${constants.ON_SELECT}`
@@ -281,6 +286,7 @@ export const checkOnSelect = (data: any) => {
   try {
     logger.info(`Comparing count of items in ${constants.SELECT} and ${constants.ON_SELECT}`)
     const itemsIdList: any = getValue('itemsIdList')
+    console.log('dasasd', itemsIdList)
     if (on_select.quote) {
       on_select.quote.breakup.forEach((item: { [x: string]: any }) => {
         if (item['@ondc/org/item_id'] in itemsIdList) {
@@ -292,10 +298,6 @@ export const checkOnSelect = (data: any) => {
             errorObj[countkey] =
               `Count of item with id: ${item['@ondc/org/item_id']} does not match in ${constants.SELECT} & ${constants.ON_SELECT}`
           }
-        } else if (item['@ondc/org/title_type'] === 'item') {
-          errorObj[`InvldQuoteId[${item['@ondc/org/item_id']}]`] = [
-            `Item with id: ${item['@ondc/org/item_id']} does not exist in items list of ${constants.SELECT}`,
-          ]
         }
       })
     } else {
@@ -307,6 +309,20 @@ export const checkOnSelect = (data: any) => {
     logger.error(
       `!!Error while comparing count items in ${constants.SELECT} and ${constants.ON_SELECT}, ${error.stack}`,
     )
+  }
+
+  try {
+    const itemPrices = new Map()
+
+    on_select.quote.breakup.forEach((item: { [x: string]: any; price: { value: any } }) => {
+      if (item['@ondc/org/item_id'] && item.price && item.price.value && item['@ondc/org/title_type'] === 'item') {
+        itemPrices.set(item['@ondc/org/item_id'], Math.abs(item.price.value))
+      }
+    })
+
+    setValue('selectPriceMap', itemPrices)
+  } catch (error: any) {
+    logger.error(`!!Error while checking and comparing the quoted price in /${constants.ON_SELECT}, ${error.stack}`)
   }
 
   try {
@@ -345,10 +361,16 @@ export const checkOnSelect = (data: any) => {
             typeof element.item.quantity.available.count === 'string'
           ) {
             const availCount = parseInt(element.item.quantity.available.count, 10)
-            if (availCount !== 99 && availCount !== 0) {
+            const maxCount = parseInt(element.item.quantity.maximum.count, 10)
+            if (availCount < 0 || maxCount < 0) {
               const key = `qntcnt${i}`
               errorObj[key] =
-                `item.quantity.available.count should be either 99 (inventory available) or 0 (out-of-stock)]`
+                `Available and Maximum count should be greater than 0 for item id: ${element['@ondc/org/item_id']} in quote.breakup[${i}]`
+            }
+            if (availCount > maxCount) {
+              const key = `qntcnt${i}`
+              errorObj[key] =
+                `Available count should not be greater than maximum count for item id: ${element['@ondc/org/item_id']} in quote.breakup[${i}]`
             }
           }
 

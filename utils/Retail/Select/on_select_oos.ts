@@ -420,8 +420,8 @@ export const checkOnSelect_OOS = (data: any) => {
         ) {
           onSelectItemsPrice += parseFloat(element.price.value)
         }
+        logger.info(`Total price of items in /${constants.ON_SELECT} is ${onSelectItemsPrice}`)
       }
-      console.log(onSelectItemsPrice)
 
       if (titleType === 'tax' || titleType === 'discount') {
         if (!(element['@ondc/org/item_id'] in itemFlfllmnts)) {

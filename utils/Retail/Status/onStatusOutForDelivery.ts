@@ -172,7 +172,7 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
             try {
               //checking out for delivery time matching with context timestamp
               if (!_.lte(out_for_delivery_time, contextTime)) {
-                onStatusObj.out_for_delivery_time = `Out_for_delivery timestamp should match context/timestamp and can't be future dated`
+                onStatusObj.out_for_delivery_time = `Fulfillments start timestamp should match context/timestamp and can't be future dated`
               }
             } catch (error) {
               logger.error(

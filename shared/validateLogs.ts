@@ -202,11 +202,15 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         case ApiSequence.INC_ONSEARCH:
           return checkOnsearchIncremental(data, msgIdSet)
         case ApiSequence.SELECT:
-          return checkSelect(data, msgIdSet)
+          if (flow === FLOW.FLOW3) {
+            return checkSelect_OOS(data, msgIdSet)
+          } else {
+            return checkSelect(data, msgIdSet)
+          }
         case ApiSequence.ON_SELECT:
           return checkOnSelect(data)
         case ApiSequence.SELECT_OUT_OF_STOCK:
-          return checkSelect_OOS(data, msgIdSet)
+          return checkSelect(data, msgIdSet)
         case ApiSequence.ON_SELECT_OUT_OF_STOCK:
           return checkOnSelect_OOS(data)
         case ApiSequence.INIT:

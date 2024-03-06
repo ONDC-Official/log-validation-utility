@@ -81,7 +81,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
     try {
       logger.info(`Comparing timestamp of /${constants.ON_INIT} and /${constants.ON_CANCEL}`)
       if (_.gte(getValue('tmpstmp'), context.timestamp)) {
-        onCnclObj.tmpstmp = `Timestamp for /${constants.ON_INIT} api cannot be greater than or equal to /${constants.ON_CANCEL} api`
+        onCnclObj.tmpstmp = `Timestamp for /${constants.ON_CONFIRM} api cannot be greater than or equal to /${constants.ON_CANCEL} api`
       }
 
       setValue('tmpstmp', context.timestamp)
@@ -233,38 +233,6 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while checking quote object in /${constants.ON_CANCEL}, ${error.stack}`)
-    }
-
-    try {
-      logger.info(`Checking for preCancel_state in fulfillments of /${constants.ON_CANCEL}`)
-      const fulfillments = message.order.fulfillments
-      const deliveryFulfillments = _.filter(on_cancel.fulfillments, { type: 'Delivery' })
-      if (!deliveryFulfillments.length) {
-        const key = `DeliveryFulfillmentMissing`
-        onCnclObj[key] = `fulfillment type Delivery is missing in /${constants.ON_CANCEL}`
-      }
-      const op = _.some(fulfillments, { type: 'Delivery', tags: [{ code: 'precancel_state' }] })
-      const cnclReqObj = _.find(fulfillments, { type: 'Delivery', tags: [{ code: 'cancel_request' }] })
-      cnclReqObj?.tags.forEach((tag: any) => {
-        if (tag.code === 'cancel_request') {
-          tag.list.forEach((i: any) => {
-            if (i.code === 'reason_id') {
-              if (i.value !== on_cancel.cancellation.reason.id) {
-                onCnclObj['reason_id'] =
-                  `reason_id in cancel_request does not match with cancellation objext in /${constants.ON_CANCEL}`
-              }
-            }
-          })
-        }
-      })
-
-      if (!op) {
-        const key = `invldPrecancelState`
-        onCnclObj[key] = `precancel_state not found in fulfillments for ${constants.ON_CANCEL}`
-        logger.error(`precancel_state not found in fulfillments for ${constants.ON_CANCEL}`)
-      }
-    } catch (error) {
-      logger.error(`!!Error while Checking for precancel_state for /${constants.ON_CANCEL}`)
     }
 
     try {
@@ -455,6 +423,38 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
     }
 
     if (flow === '5') {
+      try {
+        logger.info(`Checking for preCancel_state in fulfillments of /${constants.ON_CANCEL}`)
+        const fulfillments = message.order.fulfillments
+        const deliveryFulfillments = _.filter(on_cancel.fulfillments, { type: 'Delivery' })
+        if (!deliveryFulfillments.length) {
+          const key = `DeliveryFulfillmentMissing`
+          onCnclObj[key] = `fulfillment type Delivery is missing in /${constants.ON_CANCEL}`
+        }
+        const op = _.some(fulfillments, { type: 'Delivery', tags: [{ code: 'precancel_state' }] })
+        const cnclReqObj = _.find(fulfillments, { type: 'Delivery', tags: [{ code: 'cancel_request' }] })
+        cnclReqObj?.tags.forEach((tag: any) => {
+          if (tag.code === 'cancel_request') {
+            tag.list.forEach((i: any) => {
+              if (i.code === 'reason_id') {
+                if (i.value !== on_cancel.cancellation.reason.id) {
+                  onCnclObj['reason_id'] =
+                    `reason_id in cancel_request does not match with cancellation objext in /${constants.ON_CANCEL}`
+                }
+              }
+            })
+          }
+        })
+
+        if (!op) {
+          const key = `invldPrecancelState`
+          onCnclObj[key] = `precancel_state not found in fulfillments for ${constants.ON_CANCEL}`
+          logger.error(`precancel_state not found in fulfillments for ${constants.ON_CANCEL}`)
+        }
+      } catch (error) {
+        logger.error(`!!Error while Checking for precancel_state for /${constants.ON_CANCEL}`)
+      }
+
       try {
         // Checking for igm_request inside fulfillments for /on_cancel
         const DeliveryObj = _.filter(on_cancel.fulfillments, { type: 'Delivery' })

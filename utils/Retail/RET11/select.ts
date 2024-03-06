@@ -141,12 +141,6 @@ export const checkSelect = (data: any, msgIdSet: any) => {
 
     if (provider[0]) {
       provider = provider[0]
-
-      setValue('providerId', provider.id)
-      setValue('providerLoc', provider.locations[0].id)
-      setValue('providerGps', provider.locations[0].gps)
-      setValue('providerName', provider.descriptor.name)
-
       try {
         logger.info(`Comparing provider location in /${constants.ON_SEARCH} and /${constants.SELECT}`)
         if (provider.locations[0].id != select.provider.locations[0].id) {
@@ -157,154 +151,32 @@ export const checkSelect = (data: any, msgIdSet: any) => {
           `!!Error while comparing provider's location id in /${constants.ON_SEARCH} and /${constants.SELECT}, ${error.stack}`,
         )
       }
-
-      try {
-        // Checking for valid item ids in /on_select
-        const itemsOnSearch = getValue('ItemList')
-        const itemsList = message.order.items
-        const itemsOnSelect: any = []
-        itemsList.forEach((item: any, index: number) => {
-          if (!itemsOnSearch?.includes(item.id)) {
-            const key = `inVldItemId[${index}]`
-            errorObj[key] = `Invalid Item Id provided in /${constants.SELECT}: ${item.id}`
-          } else {
-            itemsOnSelect.push(item.id)
-          }
-        })
-        setValue('SelectItemList', itemsOnSelect)
-      } catch (error: any) {
-        logger.error(`Error while checking for item IDs for /${constants.SELECT}`, error.stack)
-      }
-
-      logger.info(
-        `Mapping Item Ids with their counts, categories and prices /${constants.ON_SEARCH} and /${constants.SELECT}`,
-      )
-
-      try {
-        const itemMap: any = {}
-        const itemMapper: any = {}
-        const parentItemIdSet = new Set()
-        const itemIdSet = new Set()
-        select.items.forEach(
-          (
-            item: {
-              id: string | number
-              tags: any[]
-              parent_item_id: string | number
-              location_id: any
-              quantity: { count: number }
-            },
-            index: number,
-          ) => {
-            const allOnSearchItems: any = getValue('onSearchItems')
-            let onSearchItems = allOnSearchItems.flat()
-            const itemOnSearch = onSearchItems.find((it: any) => {
-              return it.id === item.id
-            })
-            const baseItem = findItemByItemType(item)
-            if (baseItem) {
-              const searchBaseItem = provider.items.find((it: { id: any }) => it.id === baseItem.id)
-              if (searchBaseItem && searchBaseItem.time.label === 'disable') {
-                errorObj.itemDisabled = `disabled item with id ${baseItem.id} cannot be selected`
-              }
-            }
-            const itemTag = tagFinder(item, 'item')
-            if (itemTag) {
-              if (!itemMap[item.parent_item_id]) {
-                itemMap[item.parent_item_id] = {
-                  location_id: item.location_id,
-                }
-              }
-
-              if (!itemIdArray.includes(item.id)) {
-                const key = `item${index}item_id`
-                errorObj[key] =
-                  `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in on_search`
-              }
-            }
-
-            const customizationTag = tagFinder(item, 'customization')
-
-            if (customizationTag) {
-              const parentTag = item.tags.find((tag) => {
-                return (
-                  tag.code === 'parent' &&
-                  tag.list &&
-                  tag.list.find((listItem: { code: string; value: any }) => {
-                    return listItem.code === 'id' && customIdArray.includes(listItem.value)
-                  })
-                )
-              })
-
-              if (!parentTag) {
-                const key = `item${index}customization_id`
-                errorObj[key] =
-                  `/message/order/items/tags/customization/value in item: ${item.id} should be one of the customizations id mapped in on_search`
-              }
-            }
-
-            if (!parentItemIdSet.has(item.parent_item_id)) parentItemIdSet.add(item.parent_item_id)
-
-            if (!itemIdSet.has(item.id)) itemIdSet.add(item.id)
-
-            onSearchItems.forEach((it: any) => {
-              if (it.id === item.id && it.location_id !== item.location_id) {
-                errorObj[`location_id[${index}]`] = `location_id should be same for the item ${item.id} as in on_search`
-              }
-            })
-
-            if (itemOnSearch) {
-              logger.info(`ITEM ID: ${item.id}, Price: ${itemOnSearch.price.value}, Count: ${item.quantity.count}`)
-
-              itemsIdList[item.id] = item.quantity.count
-              itemsCtgrs[item.id] = itemOnSearch.category_id
-              itemsTat.push(itemOnSearch['@ondc/org/time_to_ship'])
-              selectedPrice += itemOnSearch.price.value * item.quantity.count
-            }
-
-            if (!itemMapper[item.id]) {
-              // If the item is not in the map, add it
-              itemMapper[item.id] = item.parent_item_id
-            } else {
-              if (itemMapper[item.id] === item.parent_item_id) {
-                const key = `item${index}id_parent_item_id`
-                errorObj[key] = `/message/order/items/parent_item_id cannot be duplicate if item/id is same`
-              }
-            }
-          },
-        )
-
-        try {
-          logger.info(`Saving time_to_ship in /${constants.ON_SEARCH}`)
-          let timeToShip = 0
-          itemsTat.forEach((tts: any) => {
-            const ttship = isoDurToSec(tts)
-            logger.info(ttship)
-            timeToShip = Math.max(timeToShip, ttship)
-          })
-          logger.info('timeTOSHIP', timeToShip)
-          setValue('timeToShip', timeToShip)
-        } catch (error: any) {
-          logger.error(`!!Error while saving time_to_ship in ${constants.ON_SEARCH}`, error)
-        }
-
-        setValue('itemsIdList', itemsIdList)
-        setValue('itemsCtgrs', itemsCtgrs)
-        setValue('selectedPrice', selectedPrice)
-        setValue('parentItemIdSet', parentItemIdSet)
-
-        logger.info(`Provider Id in /${constants.ON_SEARCH} and /${constants.SELECT} matched`)
-      } catch (error: any) {
-        logger.error(
-          `!!Error while Comparing and Mapping Items in /${constants.ON_SEARCH} and /${constants.SELECT}, ${error.stack}`,
-        )
-      }
     } else {
-      logger.info(`Provider Ids in /${constants.ON_SEARCH} and /${constants.SELECT} mismatch`)
-      errorObj.prvdrIdMatch = `Provider Id ${select.provider.id} in /${constants.SELECT} does not exist in /${constants.ON_SEARCH}`
+      provider = select.provider
     }
 
-    setValue('select_customIdArray', customIdArray)
+    setValue('providerId', provider.id)
+    setValue('providerLoc', provider.locations[0].id)
+    setValue('providerGps', provider.locations[0].gps)
+    setValue('providerName', provider.descriptor.name)
+
+    try {
+      // Checking for valid item ids in /on_select
+      const itemsOnSearch = getValue('ItemList')
+      const itemsList = message.order.items
+      const itemsOnSelect: any = []
+      itemsList.forEach((item: any, index: number) => {
+        if (!itemsOnSearch?.includes(item.id)) {
+          const key = `inVldItemId[${index}]`
+          errorObj[key] = `Invalid Item Id provided in /${constants.SELECT}: ${item.id}`
+        }
+        itemsOnSelect.push(item.id)
+      })
+      setValue('SelectItemList', itemsOnSelect)
+    } catch (error: any) {
+      logger.error(`Error while checking for item IDs for /${constants.SELECT}`, error.stack)
+    }
+
     try {
       select.fulfillments.forEach((ff: any) => {
         logger.info(`Checking GPS Precision in /${constants.SELECT}`)
@@ -343,6 +215,132 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     } catch (error: any) {
       logger.error(`!!Error while checking GPS Precision in /${constants.SELECT}, ${error.stack}`)
     }
+
+    logger.info(
+      `Mapping Item Ids with their counts, categories and prices /${constants.ON_SEARCH} and /${constants.SELECT}`,
+    )
+
+    try {
+      const itemMap: any = {}
+      const itemMapper: any = {}
+      const parentItemIdSet = new Set()
+      const itemIdSet = new Set()
+      select.items.forEach(
+        (
+          item: {
+            id: string | number
+            tags: any[]
+            parent_item_id: string | number
+            location_id: any
+            quantity: { count: number }
+          },
+          index: number,
+        ) => {
+          const allOnSearchItems: any = getValue('onSearchItems')
+          let onSearchItems = allOnSearchItems.flat()
+          const itemOnSearch = onSearchItems.find((it: any) => {
+            return it.id === item.id
+          })
+          const baseItem = findItemByItemType(item)
+          if (baseItem) {
+            const searchBaseItem = provider.items.find((it: { id: any }) => it.id === baseItem.id)
+            if (searchBaseItem && searchBaseItem.time.label === 'disable') {
+              errorObj.itemDisabled = `disabled item with id ${baseItem.id} cannot be selected`
+            }
+          }
+          const itemTag = tagFinder(item, 'item')
+          if (itemTag) {
+            if (!itemMap[item.parent_item_id]) {
+              itemMap[item.parent_item_id] = {
+                location_id: item.location_id,
+              }
+            }
+
+            if (!itemIdArray.includes(item.id)) {
+              const key = `item${index}item_id`
+              errorObj[key] =
+                `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in on_search`
+            }
+          }
+
+          const customizationTag = tagFinder(item, 'customization')
+
+          if (customizationTag) {
+            const parentTag = item.tags.find((tag) => {
+              return (
+                tag.code === 'parent' &&
+                tag.list &&
+                tag.list.find((listItem: { code: string; value: any }) => {
+                  return listItem.code === 'id' && customIdArray.includes(listItem.value)
+                })
+              )
+            })
+
+            if (!parentTag) {
+              const key = `item${index}customization_id`
+              errorObj[key] =
+                `/message/order/items/tags/customization/value in item: ${item.id} should be one of the customizations id mapped in on_search`
+            }
+          }
+
+          if (!parentItemIdSet.has(item.parent_item_id)) parentItemIdSet.add(item.parent_item_id)
+
+          if (!itemIdSet.has(item.id)) itemIdSet.add(item.id)
+
+          onSearchItems.forEach((it: any) => {
+            if (it.id === item.id && it.location_id !== item.location_id) {
+              errorObj[`location_id[${index}]`] = `location_id should be same for the item ${item.id} as in on_search`
+            }
+          })
+
+          if (itemOnSearch) {
+            logger.info(`ITEM ID: ${item.id}, Price: ${itemOnSearch.price.value}, Count: ${item.quantity.count}`)
+
+            itemsIdList[item.id] = item.quantity.count
+            itemsCtgrs[item.id] = itemOnSearch.category_id
+            itemsTat.push(itemOnSearch['@ondc/org/time_to_ship'])
+            selectedPrice += itemOnSearch.price.value * item.quantity.count
+          }
+
+          if (!itemMapper[item.id]) {
+            // If the item is not in the map, add it
+            itemMapper[item.id] = item.parent_item_id
+          } else {
+            if (itemMapper[item.id] === item.parent_item_id) {
+              const key = `item${index}id_parent_item_id`
+              errorObj[key] = `/message/order/items/parent_item_id cannot be duplicate if item/id is same`
+            }
+          }
+        },
+      )
+
+      try {
+        logger.info(`Saving time_to_ship in /${constants.ON_SEARCH}`)
+        let timeToShip = 0
+        itemsTat.forEach((tts: any) => {
+          const ttship = isoDurToSec(tts)
+          logger.info(ttship)
+          timeToShip = Math.max(timeToShip, ttship)
+        })
+        logger.info('timeTOSHIP', timeToShip)
+        setValue('timeToShip', timeToShip)
+      } catch (error: any) {
+        logger.error(`!!Error while saving time_to_ship in ${constants.ON_SEARCH}`, error)
+      }
+
+      setValue('itemsIdList', itemsIdList)
+      setValue('itemsCtgrs', itemsCtgrs)
+      setValue('selectedPrice', selectedPrice)
+      setValue('parentItemIdSet', parentItemIdSet)
+
+      logger.info(`Provider Id in /${constants.ON_SEARCH} and /${constants.SELECT} matched`)
+    } catch (error: any) {
+      logger.error(
+        `!!Error while Comparing and Mapping Items in /${constants.ON_SEARCH} and /${constants.SELECT}, ${error.stack}`,
+      )
+    }
+
+    setValue('select_customIdArray', customIdArray)
 
     setValue('items', select.items)
   } catch (error: any) {

@@ -888,7 +888,7 @@ export const sumQuoteBreakUp = (quote: any) => {
   quote.breakup.forEach((item: any) => {
     currentPrice += Number(item.price.value)
   })
-  return totalPrice === currentPrice
+  return Math.round(totalPrice) === Math.round(currentPrice)
 }
 
 export const findVariantPath = (arr: any) => {
@@ -948,7 +948,7 @@ export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAt
         }
       }
     }
-    if (priceAtConfirm != price + quoteTrailSum) {
+    if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
       const key = `invldQuoteTrailPrices`
       errorObj[key] =
         `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM}`

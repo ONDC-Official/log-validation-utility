@@ -124,6 +124,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
   const prvdrsId = new Set()
   const prvdrLocId = new Set()
   const itemsId = new Set()
+  setValue('tmpstmp', context.timestamp)
 
   try {
     logger.info(`Saving static fulfillment ids in /${constants.ON_SEARCH}`)

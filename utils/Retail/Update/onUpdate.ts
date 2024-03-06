@@ -108,51 +108,6 @@ export const checkOnUpdate = (data: any) => {
       logger.error(`Error occurred while checking for valid quote breakup in ON_UPDATE`)
     }
 
-    //Comparing item count in /on_update and /select
-    const select_items: any = getValue('items')
-    try {
-      logger.info(`Matching the item count in message/order/items with that in /select`)
-      const onUpdateItems: any[] = _.get(on_update, 'items', [])
-      let onUpdateItemCount: number = 0
-
-      onUpdateItems.forEach((item: any) => {
-        if (item.tags) {
-          item.tags.forEach((tag: any) => {
-            tag.list.forEach((tagData: any) => {
-              if (tagData.code === 'type' && tagData.value === 'item') {
-                onUpdateItemCount++
-              }
-            })
-          })
-        } else if (item.quantity && item.quantity.count) {
-          onUpdateItemCount += item.quantity.count
-        }
-      })
-      if (flow === '6-a') {
-        select_items.forEach((selectItem: any) => {
-          if (selectItem.quantity && selectItem.quantity.count !== onUpdateItemCount) {
-            onupdtObj[`on_update/message/order/items/count`] =
-              `Item count in /on_update/message/order/items doesn't match with previous count of items`
-          }
-        })
-      } else {
-        const updateItemSet: any = getValue('updateItemSet')
-        let onUpdateCount: number = 0
-        for (let item in updateItemSet) {
-          onUpdateCount += parseInt(updateItemSet[item])
-        }
-
-        console.log('asdfadsfs', onUpdateCount)
-
-        if (onUpdateItemCount !== onUpdateCount) {
-          onupdtObj[`inValidItemCount`] =
-            `Item count in /on_update/message/order/items doesn't match with previous count of items`
-        }
-      }
-    } catch (error: any) {
-      logger.error(`Error while matching the count of items in /on_update and /select: ${error.message}`)
-    }
-
     //Check for status (Paid and Unpaid) and transaction_id available
     try {
       logger.info(`Checking if payment status is Paid or Unpaid and availability of transaction_id`)
@@ -185,12 +140,8 @@ export const checkOnUpdate = (data: any) => {
     try {
       // Checking for valid item ids in /on_select
       const itemsList = message.order.items
-      let updatedItems: any = null
-      if (getValue('flow') === '6-a') {
-        updatedItems = getValue('SelectItemList')
-      } else {
-        updatedItems = getValue('updateItemList')
-      }
+      let updatedItems: any = getValue('SelectItemList')
+      console.log('sdasfdsa', updatedItems)
       itemsList.forEach((item: any, index: number) => {
         if (!updatedItems?.includes(item.id)) {
           const key = `inVldItemId[${index}]`

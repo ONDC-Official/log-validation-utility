@@ -239,13 +239,20 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       logger.info(`Checking for preCancel_state in fulfillments of /${constants.ON_CANCEL}`)
       const fulfillments = message.order.fulfillments
       const deliveryFulfillments = _.filter(on_cancel.fulfillments, { type: 'Delivery' })
+
       if (!deliveryFulfillments.length) {
         const key = `DeliveryFulfillmentMissing`
         onCnclObj[key] = `fulfillment type Delivery is missing in /${constants.ON_CANCEL}`
       }
       const op = _.some(fulfillments, { type: 'Delivery', tags: [{ code: 'precancel_state' }] })
-      const cnclReqObj = _.find(fulfillments, { type: 'Delivery', tags: [{ code: 'cancel_request' }] })
-      cnclReqObj?.tags.forEach((tag: any) => {
+      if (!op) {
+        const key = `invldPrecancelState`
+        onCnclObj[key] = `precancel_state not found in fulfillments for ${constants.ON_CANCEL}`
+        logger.error(`precancel_state not found in fulfillments for ${constants.ON_CANCEL}`)
+      }
+      const cnclReqObj: any = _.filter(fulfillments, { type: 'Delivery', tags: [{ code: 'cancel_request' }] })
+
+      cnclReqObj[0]?.tags.forEach((tag: any) => {
         if (tag.code === 'cancel_request') {
           tag.list.forEach((i: any) => {
             if (i.code === 'reason_id') {
@@ -257,12 +264,6 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
           })
         }
       })
-
-      if (!op) {
-        const key = `invldPrecancelState`
-        onCnclObj[key] = `precancel_state not found in fulfillments for ${constants.ON_CANCEL}`
-        logger.error(`precancel_state not found in fulfillments for ${constants.ON_CANCEL}`)
-      }
     } catch (error) {
       logger.error(`!!Error while Checking for precancel_state for /${constants.ON_CANCEL}`)
     }

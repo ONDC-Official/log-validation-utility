@@ -268,16 +268,16 @@ export const checkOnSelect_OOS = (data: any) => {
 
   try {
     logger.info(`Comparing count of items in ${constants.SELECT} and ${constants.ON_SELECT}`)
-    const itemsIdList: any = getValue('itemsIdList')    
+    const itemsIdList: any = getValue('itemsIdList')
     ON_SELECT_OUT_OF_STOCK.quote.breakup.forEach((item: { [x: string]: any }) => {
       if (item['@ondc/org/item_id'] in itemsIdList) {
         if (
           item['@ondc/org/title_type'] === 'item' &&
           itemsIdList[item['@ondc/org/item_id']] < item['@ondc/org/item_quantity'].count
-          ) {
-            errorObj[`InvldQuoteId[${item['@ondc/org/item_id']}]`] = [
-              `Item with id: ${item['@ondc/org/item_id']} count is greater than or equal to  ${constants.SELECT}`,]
-
+        ) {
+          errorObj[`InvldQuoteId[${item['@ondc/org/item_id']}]`] = [
+            `Item with id: ${item['@ondc/org/item_id']} count is greater than or equal to  ${constants.SELECT}`,
+          ]
         }
       } else if (item['@ondc/org/title_type'] === 'item') {
         errorObj[`InvldQuoteId[${item['@ondc/org/item_id']}]`] = [
@@ -292,30 +292,32 @@ export const checkOnSelect_OOS = (data: any) => {
   }
 
   try {
-    const breakup_msg = message.order.quote.breakup;
-    const msg_err = error.message;
-    const itemsIdList: any = getValue('itemsIdList') 
-   
-    logger.info(`Item Id and error.message.item_id Mapping in /ON_SELECT_OUT_OF_STOCK`);
-   
-    const errorArray = JSON.parse(msg_err);
-    let i = 0;
-   
+    const breakup_msg = message.order.quote.breakup
+    const msg_err = error.message
+    const itemsIdList: any = getValue('itemsIdList')
+
+    logger.info(`Item Id and error.message.item_id Mapping in /ON_SELECT_OUT_OF_STOCK`)
+
+    const errorArray = JSON.parse(msg_err)
+    let i = 0
+
     const itemsWithCountZero = breakup_msg.filter(
-       (item: any) => item['@ondc/org/item_quantity'] && item['@ondc/org/item_quantity'].count < itemsIdList[item['@ondc/org/item_id']],
-    );
+      (item: any) =>
+        item['@ondc/org/item_quantity'] &&
+        item['@ondc/org/item_quantity'].count < itemsIdList[item['@ondc/org/item_id']],
+    )
     itemsWithCountZero.forEach((item: any) => {
-       const isPresentForward = errorArray.some((errorItem: any) => errorItem.item_id === item['@ondc/org/item_id']);
-       if (!isPresentForward ) {
-         const key = `msg/err/items_id${i}`;
-         errorObj[key] = `message/order/items for item ${item['@ondc/org/item_id']} does not match in ${msg_err} `;
-         i++;
-       }
-    });
-   } catch (error: any) {
-    logger.error(`!!Error while checking Item Id and Mapping in ${error.message}`);
-   }
-   
+      const isPresentForward = errorArray.some((errorItem: any) => errorItem.item_id === item['@ondc/org/item_id'])
+      if (!isPresentForward) {
+        const key = `msg/err/items_id${i}`
+        errorObj[key] = `message/order/items for item ${item['@ondc/org/item_id']} does not match in ${msg_err} `
+        i++
+      }
+    })
+  } catch (error: any) {
+    logger.error(`!!Error while checking Item Id and Mapping in ${error.message}`)
+  }
+
   try {
     logger.info(`-x-x-x-x-Quote Breakup ${constants.ON_SELECT} all checks-x-x-x-x`)
     const itemsIdList: any = getValue('itemsIdList')
@@ -351,10 +353,16 @@ export const checkOnSelect_OOS = (data: any) => {
           typeof element.item.quantity.available.count === 'string'
         ) {
           const availCount = parseInt(element.item.quantity.available.count, 10)
-          if (availCount !== 99 && availCount !== 0) {
+          const maxCount = parseInt(element.item.quantity.maximum.count, 10)
+          if (availCount < 0 || maxCount < 0) {
             const key = `qntcnt${i}`
             errorObj[key] =
-              `item.quantity.available.count should be either 99 (inventory available) or 0 (out-of-stock)]`
+              `Available and Maximum count should be greater than 0 for item id: ${element['@ondc/org/item_id']} in quote.breakup[${i}]`
+          }
+          if (availCount > maxCount) {
+            const key = `qntcnt${i}`
+            errorObj[key] =
+              `Available count should not be greater than maximum count for item id: ${element['@ondc/org/item_id']} in quote.breakup[${i}]`
           }
         }
 
@@ -375,7 +383,6 @@ export const checkOnSelect_OOS = (data: any) => {
         if (element.item.quantity && element.item.quantity.maximum && element.item.quantity.available) {
           const maxCount = parseInt(element.item.quantity.maximum.count, 10)
           const availCount = parseInt(element.item.quantity.available.count, 10)
-
 
           if (availCount == 0 && maxCount > 0) {
             const key = `qntcnt${i}`
@@ -431,8 +438,7 @@ export const checkOnSelect_OOS = (data: any) => {
     if (onSelectPrice != parseFloat(ON_SELECT_OUT_OF_STOCK.quote.price.value)) {
       errorObj.quoteBrkup = `quote.price.value ${ON_SELECT_OUT_OF_STOCK.quote.price.value} does not match with the price breakup ${onSelectPrice}`
     }
-    console.log(onSelectItemsPrice);
-    
+    console.log(onSelectItemsPrice)
   } catch (error: any) {
     logger.error(`!!Error while checking and comparing the quoted price in /${constants.ON_SELECT}, ${error.stack}`)
   }

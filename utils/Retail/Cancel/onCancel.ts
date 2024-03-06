@@ -11,6 +11,7 @@ import {
   sumQuoteBreakUp,
   payment_status,
   mapCancellationID,
+  checkQuoteTrail,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -37,6 +38,8 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
     const contextRes: any = checkContext(context, constants.ON_CANCEL)
     const checkBap = checkBppIdOrBapId(context.bap_id)
     const checkBpp = checkBppIdOrBapId(context.bpp_id)
+    const itemSet = new Set()
+    const selectPriceMap: any = getValue('selectPriceMap')
 
     if (checkBap) Object.assign(onCnclObj, { bap_id: 'context/bap_id should not be a url' })
     if (checkBpp) Object.assign(onCnclObj, { bpp_id: 'context/bpp_id should not be a url' })
@@ -105,10 +108,13 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       // Checking for valid item ids in /on_select
       const itemsOnSelect = getValue('SelectItemList')
       const itemsList = message.order.items
-      itemsList.forEach((item: any, index: number) => {
+
+      itemsList.forEach((item: any) => {
         if (!itemsOnSelect?.includes(item.id)) {
-          const key = `inVldItemId[${index}]`
+          const key = `inVldItemId[${item.id}]`
           onCnclObj[key] = `Invalid Item Id provided in /${constants.ON_CANCEL}: ${item.id}`
+        } else {
+          itemSet.add(item.id)
         }
       })
     } catch (error: any) {
@@ -183,6 +189,10 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
         const price = Number(on_cancel.quote.price.value)
         const priceAtConfirm = Number(getValue('quotePrice'))
         const cancelFulfillments = _.filter(on_cancel.fulfillments, { type: 'Cancel' })
+        if (!cancelFulfillments.length && flow === '4') {
+          const key = `CancelFulfillmentMissing`
+          onCnclObj[key] = `fulfillment type cancel is missing in /${constants.ON_CANCEL}`
+        }
         for (let obj of cancelFulfillments) {
           let quoteTrailSum = 0
           const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
@@ -210,11 +220,39 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
     }
 
     try {
+      logger.info(`Checking for Item IDs in quote object in /${constants.ON_CANCEL}`)
+      let cancelFulfillments = null
+      if (flow === '5') {
+        cancelFulfillments = _.filter(on_cancel.fulfillments, { type: 'RTO' })
+      } else {
+        cancelFulfillments = _.filter(on_cancel.fulfillments, { type: 'Cancel' })
+      }
+      for (let obj of cancelFulfillments) {
+        const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
+        checkQuoteTrail(quoteTrailItems, onCnclObj, selectPriceMap, itemSet)
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking quote object in /${constants.ON_CANCEL}, ${error.stack}`)
+    }
+
+    try {
       logger.info(`Checking for preCancel_state in fulfillments of /${constants.ON_CANCEL}`)
       const fulfillments = message.order.fulfillments
+      const deliveryFulfillments = _.filter(on_cancel.fulfillments, { type: 'Delivery' })
+
+      if (!deliveryFulfillments.length) {
+        const key = `DeliveryFulfillmentMissing`
+        onCnclObj[key] = `fulfillment type Delivery is missing in /${constants.ON_CANCEL}`
+      }
       const op = _.some(fulfillments, { type: 'Delivery', tags: [{ code: 'precancel_state' }] })
-      const cnclReqObj = _.find(fulfillments, { type: 'Delivery', tags: [{ code: 'cancel_request' }] })
-      cnclReqObj?.tags.forEach((tag: any) => {
+      if (!op) {
+        const key = `invldPrecancelState`
+        onCnclObj[key] = `precancel_state not found in fulfillments for ${constants.ON_CANCEL}`
+        logger.error(`precancel_state not found in fulfillments for ${constants.ON_CANCEL}`)
+      }
+      const cnclReqObj: any = _.filter(fulfillments, { type: 'Delivery', tags: [{ code: 'cancel_request' }] })
+
+      cnclReqObj[0]?.tags.forEach((tag: any) => {
         if (tag.code === 'cancel_request') {
           tag.list.forEach((i: any) => {
             if (i.code === 'reason_id') {
@@ -226,12 +264,6 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
           })
         }
       })
-
-      if (!op) {
-        const key = `invldPrecancelState`
-        onCnclObj[key] = `precancel_state not found in fulfillments for ${constants.ON_CANCEL}`
-        logger.error(`precancel_state not found in fulfillments for ${constants.ON_CANCEL}`)
-      }
     } catch (error) {
       logger.error(`!!Error while Checking for precancel_state for /${constants.ON_CANCEL}`)
     }
@@ -246,6 +278,10 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
         mapCancellationID('BNP', reason_id, onCnclObj)
       } else {
         mapCancellationID('SNP', reason_id, onCnclObj)
+      }
+      if (flow === '4' && cancelled_by !== context.bap_id) {
+        const key = 'invalidCancelledByEntity'
+        onCnclObj[key] = `cancelled_by entity should be same as context/bap_id`
       }
     } catch (error: any) {
       logger.error(`!!Error while mapping cancellation_reason_id in ${constants.ON_CANCEL}`)
@@ -423,6 +459,12 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       try {
         // Checking for igm_request inside fulfillments for /on_cancel
         const DeliveryObj = _.filter(on_cancel.fulfillments, { type: 'Delivery' })
+        const RTOobj = _.filter(on_cancel.fulfillments, { type: 'RTO' })
+        if (!RTOobj.length) {
+          logger.error(`RTO object is mandatory for ${constants.ON_CANCEL}`)
+          const key = `missingRTO`
+          onCnclObj[key] = `RTO object is mandatory for ${constants.ON_CANCEL}`
+        }
         let reasonID_flag = 0
         let rto_id_flag = 0
         let initiated_by_flag = 0
@@ -444,6 +486,8 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
           const igm_request = _.filter(item.tags, { code: 'igm_request' })
           if (!igm_request) {
             logger.error(`IGM Request is mandatory for ${constants.ON_CANCEL}`)
+            const key = `missingIGMRequest`
+            onCnclObj[key] = `IGM Request is mandatory for ${constants.ON_CANCEL}`
           }
         }
         if (!reasonID_flag) {

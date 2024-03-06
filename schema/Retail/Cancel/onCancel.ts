@@ -242,7 +242,7 @@ export const onCancelSchema = {
                           code: {
                             type: 'string',
                             minLength: 1,
-                            enum: ['Cancelled', 'RTO-Initiated', 'RTO-Delivered', 'RTO-Disposed'],
+                            enum: ['Cancelled'],
                           },
                         },
                         required: ['code'],
@@ -463,7 +463,7 @@ export const onCancelSchema = {
                                   'id',
                                   'currency',
                                   'value',
-                                  'type'
+                                  'type',
                                 ],
                               },
                               value: {

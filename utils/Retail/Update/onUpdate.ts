@@ -10,12 +10,14 @@ import {
   mapCancellationID,
   payment_status,
   checkQuoteTrailSum,
+  checkQuoteTrail,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const checkOnUpdate = (data: any) => {
   const onupdtObj: any = {}
   const flow = getValue('flow')
+  const quoteItemSet: any = new Set()
   try {
     if (!data || isObjectEmpty(data)) {
       return { [ApiSequence.ON_UPDATE]: 'JSON cannot be empty' }
@@ -285,6 +287,8 @@ export const checkOnUpdate = (data: any) => {
           if (!updateItemList.includes(item.id)) {
             const key = `inVldItemId[${item.id}]`
             onupdtObj[key] = `Item ID should be present in /${constants.UPDATE} API`
+          } else {
+            quoteItemSet.add(item.id)
           }
         })
       }
@@ -296,31 +300,11 @@ export const checkOnUpdate = (data: any) => {
     try {
       logger.info(`Checking for valid item prices in /on_update`)
       const cancelFulfillments = _.filter(on_update.fulfillments, { type: 'Cancel' })
-      const quoteTrailMap = new Map()
       const selectPriceMap: any = getValue('selectPriceMap')
 
-      cancelFulfillments.forEach((fulfillment) => {
-        const tags = fulfillment.tags || []
-        tags.forEach((tag: any) => {
-          if (tag.code === 'quote_trail') {
-            const idItem = tag.list.find((item: any) => item.code === 'id')
-            // if (!selectPriceMap.has(idItem)) {
-            //   onupdtObj[`order/fulfillments/itemID`] =
-            //     `The item ${idItem} in quote_trail does not match with items in /${constants.ON_SELECT}`
-            // }
-            const priceItem = tag.list.find((item: any) => item.code === 'value')
-            if (idItem && priceItem) {
-              quoteTrailMap.set(idItem.value, Math.abs(parseFloat(priceItem.value)))
-            }
-          }
-        })
-      })
-
-      for (let [item, quoteTrailPrice] of quoteTrailMap) {
-        if (selectPriceMap.get(item) && selectPriceMap.get(item) !== quoteTrailPrice) {
-          onupdtObj[`order/fulfillments/tags`] =
-            `The price of the item ${item} in quote_trail does not match with the price in /${constants.ON_SELECT}`
-        }
+      for (let obj of cancelFulfillments) {
+        const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
+        checkQuoteTrail(quoteTrailItems, onupdtObj, selectPriceMap, quoteItemSet)
       }
     } catch (error: any) {
       logger.error(`Error while checking for valid item prices in /on_update`)

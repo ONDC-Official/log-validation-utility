@@ -327,7 +327,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
         const len = billingErrors.length
         while (i < len) {
           const key = `billingErr${i}`
-          onCnclObj[key] = `${billingErrors[i]}`
+          onCnclObj[key] = `${billingErrors[i]} when compared with init billing object`
           i++
         }
       }

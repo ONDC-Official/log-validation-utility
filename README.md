@@ -1129,7 +1129,7 @@ You can use the following `curl` command to make a POST request to the local val
 ### FOR FLOW 1
 
 ```shell
-curl --location 'https://localhost:3008/api/validate' \
+curl --location 'http://localhost:3008/api/validate' \
 --header 'Content-Type: application/json' \
 --data '{
     "domain": "ONDC:RET18",
@@ -1137,10 +1137,10 @@ curl --location 'https://localhost:3008/api/validate' \
     "bap_id": "BUYER_APP_SUBSCRIBER_ID",
     "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
-        "search": {},
-        "on_search":{},
-        "search_inc": {},
-        "on_search_inc": {}
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh":{},
+        "search_inc_refresh": {},
+        "on_search_inc_refresh": {}
     },
     "flow": "1"
 }'
@@ -1149,7 +1149,7 @@ curl --location 'https://localhost:3008/api/validate' \
 ### FOR FLOW 2
 
 ```shell
-curl --location 'https://localhost:3008/api/validate' \
+curl --location 'http://localhost:3008/api/validate' \
 --header 'Content-Type: application/json' \
 --data '{
     "domain": "ONDC:RET18",
@@ -1157,8 +1157,8 @@ curl --location 'https://localhost:3008/api/validate' \
     "bap_id": "BUYER_APP_SUBSCRIBER_ID",
     "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
-        "search": {},
-        "on_search":{},
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh":{},
         "select": {},
         "on_select": {},
         "init": {},
@@ -1178,7 +1178,7 @@ curl --location 'https://localhost:3008/api/validate' \
 ### FOR FLOW 3
 
 ```shell
-curl --location 'https://localhost:3008/api/validate' \
+curl --location 'http://localhost:3008/api/validate' \
 --header 'Content-Type: application/json' \
 --data '{
     "domain": "ONDC:RET18",
@@ -1186,8 +1186,8 @@ curl --location 'https://localhost:3008/api/validate' \
     "bap_id": "BUYER_APP_SUBSCRIBER_ID",
     "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
-        "search": {},
-        "on_search":{},
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh":{},
         "select_out_of_stock": {},
         "on_select_out_of_stock": {},
         "select": {},
@@ -1209,7 +1209,7 @@ curl --location 'https://localhost:3008/api/validate' \
 ### FOR FLOW 4
 
 ```shell
-curl --location 'https://localhost:3008/api/validate' \
+curl --location 'http://localhost:3008/api/validate' \
 --header 'Content-Type: application/json' \
 --data '{
     "domain": "ONDC:RET18",
@@ -1217,8 +1217,8 @@ curl --location 'https://localhost:3008/api/validate' \
     "bap_id": "BUYER_APP_SUBSCRIBER_ID",
     "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
-        "search": {},
-        "on_search":{},
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh":{},
         "select": {},
         "on_select": {},
         "init": {},
@@ -1235,7 +1235,7 @@ curl --location 'https://localhost:3008/api/validate' \
 ### FOR FLOW 5
 
 ```shell
-curl --location 'https://localhost:3008/api/validate' \
+curl --location 'http://localhost:3008/api/validate' \
 --header 'Content-Type: application/json' \
 --data '{
     "domain": "ONDC:RET18",
@@ -1243,8 +1243,8 @@ curl --location 'https://localhost:3008/api/validate' \
     "bap_id": "BUYER_APP_SUBSCRIBER_ID",
     "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
-        "search": {},
-        "on_search":{},
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh":{},
         "select": {},
         "on_select": {},
         "init": {},
@@ -1264,7 +1264,7 @@ curl --location 'https://localhost:3008/api/validate' \
 ### FOR FLOW 6-a (Part cancel)
 
 ```shell
-curl --location 'https://localhost:3008/api/validate' \
+curl --location 'http://localhost:3008/api/validate' \
 --header 'Content-Type: application/json' \
 --data '{
     "domain": "",
@@ -1272,8 +1272,8 @@ curl --location 'https://localhost:3008/api/validate' \
     "bap_id": "BUYER_APP_SUBSCRIBER_ID",
     "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
-        "search": {},
-        "on_search":{},
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh":{},
         "select": {},
         "on_select": {},
         "init": {},
@@ -1290,7 +1290,7 @@ curl --location 'https://localhost:3008/api/validate' \
 ### FOR FLOW 6-b (reverseQC)
 
 ```shell
-curl --location 'https://localhost:3008/api/validate' \
+curl --location 'http://localhost:3008/api/validate' \
 --header 'Content-Type: application/json' \
 --data '{
     "domain": "",
@@ -1298,8 +1298,8 @@ curl --location 'https://localhost:3008/api/validate' \
     "bap_id": "BUYER_APP_SUBSCRIBER_ID",
     "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
-        "search": {},
-        "on_search":{},
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh":{},
         "select": {},
         "on_select": {},
         "init": {},
@@ -1320,7 +1320,7 @@ curl --location 'https://localhost:3008/api/validate' \
 ### FOR FLOW 6-c (Liquidation)
 
 ```shell
-curl --location 'https://localhost:3008/api/validate' \
+curl --location 'http://localhost:3008/api/validate' \
 --header 'Content-Type: application/json' \
 --data '{
     "domain": "",
@@ -1328,8 +1328,8 @@ curl --location 'https://localhost:3008/api/validate' \
     "bap_id": "BUYER_APP_SUBSCRIBER_ID",
     "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
-        "search": {},
-        "on_search":{},
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh":{},
         "select": {},
         "on_select": {},
         "init": {},

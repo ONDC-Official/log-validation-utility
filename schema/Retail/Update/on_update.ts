@@ -74,7 +74,10 @@ export const onUpdateSchema = {
         order: {
           type: 'object',
           properties: {
-            id: { type: 'string' },
+            id: { type: 'string',
+            pattern: '^[a-zA-Z0-9]{1,32}$',
+            errorMessage: 'Should be alphanumeric upto 32 letters max',
+           },
             state: { type: 'string', enum: ['Created', 'Accepted', 'Cancelled', 'Completed', 'Delivered'] },
             provider: {
               type: 'object',

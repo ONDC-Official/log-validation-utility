@@ -948,6 +948,8 @@ export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAt
         }
       }
     }
+    console.log('fasdfadsfdsafa', priceAtConfirm)
+    console.log('fasdfadsfdsassfa', price + quoteTrailSum)
     if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
       const key = `invldQuoteTrailPrices`
       errorObj[key] =
@@ -967,10 +969,7 @@ export const checkQuoteTrail = (quoteTrailItems: any[], errorObj: any, selectPri
       let itemID = null
       let type = null
       for (let val of item.list) {
-        if (val.code === 'id' && !itemSet.has(val.value)) {
-          const key = `invalidID[${val.value}]`
-          errorObj[key] = `Invalid Item ID [${val.value}]provided in quote object.`
-        } else if (val.code === 'id') {
+        if (val.code === 'id') {
           itemID = val.value
           value = selectPriceMap.get(val.value)
         } else if (val.code === 'value') {
@@ -982,6 +981,10 @@ export const checkQuoteTrail = (quoteTrailItems: any[], errorObj: any, selectPri
       if (value && itemValue && value !== itemValue && type === 'item') {
         const key = `invalidPrice[${itemID}]`
         errorObj[key] = `Price mismatch for  [${itemID}] provided in quote object '[${value}]' /${constants.ON_CANCEL}`
+      }
+      if (!itemSet.has(itemID) && type === 'item') {
+        const key = `invalidItemID[${itemID}]`
+        errorObj[key] = `Item ID [${itemID}] not present in items array`
       }
     }
   } catch (error: any) {

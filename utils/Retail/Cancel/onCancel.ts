@@ -108,7 +108,13 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       // Checking for valid item ids in /on_select
       const itemsOnSelect = getValue('SelectItemList')
       const itemsList = message.order.items
-
+      const quoteobj = message.order.quote.breakup
+      quoteobj.forEach((item: any) => {
+        if (!itemsOnSelect?.includes(item['@ondc/org/item_id']) && item['@ondc/org/title_type'] === 'item') {
+          const key = `inVldItemId[${item.id}]`
+          onCnclObj[key] = `Invalid Item Id provided in quote object /${constants.ON_CANCEL}: ${item.id}`
+        }
+      })
       itemsList.forEach((item: any) => {
         if (!itemsOnSelect?.includes(item.id)) {
           const key = `inVldItemId[${item.id}]`
@@ -188,7 +194,14 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
         logger.info(`Checking for quote_trail price and item quote price sum for ${constants.ON_CANCEL}`)
         const price = Number(on_cancel.quote.price.value)
         const priceAtConfirm = Number(getValue('quotePrice'))
-        const cancelFulfillments = _.filter(on_cancel.fulfillments, { type: 'Cancel' })
+        console.log('fadfadsfdsa', priceAtConfirm)
+        let cancelFulfillments = null
+        if (flow === '5') {
+          cancelFulfillments = _.filter(on_cancel.fulfillments, { type: 'RTO' })
+        } else {
+          cancelFulfillments = _.filter(on_cancel.fulfillments, { type: 'Cancel' })
+        }
+
         if (!cancelFulfillments.length && flow === '4') {
           const key = `CancelFulfillmentMissing`
           onCnclObj[key] = `fulfillment type cancel is missing in /${constants.ON_CANCEL}`
@@ -203,6 +216,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
               }
             }
           }
+          console.log('dsfasfsadfdsacc', price + quoteTrailSum)
           if (priceAtConfirm != price + quoteTrailSum) {
             const key = `invldQuoteTrailPrices`
             onCnclObj[key] =
@@ -213,10 +227,10 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
           }
         }
       } else {
-        logger.error(`The price breakdown in brakup does not match with the total_price for ${constants.ON_CANCEL} `)
+        logger.error(`The price breakdown in brakup does not match with the total_price for ${constants.ON_CANCEL}`)
       }
     } catch (error: any) {
-      logger.error(`!!Error while Comparing Quote_Trail object for /${constants.ON_CANCEL}`)
+      logger.error(`!!Error while Comparing Quote_Trail object for /${constants.ON_CANCEL}, ${error.stack} `)
     }
 
     try {
@@ -444,7 +458,37 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
           logger.error(`RTO object is mandatory for ${constants.ON_CANCEL}`)
           const key = `missingRTO`
           onCnclObj[key] = `RTO object is mandatory for ${constants.ON_CANCEL}`
+        } else {
+          for (let item of RTOobj) {
+            const validVal = ['RTO-Initiated', 'RTO-Delivered', 'RTO-Disposed']
+            if (!validVal.includes(item.state?.descriptor?.code)) {
+              logger.error(
+                `Delivery state should be one of ['RTO-Initiated','RTO-Approved','RTO-Completed'] for ${constants.ON_CANCEL}`,
+              )
+              const key = `invalidState`
+              onCnclObj[key] =
+                `Delivery state should be one of ['RTO-Initiated','RTO-Approved','RTO-Completed'] for ${constants.ON_CANCEL}`
+            }
+          }
         }
+      }
+
+      try {
+        logger.info(`Checking payment object in /${constants.CONFIRM}`)
+
+        if (!_.isEqual(on_cancel.payment['@ondc/org/settlement_details'][0], getValue('sttlmntdtls'))) {
+          onCnclObj.sttlmntdtls = `payment settlement_details mismatch in /${constants.ON_INIT} & /${constants.CONFIRM}`
+        }
+
+        if (!on_cancel.hasOwnProperty('created_at') || !on_cancel.hasOwnProperty('updated_at')) {
+          onCnclObj.ordertmpstmp = `order created and updated timestamps are mandatory in /${constants.CONFIRM}`
+        } else {
+          if (!_.isEqual(on_cancel.created_at, context.timestamp)) {
+            onCnclObj.orderCrtd = `order.created_at timestamp should match context.timestamp`
+          }
+        }
+      } catch (error: any) {
+        logger.error(`!!Error while checking payment object in /${constants.CONFIRM}, ${error.stack}`)
       }
       if (flow === '4') {
         const Cancelobj = _.filter(on_cancel.fulfillments, { type: 'Cancel' })
@@ -461,6 +505,11 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       let rto_id_flag = 0
       let initiated_by_flag = 0
       for (let item of DeliveryObj) {
+        if (item.state?.descriptor?.code !== 'Cancelled') {
+          logger.error(`Delivery state should be cancelled for ${constants.ON_CANCEL}`)
+          const key = `invalidState`
+          onCnclObj[key] = `Delivery state should be Cancelled for ${constants.ON_CANCEL}`
+        }
         const cancel_request = _.filter(item.tags, { code: 'cancel_request' })
         if (!cancel_request.length) {
           logger.error(`Cancel Request is mandatory for ${constants.ON_CANCEL}`)

@@ -242,6 +242,13 @@ export const checkOnUpdate = (data: any) => {
             quoteItemSet.add(item.id)
           }
         })
+        on_update.quote.breakup.forEach((item: any) => {
+          if (!updateItemList.includes(item['@ondc/org/item_id']) && item['"@ondc/org/title_type"'] === 'item') {
+            const key = `inVldQuoteItemId[${item['@ondc/org/item_id']}]`
+            onupdtObj[key] =
+              `Invalid item ID provided in quote object : ${item['@ondc/org/item_id']}should be present in /${constants.UPDATE} API`
+          }
+        })
       }
     } catch (error: any) {
       logger.error(`Error while checking for item IDs for /${constants.ON_UPDATE}, ${error.stack}`)

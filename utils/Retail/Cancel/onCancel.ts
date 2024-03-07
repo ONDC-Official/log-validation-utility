@@ -436,102 +436,80 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       }
     }
 
-    if (flow === '5') {
-      try {
-        logger.info(`Checking for preCancel_state in fulfillments of /${constants.ON_CANCEL}`)
-        const fulfillments = message.order.fulfillments
-        const deliveryFulfillments = _.filter(on_cancel.fulfillments, { type: 'Delivery' })
-        if (!deliveryFulfillments.length) {
-          const key = `DeliveryFulfillmentMissing`
-          onCnclObj[key] = `fulfillment type Delivery is missing in /${constants.ON_CANCEL}`
-        }
-        const op = _.some(fulfillments, { type: 'Delivery', tags: [{ code: 'precancel_state' }] })
-        const cnclReqObj = _.find(fulfillments, { type: 'Delivery', tags: [{ code: 'cancel_request' }] })
-        cnclReqObj?.tags.forEach((tag: any) => {
-          if (tag.code === 'cancel_request') {
-            tag.list.forEach((i: any) => {
-              if (i.code === 'reason_id') {
-                if (i.value !== on_cancel.cancellation.reason.id) {
-                  onCnclObj['reason_id'] =
-                    `reason_id in cancel_request does not match with cancellation objext in /${constants.ON_CANCEL}`
-                }
-              }
-            })
-          }
-        })
-
-        if (!op) {
-          const key = `invldPrecancelState`
-          onCnclObj[key] = `precancel_state not found in fulfillments for ${constants.ON_CANCEL}`
-          logger.error(`precancel_state not found in fulfillments for ${constants.ON_CANCEL}`)
-        }
-      } catch (error) {
-        logger.error(`!!Error while Checking for precancel_state for /${constants.ON_CANCEL}`)
-      }
-
-      try {
-        // Checking for igm_request inside fulfillments for /on_cancel
-        const DeliveryObj = _.filter(on_cancel.fulfillments, { type: 'Delivery' })
+    try {
+      // Checking for igm_request inside fulfillments for /on_cancel
+      if (flow === '5') {
         const RTOobj = _.filter(on_cancel.fulfillments, { type: 'RTO' })
         if (!RTOobj.length) {
           logger.error(`RTO object is mandatory for ${constants.ON_CANCEL}`)
           const key = `missingRTO`
           onCnclObj[key] = `RTO object is mandatory for ${constants.ON_CANCEL}`
         }
-        let reasonID_flag = 0
-        let rto_id_flag = 0
-        let initiated_by_flag = 0
-        for (let item of DeliveryObj) {
-          const cancel_request = _.filter(item.tags, { code: 'cancel_request' })
-          if (!cancel_request.length) {
-            logger.error(`Cancel Request is mandatory for ${constants.ON_CANCEL}`)
-            const key = `missingCancelRequest`
-            onCnclObj[key] = `Cancel Request is mandatory for ${constants.ON_CANCEL}`
-          } else {
-            cancel_request.forEach((tag: any) => {
-              if (!tag.list) {
-                const key = `missingListObj`
-                onCnclObj[key] = `List object is mandatory for cancel_request`
-                return
-              }
-              tag.list.some((i: any) => {
-                if (i.code === 'reason_id') {
-                  reasonID_flag = 1
-                }
-                if (i.code === 'rto_id') {
-                  rto_id_flag = 1
-                }
-                if (i.code === 'initiated_by') {
-                  initiated_by_flag = 1
-                }
-              })
-            })
-          }
-          const igm_request = _.filter(item.tags, { code: 'igm_request' })
-          if (!igm_request) {
-            logger.error(`IGM Request is mandatory for ${constants.ON_CANCEL}`)
-            const key = `missingIGMRequest`
-            onCnclObj[key] = `IGM Request is mandatory for ${constants.ON_CANCEL}`
-          }
-        }
-        if (!reasonID_flag) {
-          logger.error(`Reason ID is mandatory field for ${constants.ON_CANCEL}`)
-          let key = `missingReasonID`
-          onCnclObj[key] = `Reason ID is mandatory field for ${constants.ON_CANCEL}`
-        }
-        if (!rto_id_flag) {
-          logger.error(`RTO Id is mandatory field for ${constants.ON_CANCEL}`)
-          let key = `missingRTOvalues`
-          onCnclObj[key] = `RTO Id is mandatory field for ${constants.ON_CANCEL}`
-        }
-        if (!initiated_by_flag) {
-          logger.error(`Initiated_by is mandatory field for ${constants.ON_CANCEL}`)
-          let key = `missingInitiatedBy`
-          onCnclObj[key] = `Initiated_by is mandatory field for ${constants.ON_CANCEL}`
-        }
-      } catch (error: any) {
-        logger.error(`!!Error while checking Reason ID ,RTO Id and Initiated_by for ${constants.ON_CANCEL}`)
       }
+      if (flow === '4') {
+        const Cancelobj = _.filter(on_cancel.fulfillments, { type: 'Cancel' })
+        if (!Cancelobj.length) {
+          logger.error(`Cancel object is mandatory for ${constants.ON_CANCEL}`)
+          const key = `missingCancel`
+          onCnclObj[key] = `Cancel object is mandatory for ${constants.ON_CANCEL}`
+        }
+      }
+
+      const DeliveryObj = _.filter(on_cancel.fulfillments, { type: 'Delivery' })
+
+      let reasonID_flag = 0
+      let rto_id_flag = 0
+      let initiated_by_flag = 0
+      for (let item of DeliveryObj) {
+        const cancel_request = _.filter(item.tags, { code: 'cancel_request' })
+        if (!cancel_request.length) {
+          logger.error(`Cancel Request is mandatory for ${constants.ON_CANCEL}`)
+          const key = `missingCancelRequest`
+          onCnclObj[key] = `Cancel Request is mandatory for ${constants.ON_CANCEL}`
+        } else {
+          cancel_request.forEach((tag: any) => {
+            if (!tag.list) {
+              const key = `missingListObj`
+              onCnclObj[key] = `List object is mandatory for cancel_request`
+              return
+            }
+            tag.list.some((i: any) => {
+              if (i.code === 'reason_id') {
+                reasonID_flag = 1
+              }
+              if (i.code === 'rto_id') {
+                rto_id_flag = 1
+              }
+              if (i.code === 'initiated_by') {
+                initiated_by_flag = 1
+              }
+            })
+          })
+        }
+        const preCancelObj = _.filter(item.tags, { code: 'pre_cancel' })
+        if (!preCancelObj.length) {
+          logger.error(`Pre Cancel is mandatory for ${constants.ON_CANCEL}`)
+          const key = `missingPreCancel`
+          onCnclObj[key] = `Pre Cancel is mandatory for ${constants.ON_CANCEL}`
+        }
+      }
+      if (!reasonID_flag) {
+        logger.error(`Reason ID is mandatory field for ${constants.ON_CANCEL}`)
+        let key = `missingReasonID`
+        onCnclObj[key] = `Reason ID is mandatory field for ${constants.ON_CANCEL}`
+      }
+      if (!rto_id_flag && flow === '5') {
+        logger.error(`RTO Id is mandatory field for ${constants.ON_CANCEL}`)
+        let key = `missingRTOvalues`
+        onCnclObj[key] = `RTO Id is mandatory field for ${constants.ON_CANCEL}`
+      }
+      if (!initiated_by_flag) {
+        logger.error(`Initiated_by is mandatory field for ${constants.ON_CANCEL}`)
+        let key = `missingInitiatedBy`
+        onCnclObj[key] = `Initiated_by is mandatory field for ${constants.ON_CANCEL}`
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking Reason ID ,RTO Id and Initiated_by for ${constants.ON_CANCEL}`)
     }
 
     return onCnclObj

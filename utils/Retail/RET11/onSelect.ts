@@ -104,7 +104,7 @@ export const checkOnSelect = (data: any) => {
     })
     setValue('SelectItemList', selectItems)
   } catch (error: any) {
-    logger.error(`Error while checking for item IDs for /${constants.ON_SELECT}`, error.stack)
+    logger.error(`Error while checking for item IDs for /${constants.ON_SELECT}, ${error.stack}`)
   }
 
   try {

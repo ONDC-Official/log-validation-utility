@@ -115,6 +115,19 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
     const on_init = message.order
 
+    try {
+      logger.info(`Checking provider id and location in /${constants.CONFIRM}`)
+      if (on_init.provider.id != getValue('providerId')) {
+        onInitObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.CONFIRM}`
+      }
+
+      if (on_init.provider.locations[0].id != getValue('providerLoc')) {
+        onInitObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.ON_SEARCH} and /${constants.CONFIRM}`
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking provider id and location in /${constants.CONFIRM}, ${error.stack}`)
+    }
+
     // checking for tax_number in tags
     try {
       logger.info(`Checking for tax_number for ${constants.ON_INIT}`)

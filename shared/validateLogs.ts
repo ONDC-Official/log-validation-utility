@@ -82,9 +82,9 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
     const flowThreeSequence = [
       ApiSequence.SEARCH,
       ApiSequence.ON_SEARCH,
-      ApiSequence.SELECT_OUT_OF_STOCK,
-      ApiSequence.ON_SELECT_OUT_OF_STOCK,
       ApiSequence.SELECT,
+      ApiSequence.ON_SELECT_OUT_OF_STOCK,
+      ApiSequence.SELECT_OUT_OF_STOCK,
       ApiSequence.ON_SELECT,
       ApiSequence.INIT,
       ApiSequence.ON_INIT,
@@ -170,6 +170,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         apiSequence.forEach((apiSeq: any) => {
           if (data[apiSeq]) {
             const resp = getResponse(apiSeq, data[apiSeq], msgIdSet)
+            console.log(msgIdSet,apiSeq)
             if (!_.isEmpty(resp)) {
               logReport = { ...logReport, [apiSeq]: resp }
             }

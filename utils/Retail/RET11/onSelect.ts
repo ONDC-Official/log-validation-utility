@@ -51,7 +51,6 @@ export const checkOnSelect = (data: any) => {
   }
 
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-  const select: any = getValue(`${ApiSequence.SELECT}`)
   const searchMessage: any = getValue(`${ApiSequence.ON_SEARCH}_message`)
 
   try {
@@ -65,7 +64,7 @@ export const checkOnSelect = (data: any) => {
 
   try {
     logger.info(`Comparing timestamp of /${constants.SELECT} and /${constants.ON_SELECT}`)
-    const tmpstmp = select.context.timestamp
+    const tmpstmp = getValue('tmpstmp')
     if (_.gte(tmpstmp, context.timestamp)) {
       errorObj.tmpstmp = `Timestamp for /${constants.SELECT} api cannot be greater than or equal to /${constants.ON_SELECT} api`
     } else {
@@ -84,8 +83,12 @@ export const checkOnSelect = (data: any) => {
   }
 
   try {
+  } catch (error: any) {}
+
+  try {
     logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
-    if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
+    const txnId = getValue('txnId')
+    if (!_.isEqual(txnId, context.transaction_id)) {
       errorObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
     }
   } catch (error: any) {
@@ -96,7 +99,8 @@ export const checkOnSelect = (data: any) => {
 
   try {
     logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
-    if (!_.isEqual(select.context.message_id, context.message_id)) {
+    const msgId = getValue('msgId')
+    if (!_.isEqual(msgId, context.message_id)) {
       errorObj.msgId = `Message Id for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
     }
   } catch (error: any) {
@@ -169,11 +173,11 @@ export const checkOnSelect = (data: any) => {
       const tat = isoDurToSec(ff['@ondc/org/TAT'])
 
       if (tat < tts) {
-        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be less than @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
+        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be less than @ondc/org/time_to_ship (O2S) in /${constants.ON_SEARCH}`
       }
 
       if (tat === tts) {
-        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be equal to @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
+        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be equal to @ondc/org/time_to_ship (O2S) in /${constants.ON_SEARCH}`
       }
 
       logger.info(tat, 'asdfasdf', tts)
@@ -487,6 +491,8 @@ export const checkOnSelect = (data: any) => {
   } catch (error: any) {
     logger.error(`!Error while comparing fulfillmentID with providerID in /${constants.ON_SELECT}, ${error.stack}`)
   }
+
+  setValue('quote_price', on_select.quote.price.value)
 
   return Object.keys(errorObj).length > 0 && errorObj
 }

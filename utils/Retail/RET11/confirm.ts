@@ -13,7 +13,7 @@ import {
   areGSTNumbersDifferent,
   compareObjects,
   sumQuoteBreakUp,
-  payment_status
+  payment_status,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -30,7 +30,6 @@ export const checkConfirm = (data: any) => {
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const select: any = getValue(`${ApiSequence.SELECT}`)
     const parentItemIdSet: any = getValue(`parentItemIdSet`)
     const select_customIdArray: any = getValue(`select_customIdArray`)
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.CONFIRM, data)
@@ -76,7 +75,7 @@ export const checkConfirm = (data: any) => {
 
     try {
       logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.CONFIRM}`)
-      if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
+      if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
         cnfrmObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
       }
     } catch (error: any) {
@@ -148,7 +147,7 @@ export const checkConfirm = (data: any) => {
           if (confirm.items[i].quantity.count != itemsIdList[itemId]) {
             itemsIdList[itemId] = confirm.items[i].quantity.count //changing the item quantity as per the order confirmation
             itemsCountChange = true
-            cnfrmObj.cntErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
+            cnfrmObj.countErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
           }
         }
 
@@ -367,8 +366,8 @@ export const checkConfirm = (data: any) => {
     try {
       logger.info(`Checking if transaction_id is present in message.order.payment`)
       const payment = confirm.payment
-      const status = payment_status(payment);
-      if(!status){
+      const status = payment_status(payment)
+      if (!status) {
         cnfrmObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
       }
     } catch (err: any) {

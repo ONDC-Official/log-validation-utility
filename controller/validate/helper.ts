@@ -26,10 +26,22 @@ const getEnumForDomain = (path: string) => {
   if (path.includes('igm')) return DOMAIN.IGM
   throw new Error('Domain could not be detected')
 }
-const validateRetail = async (domain: string, payload: string, version: string, flow: string) => {
-  let response
+const validateRetail = async (
+  domain: string,
+  payload: string,
+  version: string,
+  flow: string,
+  bap_id: string,
+  bpp_id: string,
+) => {
+  let response: any
   let success = false
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
+
+  if (!bap_id || !bpp_id || !flow) {
+    message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_PAYLOAD
+    return { response, success, message }
+  }
   switch (version) {
     case '1.2.0':
       response = await validateLogs(payload, domain, flow)

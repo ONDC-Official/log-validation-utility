@@ -19,8 +19,7 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
       return { missingFields: '/context, /message, is missing or empty' }
     }
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const schemaValidation = validateSchema('RET11', constants.ON_STATUS, data)
-    const select: any = getValue(`${ApiSequence.SELECT}`)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_STATUS, data)
     const contextRes: any = checkContext(context, constants.ON_STATUS)
 
     if (schemaValidation !== 'error') {
@@ -75,7 +74,7 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
 
     try {
       logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_STATUS}`)
-      if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
+      if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
         onStatusObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
       }
     } catch (error: any) {
@@ -163,42 +162,52 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
           const pickUpTime = fulfillment.start.time.timestamp
           const deliveryTime = fulfillment.end.time.timestamp
           deliveryTimestamps[fulfillment.id] = deliveryTime
-
           try {
-            //checking delivery time matching with context timestamp
-            if (!_.lte(deliveryTime, contextTime)) {
-              onStatusObj.deliveryTime = `delivery timestamp should match context/timestamp and can't be future dated`
+            //checking delivery time exists or not
+            if (!deliveryTime) {
+              onStatusObj.deliverytime = `delivery timestamp is missing`
+            } else {
+              try {
+                //checking delivery time matching with context timestamp
+                if (!_.lte(deliveryTime, contextTime)) {
+                  onStatusObj.deliveryTime = `delivery timestamp should match context/timestamp and can't be future dated; as delivery timestamp is ${deliveryTime} and context timestamp is ${contextTime}`
+                }
+              } catch (error) {
+                logger.error(
+                  `!!Error while checking delivery time matching with context timestamp in /${constants.ON_STATUS}_${state}`,
+                  error,
+                )
+              }
+              try {
+                //checking delivery time and pickup time
+                if (_.gte(pickUpTime, deliveryTime)) {
+                  onStatusObj.delPickTime = `delivery timestamp (/end/time/timestamp) can't be less than or equal to the pickup timestamp (start/time/timestamp)`
+                }
+              } catch (error) {
+                logger.error(
+                  `!!Error while checking delivery time and pickup time in /${constants.ON_STATUS}_${state}`,
+                  error,
+                )
+              }
+
+              try {
+                //checking order/updated_at timestamp
+                if (!_.gte(on_status.updated_at, deliveryTime)) {
+                  onStatusObj.updatedAt = `order/updated_at timestamp can't be less than the delivery time`
+                }
+
+                if (!_.gte(contextTime, on_status.updated_at)) {
+                  onStatusObj.updatedAtTime = `order/updated_at timestamp can't be future dated (should match context/timestamp)`
+                }
+              } catch (error) {
+                logger.info(
+                  `!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`,
+                  error,
+                )
+              }
             }
           } catch (error) {
-            logger.error(
-              `!!Error while checking delivery time matching with context timestamp in /${constants.ON_STATUS}_${state}`,
-              error,
-            )
-          }
-
-          try {
-            //checking delivery time and pickup time
-            if (_.gte(pickUpTime, deliveryTime)) {
-              onStatusObj.delPickTime = `delivery timestamp (/end/time/timestamp) can't be less than or equal to the pickup timestamp (start/time/timestamp)`
-            }
-          } catch (error) {
-            logger.error(
-              `!!Error while checking delivery time and pickup time in /${constants.ON_STATUS}_${state}`,
-              error,
-            )
-          }
-
-          try {
-            //checking order/updated_at timestamp
-            if (!_.gte(on_status.updated_at, deliveryTime)) {
-              onStatusObj.updatedAt = `order/updated_at timestamp can't be less than the delivery time`
-            }
-
-            if (!_.gte(contextTime, on_status.updated_at)) {
-              onStatusObj.updatedAtTime = `order/updated_at timestamp can't be future dated (should match context/timestamp)`
-            }
-          } catch (error) {
-            logger.info(`!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`, error)
+            logger.error(`!!Error delivery timestamp is missing /${constants.ON_STATUS}_${state}`, error)
           }
         }
 

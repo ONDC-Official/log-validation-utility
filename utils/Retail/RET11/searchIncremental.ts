@@ -22,11 +22,10 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
     if (!message || !context || !message.intent || isObjectEmpty(message) || isObjectEmpty(message.intent)) {
       return { missingFields: '/context, /message, /intent or /message/intent is missing or empty' }
     }
-    const schemaValidation = validateSchema(context.domain.split(':')[1] || 'RET11', constants.SEARCH, data)
+    const schemaValidation = validateSchema(context.domain.split(':')[1] || 'RET11', constants.INC_SEARCH, data)
     const contextRes: any = checkContext(context, constants.SEARCH)
     setValue(`${ApiSequence.INC_SEARCH}_context`, context)
     msgIdSet.add(context.message_id)
-
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
@@ -72,7 +71,10 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
     }
 
     if (message.intent?.tags) {
-      errorObj.intent = { ...errorObj.intent, tags: checkTagConditions(message, context) }
+      let tags = checkTagConditions(message, context)
+      if (tags) {
+        errorObj.intent = { ...errorObj.intent, tags }
+      }
     } else {
       errorObj.intent = '/message/intent should have a required property tags'
     }

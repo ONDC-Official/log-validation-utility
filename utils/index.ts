@@ -302,7 +302,6 @@ export const checkTagConditions = (message: any, context: any) => {
   } else {
     tags.push('/message/intent should have a required property tags')
   }
-
   return tags.length ? tags : null
 }
 
@@ -476,6 +475,7 @@ export const checkBppIdOrBapId = (input: string, type?: string) => {
       input.startsWith('http')
     )
       return `context/${type}_id should not be a url`
+    return
   } catch (e) {
     return e
   }
@@ -931,4 +931,26 @@ export const payment_status = (payment: any) => {
     }
   }
   return true
+}
+
+export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAtConfirm: number, errorObj: any) => {
+  for (let obj of fulfillmentArr) {
+    let quoteTrailSum = 0
+    const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
+    for (let item of quoteTrailItems) {
+      for (let val of item.list) {
+        if (val.code === 'value') {
+          quoteTrailSum += Math.abs(val.value)
+        }
+      }
+    }
+    if (priceAtConfirm != price + quoteTrailSum) {
+      const key = `invldQuoteTrailPrices`
+      errorObj[key] =
+        `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM}`
+      logger.error(
+        `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM} `,
+      )
+    }
+  }
 }

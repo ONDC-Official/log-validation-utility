@@ -236,10 +236,6 @@ export const onConfirmSchema = {
                     type: 'string',
                     minLength: 1,
                   },
-                  '@ondc/org/TAT': {
-                    type: 'string',
-                    minLength: 1,
-                  },
                   state: {
                     type: 'object',
                     properties: {
@@ -467,16 +463,7 @@ export const onConfirmSchema = {
                     required: ['location', 'person', 'contact'],
                   },
                 },
-                required: [
-                  'id',
-                  '@ondc/org/provider_name',
-                  '@ondc/org/TAT',
-                  'state',
-                  'type',
-                  'tracking',
-                  'start',
-                  'end',
-                ],
+                required: ['id', '@ondc/org/provider_name', 'state', 'type', 'tracking', 'start', 'end'],
               },
             },
             quote: {
@@ -623,12 +610,15 @@ export const onConfirmSchema = {
                 },
                 status: {
                   type: 'string',
+                  enum: ['PAID', 'NOT-PAID'],
                 },
                 type: {
                   type: 'string',
+                  enum: ['ON-ORDER', 'ON-FULFILLMENT'],
                 },
                 collected_by: {
                   type: 'string',
+                  enum: ['BAP', 'BPP'],
                 },
                 '@ondc/org/buyer_app_finder_fee_type': {
                   type: 'string',
@@ -638,6 +628,7 @@ export const onConfirmSchema = {
                 },
                 '@ondc/org/settlement_basis': {
                   type: 'string',
+                  enum: ['shipment', 'delivery', 'return_window_expiry'],
                 },
                 '@ondc/org/settlement_window': {
                   type: 'string',
@@ -735,25 +726,81 @@ export const onConfirmSchema = {
                 properties: {
                   code: {
                     type: 'string',
+                    enum: ['bpp_terms', 'bap_terms'],
                   },
                   list: {
                     type: 'array',
                     items: {
-                      type: 'object',
-                      properties: {
-                        code: {
-                          type: 'string',
+                      allOf: [
+                        {
+                          if: {
+                            properties: {
+                              code: { const: 'np_type' },
+                            },
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                                enum: ['np_type'],
+                              },
+                              value: {
+                                type: 'string',
+                                enum: ['MSN', 'ISN'],
+                              },
+                            },
+                            required: ['code', 'value'],
+                            additionalProperties: false,
+                          },
                         },
-                        value: {
-                          type: 'string',
-                          minLength: 1,
+                        {
+                          if: {
+                            properties: {
+                              code: { const: 'tax_number' },
+                            },
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                              },
+                              value: {
+                                type: 'string',
+                              },
+                            },
+                            required: ['code', 'value'],
+                            additionalProperties: false,
+                          },
                         },
-                      },
-                      required: ['code', 'value'],
+                        {
+                          if: {
+                            properties: {
+                              code: { const: 'provider_tax_number' },
+                            },
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                              },
+                              value: {
+                                type: 'string',
+                              },
+                            },
+                            required: ['code', 'value'],
+                            additionalProperties: false,
+                          },
+                        },
+                      ],
                     },
+                    minItems: 1,
                   },
                 },
                 required: ['code', 'list'],
+                additionalProperties: false,
               },
             },
             created_at: {

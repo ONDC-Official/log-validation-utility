@@ -1,22 +1,57 @@
 export const updateSchema = {
-  $schema: 'http://json-schema.org/draft-07/schema#',
   type: 'object',
   properties: {
     context: {
       type: 'object',
       properties: {
-        domain: { type: 'string', minLength: 1 },
-        action: { type: 'string', const: 'update' },
-        core_version: { type: 'string', const: '1.2.0' },
-        bap_id: { type: 'string', minLength: 1 },
-        bap_uri: { type: 'string', format: 'uri' },
-        bpp_id: { type: 'string', minLength: 1 },
-        bpp_uri: { type: 'string', format: 'uri' },
-        transaction_id: { type: 'string', minLength: 1 },
-        message_id: { type: 'string', minLength: 1 },
-        city: { type: 'string', minLength: 1 },
-        country: { type: 'string', const: 'IND' },
-        timestamp: { type: 'string', format: 'date-time' },
+        domain: {
+          type: 'string',
+          minLength: 1,
+        },
+        country: {
+          type: 'string',
+          const: 'IND',
+        },
+        city: {
+          type: 'string',
+          minLength: 1,
+        },
+        action: {
+          type: 'string',
+          const: 'update',
+        },
+        core_version: {
+          type: 'string',
+          const: '1.2.0',
+        },
+        bap_id: {
+          type: 'string',
+          minLength: 1,
+        },
+        bap_uri: {
+          type: 'string',
+          format: 'url',
+        },
+        bpp_id: {
+          type: 'string',
+          minLength: 1,
+        },
+        bpp_uri: {
+          type: 'string',
+          format: 'url',
+        },
+        transaction_id: {
+          type: 'string',
+          minLength: 1,
+        },
+        message_id: {
+          type: 'string',
+          minLength: 1,
+        },
+        timestamp: {
+          type: 'string',
+          format: 'date-time',
+        },
       },
       required: [
         'domain',
@@ -36,20 +71,43 @@ export const updateSchema = {
     message: {
       type: 'object',
       properties: {
-        update_target: { type: 'string', const: 'payment' },
+        update_target: {
+          type: 'string',
+          enum: ['payment', 'item'],
+        },
         order: {
           type: 'object',
           properties: {
-            id: { type: 'string', minLength: 1 },
+            id: { type: 'string' },
             fulfillments: {
               type: 'array',
               items: {
                 type: 'object',
                 properties: {
-                  id: { type: 'string', minLength: 1 },
-                  type: { type: 'string', const: 'Cancel' },
+                  id: { type: 'string' },
+                  type: { type: 'string' },
+                  tags: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        code: { type: 'string' },
+                        list: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              code: { type: 'string' },
+                              value: { type: 'string' },
+                            },
+                            required: ['code', 'value'],
+                          },
+                        },
+                      },
+                      required: ['code', 'list'],
+                    },
+                  },
                 },
-                required: ['id', 'type'],
               },
             },
             payment: {
@@ -76,10 +134,9 @@ export const updateSchema = {
                   },
                 },
               },
-              required: ['@ondc/org/settlement_details'],
             },
           },
-          required: ['id', 'fulfillments', 'payment'],
+          required: ['id', 'fulfillments'],
         },
       },
       required: ['update_target', 'order'],

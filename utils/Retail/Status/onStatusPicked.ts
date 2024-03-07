@@ -19,8 +19,7 @@ export const checkOnStatusPicked = (data: any, state: string) => {
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const schemaValidation = validateSchema('RET11', constants.ON_STATUS, data)
-    const select: any = getValue(`${ApiSequence.SELECT}`)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_STATUS, data)
     const contextRes: any = checkContext(context, constants.ON_STATUS)
 
     if (schemaValidation !== 'error') {
@@ -74,7 +73,7 @@ export const checkOnStatusPicked = (data: any, state: string) => {
 
     try {
       logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_STATUS}`)
-      if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
+      if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
         onStatusObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
       }
     } catch (error: any) {
@@ -96,11 +95,10 @@ export const checkOnStatusPicked = (data: any, state: string) => {
         error,
       )
     }
-
     try {
-      logger.info(`Comparing timestamp of /${constants.ON_STATUS}_Packed and /${constants.ON_STATUS}_${state} API`)
+      logger.info(`Comparing timestamp of /${constants.ON_STATUS}_picked and /${constants.ON_STATUS}_${state} API`)
       if (_.gte(getValue('tmpstmp'), context.timestamp)) {
-        onStatusObj.inVldTmstmp = `Timestamp for /${constants.ON_STATUS}_Packed api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
+        onStatusObj.inVldTmstmp = `Timestamp for /${constants.ON_STATUS}_picked api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
       }
 
       setValue('tmpstmp', context.timestamp)
@@ -159,30 +157,36 @@ export const checkOnStatusPicked = (data: any, state: string) => {
           orderPicked = true
           const pickUpTime = fulfillment.start?.time.timestamp
           pickupTimestamps[fulfillment.id] = pickUpTime
-
-          try {
-            //checking pickup time matching with context timestamp
-            if (!_.lte(pickUpTime, contextTime)) {
-              onStatusObj.pickupTime = `pickup timestamp should match context/timestamp and can't be future dated`
-            }
-          } catch (error) {
-            logger.error(
-              `!!Error while checking pickup time matching with context timestamp in /${constants.ON_STATUS}_${state}`,
-              error,
-            )
-          }
-
-          try {
-            //checking order/updated_at timestamp
-            if (!_.gte(on_status.updated_at, pickUpTime)) {
-              onStatusObj.updatedAt = `order/updated_at timestamp can't be less than the pickup time`
+          if (!pickUpTime) {
+            onStatusObj.pickUpTime = `picked timestamp is missing`
+          } else {
+            try {
+              //checking pickup time matching with context timestamp
+              if (!_.lte(pickUpTime, contextTime)) {
+                onStatusObj.pickupTime = `pickup timestamp should match context/timestamp and can't be future dated`
+              }
+            } catch (error) {
+              logger.error(
+                `!!Error while checking pickup time matching with context timestamp in /${constants.ON_STATUS}_${state}`,
+                error,
+              )
             }
 
-            if (!_.gte(contextTime, on_status.updated_at)) {
-              onStatusObj.updatedAtTime = `order/updated_at timestamp can't be future dated (should match context/timestamp)`
+            try {
+              //checking order/updated_at timestamp
+              if (!_.gte(on_status.updated_at, pickUpTime)) {
+                onStatusObj.updatedAt = `order/updated_at timestamp can't be less than the pickup time`
+              }
+
+              if (!_.gte(contextTime, on_status.updated_at)) {
+                onStatusObj.updatedAtTime = `order/updated_at timestamp can't be future dated (should match context/timestamp)`
+              }
+            } catch (error) {
+              logger.error(
+                `!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`,
+                error,
+              )
             }
-          } catch (error) {
-            logger.error(`!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`, error)
           }
         }
 

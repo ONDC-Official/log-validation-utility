@@ -111,9 +111,11 @@ export const checkUpdate = (data: any) => {
         logger.info(`Checking for return_request object in /${constants.UPDATE}`)
         const updateItemSet: any = {}
         const updateItemList: any = []
+        const updateReturnId: any = []
+        const itemFlfllmnts: any = getValue('itemFlfllmnts')
         let return_request_obj = null
         update.fulfillments.forEach((item: any) => {
-          item.tags.forEach((tag: any) => {
+          item.tags?.forEach((tag: any) => {
             if (tag.code === 'return_request') {
               return_request_obj = tag
               let key: any = null
@@ -130,6 +132,13 @@ export const checkUpdate = (data: any) => {
                     setValue('updatedItemID', item.value)
                   }
                 }
+                if (item.code === 'id') {
+                  if (Object.values(itemFlfllmnts).includes(item.value)) {
+                    updtObj.nonUniqueReturnFulfillment = `${item.value} is not a unique fulfillment`
+                  } else {
+                    updateReturnId.push(item.value)
+                  }
+                }
                 if (item.code === 'item_quantity') {
                   let val = item.value
                   updateItemSet[key] = val
@@ -139,14 +148,13 @@ export const checkUpdate = (data: any) => {
                   let reasonId = item.value
 
                   if (!buyerCancellationRid.has(reasonId)) {
-                    logger.info(`reason_id should be a valid cancellation id (buyer app initiated)`)
-
+                    logger.error(`reason_id should be a valid cancellation id (buyer app initiated)`)
                     updtObj.updateRid = `reason_id is not a valid reason id (buyer app initiated)`
                   }
                 }
                 if (item.code === 'images') {
                   const images = item.value
-                  const allurls = images.every((img: string) => isValidUrl(img))
+                  const allurls = images?.every((img: string) => isValidUrl(img))
                   if (!allurls) {
                     logger.error(
                       `Images array should be prvided as comma seperated values and each image should be an url`,
@@ -160,6 +168,8 @@ export const checkUpdate = (data: any) => {
             }
           })
         })
+        console.log('updatesdafdsReturnId', updateReturnId)
+        setValue('updateReturnId', updateReturnId)
         setValue('updateItemSet', updateItemSet)
         setValue('updateItemList', updateItemList)
         setValue('return_request_obj', return_request_obj)

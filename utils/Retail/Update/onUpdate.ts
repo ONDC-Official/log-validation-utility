@@ -268,6 +268,7 @@ export const checkOnUpdate = (data: any) => {
       logger.error(`Error while checking for valid item prices in /on_update`)
     }
     // Compare return_request object
+
     if (flow === '6-b') {
       // Checking for quote_trail price and item quote price
       try {

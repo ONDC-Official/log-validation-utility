@@ -130,12 +130,15 @@ export const checkUpdate = (data: any) => {
                     updateItemSet[item.value] = item.value
                     updateItemList.push(item.value)
                     setValue('updatedItemID', item.value)
-                  }                 
-                }
-                if(item.code === 'id' && Object.values(itemFlfllmnts).includes(item.value)){
-                    updateReturnId.push(item.value)
-                    updtObj.nonUniqueReturnFulfillment = `${item.value} is not a unique fulfillment`
                   }
+                }
+                if (item.code === 'id') {
+                  if (Object.values(itemFlfllmnts).includes(item.value)) {
+                    updtObj.nonUniqueReturnFulfillment = `${item.value} is not a unique fulfillment`
+                  } else {
+                    updateReturnId.push(item.value)
+                  }
+                }
                 if (item.code === 'item_quantity') {
                   let val = item.value
                   updateItemSet[key] = val
@@ -151,7 +154,7 @@ export const checkUpdate = (data: any) => {
                 }
                 if (item.code === 'images') {
                   const images = item.value
-                  const allurls = images.every((img: string) => isValidUrl(img))
+                  const allurls = images?.every((img: string) => isValidUrl(img))
                   if (!allurls) {
                     logger.error(
                       `Images array should be prvided as comma seperated values and each image should be an url`,
@@ -165,7 +168,8 @@ export const checkUpdate = (data: any) => {
             }
           })
         })
-        setValue('updateReturnId',updateReturnId)
+        console.log('updatesdafdsReturnId', updateReturnId)
+        setValue('updateReturnId', updateReturnId)
         setValue('updateItemSet', updateItemSet)
         setValue('updateItemList', updateItemList)
         setValue('return_request_obj', return_request_obj)

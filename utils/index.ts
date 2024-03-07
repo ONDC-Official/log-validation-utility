@@ -969,12 +969,12 @@ export const checkQuoteTrail = (quoteTrailItems: any[], errorObj: any, selectPri
       for (let val of item.list) {
         if (val.code === 'id' && !itemSet.has(val.value)) {
           const key = `invalidID[${val.value}]`
-          errorObj[key] = `Invalid Item ID [${val.value}]provided in quote object in /${constants.ON_CANCEL}`
+          errorObj[key] = `Invalid Item ID [${val.value}]provided in quote object.`
         } else if (val.code === 'id') {
           itemID = val.value
           value = selectPriceMap.get(val.value)
         } else if (val.code === 'value') {
-          itemValue = Math.abs(parseInt(val.value))
+          itemValue = Math.abs(parseFloat(val.value))
         } else if (val.code === 'type') {
           type = val.value
         }

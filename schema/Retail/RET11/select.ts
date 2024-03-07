@@ -145,7 +145,7 @@ export const FnBselectSchema = {
                     },
                   },
                 },
-                required: ['id', 'location_id'],
+                required: ['id', 'location_id','quantity'],
               },
             },
             fulfillments: {

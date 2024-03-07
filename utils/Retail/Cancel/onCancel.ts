@@ -486,7 +486,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
             })
           })
         }
-        const preCancelObj = _.filter(item.tags, { code: 'pre_cancel' })
+        const preCancelObj = _.filter(item.tags, { code: 'precancel_state' })
         if (!preCancelObj.length) {
           logger.error(`Pre Cancel is mandatory for ${constants.ON_CANCEL}`)
           const key = `missingPreCancel`

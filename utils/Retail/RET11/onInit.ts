@@ -205,7 +205,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         const len = billingErrors.length
         while (i < len) {
           const key = `billingErr${i}`
-          onInitObj[key] = `${billingErrors[i]}`
+          onInitObj[key] = `${billingErrors[i]} when compared with init billing object`
           i++
         }
       }

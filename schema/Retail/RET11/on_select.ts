@@ -130,7 +130,7 @@ export const FnBonSelectSchema = {
                     },
                   },
                 },
-                required: ['id', 'fulfillment_id', 'quantity'],
+                required: ['id', 'fulfillment_id'],
               },
             },
             fulfillments: {

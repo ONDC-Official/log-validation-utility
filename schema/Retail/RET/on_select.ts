@@ -123,7 +123,7 @@ export const onSelectSchema = {
                     },
                   },
                 },
-                required: ['id', 'fulfillment_id', 'quantity'],
+                required: ['id', 'fulfillment_id'],
               },
             },
             fulfillments: {

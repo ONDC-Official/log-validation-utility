@@ -228,7 +228,7 @@ export const checkOnConfirm = (data: any) => {
         const len = billingErrors.length
         while (i < len) {
           const key = `billingErr${i}`
-          onCnfrmObj[key] = `${billingErrors[i]}`
+          onCnfrmObj[key] = `${billingErrors[i] } when compared with init billing object`
           i++
         }
       }

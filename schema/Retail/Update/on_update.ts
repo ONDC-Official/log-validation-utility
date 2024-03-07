@@ -74,7 +74,10 @@ export const onUpdateSchema = {
         order: {
           type: 'object',
           properties: {
-            id: { type: 'string' },
+            id: { type: 'string',
+            pattern: '^[a-zA-Z0-9]{1,32}$',
+            errorMessage: 'Should be alphanumeric upto 32 letters max',
+           },
             state: { type: 'string', enum: ['Created', 'Accepted', 'Cancelled', 'Completed', 'Delivered'] },
             provider: {
               type: 'object',
@@ -228,7 +231,9 @@ export const onUpdateSchema = {
                       contact: {
                         type: 'object',
                         properties: {
-                          phone: { type: 'string' },
+                          phone: { type: 'string' ,                 
+                          minLength: 10,
+                          maxLength: 11,},
                           email: { type: 'string', format: 'email' },
                         },
                         required: ['phone', 'email'],
@@ -288,7 +293,9 @@ export const onUpdateSchema = {
                       contact: {
                         type: 'object',
                         properties: {
-                          phone: { type: 'string' },
+                          phone: { type: 'string' ,                  
+                          minLength: 10,
+                          maxLength: 11,},
                           email: { type: 'string', format: 'email' },
                         },
                       },

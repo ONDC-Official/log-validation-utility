@@ -4,9 +4,9 @@ import {
   validateSchema,
   isObjectEmpty,
   checkContext,
-  isoDurToSec,
   checkBppIdOrBapId,
   findItemByItemType,
+  isoDurToSec,
 } from '../../../utils'
 import _ from 'lodash'
 import { logger } from '../../../shared/logger'
@@ -37,6 +37,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   const schemaValidation = validateSchema(context.domain.split(':')[1], constants.SELECT, data)
 
   const contextRes: any = checkContext(context, constants.SELECT)
+  const onSearch: any = getValue(`${ApiSequence.ON_SEARCH}`)
   msgIdSet.add(context.message_id)
 
   const errorObj: any = {}
@@ -66,10 +67,21 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     Object.assign(errorObj, contextRes.ERRORS)
   }
 
+  const select = message.order
+
   setValue(`${ApiSequence.SELECT}`, data)
+  setValue('providerId', select.provider.id)
+  setValue('providerLoc', select.provider.locations[0].id)
+  setValue('items', select.items)
 
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
   const onSearchContext: any = getValue(`${ApiSequence.ON_SEARCH}_context`)
+  let providerOnSelect = null
+  const itemIdArray: any[] = []
+  const customIdArray: any[] = []
+  const itemsOnSelect: any = []
+  const itemMapper: any = {}
+  const parentItemIdSet = new Set()
 
   try {
     logger.info(`Comparing city of /${constants.ON_SEARCH} and /${constants.SELECT}`)
@@ -116,235 +128,239 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   }
 
   try {
-    const customIdArray: any[] = []
-    const itemIdArray: any[] = []
-    const select = message.order
-    const onSearch: any = getValue(`${ApiSequence.ON_SEARCH}`)
+    logger.info(`Storing item IDs and thier count in /${constants.SELECT}`)
+    const itemsOnSearch: any = getValue(`${ApiSequence.ON_SEARCH}itemsId`)
+    console.log('iadfafa', itemsOnSearch)
 
+    if (!itemsOnSearch?.length) {
+      errorObj.invalidItems = `No Items found on ${constants.ON_SEARCH} API`
+    }
+
+    select.items.forEach((item: { id: string | number; quantity: { count: number } }) => {
+      if (!itemsOnSearch?.includes(item.id)) {
+        errorObj[`invalidItemId[${item.id}]`] = `Invalid item found in /${constants.SELECT} id: ${item.id}`
+      }
+      itemIdArray.push(item.id)
+      itemsOnSelect.push(item.id)
+      itemsIdList[item.id] = item.quantity.count
+    })
+    setValue('itemsIdList', itemsIdList)
+    setValue('SelectItemList', itemsOnSelect)
+  } catch (error: any) {
+    logger.error(`Error while storing item IDs in /${constants.SELECT}, ${error.stack}`)
+  }
+
+  try {
+    logger.info(`Checking for GPS precision in /${constants.SELECT}`)
+    select.fulfillments?.forEach((ff: any) => {
+      if (ff.hasOwnProperty('end')) {
+        setValue('buyerGps', ff.end?.location?.gps)
+        setValue('buyerAddr', ff.end?.location?.address?.area_code)
+
+        const gps = ff.end?.location?.gps?.split(',')
+        const gpsLat: string = gps[0]
+        Array.from(gpsLat).forEach((char: any) => {
+          if (char !== '.' && isNaN(parseInt(char))) {
+            errorObj.LatgpsErr = `fulfillments location.gps is not as per the API contract`
+          }
+        })
+        const gpsLong = gps[1]
+        Array.from(gpsLong).forEach((char: any) => {
+          if (char !== '.' && isNaN(parseInt(char))) {
+            errorObj.LongGpsErr = `fulfillments location.gps is not as per the API contract`
+          }
+        })
+        if (!gpsLat || !gpsLong) {
+          errorObj.gpsErr = `fulfillments location.gps is not as per the API contract`
+        }
+        if (!ff.end.location.address.hasOwnProperty('area_code')) {
+          errorObj.areaCode = `address.area_code is required property in /${constants.SELECT}`
+        }
+      }
+    })
+  } catch (error: any) {
+    logger.error(`!!Error while checking GPS Precision in /${constants.SELECT}, ${error.stack}`)
+  }
+
+  try {
+    logger.info(`Checking for valid provider in /${constants.ON_SEARCH} and /${constants.SELECT}`)
     let provider = onSearch?.message?.catalog['bpp/providers'].filter(
       (provider: { id: any }) => provider.id === select.provider.id,
     )
-    if (provider.length === 0) {
+
+    if (provider?.length === 0) {
       errorObj.providerId = `provider with provider.id: ${select.provider.id} does not exist in on_search`
-    }
-    if (provider.time && provider[0].time.label === 'disable') {
-      errorObj.disbledProvider = `provider with provider.id: ${provider[0].id} was disabled in on_search `
-    }
-
-    provider[0].items.map((item: { id: string }) => {
-      itemIdArray.push(item.id)
-    })
-
-    provider[0]?.categories?.map((item: { id: string }) => {
-      customIdArray.push(item.id)
-    })
-
-    if (provider[0]) {
-      provider = provider[0]
-
-      setValue('providerId', provider.id)
-      setValue('providerLoc', provider.locations[0].id)
-      setValue('providerGps', provider.locations[0].gps)
-      setValue('providerName', provider.descriptor.name)
-
-      try {
-        logger.info(`Comparing provider location in /${constants.ON_SEARCH} and /${constants.SELECT}`)
-        if (provider.locations[0].id != select.provider.locations[0].id) {
-          errorObj.prvdLoc = `provider.locations[0].id ${provider.locations[0].id} mismatches in /${constants.ON_SEARCH} and /${constants.SELECT}`
-        }
-      } catch (error: any) {
-        logger.error(
-          `!!Error while comparing provider's location id in /${constants.ON_SEARCH} and /${constants.SELECT}, ${error.stack}`,
-        )
-      }
-
-      try {
-        // Checking for valid item ids in /on_select
-        const itemsOnSearch = getValue('ItemList')
-        const itemsList = message.order.items
-        const itemsOnSelect: any = []
-        itemsList.forEach((item: any, index: number) => {
-          if (!itemsOnSearch?.includes(item.id)) {
-            const key = `inVldItemId[${index}]`
-            errorObj[key] = `Invalid Item Id provided in /${constants.SELECT}: ${item.id}`
-          } else {
-            itemsOnSelect.push(item.id)
-          }
-        })
-        setValue('SelectItemList', itemsOnSelect)
-      } catch (error: any) {
-        logger.error(`Error while checking for item IDs for /${constants.SELECT}`, error.stack)
-      }
-
-      logger.info(
-        `Mapping Item Ids with their counts, categories and prices /${constants.ON_SEARCH} and /${constants.SELECT}`,
-      )
-
-      try {
-        const itemMap: any = {}
-        const itemMapper: any = {}
-        const parentItemIdSet = new Set()
-        const itemIdSet = new Set()
-        select.items.forEach(
-          (
-            item: {
-              id: string | number
-              tags: any[]
-              parent_item_id: string | number
-              location_id: any
-              quantity: { count: number }
-            },
-            index: number,
-          ) => {
-            const allOnSearchItems: any = getValue('onSearchItems')
-            let onSearchItems = allOnSearchItems.flat()
-            const itemOnSearch = onSearchItems.find((it: any) => {
-              return it.id === item.id
-            })
-            const baseItem = findItemByItemType(item)
-            if (baseItem) {
-              const searchBaseItem = provider.items.find((it: { id: any }) => it.id === baseItem.id)
-              if (searchBaseItem && searchBaseItem.time.label === 'disable') {
-                errorObj.itemDisabled = `disabled item with id ${baseItem.id} cannot be selected`
-              }
-            }
-            const itemTag = tagFinder(item, 'item')
-            if (itemTag) {
-              if (!itemMap[item.parent_item_id]) {
-                itemMap[item.parent_item_id] = {
-                  location_id: item.location_id,
-                }
-              }
-
-              if (!itemIdArray.includes(item.id)) {
-                const key = `item${index}item_id`
-                errorObj[key] =
-                  `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in on_search`
-              }
-            }
-
-            const customizationTag = tagFinder(item, 'customization')
-
-            if (customizationTag) {
-              const parentTag = item.tags.find((tag) => {
-                return (
-                  tag.code === 'parent' &&
-                  tag.list &&
-                  tag.list.find((listItem: { code: string; value: any }) => {
-                    return listItem.code === 'id' && customIdArray.includes(listItem.value)
-                  })
-                )
-              })
-
-              if (!parentTag) {
-                const key = `item${index}customization_id`
-                errorObj[key] =
-                  `/message/order/items/tags/customization/value in item: ${item.id} should be one of the customizations id mapped in on_search`
-              }
-            }
-
-            if (!parentItemIdSet.has(item.parent_item_id)) parentItemIdSet.add(item.parent_item_id)
-
-            if (!itemIdSet.has(item.id)) itemIdSet.add(item.id)
-
-            onSearchItems.forEach((it: any) => {
-              if (it.id === item.id && it.location_id !== item.location_id) {
-                errorObj[`location_id[${index}]`] = `location_id should be same for the item ${item.id} as in on_search`
-              }
-            })
-
-            if (itemOnSearch) {
-              logger.info(`ITEM ID: ${item.id}, Price: ${itemOnSearch.price.value}, Count: ${item.quantity.count}`)
-
-              itemsIdList[item.id] = item.quantity.count
-              itemsCtgrs[item.id] = itemOnSearch.category_id
-              itemsTat.push(itemOnSearch['@ondc/org/time_to_ship'])
-              selectedPrice += itemOnSearch.price.value * item.quantity.count
-            }
-
-            if (!itemMapper[item.id]) {
-              // If the item is not in the map, add it
-              itemMapper[item.id] = item.parent_item_id
-            } else {
-              if (itemMapper[item.id] === item.parent_item_id) {
-                const key = `item${index}id_parent_item_id`
-                errorObj[key] = `/message/order/items/parent_item_id cannot be duplicate if item/id is same`
-              }
-            }
-          },
-        )
-
-        try {
-          logger.info(`Saving time_to_ship in /${constants.ON_SEARCH}`)
-          let timeToShip = 0
-          itemsTat.forEach((tts: any) => {
-            const ttship = isoDurToSec(tts)
-            logger.info(ttship)
-            timeToShip = Math.max(timeToShip, ttship)
-          })
-          logger.info('timeTOSHIP', timeToShip)
-          setValue('timeToShip', timeToShip)
-        } catch (error: any) {
-          logger.error(`!!Error while saving time_to_ship in ${constants.ON_SEARCH}`, error)
-        }
-
-        setValue('itemsIdList', itemsIdList)
-        setValue('itemsCtgrs', itemsCtgrs)
-        setValue('selectedPrice', selectedPrice)
-        setValue('parentItemIdSet', parentItemIdSet)
-
-        logger.info(`Provider Id in /${constants.ON_SEARCH} and /${constants.SELECT} matched`)
-      } catch (error: any) {
-        logger.error(
-          `!!Error while Comparing and Mapping Items in /${constants.ON_SEARCH} and /${constants.SELECT}, ${error.stack}`,
-        )
-      }
     } else {
-      logger.info(`Provider Ids in /${constants.ON_SEARCH} and /${constants.SELECT} mismatch`)
-      errorObj.prvdrIdMatch = `Provider Id ${select.provider.id} in /${constants.SELECT} does not exist in /${constants.ON_SEARCH}`
+      providerOnSelect = provider[0]
+
+      setValue('providerGps', providerOnSelect?.locations[0]?.gps)
+      setValue('providerName', providerOnSelect?.descriptor?.name)
+    }
+  } catch (error: any) {
+    logger.error(
+      `Error while checking for valid provider in /${constants.ON_SEARCH} and /${constants.SELECT}, ${error.stack}`,
+    )
+  }
+
+  try {
+    logger.info(`Checking for valid location ID inside item list for /${constants.SELECT}`)
+    const allOnSearchItems: any = getValue('onSearchItems')
+    let onSearchItems = allOnSearchItems.flat()
+    select.items.forEach((item: any, index: number) => {
+      onSearchItems.forEach((it: any) => {
+        if (it.id === item.id && it.location_id !== item.location_id) {
+          errorObj[`location_id[${index}]`] = `location_id should be same for the item ${item.id} as in on_search`
+        }
+      })
+    })
+  } catch (error: any) {
+    logger.error(`Error while checking for valid location ID inside item list for /${constants.SELECT}, ${error.stack}`)
+  }
+
+  try {
+    logger.info(`Checking for duplicate parent_item_id in /${constants.SELECT}`)
+    select.items.forEach((item: any, index: number) => {
+      if (!itemMapper[item.id]) {
+        // If the item is not in the map, add it
+        itemMapper[item.id] = item.parent_item_id
+      } else {
+        if (itemMapper[item.id] === item.parent_item_id) {
+          const key = `item${index}id_parent_item_id`
+          errorObj[key] = `/message/order/items/parent_item_id cannot be duplicate if item/id is same`
+        }
+      }
+    })
+  } catch (error: any) {
+    logger.error(`Error while checking for duplicate parent_item_id in /${constants.SELECT}, ${error.stack}`)
+  }
+
+  try {
+    logger.info(`Adding parent_item_id in a set on /${constants.SELECT}`)
+    select.items.forEach((item: any) => {
+      if (!parentItemIdSet.has(item.parent_item_id)) {
+        parentItemIdSet.add(item.parent_item_id)
+      }
+    })
+    setValue('parentItemIdSet', parentItemIdSet)
+  } catch (error: any) {
+    logger.error(`Error while adding parent_item_id in a set on /${constants.SELECT}, ${error.stack}`)
+  }
+
+  try {
+    logger.info(`Mapping the items with thier prices on /${constants.ON_SEARCH} and /${constants.SELECT}`)
+    const allOnSearchItems: any = getValue('onSearchItems')
+    let onSearchItems = allOnSearchItems.flat()
+    select.items.forEach((item: any) => {
+      const itemOnSearch = onSearchItems.find((it: any) => {
+        return it.id === item.id
+      })
+
+      if (itemOnSearch) {
+        logger.info(`ITEM ID: ${item.id}, Price: ${itemOnSearch.price.value}, Count: ${item.quantity.count}`)
+        itemsCtgrs[item.id] = itemOnSearch.category_id
+        itemsTat.push(itemOnSearch['@ondc/org/time_to_ship'])
+        selectedPrice += itemOnSearch.price.value * item.quantity?.count
+      }
+    })
+    setValue('selectedPrice', selectedPrice)
+    setValue('itemsCtgrs', itemsCtgrs)
+  } catch (error: any) {
+    logger.error(
+      `Error while mapping the items with thier prices on /${constants.ON_SEARCH} and /${constants.SELECT}, ${error.stack}`,
+    )
+  }
+
+  try {
+    logger.info(`Saving time_to_ship in /${constants.SELECT}`)
+    let timeToShip = 0
+    itemsTat?.forEach((tts: any) => {
+      const ttship = isoDurToSec(tts)
+      logger.info(ttship)
+      timeToShip = Math.max(timeToShip, ttship)
+    })
+    setValue('timeToShip', timeToShip)
+  } catch (error: any) {
+    logger.error(`!!Error while saving time_to_ship in ${constants.SELECT}`, error)
+  }
+
+  const checksOnValidProvider = (provider: any) => {
+    try {
+      logger.info(`Comparing provider location in /${constants.ON_SEARCH} and /${constants.SELECT}`)
+      if (provider?.locations[0]?.id != select.provider?.locations[0]?.id) {
+        errorObj.prvdLoc = `provider.locations[0].id ${provider.locations[0].id} mismatches in /${constants.ON_SEARCH} and /${constants.SELECT}`
+      }
+    } catch (error: any) {
+      logger.error(
+        `!!Error while comparing provider's location id in /${constants.ON_SEARCH} and /${constants.SELECT}, ${error.stack}`,
+      )
     }
 
-    setValue('select_customIdArray', customIdArray)
     try {
-      select.fulfillments.forEach((ff: any) => {
-        logger.info(`Checking GPS Precision in /${constants.SELECT}`)
+      logger.info(`Storing item IDs on custom ID array`)
+      provider?.categories?.map((item: { id: string }) => {
+        customIdArray.push(item.id)
+      })
+      setValue('select_customIdArray', customIdArray)
+    } catch (error: any) {
+      logger.error(`Error while storing item IDs on custom ID array, ${error.stack}`)
+    }
 
-        // eslint-disable-next-line no-prototype-builtins
-        if (ff.hasOwnProperty('end')) {
-          setValue('buyerGps', ff.end.location.gps)
-          setValue('buyerAddr', ff.end.location.address.area_code)
+    try {
+      logger.info(`Checking for valid time object in /${constants.SELECT}`)
+      if (provider?.time && provider?.time?.label === 'disable') {
+        errorObj.disbledProvider = `provider with provider.id: ${provider.id} was disabled in on_search `
+      }
+    } catch (error: any) {
+      logger.error(`Error while checking for valid time object in /${constants.SELECT}, ${error.stack}`)
+    }
 
-          const gps = ff.end.location.gps.split(',')
-          const gpsLat: string = gps[0]
-          Array.from(gpsLat).forEach((char: any) => {
-            if (char !== '.' && isNaN(parseInt(char))) {
-              errorObj.gpsErr = `fulfillments location.gps is not as per the API contract`
-            }
-          })
-          const gpsLong = gps[1]
-          Array.from(gpsLong).forEach((char: any) => {
-            if (char !== '.' && isNaN(parseInt(char))) {
-              errorObj.gpsErr = `fulfillments location.gps is not as per the API contract`
-            }
-          })
-
-          if (!gpsLat || !gpsLong) {
-            errorObj.gpsErr = `fulfillments location.gps is not as per the API contract`
-          }
-
-          // eslint-disable-next-line no-prototype-builtins
-          if (!ff.end.location.address.hasOwnProperty('area_code')) {
-            errorObj.areaCode = `address.area_code is required property in /${constants.SELECT}`
+    try {
+      logger.info(`Checking for valid base Item in /${constants.SELECT}`)
+      select.items.forEach((item: any) => {
+        const baseItem = findItemByItemType(item)
+        if (baseItem) {
+          const searchBaseItem = provider.items.find((it: { id: any }) => it.id === baseItem.id)
+          if (searchBaseItem && searchBaseItem.time.label === 'disable') {
+            errorObj.itemDisabled = `disabled item with id ${baseItem.id} cannot be selected`
           }
         }
       })
     } catch (error: any) {
-      logger.error(`!!Error while checking GPS Precision in /${constants.SELECT}, ${error.stack}`)
+      logger.error(`Error while checking for valid base Item in /${constants.SELECT}, ${error.stack}`)
     }
 
-    setValue('items', select.items)
-  } catch (error: any) {
-    logger.error(`!!Error occcurred while checking providers info in /${constants.SELECT},  ${error.message}`)
+    try {
+      logger.info(`Checkinf or customization Items in /${constants.SELECT}`)
+      select.items.forEach((item: any, index: number) => {
+        const customizationTag = tagFinder(item, 'customization')
+        if (customizationTag) {
+          const parentTag = item.tags.find((tag: any) => {
+            return (
+              tag.code === 'parent' &&
+              tag.list &&
+              tag.list.find((listItem: { code: string; value: any }) => {
+                return listItem.code === 'id' && customIdArray.includes(listItem.value)
+              })
+            )
+          })
+
+          if (!parentTag) {
+            const key = `item${index}customization_id`
+            errorObj[key] =
+              `/message/order/items/tags/customization/value in item: ${item.id} should be one of the customizations id mapped in on_search`
+          }
+        }
+      })
+    } catch (error: any) {
+      logger.error(`Error while checking for customization Items in /${constants.SELECT}, ${error.stack}`)
+    }
+  }
+
+  // Call the provider check Function only when valid provider is present
+  if (providerOnSelect) {
+    checksOnValidProvider(providerOnSelect)
+  } else {
+    errorObj.providerChecks = `Warning: Missed checks for provider as provider with  ID: ${select.provider.id} does not exist on ${constants.ON_SEARCH} API`
   }
 
   return Object.keys(errorObj).length > 0 && errorObj

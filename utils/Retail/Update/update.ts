@@ -168,7 +168,6 @@ export const checkUpdate = (data: any) => {
             }
           })
         })
-        console.log('updatesdafdsReturnId', updateReturnId)
         setValue('updateReturnId', updateReturnId)
         setValue('updateItemSet', updateItemSet)
         setValue('updateItemList', updateItemList)

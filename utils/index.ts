@@ -948,8 +948,6 @@ export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAt
         }
       }
     }
-    console.log('fasdfadsfdsafa', priceAtConfirm)
-    console.log('fasdfadsfdsassfa', price + quoteTrailSum)
     if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
       const key = `invldQuoteTrailPrices`
       errorObj[key] =

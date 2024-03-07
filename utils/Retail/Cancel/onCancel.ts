@@ -194,7 +194,6 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
         logger.info(`Checking for quote_trail price and item quote price sum for ${constants.ON_CANCEL}`)
         const price = Number(on_cancel.quote.price.value)
         const priceAtConfirm = Number(getValue('quotePrice'))
-        console.log('fadfadsfdsa', priceAtConfirm)
         let cancelFulfillments = null
         if (flow === '5') {
           cancelFulfillments = _.filter(on_cancel.fulfillments, { type: 'RTO' })
@@ -216,7 +215,6 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
               }
             }
           }
-          console.log('dsfasfsadfdsacc', price + quoteTrailSum)
           if (priceAtConfirm != price + quoteTrailSum) {
             const key = `invldQuoteTrailPrices`
             onCnclObj[key] =

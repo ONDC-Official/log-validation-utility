@@ -228,7 +228,7 @@ export const checkOnConfirm = (data: any) => {
         const len = billingErrors.length
         while (i < len) {
           const key = `billingErr${i}`
-          onCnfrmObj[key] = `${billingErrors[i] } when compared with init billing object`
+          onCnfrmObj[key] = `${billingErrors[i]} when compared with init billing object`
           i++
         }
       }
@@ -278,7 +278,9 @@ export const checkOnConfirm = (data: any) => {
         }
 
         try {
-          if (!_.isEqual(on_confirm.fulfillments[i].start.location.descriptor.name, getValue('providerName'))) {
+          if (!getValue('providerName')) {
+            onCnfrmObj.sellerNameErr = `Invalid store name inside fulfillments in /${constants.ON_CONFIRM}`
+          } else if (!_.isEqual(on_confirm.fulfillments[i].start.location.descriptor.name, getValue('providerName'))) {
             onCnfrmObj.sellerNameErr = `store name  /fulfillments[${i}]/start/location/descriptor/name can't change`
           }
         } catch (error: any) {

@@ -465,17 +465,34 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
               'additives_info',
               'brand_owner_FSSAI_license_no',
               'other_FSSAI_license_no',
-              'brand_owner_FSSAI_license_no',
               'importer_FSSAI_license_no',
             ]
+
+            let foundFSSAILicense = false
+
             mandatoryFields.forEach((field) => {
-              if (statutory_reqs_prepackaged_food && !statutory_reqs_prepackaged_food[field]) {
-                const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
-                errorObj[key] =
-                  `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food following fields are valid 'nutritional_info', 'additives_info', 'brand_owner_FSSAI_license_no','other_FSSAI_license_no',
-                  'brand_owner_FSSAI_license_no','importer_FSSAI_license_no'`
+              if (
+                field === 'brand_owner_FSSAI_license_no' ||
+                field === 'other_FSSAI_license_no' ||
+                field === 'importer_FSSAI_license_no'
+              ) {
+                if (statutory_reqs_prepackaged_food && statutory_reqs_prepackaged_food[field]) {
+                  foundFSSAILicense = true
+                }
+              } else {
+                if (statutory_reqs_prepackaged_food && !statutory_reqs_prepackaged_food[field]) {
+                  const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
+                  errorObj[key] =
+                    `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food, the field '${field}' is required for FSSAI compliance`
+                }
               }
             })
+
+            if (!foundFSSAILicense) {
+              const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
+              errorObj[key] = `one of these FSSAI license no. are mandatory in prepackaged food.`
+              // Throw an error or handle the case where none of the specified FSSAI license fields are present.
+            }
           }
           //check availabe and max quantity
           if (item.quantity && item.quantity.available && typeof item.quantity.available.count === 'string') {

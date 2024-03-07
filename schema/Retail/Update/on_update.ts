@@ -228,7 +228,9 @@ export const onUpdateSchema = {
                       contact: {
                         type: 'object',
                         properties: {
-                          phone: { type: 'string' },
+                          phone: { type: 'string' ,                 
+                          minLength: 10,
+                          maxLength: 11,},
                           email: { type: 'string', format: 'email' },
                         },
                         required: ['phone', 'email'],
@@ -288,7 +290,9 @@ export const onUpdateSchema = {
                       contact: {
                         type: 'object',
                         properties: {
-                          phone: { type: 'string' },
+                          phone: { type: 'string' ,                  
+                          minLength: 10,
+                          maxLength: 11,},
                           email: { type: 'string', format: 'email' },
                         },
                       },

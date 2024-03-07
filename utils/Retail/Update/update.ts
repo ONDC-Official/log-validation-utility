@@ -111,6 +111,8 @@ export const checkUpdate = (data: any) => {
         logger.info(`Checking for return_request object in /${constants.UPDATE}`)
         const updateItemSet: any = {}
         const updateItemList: any = []
+        const updateReturnId: any = {}
+        const itemFlfllmnts: any = getValue('itemFlfllmnts')
         let return_request_obj = null
         update.fulfillments.forEach((item: any) => {
           item.tags.forEach((tag: any) => {
@@ -128,6 +130,11 @@ export const checkUpdate = (data: any) => {
                     updateItemSet[item.value] = item.value
                     updateItemList.push(item.value)
                     setValue('updatedItemID', item.value)
+                  }                 
+                }
+                if(item.code === 'id'){
+                  if(Object.values(itemFlfllmnts).includes(item.value)){
+                    updtObj.nonUniqueReturnFulfillment = `${item.value} is not a unique fulfillment`
                   }
                 }
                 if (item.code === 'item_quantity') {

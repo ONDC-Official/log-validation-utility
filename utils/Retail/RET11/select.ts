@@ -80,6 +80,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   const itemIdArray: any[] = []
   const customIdArray: any[] = []
   const itemsOnSelect: any = []
+  const itemMap: any = {}
   const itemMapper: any = {}
   const parentItemIdSet = new Set()
 
@@ -282,6 +283,29 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     logger.error(`!!Error while saving time_to_ship in ${constants.SELECT}`, error)
   }
 
+  try {
+    logger.info(`Checking for Consistent location IDs for parent_item_id in /${constants.SELECT}`)
+    select.items.forEach((item: any, index: number) => {
+      const itemTag = tagFinder(item, 'item')
+      if (itemTag) {
+        if (!itemMap[item.parent_item_id]) {
+          itemMap[item.parent_item_id] = {
+            location_id: item.location_id,
+          }
+        }
+      }
+
+      if (itemTag && itemMap[item.parent_item_id].location_id !== item.location_id) {
+        const key = `item${index}location_id`
+        errorObj[key] = `Inconsistent location_id for parent_item_id ${item.parent_item_id}`
+      }
+    })
+  } catch (error: any) {
+    logger.error(
+      `Error while checking for Consistent location IDs for parent_item_id in /${constants.SELECT}, ${error.stack}`,
+    )
+  }
+
   const checksOnValidProvider = (provider: any) => {
     try {
       logger.info(`Comparing provider location in /${constants.ON_SEARCH} and /${constants.SELECT}`)
@@ -297,9 +321,10 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     try {
       logger.info(`Checking for valid items for provider in /${constants.SELECT}`)
       const itemProviderMap: any = getValue(`itemProviderMap`)
+      const providerID = select.provider.id
       const items = select.items
       items.forEach((item: any, index: number) => {
-        if (!itemProviderMap[item.id].includes(provider.id)) {
+        if (!itemProviderMap[providerID].includes(item.id)) {
           errorObj[`itemProvider[${index}]`] =
             `Item with id ${item.id} is not available for provider with id ${provider.id}`
         }

@@ -124,7 +124,7 @@ export const checkOnSelect_OOS = (data: any) => {
   try {
     logger.info(`Checking provider id in /${constants.ON_SEARCH} and /${constants.ON_SELECT}`)
     if (getValue('providerId') != ON_SELECT_OUT_OF_STOCK.provider.id) {
-      errorObj.prvdrId = `provider.id mismatches in /${constants.ON_SEARCH} and /${constants.ON_SELECT}`
+      errorObj.prvdrId = `provider.id mismatches in /${constants.SELECT} and /${constants.ON_SELECT}`
     }
     if (ON_SELECT_OUT_OF_STOCK.provider.locations[0].id != getValue('providerLoc')) {
       errorObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.ON_SELECT} and /${constants.SELECT}`

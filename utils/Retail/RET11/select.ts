@@ -130,7 +130,6 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   try {
     logger.info(`Storing item IDs and thier count in /${constants.SELECT}`)
     const itemsOnSearch: any = getValue(`${ApiSequence.ON_SEARCH}itemsId`)
-    console.log('iadfafa', itemsOnSearch)
 
     if (!itemsOnSearch?.length) {
       errorObj.invalidItems = `No Items found on ${constants.ON_SEARCH} API`
@@ -293,6 +292,20 @@ export const checkSelect = (data: any, msgIdSet: any) => {
       logger.error(
         `!!Error while comparing provider's location id in /${constants.ON_SEARCH} and /${constants.SELECT}, ${error.stack}`,
       )
+    }
+
+    try {
+      logger.info(`Checking for valid items for provider in /${constants.SELECT}`)
+      const itemProviderMap: any = getValue(`itemProviderMap`)
+      const items = select.items
+      items.forEach((item: any, index: number) => {
+        if (!itemProviderMap[item.id].includes(provider.id)) {
+          errorObj[`itemProvider[${index}]`] =
+            `Item with id ${item.id} is not available for provider with id ${provider.id}`
+        }
+      })
+    } catch (error: any) {
+      logger.error(`Error while checking for valid items for provider in /${constants.SELECT}, ${error.stack}`)
     }
 
     try {

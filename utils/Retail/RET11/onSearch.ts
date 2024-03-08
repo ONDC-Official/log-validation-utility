@@ -139,6 +139,26 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
   }
 
   try {
+    // Mapping items with thier respective providers
+    const itemProviderMap = new Map()
+    const providers = onSearchCatalog['bpp/providers']
+    providers.forEach((provider: any) => {
+      const items = provider.items
+      items.forEach((item: any) => {
+        if (itemProviderMap.has(item.id)) {
+          itemProviderMap.get(item.id).push(provider.id)
+        } else {
+          itemProviderMap.set(item.id, [provider.id])
+        }
+      })
+    })
+
+    setValue('itemProviderMap', itemProviderMap)
+  } catch (e: any) {
+    logger.error(`Error while mapping items with thier respective providers ${e.stack}`)
+  }
+
+  try {
     logger.info(`Checking Providers info (bpp/providers) in /${constants.ON_SEARCH}`)
     let i = 0
     const bppPrvdrs = onSearchCatalog['bpp/providers']

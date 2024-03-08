@@ -272,6 +272,24 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
       }
 
       try {
+        // Mapping items with thier respective providers
+        const itemProviderMap: any = {}
+        const providers = onSearchCatalog['bpp/providers']
+        providers.forEach((provider: any) => {
+          const items = provider.items
+          const itemArray: any = []
+          items.forEach((item: any) => {
+            itemArray.push(item.id)
+          })
+          itemProviderMap[provider.id] = itemArray
+        })
+
+        setValue('itemProviderMap', itemProviderMap)
+      } catch (e: any) {
+        logger.error(`Error while mapping items with thier respective providers ${e.stack}`)
+      }
+
+      try {
         logger.info(`Checking categories for provider (${prvdr.id}) in bpp/providers[${i}]`)
         let j = 0
         const categories = onSearchCatalog['bpp/providers'][i]['categories']

@@ -87,19 +87,12 @@ export const checkOnSelect = (data: any) => {
   try {
     // Checking for valid item ids in /on_select
     const itemsOnSelect = getValue('SelectItemList')
-    const itemsIdList: any = getValue('itemsIdList')
     const itemsList = message.order.items
     const selectItems: any = []
     itemsList.forEach((item: any, index: number) => {
       if (!itemsOnSelect?.includes(item.id)) {
         const key = `inVldItemId[${index}]`
         errorObj[key] = `Invalid Item Id provided in /${constants.ON_SELECT}: ${item.id}`
-      } else {
-        if (itemsIdList[item.id] != item.quantity.count) {
-          const key = `inVldItemCount[${index}]`
-          errorObj[key] = `Invalid Item Count provided in /${constants.ON_SELECT}: ${item.id}`
-        }
-        selectItems.push(item.id)
       }
     })
     setValue('SelectItemList', selectItems)

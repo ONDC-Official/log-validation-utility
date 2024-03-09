@@ -105,7 +105,7 @@ export const cancelSchema = {
           required: ['name', 'short_desc'],
         },
       },
-      required: ['order_id', 'cancellation_reason_id', 'descriptor'],
+      required: ['order_id', 'cancellation_reason_id'],
     },
   },
   required: ['context', 'message'],

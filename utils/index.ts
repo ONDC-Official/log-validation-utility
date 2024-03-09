@@ -5,7 +5,7 @@ import constants, { statusArray } from '../constants'
 import schemaValidator from '../shared/schemaValidator'
 import data from '../constants/AreacodeMap.json'
 import { reasonCodes } from '../constants/reasonCode'
-
+import { InputObject } from '../shared/interface'
 export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
 
 export const getObjValues = (obj: any) => {
@@ -953,4 +953,43 @@ export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAt
       )
     }
   }
+}
+
+export function compareQuoteObjects(obj1: InputObject, obj2: InputObject): string[] {
+  const errors: string[] = []
+
+  // Compare root level properties
+  const rootKeys1 = Object.keys(obj1)
+  const rootKeys2 = Object.keys(obj2)
+
+  if (rootKeys1.length !== rootKeys2.length) {
+    errors.push('Root level properties mismatch')
+    return errors
+  }
+
+  // Compare breakup array
+  obj1.breakup.forEach((item1) => {
+    const matchingItem = obj2.breakup.find(
+      (item2) =>
+        item1['@ondc/org/item_id'] === item2['@ondc/org/item_id'] &&
+        item1['@ondc/org/title_type'] === item2['@ondc/org/title_type'],
+    )
+
+    if (!matchingItem) {
+      errors.push(`Matching item not found for ${item1.title}`)
+    } else {
+      // Compare other properties of the matching items
+      if (item1.title !== matchingItem.title) {
+        errors.push(`Title mismatch for ${item1.title}`)
+      }
+
+      if (item1.price.value !== matchingItem.price.value) {
+        errors.push(`Price value mismatch for ${item1.title}`)
+      }
+
+      // You can add more comparisons as needed
+    }
+  })
+
+  return errors
 }

@@ -32,7 +32,6 @@ export const checkUpdate = (data: any, msgIdSet: any) => {
     errorObj['bpp_id'] = 'context/bpp_id is required'
   } else {
     const checkBpp = checkBppIdOrBapId(context.bpp_id)
-    console.log('checkBppcheckBppcheckBppcheckBppcheckBppcheckBpp', checkBpp)
     if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
   }
 

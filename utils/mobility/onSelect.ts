@@ -1,16 +1,19 @@
 import { logger } from '../../shared/logger'
-import constants, {
-  mobilitySequence,
-  MOB_VEHICLE_CATEGORIES as VALID_VEHICLE_CATEGORIES,
-  MOB__DESCRIPTOR_CODES as VALID_DESCRIPTOR_CODES,
-} from '../../constants'
+import constants, { mobilitySequence, ON_DEMAND_VEHICLE } from '../../constants'
 import { validateSchema, isObjectEmpty } from '../'
 import _ from 'lodash'
 import { getValue, setValue } from '../../shared/dao'
-import { validateContext, validateQuote, validateStops } from './mobilityChecks'
-import { validateRouteInfoTags } from './tags'
+import {
+  validateContext,
+  validateItemRefIds,
+  validateQuote,
+  validateStops,
+  validatePayloadAgainstSchema,
+} from './mobilityChecks'
+import { validateItemsTags, validateRouteInfoTags } from './tags'
+import attributeConfig from './config/config2.0.1.json'
 
-export const checkOnSelect = (data: any, msgIdSet: any) => {
+export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [mobilitySequence.ON_SELECT]: 'JSON cannot be empty' }
   }
@@ -33,17 +36,14 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
     Object.assign(errorObj, contextRes.ERRORS)
   }
 
-  // const searchContext: any = getValue(`${mobilitySequence.SEARCH}_context`)
-  const select: any = getValue(`${mobilitySequence.SELECT}`)
-
   try {
     const onSelect = message.order
-    const itemIDS: any = getValue(`${mobilitySequence.ON_SEARCH}_itemsId`)
-    const itemIdArray: any[] = []
+    const itemIDS: any = getValue(`itemIds`)
+    const locationIds = getValue(`locationIds`)
     const storedFull: any = getValue(`${mobilitySequence.ON_SEARCH}_storedFulfillments`)
     const fulfillmentIdsSet = new Set()
-    const itemIdsSet = new Set()
 
+    //check provider
     try {
       logger.info(`Comparing Provider Id of /${constants.SELECT} and /${constants.ON_SELECT}`)
       const prvrdID: any = getValue('providerId')
@@ -63,12 +63,15 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
       )
     }
 
+    //check fulfillments
     try {
       logger.info(`Validating fulfillments object for /${constants.ON_SELECT}`)
       onSelect.fulfillments.forEach((fulfillment: any, index: number) => {
         const fulfillmentKey = `fulfillments[${index}]`
 
-        if (storedFull && !storedFull.includes(fulfillment.id)) {
+        if (!fulfillment?.id) {
+          errorObj[fulfillmentKey] = `id is missing in fulfillments[${index}]`
+        } else if (storedFull && !storedFull.includes(fulfillment.id)) {
           errorObj[
             `${fulfillmentKey}.id`
           ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
@@ -76,10 +79,8 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
           fulfillmentIdsSet.add(fulfillment.id)
         }
 
-        if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
-          errorObj[
-            `${fulfillmentKey}.vehicleCategory`
-          ] = `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
+        if (!ON_DEMAND_VEHICLE.includes(fulfillment.vehicle.category)) {
+          errorObj[`${fulfillmentKey}.vehicleCategory`] = `Vehicle category should be one of ${ON_DEMAND_VEHICLE}`
         }
 
         if (!fulfillment.type) {
@@ -93,7 +94,8 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
         // Check stops for START and END, or time range with valid timestamp and GPS
         const otp = false
         const cancel = false
-        validateStops(fulfillment?.stops, index, otp, cancel)
+        const stopsError = validateStops(fulfillment?.stops, index, otp, cancel)
+        if (!stopsError?.valid) Object.assign(errorObj, stopsError.errors)
 
         if (fulfillment.tags) {
           // Validate route info tags
@@ -108,67 +110,60 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
       return { error: error.message }
     }
 
-    logger.info(`Mapping Item Ids /${constants.ON_SEARCH} and /${constants.ON_SELECT}`)
-    let newItemIDSValue: any[]
-
-    if (itemIDS && itemIDS.length > 0) {
-      newItemIDSValue = itemIDS
-    } else {
-      select.message.order.items.map((item: { id: string }) => {
-        itemIdArray.push(item.id)
-      })
-      newItemIDSValue = itemIdArray
-    }
-
+    //check items
     try {
-      onSelect.items.forEach((item: any, index: number) => {
-        if (!newItemIDSValue.includes(item.id)) {
-          const key = `item[${index}].item_id`
-          errorObj[key] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in select`
-        } else {
-          itemIdsSet.add(item.id)
-        }
-
-        if (!item.descriptor || !item.descriptor.code) {
-          const key = `item${index}_descriptor`
-          errorObj[key] = `Descriptor is missing in items[${index}]`
-        } else {
-          if (!VALID_DESCRIPTOR_CODES.includes(item.descriptor.code)) {
-            const key = `item${index}_descriptor`
+      logger.info(`Validating items object for /${constants.ON_SELECT}`)
+      if (!onSelect?.items) errorObj.items = `items is missing in /${constants.ON_SELECT}`
+      else {
+        onSelect.items.forEach((item: any, index: number) => {
+          const itemKey = `items[${index}]`
+          //id checks
+          if (!item?.id) {
+            errorObj[`${itemKey}.id`] = `id is missing in [${itemKey}]`
+          } else if (!itemIDS.includes(item.id)) {
             errorObj[
-              key
-            ] = `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
+              `${itemKey}.id`
+            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_SELECT}`
           }
-        }
 
-        const price = item.price
-        if (!price || !price.currency || !price.value) {
-          const key = `item${index}_price`
-          errorObj[key] = `Price is missing or incomplete in /items[${index}]`
-        }
+          //price check
+          if (!item?.price?.value) errorObj[`${itemKey}.price`] = `value is missing at item.index ${index} `
 
-        if (!item?.fulfillment_ids || item?.fulfillment_ids?.length === 0) {
-          errorObj[`invalidFulfillmentId_${index}`] = `fulfillment_ids should be present`
-        } else {
-          item.fulfillment_ids.forEach((fulfillmentId: string) => {
-            if (!_.isEmpty(fulfillmentIdsSet) && !fulfillmentIdsSet.has(fulfillmentId)) {
-              errorObj[
-                `invalidFulfillmentId_${index}`
-              ] = `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.ON_SELECT} is not valid`
+          //fulfillment_ids, location_ids & payment_ids checks
+          const refIdsErrors = validateItemRefIds(
+            item,
+            constants.ON_SELECT,
+            index,
+            fulfillmentIdsSet,
+            new Set(locationIds),
+            new Set(),
+          )
+          Object.assign(errorObj, refIdsErrors)
+
+          //descriptor.code
+          if (!item?.descriptor?.code)
+            errorObj[`${itemKey}.code`] = `descriptor.code is missing at index: ${index} in /${constants.ON_SELECT}`
+          else if (item.descriptor.code !== 'RIDE') {
+            errorObj[
+              `${itemKey}.type`
+            ] = `descriptor.code must be RIDE at item.index ${index} in /${constants.ON_SELECT}`
+          }
+
+          // FARE_POLICY & INFO checks
+          if (item.tags) {
+            const tagsValidation = validateItemsTags(item.tags)
+            if (!tagsValidation.isValid) {
+              Object.assign(errorObj, { tags: tagsValidation.errors })
             }
-          })
-        }
-
-        if (item?.payment_ids) {
-          errorObj[`payment_ids_${index}`] = `payment_ids are not part of /${constants.ON_SELECT}`
-        }
-      })
-      setValue(`itemIds`, Array.from(newItemIDSValue))
+          }
+        })
+      }
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking items info in /${constants.ON_SELECT},  ${error.message}`)
       return { error: error.message }
     }
 
+    //quote checks
     try {
       logger.info(`Checking quote details in /${constants.ON_SELECT}`)
       const quoteErrors = validateQuote(onSelect?.quote, constants.ON_SELECT)
@@ -184,6 +179,11 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
 
     if (onSelect?.cancellation_terms) {
       errorObj[`cancellation_terms`] = `cancellation_terms  is not part of /${constants.ON_SELECT}`
+    }
+
+    if (version === '2.0.1') {
+      const additionalAttributes: any = attributeConfig.on_select
+      validatePayloadAgainstSchema(additionalAttributes, data, errorObj, '', '')
     }
 
     setValue(`${mobilitySequence.ON_SELECT}`, data)

@@ -213,6 +213,24 @@ export const checkGpsPrecision = (coordinates: string) => {
   }
 }
 
+export const checkSixDigitGpsPrecision = (coordinates: string) => {
+  try {
+    const [lat, long] = coordinates.split(',')
+    const latPrecision = getDecimalPrecision(lat)
+    const longPrecision = getDecimalPrecision(long)
+    const decimalPrecision = constants.DECIMAL_PRECISION
+
+    if (latPrecision === decimalPrecision && longPrecision === decimalPrecision) {
+      return true
+    } else {
+      return false
+    }
+  } catch (error) {
+    logger.error(error)
+    return false
+  }
+}
+
 export const checkTagConditions = (message: any, context: any) => {
   const tags = []
   if (message.intent?.tags) {
@@ -650,6 +668,13 @@ export const isValidPhoneNumber = (value: string): boolean => {
 export const isValidUrl = (url: string) => {
   const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(:[0-9]+)?([/\w.-]*)*\/?$/
   return urlRegex.test(url)
+}
+
+export const isValidISO8601Duration = (duration: string): boolean => {
+  const iso8601DurationRegex =
+    /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$/
+
+  return iso8601DurationRegex.test(duration)
 }
 
 export const checkIdAndUri = (id: string, uri: string, type: string) => {

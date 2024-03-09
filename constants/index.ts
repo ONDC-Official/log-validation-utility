@@ -72,13 +72,35 @@ export const FisApiSequence = {
   ON_CONFIRM: 'on_confirm',
   CANCEL: 'cancel',
   ON_CANCEL: 'on_cancel',
-  TRACK: 'track',
-  ON_TRACK: 'on_track',
   STATUS: 'status',
   ON_STATUS: 'on_status',
   UPDATE: 'update',
   ON_UPDATE: 'on_update',
-  ON_UPDATE_UNSOLICATED: 'on_update_unsolicated',
+  ON_UPDATE_UNCOLICATED: 'on_update_uncolicated',
+}
+
+export const FIS13HealthSequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SEARCH_OFFER: 'search_offer',
+  ON_SEARCH_OFFER: 'on_search_offer',
+  SELECT: 'select',
+  ON_SELECT: 'on_select',
+  INIT_1: 'init_1',
+  INIT_2: 'init_2',
+  INIT_3: 'init_3',
+  ON_INIT_1: 'on_init_1',
+  ON_INIT_2: 'on_init_2',
+  ON_INIT_3: 'on_init_3',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  CANCEL: 'cancel',
+  ON_CANCEL: 'on_cancel',
+  STATUS: 'status',
+  ON_STATUS: 'on_status',
+  UPDATE: 'update',
+  ON_UPDATE: 'on_update',
+  ON_UPDATE_UNCOLICATED: 'on_update_uncolicated',
 }
 
 export const mobilitySequence = {
@@ -99,13 +121,6 @@ export const mobilitySequence = {
   STATUS: 'status',
   ON_STATUS: 'on_status',
 }
-export const mobilityFlow: any = {
-  AIRLINES: 'airlines',
-  METRO: 'metro',
-  ONDEMAND: 'on-demand',
-  INTERCITY: 'intercity',
-  INTRACITY: 'intracity',
-}
 
 export const formHeadingsFis: any = {
   INVOICE_BASED_LOAN: {
@@ -120,6 +135,20 @@ export const formHeadingsFis: any = {
   },
 }
 
+export const insuranceFormHeadings: any = {
+  HEALTH_INSURANCE: {
+    on_search: ['Individual Information'],
+    on_search_offer: ['PED, PAN & DOB Details'],
+    on_select: ['EKYC'],
+    on_init: ['Buyer Details', 'Manual Review', 'Nominee Details'],
+  },
+  MARINE_INSURANCE: {
+    on_search: ['Individual Information'],
+    on_select: ['EKYC'],
+    on_init: ['Buyer Details', 'Manual Review', 'Nominee Details'],
+  },
+}
+
 export const fisFlows = {
   INVOICE: 'INVOICE_BASED_LOAN',
   PERSONAL: 'PERSONAL_LOAN',
@@ -128,6 +157,11 @@ export const fisFlows = {
   LOAN_FORECLOSURE: 'FORECLOSURE',
   PRE_PART_PAYMENT: 'PRE_PART_PAYMENT',
   MISSED_EMI_PAYMENT: 'MISSED_EMI_PAYMENT',
+}
+
+export const insuranceFlows = {
+  HEALTH: 'HEALTH_INSURANCE',
+  MARINE: 'MARINE_INSURANCE',
 }
 
 export const onDemandFlows = {
@@ -197,6 +231,7 @@ export const retailDomains = [
 ]
 
 export const MOB_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
+export const ON_DEMAND_VEHICLE = ['AUTO_RICKSHAW', 'CAB']
 export const MOB__DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
 export const MOB_FULL_STATE = [
   'RIDE_CANCELLED',

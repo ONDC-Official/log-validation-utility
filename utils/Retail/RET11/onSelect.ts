@@ -93,6 +93,8 @@ export const checkOnSelect = (data: any) => {
       if (!itemsOnSelect?.includes(item.id)) {
         const key = `inVldItemId[${index}]`
         errorObj[key] = `Invalid Item Id provided in /${constants.ON_SELECT}: ${item.id}`
+      } else {
+        selectItems.push(item.id)
       }
     })
     setValue('SelectItemList', selectItems)

@@ -401,6 +401,10 @@ export const checkOnConfirm = (data: any) => {
           list_ON_CONFIRM = data.list
         }
       })
+      if (!list_ON_CONFIRM.some((data: any) => data.code == 'np_type')) {
+        onCnfrmObj['message/order/tags/bpp_terms/np_type'] =
+          `np_type is missing in message/order/tags/bpp_terms for ON_CONFIRM`
+      }
       list_ON_CONFIRM.map((data: any) => {
         if (data.code == 'tax_number') {
           if (data.value != ON_INIT_val) {

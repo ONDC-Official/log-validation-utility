@@ -135,6 +135,15 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
         `!!Error occurred while comparing order updated at for /${constants.ON_STATUS}_${state}, ${error.stack}`,
       )
     }
+    try {
+      if (!_.isEqual(context.timestamp, on_status.created_at)) {
+        onStatusObj.tmpstmp = `Context timestamp for /${constants.ON_STATUS}_${state} should be equal to order.created_at`
+      }
+    } catch (error: any) {
+      logger.error(
+        `!!Error occurred while comparing order created at for /${constants.ON_STATUS}_${state}, ${error.stack}`,
+      )
+    }
 
     try {
       logger.info(`Checking order state in /${constants.ON_STATUS}_${state}`)

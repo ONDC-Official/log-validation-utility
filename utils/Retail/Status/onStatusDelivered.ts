@@ -140,6 +140,14 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any) 
     }
 
     try {
+      if (!_.isEqual(on_status.created_at, contextTime)) {
+        onStatusObj.tmpstmp = `Context timestamp for /${constants.ON_STATUS}_${state} should be equal to order.created_at`
+      }
+    } catch (error: any) {
+      logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
+    }
+
+    try {
       logger.info(`Checking order state in /${constants.ON_STATUS}_${state}`)
       if (on_status.state != 'Completed') {
         onStatusObj.ordrState = `order/state should be "Completed" for /${constants.ON_STATUS}_${state}`

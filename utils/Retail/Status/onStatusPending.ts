@@ -86,6 +86,14 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any) =>
     }
 
     try {
+      if (!_.isEqual(context.timestamp, on_status.created_at)) {
+        onStatusObj.tmpstmp = `Context timestamp for /${constants.ON_STATUS}_${state} should be equal to order.created_at`
+      }
+    } catch (error: any) {
+      logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
+    }
+
+    try {
       logger.info(`Comparing timestamp of /${constants.ON_CONFIRM} and /${constants.ON_STATUS}_${state} API`)
       if (_.gte(getValue('onCnfrmtmpstmp'), context.timestamp)) {
         onStatusObj.tmpstmp1 = `Timestamp for /${constants.ON_CONFIRM} api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`

@@ -125,6 +125,9 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any) => 
     const contextTime = context.timestamp
     try {
       logger.info(`Comparing order.updated_at and context timestamp for /${constants.ON_STATUS}_${state} API`)
+      if (!_.isEqual(on_status.created_at, contextTime)) {
+        onStatusObj.tmpstmp = `Context timestamp for /${constants.ON_STATUS}_${state} should be equal to order.created_at`
+      }
 
       if (!areTimestampsLessThanOrEqualTo(on_status.updated_at, contextTime)) {
         onStatusObj.tmpstmp2 = ` order.updated_at timestamp should be less than or eqaul to  context timestamp for /${constants.ON_STATUS}_${state} api`

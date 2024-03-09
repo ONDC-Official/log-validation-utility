@@ -83,7 +83,7 @@ export const cancelSchema = {
           type: 'string',
           minLength: 1,
           pattern: '^[a-zA-Z0-9]{1,32}$',
-          errorMessage: 'Should be alphanumeric upto 32 letters max'
+          errorMessage: 'Should be alphanumeric upto 32 letters max',
         },
         cancellation_reason_id: {
           type: 'string',
@@ -105,7 +105,7 @@ export const cancelSchema = {
           required: ['name', 'short_desc'],
         },
       },
-      required: ['order_id', 'cancellation_reason_id', 'descriptor'],
+      required: ['order_id', 'cancellation_reason_id'],
     },
   },
   required: ['context', 'message'],

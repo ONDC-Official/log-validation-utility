@@ -508,6 +508,11 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
           const key = `invalidState`
           onCnclObj[key] = `Delivery state should be Cancelled for ${constants.ON_CANCEL}`
         }
+        if (item.state?.descriptor?.code === 'Cancelled' && (!item.tags || !item.tags.length)) {
+          logger.error(`Tags are mandatory for ${constants.ON_CANCEL} on cancelled state`)
+          const key = `missingTags`
+          onCnclObj[key] = `Tags are mandatory for ${constants.ON_CANCEL}`
+        }
         const cancel_request = _.filter(item.tags, { code: 'cancel_request' })
         if (!cancel_request.length) {
           logger.error(`Cancel Request is mandatory for ${constants.ON_CANCEL}`)

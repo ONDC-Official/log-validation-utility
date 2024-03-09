@@ -69,6 +69,7 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
 
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
   const onSearchContext: any = getValue(`${ApiSequence.ON_SEARCH}_context`)
+  setValue('providerId', select_oos.provider.id)
   let providerOnSelect = null
   const itemsOnSelect: any = []
   const itemIdArray: any[] = []

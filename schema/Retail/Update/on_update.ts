@@ -387,7 +387,7 @@ export const onUpdateSchema = {
                     ],
                   },
                 },
-                ttl: { type: 'string' },
+                ttl: { type: 'string',format: 'duration' },
               },
               required: ['price', 'breakup', 'ttl'],
             },

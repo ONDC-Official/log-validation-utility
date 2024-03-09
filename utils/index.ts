@@ -955,12 +955,35 @@ export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAt
   }
 }
 
+function deepCompare(obj1: any, obj2: any): boolean {
+  if (typeof obj1 !== 'object' || typeof obj2 !== 'object') {
+    return obj1 === obj2
+  }
+
+  const keys1 = Object.keys(obj1)
+  const keys2 = Object.keys(obj2)
+
+  if (keys1.length !== keys2.length) {
+    return false
+  }
+
+  for (const key of keys1) {
+    if (!keys2.includes(key) || !deepCompare(obj1[key], obj2[key])) {
+      return false
+    }
+  }
+
+  return true
+}
+
 export function compareQuoteObjects(obj1: InputObject, obj2: InputObject): string[] {
   const errors: string[] = []
 
   // Compare root level properties
   const rootKeys1 = Object.keys(obj1)
+  console.log('rootKeys1', rootKeys1)
   const rootKeys2 = Object.keys(obj2)
+  console.log('rootKeys2', rootKeys2)
 
   if (rootKeys1.length !== rootKeys2.length) {
     errors.push('Root level properties mismatch')
@@ -975,19 +998,8 @@ export function compareQuoteObjects(obj1: InputObject, obj2: InputObject): strin
         item1['@ondc/org/title_type'] === item2['@ondc/org/title_type'],
     )
 
-    if (!matchingItem) {
-      errors.push(`Matching item not found for ${item1.title}`)
-    } else {
-      // Compare other properties of the matching items
-      if (item1.title !== matchingItem.title) {
-        errors.push(`Title mismatch for ${item1.title}`)
-      }
-
-      if (item1.price.value !== matchingItem.price.value) {
-        errors.push(`Price value mismatch for ${item1.title}`)
-      }
-
-      // You can add more comparisons as needed
+    if (!matchingItem || !deepCompare(item1, matchingItem)) {
+      errors.push(`Mismatch found for item with item_id ${item1['@ondc/org/item_id']}`)
     }
   })
 

@@ -145,7 +145,7 @@ export const selectSchema = {
                     },
                   },
                 },
-                required: ['id', 'location_id','quantity'],
+                required: ['id', 'location_id', 'quantity'],
               },
             },
             fulfillments: {

@@ -12,6 +12,7 @@ import {
   isTagsValid,
   compareObjects,
   payment_status,
+  compareQuoteObjects,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -218,7 +219,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         const len = billingErrors.length
         while (i < len) {
           const key = `billingErr${i}`
-          onInitObj[key] = `${billingErrors[i]} when compared with init billing object`
+          onInitObj[key] = `${billingErrors[i]}  when compared with init billing object`
           i++
         }
       }
@@ -313,9 +314,9 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
     try {
       logger.info(`Checking Quote Object in /${constants.ON_SELECT} and /${constants.ON_INIT}`)
-      const on_select_quote = getValue('quoteObj')
+      const on_select_quote: any = getValue('quoteObj')
 
-      const quoteErrors = compareObjects(on_select_quote, on_init.quote)
+      const quoteErrors = compareQuoteObjects(on_select_quote, on_init.quote)
 
       if (quoteErrors) {
         let i = 0

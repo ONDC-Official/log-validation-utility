@@ -14,6 +14,7 @@ import {
   compareObjects,
   sumQuoteBreakUp,
   payment_status,
+  compareQuoteObjects,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -327,8 +328,8 @@ export const checkOnConfirm = (data: any) => {
     try {
       logger.info(`Comparing Quote object for /${constants.ON_SELECT} and /${constants.ON_CONFIRM}`)
 
-      const confirm_quote = getValue('quoteObj')
-      const quoteErrors = compareObjects(confirm_quote, on_confirm.quote)
+      const confirm_quote: any = getValue('quoteObj')
+      const quoteErrors = compareQuoteObjects(confirm_quote, on_confirm.quote)
 
       if (quoteErrors) {
         let i = 0

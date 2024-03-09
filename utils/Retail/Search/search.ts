@@ -1,6 +1,5 @@
 import { logger } from '../../../shared/logger'
-import _ from 'lodash'
-import { getValue, setValue } from '../../../shared/dao'
+import { setValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
 import {
   validateSchema,
@@ -31,9 +30,6 @@ export const checkSearch = (data: any, msgIdSet: any) => {
     }
 
     msgIdSet.add(data.context.message_id)
-    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-      errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
-    }
 
     const schemaValidation = validateSchema(data.context.domain.split(':')[1], constants.SEARCH, data)
     if (schemaValidation !== 'error') {

@@ -5,8 +5,8 @@ import constants, { statusArray } from '../constants'
 import schemaValidator from '../shared/schemaValidator'
 import data from '../constants/AreacodeMap.json'
 import { reasonCodes } from '../constants/reasonCode'
+import { InputObject } from '../shared/interface'
 import { setValue } from '../shared/dao'
-
 export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
 
 export const getObjValues = (obj: any) => {
@@ -988,4 +988,55 @@ export const checkQuoteTrail = (quoteTrailItems: any[], errorObj: any, selectPri
   } catch (error: any) {
     logger.error(error)
   }
+}
+
+function deepCompare(obj1: any, obj2: any): boolean {
+  if (typeof obj1 !== 'object' || typeof obj2 !== 'object') {
+    return obj1 === obj2
+  }
+
+  const keys1 = Object.keys(obj1)
+  const keys2 = Object.keys(obj2)
+
+  if (keys1.length !== keys2.length) {
+    return false
+  }
+
+  for (const key of keys1) {
+    if (!keys2.includes(key) || !deepCompare(obj1[key], obj2[key])) {
+      return false
+    }
+  }
+
+  return true
+}
+
+export function compareQuoteObjects(obj1: InputObject, obj2: InputObject): string[] {
+  const errors: string[] = []
+
+  // Compare root level properties
+  const rootKeys1 = Object.keys(obj1)
+  console.log('rootKeys1', rootKeys1)
+  const rootKeys2 = Object.keys(obj2)
+  console.log('rootKeys2', rootKeys2)
+
+  if (rootKeys1.length !== rootKeys2.length) {
+    errors.push('Root level properties mismatch')
+    return errors
+  }
+
+  // Compare breakup array
+  obj1.breakup.forEach((item1) => {
+    const matchingItem = obj2.breakup.find(
+      (item2) =>
+        item1['@ondc/org/item_id'] === item2['@ondc/org/item_id'] &&
+        item1['@ondc/org/title_type'] === item2['@ondc/org/title_type'],
+    )
+
+    if (!matchingItem || !deepCompare(item1, matchingItem)) {
+      errors.push(`Mismatch found for item with item_id ${item1['@ondc/org/item_id']}`)
+    }
+  })
+
+  return errors
 }

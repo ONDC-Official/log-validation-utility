@@ -12,7 +12,6 @@ import _ from 'lodash'
 import { logger } from '../../../shared/logger'
 
 const tagFinder = (item: { tags: any[] }, value: string): any => {
-  console.log('item', item)
   const res = item?.tags?.find((tag: any) => {
     return (
       tag.code === 'type' &&
@@ -27,7 +26,7 @@ const tagFinder = (item: { tags: any[] }, value: string): any => {
 
 export const checkSelect = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
-    return { [ApiSequence.SELECT]: 'Json cannot be empty' }
+    return { [ApiSequence.SELECT]: 'JSON cannot be empty' }
   }
 
   const { message, context } = data
@@ -66,16 +65,6 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   const onSearchContext: any = getValue(`${ApiSequence.ON_SEARCH}_context`)
 
   try {
-    logger.info(`Comparing city of /${constants.SEARCH} and /${constants.SELECT}`)
-    if (!_.isEqual(searchContext.city, context.city)) {
-      const key = `${ApiSequence.SEARCH}_city`
-      errorObj[key] = `City code mismatch in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT}`
-    }
-  } catch (error: any) {
-    logger.info(`Error while comparing city in /${ApiSequence.SEARCH} and /${ApiSequence.SELECT}, ${error.stack}`)
-  }
-
-  try {
     logger.info(`Comparing city of /${constants.ON_SEARCH} and /${constants.SELECT}`)
     if (!_.isEqual(onSearchContext.city, context.city)) {
       const key = `${ApiSequence.ON_SEARCH}_city`
@@ -92,6 +81,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     }
 
     setValue('tmpstmp', context.timestamp)
+    setValue('msgId', context.message_id)
   } catch (error: any) {
     logger.info(
       `Error while comparing timestamp for /${constants.ON_SEARCH} and /${constants.SELECT} api, ${error.stack}`,
@@ -187,7 +177,6 @@ export const checkSelect = (data: any, msgIdSet: any) => {
                 errorObj.itemDisabled = `disabled item with id ${baseItem.id} cannot be selected`
               }
             }
-
             const itemTag = tagFinder(item, 'item')
             if (itemTag) {
               if (!itemMap[item.parent_item_id]) {
@@ -198,9 +187,8 @@ export const checkSelect = (data: any, msgIdSet: any) => {
 
               if (!itemIdArray.includes(item.id)) {
                 const key = `item${index}item_id`
-                errorObj[
-                  key
-                ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in on_search`
+                errorObj[key] =
+                  `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in on_search`
               }
             }
 
@@ -219,17 +207,15 @@ export const checkSelect = (data: any, msgIdSet: any) => {
 
               if (!parentTag) {
                 const key = `item${index}customization_id`
-                errorObj[
-                  key
-                ] = `/message/order/items/tags/customization/value in item: ${item.id} should be one of the customizations id mapped in on_search`
+                errorObj[key] =
+                  `/message/order/items/tags/customization/value in item: ${item.id} should be one of the customizations id mapped in on_search`
               }
             }
 
             if (!parentItemIdSet.has(item.parent_item_id)) parentItemIdSet.add(item.parent_item_id)
 
             if (!itemIdSet.has(item.id)) itemIdSet.add(item.id)
-
-            if (itemMap[item.parent_item_id].location_id !== item.location_id) {
+            if (itemMap[item.parent_item_id] && itemMap[item.parent_item_id].location_id !== item.location_id) {
               const key = `item${index}location_id`
               errorObj[key] = `Inconsistent location_id for parent_item_id ${item.parent_item_id}`
             }
@@ -297,7 +283,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
           const gps = ff.end.location.gps.split(',')
           const gpsLat = gps[0]
           const gpsLong = gps[1]
-          // logger.info(gpsLat, " sfsfdsf ", gpsLong);
+
           if (!gpsLat || !gpsLong) {
             errorObj.gpsErr = `fulfillments location.gps is not as per the API contract`
           }
@@ -311,6 +297,8 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     } catch (error: any) {
       logger.error(`!!Error while checking GPS Precision in /${constants.SELECT}, ${error.stack}`)
     }
+
+    setValue('items', select.items)
   } catch (error: any) {
     logger.error(`!!Error occcurred while checking providers info in /${constants.SELECT},  ${error.message}`)
   }

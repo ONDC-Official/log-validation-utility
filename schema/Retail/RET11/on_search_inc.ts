@@ -285,6 +285,9 @@ export const FnBonSearchIncSchema = {
                           properties: {
                             gps: {
                               type: 'string',
+
+                              errorMessage:
+                                'The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                             },
                             radius: {
                               type: 'object',

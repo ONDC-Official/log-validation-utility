@@ -84,6 +84,8 @@ export const onStatusSchema = {
             id: {
               type: 'string',
               minLength: 1,
+              pattern: '^[a-zA-Z0-9]{1,32}$',
+              errorMessage: 'Should be alphanumeric upto 32 letters max',
             },
             state: {
               type: 'string',
@@ -104,7 +106,7 @@ export const onStatusSchema = {
                       minLength: 1,
                     },
                   },
-                  required: ['id'],
+                  required: ['id', 'state'],
                 },
               },
               required: ['cancelled_by', 'reason'],
@@ -669,12 +671,15 @@ export const onStatusSchema = {
                 },
                 status: {
                   type: 'string',
+                  enum: ['PAID', 'NOT-PAID'],
                 },
                 type: {
                   type: 'string',
+                  enum: ['ON-ORDER', 'ON-FULFILLMENT'],
                 },
                 collected_by: {
                   type: 'string',
+                  enum: ['BAP', 'BPP'],
                 },
                 '@ondc/org/buyer_app_finder_fee_type': {
                   type: 'string',
@@ -684,6 +689,7 @@ export const onStatusSchema = {
                 },
                 '@ondc/org/settlement_basis': {
                   type: 'string',
+                  enum: ['shipment', 'delivery', 'return_window_expiry'],
                 },
                 '@ondc/org/settlement_window': {
                   type: 'string',

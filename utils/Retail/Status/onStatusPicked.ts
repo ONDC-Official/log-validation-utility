@@ -4,12 +4,13 @@ import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
+import { checkFulfillmentID } from '../../index'
 
 export const checkOnStatusPicked = (data: any, state: string) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.ON_STATUS_PICKED]: 'Json cannot be empty' }
+      return { [ApiSequence.ON_STATUS_PICKED]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -18,8 +19,7 @@ export const checkOnStatusPicked = (data: any, state: string) => {
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const schemaValidation = validateSchema('RET11', constants.ON_STATUS, data)
-    const select: any = getValue(`${ApiSequence.SELECT}`)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_STATUS, data)
     const contextRes: any = checkContext(context, constants.ON_STATUS)
 
     if (schemaValidation !== 'error') {
@@ -31,6 +31,26 @@ export const checkOnStatusPicked = (data: any, state: string) => {
     }
 
     setValue(`${ApiSequence.ON_STATUS_PICKED}`, data)
+
+    const pending_message_id: string | null = getValue('pending_message_id')
+    const picked_message_id: string = context.message_id
+
+    setValue(`picked_message_id`, picked_message_id)
+
+    try {
+      logger.info(
+        `Comparing message_id for unsolicited calls for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`,
+      )
+      if (pending_message_id === picked_message_id) {
+        logger.error(`Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`)
+        onStatusObj['invalid_message_id_picked'] =
+          `Message_id cannot be same for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`
+      }
+    } catch (error: any) {
+      logger.error(
+        `Error while comparing message_id for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked`,
+      )
+    }
 
     try {
       logger.info(`Checking context for /${constants.ON_STATUS} API`) //checking context
@@ -53,7 +73,7 @@ export const checkOnStatusPicked = (data: any, state: string) => {
 
     try {
       logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_STATUS}`)
-      if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
+      if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
         onStatusObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
       }
     } catch (error: any) {
@@ -75,14 +95,21 @@ export const checkOnStatusPicked = (data: any, state: string) => {
         error,
       )
     }
-
     try {
-      logger.info(`Comparing timestamp of /${constants.ON_CONFIRM} and /${constants.ON_STATUS}_${state} API`)
-      if (_.gte(getValue('tmstmp'), context.timestamp)) {
-        onStatusObj.tmpstmp1 = `Timestamp for /${constants.ON_CONFIRM} api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
+      logger.info(`Comparing timestamp of /${constants.ON_STATUS}_picked and /${constants.ON_STATUS}_${state} API`)
+      if (_.gte(getValue('tmpstmp'), context.timestamp)) {
+        onStatusObj.inVldTmstmp = `Timestamp for /${constants.ON_STATUS}_picked api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
       }
 
-      setValue('tmpstmp', on_status.context.timestamp)
+      setValue('tmpstmp', context.timestamp)
+    } catch (error: any) {
+      logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
+    }
+    try {
+      logger.info(`Comparing timestamp of /${constants.ON_CONFIRM} and /${constants.ON_STATUS}_${state} API`)
+      if (_.gte(getValue('onCnfrmtmpstmp'), context.timestamp)) {
+        onStatusObj.tmpstmp1 = `Timestamp for /${constants.ON_CONFIRM} api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
+      }
     } catch (error: any) {
       logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
     }
@@ -130,30 +157,36 @@ export const checkOnStatusPicked = (data: any, state: string) => {
           orderPicked = true
           const pickUpTime = fulfillment.start?.time.timestamp
           pickupTimestamps[fulfillment.id] = pickUpTime
-
-          try {
-            //checking pickup time matching with context timestamp
-            if (!_.lte(pickUpTime, contextTime)) {
-              onStatusObj.pickupTime = `pickup timestamp should match context/timestamp and can't be future dated`
-            }
-          } catch (error) {
-            logger.error(
-              `!!Error while checking pickup time matching with context timestamp in /${constants.ON_STATUS}_${state}`,
-              error,
-            )
-          }
-
-          try {
-            //checking order/updated_at timestamp
-            if (!_.gte(on_status.updated_at, pickUpTime)) {
-              onStatusObj.updatedAt = `order/updated_at timestamp can't be less than the pickup time`
+          if (!pickUpTime) {
+            onStatusObj.pickUpTime = `picked timestamp is missing`
+          } else {
+            try {
+              //checking pickup time matching with context timestamp
+              if (!_.lte(pickUpTime, contextTime)) {
+                onStatusObj.pickupTime = `pickup timestamp should match context/timestamp and can't be future dated`
+              }
+            } catch (error) {
+              logger.error(
+                `!!Error while checking pickup time matching with context timestamp in /${constants.ON_STATUS}_${state}`,
+                error,
+              )
             }
 
-            if (!_.gte(contextTime, on_status.updated_at)) {
-              onStatusObj.updatedAtTime = `order/updated_at timestamp can't be future dated (should match context/timestamp)`
+            try {
+              //checking order/updated_at timestamp
+              if (!_.gte(on_status.updated_at, pickUpTime)) {
+                onStatusObj.updatedAt = `order/updated_at timestamp can't be less than the pickup time`
+              }
+
+              if (!_.gte(contextTime, on_status.updated_at)) {
+                onStatusObj.updatedAtTime = `order/updated_at timestamp can't be future dated (should match context/timestamp)`
+              }
+            } catch (error) {
+              logger.error(
+                `!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`,
+                error,
+              )
             }
-          } catch (error) {
-            logger.error(`!!Error while checking order/updated_at timestamp in /${constants.ON_STATUS}_${state}`, error)
           }
         }
 
@@ -163,11 +196,24 @@ export const checkOnStatusPicked = (data: any, state: string) => {
       setValue('pickupTimestamps', pickupTimestamps)
 
       if (!orderPicked) {
-        onStatusObj.noOrdrPicked = `fulfillments/state should be Order-picked-up for /${constants.ON_STATUS}_${state}`
+        onStatusObj.noOrdrPicked = `fulfillments/state should be ${constants.ORDER_PICKED} for /${constants.ON_STATUS}_${constants.ORDER_PICKED}`
       }
     } catch (error: any) {
       logger.info(
         `Error while checking pickup timestamp in /${constants.ON_STATUS}_${state}.json Error: ${error.stack}`,
+      )
+    }
+
+    // Checking fullfillment IDs for items
+    try {
+      logger.info(`Comparing fulfillmentID for items at /${constants.ON_STATUS}_picked`)
+      const items = on_status.items
+      const flow = constants.ON_STATUS + '_picked'
+      const err = checkFulfillmentID(items, onStatusObj, flow)
+      Object.assign(onStatusObj, err)
+    } catch (error: any) {
+      logger.error(
+        `!!Error occurred while checking for fulfillmentID for /${constants.ON_STATUS}_${state}, ${error.stack}`,
       )
     }
 

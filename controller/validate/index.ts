@@ -2,7 +2,7 @@ import { Response, Request } from 'express'
 import _ from 'lodash'
 import { validateActionSchema } from '../../shared/validateLogs'
 import { logger } from '../../shared/logger'
-import { DOMAIN } from '../../shared/types'
+import { DOMAIN, IHttpResponse } from '../../shared/types'
 import { actionsArray } from '../../constants'
 import helper from './helper'
 
@@ -11,20 +11,28 @@ import { verify, hash } from '../../shared/crypto'
 const controller = {
   validate: async (req: Request, res: Response): Promise<Response | void> => {
     try {
-      const { domain, version, payload, flow } = req.body
+      const { domain, version, payload, flow, bap_id, bpp_id } = req.body
+
       let result: { response?: string; success?: boolean; message?: string } = {}
       const splitPath = req.originalUrl.split('/')
       const pathUrl = splitPath[splitPath.length - 1]
-      const stringPayload = JSON.stringify(payload)
 
       const normalisedDomain = helper.getEnumForDomain(pathUrl)
 
       switch (normalisedDomain) {
         case DOMAIN.RETAIL:
           {
-            const { response, success, message } = await helper.validateRetail(domain, payload, version)
+            const { response, success, message } = await helper.validateRetail(
+              domain,
+              payload,
+              version,
+              flow,
+              bap_id,
+              bpp_id,
+            )
             result = { response, success, message }
           }
+
           break
         case DOMAIN.LOGISTICS:
           // to-do
@@ -35,14 +43,17 @@ const controller = {
             const { response, success, message } = await helper.validateFinance(domain, payload, version, flow)
             result = { response, success, message }
           }
+
           break
         case DOMAIN.MOBILITY:
           {
             const { response, success, message } = await helper.validateMobility(domain, payload, version, flow)
             result = { response, success, message }
           }
+
           break
         case DOMAIN.IGM:
+          // eslint-disable-next-line no-case-declarations
           const { response, success, message } = await helper.validateIGM(payload, version)
           result = { response, success, message }
           break
@@ -52,14 +63,21 @@ const controller = {
 
       const { response, success, message } = result
 
-      const { signature, currentDate } = await helper.createSignature({ message: stringPayload })
+      const httpResponse: IHttpResponse = {
+        message,
+        report: response,
+        bpp_id,
+        bap_id,
+        domain,
+        reportTimestamp: new Date().toISOString(),
+      }
+
+      const { signature, currentDate } = await helper.createSignature({ message: JSON.stringify(httpResponse) })
 
       if (!success)
-        return res
-          .status(400)
-          .send({ success, response: { message, signature, signTimestamp: currentDate, report: response } })
+        return res.status(400).send({ success, response: httpResponse, signature, signTimestamp: currentDate })
 
-      return res.status(200).send({ success, response: { message, signature, signTimestamp: currentDate } })
+      return res.status(200).send({ success, response: httpResponse, signature, signTimestamp: currentDate })
     } catch (error: any) {
       logger.error(error)
       return res.status(500).send({ success: false, response: { message: error?.message || error } })
@@ -68,24 +86,30 @@ const controller = {
 
   validateToken: async (req: Request, res: Response): Promise<Response | void> => {
     try {
-      const { domain, version, payload, signature, signTimestamp } = req.body
+      const { success, response, signature, signTimestamp } = req.body
 
-      if (!signature || !signTimestamp || !domain || !payload)
-        throw new Error('Payload needs to have signature, signTimestamp, payload, version and domain')
+      if (!signature || !signTimestamp || !response || success === undefined)
+        throw new Error('Payload needs to have signature, signTimestamp, success, and response')
 
       const publicKey = process.env.SIGN_PUBLIC_KEY as string
 
-      const supportedVersions = ['1.2.0']
+      const httpResponse: IHttpResponse = {
+        message: response?.message,
+        report: response?.report,
+        bpp_id: response?.bpp_id,
+        bap_id: response?.bap_id,
+        domain: response?.domain,
+        reportTimestamp: response?.reportTimestamp,
+      }
 
-      const stringJSON = JSON.stringify(payload)
-
-      if (!supportedVersions.includes(version)) throw new Error('Invalid Version! Please enter a valid version')
-      const hashString = await hash({ message: stringJSON })
+      const hashString = await hash({ message: JSON.stringify(httpResponse) })
 
       const signingString = `${hashString}|${signTimestamp}`
 
       const isVerified = await verify({ signedMessage: signature, message: signingString, publicKey })
-      return res.status(200).send({ success: true, response: { verified: isVerified } })
+      const reportMessage = isVerified ? 'The report is validated' : 'The report is not validated'
+
+      return res.status(200).send({ success: true, response: { message: reportMessage, verified: isVerified } })
     } catch (error: any) {
       logger.error(error)
       return res.status(500).send({ success: false, response: { message: error?.message || error } })

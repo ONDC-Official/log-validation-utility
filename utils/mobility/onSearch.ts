@@ -76,7 +76,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
             errorObj[`${key}.vehicleCategory`] = `Vehicle category should be one of ${ON_DEMAND_VEHICLE}`
           }
 
-          if (fulfillment.type !== 'DELIVERY') {
+          if (fulfillment?.type !== 'DELIVERY') {
             errorObj[`${key}.type`] = `Fulfillment type must be DELIVERY at index ${i} in /${constants.ON_SEARCH}`
           }
 
@@ -136,9 +136,8 @@ export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
             if (!item?.descriptor?.code)
               errorObj[`${itemKey}.code`] = `descriptor.code is missing at index: ${index} in /${constants.ON_SEARCH}`
             else if (item?.descriptor?.code !== 'RIDE') {
-              errorObj[
-                `${itemKey}.code`
-              ] = `descriptor.code must be RIDE at item.index ${index} in /${constants.ON_SEARCH}`
+              errorObj[`${itemKey}.code`] =
+                `descriptor.code must be RIDE at item.index ${index} in /${constants.ON_SEARCH}`
             }
           })
         }
@@ -174,15 +173,13 @@ export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
             ]
 
             if (!arr?.collected_by) {
-              errorObj[
-                `payemnts[${i}]_collected_by`
-              ] = `payments.collected_by must be present in ${constants.ON_SEARCH}`
+              errorObj[`payemnts[${i}]_collected_by`] =
+                `payments.collected_by must be present in ${constants.ON_SEARCH}`
             } else {
               const srchCollectBy = getValue(`collected_by`)
               if (srchCollectBy != arr?.collected_by)
-                errorObj[
-                  `payemnts[${i}]_collected_by`
-                ] = `payments.collected_by value sent in ${constants.ON_SEARCH} should be same as sent in ${constants.SEARCH}: ${srchCollectBy}`
+                errorObj[`payemnts[${i}]_collected_by`] =
+                  `payments.collected_by value sent in ${constants.ON_SEARCH} should be same as sent in ${constants.SEARCH}: ${srchCollectBy}`
             }
 
             // Validate payment tags

@@ -68,9 +68,8 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
       on_update.items.forEach((item: any, index: number) => {
         if (!newItemIDSValue.includes(item.id)) {
           const key = `item[${index}].item_id`
-          onUpdateObj[
-            key
-          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+          onUpdateObj[key] =
+            `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
         }
 
         if (item.tags) {
@@ -81,9 +80,8 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
         }
 
         if (item?.descriptor?.code !== fisFlows.PERSONAL)
-          onUpdateObj[
-            `item[${index}].code`
-          ] = `Descriptor code: ${item?.descriptor?.code} in item[${index}] must be the same as ${flow}`
+          onUpdateObj[`item[${index}].code`] =
+            `Descriptor code: ${item?.descriptor?.code} in item[${index}] must be the same as ${flow}`
 
         if (on_update.quote.price.value !== item?.price?.value) {
           onUpdateObj[`item${index}_price`] = `Price mismatch for item: ${item.id}`
@@ -230,9 +228,8 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
           } else {
             const updateValue = getValue(`updatePayment`)
             if (payment?.params?.amount !== updateValue)
-              onUpdateObj[
-                'invalidPaymentAmount'
-              ] = `Invalid payment amount (${payment.url}) at index ${i}, should be the same as sent in update call`
+              onUpdateObj['invalidPaymentAmount'] =
+                `Invalid payment amount (${payment.url}) at index ${i}, should be the same as sent in update call`
           }
         }
 

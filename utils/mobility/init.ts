@@ -67,9 +67,8 @@ export const checkInit = (data: any, msgIdSet: any, version: any) => {
       else {
         init.items.forEach((item: any, index: number) => {
           if (!itemIDS.includes(item.id)) {
-            errorObj[
-              `item[${index}].item_id`
-            ] = `/message/order/items/id in item: ${item.id} at /${constants.INIT} should be one of the /item/id mapped in past call`
+            errorObj[`item[${index}].item_id`] =
+              `/message/order/items/id in item: ${item.id} at /${constants.INIT} should be one of the /item/id mapped in past call`
           }
         })
       }
@@ -84,9 +83,8 @@ export const checkInit = (data: any, msgIdSet: any, version: any) => {
         if (!fulfillment?.id) {
           errorObj[fulfillmentKey] = `id is missing in fulfillments[${index}]`
         } else if (!storedFull.includes(fulfillment.id)) {
-          errorObj[
-            `${fulfillmentKey}.id`
-          ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+          errorObj[`${fulfillmentKey}.id`] =
+            `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
         }
 
         if (!ON_DEMAND_VEHICLE.includes(fulfillment.vehicle.category)) {

@@ -94,7 +94,7 @@ export const checkConfirm = (data: any, msgIdSet: any, version: any) => {
           ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
         }
 
-        if (!ON_DEMAND_VEHICLE.includes(fulfillment.vehicle.category)) {
+        if (!ON_DEMAND_VEHICLE.includes(fulfillment.vehicle?.category)) {
           errorObj[`${fulfillmentKey}.vehicleCategory`] = `Vehicle category should be one of ${ON_DEMAND_VEHICLE}`
         }
 

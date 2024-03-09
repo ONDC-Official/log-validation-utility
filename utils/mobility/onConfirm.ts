@@ -91,9 +91,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any) => {
         if (!fulfillment?.id) {
           errorObj[fulfillmentKey] = `id is missing in fulfillments[${index}]`
         } else if (!storedFull.includes(fulfillment.id)) {
-          errorObj[
-            `${fulfillmentKey}.id`
-          ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+          errorObj[`${fulfillmentKey}.id`] =
+            `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
         } else {
           fulfillmentIdsSet.add(fulfillment.id)
         }
@@ -112,10 +111,9 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any) => {
           errorObj[`${fulfillmentKey}.details`] = `Vehicle object is incomplete for fulfillment ${index}`
         }
 
-        if (fulfillment.type !== 'DELIVERY') {
-          errorObj[
-            `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_CONFIRM}`
+        if (fulfillment?.type !== 'DELIVERY') {
+          errorObj[`${fulfillmentKey}.type`] =
+            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_CONFIRM}`
         }
 
         //customer checks
@@ -123,7 +121,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any) => {
         Object.assign(errorObj, customerErrors)
 
         //agent checks
-        const agentErrors = validateEntity(fulfillment.agent, 'customer', constants.ON_CONFIRM, index)
+        const agentErrors = validateEntity(fulfillment.agent, 'agent', constants.ON_CONFIRM, index)
         Object.assign(errorObj, agentErrors)
 
         // Check stops for START and END, or time range with valid timestamp and GPS
@@ -153,9 +151,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any) => {
         on_confirm.items.forEach((item: any, index: number) => {
           const itemKey = `items[${index}]`
           if (!newItemIDSValue.includes(item.id)) {
-            errorObj[
-              `${itemKey}.id`
-            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_CONFIRM}`
+            errorObj[`${itemKey}.id`] =
+              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_CONFIRM}`
           }
 
           //price check
@@ -174,9 +171,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any) => {
 
           //descriptor.code
           if (item.descriptor.code !== 'RIDE') {
-            errorObj[
-              `${itemKey}.type`
-            ] = `descriptor.code must be RIDE at item.index ${index} in /${constants.ON_CONFIRM}`
+            errorObj[`${itemKey}.type`] =
+              `descriptor.code must be RIDE at item.index ${index} in /${constants.ON_CONFIRM}`
           }
 
           // FARE_POLICY & INFO checks

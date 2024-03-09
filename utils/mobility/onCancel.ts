@@ -109,18 +109,16 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string, versio
         if (!fulfillment?.id) {
           errorObj[fulfillmentKey] = `id is missing in fulfillments[${index}]`
         } else if (!storedFull.includes(fulfillment.id)) {
-          errorObj[
-            `${fulfillmentKey}.id`
-          ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+          errorObj[`${fulfillmentKey}.id`] =
+            `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
         } else {
           fulfillmentIdsSet.add(fulfillment.id)
         }
 
         const stateCode = fulfillment.state?.descriptor?.code
         if (sequence === 'on_cancel' && stateCode !== 'RIDE_CANCELLED') {
-          errorObj[
-            `fulfillmentStateCode_${index}`
-          ] = `Fulfillment state code must be RIDE_CANCELLED at index ${index} in /${constants.ON_CANCEL}`
+          errorObj[`fulfillmentStateCode_${index}`] =
+            `Fulfillment state code must be RIDE_CANCELLED at index ${index} in /${constants.ON_CANCEL}`
         } else {
           if (!VALID_FULL_STATE.includes(fulfillment?.state?.descriptor?.code)) {
             errorObj[`${fulfillmentKey}.state`] = `Invalid or missing descriptor.code for fulfillment ${index}`
@@ -137,10 +135,9 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string, versio
           errorObj[`${fulfillmentKey}.details`] = `Vehicle object is incomplete for fulfillment ${index}`
         }
 
-        if (fulfillment.type !== 'DELIVERY') {
-          errorObj[
-            `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_CANCEL}`
+        if (fulfillment?.type !== 'DELIVERY') {
+          errorObj[`${fulfillmentKey}.type`] =
+            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_CANCEL}`
         }
 
         //customer checks
@@ -148,7 +145,7 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string, versio
         Object.assign(errorObj, customerErrors)
 
         //agent checks
-        const agentErrors = validateEntity(fulfillment.agent, 'customer', constants.ON_CANCEL, index)
+        const agentErrors = validateEntity(fulfillment.agent, 'agent', constants.ON_CANCEL, index)
         Object.assign(errorObj, agentErrors)
 
         // Check stops for START and END, or time range with valid timestamp and GPS
@@ -178,9 +175,8 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string, versio
         onCancel.items.forEach((item: any, index: number) => {
           const itemKey = `items[${index}]`
           if (!newItemIDSValue.includes(item.id)) {
-            errorObj[
-              `${itemKey}.id`
-            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_CANCEL}`
+            errorObj[`${itemKey}.id`] =
+              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_CANCEL}`
           }
 
           //price check
@@ -199,9 +195,8 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string, versio
 
           //descriptor.code
           if (item.descriptor.code !== 'RIDE') {
-            errorObj[
-              `${itemKey}.type`
-            ] = `descriptor.code must be RIDE at item.index ${index} in /${constants.ON_CANCEL}`
+            errorObj[`${itemKey}.type`] =
+              `descriptor.code must be RIDE at item.index ${index} in /${constants.ON_CANCEL}`
           }
 
           // FARE_POLICY & INFO checks
@@ -229,9 +224,8 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string, versio
           const paymentId = payment.id
 
           if (paymentIdsSet.has(paymentId)) {
-            errorObj[
-              `paymentId_${index}`
-            ] = `Duplicate payment ID '${paymentId}' at index ${index} in /${constants.ON_CANCEL}`
+            errorObj[`paymentId_${index}`] =
+              `Duplicate payment ID '${paymentId}' at index ${index} in /${constants.ON_CANCEL}`
           } else {
             paymentIdsSet.add(paymentId)
           }
@@ -264,9 +258,8 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string, versio
             const tagGroupFound = tags.some((tag: any) => tag.descriptor?.code === tagGroup)
 
             if (!tagGroupFound) {
-              errorObj[
-                `${tagGroup}_${index}`
-              ] = `${tagGroup} tag group is missing at index ${index} in /${constants.ON_CANCEL}`
+              errorObj[`${tagGroup}_${index}`] =
+                `${tagGroup} tag group is missing at index ${index} in /${constants.ON_CANCEL}`
             }
           })
         })
@@ -280,7 +273,7 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string, versio
       logger.info(`Checking quote details in /${constants.ON_CANCEL}`)
       const quote = onCancel.quote
       const quoteBreakup = quote.breakup
-      const requiredBreakupItems = ['BASE_FARE', 'DISTANCE_FARE', 'CURRENT_FARE_CHARGE']
+      const requiredBreakupItems = ['BASE_FARE', 'DISTANCE_FARE']
 
       if (sequence == 'soft_on_cancel') {
         requiredBreakupItems.push('CANCELLATION_CHARGES')

@@ -2,14 +2,15 @@
 import _ from 'lodash'
 import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo } from '../..'
+import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, payment_status } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
+import { checkFulfillmentID } from '../../index'
 
 export const checkOnStatusPending = (data: any, state: string) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.ON_STATUS_PENDING]: 'Json cannot be empty' }
+      return { [ApiSequence.ON_STATUS_PENDING]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -18,8 +19,7 @@ export const checkOnStatusPending = (data: any, state: string) => {
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const schemaValidation = validateSchema('RET11', constants.ON_STATUS, data)
-    const select: any = getValue(`${ApiSequence.SELECT}`)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_STATUS, data)
     const contextRes: any = checkContext(context, constants.ON_STATUS)
 
     if (schemaValidation !== 'error') {
@@ -31,6 +31,7 @@ export const checkOnStatusPending = (data: any, state: string) => {
     }
 
     setValue(`${ApiSequence.ON_STATUS_PENDING}`, data)
+    setValue('pending_message_id', context.message_id)
 
     try {
       logger.info(`Checking context for /${constants.ON_STATUS} API`) //checking context
@@ -53,7 +54,7 @@ export const checkOnStatusPending = (data: any, state: string) => {
 
     try {
       logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_STATUS}`)
-      if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
+      if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
         onStatusObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
       }
     } catch (error: any) {
@@ -78,11 +79,10 @@ export const checkOnStatusPending = (data: any, state: string) => {
 
     try {
       logger.info(`Comparing timestamp of /${constants.ON_CONFIRM} and /${constants.ON_STATUS}_${state} API`)
-      if (_.gte(getValue('tmstmp'), context.timestamp)) {
+      if (_.gte(getValue('onCnfrmtmpstmp'), context.timestamp)) {
         onStatusObj.tmpstmp1 = `Timestamp for /${constants.ON_CONFIRM} api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
       }
-
-      setValue('tmpstmp', on_status.context.timestamp)
+      setValue('tmpstmp', context.timestamp)
     } catch (error: any) {
       logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
     }
@@ -92,12 +92,36 @@ export const checkOnStatusPending = (data: any, state: string) => {
       logger.info(`Comparing order.updated_at and context timestamp for /${constants.ON_STATUS}_${state} API`)
 
       if (!areTimestampsLessThanOrEqualTo(on_status.updated_at, contextTime)) {
-        onStatusObj.tmpstmp2 = ` order.updated_at timestamp should be less than or eqaul to  context timestamp for /${constants.ON_STATUS}_${state} api`
+        onStatusObj.tmpstmp2 = `order.updated_at timestamp should be less than or eqaul to  context timestamp for /${constants.ON_STATUS}_${state} api`
       }
     } catch (error: any) {
       logger.error(
         `!!Error occurred while comparing order updated at for /${constants.ON_STATUS}_${state}, ${error.stack}`,
       )
+    }
+
+    // Checking fullfillment IDs for items
+    try {
+      logger.info(`Comparing fulfillmentID for items at /${constants.ON_STATUS}_${state}`)
+      const items = on_status.items
+      const flow = constants.ON_STATUS + '_pending'
+      const err = checkFulfillmentID(items, onStatusObj, flow)
+      Object.assign(onStatusObj, err)
+    } catch (error: any) {
+      logger.error(
+        `!!Error occurred while checking for fulfillmentID for /${constants.ON_STATUS}_${state}, ${error.stack}`,
+      )
+    }
+
+    try {
+      logger.info(`Checking if transaction_id is present in message.order.payment`)
+      const payment = on_status.payment
+      const status = payment_status(payment)
+      if (!status) {
+        onStatusObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
+      }
+    } catch (err: any) {
+      logger.error(`Error while checking transaction is in message.order.payment`)
     }
 
     return onStatusObj

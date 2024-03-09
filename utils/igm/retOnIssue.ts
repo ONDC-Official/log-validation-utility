@@ -19,7 +19,7 @@ const checkOnIssue = (data: any) => {
     const on_issue: any = data
 
     if (!data || isObjectEmpty(data)) {
-      return { [IGMApiSequence.RET_ON_ISSUE]: 'Json cannot be empty' }
+      return { [IGMApiSequence.RET_ON_ISSUE]: 'JSON cannot be empty' }
     }
 
     try {

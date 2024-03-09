@@ -26,13 +26,25 @@ const getEnumForDomain = (path: string) => {
   if (path.includes('igm')) return DOMAIN.IGM
   throw new Error('Domain could not be detected')
 }
-const validateRetail = async (domain: string, payload: string, version: string) => {
-  let response
+const validateRetail = async (
+  domain: string,
+  payload: string,
+  version: string,
+  flow: string,
+  bap_id: string,
+  bpp_id: string,
+) => {
+  let response: any
   let success = false
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
+
+  if (!bap_id || !bpp_id || !flow) {
+    message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_PAYLOAD
+    return { response, success, message }
+  }
   switch (version) {
     case '1.2.0':
-      response = await validateLogs(payload, domain)
+      response = await validateLogs(payload, domain, flow)
 
       if (_.isEmpty(response)) {
         success = true
@@ -44,6 +56,7 @@ const validateRetail = async (domain: string, payload: string, version: string) 
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
       logger.warn('Invalid Version!!')
   }
+
   return { response, success, message }
 }
 const validateFinance = async (domain: string, payload: string, version: string, flow?: string) => {
@@ -55,7 +68,7 @@ const validateFinance = async (domain: string, payload: string, version: string,
 
   switch (version) {
     case '2.0.0':
-      response = validateLogsForFIS12(payload, domain, flow, version)
+      response = validateLogsForFIS12(payload, domain, flow)
 
       if (_.isEmpty(response)) {
         success = true
@@ -67,6 +80,7 @@ const validateFinance = async (domain: string, payload: string, version: string,
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
       logger.warn('Invalid Version!!')
   }
+
   return { response, success, message }
 }
 const validateMobility = async (domain: string, payload: string, version: string, flow?: string) => {
@@ -78,7 +92,7 @@ const validateMobility = async (domain: string, payload: string, version: string
 
   switch (version) {
     case '2.0.0':
-      response = validateLogsForMobility(payload, domain, flow, version)
+      response = validateLogsForMobility(payload, domain, flow)
 
       if (_.isEmpty(response)) {
         success = true
@@ -90,6 +104,7 @@ const validateMobility = async (domain: string, payload: string, version: string
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
       logger.warn('Invalid Version!!')
   }
+
   return { response, success, message }
 }
 const validateIGM = async (payload: string, version: string) => {
@@ -111,6 +126,7 @@ const validateIGM = async (payload: string, version: string) => {
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
       logger.warn('Invalid Version!!')
   }
+
   return { response, success, message }
 }
 

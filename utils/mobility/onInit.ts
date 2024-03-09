@@ -66,19 +66,17 @@ export const checkOnInit = (data: any, msgIdSet: any, version: any) => {
         if (!fulfillment?.id) {
           errorObj[fulfillmentKey] = `id is missing in fulfillments[${index}]`
         } else if (!storedFull.includes(fulfillment.id)) {
-          errorObj[
-            `${fulfillmentKey}.id`
-          ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+          errorObj[`${fulfillmentKey}.id`] =
+            `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
         }
 
         if (!ON_DEMAND_VEHICLE.includes(fulfillment.vehicle.category)) {
           errorObj[`${fulfillmentKey}.vehicleCategory`] = `Vehicle category should be one of ${ON_DEMAND_VEHICLE}`
         }
 
-        if (fulfillment.type !== 'DELIVERY') {
-          errorObj[
-            `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_INIT}`
+        if (fulfillment?.type !== 'DELIVERY') {
+          errorObj[`${fulfillmentKey}.type`] =
+            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_INIT}`
         }
 
         if (Object.prototype.hasOwnProperty.call(fulfillment, 'agent')) {
@@ -119,9 +117,8 @@ export const checkOnInit = (data: any, msgIdSet: any, version: any) => {
           if (!item?.id) {
             errorObj[`${itemKey}.id`] = `id is missing in [${itemKey}]`
           } else if (!itemIDS.includes(item.id)) {
-            errorObj[
-              `${itemKey}.id`
-            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_INIT}`
+            errorObj[`${itemKey}.id`] =
+              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_INIT}`
           }
 
           //price check

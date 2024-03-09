@@ -86,18 +86,18 @@ export const onInitSchema = {
                   type: 'string',
                   minLength: 1,
                 },
-              },
-              required: ['id'],
-            },
-            provider_location: {
-              type: 'object',
-              properties: {
-                id: {
-                  type: 'string',
-                  minLength: 1,
+                locations: {
+                  type: 'object',
+                  properties: {
+                    id: {
+                      type: 'string',
+                      minLength: 1,
+                    },
+                  },
+                  required: ['id'],
                 },
               },
-              required: ['id'],
+              required: ['id', 'locations'],
             },
             items: {
               type: 'array',
@@ -554,7 +554,7 @@ export const onInitSchema = {
               },
             },
           },
-          required: ['provider', 'provider_location', 'items', 'billing', 'fulfillments', 'quote', 'payment', 'tags'],
+          required: ['provider', 'items', 'billing', 'fulfillments', 'quote', 'payment', 'tags'],
         },
       },
       required: ['order'],

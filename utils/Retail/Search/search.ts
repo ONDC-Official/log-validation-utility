@@ -14,7 +14,7 @@ export const checkSearch = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      errorObj[ApiSequence.SEARCH] = 'Json cannot be empty'
+      errorObj[ApiSequence.SEARCH] = 'JSON cannot be empty'
       return
     }
 
@@ -32,7 +32,6 @@ export const checkSearch = (data: any, msgIdSet: any) => {
     msgIdSet.add(data.context.message_id)
 
     const schemaValidation = validateSchema(data.context.domain.split(':')[1], constants.SEARCH, data)
-
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
     }

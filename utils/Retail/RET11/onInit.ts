@@ -11,6 +11,7 @@ import {
   checkBppIdOrBapId,
   isTagsValid,
   compareObjects,
+  payment_status,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -18,7 +19,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
   try {
     const onInitObj: any = {}
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.ON_INIT]: 'Json cannot be empty' }
+      return { [ApiSequence.ON_INIT]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -70,13 +71,13 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     try {
       logger.info(`Comparing timestamp of ${constants.INIT} & ${constants.ON_INIT}`)
       const tmpstmp = getValue('tmpstmp')
-      if (_.gte(tmpstmp, context.timestamp)) {
+      if (_.gt(tmpstmp, context.timestamp)) {
         onInitObj.tmpstmp = `Timestamp for ${constants.INIT} api cannot be greater than or equal to ${constants.ON_INIT} api`
       } else {
         const timeDiff = timeDifference(context.timestamp, tmpstmp)
         logger.info(timeDiff)
         if (timeDiff > 5000) {
-          onInitObj.tmpstmp = `context/timestamp difference between /${constants.ON_INIT} and /${constants.INIT} should be smaller than 5 sec`
+          onInitObj.tmpstmp = `context/timestamp difference between /${constants.ON_INIT} and /${constants.INIT} should be less than 5 sec`
         }
       }
 
@@ -111,25 +112,37 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
     const on_init = message.order
 
+    // checking for tax_number in tags
     try {
-      logger.info(`Checking provider Id and provider_location Id in /${constants.ON_SEARCH} and /${constants.ON_INIT}`)
-      if (!on_init.provider || on_init.provider.id != getValue('providerId')) {
-        onInitObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.ON_INIT}`
-      }
+      logger.info(`Checking for tax_number for ${constants.ON_INIT}`)
+      const tags = on_init.tags[0].list
+      let tax_number = {}
+      tags.forEach((e: any) => {
+        if (e.code === 'tax_number') {
+          if (!e.value) {
+            logger.error(`value must be present for tax_number in ${constants.ON_INIT}`)
+            onInitObj.taxNumberValue = `value must be present for tax_number in ${constants.ON_INIT}`
+          }
 
-      if (
-        on_init.hasOwnProperty('provider_location') &&
-        (!on_init.provider_location.id || on_init.provider_location.id != getValue('providerLoc'))
-      ) {
-        onInitObj.prvdrLoc = `provider_location.id mismatches in /${constants.ON_SEARCH} and /${constants.ON_INIT}`
-      } else if (!on_init.hasOwnProperty('provider_location')) {
-        onInitObj.prvdrloc = `provider_location object is missing in /${constants.ON_INIT}`
+          tax_number = e
+        }
+      })
+      if (_.isEmpty(tax_number)) {
+        logger.error(`tax_number must present in ${constants.ON_INIT}`)
+        onInitObj.taxNumber = `tax_number must be present for ${constants.ON_INIT}`
       }
     } catch (error: any) {
-      logger.error(
-        `!!Error while comparing provider Id and location Id in /${constants.ON_SEARCH} and /${constants.ON_INIT}, ${error.stack}`,
-      )
+      logger.error(`tax_number not present in tags for ${constants.ON_INIT}`)
     }
+
+    setValue(
+      'bpp_tags',
+      on_init.tags.forEach((data: any) => {
+        if (data.code == 'bpp_terms') {
+          setValue('list_ON_INIT', data.list)
+        }
+      }),
+    )
 
     try {
       logger.info(`Comparing item Ids and fulfillment Ids in /${constants.ON_SELECT} and /${constants.ON_INIT}`)
@@ -143,24 +156,21 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
         if (checkItemTag(item, select_customIdArray)) {
           const itemkey = `item${i}tags.parent_id`
-          onInitObj[
-            itemkey
-          ] = `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.SELECT} and /${constants.INIT}`
+          onInitObj[itemkey] =
+            `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.SELECT} and /${constants.INIT}`
         }
 
         if (!parentItemIdSet.includes(item.parent_item_id)) {
           const itemkey = `item_PrntItmId${i}`
-          onInitObj[
-            itemkey
-          ] = `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_INIT}`
+          onInitObj[itemkey] =
+            `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_INIT}`
         }
 
         if (itemId in itemFlfllmnts) {
           if (on_init.items[i].fulfillment_id != itemFlfllmnts[itemId]) {
             const itemkey = `item_FFErr${i}`
-            onInitObj[
-              itemkey
-            ] = `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_INIT}`
+            onInitObj[itemkey] =
+              `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_INIT}`
           }
         } else {
           const itemkey = `item_FFErr${i}`
@@ -169,7 +179,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
         if (itemId in itemsIdList) {
           if (on_init.items[i].quantity.count != itemsIdList[itemId]) {
-            onInitObj.cntErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
+            onInitObj.countErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
           }
         }
 
@@ -223,16 +233,14 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
         if (!_.isEqual(on_init.fulfillments[i].end.location.gps, getValue('buyerGps'))) {
           const gpskey = `gpsKey${i}`
-          onInitObj[
-            gpskey
-          ] = `gps coordinates in fulfillments[${i}].end.location mismatch in /${constants.SELECT} & /${constants.ON_INIT}`
+          onInitObj[gpskey] =
+            `gps coordinates in fulfillments[${i}].end.location mismatch in /${constants.SELECT} & /${constants.ON_INIT}`
         }
 
         if (!_.isEqual(on_init.fulfillments[i].end.location.address.area_code, getValue('buyerAddr'))) {
           const addrkey = `addrKey${i}`
-          onInitObj[
-            addrkey
-          ] = `address.area_code in fulfillments[${i}].end.location mismatch in /${constants.SELECT} & /${constants.ON_INIT}`
+          onInitObj[addrkey] =
+            `address.area_code in fulfillments[${i}].end.location mismatch in /${constants.SELECT} & /${constants.ON_INIT}`
         }
 
         i++
@@ -311,6 +319,41 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       if (on_init.payment['@ondc/org/settlement_details'][0]['settlement_counterparty'] != 'seller-app') {
         onInitObj.sttlmntcntrparty = `settlement_counterparty is expected to be 'seller-app' in @ondc/org/settlement_details`
       }
+
+      logger.info(`checking payment details in /${constants.ON_INIT}`)
+      const data = on_init.payment['@ondc/org/settlement_details'][0]
+      if (
+        data['settlement_type'] !== 'neft' &&
+        data['settlement_type'] !== 'rtgs' &&
+        data['settlement_type'] !== 'upi'
+      ) {
+        logger.error(
+          `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_detailsin /${constants.ON_INIT}`,
+        )
+        onInitObj.sttlmntcntrparty = `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_details`
+      } else if (data['settlement_type'] !== 'upi') {
+        if (
+          !data.bank_name ||
+          !data.branch_name ||
+          !data.beneficiary_name ||
+          !data.settlement_phase ||
+          !data.settlement_ifsc_code ||
+          !data.settlement_counterparty ||
+          !data.settlement_bank_account_no ||
+          data.beneficiary_name.trim() === '' ||
+          data.bank_name.trim() === '' ||
+          data.branch_name.trim() === '' ||
+          data.settlement_bank_account_no.trim() === ''
+        ) {
+          logger.error(`Payment details are missing /${constants.ON_INIT}`)
+          onInitObj.paymentDetails = `Payment details are missing/${constants.ON_INIT}`
+        }
+      } else {
+        if (!data.upi_address || data.upi_address.trim() === '') {
+          logger.error(`Payment details are missing /${constants.ON_INIT}`)
+          onInitObj.paymentDetails = `Payment details are missing/${constants.ON_INIT}`
+        }
+      }
     } catch (error: any) {
       logger.error(`!!Error while checking payment object in /${constants.ON_INIT}`)
     }
@@ -337,6 +380,17 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while checking tags in /${constants.ON_INIT} ${error.stack}`)
+    }
+
+    try {
+      logger.info(`Checking if transaction_id is present in message.order.payment`)
+      const payment = on_init.payment
+      const status = payment_status(payment)
+      if (!status) {
+        onInitObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
+      }
+    } catch (err: any) {
+      logger.error(`Error while checking transaction is in message.order.payment`)
     }
 
     return onInitObj

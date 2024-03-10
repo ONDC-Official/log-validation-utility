@@ -87,6 +87,19 @@ export const FnBonInitSchema = {
                   type: 'string',
                   minLength: 1,
                 },
+                locations: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      id: {
+                        type: 'string',
+                        minLength: 1,
+                      },
+                    },
+                    required: ['id'],
+                  },
+                },
               },
               required: ['id'],
             },

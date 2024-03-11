@@ -473,272 +473,319 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
             itemCategory_id.add(item.category_id)
           }
 
-          if ('category_ids' in item) {
-            item[`category_ids`].map((category: string, index: number) => {
-              const categoryId = category.split(':')[0]
-              const seq = category.split(':')[1]
+          try {
+            if ('category_ids' in item) {
+              item[`category_ids`].map((category: string, index: number) => {
+                const categoryId = category.split(':')[0]
+                const seq = category.split(':')[1]
 
-              if (seqSet.has(seq)) {
-                const key = `prvdr${i}item${j}ctgryseq${index}`
-                errorObj[key] = `duplicate seq : ${seq} in category_ids in prvdr${i}item${j}`
-              } else {
-                seqSet.add(seq)
-              }
+                if (seqSet.has(seq)) {
+                  const key = `prvdr${i}item${j}ctgryseq${index}`
+                  errorObj[key] = `duplicate seq : ${seq} in category_ids in prvdr${i}item${j}`
+                } else {
+                  seqSet.add(seq)
+                }
 
-              if (!categoriesId.has(categoryId)) {
-                const key = `prvdr${i}item${j}ctgryId${index}`
-                errorObj[key] = `item${j} should have category_ids one of the Catalog/categories/id`
-              }
-            })
+                if (!categoriesId.has(categoryId)) {
+                  const key = `prvdr${i}item${j}ctgryId${index}`
+                  errorObj[key] = `item${j} should have category_ids one of the Catalog/categories/id`
+                }
+              })
+            }
+          } catch (error: any) {
+            logger.error(`Error while checking category_ids for item id: ${item.id}, ${error.stack}`)
           }
 
-          logger.info(`Checking selling price and maximum price for item id: ${item.id}`)
+          try {
+            logger.info(`Checking selling price and maximum price for item id: ${item.id}`)
 
-          const statutory_reqs_prepackaged_food =
-            onSearchCatalog['bpp/providers'][i]['items'][j]['@ondc/org/statutory_reqs_prepackaged_food']
+            const statutory_reqs_prepackaged_food =
+              onSearchCatalog['bpp/providers'][i]['items'][j]['@ondc/org/statutory_reqs_prepackaged_food']
 
-          if (context.domain === 'ONDC:RET18') {
-            if (!statutory_reqs_prepackaged_food.ingredients_info) {
-              const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
-              errorObj[key] =
-                `In ONDC:RET18 for @ondc/org/statutory_reqs_prepackaged_food  ingredients_info is a valid field `
-            }
-          } else if (context.domain === 'ONDC:RET10') {
-            const mandatoryFields = [
-              'nutritional_info',
-              'additives_info',
-              'brand_owner_FSSAI_license_no',
-              'other_FSSAI_license_no',
-              'brand_owner_FSSAI_license_no',
-              'importer_FSSAI_license_no',
-            ]
-            mandatoryFields.forEach((field) => {
-              if (statutory_reqs_prepackaged_food && !statutory_reqs_prepackaged_food[field]) {
+            if (context.domain === 'ONDC:RET18') {
+              if (!statutory_reqs_prepackaged_food.ingredients_info) {
                 const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
                 errorObj[key] =
-                  `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food following fields are valid 'nutritional_info', 'additives_info', 'brand_owner_FSSAI_license_no','other_FSSAI_license_no',
-                  'brand_owner_FSSAI_license_no','importer_FSSAI_license_no'`
+                  `In ONDC:RET18 for @ondc/org/statutory_reqs_prepackaged_food  ingredients_info is a valid field `
+              }
+            } else if (context.domain === 'ONDC:RET10') {
+              const mandatoryFields = [
+                'nutritional_info',
+                'additives_info',
+                'brand_owner_FSSAI_license_no',
+                'other_FSSAI_license_no',
+                'brand_owner_FSSAI_license_no',
+                'importer_FSSAI_license_no',
+              ]
+              mandatoryFields.forEach((field) => {
+                if (statutory_reqs_prepackaged_food && !statutory_reqs_prepackaged_food[field]) {
+                  const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
+                  errorObj[key] =
+                    `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food following fields are valid 'nutritional_info', 'additives_info', 'brand_owner_FSSAI_license_no','other_FSSAI_license_no',
+                    'brand_owner_FSSAI_license_no','importer_FSSAI_license_no'`
+                }
+              })
+            }
+          } catch (error: any) {
+            logger.error(`Error while checking selling price and maximum price for item id: ${item.id}, ${error.stack}`)
+          }
+
+          try {
+            //check availabe and max quantity
+            if (item.quantity && item.quantity.available && typeof item.quantity.available.count === 'string') {
+              const availCount = parseInt(item.quantity.available.count, 10)
+              if (availCount !== 99 && availCount !== 0) {
+                const key = `prvdr${i}item${j}availCount`
+                errorObj[key] =
+                  `item.quantity.available.count should be either 99 (inventory available) or 0 (out-of-stock) in /bpp/providers[${i}]/items[${j}]`
+              }
+            }
+          } catch (error: any) {
+            logger.error(`Error while checking available and max quantity for item id: ${item.id}, ${error.stack}`)
+          }
+
+          try {
+            if (item.quantity && item.quantity.maximum && typeof item.quantity.maximum.count === 'string') {
+              const maxCount = parseInt(item.quantity.maximum.count, 10)
+              const availCount = parseInt(item.quantity.available.count, 10)
+              if (availCount == 99 && maxCount <= 0) {
+                const key = `prvdr${i}item${j}maxCount`
+                errorObj[key] =
+                  `item.quantity.maximum.count should be either default value 99 (no cap per order) or any other positive value (cap per order) in /bpp/providers[${i}]/items[${j}]`
+              }
+            }
+          } catch (error: any) {
+            logger.error(`Error while checking available and max quantity for item id: ${item.id}, ${error.stack}`)
+          }
+
+          try {
+            if (item.quantity && item.quantity.maximum && typeof item.quantity.maximum.count === 'string') {
+              const maxCount = parseInt(item.quantity.maximum.count, 10)
+              const availCount = parseInt(item.quantity.available.count, 10)
+              if (availCount == 99 && maxCount == 0) {
+                const key = `prvdr${i}item${j}maxCount`
+                errorObj[key] = `item.quantity.maximum.count cant be 0 if item is in stock `
+              }
+            }
+          } catch (error: any) {
+            logger.error(`Error while checking available and max quantity for item id: ${item.id}, ${error.stack}`)
+          }
+
+          try {
+            if ('price' in item) {
+              const sPrice = parseFloat(item.price.value)
+              const maxPrice = parseFloat(item.price.maximum_value)
+
+              if (sPrice > maxPrice) {
+                const key = `prvdr${i}item${j}Price`
+                errorObj[key] =
+                  `selling price of item /price/value with id: (${item.id}) can't be greater than the maximum price /price/maximum_value in /bpp/providers[${i}]/items[${j}]/`
+              }
+            }
+          } catch (error: any) {
+            logger.error(`Error while checking selling price and maximum price for item id: ${item.id}, ${error.stack}`)
+          }
+
+          try {
+            logger.info(`Checking fulfillment_id for item id: ${item.id}`)
+
+            if ('price' in item) {
+              const upper = parseFloat(item.price?.tags?.[0].list[1].value)
+              const lower = parseFloat(item.price?.tags?.[0].list[0].value)
+
+              if (upper > lower) {
+                const key = `prvdr${i}item${j}Price/tags/list`
+                errorObj[key] =
+                  `selling lower range of item /price/range/value with id: (${item.id}) can't be greater than the upper in /bpp/providers[${i}]/items[${j}]/`
+              }
+            }
+          } catch (error: any) {
+            logger.error(`Error while checking price range for item id: ${item.id}, error: ${error.stack}`)
+          }
+
+          try {
+            if (item.fulfillment_id && !onSearchFFIds.has(item.fulfillment_id)) {
+              const key = `prvdr${i}item${j}ff`
+              errorObj[key] =
+                `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/fulfillments`
+            }
+          } catch (error: any) {
+            logger.error(`Error while checking fulfillment_id for item id: ${item.id}, error: ${error.stack}`)
+          }
+
+          try {
+            logger.info(`Checking location_id for item id: ${item.id}`)
+
+            if (item.location_id && !prvdrLocId.has(item.location_id)) {
+              const key = `prvdr${i}item${j}loc`
+              errorObj[key] =
+                `location_id in /bpp/providers[${i}]/items[${j}] should be one of the locations id in /bpp/providers[${i}]/locations`
+            }
+          } catch (error: any) {
+            logger.error(`Error while checking location_id for item id: ${item.id}, error: ${error.stack}`)
+          }
+
+          try {
+            logger.info(`Checking consumer care details for item id: ${item.id}`)
+            if ('@ondc/org/contact_details_consumer_care' in item) {
+              let consCare = item['@ondc/org/contact_details_consumer_care']
+
+              consCare = consCare.split(',')
+
+              if (!isValidPhoneNumber(consCare[2])) {
+                const key = `prvdr${i}consCare`
+                errorObj[key] =
+                  `@ondc/org/contact_details_consumer_care contactno should consist of  10 or  11 digits without any spaces or special characters in /bpp/providers[${i}]/items`
+              }
+
+              if (consCare.length < 3) {
+                const key = `prvdr${i}consCare`
+                errorObj[key] =
+                  `@ondc/org/contact_details_consumer_care should be in the format "name,email,contactno" in /bpp/providers[${i}]/items`
+              } else {
+                const checkEmail: boolean = emailRegex(consCare[1].trim())
+                if (isNaN(consCare[2].trim()) || !checkEmail) {
+                  const key = `prvdr${i}consCare`
+                  errorObj[key] =
+                    `@ondc/org/contact_details_consumer_care email should be in /bpp/providers[${i}]/items`
+                }
+              }
+            }
+          } catch (error: any) {
+            logger.error(`Error while checking consumer care details for item id: ${item.id}, ${error.stack}`)
+          }
+
+          try {
+            item.tags.map((tag: { code: any; list: any[] }, index: number) => {
+              switch (tag.code) {
+                case 'type':
+                  if (
+                    tag.list &&
+                    Array.isArray(tag.list) &&
+                    tag.list.some(
+                      (listItem: { code: string; value: string }) =>
+                        listItem.code === 'type' && listItem.value === 'item',
+                    )
+                  ) {
+                    if (!item.time) {
+                      const key = `prvdr${i}item${j}time`
+                      errorObj[key] = `item_id: ${item.id} should contain time object in bpp/providers[${i}]`
+                    }
+
+                    if (!item.category_ids) {
+                      const key = `prvdr${i}item${j}ctgry_ids`
+                      errorObj[key] = `item_id: ${item.id} should contain category_ids in bpp/providers[${i}]`
+                    }
+                  }
+
+                  break
+
+                case 'custom_group':
+                  tag.list.map((it: { code: string; value: string }, index: number) => {
+                    if (!customGrpId.has(it.value)) {
+                      const key = `prvdr${i}item${j}tag${index}cstmgrp_id`
+                      errorObj[key] =
+                        `item_id: ${item.id} should have custom_group_id one of the ids passed in categories bpp/providers[${i}]`
+                    }
+                  })
+
+                  break
+
+                case 'config':
+                  const idList: any = tag.list.find((item: { code: string }) => item.code === 'id')
+                  const minList: any = tag.list.find((item: { code: string }) => item.code === 'min')
+                  const maxList: any = tag.list.find((item: { code: string }) => item.code === 'max')
+                  const seqList: any = tag.list.find((item: { code: string }) => item.code === 'seq')
+
+                  if (!categoriesId.has(idList.value)) {
+                    const key = `prvdr${i}item${j}tags${index}config_list`
+                    errorObj[key] =
+                      `value in catalog/items${j}/tags${index}/config/list/ should be one of the catalog/category/ids`
+                  }
+
+                  if (!/^-?\d+(\.\d+)?$/.test(minList.value)) {
+                    const key = `prvdr${i}item${j}tags${index}config_min`
+                    errorObj[key] = `Invalid value for ${minList.code}: ${minList.value}`
+                  }
+
+                  if (!/^-?\d+(\.\d+)?$/.test(maxList.value)) {
+                    const key = `prvdr${i}item${j}tags${index}config_max`
+                    errorObj[key] = `Invalid value for ${maxList.code}: ${maxList.value}`
+                  }
+
+                  if (!/^-?\d+(\.\d+)?$/.test(seqList.value)) {
+                    const key = `prvdr${i}item${j}tags${index}config_seq`
+                    errorObj[key] = `Invalid value for ${seqList.code}: ${seqList.value}`
+                  }
+
+                  break
+
+                case 'timing':
+                  for (const item of tag.list) {
+                    switch (item.code) {
+                      case 'day_from':
+                      case 'day_to':
+                        const dayValue = parseInt(item.value)
+                        if (isNaN(dayValue) || dayValue < 1 || dayValue > 5 || !/^-?\d+(\.\d+)?$/.test(item.value)) {
+                          const key = `prvdr${i}item${j}tags${index}timing_day`
+                          errorObj[key] = `Invalid value for '${item.code}': ${item.value}`
+                        }
+
+                        break
+                      case 'time_from':
+                      case 'time_to':
+                        if (!/^([01]\d|2[0-3])[0-5]\d$/.test(item.value)) {
+                          const key = `prvdr${i}item${j}tags${index}timing_time`
+                          errorObj[key] = `Invalid time format for '${item.code}': ${item.value}`
+                        }
+
+                        break
+                      default:
+                        errorObj.Tagtiming = `Invalid list.code for 'timing': ${item.code}`
+                    }
+                  }
+
+                  const dayFromItem = tag.list.find((item: any) => item.code === 'day_from')
+                  const dayToItem = tag.list.find((item: any) => item.code === 'day_to')
+                  const timeFromItem = tag.list.find((item: any) => item.code === 'time_from')
+                  const timeToItem = tag.list.find((item: any) => item.code === 'time_to')
+
+                  if (dayFromItem && dayToItem && timeFromItem && timeToItem) {
+                    const dayFrom = parseInt(dayFromItem.value, 10)
+                    const dayTo = parseInt(dayToItem.value, 10)
+                    const timeFrom = parseInt(timeFromItem.value, 10)
+                    const timeTo = parseInt(timeToItem.value, 10)
+
+                    if (dayTo < dayFrom) {
+                      const key = `prvdr${i}item${j}tags${index}timing_dayfrom`
+                      errorObj[key] = "'day_to' must be greater than or equal to 'day_from'"
+                    }
+
+                    if (timeTo <= timeFrom) {
+                      const key = `prvdr${i}item${j}tags${index}timing_timefrom`
+                      errorObj[key] = "'time_to' must be greater than 'time_from'"
+                    }
+                  }
+
+                  break
+
+                case 'veg_nonveg':
+                  const allowedCodes = ['veg', 'non_veg']
+
+                  for (const it of tag.list) {
+                    if (it.code && !allowedCodes.includes(it.code)) {
+                      const key = `prvdr${i}item${j}tag${index}veg_nonveg`
+                      errorObj[key] =
+                        `item_id: ${item.id} should have veg_nonveg one of the 'veg', 'non_veg' in bpp/providers[${i}]`
+                    }
+                  }
+
+                  break
               }
             })
+          } catch (error: any) {
+            logger.error(`Error while checking tags for item id: ${item.id}`, error)
           }
-          //check availabe and max quantity
-          if (item.quantity && item.quantity.available && typeof item.quantity.available.count === 'string') {
-            const availCount = parseInt(item.quantity.available.count, 10)
-            if (availCount !== 99 && availCount !== 0) {
-              const key = `prvdr${i}item${j}availCount`
-              errorObj[key] =
-                `item.quantity.available.count should be either 99 (inventory available) or 0 (out-of-stock) in /bpp/providers[${i}]/items[${j}]`
-            }
-          }
-
-          if (item.quantity && item.quantity.maximum && typeof item.quantity.maximum.count === 'string') {
-            const maxCount = parseInt(item.quantity.maximum.count, 10)
-            const availCount = parseInt(item.quantity.available.count, 10)
-            if (availCount == 99 && maxCount <= 0) {
-              const key = `prvdr${i}item${j}maxCount`
-              errorObj[key] =
-                `item.quantity.maximum.count should be either default value 99 (no cap per order) or any other positive value (cap per order) in /bpp/providers[${i}]/items[${j}]`
-            }
-          }
-
-          if (item.quantity && item.quantity.maximum && typeof item.quantity.maximum.count === 'string') {
-            const maxCount = parseInt(item.quantity.maximum.count, 10)
-            const availCount = parseInt(item.quantity.available.count, 10)
-            if (availCount == 99 && maxCount == 0) {
-              const key = `prvdr${i}item${j}maxCount`
-              errorObj[key] = `item.quantity.maximum.count cant be 0 if item is in stock `
-            }
-          }
-          if ('price' in item) {
-            const sPrice = parseFloat(item.price.value)
-            const maxPrice = parseFloat(item.price.maximum_value)
-
-            if (sPrice > maxPrice) {
-              const key = `prvdr${i}item${j}Price`
-              errorObj[key] =
-                `selling price of item /price/value with id: (${item.id}) can't be greater than the maximum price /price/maximum_value in /bpp/providers[${i}]/items[${j}]/`
-            }
-          }
-
-          logger.info(`Checking fulfillment_id for item id: ${item.id}`)
-
-          if ('price' in item) {
-            const upper = parseFloat(item.price?.tags?.[0].list[1].value)
-            const lower = parseFloat(item.price?.tags?.[0].list[0].value)
-
-            if (upper > lower) {
-              const key = `prvdr${i}item${j}Price/tags/list`
-              errorObj[key] =
-                `selling lower range of item /price/range/value with id: (${item.id}) can't be greater than the upper in /bpp/providers[${i}]/items[${j}]/`
-            }
-          }
-
-          if (item.fulfillment_id && !onSearchFFIds.has(item.fulfillment_id)) {
-            const key = `prvdr${i}item${j}ff`
-            errorObj[key] =
-              `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/fulfillments`
-          }
-
-          logger.info(`Checking location_id for item id: ${item.id}`)
-
-          if (item.location_id && !prvdrLocId.has(item.location_id)) {
-            const key = `prvdr${i}item${j}loc`
-            errorObj[key] =
-              `location_id in /bpp/providers[${i}]/items[${j}] should be one of the locations id in /bpp/providers[${i}]/locations`
-          }
-
-          logger.info(`Checking consumer care details for item id: ${item.id}`)
-          if ('@ondc/org/contact_details_consumer_care' in item) {
-            let consCare = item['@ondc/org/contact_details_consumer_care']
-
-            consCare = consCare.split(',')
-
-            if (!isValidPhoneNumber(consCare[2])) {
-              const key = `prvdr${i}consCare`
-              errorObj[key] =
-                `@ondc/org/contact_details_consumer_care contactno should consist of  10 or  11 digits without any spaces or special characters in /bpp/providers[${i}]/items`
-            }
-
-            if (consCare.length < 3) {
-              const key = `prvdr${i}consCare`
-              errorObj[key] =
-                `@ondc/org/contact_details_consumer_care should be in the format "name,email,contactno" in /bpp/providers[${i}]/items`
-            } else {
-              const checkEmail: boolean = emailRegex(consCare[1].trim())
-              if (isNaN(consCare[2].trim()) || !checkEmail) {
-                const key = `prvdr${i}consCare`
-                errorObj[key] = `@ondc/org/contact_details_consumer_care email should be in /bpp/providers[${i}]/items`
-              }
-            }
-          }
-
-          item.tags.map((tag: { code: any; list: any[] }, index: number) => {
-            switch (tag.code) {
-              case 'type':
-                if (
-                  tag.list &&
-                  Array.isArray(tag.list) &&
-                  tag.list.some(
-                    (listItem: { code: string; value: string }) =>
-                      listItem.code === 'type' && listItem.value === 'item',
-                  )
-                ) {
-                  if (!item.time) {
-                    const key = `prvdr${i}item${j}time`
-                    errorObj[key] = `item_id: ${item.id} should contain time object in bpp/providers[${i}]`
-                  }
-
-                  if (!item.category_ids) {
-                    const key = `prvdr${i}item${j}ctgry_ids`
-                    errorObj[key] = `item_id: ${item.id} should contain category_ids in bpp/providers[${i}]`
-                  }
-                }
-
-                break
-
-              case 'custom_group':
-                tag.list.map((it: { code: string; value: string }, index: number) => {
-                  if (!customGrpId.has(it.value)) {
-                    const key = `prvdr${i}item${j}tag${index}cstmgrp_id`
-                    errorObj[key] =
-                      `item_id: ${item.id} should have custom_group_id one of the ids passed in categories bpp/providers[${i}]`
-                  }
-                })
-
-                break
-
-              case 'config':
-                const idList: any = tag.list.find((item: { code: string }) => item.code === 'id')
-                const minList: any = tag.list.find((item: { code: string }) => item.code === 'min')
-                const maxList: any = tag.list.find((item: { code: string }) => item.code === 'max')
-                const seqList: any = tag.list.find((item: { code: string }) => item.code === 'seq')
-
-                if (!categoriesId.has(idList.value)) {
-                  const key = `prvdr${i}item${j}tags${index}config_list`
-                  errorObj[key] =
-                    `value in catalog/items${j}/tags${index}/config/list/ should be one of the catalog/category/ids`
-                }
-
-                if (!/^-?\d+(\.\d+)?$/.test(minList.value)) {
-                  const key = `prvdr${i}item${j}tags${index}config_min`
-                  errorObj[key] = `Invalid value for ${minList.code}: ${minList.value}`
-                }
-
-                if (!/^-?\d+(\.\d+)?$/.test(maxList.value)) {
-                  const key = `prvdr${i}item${j}tags${index}config_max`
-                  errorObj[key] = `Invalid value for ${maxList.code}: ${maxList.value}`
-                }
-
-                if (!/^-?\d+(\.\d+)?$/.test(seqList.value)) {
-                  const key = `prvdr${i}item${j}tags${index}config_seq`
-                  errorObj[key] = `Invalid value for ${seqList.code}: ${seqList.value}`
-                }
-
-                break
-
-              case 'timing':
-                for (const item of tag.list) {
-                  switch (item.code) {
-                    case 'day_from':
-                    case 'day_to':
-                      const dayValue = parseInt(item.value)
-                      if (isNaN(dayValue) || dayValue < 1 || dayValue > 5 || !/^-?\d+(\.\d+)?$/.test(item.value)) {
-                        const key = `prvdr${i}item${j}tags${index}timing_day`
-                        errorObj[key] = `Invalid value for '${item.code}': ${item.value}`
-                      }
-
-                      break
-                    case 'time_from':
-                    case 'time_to':
-                      if (!/^([01]\d|2[0-3])[0-5]\d$/.test(item.value)) {
-                        const key = `prvdr${i}item${j}tags${index}timing_time`
-                        errorObj[key] = `Invalid time format for '${item.code}': ${item.value}`
-                      }
-
-                      break
-                    default:
-                      errorObj.Tagtiming = `Invalid list.code for 'timing': ${item.code}`
-                  }
-                }
-
-                const dayFromItem = tag.list.find((item: any) => item.code === 'day_from')
-                const dayToItem = tag.list.find((item: any) => item.code === 'day_to')
-                const timeFromItem = tag.list.find((item: any) => item.code === 'time_from')
-                const timeToItem = tag.list.find((item: any) => item.code === 'time_to')
-
-                if (dayFromItem && dayToItem && timeFromItem && timeToItem) {
-                  const dayFrom = parseInt(dayFromItem.value, 10)
-                  const dayTo = parseInt(dayToItem.value, 10)
-                  const timeFrom = parseInt(timeFromItem.value, 10)
-                  const timeTo = parseInt(timeToItem.value, 10)
-
-                  if (dayTo < dayFrom) {
-                    const key = `prvdr${i}item${j}tags${index}timing_dayfrom`
-                    errorObj[key] = "'day_to' must be greater than or equal to 'day_from'"
-                  }
-
-                  if (timeTo <= timeFrom) {
-                    const key = `prvdr${i}item${j}tags${index}timing_timefrom`
-                    errorObj[key] = "'time_to' must be greater than 'time_from'"
-                  }
-                }
-
-                break
-
-              case 'veg_nonveg':
-                const allowedCodes = ['veg', 'non_veg']
-
-                for (const it of tag.list) {
-                  if (it.code && !allowedCodes.includes(it.code)) {
-                    const key = `prvdr${i}item${j}tag${index}veg_nonveg`
-                    errorObj[key] =
-                      `item_id: ${item.id} should have veg_nonveg one of the 'veg', 'non_veg' in bpp/providers[${i}]`
-                  }
-                }
-
-                break
-            }
-          })
 
           j++
         }

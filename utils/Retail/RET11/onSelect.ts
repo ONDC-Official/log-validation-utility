@@ -366,10 +366,14 @@ export const checkOnSelect = (data: any) => {
               errorObj[key] =
                 `Available count should not be greater than maximum count for item id: ${element['@ondc/org/item_id']} in quote.breakup[${i}]`
             }
-            if(element.item.quantity.available.count.trim() === "" || element.item.quantity.maximum.count.trim() === ""){
+            if (
+              element.item.quantity.available.count.trim() === '' ||
+              element.item.quantity.maximum.count.trim() === ''
+            ) {
               const key = `qntcnt${i}`
-              errorObj[key] = `Available or Maximum count should not be empty string for item id: ${element['@ondc/org/item_id']} in quote.breakup[${i}]`
-             }
+              errorObj[key] =
+                `Available or Maximum count should not be empty string for item id: ${element['@ondc/org/item_id']} in quote.breakup[${i}]`
+            }
           }
 
           if (

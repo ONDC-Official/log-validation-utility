@@ -14,6 +14,7 @@ export const checkUpdate = (data: any) => {
     const { message, context }: any = data
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const select: any = getValue(`${ApiSequence.SELECT}`)
+    const flow = getValue('flow')
 
     if (!message || !context || isObjectEmpty(message)) {
       return { missingFields: '/context, /message, is missing or empty' }
@@ -103,7 +104,19 @@ export const checkUpdate = (data: any) => {
       logger.error(`!!Error occurred while checking for payment object in /${constants.UPDATE} API`, error.stack)
     }
 
-    // Check for message.order.fulfillments.tags --> code: images & format:url, code: ttl_approval , & format: duration
+    if (flow === '6-a') {
+      try {
+        logger.info(`Checking for fulfillment ID in /${constants.UPDATE} API`)
+        const fulfillmentID = getValue('cancelFulfillmentID')
+        update.fulfillments.forEach((fulfillment: any) => {
+          if (fulfillment.type === 'Cancel' && fulfillment.id !== fulfillmentID) {
+            updtObj.fulfillmentID = `Cancel fulfillment ID should be same as the one in /${constants.ON_UPDATE} API`
+          }
+        })
+      } catch (error: any) {
+        logger.error(`!!Error occurred while checking for fulfillment ID in /${constants.UPDATE} API`, error.stack)
+      }
+    }
 
     // Checking for return_request object in /Update
     if (update.fulfillments[0].tags) {

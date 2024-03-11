@@ -170,52 +170,6 @@ export const checkOnUpdate = (data: any) => {
       logger.error(`Error while checking the settlement details in /message/order/payment`)
     }
 
-    if (flow === '6-a') {
-      // Checking for quote_trail price and item quote price
-      try {
-        if (sumQuoteBreakUp(on_update.quote)) {
-          const price = Number(on_update.quote.price.value)
-          const priceAtConfirm = Number(getValue('quotePrice'))
-          const cancelFulfillments = _.filter(on_update.fulfillments, { type: 'Cancel' })
-          logger.info(`Checking for quote_trail price and item quote price sum for ${constants.ON_UPDATE}`)
-          checkQuoteTrailSum(cancelFulfillments, price, priceAtConfirm, onupdtObj)
-        } else {
-          logger.error(`The price breakdown in brakup does not match with the total_price for ${constants.ON_UPDATE} `)
-        }
-      } catch (error: any) {
-        logger.error(
-          `Error occuerred while checking for quote_trail price and quote breakup price on /${constants.ON_UPDATE}`,
-        )
-      }
-
-      //Reason_id mapping
-      try {
-        logger.info(`Reason_id mapping for cancel_request`)
-        const fulfillments = on_update.fulfillments
-        fulfillments.map((fulfillment: any) => {
-          if (fulfillment.type == 'Cancel') {
-            const tags = fulfillment.tags
-            tags.map((tag: any) => {
-              if (tag.code == 'cancel_request') {
-                const lists = tag.list
-                let reason_id = ''
-                lists.map((list: any) => {
-                  if (list.code == 'reason_id') {
-                    reason_id = list.value
-                  }
-                  if (list.code == 'initiated_by' && list.value === context.bpp_id) {
-                    mapCancellationID('SNP', reason_id, onupdtObj)
-                  }
-                })
-              }
-            })
-          }
-        })
-      } catch (error: any) {
-        logger.error(`!!Error while mapping cancellation_reason_id in ${constants.ON_UPDATE}`)
-      }
-    }
-
     try {
       // Checking for valid item ids inside on_update
       const items = on_update.items
@@ -395,6 +349,72 @@ export const checkOnUpdate = (data: any) => {
       })
     } catch (error: any) {
       logger.error(`Error while checking for the availability of initiated_by in ${constants.ON_UPDATE}`)
+    }
+
+    const flowSixAChecks = (data: any) => {
+      try {
+        try {
+          data.fulfillments.forEach((fulfillment: any) => {
+            if (fulfillment.type === 'Cancel') {
+              setValue('cancelFulfillmentID', fulfillment.id)
+            }
+          })
+        } catch (e: any) {
+          logger.error(`Error while setting cancelFulfillmentID in /${constants.ON_UPDATE}`)
+        }
+
+        // Checking for quote_trail price and item quote price
+        try {
+          if (sumQuoteBreakUp(on_update.quote)) {
+            const price = Number(on_update.quote.price.value)
+            const priceAtConfirm = Number(getValue('quotePrice'))
+            const cancelFulfillments = _.filter(on_update.fulfillments, { type: 'Cancel' })
+            logger.info(`Checking for quote_trail price and item quote price sum for ${constants.ON_UPDATE}`)
+            checkQuoteTrailSum(cancelFulfillments, price, priceAtConfirm, onupdtObj)
+          } else {
+            logger.error(
+              `The price breakdown in brakup does not match with the total_price for ${constants.ON_UPDATE} `,
+            )
+          }
+        } catch (error: any) {
+          logger.error(
+            `Error occuerred while checking for quote_trail price and quote breakup price on /${constants.ON_UPDATE}`,
+          )
+        }
+
+        //Reason_id mapping
+        try {
+          logger.info(`Reason_id mapping for cancel_request`)
+          const fulfillments = on_update.fulfillments
+          fulfillments.map((fulfillment: any) => {
+            if (fulfillment.type == 'Cancel') {
+              const tags = fulfillment.tags
+              tags.map((tag: any) => {
+                if (tag.code == 'cancel_request') {
+                  const lists = tag.list
+                  let reason_id = ''
+                  lists.map((list: any) => {
+                    if (list.code == 'reason_id') {
+                      reason_id = list.value
+                    }
+                    if (list.code == 'initiated_by' && list.value === context.bpp_id) {
+                      mapCancellationID('SNP', reason_id, onupdtObj)
+                    }
+                  })
+                }
+              })
+            }
+          })
+        } catch (error: any) {
+          logger.error(`!!Error while mapping cancellation_reason_id in ${constants.ON_UPDATE}`)
+        }
+      } catch (error: any) {
+        logger.error(`Error while checking the flow 6-a checks in /${constants.ON_UPDATE}`)
+      }
+    }
+
+    if (flow === '6-a') {
+      flowSixAChecks(message.order)
     }
 
     return onupdtObj

@@ -4,7 +4,6 @@ import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
-import { checkFulfillmentID } from '../../index'
 
 export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any) => {
   const onStatusObj: any = {}
@@ -149,19 +148,6 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any) => 
       }
     } catch (error: any) {
       logger.error(`!!Error while checking order state in /${constants.ON_STATUS}_${state} Error: ${error.stack}`)
-    }
-
-    // Checking fullfillment IDs for items
-    try {
-      logger.info(`Comparing fulfillmentID for items at /${constants.ON_STATUS}_packed`)
-      const items = on_status.items
-      const flow = constants.ON_STATUS + '_packed'
-      const err = checkFulfillmentID(items, onStatusObj, flow)
-      Object.assign(onStatusObj, err)
-    } catch (error: any) {
-      logger.error(
-        `!!Error occurred while checking for fulfillmentID for /${constants.ON_STATUS}_${state}, ${error.stack}`,
-      )
     }
 
     return onStatusObj

@@ -75,6 +75,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       }
 
       setValue('tmpstmp', context.timestamp)
+      setValue('cnfrmTmpstmp', context.timestamp)
     } catch (error: any) {
       logger.error(
         `!!Error while comparing timestamp for /${constants.ON_INIT} and /${constants.CONFIRM} api, ${error.stack}`,

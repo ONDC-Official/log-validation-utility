@@ -136,8 +136,8 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
       )
     }
     try {
-      if (!_.isEqual(context.timestamp, on_status.created_at)) {
-        onStatusObj.tmpstmp = `Context timestamp for /${constants.ON_STATUS}_${state} should be equal to order.created_at`
+      if (!_.isEqual(getValue(`cnfrmTmpstmp`), on_status.created_at)) {
+        onStatusObj.tmpstmp = `Created At timestamp for /${constants.ON_STATUS}_${state} should be equal to context timestamp at ${constants.CONFIRM}`
       }
     } catch (error: any) {
       logger.error(

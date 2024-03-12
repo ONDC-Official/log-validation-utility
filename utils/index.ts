@@ -884,7 +884,6 @@ export const findVariantPath = (arr: any) => {
   // Map over the grouped items and collect attribute paths for each item_id into an array
   const variantPath = _.map(groupedByItemID, (group, item_id) => {
     let paths = _.chain(group).flatMap('tags').filter({ code: 'attr' }).map('list[0].value').value()
-
     return { item_id, paths }
   })
 

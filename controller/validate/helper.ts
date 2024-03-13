@@ -129,7 +129,7 @@ const validateIGM = async (payload: string, version: string) => {
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
 
   switch (version) {
-    case '1.2.0':
+    case '1.0.0':
       response = IGMvalidateLogs(payload)
 
       if (_.isEmpty(response)) {

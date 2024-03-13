@@ -907,6 +907,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
               })
               const pathForVarient = item.paths
               let valueArray = []
+              if(pathForVarient.length){
               for (let j = 0; j < map[key].length; j++) {
                 let itemValues: any = {}
                 for (let path of pathForVarient) {
@@ -923,6 +924,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
                 valueArray.push(itemValues)
               }
               checkForDuplicates(valueArray, errorObj)
+            }
             }
           }
         }

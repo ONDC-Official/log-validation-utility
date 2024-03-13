@@ -156,11 +156,13 @@ export const checkOnSelect = (data: any) => {
     if (getValue('providerId') != on_select.provider.id) {
       errorObj.prvdrId = `provider.id mismatches in /${constants.SELECT} and /${constants.ON_SELECT}`
     }
-    if (on_select.provider.locations && on_select.provider.locations[0].id != getValue('providerLoc')) {
+    if(!on_select.provider.locations){
+      errorObj.prvdrLoc = `provider.locations[0].id is missing in /${constants.ON_SELECT}`
+    }else if(on_select.provider.locations[0].id != getValue('providerLoc')) {
       errorObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.SELECT} and /${constants.ON_SELECT}`
     }
   } catch (error: any) {
-    logger.info(
+    logger.error(
       `Error while comparing provider ids in /${constants.ON_SEARCH} and /${constants.ON_SELECT}, ${error.stack}`,
     )
   }

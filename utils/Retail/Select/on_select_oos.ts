@@ -126,8 +126,10 @@ export const checkOnSelect_OOS = (data: any) => {
     if (getValue('providerId') != ON_SELECT_OUT_OF_STOCK.provider.id) {
       errorObj.prvdrId = `provider.id mismatches in /${constants.SELECT} and /${constants.ON_SELECT}`
     }
-    if (ON_SELECT_OUT_OF_STOCK.provider.locations[0].id != getValue('providerLoc')) {
-      errorObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.ON_SELECT} and /${constants.SELECT}`
+    if(!ON_SELECT_OUT_OF_STOCK.provider.locations){
+      errorObj.prvdrLoc = `provider.locations[0].id is missing in /${constants.ON_SELECT}`
+    }else if(ON_SELECT_OUT_OF_STOCK.provider.locations[0].id != getValue('providerLoc')) {
+      errorObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.SELECT} and /${constants.ON_SELECT}`
     }
   } catch (error: any) {
     logger.info(

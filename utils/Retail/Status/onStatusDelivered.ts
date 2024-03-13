@@ -4,7 +4,6 @@ import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
-import { checkFulfillmentID } from '../../index'
 
 export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any) => {
   const onStatusObj: any = {}
@@ -237,19 +236,7 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any) 
       logger.info(`Error while checking delivery timestamp in /${constants.ON_STATUS}_${state}.json`)
     }
 
-    // Checking fullfillment IDs for items
-    try {
-      logger.info(`Comparing fulfillmentID for items at /${constants.ON_STATUS}_delivery`)
-      const items = on_status.items
-      const flow = constants.ON_STATUS + '_delivery'
-      const err = checkFulfillmentID(items, onStatusObj, flow)
-      Object.assign(onStatusObj, err)
-    } catch (error: any) {
-      logger.error(
-        `!!Error occurred while checking for fulfillmentID for /${constants.ON_STATUS}_${state}, ${error.stack}`,
-      )
-    }
-
+  
     return onStatusObj
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)

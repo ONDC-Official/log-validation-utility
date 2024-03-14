@@ -40,7 +40,8 @@ export const checkSearch = (data: any, msgIdSet: any) => {
       Object.assign(errorObj, schemaValidation)
     }
 
-    if (!_.isEqual(data.context, getValue(`domain`))) {
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      console.log('sdasdfds', getValue(`domain`))
       errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 

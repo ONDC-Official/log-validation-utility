@@ -809,7 +809,7 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
             const tagInfo = mandatoryTags[tagName]
             const isTagMandatory = tagInfo.mandatory
             if (isTagMandatory) {
-              let tagValue = null
+              let tagValue: any = null
               const tagFound = tags.some((tag: any) => {
                 const res = tag.code.toLowerCase() === tagName.toLowerCase()
                 if (res) {
@@ -823,7 +823,13 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
                 const key = `missingTagsItem[${i}][${index}] : ${tagName}`
                 errorObj[key] = `Mandatory tag field [${tagName}] missing for ${categoryName} item[${index}]`
               } else {
-                if (tagInfo.value.length > 0 && !tagInfo.value.includes(tagValue)) {
+                if (
+                  tagInfo.value.length > 0 &&
+                  !tagInfo.value.includes(tagValue) &&
+                  !tagInfo.value.includes(tagValue.toUpperCase())
+                ) {
+                  console.log('adsads', tagValue)
+                  console.log('sadsf', tagInfo.value)
                   logger.error(`The item value can only be of possible values.`)
                   const key = `InvldValueforItem[${i}][${index}] : ${tagName}`
                   errorObj[key] =

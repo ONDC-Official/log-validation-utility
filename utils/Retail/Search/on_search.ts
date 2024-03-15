@@ -288,6 +288,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
     )
   }
 
+  // Checking quantity of items in bpp/providers
   try {
     logger.info(`Checking for quantity of items in bpp/providers for /${constants.ON_SEARCH}`)
     const providers = onSearchCatalog['bpp/providers']

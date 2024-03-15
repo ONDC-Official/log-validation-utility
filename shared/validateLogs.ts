@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { checkSearchFullCatalogRefresh } from '../utils/Retail/RET11/searchFullCatalogRefresh'
 import { dropDB, setValue } from '../shared/dao'
 import { logger } from './logger'
-import { ApiSequence, retailDomains, IGMApiSequence } from '../constants'
+import { ApiSequence, retailDomains, IGMApiSequence, RSFapiSequence } from '../constants'
 import { validateSchema, isObjectEmpty } from '../utils'
 import { checkOnsearchFullCatalogRefresh } from '../utils/Retail/RET11/onSearch'
 import { checkSelect } from '../utils/Retail/RET11/select'
@@ -41,6 +41,8 @@ import { checkOnStatusOutForDelivery } from '../utils/Retail/Status/onStatusOutF
 import { checkOnStatusDelivered } from '../utils/Retail/Status/onStatusDelivered'
 import { checkCancel } from '../utils/Retail/Cancel/cancel'
 import { checkOnCancel } from '../utils/Retail/Cancel/onCancel'
+import checkReceiverRecon from '../utils/RSF/receiverRecon'
+import checkOnReceiverRecon from '../utils/RSF/onReciverRecon'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
@@ -387,6 +389,39 @@ export const IGMvalidateLogs = (data: any) => {
         logReport = { ...logReport, [IGMApiSequence.LSP_ON_ISSUE_STATUS]: lsp_on_issue }
       }
     }
+
+    logger.info(logReport, 'Report Generated Successfully!!')
+    return logReport
+  } catch (error: any) {
+    logger.error(error.message)
+    return error.message
+  }
+}
+
+export const RSFvalidateLogs = (data: any) => {
+  let logReport: any = {}
+
+  try {
+    dropDB()
+  } catch (error) {
+    logger.error('!!Error while removing LMDB', error)
+  }
+
+  try {
+    if (data[RSFapiSequence.RECEIVER_RECON]) {
+      const receiver_recon = checkReceiverRecon(data[RSFapiSequence.RECEIVER_RECON])
+      if (!_.isEmpty(receiver_recon)) {
+        logReport = { ...logReport, [RSFapiSequence.RECEIVER_RECON]: receiver_recon }
+      }
+    }
+    if (data[RSFapiSequence.ON_RECEIVER_RECON]) {
+      const on_receiver_recon = checkOnReceiverRecon(data[RSFapiSequence.ON_RECEIVER_RECON])
+
+      if (!_.isEmpty(on_receiver_recon)) {
+        logReport = { ...logReport, [RSFapiSequence.ON_RECEIVER_RECON]: on_receiver_recon }
+      }
+    }
+
     logger.info(logReport, 'Report Generated Successfully!!')
     return logReport
   } catch (error: any) {

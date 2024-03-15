@@ -1,5 +1,5 @@
 import { logger } from '../../../shared/logger'
-import { setValue } from '../../../shared/dao'
+import { getValue, setValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
 import {
   validateSchema,
@@ -9,6 +9,7 @@ import {
   checkContext,
   checkTagConditions,
 } from '../../../utils'
+import _ from 'lodash'
 
 export const checkSearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
@@ -35,6 +36,9 @@ export const checkSearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
+    }
+    if (_.isEqual(data.context, getValue(`domain`))) {
+      errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     const contextRes: any = checkContext(data.context, constants.SEARCH)

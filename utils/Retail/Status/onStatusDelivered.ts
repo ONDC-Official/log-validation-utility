@@ -4,9 +4,8 @@ import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
-import { checkFulfillmentID } from '../../index'
 
-export const checkOnStatusDelivered = (data: any, state: string) => {
+export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -26,32 +25,40 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
       Object.assign(onStatusObj, schemaValidation)
     }
 
+    if (!msgIdSet.add(context.message_id)) {
+      onStatusObj['messageId'] = 'message_id should be unique'
+    }
+
     if (!contextRes?.valid) {
       Object.assign(onStatusObj, contextRes.ERRORS)
     }
 
     setValue(`${ApiSequence.ON_STATUS_DELIVERED}`, data)
 
-    const picked_message_id: string | null = getValue('picked_message_id')
-    const pending_message_id: string | null = getValue('pending_message_id')
-    const delivered_message_id: string = context.message_id
-
-    try {
-      logger.info(
-        `Comparing message_id for unsolicited calls for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.delivered`,
-      )
-      if (delivered_message_id === picked_message_id || delivered_message_id === pending_message_id) {
-        logger.error(
-          `Message_id for ${constants.ON_STATUS}.delivered cannot be same as ${constants.ON_STATUS}.picked or  ${constants.ON_STATUS}.pending`,
-        )
-        onStatusObj['invalid_message_id_delivered'] =
-          `Message_id cannot be same for ${constants.ON_STATUS}.delivered and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.pending `
-      }
-    } catch (error: any) {
-      logger.error(
-        `Error while comparing message_id for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.delivered`,
-      )
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
+
+    // const picked_message_id: string | null = getValue('picked_message_id')
+    // const pending_message_id: string | null = getValue('pending_message_id')
+    // const delivered_message_id: string = context.message_id
+
+    // try {
+    //   logger.info(
+    //     `Comparing message_id for unsolicited calls for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.delivered`,
+    //   )
+    //   if (delivered_message_id === picked_message_id || delivered_message_id === pending_message_id) {
+    //     logger.error(
+    //       `Message_id for ${constants.ON_STATUS}.delivered cannot be same as ${constants.ON_STATUS}.picked or  ${constants.ON_STATUS}.pending`,
+    //     )
+    //     onStatusObj['invalid_message_id_delivered'] =
+    //       `Message_id cannot be same for ${constants.ON_STATUS}.delivered and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.pending `
+    //   }
+    // } catch (error: any) {
+    //   logger.error(
+    //     `Error while comparing message_id for ${constants.ON_STATUS}.pending and ${constants.ON_STATUS}.picked and ${constants.ON_STATUS}.delivered`,
+    //   )
+    // }
 
     try {
       logger.info(`Checking context for /${constants.ON_STATUS} API`) //checking context
@@ -129,6 +136,14 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
       logger.error(
         `!!Error occurred while comparing order updated at for /${constants.ON_STATUS}_${state}, ${error.stack}`,
       )
+    }
+
+    try {
+      if (!_.isEqual(on_status.created_at, getValue('cnfrmTmpstmp'))) {
+        onStatusObj.tmpstmp = `Created At timestamp for /${constants.ON_STATUS}_${state} should be equal to context timestamp at ${constants.CONFIRM}`
+      }
+    } catch (error: any) {
+      logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
     }
 
     try {
@@ -221,19 +236,7 @@ export const checkOnStatusDelivered = (data: any, state: string) => {
       logger.info(`Error while checking delivery timestamp in /${constants.ON_STATUS}_${state}.json`)
     }
 
-    // Checking fullfillment IDs for items
-    try {
-      logger.info(`Comparing fulfillmentID for items at /${constants.ON_STATUS}_delivery`)
-      const items = on_status.items
-      const flow = constants.ON_STATUS + '_delivery'
-      const err = checkFulfillmentID(items, onStatusObj, flow)
-      Object.assign(onStatusObj, err)
-    } catch (error: any) {
-      logger.error(
-        `!!Error occurred while checking for fulfillmentID for /${constants.ON_STATUS}_${state}, ${error.stack}`,
-      )
-    }
-
+  
     return onStatusObj
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)

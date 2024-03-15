@@ -18,7 +18,7 @@ import {
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkConfirm = (data: any) => {
+export const checkConfirm = (data: any, msgIdSet: any) => {
   const cnfrmObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -45,6 +45,13 @@ export const checkConfirm = (data: any) => {
     if (schemaValidation !== 'error') {
       Object.assign(cnfrmObj, schemaValidation)
     }
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      cnfrmObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+    }
+
+    if (!msgIdSet.add(context.message_id)) {
+      cnfrmObj['messageId'] = 'message_id should be unique'
+    }
 
     if (!contextRes?.valid) {
       Object.assign(cnfrmObj, contextRes.ERRORS)
@@ -68,6 +75,7 @@ export const checkConfirm = (data: any) => {
       }
 
       setValue('tmpstmp', context.timestamp)
+      setValue('cnfrmTmpstmp', context.timestamp)
     } catch (error: any) {
       logger.error(
         `!!Error while comparing timestamp for /${constants.ON_INIT} and /${constants.CONFIRM} api, ${error.stack}`,
@@ -191,7 +199,7 @@ export const checkConfirm = (data: any) => {
         const len = billingErrors.length
         while (i < len) {
           const key = `billingErr${i}`
-          cnfrmObj[key] = `${billingErrors[i]}`
+          cnfrmObj[key] = `${billingErrors[i]} when compared with init billing object`
           i++
         }
       }

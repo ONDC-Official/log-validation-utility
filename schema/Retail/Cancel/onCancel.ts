@@ -464,6 +464,7 @@ export const onCancelSchema = {
                                   'currency',
                                   'value',
                                   'type',
+                                  'subtype'
                                 ],
                               },
                               value: {
@@ -479,7 +480,7 @@ export const onCancelSchema = {
                     additionalProperties: false,
                   },
                 },
-                required: ['id', 'state', 'type', 'tags'],
+                required: ['id', 'state', 'type'],
               },
             },
             quote: {

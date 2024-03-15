@@ -606,19 +606,19 @@ export const onConfirmSchema = {
                       type: 'string',
                     },
                   },
-                  required: ['currency', 'transaction_id', 'amount'],
+                  required: ['currency', 'amount'],
                 },
                 status: {
                   type: 'string',
-                  enum: ['PAID', 'NOT-PAID'],
+                  enum:["PAID","NOT-PAID"]
                 },
                 type: {
                   type: 'string',
-                  enum: ['ON-ORDER', 'ON-FULFILLMENT'],
+                  enum:["ON-ORDER","ON-FULFILLMENT"]
                 },
                 collected_by: {
                   type: 'string',
-                  enum: ['BAP', 'BPP'],
+                  enum:["BAP","BPP"]
                 },
                 '@ondc/org/buyer_app_finder_fee_type': {
                   type: 'string',
@@ -628,7 +628,7 @@ export const onConfirmSchema = {
                 },
                 '@ondc/org/settlement_basis': {
                   type: 'string',
-                  enum: ['shipment', 'delivery', 'return_window_expiry'],
+                  enum:['shipment','delivery','return_window_expiry']
                 },
                 '@ondc/org/settlement_window': {
                   type: 'string',

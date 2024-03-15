@@ -447,6 +447,7 @@ export function deepEqual(obj1: any, obj2: any): boolean {
 }
 
 export const compareCoordinates = (coord1: any, coord2: any) => {
+  if (!coord1 || !coord2) return false
   // Remove all spaces from the coordinates
   const cleanCoord1 = coord1.replace(/\s/g, '')
   const cleanCoord2 = coord2.replace(/\s/g, '')
@@ -825,7 +826,8 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
                 if (tagInfo.value.length > 0 && !tagInfo.value.includes(tagValue)) {
                   logger.error(`The item value can only be of possible values.`)
                   const key = `InvldValueforItem[${i}][${index}] : ${tagName}`
-                  errorObj[key] = `The item value can only be of possible values ${tagInfo.value}.`
+                  errorObj[key] =
+                    `The item value can only be of possible values as provided in https://github.com/ONDC-Official/protocol-network-extension/tree/main/enums/retail.`
                 }
               }
             }

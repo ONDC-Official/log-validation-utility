@@ -40,7 +40,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
   }
   const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SEARCH, data)
 
-  const contextRes: any = checkContext(context, constants.ON_SEARCH)
   setValue(`${ApiSequence.ON_SEARCH}_context`, context)
   setValue(`${ApiSequence.ON_SEARCH}_message`, message)
   msgIdSet.add(context.message_id)
@@ -59,8 +58,15 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
   if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
   if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
-  if (!contextRes?.valid) {
-    Object.assign(errorObj, contextRes.ERRORS)
+
+  try {
+    logger.info(`Checking for context in /${constants.ON_SEARCH}`)
+    const contextRes: any = checkContext(context, constants.ON_SEARCH)
+    if (!contextRes?.valid) {
+      Object.assign(errorObj, contextRes.ERRORS)
+    }
+  } catch (error: any) {
+    logger.error(`Error while checking for context in /${constants.ON_SEARCH}, ${error.stack}`)
   }
 
   setValue(`${ApiSequence.ON_SEARCH}`, data)
@@ -127,9 +133,9 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
   const itemsId = new Set()
   setValue('tmpstmp', context.timestamp)
 
+  // Storing static fulfillment ids in onSearchFFIds
   try {
     logger.info(`Saving static fulfillment ids in /${constants.ON_SEARCH}`)
-
     let i = 0
     const bppFF = onSearchCatalog['bpp/fulfillments']
     const len = bppFF.length
@@ -137,11 +143,179 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
       onSearchFFIds.add(bppFF[i].id)
       i++
     }
+    setValue('onSearchFFIds', onSearchFFIds)
   } catch (error: any) {
     logger.info(`Error while saving static fulfillment ids in /${constants.ON_SEARCH}, ${error.stack}`)
   }
 
-  setValue('onSearchFFIds', onSearchFFIds)
+  const itemsArray: any = []
+  let itemIdList: any = []
+
+  // Storing items of bpp/providers in itemsArray and itemIdList
+  try {
+    logger.info(`Storing items of bpp/providers in itemsArray for  /${constants.ON_SEARCH}`)
+    const providers = onSearchCatalog['bpp/providers']
+    providers.forEach((provider: any) => {
+      const items = provider.items
+      itemsArray.push(items)
+      items.forEach((item: any) => {
+        itemIdList.push(item.id)
+      })
+    })
+    setValue('ItemList', itemIdList)
+    setValue('onSearchItems', itemsArray)
+  } catch (error: any) {
+    logger.error(
+      `Error while storing items of bpp/providers in itemsArray for  /${constants.ON_SEARCH}, ${error.stack}`,
+    )
+  }
+
+  // Checking for mandatory Items in provider IDs
+  try {
+    const domain = context.domain.split(':')[1]
+    logger.info(`Checking for item tags in bpp/providers[0].items.tags in ${domain}`)
+    for (let i in onSearchCatalog['bpp/providers']) {
+      const items = onSearchCatalog['bpp/providers'][i].items
+      let errors: any
+      switch (domain) {
+        case DOMAIN.RET10:
+          errors = checkMandatoryTags(i, items, errorObj, groceryJSON, 'Grocery')
+          break
+        case DOMAIN.RET12:
+          errors = checkMandatoryTags(i, items, errorObj, fashion, 'Fashion')
+          break
+        case DOMAIN.RET13:
+          errors = checkMandatoryTags(i, items, errorObj, BPCJSON, 'BPC')
+          break
+        case DOMAIN.RET14:
+          errors = checkMandatoryTags(i, items, errorObj, electronicsData, 'Electronics')
+          break
+        case DOMAIN.RET15:
+          errors = checkMandatoryTags(i, items, errorObj, applianceData, 'Appliances')
+          break
+        case DOMAIN.RET16:
+          errors = checkMandatoryTags(i, items, errorObj, homeJSON, 'Home & Kitchen')
+          break
+        case DOMAIN.RET18:
+          errors = checkMandatoryTags(i, items, errorObj, healthJSON, 'Health & Wellness')
+          break
+      }
+      Object.assign(errorObj, errors)
+    }
+  } catch (error: any) {
+    logger.error(`!!Errors while checking for items in bpp/providers/items, ${error.stack}`)
+  }
+
+  // Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp
+  try {
+    logger.info(`Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp`)
+    const timestamp = context.timestamp
+    for (let i in onSearchCatalog['bpp/providers']) {
+      const items = onSearchCatalog['bpp/providers'][i].items
+      items.forEach((item: any, index: number) => {
+        const itemTimeStamp = item.time.timestamp
+        const op = areTimestampsLessThanOrEqualTo(itemTimeStamp, timestamp)
+        if (!op) {
+          const key = `bpp/providers[${i}]/items/time/timestamp[${index}]`
+          errorObj[key] = `Timestamp for item[${index}] can't be greater than context.timestamp`
+          logger.error(`Timestamp for item[${index}] can't be greater than context.timestamp`)
+        }
+      })
+    }
+  } catch (error: any) {
+    logger.error(
+      `!!Errors while checking timestamp in context.timestamp and bpp/providers/items/time/timestamp, ${error.stack}`,
+    )
+  }
+
+  // Checking for duplicate providerID in bpp/providers
+  try {
+    for (let i in onSearchCatalog['bpp/providers']) {
+      logger.info(`Validating uniqueness for provider id in bpp/providers[${i}]...`)
+      const prvdr = onSearchCatalog['bpp/providers'][i]
+      if (prvdrsId.has(prvdr.id)) {
+        const key = `prvdr${i}id`
+        errorObj[key] = `duplicate provider id: ${prvdr.id} in bpp/providers`
+      } else {
+        prvdrsId.add(prvdr.id)
+      }
+    }
+    setValue(`${ApiSequence.ON_SEARCH}prvdrsId`, prvdrsId)
+  } catch (error: any) {
+    logger.error(`!!Errors while checking provider id in bpp/providers, ${error.stack}`)
+  }
+
+  // Checking for long_desc and short_desc in bpp/providers/items/descriptor/
+  try {
+    logger.info(`Checking for long_desc and short_desc in bpp/providers/items/descriptor/`)
+    for (let i in onSearchCatalog['bpp/providers']) {
+      const items = onSearchCatalog['bpp/providers'][i].items
+      items.forEach((item: any, index: number) => {
+        if (!item.descriptor.short_desc || !item.descriptor.long_desc) {
+          logger.error(
+            `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor`,
+          )
+          const key = `bpp/providers[${i}]/items[${index}]/descriptor`
+          errorObj[key] =
+            `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor`
+        }
+      })
+    }
+  } catch (error: any) {
+    logger.error(
+      `!!Errors while checking timestamp in context.timestamp and bpp/providers/items/time/timestamp, ${error.stack}`,
+    )
+  }
+
+  // Checking image array for bpp/providers/[]/categories/[]/descriptor/images[]
+  try {
+    logger.info(`Checking image array for bpp/provider/categories/descriptor/images[]`)
+    for (let i in onSearchCatalog['bpp/providers']) {
+      const categories = onSearchCatalog['bpp/providers'][i].categories
+      if (categories) {
+        categories.forEach((item: any, index: number) => {
+          if (item.descriptor.images && item.descriptor.images.length < 1) {
+            const key = `bpp/providers[${i}]/categories[${index}]/descriptor`
+            errorObj[key] = `Images should not be provided as empty array for categories[${index}]/descriptor`
+            logger.error(`Images should not be provided as empty array for categories[${index}]/descriptor`)
+          }
+        })
+      }
+    }
+  } catch (error: any) {
+    logger.error(
+      `!!Errors while checking image array for bpp/providers/[]/categories/[]/descriptor/images[], ${error.stack}`,
+    )
+  }
+
+  try {
+    logger.info(`Checking for quantity of items in bpp/providers for /${constants.ON_SEARCH}`)
+    const providers = onSearchCatalog['bpp/providers']
+    providers.forEach((provider: any, i: number) => {
+      const items = provider.items
+      items.forEach((item: any, j: number) => {
+        if (item.quantity && item.quantity.available && typeof item.quantity.available.count === 'string') {
+          const availCount = parseInt(item.quantity.available.count, 10)
+          const maxCount = parseInt(item.quantity.maximum.count, 10)
+          if (item.quantity.unitized.measure.value < 1) {
+            const key = `prvdr${i}item${j}unitized`
+            errorObj[key] = `item.quantity.unitized.measure.value should be greater than 0`
+          }
+          if (availCount < 0 || maxCount < 0) {
+            const key = `prvdr${i}item${j}invldCount`
+            errorObj[key] =
+              `item.quantity.available.count and item.quantity.maximum.count should be greater than or equal to 0`
+          }
+          if (availCount > maxCount) {
+            const key = `prvdr${i}item${j}availCount`
+            errorObj[key] = `item.quantity.available.count should be less than or equal to item.quantity.maximum.count`
+          }
+        }
+      })
+    })
+  } catch (error: any) {
+    logger.error(`Error while checking quantity of items in bpp/providers for /${constants.ON_SEARCH}, ${error.stack}`)
+  }
 
   try {
     logger.info(`Checking Providers info (bpp/providers) in /${constants.ON_SEARCH}`)
@@ -149,8 +323,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
     const bppPrvdrs = onSearchCatalog['bpp/providers']
     const len = bppPrvdrs.length
     const tmpstmp = context.timestamp
-    let itemIdList: any = []
-    let itemsArray = []
+
     while (i < len) {
       const categoriesId = new Set()
       const customGrpId = new Set()
@@ -160,13 +333,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
       logger.info(`Validating uniqueness for provider id in bpp/providers[${i}]...`)
       const prvdr = bppPrvdrs[i]
-
-      if (prvdrsId.has(prvdr.id)) {
-        const key = `prvdr${i}id`
-        errorObj[key] = `duplicate provider id: ${prvdr.id} in bpp/providers`
-      } else {
-        prvdrsId.add(prvdr.id)
-      }
 
       logger.info(`Checking store enable/disable timestamp in bpp/providers[${i}]`)
       try {
@@ -200,7 +366,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         }
 
         try {
-          if (prvdrLocId.has(loc.id)) {
+          if (prvdrLocId.has(loc?.id)) {
             const key = `prvdr${i}${loc.id}${iter}`
             errorObj[key] = `duplicate location id: ${loc.id} in /bpp/providers[${i}]/locations[${iter}]`
           } else {
@@ -208,7 +374,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           }
 
           logger.info('Checking store days...')
-          const days = loc.time.days.split(',')
+          const days = loc?.time?.days?.split(',')
           days.forEach((day: any) => {
             day = parseInt(day)
             if (isNaN(day) || day < 1 || day > 7) {
@@ -221,14 +387,14 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           logger.info('Checking fixed or split timings')
 
           //scenario 1: range =1 freq/times =1
-          if (loc.time.range && (loc.time.schedule?.frequency || loc.time.schedule?.times)) {
+          if (loc?.time?.range && (loc.time?.schedule?.frequency || loc.time?.schedule?.times)) {
             const key = `prvdr${i}loctime${iter}`
             errorObj[key] =
               `Either one of fixed (range) or split (frequency and times) timings should be provided in /bpp/providers[${i}]/locations[${iter}]/time`
           }
 
           // scenario 2: range=0 freq || times =1
-          if (!loc.time.range && (!loc.time.schedule?.frequency || !loc.time.schedule?.times)) {
+          if (!loc?.time?.range && (!loc?.time?.schedule?.frequency || !loc?.time?.schedule?.times)) {
             const key = `prvdr${i}loctime${iter}`
             errorObj[key] =
               `Either one of fixed timings (range) or split timings (both frequency and times) should be provided in /bpp/providers[${i}]/locations[${iter}]/time`
@@ -237,8 +403,8 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           //scenario 3: range=1 (start and end not compliant) frequency=0;
           if ('range' in loc.time) {
             logger.info('checking range (fixed timings) start and end')
-            const startTime: any = 'start' in loc.time.range ? parseInt(loc.time.range.start) : ''
-            const endTime: any = 'end' in loc.time.range ? parseInt(loc.time.range.end) : ''
+            const startTime: any = 'start' in loc?.time?.range ? parseInt(loc?.time?.range?.start) : ''
+            const endTime: any = 'end' in loc?.time?.range ? parseInt(loc?.time?.range?.end) : ''
             if (isNaN(startTime) || isNaN(endTime) || startTime > endTime || endTime > 2359) {
               errorObj.startEndTime = `end time must be greater than start time in fixed timings /locations/time/range (fixed store timings)`
             }
@@ -438,18 +604,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         }
       } catch (error: any) {
         logger.error(`!!Errors while checking categories in bpp/providers[${i}], ${error.stack}`)
-      }
-
-      try {
-        // Adding items in a list
-        const items = prvdr.items
-        itemsArray.push(items)
-        items.forEach((item: any) => {
-          itemIdList.push(item.id)
-        })
-        setValue('ItemList', itemIdList)
-      } catch (error: any) {
-        logger.error(`Error while adding items in a list, ${error.stack}`)
       }
 
       try {
@@ -793,106 +947,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
         logger.error(`!!Errors while checking items in bpp/providers[${i}], ${error.stack}`)
       }
 
-      // Checking for mandatory Items in provider IDs
-      try {
-        logger.info(`Checking for item tags in bpp/providers[0].items.tags `)
-        const domain = context.domain.split(':')[1]
-        logger.info(`Checking for item tags in bpp/providers[0].items.tags in ${domain}`)
-        for (let i in onSearchCatalog['bpp/providers']) {
-          const items = onSearchCatalog['bpp/providers'][i].items
-          let errors: any
-          switch (domain) {
-            case DOMAIN.RET10:
-              errors = checkMandatoryTags(i, items, errorObj, groceryJSON, 'Grocery')
-              break
-            case DOMAIN.RET12:
-              errors = checkMandatoryTags(i, items, errorObj, fashion, 'Fashion')
-              break
-            case DOMAIN.RET13:
-              errors = checkMandatoryTags(i, items, errorObj, BPCJSON, 'BPC')
-              break
-            case DOMAIN.RET14:
-              errors = checkMandatoryTags(i, items, errorObj, electronicsData, 'Electronics')
-              break
-            case DOMAIN.RET15:
-              errors = checkMandatoryTags(i, items, errorObj, applianceData, 'Appliances')
-              break
-            case DOMAIN.RET16:
-              errors = checkMandatoryTags(i, items, errorObj, homeJSON, 'Home & Kitchen')
-              break
-            case DOMAIN.RET18:
-              errors = checkMandatoryTags(i, items, errorObj, healthJSON, 'Health & Wellness')
-              break
-          }
-          Object.assign(errorObj, errors)
-        }
-      } catch (error: any) {
-        logger.error(`!!Errors while checking for items in bpp/providers/items, ${error.stack}`)
-      }
-
-      // Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp
-      try {
-        logger.info(`Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp`)
-        const timestamp = context.timestamp
-        for (let i in onSearchCatalog['bpp/providers']) {
-          const items = onSearchCatalog['bpp/providers'][i].items
-          items.forEach((item: any, index: number) => {
-            const itemTimeStamp = item.time.timestamp
-            const op = areTimestampsLessThanOrEqualTo(itemTimeStamp, timestamp)
-            if (!op) {
-              const key = `bpp/providers[${i}]/items/time/timestamp[${index}]`
-              errorObj[key] = `Timestamp for item[${index}] can't be greater than context.timestamp`
-              logger.error(`Timestamp for item[${index}] can't be greater than context.timestamp`)
-            }
-          })
-        }
-      } catch (error: any) {
-        logger.error(
-          `!!Errors while checking timestamp in context.timestamp and bpp/providers/items/time/timestamp, ${error.stack}`,
-        )
-      }
-      // Checking for long_desc and short_desc in bpp/providers/items/descriptor/
-      try {
-        logger.info(`Checking for long_desc and short_desc in bpp/providers/items/descriptor/`)
-        for (let i in onSearchCatalog['bpp/providers']) {
-          const items = onSearchCatalog['bpp/providers'][i].items
-          items.forEach((item: any, index: number) => {
-            if (!item.descriptor.short_desc || !item.descriptor.long_desc) {
-              logger.error(
-                `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor`,
-              )
-              const key = `bpp/providers[${i}]/items[${index}]/descriptor`
-              errorObj[key] =
-                `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor`
-            }
-          })
-        }
-      } catch (error: any) {
-        logger.error(
-          `!!Errors while checking timestamp in context.timestamp and bpp/providers/items/time/timestamp, ${error.stack}`,
-        )
-      }
-
-      // Checking image array for bpp/providers/[]/categories/[]/descriptor/images[]
-      try {
-        logger.info(`Checking image array for bpp/provider/categories/descriptor/images[]`)
-        for (let i in onSearchCatalog['bpp/providers']) {
-          const categories = onSearchCatalog['bpp/providers'][i].categories
-          if (categories) {
-            categories.forEach((item: any, index: number) => {
-              if (item.descriptor.images && item.descriptor.images.length < 1) {
-                const key = `bpp/providers[${i}]/categories[${index}]/descriptor`
-                errorObj[key] = `Images should not be provided as empty array for categories[${index}]/descriptor`
-                logger.error(`Images should not be provided as empty array for categories[${index}]/descriptor`)
-              }
-            })
-          }
-        }
-      } catch (error: any) {
-        logger.error(
-          `!!Errors while checking image array for bpp/providers/[]/categories/[]/descriptor/images[], ${error.stack}`,
-        )
-      }
       // Checking for duplicate varient in bpp/providers/items for on_search
       try {
         logger.info(`Checking for duplicate varient in bpp/providers/items for on_search`)
@@ -907,24 +961,24 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
               })
               const pathForVarient = item.paths
               let valueArray = []
-              if(pathForVarient.length){
-              for (let j = 0; j < map[key].length; j++) {
-                let itemValues: any = {}
-                for (let path of pathForVarient) {
-                  if (path === 'item.quantity.unitized.measure') {
-                    const unit = map[key][j].quantity.unitized.measure.unit
-                    const value = map[key][j].quantity.unitized.measure.value
-                    itemValues['unit'] = unit
-                    itemValues['value'] = value
-                  } else {
-                    const val = findValueAtPath(path, map[key][j])
-                    itemValues[path.split('.').pop()] = val
+              if (pathForVarient.length) {
+                for (let j = 0; j < map[key].length; j++) {
+                  let itemValues: any = {}
+                  for (let path of pathForVarient) {
+                    if (path === 'item.quantity.unitized.measure') {
+                      const unit = map[key][j].quantity.unitized.measure.unit
+                      const value = map[key][j].quantity.unitized.measure.value
+                      itemValues['unit'] = unit
+                      itemValues['value'] = value
+                    } else {
+                      const val = findValueAtPath(path, map[key][j])
+                      itemValues[path.split('.').pop()] = val
+                    }
                   }
+                  valueArray.push(itemValues)
                 }
-                valueArray.push(itemValues)
+                checkForDuplicates(valueArray, errorObj)
               }
-              checkForDuplicates(valueArray, errorObj)
-            }
             }
           }
         }
@@ -957,7 +1011,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
           }
         }
 
-        //checking for each serviceability construct
+        //checkinjg for each serviceability construct
         tags.forEach((sc: any, t: any) => {
           if (sc.code === 'serviceability') {
             if ('list' in sc) {
@@ -1169,9 +1223,7 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
       i++
     }
-    setValue('onSearchItems', itemsArray)
 
-    setValue(`${ApiSequence.ON_SEARCH}prvdrsId`, prvdrsId)
     setValue(`${ApiSequence.ON_SEARCH}prvdrLocId`, prvdrLocId)
     setValue(`${ApiSequence.ON_SEARCH}itemsId`, itemsId)
   } catch (error: any) {

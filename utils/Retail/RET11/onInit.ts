@@ -280,14 +280,14 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     logger.info(`/${constants.ON_INIT} Quoted Price: ${initQuotePrice}`)
 
     logger.info(`Comparing /${constants.ON_INIT} Quoted Price and Net Price Breakup`)
-    if (initQuotePrice != initBreakupPrice) {
+    if (Math.round(initQuotePrice) != Math.round(initBreakupPrice)) {
       logger.info(`Quoted Price in /${constants.ON_INIT} is not equal to the Net Breakup Price`)
       onInitObj.onInitPriceErr = `Quoted Price ${initQuotePrice} does not match with Net Breakup Price ${initBreakupPrice} in /${constants.ON_INIT}`
     }
 
     logger.info(`Comparing /${constants.ON_INIT} Quoted Price and /${constants.ON_SELECT} Quoted Price`)
     const onSelectPrice: any = getValue('onSelectPrice')
-    if (onSelectPrice != initQuotePrice) {
+    if (Math.round(onSelectPrice) != Math.round(initQuotePrice)) {
       logger.info(`Quoted Price in /${constants.ON_INIT} is not equal to the quoted price in /${constants.ON_SELECT}`)
       onInitObj.onInitPriceErr2 = `Quoted Price in /${constants.ON_INIT} INR ${initQuotePrice} does not match with the quoted price in /${constants.ON_SELECT} INR ${onSelectPrice}`
     }

@@ -271,11 +271,19 @@ export const checkOnConfirm = (data: any) => {
         }
 
         try {
-          if (!compareCoordinates(on_confirm.fulfillments[i].start.location.gps, getValue('providerGps'))) {
+          if (!getValue('providerGps')) {
+            onCnfrmObj.inVldPrvdr = `GPS for provider in ${constants.ON_CONFIRM} is missing in /${constants.ON_SEARCH} `
+          }
+          if (
+            !compareCoordinates(
+              on_confirm.fulfillments[i].start.location.gps,
+              getValue('providerGps') && getValue('providerGps'),
+            )
+          ) {
             onCnfrmObj.sellerGpsErr = `store gps location /fulfillments[${i}]/start/location/gps can't change`
           }
         } catch (error: any) {
-          logger.error(`!!Error while checking store location in /${constants.ON_CONFIRM}`)
+          logger.error(`!!Error while checking store location in /${constants.ON_CONFIRM}, ${error.stack}`)
         }
 
         try {

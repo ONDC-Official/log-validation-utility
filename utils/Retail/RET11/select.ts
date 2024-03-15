@@ -131,7 +131,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   try {
     logger.info(`Storing item IDs and thier count in /${constants.SELECT}`)
     const itemsOnSearch: any = getValue(`${ApiSequence.ON_SEARCH}itemsId`)
-    
+
     if (!itemsOnSearch?.length) {
       errorObj.invalidItems = `No Items found on ${constants.ON_SEARCH} API`
     }
@@ -320,7 +320,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
 
     try {
       logger.info(`Checking for valid items for provider in /${constants.SELECT}`)
-      const itemProviderMap: any = getValue(`itemProviderMap`);
+      const itemProviderMap: any = getValue(`itemProviderMap`)
       const providerID = select.provider.id
       const items = select.items
       items.forEach((item: any, index: number) => {

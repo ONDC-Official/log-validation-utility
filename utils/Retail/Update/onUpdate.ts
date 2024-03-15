@@ -102,7 +102,7 @@ export const checkOnUpdate = (data: any) => {
     try {
       logger.info(`Checking for valid quote breakup prices for /${constants.ON_UPDATE}`)
       if (!sumQuoteBreakUp(on_update.quote)) {
-        onupdtObj.invldQuotePrices = `Item quote breakup prices for /${constants.ON_UPDATE} shoulb be equal to the net price.`
+        onupdtObj.invldQuotePrices = `Item quote breakup prices for /${constants.ON_UPDATE} should be equal to the net price.`
       }
     } catch (error: any) {
       logger.error(`Error occurred while checking for valid quote breakup in ON_UPDATE`)
@@ -191,7 +191,7 @@ export const checkOnUpdate = (data: any) => {
         items.forEach((item: any) => {
           if (!updateItemList.includes(item.id)) {
             const key = `inVldItemId[${item.id}]`
-            onupdtObj[key] = `Item ID should be present in /${constants.UPDATE} API`
+            onupdtObj[key] = `Item ID should be present in /${constants.SELECT}  API`
           } else {
             quoteItemSet.add(item.id)
           }

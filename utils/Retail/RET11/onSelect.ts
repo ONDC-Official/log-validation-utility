@@ -156,9 +156,9 @@ export const checkOnSelect = (data: any) => {
     if (getValue('providerId') != on_select.provider.id) {
       errorObj.prvdrId = `provider.id mismatches in /${constants.SELECT} and /${constants.ON_SELECT}`
     }
-    if(!on_select.provider.locations){
+    if (!on_select.provider.locations) {
       errorObj.prvdrLoc = `provider.locations[0].id is missing in /${constants.ON_SELECT}`
-    }else if(on_select.provider.locations[0].id != getValue('providerLoc')) {
+    } else if (on_select.provider.locations[0].id != getValue('providerLoc')) {
       errorObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.SELECT} and /${constants.ON_SELECT}`
     }
   } catch (error: any) {
@@ -443,7 +443,7 @@ export const checkOnSelect = (data: any) => {
       logger.info(
         `Matching quoted Price ${parseFloat(on_select.quote.price.value)} with Breakup Price ${onSelectPrice}`,
       )
-      if (onSelectPrice != parseFloat(on_select.quote.price.value)) {
+      if (Math.round(onSelectPrice) != Math.round(parseFloat(on_select.quote.price.value))) {
         errorObj.quoteBrkup = `quote.price.value ${on_select.quote.price.value} does not match with the price breakup ${onSelectPrice}`
       }
 

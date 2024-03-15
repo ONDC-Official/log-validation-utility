@@ -481,7 +481,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
         if (!on_cancel.hasOwnProperty('created_at') || !on_cancel.hasOwnProperty('updated_at')) {
           onCnclObj.ordertmpstmp = `order created and updated timestamps are mandatory in /${constants.CONFIRM}`
         } else {
-          if (!_.isEqual(on_cancel.created_at, context.timestamp)) {
+          if (!_.isEqual(on_cancel.created_at, getValue('cnfrmTmpstmp'))) {
             onCnclObj.orderCrtd = `order.created_at timestamp should match context.timestamp`
           }
         }

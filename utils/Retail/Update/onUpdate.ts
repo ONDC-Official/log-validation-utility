@@ -6,17 +6,18 @@ import {
   isObjectEmpty,
   checkBppIdOrBapId,
   checkContext,
-  compareObjects,
   sumQuoteBreakUp,
   mapCancellationID,
   payment_status,
   checkQuoteTrailSum,
+  checkQuoteTrail,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const checkOnUpdate = (data: any) => {
   const onupdtObj: any = {}
   const flow = getValue('flow')
+  const quoteItemSet: any = new Set()
   try {
     if (!data || isObjectEmpty(data)) {
       return { [ApiSequence.ON_UPDATE]: 'JSON cannot be empty' }
@@ -45,6 +46,10 @@ export const checkOnUpdate = (data: any) => {
     const checkBpp = checkBppIdOrBapId(context.bpp_id)
     if (checkBap) Object.assign(onupdtObj, { bap_id: 'context/bap_id should not be a url' })
     if (checkBpp) Object.assign(onupdtObj, { bpp_id: 'context/bpp_id should not be a url' })
+
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      onupdtObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+    }
 
     // Checkinf for valid context object
     try {
@@ -103,36 +108,6 @@ export const checkOnUpdate = (data: any) => {
       logger.error(`Error occurred while checking for valid quote breakup in ON_UPDATE`)
     }
 
-    //Comparing item count in /on_update and /select
-    const select_items: any = getValue('items')
-    try {
-      logger.info(`Matching the item count in message/order/items with that in /select`)
-      const onUpdateItems: any[] = _.get(on_update, 'items', [])
-      let onUpdateItemCount: number = 0
-
-      onUpdateItems.forEach((item: any) => {
-        if (item.tags) {
-          item.tags.forEach((tag: any) => {
-            tag.list.forEach((tagData: any) => {
-              if (tagData.code === 'type' && tagData.value === 'item') {
-                onUpdateItemCount++
-              }
-            })
-          })
-        } else if (item.quantity && item.quantity.count) {
-          onUpdateItemCount += item.quantity.count
-        }
-      })
-      select_items.forEach((selectItem: any) => {
-        if (selectItem.quantity && selectItem.quantity.count !== onUpdateItemCount) {
-          onupdtObj[`on_update/message/order/items/count`] =
-            `Item count in /on_update/message/order/items doesn't match with previous count of items`
-        }
-      })
-    } catch (error: any) {
-      logger.error(`Error while matching the count of items in /on_update and /select: ${error.message}`)
-    }
-
     //Check for status (Paid and Unpaid) and transaction_id available
     try {
       logger.info(`Checking if payment status is Paid or Unpaid and availability of transaction_id`)
@@ -145,8 +120,16 @@ export const checkOnUpdate = (data: any) => {
       logger.error(`Error while checking the payment status`)
     }
 
-    //Comparing the updated_at timestamp with of context.timestamp
     try {
+      // Comparing the providerId with /select providerId
+      if (getValue('providerId') != on_update.provider.id) {
+        onupdtObj.prvdrId = `provider.id mismatches in /${constants.ON_UPDATE} and /${constants.ON_SELECT}`
+      }
+      // Comparing the providerLoc with /select providerLoc
+      if (on_update.provider.locations[0].id != getValue('providerLoc')) {
+        onupdtObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.ON_SELECT} and /${constants.ON_UPDATE}`
+      }
+      //Comparing the updated_at timestamp with of context.timestamp
       if (!_.gte(context.timestamp, on_update.updated_at)) {
         onupdtObj[`context/timestamp`] = `context/timestamp should be greater than message/order/updated_at timestamp`
       }
@@ -154,6 +137,23 @@ export const checkOnUpdate = (data: any) => {
       logger.error(`Error while comparing context/timestamp and updated_at timestamp`)
     }
 
+    try {
+      // Checking for valid item ids in /on_select
+      const itemsList = message.order.items
+      let updatedItems: any = getValue('SelectItemList')
+
+      itemsList.forEach((item: any, index: number) => {
+        if (!updatedItems?.includes(item.id)) {
+          const key = `inVldItemId[${index}]`
+          onupdtObj[key] = `Invalid Item Id provided in /${constants.ON_UPDATE}: ${item.id}`
+        } else if (!updatedItems[item.id] === item.quantity.count) {
+          const key = `inVldItemCount[${index}]`
+          onupdtObj[key] = `Count provide for Item Id in /${constants.ON_UPDATE} should be same as /${constants.UPDATE}`
+        }
+      })
+    } catch (error: any) {
+      logger.error(`Error while checking for item IDs for /${constants.ON_UPDATE}, ${error.stack}`)
+    }
     //checking for settlement details in payment
     try {
       logger.info(`Checking for settlement_details in /message/order/payment`)
@@ -170,83 +170,60 @@ export const checkOnUpdate = (data: any) => {
       logger.error(`Error while checking the settlement details in /message/order/payment`)
     }
 
-    if (flow === '6-a') {
-      // Checking for quote_trail price and item quote price
-      try {
-        if (sumQuoteBreakUp(on_update.quote)) {
-          const price = Number(on_update.quote.price.value)
-          const priceAtConfirm = Number(getValue('quotePrice'))
-          const cancelFulfillments = _.filter(on_update.fulfillments, { type: 'Cancel' })
-          logger.info(`Checking for quote_trail price and item quote price sum for ${constants.ON_UPDATE}`)
-          checkQuoteTrailSum(cancelFulfillments, price, priceAtConfirm, onupdtObj)
+    try {
+      // Checking for valid item ids inside on_update
+      const items = on_update.items
+      const itemSet: any = new Set()
+      items.forEach((item: any) => {
+        if (itemSet.has(JSON.stringify(item))) {
+          onupdtObj[`DuplicateItem[${item.id}]`] = `Duplicate item found in /${constants.ON_UPDATE}`
         } else {
-          logger.error(`The price breakdown in brakup does not match with the total_price for ${constants.ON_UPDATE} `)
+          itemSet.add(JSON.stringify(item)) // Add the item to the set if it's not already present
         }
-      } catch (error: any) {
-        logger.error(
-          `Error occuerred while checking for quote_trail price and quote breakup price on /${constants.ON_UPDATE}`,
-        )
+      })
+      let updateItemList: any = null
+      if (getValue('flow') === '6-a') {
+        updateItemList = getValue('SelectItemList')
+      } else {
+        updateItemList = getValue('updateItemList')
       }
-
-      //Reason_id mapping
-      try {
-        logger.info(`Reason_id mapping for cancel_request`)
-        const fulfillments = on_update.fulfillments
-        fulfillments.map((fulfillment: any) => {
-          if (fulfillment.type == 'Cancel') {
-            const tags = fulfillment.tags
-            tags.map((tag: any) => {
-              if (tag.code == 'cancel_request') {
-                const lists = tag.list
-                let reason_id = ''
-                lists.map((list: any) => {
-                  if (list.code == 'reason_id') {
-                    reason_id = list.value
-                  }
-                  if (list.code == 'initiated_by' && list.value === context.bpp_id) {
-                    mapCancellationID('SNP', reason_id, onupdtObj)
-                  }
-                })
-              }
-            })
+      if (updateItemList) {
+        items.forEach((item: any) => {
+          if (!updateItemList.includes(item.id)) {
+            const key = `inVldItemId[${item.id}]`
+            onupdtObj[key] = `Item ID should be present in /${constants.UPDATE} API`
+          } else {
+            quoteItemSet.add(item.id)
           }
         })
-      } catch (error: any) {
-        logger.error(`!!Error while mapping cancellation_reason_id in ${constants.ON_UPDATE}`)
+        on_update.quote.breakup.forEach((item: any) => {
+          if (!updateItemList.includes(item['@ondc/org/item_id']) && item['"@ondc/org/title_type"'] === 'item') {
+            const key = `inVldQuoteItemId[${item['@ondc/org/item_id']}]`
+            onupdtObj[key] =
+              `Invalid item ID provided in quote object : ${item['@ondc/org/item_id']}should be present in /${constants.UPDATE} API`
+          }
+        })
       }
+    } catch (error: any) {
+      logger.error(`Error while checking for item IDs for /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
-    // Compare return_request object
-    if (flow === '6-b') {
-      try {
-        logger.info(`Checking for return_request object in /${constants.ON_UPDATE}`)
-        const obj = getValue('return_request_obj')
-        let return_request_obj: any = null
-        on_update.fulfillments.forEach((item: any) => {
-          if (item.tags) {
-            item.tags.forEach((tag: any) => {
-              if (tag.code === 'return_request') {
-                return_request_obj = tag
-              }
-            })
+    //Checkign for valid item prices in /on_update
+    try {
+      logger.info(`Checking for valid item prices in /on_update`)
+      const cancelFulfillments = _.filter(on_update.fulfillments, { type: 'Cancel' })
+      const selectPriceMap: any = getValue('selectPriceMap')
 
-            const requestObjectErr = obj && return_request_obj ? compareObjects(obj, return_request_obj) : null
-
-            if (requestObjectErr) {
-              let i = 0
-              const len = requestObjectErr.length
-              while (i < len) {
-                const key = `returnRequestObjectErr[${i}]`
-                onupdtObj[key] = `${requestObjectErr[i]}`
-                i++
-              }
-            }
-          }
-        })
-      } catch (error: any) {
-        logger.error(`Error while checking for return_request_obj for /${constants.UPDATE}`)
+      for (let obj of cancelFulfillments) {
+        const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
+        checkQuoteTrail(quoteTrailItems, onupdtObj, selectPriceMap, quoteItemSet)
       }
+    } catch (error: any) {
+      logger.error(`Error while checking for valid item prices in /on_update`)
+    }
+    // Compare return_request object
 
+    if (flow === '6-b') {
       // Checking for quote_trail price and item quote price
       try {
         if (sumQuoteBreakUp(on_update.quote)) {
@@ -342,6 +319,102 @@ export const checkOnUpdate = (data: any) => {
           `Error occuerred while checking for quote_trail price and quote breakup price on /${constants.ON_UPDATE}`,
         )
       }
+    }
+
+    try {
+      logger.info(`Checking for the availability of initiated_by code in ${constants.ON_UPDATE}`)
+      const fulfillments = on_update.fulfillments
+      fulfillments.map((fulfillment: any) => {
+        if (fulfillment.tags) {
+          const tags = fulfillment.tags
+          tags.map((tag: any) => {
+            if (tag.code === 'cancel_request') {
+              const list = tag.list
+              const tags_initiated = list.find((data: any) => data.code === 'initiated_by')
+              if (!tags_initiated) {
+                onupdtObj[`message/order/fulfillments/tags`] =
+                  `${constants.ON_UPDATE} must have initiated_by code in fulfillments/tags/list`
+              }
+            }
+            if (tag.code === 'return_request') {
+              const list = tag.list
+              const tags_initiated = list.find((data: any) => data.code === 'initiated_by')
+              if (!tags_initiated) {
+                onupdtObj[`message/order/fulfillments/tags`] =
+                  `${constants.ON_UPDATE} must have initiated_by code in fulfillments/tags/list`
+              }
+            }
+          })
+        }
+      })
+    } catch (error: any) {
+      logger.error(`Error while checking for the availability of initiated_by in ${constants.ON_UPDATE}`)
+    }
+
+    const flowSixAChecks = (data: any) => {
+      try {
+        try {
+          data.fulfillments.forEach((fulfillment: any) => {
+            if (fulfillment.type === 'Cancel') {
+              setValue('cancelFulfillmentID', fulfillment.id)
+            }
+          })
+        } catch (e: any) {
+          logger.error(`Error while setting cancelFulfillmentID in /${constants.ON_UPDATE}`)
+        }
+
+        // Checking for quote_trail price and item quote price
+        try {
+          if (sumQuoteBreakUp(on_update.quote)) {
+            const price = Number(on_update.quote.price.value)
+            const priceAtConfirm = Number(getValue('quotePrice'))
+            const cancelFulfillments = _.filter(on_update.fulfillments, { type: 'Cancel' })
+            logger.info(`Checking for quote_trail price and item quote price sum for ${constants.ON_UPDATE}`)
+            checkQuoteTrailSum(cancelFulfillments, price, priceAtConfirm, onupdtObj)
+          } else {
+            logger.error(
+              `The price breakdown in brakup does not match with the total_price for ${constants.ON_UPDATE} `,
+            )
+          }
+        } catch (error: any) {
+          logger.error(
+            `Error occuerred while checking for quote_trail price and quote breakup price on /${constants.ON_UPDATE}`,
+          )
+        }
+
+        //Reason_id mapping
+        try {
+          logger.info(`Reason_id mapping for cancel_request`)
+          const fulfillments = on_update.fulfillments
+          fulfillments.map((fulfillment: any) => {
+            if (fulfillment.type == 'Cancel') {
+              const tags = fulfillment.tags
+              tags.map((tag: any) => {
+                if (tag.code == 'cancel_request') {
+                  const lists = tag.list
+                  let reason_id = ''
+                  lists.map((list: any) => {
+                    if (list.code == 'reason_id') {
+                      reason_id = list.value
+                    }
+                    if (list.code == 'initiated_by' && list.value === context.bpp_id) {
+                      mapCancellationID('SNP', reason_id, onupdtObj)
+                    }
+                  })
+                }
+              })
+            }
+          })
+        } catch (error: any) {
+          logger.error(`!!Error while mapping cancellation_reason_id in ${constants.ON_UPDATE}`)
+        }
+      } catch (error: any) {
+        logger.error(`Error while checking the flow 6-a checks in /${constants.ON_UPDATE}`)
+      }
+    }
+
+    if (flow === '6-a') {
+      flowSixAChecks(message.order)
     }
 
     return onupdtObj

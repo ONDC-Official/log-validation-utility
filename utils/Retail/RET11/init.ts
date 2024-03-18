@@ -4,7 +4,7 @@ import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, checkItemTag, checkBppIdOrBapId } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkInit = (data: any) => {
+export const checkInit = (data: any, msgIdSet: any) => {
   const initObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -32,9 +32,16 @@ export const checkInit = (data: any) => {
     if (schemaValidation !== 'error') {
       Object.assign(initObj, schemaValidation)
     }
+    if (_.isEqual(data.context, getValue(`domain`))) {
+      initObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+    }
 
     if (!contextRes?.valid) {
       Object.assign(initObj, contextRes.ERRORS)
+    }
+
+    if (!msgIdSet.add(context.message_id)) {
+      initObj['messageId'] = 'message_id should be unique'
     }
 
     setValue(`${ApiSequence.INIT}`, data)

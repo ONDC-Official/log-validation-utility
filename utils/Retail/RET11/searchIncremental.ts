@@ -1,5 +1,5 @@
 import { logger } from '../../../shared/logger'
-import { setValue } from '../../../shared/dao'
+import { getValue, setValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
 import {
   validateSchema,
@@ -9,6 +9,7 @@ import {
   hasProperty,
   checkContext,
 } from '../../../utils'
+import _ from 'lodash'
 
 export const checkSearchIncremental = (data: any, msgIdSet: any) => {
   try {
@@ -33,6 +34,9 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
 
     if (!contextRes?.valid) {
       Object.assign(errorObj, contextRes.ERRORS)
+    }
+    if (_.isEqual(data.context, getValue(`domain`))) {
+      errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     if (context.city !== '*') {

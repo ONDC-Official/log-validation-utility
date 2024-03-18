@@ -46,6 +46,9 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     if (!contextRes?.valid) {
       Object.assign(onInitObj, contextRes.ERRORS)
     }
+    if (_.isEqual(data.context, getValue(`domain`))) {
+      onInitObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+    }
 
     setValue(`${ApiSequence.ON_INIT}`, data)
     msgIdSet.add(context.message_id)
@@ -112,6 +115,19 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     }
 
     const on_init = message.order
+
+    try {
+      logger.info(`Checking provider id and location in /${constants.CONFIRM}`)
+      if (on_init.provider.id != getValue('providerId')) {
+        onInitObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.CONFIRM}`
+      }
+
+      if (on_init.provider.locations[0].id != getValue('providerLoc')) {
+        onInitObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.ON_SEARCH} and /${constants.CONFIRM}`
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking provider id and location in /${constants.CONFIRM}, ${error.stack}`)
+    }
 
     // checking for tax_number in tags
     try {
@@ -203,7 +219,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         const len = billingErrors.length
         while (i < len) {
           const key = `billingErr${i}`
-          onInitObj[key] = `${billingErrors[i]}`
+          onInitObj[key] = `${billingErrors[i]}  when compared with init billing object`
           i++
         }
       }

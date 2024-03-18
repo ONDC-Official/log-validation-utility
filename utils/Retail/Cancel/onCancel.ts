@@ -11,10 +11,11 @@ import {
   sumQuoteBreakUp,
   payment_status,
   mapCancellationID,
+  checkQuoteTrail,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkOnCancel = (data: any) => {
+export const checkOnCancel = (data: any, msgIdSet: any) => {
   const onCnclObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -27,16 +28,18 @@ export const checkOnCancel = (data: any) => {
     }
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const flow = getValue('flow')
-    let schemaValidation:any
-    if(flow === '5'){
+    let schemaValidation: any
+    if (flow === '5') {
       schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_CANCEL_RTO, data)
-    }else {
+    } else {
       schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_CANCEL, data)
     }
     const select: any = getValue(`${ApiSequence.SELECT}`)
     const contextRes: any = checkContext(context, constants.ON_CANCEL)
     const checkBap = checkBppIdOrBapId(context.bap_id)
     const checkBpp = checkBppIdOrBapId(context.bpp_id)
+    const itemSet = new Set()
+    const selectPriceMap: any = getValue('selectPriceMap')
 
     if (checkBap) Object.assign(onCnclObj, { bap_id: 'context/bap_id should not be a url' })
     if (checkBpp) Object.assign(onCnclObj, { bpp_id: 'context/bpp_id should not be a url' })
@@ -45,6 +48,13 @@ export const checkOnCancel = (data: any) => {
     }
     if (!contextRes?.valid) {
       Object.assign(onCnclObj, contextRes.ERRORS)
+    }
+
+    if (!msgIdSet.add(context.message_id)) {
+      onCnclObj['messageId'] = 'message_id should be unique'
+    }
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      onCnclObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     setValue(`${ApiSequence.CANCEL}`, data)
@@ -71,7 +81,7 @@ export const checkOnCancel = (data: any) => {
     try {
       logger.info(`Comparing timestamp of /${constants.ON_INIT} and /${constants.ON_CANCEL}`)
       if (_.gte(getValue('tmpstmp'), context.timestamp)) {
-        onCnclObj.tmpstmp = `Timestamp for /${constants.ON_INIT} api cannot be greater than or equal to /${constants.ON_CANCEL} api`
+        onCnclObj.tmpstmp = `Timestamp for /${constants.ON_CONFIRM} api cannot be greater than or equal to /${constants.ON_CANCEL} api`
       }
 
       setValue('tmpstmp', context.timestamp)
@@ -95,6 +105,80 @@ export const checkOnCancel = (data: any) => {
     const on_cancel = message.order
 
     try {
+      // Checking for valid item ids in /on_select
+      const itemsOnSelect = getValue('SelectItemList')
+      const itemsList = message.order.items
+      const quoteobj = message.order.quote.breakup
+      quoteobj.forEach((item: any) => {
+        if (!itemsOnSelect?.includes(item['@ondc/org/item_id']) && item['@ondc/org/title_type'] === 'item') {
+          const key = `inVldItemId[${item.id}]`
+          onCnclObj[key] = `Invalid Item Id provided in quote object /${constants.ON_CANCEL}: ${item.id}`
+        }
+      })
+      itemsList.forEach((item: any) => {
+        if (!itemsOnSelect?.includes(item.id)) {
+          const key = `inVldItemId[${item.id}]`
+          onCnclObj[key] = `Invalid Item Id provided in /${constants.ON_CANCEL}: ${item.id}`
+        } else {
+          itemSet.add(item.id)
+        }
+      })
+    } catch (error: any) {
+      logger.error(`Error while checking for item IDs for /${constants.ON_CANCEL}`, error.stack)
+    }
+
+    try {
+      //Checking for valid fulfillment ids in /on_select and 0 item count in /on_cancel
+      const fulfillmentIdsOnSelect = getValue('selectFlflmntSet')
+      const itemList = message.order.items
+      itemList.forEach((item: any, index: number) => {
+        if (fulfillmentIdsOnSelect) {
+          if (fulfillmentIdsOnSelect.includes(item.fulfillment_id) && item.quantity.count !== 0) {
+            onCnclObj[`itemCount[${index}]`] = `Item count should be 0 for /${constants.ON_CANCEL} in forward shipment`
+          } else if (!fulfillmentIdsOnSelect.includes(item.fulfillment_id) && item.quantity.count === 0) {
+            onCnclObj[`itemCount[${index}]`] = `Item count can't be 0 for /${constants.ON_CANCEL} in cancel shipment`
+          }
+        }
+      })
+    } catch (error: any) {
+      logger.error(`Error while checking for fulfillment IDs for /${constants.ON_CANCEL}`, error.stack)
+    }
+    //Comparing item count in /on_update and /select
+    const select_items: any = getValue('items')
+    try {
+      logger.info(`Matching the item count in message/order/items with that in /select`)
+      const onCancelItems: any[] = on_cancel.items
+      let onCancelItemCount: number = 0
+      let onSelectItemCount: number = 0
+      let selectItems: any = {}
+      const fulfillmentIdsOnSelect = getValue('selectFlflmntSet')
+
+      select_items.forEach((selectItem: any) => {
+        onSelectItemCount += selectItem.quantity.count
+        selectItems[selectItem.id] = selectItem.quantity.count
+      })
+
+      onCancelItems.forEach((item: any, index: number) => {
+        if (
+          selectItems.hasOwnProperty(item.id) &&
+          !fulfillmentIdsOnSelect?.includes(item.fulfillment_id) &&
+          selectItems[item.id] !== item.quantity.count
+        ) {
+          onCnclObj[`itemQuantity[${index}]`] =
+            `Total item count in message/order/items doesn't match with item count of /${constants.ON_SELECT}`
+        }
+        onCancelItemCount += item.quantity.count
+      })
+
+      if (onSelectItemCount !== onCancelItemCount) {
+        onCnclObj[`itemCount`] =
+          `Total item count in message/order/items doesn't match with item count of /${constants.ON_SELECT}`
+      }
+    } catch (error: any) {
+      logger.error(`Error while matching the count of items in /on_update and /select: ${error.message}`)
+    }
+
+    try {
       logger.info(`Checking quote breakup prices for /${constants.ON_CANCEL}`)
       if (!sumQuoteBreakUp(on_cancel.quote)) {
         const key = `invldQuotePrices`
@@ -110,7 +194,17 @@ export const checkOnCancel = (data: any) => {
         logger.info(`Checking for quote_trail price and item quote price sum for ${constants.ON_CANCEL}`)
         const price = Number(on_cancel.quote.price.value)
         const priceAtConfirm = Number(getValue('quotePrice'))
-        const cancelFulfillments = _.filter(on_cancel.fulfillments, { type: 'Cancel' })
+        let cancelFulfillments = null
+        if (flow === '5') {
+          cancelFulfillments = _.filter(on_cancel.fulfillments, { type: 'RTO' })
+        } else {
+          cancelFulfillments = _.filter(on_cancel.fulfillments, { type: 'Cancel' })
+        }
+
+        if (!cancelFulfillments.length && flow === '4') {
+          const key = `CancelFulfillmentMissing`
+          onCnclObj[key] = `fulfillment type cancel is missing in /${constants.ON_CANCEL}`
+        }
         for (let obj of cancelFulfillments) {
           let quoteTrailSum = 0
           const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
@@ -131,24 +225,26 @@ export const checkOnCancel = (data: any) => {
           }
         }
       } else {
-        logger.error(`The price breakdown in brakup does not match with the total_price for ${constants.ON_CANCEL} `)
+        logger.error(`The price breakdown in brakup does not match with the total_price for ${constants.ON_CANCEL}`)
       }
     } catch (error: any) {
-      logger.error(`!!Error while Comparing Quote_Trail object for /${constants.ON_CANCEL}`)
+      logger.error(`!!Error while Comparing Quote_Trail object for /${constants.ON_CANCEL}, ${error.stack} `)
     }
 
     try {
-      logger.info(`Checking for preCancel_state in fulfillments of /${constants.ON_CANCEL}`)
-      const fulfillments = message.order.fulfillments
-      const op = _.some(fulfillments, { type: 'Delivery', tags: [{ code: 'precancel_state' }] })
-
-      if (!op) {
-        const key = `invldPrecancelState`
-        onCnclObj[key] = `precancel_state not found in fulfillments for ${constants.ON_CANCEL}`
-        logger.error(`precancel_state not found in fulfillments for ${constants.ON_CANCEL}`)
+      logger.info(`Checking for Item IDs in quote object in /${constants.ON_CANCEL}`)
+      let cancelFulfillments = null
+      if (flow === '5') {
+        cancelFulfillments = _.filter(on_cancel.fulfillments, { type: 'RTO' })
+      } else {
+        cancelFulfillments = _.filter(on_cancel.fulfillments, { type: 'Cancel' })
       }
-    } catch (error) {
-      logger.error(`!!Error while Checking for precancel_state for /${constants.ON_CANCEL}`)
+      for (let obj of cancelFulfillments) {
+        const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
+        checkQuoteTrail(quoteTrailItems, onCnclObj, selectPriceMap, itemSet)
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking quote object in /${constants.ON_CANCEL}, ${error.stack}`)
     }
 
     try {
@@ -161,6 +257,10 @@ export const checkOnCancel = (data: any) => {
         mapCancellationID('BNP', reason_id, onCnclObj)
       } else {
         mapCancellationID('SNP', reason_id, onCnclObj)
+      }
+      if (flow === '4' && cancelled_by !== context.bap_id) {
+        const key = 'invalidCancelledByEntity'
+        onCnclObj[key] = `cancelled_by entity should be same as context/bap_id`
       }
     } catch (error: any) {
       logger.error(`!!Error while mapping cancellation_reason_id in ${constants.ON_CANCEL}`)
@@ -177,7 +277,7 @@ export const checkOnCancel = (data: any) => {
     try {
       logger.info(`Checking provider id and location in /${constants.ON_CANCEL}`)
       if (on_cancel.provider.id != getValue('providerId')) {
-        onCnclObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.ON_CANCEL}`
+        onCnclObj.prvdrId = `Provider Id mismatches in /${constants.ON_SELECT} and /${constants.ON_CANCEL}`
       }
 
       if (on_cancel.provider.locations[0].id != getValue('providerLoc')) {
@@ -186,35 +286,41 @@ export const checkOnCancel = (data: any) => {
     } catch (error: any) {
       logger.error(`!!Error while checking provider id and location in /${constants.ON_CANCEL}, ${error.stack}`)
     }
-
+    let Ids = []
+    let Flfmntid = []
     try {
       logger.info(`Comparing item Ids and fulfillment ids in /${constants.ON_SELECT} and /${constants.ON_CANCEL}`)
       const itemFlfllmnts: any = getValue('itemFlfllmnts')
-      const itemsIdList: any = getValue('itemsIdList')
       let i = 0
       const len = on_cancel.items.length
+      let forwardFulfillmentCount = 0 // Counter for forward fulfillment
+      let cancellationFulfillmentCount = 0 // Counter for cancellation fulfillment
       while (i < len) {
         const itemId = on_cancel.items[i].id
-
-        if (itemId in itemFlfllmnts) {
-          if ((on_cancel.items[i].fulfillment_id != itemFlfllmnts[itemId]) && flow !== '5') {
-            const itemkey = `item_FFErr${i}`
-            onCnclObj[itemkey] =
-              `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_CANCEL}`
-          }
-        } else {
-          const itemkey = `item_FFErr${i}`
-          onCnclObj[itemkey] = `Item Id ${itemId} does not exist in /${constants.ON_SELECT}`
+        Ids.push(itemId)
+        Flfmntid.push(on_cancel.items[i].fulfillment_id)
+        if (!(itemId in itemFlfllmnts)) {
+          const key = `ITEM_ID ${itemId}`
+          onCnclObj[key] = `${itemId} itemID not found in ${constants.ON_SELECT}`
         }
-
-        if (itemId in itemsIdList) {
-          if (on_cancel.items[i].quantity.count != itemsIdList[itemId] && flow !== '5') {
-            itemsIdList[itemId] = on_cancel.items[i].quantity.count
-            onCnclObj.countErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
-          }
+        if (itemId in itemFlfllmnts && Object.values(itemFlfllmnts).includes(on_cancel.items[i].fulfillment_id)) {
+          const key = `FF_ID ${on_cancel.items[i].fulfillment_id}`
+          logger.info(`forward fulfillment found ${key}`)
+          forwardFulfillmentCount++
         }
-
+        if (itemId in itemFlfllmnts && !Object.values(itemFlfllmnts).includes(on_cancel.items[i].fulfillment_id)) {
+          const key = `FF_ID ${on_cancel.items[i].fulfillment_id}`
+          logger.info(`Cancellation fulfillment found ${key}`)
+          cancellationFulfillmentCount++
+        }
         i++
+      }
+      if (cancellationFulfillmentCount != forwardFulfillmentCount) {
+        const key = `Fulfillment_mismatch`
+        onCnclObj[key] =
+          `The count of cancellation fulfillmentsn is not equal to the count of forward fulfillments or invalid fulfillment id.`
+      } else {
+        logger.info(`The count of cancellation fulfillments is equal to the count of forward fulfillments.`)
       }
     } catch (error: any) {
       logger.error(
@@ -233,7 +339,7 @@ export const checkOnCancel = (data: any) => {
         const len = billingErrors.length
         while (i < len) {
           const key = `billingErr${i}`
-          onCnclObj[key] = `${billingErrors[i]}`
+          onCnclObj[key] = `${billingErrors[i]} when compared with init billing object`
           i++
         }
       }
@@ -248,6 +354,19 @@ export const checkOnCancel = (data: any) => {
       const itemFlfllmnts: any = getValue('itemFlfllmnts')
       let i = 0
       const len = on_cancel.fulfillments.length
+      while (i < len) {
+        if (on_cancel.fulfillments[i].id) {
+          const id = on_cancel.fulfillments[i].id
+          const nonMatchingFlfmntid = new Set(Flfmntid)
+          if (!nonMatchingFlfmntid.has(id)) {
+            const key = `ffID${id}`
+            //MM->Mismatch
+            onCnclObj[key] = `fulfillment id ${id} does not exist in /${constants.ON_CANCEL} items.fulfillment_id`
+          }
+        }
+        i++
+      }
+
       while (i < len && flow !== '5' && on_cancel.fulfillments[i].type !== 'Cancel') {
         //Comparing fulfillment Ids
         if (on_cancel.fulfillments[i].id) {
@@ -261,7 +380,7 @@ export const checkOnCancel = (data: any) => {
           onCnclObj.ffId = `fulfillments[${i}].id is missing in /${constants.CONFIRM}`
         }
 
-        if ((!on_cancel.fulfillments[i].end || !on_cancel.fulfillments[i].end.person)) {
+        if (!on_cancel.fulfillments[i].end || !on_cancel.fulfillments[i].end.person) {
           onCnclObj.ffprsn = `fulfillments[${i}].end.person object is missing`
         }
 
@@ -289,7 +408,7 @@ export const checkOnCancel = (data: any) => {
       if (!on_cancel.hasOwnProperty('created_at') || !on_cancel.hasOwnProperty('updated_at')) {
         onCnclObj.ordertmpstmp = `order created and updated timestamps are mandatory in /${constants.ON_CANCEL}`
       } else {
-        if (!_.gt(on_cancel.updated_at, on_cancel.created_at )) {
+        if (!_.gt(on_cancel.updated_at, on_cancel.created_at)) {
           onCnclObj.ordrupdtd = `order.updated_at timestamp should be greater than order.created_at timestamp`
         }
       }
@@ -314,17 +433,98 @@ export const checkOnCancel = (data: any) => {
     } catch (err: any) {
       logger.error(`Error while checking transaction is in message.order.payment`)
     }
-
-    if (flow === '5') {
+    if (flow === '4') {
       try {
-        // Checking for igm_request inside fulfillments for /on_cancel
-        const DeliveryObj = _.filter(on_cancel.fulfillments, { type: 'Delivery' })
-        let reasonID_flag = 0
-        let rto_id_flag = 0
-        let initiated_by_flag = 0
-        for (let item of DeliveryObj) {
-          const cancel_request = _.filter(item.tags, { code: 'cancel_request' })
+        logger.info(`Checking for valid cancellation reason ID in cancellation object of /${constants.ON_CANCEL}`)
+        const reason_id = on_cancel.cancellation.reason.id
+        if (reason_id !== getValue('cnclRid')) {
+          onCnclObj['reason_id'] =
+            `reason_id is different in cancellation object of /${constants.ON_CANCEL} from /${constants.CANCEL}`
+        }
+      } catch (err: any) {
+        logger.error(
+          `Error while checking for valid cancellation reason ID in cancellation object of /${constants.ON_CANCEL}`,
+        )
+      }
+    }
+
+    try {
+      // Checking for igm_request inside fulfillments for /on_cancel
+      if (flow === '5') {
+        const RTOobj = _.filter(on_cancel.fulfillments, { type: 'RTO' })
+        if (!RTOobj.length) {
+          logger.error(`RTO object is mandatory for ${constants.ON_CANCEL}`)
+          const key = `missingRTO`
+          onCnclObj[key] = `RTO object is mandatory for ${constants.ON_CANCEL}`
+        } else {
+          for (let item of RTOobj) {
+            const validVal = ['RTO-Initiated', 'RTO-Delivered', 'RTO-Disposed']
+            if (!validVal.includes(item.state?.descriptor?.code)) {
+              logger.error(
+                `Delivery state should be one of ['RTO-Initiated','RTO-Approved','RTO-Completed'] for ${constants.ON_CANCEL}`,
+              )
+              const key = `invalidState`
+              onCnclObj[key] =
+                `Delivery state should be one of ['RTO-Initiated','RTO-Approved','RTO-Completed'] for ${constants.ON_CANCEL}`
+            }
+          }
+        }
+      }
+
+      try {
+        logger.info(`Checking payment object in /${constants.CONFIRM}`)
+
+        if (!_.isEqual(on_cancel.payment['@ondc/org/settlement_details'][0], getValue('sttlmntdtls'))) {
+          onCnclObj.sttlmntdtls = `payment settlement_details mismatch in /${constants.ON_INIT} & /${constants.CONFIRM}`
+        }
+
+        if (!on_cancel.hasOwnProperty('created_at') || !on_cancel.hasOwnProperty('updated_at')) {
+          onCnclObj.ordertmpstmp = `order created and updated timestamps are mandatory in /${constants.CONFIRM}`
+        } else {
+          if (!_.isEqual(on_cancel.created_at, context.timestamp)) {
+            onCnclObj.orderCrtd = `order.created_at timestamp should match context.timestamp`
+          }
+        }
+      } catch (error: any) {
+        logger.error(`!!Error while checking payment object in /${constants.CONFIRM}, ${error.stack}`)
+      }
+      if (flow === '4') {
+        const Cancelobj = _.filter(on_cancel.fulfillments, { type: 'Cancel' })
+        if (!Cancelobj.length) {
+          logger.error(`Cancel object is mandatory for ${constants.ON_CANCEL}`)
+          const key = `missingCancel`
+          onCnclObj[key] = `Cancel object is mandatory for ${constants.ON_CANCEL}`
+        }
+      }
+
+      const DeliveryObj = _.filter(on_cancel.fulfillments, { type: 'Delivery' })
+
+      let reasonID_flag = 0
+      let rto_id_flag = 0
+      let initiated_by_flag = 0
+      for (let item of DeliveryObj) {
+        if (item.state?.descriptor?.code !== 'Cancelled') {
+          logger.error(`Delivery state should be cancelled for ${constants.ON_CANCEL}`)
+          const key = `invalidState`
+          onCnclObj[key] = `Delivery state should be Cancelled for ${constants.ON_CANCEL}`
+        }
+        if (item.state?.descriptor?.code === 'Cancelled' && (!item.tags || !item.tags.length)) {
+          logger.error(`Tags are mandatory for ${constants.ON_CANCEL} on cancelled state`)
+          const key = `missingTags`
+          onCnclObj[key] = `Tags are mandatory for ${constants.ON_CANCEL}`
+        }
+        const cancel_request = _.filter(item.tags, { code: 'cancel_request' })
+        if (!cancel_request.length) {
+          logger.error(`Cancel Request is mandatory for ${constants.ON_CANCEL}`)
+          const key = `missingCancelRequest`
+          onCnclObj[key] = `Cancel Request is mandatory for ${constants.ON_CANCEL}`
+        } else {
           cancel_request.forEach((tag: any) => {
+            if (!tag.list) {
+              const key = `missingListObj`
+              onCnclObj[key] = `List object is mandatory for cancel_request`
+              return
+            }
             tag.list.some((i: any) => {
               if (i.code === 'reason_id') {
                 reasonID_flag = 1
@@ -337,29 +537,31 @@ export const checkOnCancel = (data: any) => {
               }
             })
           })
-          const igm_request = _.filter(item.tags, { code: 'igm_request' })
-          if (!igm_request) {
-            logger.error(`IGM Request is mandatory for ${constants.ON_CANCEL}`)
-          }
         }
-        if (!reasonID_flag) {
-          logger.error(`Reason ID is mandatory field for ${constants.ON_CANCEL}`)
-          let key = `missingReasonID`
-          onCnclObj[key] = `Reason ID is mandatory field for ${constants.ON_CANCEL}`
+        const preCancelObj = _.filter(item.tags, { code: 'precancel_state' })
+        if (!preCancelObj.length) {
+          logger.error(`Pre Cancel is mandatory for ${constants.ON_CANCEL}`)
+          const key = `missingPreCancel`
+          onCnclObj[key] = `Pre Cancel is mandatory for ${constants.ON_CANCEL}`
         }
-        if (!rto_id_flag) {
-          logger.error(`RTO Id is mandatory field for ${constants.ON_CANCEL}`)
-          let key = `missingRTOvalues`
-          onCnclObj[key] = `RTO Id is mandatory field for ${constants.ON_CANCEL}`
-        }
-        if (!initiated_by_flag) {
-          logger.error(`Initiated_by is mandatory field for ${constants.ON_CANCEL}`)
-          let key = `missingInitiatedBy`
-          onCnclObj[key] = `Initiated_by is mandatory field for ${constants.ON_CANCEL}`
-        }
-      } catch (error: any) {
-        logger.error(`!!Error while checking Reason ID ,RTO Id and Initiated_by for ${constants.ON_CANCEL}`)
       }
+      if (!reasonID_flag) {
+        logger.error(`Reason ID is mandatory field for ${constants.ON_CANCEL}`)
+        let key = `missingReasonID`
+        onCnclObj[key] = `Reason ID is mandatory field for ${constants.ON_CANCEL}`
+      }
+      if (!rto_id_flag && flow === '5') {
+        logger.error(`RTO Id is mandatory field for ${constants.ON_CANCEL}`)
+        let key = `missingRTOvalues`
+        onCnclObj[key] = `RTO Id is mandatory field for ${constants.ON_CANCEL}`
+      }
+      if (!initiated_by_flag) {
+        logger.error(`Initiated_by is mandatory field for ${constants.ON_CANCEL}`)
+        let key = `missingInitiatedBy`
+        onCnclObj[key] = `Initiated_by is mandatory field for ${constants.ON_CANCEL}`
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking Reason ID ,RTO Id and Initiated_by for ${constants.ON_CANCEL}`)
     }
 
     return onCnclObj

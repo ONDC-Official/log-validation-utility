@@ -74,7 +74,10 @@ export const onUpdateSchema = {
         order: {
           type: 'object',
           properties: {
-            id: { type: 'string' },
+            id: { type: 'string',
+            pattern: '^[a-zA-Z0-9]{1,32}$',
+            errorMessage: 'Should be alphanumeric upto 32 letters max',
+           },
             state: { type: 'string', enum: ['Created', 'Accepted', 'Cancelled', 'Completed', 'Delivered'] },
             provider: {
               type: 'object',
@@ -228,7 +231,9 @@ export const onUpdateSchema = {
                       contact: {
                         type: 'object',
                         properties: {
-                          phone: { type: 'string' },
+                          phone: { type: 'string' ,                 
+                          minLength: 10,
+                          maxLength: 11,},
                           email: { type: 'string', format: 'email' },
                         },
                         required: ['phone', 'email'],
@@ -288,7 +293,9 @@ export const onUpdateSchema = {
                       contact: {
                         type: 'object',
                         properties: {
-                          phone: { type: 'string' },
+                          phone: { type: 'string' ,                  
+                          minLength: 10,
+                          maxLength: 11,},
                           email: { type: 'string', format: 'email' },
                         },
                       },
@@ -372,10 +379,15 @@ export const onUpdateSchema = {
                         },
                       },
                     },
-                    required: ['@ondc/org/item_id', 'title', '@ondc/org/title_type', 'price'],
+                    required: [
+                      '@ondc/org/item_id',
+                      'title',
+                      '@ondc/org/title_type',
+                      'price',
+                    ],
                   },
                 },
-                ttl: { type: 'string' },
+                ttl: { type: 'string',format: 'duration' },
               },
               required: ['price', 'breakup', 'ttl'],
             },
@@ -406,15 +418,15 @@ export const onUpdateSchema = {
                 },
                 status: {
                   type: 'string',
-                  enum: ['PAID', 'NOT-PAID'],
+                  enum:["PAID","NOT-PAID"]
                 },
                 type: {
                   type: 'string',
-                  enum: ['ON-ORDER', 'ON-FULFILLMENT'],
+                  enum:["ON-ORDER","ON-FULFILLMENT"]
                 },
                 collected_by: {
                   type: 'string',
-                  enum: ['BAP', 'BPP'],
+                  enum:["BAP","BPP"]
                 },
                 '@ondc/org/buyer_app_finder_fee_type': {
                   type: 'string',
@@ -424,7 +436,7 @@ export const onUpdateSchema = {
                 },
                 '@ondc/org/settlement_basis': {
                   type: 'string',
-                  enum: ['shipment', 'delivery', 'return_window_expiry'],
+                  enum:['shipment','delivery','return_window_expiry']
                 },
                 '@ondc/org/settlement_window': {
                   type: 'string',

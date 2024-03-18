@@ -1,10 +1,10 @@
 import constants, { RSFapiSequence } from '../../constants/index'
 import _ from 'lodash'
-import { isObjectEmpty } from '../../utils/index'
-import { validateSchema } from '../../utils/index'
+import { isObjectEmpty } from '../index'
+import { validateSchema } from '../index'
 import { logger } from '../../shared/logger'
 
-const checkOnReceiverRecon = (data: any) => {
+const checkRsfOnReceiverRecon = (data: any) => {
   const issueObj: any = {}
 
   if (!data || isObjectEmpty(data)) {
@@ -34,4 +34,4 @@ const checkOnReceiverRecon = (data: any) => {
   }
 }
 
-export default checkOnReceiverRecon
+export default checkRsfOnReceiverRecon

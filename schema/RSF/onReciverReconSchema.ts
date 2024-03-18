@@ -60,7 +60,6 @@ const onReceiverReconSchema = {
                 type: 'object',
                 required: [
                   'id',
-                  'invoice_no',
                   'collector_app_id',
                   'receiver_app_id',
                   'order_recon_status',

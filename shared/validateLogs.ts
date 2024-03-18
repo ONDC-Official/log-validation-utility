@@ -41,8 +41,8 @@ import { checkOnStatusOutForDelivery } from '../utils/Retail/Status/onStatusOutF
 import { checkOnStatusDelivered } from '../utils/Retail/Status/onStatusDelivered'
 import { checkCancel } from '../utils/Retail/Cancel/cancel'
 import { checkOnCancel } from '../utils/Retail/Cancel/onCancel'
-import checkReceiverRecon from '../utils/RSF/receiverRecon'
-import checkOnReceiverRecon from '../utils/RSF/onReciverRecon'
+import checkRsfReceiverRecon from '../utils/RSF/rsfReceiverRecon'
+import checkRsfOnReceiverRecon from '../utils/RSF/rsfOnReciverRecon'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
@@ -409,13 +409,13 @@ export const RSFvalidateLogs = (data: any) => {
 
   try {
     if (data[RSFapiSequence.RECEIVER_RECON]) {
-      const receiver_recon = checkReceiverRecon(data[RSFapiSequence.RECEIVER_RECON])
+      const receiver_recon = checkRsfReceiverRecon(data[RSFapiSequence.RECEIVER_RECON])
       if (!_.isEmpty(receiver_recon)) {
         logReport = { ...logReport, [RSFapiSequence.RECEIVER_RECON]: receiver_recon }
       }
     }
     if (data[RSFapiSequence.ON_RECEIVER_RECON]) {
-      const on_receiver_recon = checkOnReceiverRecon(data[RSFapiSequence.ON_RECEIVER_RECON])
+      const on_receiver_recon = checkRsfOnReceiverRecon(data[RSFapiSequence.ON_RECEIVER_RECON])
 
       if (!_.isEmpty(on_receiver_recon)) {
         logReport = { ...logReport, [RSFapiSequence.ON_RECEIVER_RECON]: on_receiver_recon }

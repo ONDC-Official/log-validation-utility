@@ -359,7 +359,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
           const id = on_cancel.fulfillments[i].id
           const nonMatchingFlfmntid = new Set(Flfmntid)
           if (!nonMatchingFlfmntid.has(id)) {
-            const key = `ffID ${id}`
+            const key = `ffID${id}`
             //MM->Mismatch
             onCnclObj[key] = `fulfillment id ${id} does not exist in /${constants.ON_CANCEL} items.fulfillment_id`
           }
@@ -372,7 +372,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
         if (on_cancel.fulfillments[i].id) {
           const id = on_cancel.fulfillments[i].id
           if (!Object.values(itemFlfllmnts).includes(id)) {
-            const key = `ffID ${id}`
+            const key = `ffID${id}`
             //MM->Mismatch
             onCnclObj[key] = `fulfillment id ${id} does not exist in /${constants.ON_SELECT}`
           }
@@ -481,8 +481,8 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
         if (!on_cancel.hasOwnProperty('created_at') || !on_cancel.hasOwnProperty('updated_at')) {
           onCnclObj.ordertmpstmp = `order created and updated timestamps are mandatory in /${constants.CONFIRM}`
         } else {
-          if (!_.isEqual(on_cancel.created_at, getValue('cnfrmTmpstmp'))) {
-            onCnclObj.orderCrtd = `order.created_at timestamp should match context.timestamp of confirm`
+          if (!_.isEqual(on_cancel.created_at, context.timestamp)) {
+            onCnclObj.orderCrtd = `order.created_at timestamp should match context.timestamp`
           }
         }
       } catch (error: any) {
@@ -511,14 +511,13 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
         if (item.state?.descriptor?.code === 'Cancelled' && (!item.tags || !item.tags.length)) {
           logger.error(`Tags are mandatory for ${constants.ON_CANCEL} on cancelled state`)
           const key = `missingTags`
-          onCnclObj[key] =
-            `Tags are mandatory for ${constants.ON_CANCEL} on cancelled state for fulfillment type delivery`
+          onCnclObj[key] = `Tags are mandatory for ${constants.ON_CANCEL}`
         }
         const cancel_request = _.filter(item.tags, { code: 'cancel_request' })
         if (!cancel_request.length) {
           logger.error(`Cancel Request is mandatory for ${constants.ON_CANCEL}`)
           const key = `missingCancelRequest`
-          onCnclObj[key] = `Cancel Request is mandatory for ${constants.ON_CANCEL} in fulfillment type delivery`
+          onCnclObj[key] = `Cancel Request is mandatory for ${constants.ON_CANCEL}`
         } else {
           cancel_request.forEach((tag: any) => {
             if (!tag.list) {

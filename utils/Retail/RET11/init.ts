@@ -177,13 +177,13 @@ export const checkInit = (data: any, msgIdSet: any) => {
         if (checkItemTag(item, select_customIdArray)) {
           const itemkey = `item${i}tags.parent_id`
           initObj[itemkey] =
-            `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.ON_SEARCH} and /${constants.INIT}`
+            `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.SELECT} and /${constants.INIT}`
         }
 
-        if (parentItemIdSet && !parentItemIdSet.includes(item.parent_item_id)) {
+        if (!parentItemIdSet.includes(item.parent_item_id)) {
           const itemkey = `item_PrntItmId${i}`
           initObj[itemkey] =
-            `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SEARCH} and /${constants.INIT}`
+            `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.INIT}`
         }
 
         if (itemId in itemFlfllmnts) {
@@ -219,7 +219,7 @@ export const checkInit = (data: any, msgIdSet: any) => {
         const id = init.fulfillments[i].id
         if (id) {
           if (!Object.values(itemFlfllmnts).includes(id)) {
-            const key = `ffID ${id}`
+            const key = `ffID${id}`
             //MM->Mismatch
             initObj[key] = `fulfillment id ${id} does not exist in /${constants.ON_SELECT}`
           }

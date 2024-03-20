@@ -13,8 +13,6 @@ export default Object.freeze({
   ON_SEARCHINC: 'on_search_inc',
   SELECT: 'select',
   ON_SELECT: 'on_select',
-  SELECT_OUT_OF_STOCK: 'select_out_of_stock',
-  ON_SELECT_OUT_OF_STOCK: 'on_select_out_of_stock',
   CONFIRM: 'confirm',
   ON_CONFIRM: 'on_confirm',
   INIT: 'init',

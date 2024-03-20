@@ -1,5 +1,5 @@
 /* eslint-disable no-prototype-builtins */
-import _, { isArray } from 'lodash'
+import _ from 'lodash'
 import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import {
@@ -135,10 +135,11 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
           cnfrmObj[itemkey] =
             `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.SELECT} and /${constants.CONFIRM}`
         }
-        if (parentItemIdSet && !parentItemIdSet.includes(item.parent_item_id)) {
+
+        if (!parentItemIdSet.includes(item.parent_item_id)) {
           const itemkey = `item_PrntItmId${i}`
           cnfrmObj[itemkey] =
-            `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SEARCH} and /${constants.CONFIRM}`
+            `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.CONFIRM}`
         }
         if (itemId in itemFlfllmnts) {
           if (confirm.items[i].fulfillment_id != itemFlfllmnts[itemId]) {
@@ -173,20 +174,18 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
 
     try {
       logger.info(`Checking for number of digits in tax number in message.order.tags[0].list`)
-      if (message.order.tags && isArray(message.order.tags)) {
-        const list = message.order.tags[0]?.list
+      const list = message.order.tags[0].list
 
-        list.map((item: any) => {
-          if (item.code == 'tax_number') {
-            if (item.value.length !== 15) {
-              const key = `message.order.tags[0].list`
-              cnfrmObj[key] = `Number of digits in tax number in  message.order.tags[0].list should be 15`
-            }
+      list.map((item: any) => {
+        if (item.code == 'tax_number') {
+          if (item.value.length !== 15) {
+            const key = `message.order.tags[0].list`
+            cnfrmObj[key] = `Number of digits in tax number in  message.order.tags[0].list should be 15`
           }
-        })
-      }
+        }
+      })
     } catch (error: any) {
-      logger.error(`Error while checking for the number of digits in tax_number, ${error.stack}`)
+      logger.error(`Error while checking for the number of digits in tax_number`)
     }
 
     try {
@@ -218,7 +217,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         if (confirm.fulfillments[i].id) {
           const id = confirm.fulfillments[i].id
           if (!Object.values(itemFlfllmnts).includes(id)) {
-            const key = `ffID ${id}`
+            const key = `ffID${id}`
             //MM->Mismatch
             cnfrmObj[key] = `fulfillment id ${id} does not exist in /${constants.ON_SELECT}`
           }
@@ -280,13 +279,9 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     try {
       logger.info(`Comparing Quote object for /${constants.ON_SELECT} and /${constants.CONFIRM}`)
       const on_select_quote: any = getValue('quoteObj')
-      const quoteErrors = compareQuoteObjects(on_select_quote, confirm.quote, constants.ON_SELECT, constants.CONFIRM)
-      const hasItemWithQuantity = _.some(confirm.quote.breakup, item => _.has(item, 'item.quantity'));
-      if (hasItemWithQuantity){
-        const key = `quantErr`
-        cnfrmObj[key] = `Extra attribute Quantity provided in quote object i.e not supposed to be provided after on_select so invalid quote object`
-      }
-      else if (quoteErrors) {
+      const quoteErrors = compareQuoteObjects(on_select_quote, confirm.quote)
+
+      if (quoteErrors) {
         let i = 0
         const len = quoteErrors.length
         while (i < len) {

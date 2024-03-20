@@ -156,9 +156,9 @@ export const checkOnSelect = (data: any) => {
     if (getValue('providerId') != on_select.provider.id) {
       errorObj.prvdrId = `provider.id mismatches in /${constants.SELECT} and /${constants.ON_SELECT}`
     }
-    if (!on_select.provider.locations) {
+    if(!on_select.provider.locations){
       errorObj.prvdrLoc = `provider.locations[0].id is missing in /${constants.ON_SELECT}`
-    } else if (on_select.provider.locations[0].id != getValue('providerLoc')) {
+    }else if(on_select.provider.locations[0].id != getValue('providerLoc')) {
       errorObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.SELECT} and /${constants.ON_SELECT}`
     }
   } catch (error: any) {
@@ -322,50 +322,13 @@ export const checkOnSelect = (data: any) => {
   }
 
   try {
-    logger.info(`Checking available and maximum count in ${constants.ON_SELECT}`)
-    on_select.quote.breakup.forEach((element: any, i: any) => {
-      const itemId = element['@ondc/org/item_id']
-      if (
-        element.item?.quantity &&
-        element.item.quantity?.available &&
-        element.item.quantity?.maximum &&
-        typeof element.item.quantity.available.count === 'string' &&
-        typeof element.item.quantity.maximum.count === 'string'
-      ) {
-        const availCount = parseInt(element.item.quantity.available.count, 10)
-        const maxCount = parseInt(element.item.quantity.maximum.count, 10)
-        if (isNaN(availCount) || isNaN(maxCount) || availCount < 0 || maxCount < 0) {
-          errorObj[`qntcnt${i}`] =
-            `Available and Maximum count should be greater than 0 for item id: ${itemId} in quote.breakup[${i}]`
-        } else if (availCount > maxCount) {
-          errorObj[`qntcnt${i}`] =
-            `Available count should not be greater than maximum count for item id: ${itemId} in quote.breakup[${i}]`
-        } else if (availCount === 0 && maxCount > 0) {
-          errorObj[`qntcnt${i}`] =
-            `item.quantity.maximum.count should be greater than 0 if item.quantity.available.count is 0 for item id: ${itemId} in quote.breakup[${i}]`
-        } else if (availCount === 99 && maxCount <= 0) {
-          errorObj[`qntcnt${i}`] =
-            `item.quantity.maximum.count cannot be 0 if item is in stock for item id: ${itemId} in quote.breakup[${i}]`
-        } else if (
-          element.item.quantity.available.count.trim() === '' ||
-          element.item.quantity.maximum.count.trim() === ''
-        ) {
-          errorObj[`qntcnt${i}`] =
-            `Available or Maximum count should not be empty string for item id: ${itemId} in quote.breakup[${i}]`
-        }
-      }
-    })
-  } catch (error: any) {
-    logger.error(`Error while checking available and maximum count in ${constants.ON_SELECT}, ${error.stack}`)
-  }
-
-  try {
     logger.info(`-x-x-x-x-Quote Breakup ${constants.ON_SELECT} all checks-x-x-x-x`)
     const itemsIdList: any = getValue('itemsIdList')
     const itemsCtgrs: any = getValue('itemsCtgrs')
     if (on_select.quote) {
       on_select.quote.breakup.forEach((element: any, i: any) => {
         const titleType = element['@ondc/org/title_type']
+        // logger.info(element.price.value);
 
         logger.info(`Calculating quoted Price Breakup for element ${element.title}`)
         onSelectPrice += parseFloat(element.price.value)
@@ -385,6 +348,57 @@ export const checkOnSelect = (data: any) => {
             element.price.value
           ) {
             errorObj.priceBreakup = `Item's unit and total price mismatch for id: ${element['@ondc/org/item_id']}`
+          }
+
+          logger.info(`checking available and maximum count in ${constants.ON_SELECT}`)
+          if (
+            element.item.quantity &&
+            element.item.quantity.available &&
+            typeof element.item.quantity.available.count === 'string'
+          ) {
+            const availCount = parseInt(element.item.quantity.available.count, 10)
+            const maxCount = parseInt(element.item.quantity.maximum.count, 10)
+            if (availCount < 0 || maxCount < 0) {
+              const key = `qntcnt${i}`
+              errorObj[key] =
+                `Available and Maximum count should be greater than 0 for item id: ${element['@ondc/org/item_id']} in quote.breakup[${i}]`
+            }
+            if (availCount > maxCount) {
+              const key = `qntcnt${i}`
+              errorObj[key] =
+                `Available count should not be greater than maximum count for item id: ${element['@ondc/org/item_id']} in quote.breakup[${i}]`
+            }
+            if (
+              element.item.quantity.available.count.trim() === '' ||
+              element.item.quantity.maximum.count.trim() === ''
+            ) {
+              const key = `qntcnt${i}`
+              errorObj[key] =
+                `Available or Maximum count should not be empty string for item id: ${element['@ondc/org/item_id']} in quote.breakup[${i}]`
+            }
+          }
+
+          if (
+            element.item.quantity &&
+            element.item.quantity.maximum &&
+            typeof element.item.quantity.maximum.count === 'string' &&
+            element.item.quantity.available &&
+            typeof element.item.quantity.available.count === 'string'
+          ) {
+            const maxCount = parseInt(element.item.quantity.maximum.count, 10)
+            const availCount = parseInt(element.item.quantity.available.count, 10)
+            if (availCount == 99 && maxCount <= 0) {
+              const key = `qntcnt${i}`
+              errorObj[key] = `item.quantity.maximum.count cant be 0 if item is in stock `
+            }
+          }
+          if (element.item.quantity && element.item.quantity.maximum && element.item.quantity.available) {
+            const maxCount = parseInt(element.item.quantity.maximum.count, 10)
+            const availCount = parseInt(element.item.quantity.available.count, 10)
+            if (availCount == 0 && maxCount > 0) {
+              const key = `qntcnt${i}`
+              errorObj[key] = `item.quantity.maximum.count be greater than 0 if item.quantity.available.count is 0 `
+            }
           }
         }
 
@@ -429,7 +443,7 @@ export const checkOnSelect = (data: any) => {
       logger.info(
         `Matching quoted Price ${parseFloat(on_select.quote.price.value)} with Breakup Price ${onSelectPrice}`,
       )
-      if (Math.round(onSelectPrice) != Math.round(parseFloat(on_select.quote.price.value))) {
+      if (onSelectPrice != parseFloat(on_select.quote.price.value)) {
         errorObj.quoteBrkup = `quote.price.value ${on_select.quote.price.value} does not match with the price breakup ${onSelectPrice}`
       }
 
@@ -439,7 +453,7 @@ export const checkOnSelect = (data: any) => {
       )
 
       if (typeof selectedPrice === 'number' && onSelectItemsPrice !== selectedPrice) {
-        errorObj.priceErr = `Warning: Quoted Price in /${constants.ON_SELECT} INR ${onSelectItemsPrice} does not match with the total price of items in /${constants.SELECT} INR ${selectedPrice} i.e price for the item mismatch in on_search and on_select`
+        // errorObj.priceErr = `Warning: Quoted Price in /${constants.ON_SELECT} INR ${onSelectItemsPrice} does not match with the total price of items in /${constants.SELECT} INR ${selectedPrice}`
         logger.info('Quoted Price and Selected Items price mismatch')
       }
     } else {

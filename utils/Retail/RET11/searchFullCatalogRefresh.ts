@@ -1,5 +1,5 @@
 import { logger } from '../../../shared/logger'
-import { setValue } from '../../../shared/dao'
+import { getValue, setValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
 import {
   validateSchema,
@@ -9,8 +9,9 @@ import {
   checkContext,
   checkTagConditions,
 } from '../../../utils'
+import _ from 'lodash'
 
-export const checkSearch = (data: any, msgIdSet: any) => {
+export const checkSearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -29,11 +30,15 @@ export const checkSearch = (data: any, msgIdSet: any) => {
       return Object.keys(errorObj).length > 0 && errorObj
     }
 
-    msgIdSet.add(data.context.message_id)
+    // msgIdSet.add(data.context.message_id) //Duplicate db entry below
 
-    const schemaValidation = validateSchema(data.context.domain.split(':')[1], constants.SEARCH, data)
+    const schemaValidation = validateSchema('RET11', constants.SEARCH, data)
+
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
+    }
+    if (_.isEqual(data.context, getValue(`domain`))) {
+      errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     const contextRes: any = checkContext(data.context, constants.SEARCH)

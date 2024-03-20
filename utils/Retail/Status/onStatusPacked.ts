@@ -114,7 +114,7 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any) => 
     }
     try {
       if (!_.isEqual(getValue(`cnfrmTmpstmp`), on_status.created_at)) {
-        onStatusObj.tmpstmp = `Created At timestamp for /${constants.ON_STATUS}_${state}.message.order should be equal to context timestamp at ${constants.CONFIRM}`
+        onStatusObj.tmpstmp = `Created At timestamp for /${constants.ON_STATUS}_${state} should be equal to context timestamp at ${constants.CONFIRM}`
       }
     } catch (error: any) {
       logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)

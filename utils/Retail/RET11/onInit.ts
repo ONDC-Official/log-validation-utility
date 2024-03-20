@@ -1,5 +1,5 @@
 /* eslint-disable no-prototype-builtins */
-import _, { isArray } from 'lodash'
+import _ from 'lodash'
 import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import {
@@ -122,7 +122,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         onInitObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.CONFIRM}`
       }
 
-      if (on_init.provider.location && on_init.provider.locations[0].id != getValue('providerLoc')) {
+      if (on_init.provider.locations[0].id != getValue('providerLoc')) {
         onInitObj.prvdrLoc = `provider.locations[0].id mismatches in /${constants.ON_SEARCH} and /${constants.CONFIRM}`
       }
     } catch (error: any) {
@@ -152,21 +152,14 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       logger.error(`tax_number not present in tags for ${constants.ON_INIT}`)
     }
 
-    try {
-      logger.info(`Checking for tags in /${constants.ON_INIT}`)
-      if (on_init.tags && isArray(on_init.tags)) {
-        setValue(
-          'bpp_tags',
-          on_init.tags.forEach((data: any) => {
-            if (data.code == 'bpp_terms') {
-              setValue('list_ON_INIT', data.list)
-            }
-          }),
-        )
-      }
-    } catch (error: any) {
-      logger.error(`!!Error while checking tags in /${constants.ON_INIT} ${error.stack}`)
-    }
+    setValue(
+      'bpp_tags',
+      on_init.tags.forEach((data: any) => {
+        if (data.code == 'bpp_terms') {
+          setValue('list_ON_INIT', data.list)
+        }
+      }),
+    )
 
     try {
       logger.info(`Comparing item Ids and fulfillment Ids in /${constants.ON_SELECT} and /${constants.ON_INIT}`)
@@ -184,10 +177,10 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
             `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.SELECT} and /${constants.INIT}`
         }
 
-        if (parentItemIdSet && !parentItemIdSet.includes(item.parent_item_id)) {
+        if (!parentItemIdSet.includes(item.parent_item_id)) {
           const itemkey = `item_PrntItmId${i}`
           onInitObj[itemkey] =
-            `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SEARCH} and /${constants.ON_INIT}`
+            `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_INIT}`
         }
 
         if (itemId in itemFlfllmnts) {
@@ -247,7 +240,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         if (on_init.fulfillments[i].id) {
           const id = on_init.fulfillments[i].id
           if (!Object.values(itemFlfllmnts).includes(id)) {
-            const key = `ffID ${id}`
+            const key = `ffID${id}`
             //MM->Mismatch
             onInitObj[key] = `fulfillment id ${id} does not exist in /${constants.ON_SELECT}`
           }
@@ -273,39 +266,35 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       logger.error(`!!Error while checking fulfillments object in /${constants.ON_INIT}, ${error.stack}`)
     }
 
-    try {
-      let initQuotePrice = 0
-      let initBreakupPrice = 0
-      // setValue("onInitQuote", quote);
-      logger.info(`Calculating Net /${constants.ON_INIT} Price breakup`)
-      on_init.quote.breakup.forEach((element: { price: { value: string } }) => {
-        initBreakupPrice += parseFloat(element.price.value)
-      })
-      logger.info(`/${constants.ON_INIT} Price Breakup: ${initBreakupPrice}`)
+    let initQuotePrice = 0
+    let initBreakupPrice = 0
+    // setValue("onInitQuote", quote);
+    logger.info(`Calculating Net /${constants.ON_INIT} Price breakup`)
+    on_init.quote.breakup.forEach((element: { price: { value: string } }) => {
+      initBreakupPrice += parseFloat(element.price.value)
+    })
+    logger.info(`/${constants.ON_INIT} Price Breakup: ${initBreakupPrice}`)
 
-      initQuotePrice = parseFloat(on_init.quote.price.value)
+    initQuotePrice = parseFloat(on_init.quote.price.value)
 
-      logger.info(`/${constants.ON_INIT} Quoted Price: ${initQuotePrice}`)
+    logger.info(`/${constants.ON_INIT} Quoted Price: ${initQuotePrice}`)
 
-      logger.info(`Comparing /${constants.ON_INIT} Quoted Price and Net Price Breakup`)
-      if (Math.round(initQuotePrice) != Math.round(initBreakupPrice)) {
-        logger.info(`Quoted Price in /${constants.ON_INIT} is not equal to the Net Breakup Price`)
-        onInitObj.onInitPriceErr = `Quoted Price ${initQuotePrice} does not match with Net Breakup Price ${initBreakupPrice} in /${constants.ON_INIT}`
-      }
+    logger.info(`Comparing /${constants.ON_INIT} Quoted Price and Net Price Breakup`)
+    if (initQuotePrice != initBreakupPrice) {
+      logger.info(`Quoted Price in /${constants.ON_INIT} is not equal to the Net Breakup Price`)
+      onInitObj.onInitPriceErr = `Quoted Price ${initQuotePrice} does not match with Net Breakup Price ${initBreakupPrice} in /${constants.ON_INIT}`
+    }
 
-      logger.info(`Comparing /${constants.ON_INIT} Quoted Price and /${constants.ON_SELECT} Quoted Price`)
-      const onSelectPrice: any = getValue('onSelectPrice')
-      if (Math.round(onSelectPrice) != Math.round(initQuotePrice)) {
-        logger.info(`Quoted Price in /${constants.ON_INIT} is not equal to the quoted price in /${constants.ON_SELECT}`)
-        onInitObj.onInitPriceErr2 = `Quoted Price in /${constants.ON_INIT} INR ${initQuotePrice} does not match with the quoted price in /${constants.ON_SELECT} INR ${onSelectPrice}`
-      }
+    logger.info(`Comparing /${constants.ON_INIT} Quoted Price and /${constants.ON_SELECT} Quoted Price`)
+    const onSelectPrice: any = getValue('onSelectPrice')
+    if (onSelectPrice != initQuotePrice) {
+      logger.info(`Quoted Price in /${constants.ON_INIT} is not equal to the quoted price in /${constants.ON_SELECT}`)
+      onInitObj.onInitPriceErr2 = `Quoted Price in /${constants.ON_INIT} INR ${initQuotePrice} does not match with the quoted price in /${constants.ON_SELECT} INR ${onSelectPrice}`
+    }
 
-      logger.info(`Checking Payment Object for  /${constants.ON_INIT}`)
-      if (!on_init.payment) {
-        onInitObj.pymntOnInitObj = `Payment Object can't be null in /${constants.ON_INIT}`
-      }
-    } catch (error: any) {
-      logger.error(`!!Error while checking /${constants.ON_INIT} Quoted Price and Net Price Breakup, ${error.stack}`)
+    logger.info(`Checking Payment Object for  /${constants.ON_INIT}`)
+    if (!on_init.payment) {
+      onInitObj.pymntOnInitObj = `Payment Object can't be null in /${constants.ON_INIT}`
     }
 
     try {
@@ -326,13 +315,10 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     try {
       logger.info(`Checking Quote Object in /${constants.ON_SELECT} and /${constants.ON_INIT}`)
       const on_select_quote: any = getValue('quoteObj')
-      const quoteErrors = compareQuoteObjects(on_select_quote, on_init.quote, constants.ON_SELECT, constants.ON_INIT)
-      const hasItemWithQuantity = _.some(on_init.quote.breakup, item => _.has(item, 'item.quantity'));
-      if (hasItemWithQuantity){
-        const key = `quantErr`
-        onInitObj[key] = `Extra attribute Quantity provided in quote object i.e not supposed to be provided after on_select so invalid quote object`
-      }
-      else if (quoteErrors) {
+
+      const quoteErrors = compareQuoteObjects(on_select_quote, on_init.quote)
+
+      if (quoteErrors) {
         let i = 0
         const len = quoteErrors.length
         while (i < len) {
@@ -363,32 +349,21 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         )
         onInitObj.sttlmntcntrparty = `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_details`
       } else if (data['settlement_type'] !== 'upi') {
-        let missingFields = []
-        if (!data.bank_name) {
-          missingFields.push('bank_name')
-        }
-        if (!data.branch_name) {
-          missingFields.push('branch_name')
-        }
-        if (!data.beneficiary_name || data.beneficiary_name.trim() === '') {
-          missingFields.push('beneficiary_name')
-        }
-        if (!data.settlement_phase) {
-          missingFields.push('settlement_phase')
-        }
-        if (!data.settlement_ifsc_code) {
-          missingFields.push('settlement_ifsc_code')
-        }
-        if (!data.settlement_counterparty) {
-          missingFields.push('settlement_counterparty')
-        }
-        if (!data.settlement_bank_account_no || data.settlement_bank_account_no.trim() === '') {
-          missingFields.push('settlement_bank_account_no')
-        }
-
-        if (missingFields.length > 0) {
-          logger.error(`Payment details are missing: ${missingFields.join(', ')} /${constants.ON_INIT}`)
-          onInitObj.paymentDetails = `Payment details are missing: ${missingFields.join(', ')}/${constants.ON_INIT}`
+        if (
+          !data.bank_name ||
+          !data.branch_name ||
+          !data.beneficiary_name ||
+          !data.settlement_phase ||
+          !data.settlement_ifsc_code ||
+          !data.settlement_counterparty ||
+          !data.settlement_bank_account_no ||
+          data.beneficiary_name.trim() === '' ||
+          data.bank_name.trim() === '' ||
+          data.branch_name.trim() === '' ||
+          data.settlement_bank_account_no.trim() === ''
+        ) {
+          logger.error(`Payment details are missing /${constants.ON_INIT}`)
+          onInitObj.paymentDetails = `Payment details are missing/${constants.ON_INIT}`
         }
       } else {
         if (!data.upi_address || data.upi_address.trim() === '') {

@@ -82,6 +82,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   const itemsOnSelect: any = []
   const itemMap: any = {}
   const itemMapper: any = {}
+  const parentItemIdSet = new Set()
 
   try {
     logger.info(`Comparing city of /${constants.ON_SEARCH} and /${constants.SELECT}`)
@@ -130,7 +131,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   try {
     logger.info(`Storing item IDs and thier count in /${constants.SELECT}`)
     const itemsOnSearch: any = getValue(`${ApiSequence.ON_SEARCH}itemsId`)
-
+    
     if (!itemsOnSearch?.length) {
       errorObj.invalidItems = `No Items found on ${constants.ON_SEARCH} API`
     }
@@ -234,6 +235,18 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   }
 
   try {
+    logger.info(`Adding parent_item_id in a set on /${constants.SELECT}`)
+    select.items.forEach((item: any) => {
+      if (!parentItemIdSet.has(item.parent_item_id)) {
+        parentItemIdSet.add(item.parent_item_id)
+      }
+    })
+    setValue('parentItemIdSet', parentItemIdSet)
+  } catch (error: any) {
+    logger.error(`Error while adding parent_item_id in a set on /${constants.SELECT}, ${error.stack}`)
+  }
+
+  try {
     logger.info(`Mapping the items with thier prices on /${constants.ON_SEARCH} and /${constants.SELECT}`)
     const allOnSearchItems: any = getValue('onSearchItems')
     let onSearchItems = allOnSearchItems.flat()
@@ -307,7 +320,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
 
     try {
       logger.info(`Checking for valid items for provider in /${constants.SELECT}`)
-      const itemProviderMap: any = getValue(`itemProviderMap`)
+      const itemProviderMap: any = getValue(`itemProviderMap`);
       const providerID = select.provider.id
       const items = select.items
       items.forEach((item: any, index: number) => {

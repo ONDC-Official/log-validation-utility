@@ -1,4 +1,4 @@
-export const onStatusSchema = {
+export const cancel_RTO_Schema = {
   type: 'object',
   properties: {
     context: {
@@ -18,19 +18,17 @@ export const onStatusSchema = {
         },
         action: {
           type: 'string',
-          const: 'on_status',
+          const: 'on_cancel',
         },
         core_version: {
           type: 'string',
           const: '1.2.0',
-          minLength: 1,
         },
         bap_id: {
           type: 'string',
           minLength: 1,
         },
         bap_uri: {
-          minLength: 1,
           type: 'string',
           format: 'url',
         },
@@ -40,7 +38,6 @@ export const onStatusSchema = {
         },
         bpp_uri: {
           type: 'string',
-          minLength: 1,
           format: 'url',
         },
         transaction_id: {
@@ -62,6 +59,8 @@ export const onStatusSchema = {
       },
       required: [
         'domain',
+        'country',
+        'city',
         'action',
         'core_version',
         'bap_id',
@@ -70,8 +69,7 @@ export const onStatusSchema = {
         'bpp_uri',
         'transaction_id',
         'message_id',
-        'city',
-        'country',
+        'timestamp',
         'ttl',
       ],
     },
@@ -89,27 +87,7 @@ export const onStatusSchema = {
             },
             state: {
               type: 'string',
-              enum: ['Created', 'Accepted', 'In-progress', 'Completed', 'Cancelled'],
-            },
-            cancellation: {
-              type: 'object',
-              properties: {
-                cancelled_by: {
-                  type: 'string',
-                  minLength: 1,
-                },
-                reason: {
-                  type: 'object',
-                  properties: {
-                    id: {
-                      type: 'string',
-                      minLength: 1,
-                    },
-                  },
-                  required: ['id', 'state'],
-                },
-              },
-              required: ['cancelled_by', 'reason'],
+              enum: ['Cancelled'],
             },
             provider: {
               type: 'object',
@@ -156,40 +134,6 @@ export const onStatusSchema = {
                     },
                     required: ['count'],
                   },
-                  parent_item_id: {
-                    type: 'string',
-                    minLength: 1,
-                  },
-                  tags: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        code: {
-                          type: 'string',
-                          minLength: 1,
-                        },
-                        list: {
-                          type: 'array',
-                          items: {
-                            type: 'object',
-                            properties: {
-                              code: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              value: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                            },
-                            required: ['code', 'value'],
-                          },
-                        },
-                      },
-                      required: ['code', 'list'],
-                    },
-                  },
                 },
                 required: ['id', 'fulfillment_id', 'quantity'],
               },
@@ -208,7 +152,6 @@ export const onStatusSchema = {
                       type: 'string',
                       minLength: 1,
                     },
-
                     building: {
                       type: 'string',
                       minLength: 1,
@@ -256,6 +199,27 @@ export const onStatusSchema = {
               },
               required: ['name', 'address', 'phone', 'created_at', 'updated_at'],
             },
+            cancellation: {
+              type: 'object',
+              properties: {
+                cancelled_by: {
+                  type: 'string',
+                  minLength: 1,
+                },
+                reason: {
+                  type: 'object',
+                  properties: {
+                    id: {
+                      type: 'string',
+                      minLength: 3,
+                      maxLength: 3,
+                    },
+                  },
+                  required: ['id'],
+                },
+              },
+              required: ['cancelled_by', 'reason'],
+            },
             fulfillments: {
               type: 'array',
               items: {
@@ -269,17 +233,6 @@ export const onStatusSchema = {
                     type: 'string',
                     minLength: 1,
                   },
-                  type: {
-                    type: 'string',
-                    minLength: 1,
-                  },
-                  tracking: {
-                    type: 'boolean',
-                  },
-                  '@ondc/org/TAT': {
-                    type: 'string',
-                    format: 'duration',
-                  },
                   state: {
                     type: 'object',
                     properties: {
@@ -289,6 +242,7 @@ export const onStatusSchema = {
                           code: {
                             type: 'string',
                             minLength: 1,
+                            enum: ['Cancelled', 'RTO-Initiated', 'RTO-Delivered', 'RTO-Disposed'],
                           },
                         },
                         required: ['code'],
@@ -296,12 +250,22 @@ export const onStatusSchema = {
                     },
                     required: ['descriptor'],
                   },
+                  type: {
+                    type: 'string',
+                    minLength: 1,
+                  },
+                  tracking: {
+                    type: 'boolean',
+                  },
                   start: {
                     type: 'object',
                     properties: {
                       location: {
                         type: 'object',
                         properties: {
+                          id: {
+                            type: 'string',
+                          },
                           descriptor: {
                             type: 'object',
                             properties: {
@@ -319,21 +283,26 @@ export const onStatusSchema = {
                             properties: {
                               locality: {
                                 type: 'string',
+                                minLength: 1,
                               },
                               city: {
                                 type: 'string',
+                                minLength: 1,
                               },
                               area_code: {
                                 type: 'string',
+                                minLength: 1,
+                                maxLength: 6,
                               },
                               state: {
                                 type: 'string',
+                                minLength: 1,
                               },
                             },
                             required: ['locality', 'city', 'area_code', 'state'],
                           },
                         },
-                        required: ['descriptor', 'gps', 'address'],
+                        required: ['id', 'descriptor', 'gps', 'address'],
                       },
                       time: {
                         type: 'object',
@@ -352,29 +321,7 @@ export const onStatusSchema = {
                             },
                             required: ['start', 'end'],
                           },
-                          timestamp: {
-                            type: 'string',
-                          },
                         },
-                        required: ['range'],
-                      },
-                      instructions: {
-                        type: 'object',
-                        properties: {
-                          code: {
-                            type: 'string',
-                          },
-                          name: {
-                            type: 'string',
-                          },
-                          short_desc: {
-                            type: 'string',
-                          },
-                          long_desc: {
-                            type: 'string',
-                          },
-                        },
-                        required: ['code', 'name', 'short_desc', 'long_desc'],
                       },
                       contact: {
                         type: 'object',
@@ -392,7 +339,6 @@ export const onStatusSchema = {
                         required: ['phone'],
                       },
                     },
-                    required: ['location', 'time', 'contact'],
                   },
                   end: {
                     type: 'object',
@@ -402,6 +348,7 @@ export const onStatusSchema = {
                         properties: {
                           gps: {
                             type: 'string',
+                            minLength: 1,
                           },
                           address: {
                             type: 'object',
@@ -433,7 +380,6 @@ export const onStatusSchema = {
                               area_code: {
                                 type: 'string',
                                 minLength: 1,
-                                maxLength: 6,
                               },
                             },
                             required: ['name', 'building', 'locality', 'city', 'state', 'country', 'area_code'],
@@ -458,29 +404,18 @@ export const onStatusSchema = {
                             },
                             required: ['start', 'end'],
                           },
-                          timestamp: {
-                            type: 'string',
-                          },
                         },
                         required: ['range'],
                       },
-                      instructions: {
+                      person: {
                         type: 'object',
                         properties: {
-                          code: {
-                            type: 'string',
-                          },
                           name: {
                             type: 'string',
-                          },
-                          short_desc: {
-                            type: 'string',
-                          },
-                          long_desc: {
-                            type: 'string',
+                            minLength: 1,
                           },
                         },
-                        required: ['code', 'name', 'short_desc', 'long_desc'],
+                        required: ['name'],
                       },
                       contact: {
                         type: 'object',
@@ -490,52 +425,59 @@ export const onStatusSchema = {
                             minLength: 10,
                             maxLength: 11,
                           },
+                          email: {
+                            type: 'string',
+                            format: 'email',
+                          },
                         },
                         required: ['phone'],
                       },
                     },
-                    required: ['location', 'time', 'contact'],
+                    required: ['location', 'time', 'person', 'contact'],
                   },
-                  agent: {
-                    type: 'object',
-                    properties: {
-                      name: {
-                        type: 'string',
+                  tags: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        code: {
+                          type: 'string',
+                          enum: ['cancel_request', 'igm_request', 'precancel_state', 'quote_trail'],
+                        },
+                        list: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                                enum: [
+                                  'reason_id',
+                                  'initiated_by',
+                                  'fulfillment_state',
+                                  'updated_at',
+                                  'retry_count',
+                                  'rto_id',
+                                  'id',
+                                  'currency',
+                                  'value',
+                                  'type'
+                                ],
+                              },
+                              value: {
+                                type: 'string',
+                              },
+                            },
+                            required: ['code', 'value'],
+                          },
+                        },
                       },
-                      phone: {
-                        type: 'string',
-                        minLength: 10,
-                        maxLength: 11,
-                      },
+                      required: ['code', 'list'],
                     },
-                    required: ['name', 'phone'],
-                  },
-                  vehicle: {
-                    type: 'object',
-                    properties: {
-                      category: {
-                        type: 'string',
-                      },
-                      size: {
-                        type: 'string',
-                      },
-                      registration: {
-                        type: 'string',
-                      },
-                    },
-                    required: ['category', 'size', 'registration'],
+                    additionalProperties: false,
                   },
                 },
-                required: [
-                  'id',
-                  '@ondc/org/provider_name',
-                  'type',
-                  'tracking',
-                  '@ondc/org/TAT',
-                  'state',
-                  'start',
-                  'end',
-                ],
+                required: ['id', 'state', 'type', 'tags'],
               },
             },
             quote: {
@@ -591,9 +533,6 @@ export const onStatusSchema = {
                       item: {
                         type: 'object',
                         properties: {
-                          parent_item_id: {
-                            type: 'string',
-                          },
                           price: {
                             type: 'object',
                             properties: {
@@ -606,34 +545,8 @@ export const onStatusSchema = {
                             },
                             required: ['currency', 'value'],
                           },
-                          tags: {
-                            type: 'array',
-                            items: {
-                              type: 'object',
-                              properties: {
-                                code: {
-                                  type: 'string',
-                                },
-                                list: {
-                                  type: 'array',
-                                  items: {
-                                    type: 'object',
-                                    properties: {
-                                      code: {
-                                        type: 'string',
-                                      },
-                                      value: {
-                                        type: 'string',
-                                      },
-                                    },
-                                    required: ['code', 'value'],
-                                  },
-                                },
-                              },
-                              required: ['code', 'list'],
-                            },
-                          },
                         },
+                        required: ['price'],
                       },
                     },
                     required: ['@ondc/org/item_id', 'title', '@ondc/org/title_type', 'price'],
@@ -641,6 +554,7 @@ export const onStatusSchema = {
                 },
                 ttl: {
                   type: 'string',
+                  format: 'duration',
                 },
               },
               required: ['price', 'breakup', 'ttl'],
@@ -671,30 +585,17 @@ export const onStatusSchema = {
                 },
                 status: {
                   type: 'string',
-                  enum:["PAID","NOT-PAID"]
                 },
                 type: {
                   type: 'string',
-                  enum:["ON-ORDER","ON-FULFILLMENT"]
                 },
                 collected_by: {
                   type: 'string',
-                  enum:["BAP","BPP"]
                 },
                 '@ondc/org/buyer_app_finder_fee_type': {
                   type: 'string',
                 },
                 '@ondc/org/buyer_app_finder_fee_amount': {
-                  type: 'string',
-                },
-                '@ondc/org/settlement_basis': {
-                  type: 'string',
-                  enum:['shipment','delivery','return_window_expiry']
-                },
-                '@ondc/org/settlement_window': {
-                  type: 'string',
-                },
-                '@ondc/org/withholding_amount': {
                   type: 'string',
                 },
                 '@ondc/org/settlement_details': {
@@ -709,15 +610,6 @@ export const onStatusSchema = {
                         type: 'string',
                       },
                       beneficiary_name: {
-                        type: 'string',
-                      },
-                      settlement_reference: {
-                        type: 'string',
-                      },
-                      settlement_status: {
-                        type: 'string',
-                      },
-                      settlement_timestamp: {
                         type: 'string',
                       },
                       settlement_type: {
@@ -739,7 +631,6 @@ export const onStatusSchema = {
                         type: 'string',
                       },
                     },
-                    required: ['settlement_counterparty', 'settlement_phase', 'settlement_type'],
                   },
                 },
               },
@@ -750,22 +641,8 @@ export const onStatusSchema = {
                 'collected_by',
                 '@ondc/org/buyer_app_finder_fee_type',
                 '@ondc/org/buyer_app_finder_fee_amount',
+                '@ondc/org/settlement_details',
               ],
-            },
-            documents: {
-              type: 'array',
-              items: {
-                type: 'object',
-                properties: {
-                  url: {
-                    type: 'string',
-                  },
-                  label: {
-                    type: 'string',
-                  },
-                },
-                required: ['url', 'label'],
-              },
             },
             created_at: {
               type: 'string',
@@ -788,6 +665,7 @@ export const onStatusSchema = {
             'created_at',
             'updated_at',
           ],
+          additionalProperties: false,
         },
       },
       required: ['order'],

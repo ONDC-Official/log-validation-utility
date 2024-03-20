@@ -116,31 +116,10 @@ export const onSelectSchema = {
                   parent_item_id: {
                     type: 'string',
                   },
-                  tags: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        code: {
-                          type: 'string',
-                        },
-                        list: {
-                          type: 'array',
-                          items: {
-                            type: 'object',
-                            properties: {
-                              code: {
-                                type: 'string',
-                              },
-                              value: {
-                                type: 'string',
-                              },
-                            },
-                            required: ['code', 'value'],
-                          },
-                        },
-                      },
-                      required: ['code', 'list'],
+                  quantity: {
+                    type: 'object',
+                    properties: {
+                      count: { type: 'integer' },
                     },
                   },
                 },

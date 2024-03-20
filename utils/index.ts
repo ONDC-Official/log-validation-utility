@@ -6,6 +6,7 @@ import schemaValidator from '../shared/schemaValidator'
 import data from '../constants/AreacodeMap.json'
 import { reasonCodes } from '../constants/reasonCode'
 import { InputObject } from '../shared/interface'
+import { setValue } from '../shared/dao'
 export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
 
 export const getObjValues = (obj: any) => {
@@ -275,6 +276,9 @@ export const checkTagConditions = (message: any, context: any) => {
 
       const modeTag = catalogIncTags.list.find((tag: { code: string; value: string }) => tag.code === 'mode')
 
+      if (modeTag) {
+        setValue('multiIncSearch', 'true')
+      }
       if (modeTag && modeTag.value !== 'start' && modeTag.value !== 'stop') {
         tags.push('/message/intent/tags/list/value should be one of start or stop')
       }
@@ -767,19 +771,6 @@ export function compareObjects(obj1: any, obj2: any, parentKey?: string): string
   return errors
 }
 
-export const checkFulfillmentID = (items: any, errObj: any, flow: string) => {
-  logger.info(`Inside Fullfillment ID function for flow ${flow}`)
-  items.reduce((acc: any, item: any) => {
-    if (item.fulfillment_id !== acc) {
-      logger.error(`Fullfillment IDs can't be different for items on flow ${flow}`)
-      errObj.flflmntID = `Fulfillment ID can't be different for items on flow ${flow}`
-    }
-
-    return item.fulfillment_id
-  }, items[0].fulfillment_id)
-  return errObj
-}
-
 export const compareSTDwithArea = (pincode: number, std: string): boolean => {
   return data.some((e: any) => e.Pincode === pincode && e['STD Code'] === std)
 }
@@ -884,7 +875,7 @@ export const sumQuoteBreakUp = (quote: any) => {
   quote.breakup.forEach((item: any) => {
     currentPrice += Number(item.price.value)
   })
-  return totalPrice === currentPrice
+  return Math.round(totalPrice) === Math.round(currentPrice)
 }
 
 export const findVariantPath = (arr: any) => {
@@ -893,7 +884,6 @@ export const findVariantPath = (arr: any) => {
   // Map over the grouped items and collect attribute paths for each item_id into an array
   const variantPath = _.map(groupedByItemID, (group, item_id) => {
     let paths = _.chain(group).flatMap('tags').filter({ code: 'attr' }).map('list[0].value').value()
-
     return { item_id, paths }
   })
 
@@ -944,7 +934,7 @@ export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAt
         }
       }
     }
-    if (priceAtConfirm != price + quoteTrailSum) {
+    if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
       const key = `invldQuoteTrailPrices`
       errorObj[key] =
         `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM}`
@@ -952,6 +942,37 @@ export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAt
         `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM} `,
       )
     }
+  }
+}
+
+export const checkQuoteTrail = (quoteTrailItems: any[], errorObj: any, selectPriceMap: any, itemSet: any) => {
+  try {
+    for (let item of quoteTrailItems) {
+      let value = null
+      let itemValue = null
+      let itemID = null
+      let type = null
+      for (let val of item.list) {
+        if (val.code === 'id') {
+          itemID = val.value
+          value = selectPriceMap.get(val.value)
+        } else if (val.code === 'value') {
+          itemValue = Math.abs(parseFloat(val.value))
+        } else if (val.code === 'type') {
+          type = val.value
+        }
+      }
+      if (value && itemValue && value !== itemValue && type === 'item') {
+        const key = `invalidPrice[${itemID}]`
+        errorObj[key] = `Price mismatch for  [${itemID}] provided in quote object '[${value}]' /${constants.ON_CANCEL}`
+      }
+      if (!itemSet.has(itemID) && type === 'item') {
+        const key = `invalidItemID[${itemID}]`
+        errorObj[key] = `Item ID [${itemID}] not present in items array`
+      }
+    }
+  } catch (error: any) {
+    logger.error(error)
   }
 }
 

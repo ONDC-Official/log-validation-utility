@@ -48,6 +48,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
   let logReport: any = {}
   setValue('flow', flow)
+  setValue('domain', domain.split(':')[1])
   try {
     dropDB()
   } catch (error) {
@@ -83,9 +84,9 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
     const flowThreeSequence = [
       ApiSequence.SEARCH,
       ApiSequence.ON_SEARCH,
-      ApiSequence.SELECT,
-      ApiSequence.ON_SELECT_OUT_OF_STOCK,
       ApiSequence.SELECT_OUT_OF_STOCK,
+      ApiSequence.ON_SELECT_OUT_OF_STOCK,
+      ApiSequence.SELECT,
       ApiSequence.ON_SELECT,
       ApiSequence.INIT,
       ApiSequence.ON_INIT,
@@ -118,11 +119,11 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       ApiSequence.ON_INIT,
       ApiSequence.CONFIRM,
       ApiSequence.ON_CONFIRM,
-      ApiSequence.ON_CANCEL,
       ApiSequence.ON_STATUS_PENDING,
       ApiSequence.ON_STATUS_PACKED,
       ApiSequence.ON_STATUS_PICKED,
       ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
+      ApiSequence.ON_CANCEL,
     ]
     const flowSixASequence = [
       ApiSequence.SEARCH,
@@ -187,13 +188,13 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
     const getResponse = (apiSeq: any, data: any, msgIdSet: any) => {
       switch (apiSeq) {
         case ApiSequence.SEARCH:
-          if (domain === 'RET11') {
+          if (domain === 'ONDC:RET11') {
             return checkSearchFullCatalogRefresh(data, msgIdSet)
           } else {
             return checkSearch(data, msgIdSet)
           }
         case ApiSequence.ON_SEARCH:
-          if (domain === 'RET11') {
+          if (domain === 'ONDC:RET11') {
             return checkOnsearchFullCatalogRefresh(data, msgIdSet)
           } else {
             return checkOnsearch(data, msgIdSet)
@@ -203,37 +204,41 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         case ApiSequence.INC_ONSEARCH:
           return checkOnsearchIncremental(data, msgIdSet)
         case ApiSequence.SELECT:
-          return checkSelect(data, msgIdSet)
+          if (flow === FLOW.FLOW3) {
+            return checkSelect_OOS(data, msgIdSet)
+          } else {
+            return checkSelect(data, msgIdSet)
+          }
         case ApiSequence.ON_SELECT:
           return checkOnSelect(data)
         case ApiSequence.SELECT_OUT_OF_STOCK:
-          return checkSelect_OOS(data, msgIdSet)
+          return checkSelect(data, msgIdSet)
         case ApiSequence.ON_SELECT_OUT_OF_STOCK:
           return checkOnSelect_OOS(data)
         case ApiSequence.INIT:
-          return checkInit(data)
+          return checkInit(data, msgIdSet)
         case ApiSequence.ON_INIT:
           return checkOnInit(data, msgIdSet)
         case ApiSequence.CONFIRM:
-          return checkConfirm(data)
+          return checkConfirm(data, msgIdSet)
         case ApiSequence.ON_CONFIRM:
           return checkOnConfirm(data)
         case ApiSequence.CANCEL:
-          return checkCancel(data)
+          return checkCancel(data, msgIdSet)
         case ApiSequence.ON_CANCEL:
-          return checkOnCancel(data)
+          return checkOnCancel(data, msgIdSet)
         case ApiSequence.STATUS:
           return checkStatus(data)
         case ApiSequence.ON_STATUS_PENDING:
-          return checkOnStatusPending(data, 'pending')
+          return checkOnStatusPending(data, 'pending', msgIdSet)
         case ApiSequence.ON_STATUS_PACKED:
-          return checkOnStatusPacked(data, 'packed')
+          return checkOnStatusPacked(data, 'packed', msgIdSet)
         case ApiSequence.ON_STATUS_PICKED:
-          return checkOnStatusPicked(data, 'picked')
+          return checkOnStatusPicked(data, 'picked', msgIdSet)
         case ApiSequence.ON_STATUS_OUT_FOR_DELIVERY:
-          return checkOnStatusOutForDelivery(data, 'out-for-delivery')
+          return checkOnStatusOutForDelivery(data, 'out-for-delivery', msgIdSet)
         case ApiSequence.ON_STATUS_DELIVERED:
-          return checkOnStatusDelivered(data, 'delivered')
+          return checkOnStatusDelivered(data, 'delivered', msgIdSet)
         case ApiSequence.UPDATE:
           return checkUpdate(data)
         case ApiSequence.UPDATE_SETTLEMENT:

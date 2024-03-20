@@ -51,6 +51,9 @@ export const checkOnConfirm = (data: any) => {
     if (!contextRes?.valid) {
       Object.assign(onCnfrmObj, contextRes.ERRORS)
     }
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      onCnfrmObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+    }
 
     setValue(`${ApiSequence.ON_CONFIRM}`, data)
 
@@ -226,7 +229,7 @@ export const checkOnConfirm = (data: any) => {
         const len = billingErrors.length
         while (i < len) {
           const key = `billingErr${i}`
-          onCnfrmObj[key] = `${billingErrors[i]}`
+          onCnfrmObj[key] = `${billingErrors[i]} when compared with init billing object`
           i++
         }
       }
@@ -276,7 +279,9 @@ export const checkOnConfirm = (data: any) => {
         }
 
         try {
-          if (!_.isEqual(on_confirm.fulfillments[i].start.location.descriptor.name, getValue('providerName'))) {
+          if (!getValue('providerName')) {
+            onCnfrmObj.sellerNameErr = `Invalid store name inside fulfillments in /${constants.ON_CONFIRM}`
+          } else if (!_.isEqual(on_confirm.fulfillments[i].start.location.descriptor.name, getValue('providerName'))) {
             onCnfrmObj.sellerNameErr = `store name  /fulfillments[${i}]/start/location/descriptor/name can't change`
           }
         } catch (error: any) {
@@ -397,6 +402,10 @@ export const checkOnConfirm = (data: any) => {
           list_ON_CONFIRM = data.list
         }
       })
+      if (!list_ON_CONFIRM.some((data: any) => data.code == 'np_type')) {
+        onCnfrmObj['message/order/tags/bpp_terms/np_type'] =
+          `np_type is missing in message/order/tags/bpp_terms for ON_CONFIRM`
+      }
       list_ON_CONFIRM.map((data: any) => {
         if (data.code == 'tax_number') {
           if (data.value != ON_INIT_val) {

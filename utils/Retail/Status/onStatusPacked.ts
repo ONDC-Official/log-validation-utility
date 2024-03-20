@@ -4,9 +4,8 @@ import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
-import { checkFulfillmentID } from '../../index'
 
-export const checkOnStatusPacked = (data: any, state: string) => {
+export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -16,6 +15,10 @@ export const checkOnStatusPacked = (data: any, state: string) => {
     const { message, context }: any = data
     if (!message || !context || isObjectEmpty(message)) {
       return { missingFields: '/context, /message, is missing or empty' }
+    }
+
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
@@ -28,6 +31,10 @@ export const checkOnStatusPacked = (data: any, state: string) => {
 
     if (!contextRes?.valid) {
       Object.assign(onStatusObj, contextRes.ERRORS)
+    }
+
+    if (!msgIdSet.add(context.message_id)) {
+      onStatusObj['messageId'] = 'message_id should be unique'
     }
 
     setValue(`${ApiSequence.ON_STATUS_PACKED}`, data)
@@ -106,6 +113,13 @@ export const checkOnStatusPacked = (data: any, state: string) => {
       logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
     }
     try {
+      if (!_.isEqual(getValue(`cnfrmTmpstmp`), on_status.created_at)) {
+        onStatusObj.tmpstmp = `Created At timestamp for /${constants.ON_STATUS}_${state} should be equal to context timestamp at ${constants.CONFIRM}`
+      }
+    } catch (error: any) {
+      logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
+    }
+    try {
       logger.info(`Comparing timestamp of /${constants.ON_CONFIRM} and /${constants.ON_STATUS}_${state} API`)
       if (_.gte(getValue('onCnfrmtmpstmp'), context.timestamp)) {
         onStatusObj.tmpstmp1 = `Timestamp for /${constants.ON_CONFIRM} api cannot be greater than or equal to /${constants.ON_STATUS}_${state} api`
@@ -134,19 +148,6 @@ export const checkOnStatusPacked = (data: any, state: string) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while checking order state in /${constants.ON_STATUS}_${state} Error: ${error.stack}`)
-    }
-
-    // Checking fullfillment IDs for items
-    try {
-      logger.info(`Comparing fulfillmentID for items at /${constants.ON_STATUS}_packed`)
-      const items = on_status.items
-      const flow = constants.ON_STATUS + '_packed'
-      const err = checkFulfillmentID(items, onStatusObj, flow)
-      Object.assign(onStatusObj, err)
-    } catch (error: any) {
-      logger.error(
-        `!!Error occurred while checking for fulfillmentID for /${constants.ON_STATUS}_${state}, ${error.stack}`,
-      )
     }
 
     return onStatusObj

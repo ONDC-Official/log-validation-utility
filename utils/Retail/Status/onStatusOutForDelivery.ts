@@ -4,9 +4,9 @@ import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
-import { checkFulfillmentID } from '../../index'
 
-export const checkOnStatusOutForDelivery = (data: any, state: string) => {
+
+export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: any) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -25,9 +25,15 @@ export const checkOnStatusOutForDelivery = (data: any, state: string) => {
     if (schemaValidation !== 'error') {
       Object.assign(onStatusObj, schemaValidation)
     }
-
+    if (!msgIdSet.add(context.message_id)) {
+      onStatusObj['messageId'] = 'message_id should be unique'
+    }
     if (!contextRes?.valid) {
       Object.assign(onStatusObj, contextRes.ERRORS)
+    }
+
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     setValue(`${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}`, data)
@@ -129,6 +135,15 @@ export const checkOnStatusOutForDelivery = (data: any, state: string) => {
         `!!Error occurred while comparing order updated at for /${constants.ON_STATUS}_${state}, ${error.stack}`,
       )
     }
+    try {
+      if (!_.isEqual(getValue(`cnfrmTmpstmp`), on_status.created_at)) {
+        onStatusObj.tmpstmp = `Created At timestamp for /${constants.ON_STATUS}_${state} should be equal to context timestamp at ${constants.CONFIRM}`
+      }
+    } catch (error: any) {
+      logger.error(
+        `!!Error occurred while comparing order created at for /${constants.ON_STATUS}_${state}, ${error.stack}`,
+      )
+    }
 
     try {
       logger.info(`Checking order state in /${constants.ON_STATUS}_${state}`)
@@ -166,7 +181,7 @@ export const checkOnStatusOutForDelivery = (data: any, state: string) => {
             try {
               //checking out for delivery time matching with context timestamp
               if (!_.lte(out_for_delivery_time, contextTime)) {
-                onStatusObj.out_for_delivery_time = `Out_for_delivery timestamp should match context/timestamp and can't be future dated`
+                onStatusObj.out_for_delivery_time = `Fulfillments start timestamp should match context/timestamp and can't be future dated`
               }
             } catch (error) {
               logger.error(
@@ -204,19 +219,6 @@ export const checkOnStatusOutForDelivery = (data: any, state: string) => {
     } catch (error: any) {
       logger.info(
         `Error while checking out for delivery timestamp in /${constants.ON_STATUS}_${state}.json Error: ${error.stack}`,
-      )
-    }
-
-    // Checking fullfillment IDs for items
-    try {
-      logger.info(`Comparing fulfillmentID for items at /${constants.ON_STATUS}_out_for_delivery`)
-      const items = on_status.items
-      const flow = constants.ON_STATUS + '_out_for_delivery'
-      const err = checkFulfillmentID(items, onStatusObj, flow)
-      Object.assign(onStatusObj, err)
-    } catch (error: any) {
-      logger.error(
-        `!!Error occurred while checking for fulfillmentID for /${constants.ON_STATUS}_${state}, ${error.stack}`,
       )
     }
 

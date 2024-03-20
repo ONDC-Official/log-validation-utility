@@ -76,7 +76,6 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
   const customIdArray: any[] = []
   const itemMap: any = {}
   const itemMapper: any = {}
-  const parentItemIdSet = new Set()
 
   try {
     logger.info(`Comparing city of /${constants.SEARCH} and /${constants.SELECT}`)
@@ -118,8 +117,8 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
     }
 
     setValue('msgId', context.message_id)
-    if (_.isEqual(getValue('txnId'), context.transaction_id)) {
-      errorObj.txnId = `Transaction Id should be different for flow 3 from /${ApiSequence.SELECT_OUT_OF_STOCK} onwards`
+    if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
+      errorObj.txnId = `Transaction Id should be same as in previous APIs`
     }
     setValue('txnId', context.transaction_id)
   } catch (error: any) {
@@ -232,18 +231,6 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
     })
   } catch (error: any) {
     logger.error(`Error while checking for duplicate parent_item_id in /${constants.SELECT}, ${error.stack}`)
-  }
-
-  try {
-    logger.info(`Adding parent_item_id in a set on /${constants.SELECT}`)
-    select_oos.items.forEach((item: any) => {
-      if (!parentItemIdSet.has(item.parent_item_id)) {
-        parentItemIdSet.add(item.parent_item_id)
-      }
-    })
-    setValue('parentItemIdSet', parentItemIdSet)
-  } catch (error: any) {
-    logger.error(`Error while adding parent_item_id in a set on /${constants.SELECT}, ${error.stack}`)
   }
 
   try {

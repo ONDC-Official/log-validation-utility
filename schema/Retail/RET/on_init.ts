@@ -528,7 +528,6 @@ export const onInitSchema = {
                 '@ondc/org/settlement_details',
               ],
             },
-
             tags: {
               type: 'array',
               items: {

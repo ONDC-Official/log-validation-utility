@@ -507,9 +507,6 @@ export const onSearchSchema = {
                             },
                             code: {
                               type: 'string',
-                              pattern: '^(1|2|3|4|5):[a-zA-Z0-9]+$',
-                              errorMessage:
-                                'item/descriptor/code should be in this format - "type:code" where type is 1 - EAN, 2 - ISBN, 3 - GTIN, 4 - HSN, 5 - others',
                             },
                             symbol: {
                               type: 'string',
@@ -558,9 +555,6 @@ export const onSearchSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
-                                  enum: ['99', '0'],
-                                  errorMessage:
-                                    'available/count must be equal to one of the allowed values i.e 99 if in stock or 0 if not in stock ',
                                 },
                               },
                               required: ['count'],

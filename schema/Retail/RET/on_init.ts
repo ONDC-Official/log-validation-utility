@@ -535,27 +535,151 @@ export const onInitSchema = {
                 properties: {
                   code: {
                     type: 'string',
+                    const: 'bpp_terms',
                   },
                   list: {
                     type: 'array',
                     items: {
-                      type: 'object',
-                      properties: {
-                        code: {
-                          type: 'string',
+                      allOf: [
+                        {
+                          if: {
+                            properties: {
+                              code: {
+                                const: 'max_liability',
+                              },
+                            },
+                          },
+                          then: {
+                            properties: {
+                              value: {
+                                type: 'string',
+                                pattern: '^[0-9]+(\\.[0-9]+)?$',
+                                errorMessage: 'Value for max_liability must be a number',
+                              },
+                            },
+                            required: ['code', 'value'],
+                          },
                         },
-                        value: {
-                          type: 'string',
+                        {
+                          if: {
+                            properties: {
+                              code: {
+                                const: 'max_liability_cap',
+                              },
+                            },
+                          },
+                          then: {
+                            properties: {
+                              value: {
+                                type: 'string',
+                                pattern: '^[0-9]+(\\.[0-9]+)?$',
+                                errorMessage: 'Value for max_liability_cap must be a number',
+                              },
+                            },
+                          },
                         },
-                      },
-                      required: ['code', 'value'],
+                        {
+                          if: {
+                            properties: {
+                              code: {
+                                const: 'mandatory_arbitration',
+                              },
+                            },
+                          },
+                          then: {
+                            properties: {
+                              value: {
+                                type: 'string',
+                                pattern: '^(true|false)$',
+                                errorMessage: "Value for mandatory_arbitration must be either 'true' or 'false'",
+                              },
+                            },
+                          },
+                        },
+                        {
+                          if: {
+                            properties: {
+                              code: {
+                                const: 'court_jurisdiction',
+                              },
+                            },
+                          },
+                          then: {
+                            properties: {
+                              value: {
+                                type: 'string',
+                                pattern: '^[A-Za-z\\s]+$',
+                                errorMessage: 'Value for court_jurisdiction must be alphabetic characters only',
+                              },
+                            },
+                          },
+                        },
+                        {
+                          if: {
+                            properties: {
+                              code: {
+                                const: 'delay_interest',
+                              },
+                            },
+                          },
+                          then: {
+                            properties: {
+                              value: {
+                                type: 'string',
+                                pattern: '^[0-9]+(\\.[0-9]+)?$',
+                                errorMessage: 'Value for delay_interest must be a number',
+                              },
+                            },
+                          },
+                        },
+                        {
+                          if: {
+                            properties: {
+                              code: {
+                                const: 'tax_number',
+                              },
+                            },
+                          },
+                          then: {
+                            properties: {
+                              value: {
+                                type: 'string',
+                                pattern: '^[A-Za-z0-9]+$',
+                                errorMessage: 'Value for tax_number must be alphanumeric characters only',
+                              },
+                            },
+                            required: ['code', 'value'],
+                          },
+                        },
+                        {
+                          if: {
+                            properties: {
+                              code: {
+                                const: 'provider_tax_number',
+                              },
+                            },
+                          },
+                          then: {
+                            properties: {
+                              value: {
+                                type: 'string',
+                                pattern: '^[A-Za-z0-9]+$',
+                                errorMessage: 'Value for provider_tax_number must be alphanumeric characters only',
+                              },
+                            },
+                            required: ['code', 'value'],
+                          },
+                        },
+                      ],
                     },
                   },
+                  
                 },
-                required: ['code', 'list'],
               },
             },
+            additionalProperties: false,
           },
+
           required: ['provider', 'items', 'billing', 'fulfillments', 'quote', 'payment', 'tags'],
         },
       },

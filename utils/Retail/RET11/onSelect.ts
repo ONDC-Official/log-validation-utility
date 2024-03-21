@@ -334,7 +334,7 @@ export const checkOnSelect = (data: any) => {
       ) {
         const availCount = parseInt(element.item.quantity.available.count, 10)
         const maxCount = parseInt(element.item.quantity.maximum.count, 10)
-        if (isNaN(availCount) || isNaN(maxCount) || availCount <= 0) {
+        if (isNaN(availCount) || isNaN(maxCount) || availCount < 0 || maxCount < 0) {
           errorObj[`qntcnt${i}`] =
             `Available and Maximum count should be greater than 0 for item id: ${itemId} in quote.breakup[${i}]`
         } else if (

@@ -1016,9 +1016,7 @@ export function compareQuoteObjects(obj1: InputObject, obj2: InputObject, api1: 
 
   // Compare root level properties
   const rootKeys1 = Object.keys(obj1)
-  console.log('rootKeys1', rootKeys1)
   const rootKeys2 = Object.keys(obj2)
-  console.log('rootKeys2', rootKeys2)
 
   if (rootKeys1.length !== rootKeys2.length) {
     errors.push('Root level properties mismatch')

@@ -88,7 +88,7 @@ export const confirmSchema = {
               type: 'string',
               minLength: 2,
               pattern: '^[a-zA-Z0-9-]{1,32}$|^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
-              errorMessage: 'Should be alphanumeric upto 32 letters max',
+              errorMessage: 'Order ID should be alphanumeric upto 32 letters max or UUID',
             },
             state: {
               type: 'string',

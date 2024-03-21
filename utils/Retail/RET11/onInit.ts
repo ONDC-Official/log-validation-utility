@@ -134,19 +134,30 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       logger.info(`Checking for tax_number for ${constants.ON_INIT}`)
       const tags = on_init.tags[0].list
       let tax_number = {}
+      let provider_tax_number ={}
       tags.forEach((e: any) => {
         if (e.code === 'tax_number') {
           if (!e.value) {
             logger.error(`value must be present for tax_number in ${constants.ON_INIT}`)
             onInitObj.taxNumberValue = `value must be present for tax_number in ${constants.ON_INIT}`
           }
-
           tax_number = e
+        }
+        if (e.code === 'provider_tax_number') {
+          if (!e.value) {
+            logger.error(`value must be present for provider_tax_number in ${constants.ON_INIT}`)
+            onInitObj.provider_tax_number = `value must be present for provider_tax_number in ${constants.ON_INIT}`
+          }
+          provider_tax_number = e
         }
       })
       if (_.isEmpty(tax_number)) {
         logger.error(`tax_number must present in ${constants.ON_INIT}`)
         onInitObj.taxNumber = `tax_number must be present for ${constants.ON_INIT}`
+      }
+      if (_.isEmpty(provider_tax_number)) {
+        logger.error(`tax_number must present in ${constants.ON_INIT}`)
+        onInitObj.providertaxNumber = `provider_tax_number must be present for ${constants.ON_INIT}`
       }
     } catch (error: any) {
       logger.error(`tax_number not present in tags for ${constants.ON_INIT}`)

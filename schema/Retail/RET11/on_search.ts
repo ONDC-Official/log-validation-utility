@@ -536,7 +536,7 @@ export const FnBonSearchSchema = {
                                     },
                                     value: {
                                       type: 'string',
-                                      pattern: '-?^\\d*(.\\d{0,2})?$',
+                                      pattern: '^[0-9]+$',
                                       errorMessage: 'enter a valid number',
                                     },
                                   },
@@ -550,9 +550,9 @@ export const FnBonSearchSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
-                                  enum: ['0', '99'],
+                                  pattern: '^[0-9]+$',
                                   errorMessage:
-                                    'maximum/count must be equal to one of the allowed values i.e either 99 or 0',
+                                    'available count must be numbers only',
                                 },
                               },
                               required: ['count'],
@@ -562,6 +562,9 @@ export const FnBonSearchSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
+                                  pattern: '^[0-9]+$',
+                                  errorMessage:
+                                    'maximum count must be numbers only ',
                                 },
                               },
                               required: ['count'],
@@ -1180,7 +1183,7 @@ export const FnBonSearchSchema = {
                                       then: {
                                         properties: {
                                           value: {
-                                            pattern: '^\\d+(\\.\\d{1,2})?$',
+                                            pattern: '^\d+(\.\d{1,2})?$',
                                             errorMessage: 'min_value must be number with exactly two decimal places',
                                           },
                                         },

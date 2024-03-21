@@ -558,6 +558,9 @@ export const onSearchSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
+                                  pattern: '^[0-9]+$',
+                                  errorMessage:
+                                    'available count must be numbers only',
                                 },
                               },
                               required: ['count'],
@@ -567,6 +570,9 @@ export const onSearchSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
+                                  pattern: '^[0-9]+$',
+                                  errorMessage:
+                                    'maximum count must be numbers only ',
                                 },
                               },
                               required: ['count'],
@@ -783,7 +789,7 @@ export const onSearchSchema = {
                                         properties: {
                                           value: {
                                             type: 'string',
-                                            pattern: '^[1-7]$',
+                                            pattern: '^[0-7]+$',
                                             errorMessage: "Value for 'day_from' must be numeric characters only from 1 to 7",
                                           },
                                         },
@@ -802,7 +808,7 @@ export const onSearchSchema = {
                                         properties: {
                                           value: {
                                             type: 'string',
-                                            pattern: '^[1-7]$',
+                                            pattern: '',
                                             errorMessage: "Value for 'day_to' must be numeric characters only from 1 to 7",
                                           },
                                         },

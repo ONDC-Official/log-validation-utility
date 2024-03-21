@@ -94,9 +94,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
         on_confirm.items.forEach((item: any, index: number) => {
           if (!newItemIDSValue.includes(item.id)) {
             const key = `item[${index}].item_id`
-            errorObj[
-              key
-            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_CONFIRM}`
+            errorObj[key] =
+              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_CONFIRM}`
           }
 
           if (!item.descriptor || !item.descriptor.code) {
@@ -105,9 +104,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
           } else {
             if (!VALID_DESCRIPTOR_CODES.includes(item.descriptor.code)) {
               const key = `item${index}_descriptor`
-              errorObj[
-                key
-              ] = `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
+              errorObj[key] =
+                `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
             }
           }
 
@@ -120,9 +118,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
           item.fulfillment_ids &&
             item.fulfillment_ids.forEach((fulfillmentId: string) => {
               if (!fulfillmentIdsSet.has(fulfillmentId)) {
-                errorObj[
-                  `invalidFulfillmentId_${index}`
-                ] = `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_CONFIRM} is not valid`
+                errorObj[`invalidFulfillmentId_${index}`] =
+                  `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_CONFIRM} is not valid`
               }
             })
         })
@@ -137,17 +134,15 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
         const fulfillmentKey = `fulfillments[${index}]`
 
         if (!storedFull.includes(fulfillment.id)) {
-          errorObj[
-            `${fulfillmentKey}.id`
-          ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+          errorObj[`${fulfillmentKey}.id`] =
+            `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
         } else {
           fulfillmentIdsSet.add(fulfillment.id)
         }
 
         if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
-          errorObj[
-            `${fulfillmentKey}.vehicleCategory`
-          ] = `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
+          errorObj[`${fulfillmentKey}.vehicleCategory`] =
+            `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
         }
 
         if (!VALID_FULL_STATE.includes(fulfillment?.state?.descriptor?.code)) {
@@ -160,10 +155,9 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
           errorObj[`${fulfillmentKey}.details`] = `Vehicle object is incomplete for fulfillment ${index}`
         }
 
-        if (fulfillment.type !== 'DELIVERY') {
-          errorObj[
-            `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_CONFIRM}`
+        if (fulfillment?.type !== 'DELIVERY') {
+          errorObj[`${fulfillmentKey}.type`] =
+            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_CONFIRM}`
         }
 
         if (!Object.prototype.hasOwnProperty.call(fulfillment.customer?.person, 'name')) {
@@ -236,9 +230,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
         } else {
           const srchCollectBy = getValue(`collected_by`)
           if (srchCollectBy != arr?.collected_by)
-            errorObj[
-              `payemnts[${i}]_collected_by`
-            ] = `payments.collected_by value sent in ${constants.ON_SELECT} should be ${srchCollectBy} as sent in ${constants.ON_CONFIRM}`
+            errorObj[`payemnts[${i}]_collected_by`] =
+              `payments.collected_by value sent in ${constants.ON_SELECT} should be ${srchCollectBy} as sent in ${constants.ON_CONFIRM}`
         }
 
         const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']

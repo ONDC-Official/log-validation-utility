@@ -87,24 +87,21 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
 
           // Check if fulfillment ID is unique
           if (fulfillmentIdsSet.has(fulfillmentId)) {
-            errorObj[
-              `fulfillmentId_${i}`
-            ] = `Duplicate fulfillment ID '${fulfillmentId}' at index ${i} in /${constants.ON_CANCEL}`
+            errorObj[`fulfillmentId_${i}`] =
+              `Duplicate fulfillment ID '${fulfillmentId}' at index ${i} in /${constants.ON_CANCEL}`
           } else {
             fulfillmentIdsSet.add(fulfillmentId)
           }
 
-          if (fulfillment.type !== 'DELIVERY') {
-            errorObj[
-              `fulfillmentType_${i}`
-            ] = `Fulfillment type must be DELIVERY at index ${i} in /${constants.ON_CANCEL}`
+          if (fulfillment?.type !== 'DELIVERY') {
+            errorObj[`fulfillmentType_${i}`] =
+              `Fulfillment type must be DELIVERY at index ${i} in /${constants.ON_CANCEL}`
           }
 
           const stateCode = fulfillment.state?.descriptor?.code
           if (sequence === 'on_cancel' && stateCode !== 'RIDE_CANCELLED') {
-            errorObj[
-              `fulfillmentStateCode_${i}`
-            ] = `Fulfillment state code must be RIDE_CANCELLED at index ${i} in /${constants.ON_CANCEL}`
+            errorObj[`fulfillmentStateCode_${i}`] =
+              `Fulfillment state code must be RIDE_CANCELLED at index ${i} in /${constants.ON_CANCEL}`
           } else {
             const validStateCodes = [
               'RIDE_CANCELLED',
@@ -116,9 +113,8 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
             ]
 
             if (!validStateCodes.includes(stateCode)) {
-              errorObj[
-                `fulfillmentStateCode_${i}`
-              ] = `Invalid fulfillment state code at index ${i} in /${constants.ON_CANCEL}`
+              errorObj[`fulfillmentStateCode_${i}`] =
+                `Invalid fulfillment state code at index ${i} in /${constants.ON_CANCEL}`
             }
           }
 
@@ -156,9 +152,8 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
           const paymentId = payment.id
 
           if (paymentIdsSet.has(paymentId)) {
-            errorObj[
-              `paymentId_${index}`
-            ] = `Duplicate payment ID '${paymentId}' at index ${index} in /${constants.ON_CANCEL}`
+            errorObj[`paymentId_${index}`] =
+              `Duplicate payment ID '${paymentId}' at index ${index} in /${constants.ON_CANCEL}`
           } else {
             paymentIdsSet.add(paymentId)
           }
@@ -191,9 +186,8 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
             const tagGroupFound = tags.some((tag: any) => tag.descriptor?.code === tagGroup)
 
             if (!tagGroupFound) {
-              errorObj[
-                `${tagGroup}_${index}`
-              ] = `${tagGroup} tag group is missing at index ${index} in /${constants.ON_CANCEL}`
+              errorObj[`${tagGroup}_${index}`] =
+                `${tagGroup} tag group is missing at index ${index} in /${constants.ON_CANCEL}`
             }
           })
         })
@@ -223,9 +217,8 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
           }
 
           if (!item.descriptor || !item.descriptor.code) {
-            errorObj[
-              `descriptorCode_${index}`
-            ] = `Descriptor code is missing at index ${index} in /${constants.ON_CANCEL}`
+            errorObj[`descriptorCode_${index}`] =
+              `Descriptor code is missing at index ${index} in /${constants.ON_CANCEL}`
           }
 
           if (!item.price || !item.price.currency || !item.price.value) {
@@ -237,23 +230,20 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
           } else {
             item.payment_ids.forEach((paymentId: string) => {
               if (!paymentIdsSet.has(paymentId)) {
-                errorObj[
-                  `invalidPaymentId_${index}`
-                ] = `Payment ID '${paymentId}' at index ${index} in /${constants.ON_CANCEL} is not valid`
+                errorObj[`invalidPaymentId_${index}`] =
+                  `Payment ID '${paymentId}' at index ${index} in /${constants.ON_CANCEL} is not valid`
               }
             })
           }
 
           if (!item?.fulfillment_ids) {
-            errorObj[
-              `fulfillment_ids`
-            ] = `fulfillment_ids should be present at index ${index} in /${constants.ON_CANCEL}`
+            errorObj[`fulfillment_ids`] =
+              `fulfillment_ids should be present at index ${index} in /${constants.ON_CANCEL}`
           } else {
             item.fulfillment_ids.forEach((fulfillmentId: string) => {
               if (!_.isEmpty(fulfillmentIdsSet) && !fulfillmentIdsSet.has(fulfillmentId)) {
-                errorObj[
-                  `invalidFulfillmentId_${index}`
-                ] = `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.ON_CANCEL} is not valid`
+                errorObj[`invalidFulfillmentId_${index}`] =
+                  `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.ON_CANCEL} is not valid`
               }
             })
           }
@@ -266,9 +256,8 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
             const tagGroupFound = tags.some((tag: any) => tag.descriptor?.code === tagGroup)
 
             if (!tagGroupFound) {
-              errorObj[
-                `tagGroup_${tagGroup}_${index}`
-              ] = `${tagGroup} tag group is missing at index ${index} in /${constants.ON_CANCEL}`
+              errorObj[`tagGroup_${tagGroup}_${index}`] =
+                `${tagGroup} tag group is missing at index ${index} in /${constants.ON_CANCEL}`
             }
           })
         })
@@ -355,14 +344,12 @@ const validateVehicle = (errorObj: any, vehicle: any, i: number) => {
     !vehicle.category ||
     !['METRO', 'AUTO_RICKSHAW', 'CAB', 'BUS', 'AIRLINE'].includes(vehicle.category)
   ) {
-    errorObj[
-      `fulfillment_${i}_vehicle_category`
-    ] = `Invalid or missing vehicle category at index ${i} in /${constants.ON_CANCEL}`
+    errorObj[`fulfillment_${i}_vehicle_category`] =
+      `Invalid or missing vehicle category at index ${i} in /${constants.ON_CANCEL}`
   }
 
   if (!vehicle.make || !vehicle.model || !vehicle.registration) {
-    errorObj[
-      `fulfillment_${i}_vehicle_details`
-    ] = `Vehicle details are incomplete at index ${i} in /${constants.ON_CANCEL}`
+    errorObj[`fulfillment_${i}_vehicle_details`] =
+      `Vehicle details are incomplete at index ${i} in /${constants.ON_CANCEL}`
   }
 }

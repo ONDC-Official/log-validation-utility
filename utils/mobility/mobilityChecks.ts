@@ -1,7 +1,10 @@
+import _, { isEmpty, isEqual } from 'lodash'
 import { logger } from '../../shared/logger'
 import { getValue, setValue } from '../../shared/dao'
-import { checkGpsPrecision, checkIdAndUri, checkMobilityContext, timestampCheck } from '../../utils'
-import _ from 'lodash'
+import { checkSixDigitGpsPrecision, checkIdAndUri, checkMobilityContext, timestampCheck } from '../../utils'
+import { validateLocationTag, validatePaymentTags } from './tags'
+// import { mobilitySequence, ON_DEMAND_VEHICLE } from '../../constants'
+// import { validateRouteInfoTags } from './tags'
 
 export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any) => {
   const errorObj: any = {}
@@ -126,20 +129,20 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
 
 export const validateStops = (stops: any, index: number, otp: boolean, cancel: boolean) => {
   const errorObj: any = {}
+  if (!stops) {
+    errorObj[`stops_${index}`] = `stops is missing at fulfillment[${index}]`
+    return { valid: false, errors: errorObj }
+  }
 
   const hasStartStop = stops.some((stop: any) => stop.type === 'START')
   const hasEndStop = stops.some((stop: any) => stop.type === 'END')
 
   if (!hasStartStop) {
-    errorObj[
-      `fulfillment_${index}_stops`
-    ] = `Fulfillment ${index} in  must contain both START stops or a valid time range start`
+    errorObj[`fulfillment_${index}_start`] = `Fulfillment ${index} in  must contain START stop`
   }
 
   if (!cancel && !hasEndStop) {
-    errorObj[
-      `fulfillment_${index}_stops`
-    ] = `Fulfillment ${index} in  must contain both END stops or a valid time range start`
+    errorObj[`fulfillment_${index}_end`] = `Fulfillment ${index} in  must contain END stops `
   }
 
   stops.forEach((stop: any, l: number) => {
@@ -155,56 +158,31 @@ export const validateStops = (stops: any, index: number, otp: boolean, cancel: b
     }
 
     // Check if GPS coordinates are valid
-    if (stop.location?.gps && !checkGpsPrecision(stop.location.gps)) {
+    if (stop.location?.gps && !checkSixDigitGpsPrecision(stop.location.gps)) {
       errorObj[`fulfillment_${index}_stop_${l}_gpsPrecision`] =
-        'GPS coordinates must be specifieddddd with at least six decimal places of precision'
+        'GPS coordinates must be specified with precision of six decimal places'
     }
   })
 
-  if (otp) {
+  if (otp && stops.type == 'START') {
     stops.forEach((stop: any, l: number) => {
       if (stop.authorization) {
         const authorization = stop.authorization
         if (authorization.type !== 'OTP') {
-          errorObj[`fulfillment_${index}_stop_${l}_authorization_type`] =
-            'Authorization type must be OTP when otp is true'
+          errorObj[`fulfillment_${index}_stop_${l}_authorization_type`] = 'Authorization type must be OTP'
         }
 
         if (typeof authorization.token !== 'number') {
-          errorObj[`fulfillment_${index}_stop_${l}_authorization_token`] =
-            'Authorization token must be a number when otp is true'
+          errorObj[`fulfillment_${index}_stop_${l}_authorization_token`] = 'Authorization token must be a number'
         }
       }
     })
   }
 
   if (_.isEmpty(errorObj)) {
-    const result = { valid: true, SUCCESS: 'Context Valid' }
-    return result
+    return { valid: true }
   } else {
-    const result = { valid: false, ERRORS: errorObj }
-    return result
-  }
-}
-
-export const validatePaymentParams = (
-  params: any,
-  storedValue: any,
-  storedKey: string,
-  errorObj: any,
-  i: number,
-  action: string,
-) => {
-  if (!params[storedKey]) {
-    errorObj[`payments[${i}]_${storedKey}`] = `payments.params.${storedKey} must be present in ${action}`
-  } else {
-    if (storedValue && !_.isEqual(storedValue, params[storedKey])) {
-      errorObj[
-        `payments[${i}]_${storedKey}`
-      ] = `payments.params.${storedKey} must match with the value sent in past calls, ${action}`
-    } else {
-      setValue(storedKey, params[storedKey])
-    }
+    return { valid: false, errors: errorObj }
   }
 }
 
@@ -257,18 +235,24 @@ export const validateCancellationTerms = (cancellationTerms: any, action: string
     if (!cancellationTerms) {
       errorObj.cancellationTerms = `cancellation_terms are required in /${action}`
     } else if (cancellationTerms && cancellationTerms.length > 0) {
+      const validCodes = ['RIDE_ASSIGNED', 'RIDE_ENROUTE_PICKUP', 'RIDE_ARRIVED_PICKUP', 'RIDE_STARTED']
+
       for (let i = 0; i < cancellationTerms.length; i++) {
         const cancellationTerm = cancellationTerms[i]
+        if (!cancellationTerm?.fulfillment_state?.descriptor?.code) {
+          errorObj[`cancellationTerms[${i}]`] = `descriptor.code is missing for cancellation term ${i}`
+        } else if (!validCodes.includes(cancellationTerm.fulfillment_state.descriptor.code)) {
+          errorObj[
+            `cancellationTerms[${i}].descriptor.code`
+          ] = `Invalid descriptor.code for cancellation term ${i}. It must be one of: ${validCodes.join(', ')}`
+        }
 
         if (
-          cancellationTerm.fulfillment_state &&
-          cancellationTerm.fulfillment_state.descriptor &&
-          cancellationTerm.fulfillment_state.descriptor.code &&
-          (!cancellationTerm.cancellation_fee ||
-            !(
-              (cancellationTerm.cancellation_fee.percentage && !cancellationTerm.cancellation_fee.amount) ||
-              (!cancellationTerm.cancellation_fee.percentage && cancellationTerm.cancellation_fee.amount)
-            ))
+          !cancellationTerm.cancellation_fee ||
+          !(
+            (cancellationTerm.cancellation_fee.percentage && !cancellationTerm.cancellation_fee.amount) ||
+            (!cancellationTerm.cancellation_fee.percentage && cancellationTerm.cancellation_fee.amount)
+          )
         ) {
           errorObj.cancellationFee = `Either percentage or amount.currency & amount.value should be present, but not both, for Cancellation Term[${i}] when fulfillment_state is present`
         }
@@ -281,4 +265,254 @@ export const validateCancellationTerms = (cancellationTerms: any, action: string
   }
 
   return errorObj
+}
+
+export const validateEntity = (entity: any, entityType: string, action: string, index: number) => {
+  const errorObj: any = {}
+  try {
+    if (!entity) {
+      errorObj[`${entityType}s${index}`] = `${entityType} is missing for fulfillments[${index}]`
+    } else {
+      if (!entity?.person?.name) {
+        errorObj[`${entityType}s${index}_person`] = `/${action}/fulfillments/${entityType}: must have person.name`
+      } else {
+        if (entity.person.name.trim() === '') {
+          errorObj[`${entityType}s${index}_person_name`] = `Empty name is not allowed for ${entityType} ${index}`
+        } else {
+          const name = getValue(`${entityType}_name`)
+          if (name) {
+            if (!isEqual(name, entity?.person?.name.trim())) {
+              errorObj[
+                `${entityType}s${index}_person_name`
+              ] = `Name is not similar to what was sent in the previous call, at ${entityType}${index}`
+            }
+          }
+
+          setValue(`${entityType}_name`, entity.person.name.trim())
+        }
+      }
+
+      if (!entity?.contact?.phone) {
+        errorObj[`${entityType}s${index}_contact`] = `/${action}/fulfillments/${entityType}: must have contact.phone`
+      } else {
+        const phoneRegex = /^[0-9]{10}$/
+        const isValidPhone = phoneRegex.test(entity?.contact?.phone)
+        if (!isValidPhone) {
+          errorObj[`${entityType}s${index}_contact_phone`] = `Invalid phone format for ${entityType} ${index}`
+        } else {
+          const phone = getValue(`${entityType}_phone`)
+          if (phone) {
+            if (!isEqual(phone, entity?.contact?.phone.trim())) {
+              errorObj[
+                `${entityType}s${index}_contact_phone`
+              ] = `Phone is not similar to what was sent in the previous call, at ${entityType}${index}`
+            }
+          }
+
+          setValue(`${entityType}_phone`, entity.contact.phone.trim())
+        }
+      }
+    }
+  } catch (error: any) {
+    logger.error(
+      `!!Error while checking ${entityType} detail at fulfillments[${index}] array in /${action}`,
+      error.stack,
+    )
+  }
+
+  return errorObj
+}
+
+export const validateItemRefIds = (
+  item: any,
+  action: string,
+  index: number,
+  fulfillmentIdsSet: any,
+  locationIdsSet: any,
+  paymentIdsSet: any,
+): any => {
+  const errorObj: any = {}
+
+  if (!item?.fulfillment_ids) {
+    errorObj[`fulfillment_ids`] = `fulfillment_ids is missing at item.${index}`
+  } else {
+    item.fulfillment_ids?.forEach((fulfillmentId: string) => {
+      if (!_.isEmpty(fulfillmentIdsSet) && !fulfillmentIdsSet.has(fulfillmentId)) {
+        errorObj[
+          `invalidFulfillmentId_${index}`
+        ] = `fulfillment_ids should be one of the id passed in fulfillment array, '${fulfillmentId}' at index ${index} in /${action} is not valid`
+      }
+    })
+  }
+
+  item?.location_ids?.forEach((locationId: string) => {
+    if (!_.isEmpty(locationIdsSet) && !locationIdsSet.has(locationId)) {
+      errorObj[
+        `invalidLocationId_${index}`
+      ] = `location_ids should be one of the id passed in location array, '${locationId}' at index ${index} in /${action} is not valid`
+    }
+  })
+
+  item?.payment_ids?.forEach((paymentId: string) => {
+    if (!_.isEmpty(paymentIdsSet) && !paymentIdsSet.has(paymentId)) {
+      errorObj[
+        `invalidPaymentId_${index}`
+      ] = `payment_ids should be one of the id passed in payments array, '${paymentId}' at index ${index} in /${action} is not valid`
+    }
+  })
+
+  return errorObj
+}
+
+export const validatePaymentObject = (payments: any, action: string): any => {
+  try {
+    const errorObj: any = {}
+    if (isEmpty(payments)) {
+      errorObj.payments = `payments array is missing or is empty`
+    } else {
+      const allowedStatusValues = ['NOT-PAID', 'PAID']
+      const requiredParams = ['bank_code', 'bank_account_number', 'virtual_payment_address']
+      payments?.forEach((arr: any, i: number) => {
+        const terms = [
+          { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' },
+          {
+            code: 'SETTLEMENT_BASIS',
+            type: 'enum',
+            value: ['INVOICE_RECEIPT', 'Delivery'],
+          },
+          { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
+          { code: 'STATIC_TERMS', type: 'url' },
+          { code: 'COURT_JURISDICTION', type: 'string' },
+          { code: 'DELAY_INTEREST', type: 'amount' },
+          {
+            code: 'SETTLEMENT_TYPE',
+            type: 'enum',
+            value: ['upi', 'neft', 'rtgs'],
+          },
+          { code: 'SETTLEMENT_AMOUNT', type: 'amount' },
+        ]
+
+        if (!arr?.collected_by) {
+          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${action}`
+        } else {
+          const collectedBy = getValue(`collected_by`)
+          if (collectedBy && collectedBy != arr?.collected_by)
+            errorObj[
+              `payemnts[${i}]_collected_by`
+            ] = `payments.collected_by value sent in ${action} should be same as sent in past call: ${collectedBy}`
+        }
+
+        // check status
+        if (!arr?.status) errorObj.paymentStatus = `payment.status is missing for index:${i} in payments`
+        else if (!arr?.status || !allowedStatusValues.includes(arr?.status)) {
+          errorObj.paymentStatus = `invalid status at index:${i} in payments, should be either of ${allowedStatusValues}`
+        }
+
+        // check type
+        const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
+        if (!arr?.type || !validTypes.includes(arr.type)) {
+          errorObj[
+            `payments[${i}]_type`
+          ] = `payments.params.type must be present in ${action} & its value must be one of: ${validTypes.join(', ')}`
+        }
+
+        // check params
+        const params = arr?.params
+        if (!params) errorObj.params = `payment.params is missing for index:${i} in payments`
+        else {
+          const missingParams = requiredParams.filter((param) => !Object.prototype.hasOwnProperty.call(params, param))
+          if (missingParams.length > 0) {
+            errorObj.missingParams = `Required params ${missingParams.join(', ')} are missing in payments`
+          }
+        }
+
+        // Validate payment tags
+        const tagsValidation = validatePaymentTags(arr?.tags, terms)
+        if (!tagsValidation.isValid) {
+          Object.assign(errorObj, { tags: tagsValidation.errors })
+        }
+      })
+    }
+
+    return errorObj
+  } catch (error) {
+    logger.error(`!!Some error occurred while checking payment object /${action} API`, error)
+  }
+}
+
+export const validatePayloadAgainstSchema = (
+  schema: any,
+  payload: any,
+  errorObj: any,
+  key: string,
+  path: string,
+): boolean => {
+  // Base case: if the current schema node is required and the corresponding node in payload is missing, return false
+  if (schema.required) {
+    if (!payload) {
+      console.error(`Error: Required field missing in payload`, key)
+      errorObj[`${key}`] = `${key} is missing`
+      return false
+    } else {
+      if (schema?.type) {
+        validateConfigAttributes(schema, payload, errorObj)
+      }
+
+      return true
+    }
+  }
+
+  if (Array.isArray(schema)) {
+    if (!Array.isArray(payload)) {
+      console.error(`Error: Expected array in payload`)
+      errorObj.path = 'Expected array'
+      return false
+    } else {
+      for (let i = 0; i < payload.length; i++) {
+        validatePayloadAgainstSchema(schema[0], payload[i], errorObj, key, path + `[${i}]`)
+      }
+    }
+  } else {
+    // Recursive case: if the schema node is an object, traverse through its keys
+    // if (typeof schema === 'object' && schema !== null) {
+    for (const key in schema) {
+      // Recursive call for each key
+      const isValid = validatePayloadAgainstSchema(schema[key], payload[key], errorObj, key, path + key + '.')
+      if (!isValid) {
+        return false // If any validation fails, return false
+      }
+    }
+    // }
+  }
+
+  return true
+}
+
+export const validateConfigAttributes = (schema: any, payload: any, errorObj: any) => {
+  try {
+    switch (schema.type) {
+      case 'tag': {
+        switch (schema.name) {
+          case 'LOCATION': {
+            const tagsValidation = validateLocationTag(payload)
+            if (!tagsValidation.isValid) {
+              Object.assign(errorObj, { location_tag: tagsValidation.errors })
+            }
+
+            break
+          }
+
+          default:
+            break
+        }
+
+        break
+      }
+
+      default:
+        break
+    }
+  } catch (error) {
+    logger.error(error)
+  }
 }

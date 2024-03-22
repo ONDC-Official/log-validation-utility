@@ -963,9 +963,6 @@ export const onSearchSchema = {
                                         properties: {
                                           value: {
                                             type: 'string',
-                                            enum: ['unit', 'dozen', 'gram', 'kilogram', 'tonne', 'litre', 'millilitre'],
-                                            errorMessage:
-                                              "Value for 'unit' must either 'unit', 'dozen', 'gram', 'kilogram', 'tonne', 'litre', 'millilitre'",
                                           },
                                         },
                                         required: ['value'],

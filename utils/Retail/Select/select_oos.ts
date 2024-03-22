@@ -117,9 +117,6 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
     }
 
     setValue('msgId', context.message_id)
-    if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
-      errorObj.txnId = `Transaction Id should be same as in previous APIs`
-    }
     setValue('txnId', context.transaction_id)
   } catch (error: any) {
     logger.info(

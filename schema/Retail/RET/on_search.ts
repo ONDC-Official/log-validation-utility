@@ -808,7 +808,7 @@ export const onSearchSchema = {
                                         properties: {
                                           value: {
                                             type: 'string',
-                                            pattern: '',
+                                            pattern: '^[1-7]$',
                                             errorMessage: "Value for 'day_to' must be numeric characters only from 1 to 7",
                                           },
                                         },
@@ -1118,7 +1118,7 @@ export const onSearchSchema = {
                                       then: {
                                         properties: {
                                           value: {
-                                            pattern: '^\\d+(\\.\\d{1,2})?$',
+                                            pattern: '^[0-9]+(\.[0-9]{2})?$',
                                             errorMessage: 'min_value must be number with exactly two decimal places',
                                           },
                                         },

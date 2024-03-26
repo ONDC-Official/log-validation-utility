@@ -445,6 +445,9 @@ export const onSearchIncSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
+                                  pattern: '^[0-9]+$',
+                                  errorMessage:
+                                    'available count must be numbers only',
                                 },
                               },
                               required: ['count'],
@@ -454,6 +457,9 @@ export const onSearchIncSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
+                                  pattern: '^[0-9]+$',
+                                  errorMessage:
+                                    'maximum count must be numbers only ',
                                 },
                               },
                               required: ['count'],

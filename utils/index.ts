@@ -447,6 +447,7 @@ export function deepEqual(obj1: any, obj2: any): boolean {
 }
 
 export const compareCoordinates = (coord1: any, coord2: any) => {
+  if (!coord1 || !coord2) return false
   // Remove all spaces from the coordinates
   const cleanCoord1 = coord1.replace(/\s/g, '')
   const cleanCoord2 = coord2.replace(/\s/g, '')
@@ -635,23 +636,28 @@ function findTaxNumber(termObject: any): string | undefined {
 
 function findGSTNumber(tags: any[], termToMatch: string): string | undefined {
   // Find the object with the specified term
-  const termObject = tags.find((tag) => tag.code === termToMatch)
+  try {
+    const termObject = tags.find((tag) => tag.code === termToMatch)
 
-  // If termObject is found, check the list for the GST number
-  if (termObject) {
-    const taxNumberObject = termObject.list.find((item: { code: string }) => item.code === 'tax_number')
+    // If termObject is found, check the list for the GST number
+    if (termObject) {
+      const taxNumberObject = termObject.list.find((item: { code: string }) => item.code === 'tax_number')
 
-    // If taxNumberObject is found, return the GST number
-    if (taxNumberObject) {
-      const value = taxNumberObject.value
+      // If taxNumberObject is found, return the GST number
+      if (taxNumberObject) {
+        const value = taxNumberObject.value
 
-      if (typeof value === 'string' && value.length <= 15) {
-        return value // Return the GST number
+        if (typeof value === 'string' && value.length <= 15) {
+          return value // Return the GST number
+        }
       }
     }
-  }
 
-  return undefined // GST number not found or not valid
+    return undefined // GST number not found or not valid
+  } catch (error: any) {
+    logger.error(`Error in finding GST number: ${error.stack}`)
+  }
+  return undefined
 }
 
 export function areTimestampsLessThanOrEqualTo(timestamp1: string, timestamp2: string): boolean {
@@ -808,11 +814,13 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
             const tagInfo = mandatoryTags[tagName]
             const isTagMandatory = tagInfo.mandatory
             if (isTagMandatory) {
-              let tagValue = null
+              let tagValue: any = null
+              let originalTag:any = null
               const tagFound = tags.some((tag: any) => {
                 const res = tag.code.toLowerCase() === tagName.toLowerCase()
                 if (res) {
                   tagValue = tag.value.toLowerCase()
+                  originalTag = tag.value
                 }
 
                 return res
@@ -822,10 +830,15 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
                 const key = `missingTagsItem[${i}][${index}] : ${tagName}`
                 errorObj[key] = `Mandatory tag field [${tagName}] missing for ${categoryName} item[${index}]`
               } else {
-                if (tagInfo.value.length > 0 && !tagInfo.value.includes(tagValue)) {
+                if (
+                  tagInfo.value.length > 0 &&
+                  !tagInfo.value.includes(originalTag) &&
+                  !tagInfo.value.includes(tagValue) 
+                ) {
                   logger.error(`The item value can only be of possible values.`)
                   const key = `InvldValueforItem[${i}][${index}] : ${tagName}`
-                  errorObj[key] = `The item value can only be of possible values ${tagInfo.value}.`
+                  errorObj[key] =
+                    `Invalid item value: [${originalTag}]. It can only be of possible values as provided in https://github.com/ONDC-Official/protocol-network-extension/tree/main/enums/retail.`
                 }
               }
             }
@@ -964,7 +977,8 @@ export const checkQuoteTrail = (quoteTrailItems: any[], errorObj: any, selectPri
       }
       if (value && itemValue && value !== itemValue && type === 'item') {
         const key = `invalidPrice[${itemID}]`
-        errorObj[key] = `Price mismatch for  [${itemID}] provided in quote object '[${value}]' /${constants.ON_CANCEL}`
+        errorObj[key] =
+          `Price mismatch for  [${itemID}] provided in quote object '[${value}]'. Should be same as in quote of ${constants.ON_SELECT}`
       }
       if (!itemSet.has(itemID) && type === 'item') {
         const key = `invalidItemID[${itemID}]`
@@ -997,14 +1011,12 @@ function deepCompare(obj1: any, obj2: any): boolean {
   return true
 }
 
-export function compareQuoteObjects(obj1: InputObject, obj2: InputObject): string[] {
+export function compareQuoteObjects(obj1: InputObject, obj2: InputObject, api1: string, api2: string): string[] {
   const errors: string[] = []
 
   // Compare root level properties
   const rootKeys1 = Object.keys(obj1)
-  console.log('rootKeys1', rootKeys1)
   const rootKeys2 = Object.keys(obj2)
-  console.log('rootKeys2', rootKeys2)
 
   if (rootKeys1.length !== rootKeys2.length) {
     errors.push('Root level properties mismatch')
@@ -1020,7 +1032,9 @@ export function compareQuoteObjects(obj1: InputObject, obj2: InputObject): strin
     )
 
     if (!matchingItem || !deepCompare(item1, matchingItem)) {
-      errors.push(`Mismatch found for item with item_id ${item1['@ondc/org/item_id']}`)
+      errors.push(
+        `Mismatch found for item with item_id ${item1['@ondc/org/item_id']} while comparing quote object of ${api1} and ${api2}`,
+      )
     }
   })
 

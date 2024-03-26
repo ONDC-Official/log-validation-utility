@@ -6,7 +6,7 @@ import { logger } from '../../shared/logger'
 import { CompareTimeStamps } from './rsfHelpers'
 
 const checkRsfReceiverRecon = (data: any) => {
-  const issueObj: any = {}
+  const rsfObj: any = {}
 
   if (!data || isObjectEmpty(data)) {
     return { [RSFapiSequence.RECEIVER_RECON]: 'JSON cannot be empty' }
@@ -17,7 +17,7 @@ const checkRsfReceiverRecon = (data: any) => {
     logger.info(`Validating Schema for ${constants.RECEIVER_RECON} API`)
     const vs = validateSchema('rsf', constants.RECEIVER_RECON, issue)
     if (vs != 'error') {
-      Object.assign(issueObj, vs)
+      Object.assign(rsfObj, vs)
     }
     try {
     } catch (error: any) {
@@ -30,10 +30,10 @@ const checkRsfReceiverRecon = (data: any) => {
         CreatedAt: order.created_at,
         contextTimeStamp: issue.context.timestamp,
         UpdatedAt: order.updated_at,
-        issueReportObj: issueObj,
+        issueReportObj: rsfObj,
       })
     })
-    return issueObj
+    return rsfObj
   } catch (err: any) {
     if (err.code === 'ENOENT') {
       logger.info(`!!File not found for /${constants.RECEIVER_RECON} API!`)

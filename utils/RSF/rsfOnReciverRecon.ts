@@ -5,7 +5,7 @@ import { validateSchema } from '../index'
 import { logger } from '../../shared/logger'
 
 const checkRsfOnReceiverRecon = (data: any) => {
-  const issueObj: any = {}
+  const rsfObj: any = {}
 
   if (!data || isObjectEmpty(data)) {
     return { [RSFapiSequence.ON_RECEIVER_RECON]: 'JSON cannot be empty' }
@@ -16,7 +16,7 @@ const checkRsfOnReceiverRecon = (data: any) => {
     logger.info(`Validating Schema for ${constants.ON_RECEIVER_RECON} API`)
     const vs = validateSchema('rsf', constants.ON_RECEIVER_RECON, issue)
     if (vs != 'error') {
-      Object.assign(issueObj, vs)
+      Object.assign(rsfObj, vs)
     }
     try {
     } catch (error: any) {
@@ -24,7 +24,7 @@ const checkRsfOnReceiverRecon = (data: any) => {
         `!!Error occurred while performing schema validation for /${constants.ON_RECEIVER_RECON}_lsp, ${error.stack}`,
       )
     }
-    return issueObj
+    return rsfObj
   } catch (err: any) {
     if (err.code === 'ENOENT') {
       logger.info(`!!File not found for /${constants.ON_RECEIVER_RECON} API!`)

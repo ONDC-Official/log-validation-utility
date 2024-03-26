@@ -57,6 +57,12 @@ const controller = {
           const { response, success, message } = await helper.validateIGM(payload, version)
           result = { response, success, message }
           break
+        case DOMAIN.RSF:
+          {
+            const { response, success, message } = await helper.validateRSF(payload, version)
+            result = { response, success, message }
+          }
+          break
         default:
           throw new Error('Internal server error')
       }

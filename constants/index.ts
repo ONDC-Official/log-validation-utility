@@ -34,6 +34,8 @@ export default Object.freeze({
   RET_ONISSUE: 'on_issue',
   RET_ISSUE_STATUS: 'issue_status',
   RET_ONISSUE_STATUS: 'on_issue_status',
+  RECEIVER_RECON: 'receiver_recon',
+  ON_RECEIVER_RECON: 'on_receiver_recon',
 })
 
 export const ApiSequence = {
@@ -185,6 +187,11 @@ export const IGMApiSequence = {
   LSP_ON_ISSUE: 'lsp_on_issue',
   LSP_ISSUE_STATUS: 'lsp_issue_status',
   LSP_ON_ISSUE_STATUS: 'lsp_on_issue_status',
+}
+
+export const RSFapiSequence = {
+  RECEIVER_RECON: 'receiver_recon',
+  ON_RECEIVER_RECON: 'on_receiver_recon',
 }
 
 export const actionsArray = [

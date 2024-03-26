@@ -160,10 +160,10 @@ export const checkOnConfirm = (data: any) => {
             `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.SELECT} and /${constants.INIT}`
         }
 
-        if (!parentItemIdSet.includes(item.parent_item_id)) {
+        if (parentItemIdSet && !parentItemIdSet.includes(item.parent_item_id)) {
           const itemkey = `item_PrntItmId${i}`
           onCnfrmObj[itemkey] =
-            `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_INIT}`
+            `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SEARCH} and /${constants.ON_INIT}`
         }
 
         if (itemId in itemFlfllmnts) {
@@ -275,7 +275,7 @@ export const checkOnConfirm = (data: any) => {
             onCnfrmObj.sellerGpsErr = `store gps location /fulfillments[${i}]/start/location/gps can't change`
           }
         } catch (error: any) {
-          logger.error(`!!Error while checking store location in /${constants.ON_CONFIRM}`)
+          logger.error(`!!Error while checking store location in /${constants.ON_CONFIRM}, ${error.stack}`)
         }
 
         try {
@@ -329,9 +329,14 @@ export const checkOnConfirm = (data: any) => {
       logger.info(`Comparing Quote object for /${constants.ON_SELECT} and /${constants.ON_CONFIRM}`)
 
       const confirm_quote: any = getValue('quoteObj')
-      const quoteErrors = compareQuoteObjects(confirm_quote, on_confirm.quote)
+      const quoteErrors = compareQuoteObjects(confirm_quote, on_confirm.quote, constants.ON_CONFIRM, constants.CONFIRM)
 
-      if (quoteErrors) {
+      const hasItemWithQuantity = _.some(on_confirm.quote.breakup, item => _.has(item, 'item.quantity'));
+      if (hasItemWithQuantity){
+        const key = `quantErr`
+        onCnfrmObj[key] = `Extra attribute Quantity provided in quote object i.e not supposed to be provided after on_select so invalid quote object`
+      }
+      else if (quoteErrors) {
         let i = 0
         const len = quoteErrors.length
         while (i < len) {
@@ -430,7 +435,7 @@ export const checkOnConfirm = (data: any) => {
 
         const bpp_terms = areGSTNumbersMatching(confirm_tags, on_confirm.tags, 'bpp_terms')
         if (bpp_terms === false) {
-          onCnfrmObj.tags_bpp_terms = `Tags should have same and valid gst_number as passed in /${constants.ON_INIT} and ${constants.CONFIRM}`
+          onCnfrmObj.tags_bpp_terms = `Tags should have same and valid gst_number as passed in /${constants.CONFIRM}`
         }
       }
     } catch (error: any) {

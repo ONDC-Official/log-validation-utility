@@ -3048,7 +3048,10 @@ export const fashion = {
       mandatory: true,
       value: COLOUR,
     },
-    Size: true,
+    Size: {
+      mandatory: true,
+      value: SIZE,
+    },
     Brand: {
       mandatory: true,
       value: [],
@@ -5705,7 +5708,10 @@ export const fashion = {
       mandatory: true,
       value: COLOUR,
     },
-    Size: true,
+    Size: {
+      mandatory: true,
+      value: SIZE,
+    },
     Brand: {
       mandatory: true,
       value: [],
@@ -6068,7 +6074,10 @@ export const fashion = {
       mandatory: true,
       value: COLOUR,
     },
-    Size: true,
+    Size: {
+      mandatory: true,
+      value: SIZE,
+    },
     Brand: {
       mandatory: true,
       value: [],
@@ -14083,7 +14092,10 @@ export const fashion = {
       mandatory: true,
       value: COLOUR,
     },
-    Size: true,
+    Size: {
+      mandatory: true,
+      value: SIZE,
+    },
     Brand: {
       mandatory: true,
       value: [],
@@ -17542,7 +17554,10 @@ export const fashion = {
       mandatory: true,
       value: COLOUR,
     },
-    Size: true,
+    Size: {
+      mandatory: true,
+      value: SIZE,
+    },
     Brand: {
       mandatory: true,
       value: [],
@@ -21608,7 +21623,10 @@ export const fashion = {
       mandatory: true,
       value: COLOUR,
     },
-    Size: true,
+    Size: {
+      mandatory: true,
+      value: SIZE,
+    },
     Brand: {
       mandatory: true,
       value: [],
@@ -21971,7 +21989,10 @@ export const fashion = {
       mandatory: true,
       value: COLOUR,
     },
-    Size: true,
+    Size: {
+      mandatory: true,
+      value: SIZE,
+    },
     Brand: {
       mandatory: true,
       value: [],
@@ -22700,7 +22721,10 @@ export const fashion = {
       mandatory: true,
       value: COLOUR,
     },
-    Size: true,
+    Size: {
+      mandatory: true,
+      value: SIZE,
+    },
     Brand: {
       mandatory: true,
       value: [],
@@ -26013,7 +26037,10 @@ export const fashion = {
       mandatory: true,
       value: COLOUR,
     },
-    Size: true,
+    Size: {
+      mandatory: true,
+      value: SIZE,
+    },
     Brand: {
       mandatory: true,
       value: [],
@@ -26376,7 +26403,10 @@ export const fashion = {
       mandatory: true,
       value: COLOUR,
     },
-    Size: true,
+    Size: {
+      mandatory: true,
+      value: SIZE,
+    },
     Brand: {
       mandatory: true,
       value: [],
@@ -27471,7 +27501,10 @@ export const fashion = {
       mandatory: true,
       value: COLOUR,
     },
-    Size: true,
+    Size: {
+      mandatory: true,
+      value: SIZE,
+    },
     Brand: {
       mandatory: true,
       value: [],
@@ -28200,7 +28233,10 @@ export const fashion = {
       mandatory: true,
       value: COLOUR,
     },
-    Size: true,
+    Size: {
+      mandatory: true,
+      value: SIZE,
+    },
     Brand: {
       mandatory: true,
       value: [],
@@ -33321,7 +33357,10 @@ export const fashion = {
       mandatory: true,
       value: COLOUR,
     },
-    Size: true,
+    Size: {
+      mandatory: true,
+      value: SIZE,
+    },
     Brand: {
       mandatory: true,
       value: [],
@@ -33684,7 +33723,10 @@ export const fashion = {
       mandatory: true,
       value: COLOUR,
     },
-    Size: true,
+    Size: {
+      mandatory: true,
+      value: SIZE,
+    },
     Brand: {
       mandatory: true,
       value: [],
@@ -34413,7 +34455,10 @@ export const fashion = {
       mandatory: true,
       value: COLOUR,
     },
-    Size: true,
+    Size: {
+      mandatory: true,
+      value: SIZE,
+    },
     Brand: {
       mandatory: true,
       value: [],
@@ -34776,7 +34821,10 @@ export const fashion = {
       mandatory: true,
       value: COLOUR,
     },
-    Size: true,
+    Size: {
+      mandatory: true,
+      value: SIZE,
+    },
     Brand: {
       mandatory: true,
       value: [],

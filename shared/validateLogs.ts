@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import { checkSearchFullCatalogRefresh } from '../utils/Retail/RET11/searchFullCatalogRefresh'
 import { dropDB, setValue } from '../shared/dao'
 import { logger } from './logger'
 import { ApiSequence, retailDomains, IGMApiSequence, RSFapiSequence } from '../constants'
@@ -188,11 +187,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
     const getResponse = (apiSeq: any, data: any, msgIdSet: any) => {
       switch (apiSeq) {
         case ApiSequence.SEARCH:
-          if (domain === 'ONDC:RET11') {
-            return checkSearchFullCatalogRefresh(data, msgIdSet)
-          } else {
-            return checkSearch(data, msgIdSet)
-          }
+          return checkSearch(data, msgIdSet)
         case ApiSequence.ON_SEARCH:
           if (domain === 'ONDC:RET11') {
             return checkOnsearchFullCatalogRefresh(data, msgIdSet)

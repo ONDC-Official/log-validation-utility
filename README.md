@@ -504,7 +504,7 @@ curl --location 'http://localhost:3008/api/validate' \
     "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
         "search_full_catalog_refresh": {},
-        "on_search_catalog_refresh":{},
+        "on_search_full_catalog_refresh":{},
         "select": {},
         "on_select": {},
         "init": {},

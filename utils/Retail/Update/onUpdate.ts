@@ -10,7 +10,6 @@ import {
   mapCancellationID,
   payment_status,
   checkQuoteTrailSum,
-  checkQuoteTrail,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -102,7 +101,7 @@ export const checkOnUpdate = (data: any) => {
     try {
       logger.info(`Checking for valid quote breakup prices for /${constants.ON_UPDATE}`)
       if (!sumQuoteBreakUp(on_update.quote)) {
-        onupdtObj.invldQuotePrices = `Item quote breakup prices for /${constants.ON_UPDATE} shoulb be equal to the net price.`
+        onupdtObj.invldQuotePrices = `Item quote breakup prices for /${constants.ON_UPDATE} should be equal to the net price.`
       }
     } catch (error: any) {
       logger.error(`Error occurred while checking for valid quote breakup in ON_UPDATE`)
@@ -191,7 +190,7 @@ export const checkOnUpdate = (data: any) => {
         items.forEach((item: any) => {
           if (!updateItemList.includes(item.id)) {
             const key = `inVldItemId[${item.id}]`
-            onupdtObj[key] = `Item ID should be present in /${constants.UPDATE} API`
+            onupdtObj[key] = `Item ID should be present in /${constants.SELECT}  API`
           } else {
             quoteItemSet.add(item.id)
           }
@@ -208,19 +207,6 @@ export const checkOnUpdate = (data: any) => {
       logger.error(`Error while checking for item IDs for /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
-    //Checkign for valid item prices in /on_update
-    try {
-      logger.info(`Checking for valid item prices in /on_update`)
-      const cancelFulfillments = _.filter(on_update.fulfillments, { type: 'Cancel' })
-      const selectPriceMap: any = getValue('selectPriceMap')
-
-      for (let obj of cancelFulfillments) {
-        const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
-        checkQuoteTrail(quoteTrailItems, onupdtObj, selectPriceMap, quoteItemSet)
-      }
-    } catch (error: any) {
-      logger.error(`Error while checking for valid item prices in /on_update`)
-    }
     // Compare return_request object
 
     if (flow === '6-b') {

@@ -35,6 +35,8 @@ import issueCloseSchema from '../schema/Igm/issueCloseSchema'
 import { onSearchIncSchema } from '../schema/Retail/RET/on_search_inc'
 import { onUpdateSchema } from '../schema/Retail/Update/on_update'
 import { updateSchema } from '../schema/Retail/Update/update'
+import receiverReconSchema from '../schema/RSF/receiverReconSchema'
+import onReceiverReconSchema from '../schema/RSF/onReciverReconSchema'
 
 const ajv = new Ajv({
   allErrors: true,
@@ -888,6 +890,16 @@ const validate_schema_issue_close_igm_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+const validate_schema_receiver_recon_rsf_for_json = (data: any) => {
+  const error_list = validate_schema(data, receiverReconSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_receiver_recon_rsf_for_json = (data: any) => {
+  const error_list = validate_schema(data, onReceiverReconSchema)
+  return formatted_error(error_list)
+}
+
 export default {
   validate_schema_search_RET11_for_json,
   validate_schema_search_RET19_for_json,
@@ -1071,6 +1083,8 @@ export default {
   validate_schema_update_RET18_for_json,
   validate_schema_track_RET10_for_json,
   validate_schema_on_track_RET10_for_json,
+  validate_schema_receiver_recon_rsf_for_json,
+  validate_schema_on_receiver_recon_rsf_for_json,
   ...FIS12Validator,
   ...TRV10Validator,
 }

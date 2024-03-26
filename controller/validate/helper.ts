@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { sign, hash } from '../../shared/crypto'
 import { logger } from '../../shared/logger'
 import { DOMAIN, ERROR_MESSAGE } from '../../shared/types'
-import { IGMvalidateLogs, validateLogs } from '../../shared/validateLogs'
+import { IGMvalidateLogs, validateLogs, RSFvalidateLogs } from '../../shared/validateLogs'
 import { validateLogsForFIS12 } from '../../shared/Actions/FIS12Actions'
 import { validateLogsForMobility } from '../../shared/Actions/mobilityActions'
 import { validateLogsForMetro } from '../../shared/Actions/metroActions'
@@ -25,6 +25,7 @@ const getEnumForDomain = (path: string) => {
   if (path.includes('logistics')) return DOMAIN.LOGISTICS
   if (path.includes('validate') || path.includes('retail')) return DOMAIN.RETAIL
   if (path.includes('igm')) return DOMAIN.IGM
+  if (path.includes('rsf')) return DOMAIN.RSF
   throw new Error('Domain could not be detected')
 }
 const validateRetail = async (
@@ -145,5 +146,32 @@ const validateIGM = async (payload: string, version: string) => {
 
   return { response, success, message }
 }
+const validateRSF = async (payload: string, version: string) => {
+  let response
+  let success = false
+  let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
+  switch (version) {
+    case '1.0.0':
+      response = RSFvalidateLogs(payload)
 
-export default { validateFinance, validateIGM, validateMobility, validateRetail, getEnumForDomain, createSignature }
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+
+      break
+    default:
+      message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
+      logger.warn('Invalid Version!!')
+  }
+  return { response, success, message }
+}
+export default {
+  validateFinance,
+  validateIGM,
+  validateMobility,
+  validateRetail,
+  validateRSF,
+  getEnumForDomain,
+  createSignature,
+}

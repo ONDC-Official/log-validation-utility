@@ -180,7 +180,7 @@ export const checkInit = (data: any, msgIdSet: any) => {
             `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.ON_SEARCH} and /${constants.INIT}`
         }
 
-        if (parentItemIdSet && !parentItemIdSet.includes(item.parent_item_id)) {
+        if (parentItemIdSet && item.parent_item_id && !parentItemIdSet.includes(item.parent_item_id)) {
           const itemkey = `item_PrntItmId${i}`
           initObj[itemkey] =
             `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SEARCH} and /${constants.INIT}`

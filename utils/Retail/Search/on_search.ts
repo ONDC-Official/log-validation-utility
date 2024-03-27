@@ -318,13 +318,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
             errorObj[key] = `item.price.value should be greater than 0`
           }
         }
-        if (item.price && item.price.maximum_value) {
-          const maxPriceValue = parseFloat(item.price.maximum_value)
-          if (maxPriceValue < 1) {
-            const key = `prvdr${i}item${j}maxPrice`
-            errorObj[key] = `item.price.maximum_value should be greater than 0`
-          }
-        }
       })
     })
   } catch (error: any) {

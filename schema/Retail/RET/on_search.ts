@@ -943,8 +943,6 @@ export const onSearchSchema = {
                                         properties: {
                                           value: {
                                             type: 'string',
-                                            pattern: '^[0-9]+$',
-                                            errorMessage: "Value for 'val' must be numeric characters only",
                                           },
                                         },
                                         required: ['value'],

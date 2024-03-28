@@ -143,7 +143,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
     } catch (error: any) {
       logger.error(`Error while checking for fulfillment IDs for /${constants.ON_CANCEL}`, error.stack)
     }
-    //Comparing item count in /on_update and /select
+    //Comparing item count in /on_cancel and /select
     const select_items: any = getValue('items')
     try {
       logger.info(`Matching the item count in message/order/items with that in /select`)
@@ -154,22 +154,23 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       const fulfillmentIdsOnSelect = getValue('selectFlflmntSet')
 
       select_items.forEach((selectItem: any) => {
-        onSelectItemCount += selectItem.quantity.count
-        selectItems[selectItem.id] = selectItem.quantity.count
+        onSelectItemCount += selectItem.quantity.count/1
+        selectItems[selectItem.count] = selectItem.quantity.count
+        selectItems[selectItem.id] = selectItem.id
       })
 
       onCancelItems.forEach((item: any, index: number) => {
         if (
-          selectItems.hasOwnProperty(item.id) &&
+          selectItems.hasOwnProperty(item.count) &&
           !fulfillmentIdsOnSelect?.includes(item.fulfillment_id) &&
-          selectItems[item.id] !== item.quantity.count
+          selectItems[item.count] === item.quantity.count &&
+          selectItems[item.id] === item.id
         ) {
           onCnclObj[`itemQuantity[${index}]`] =
-            `Total item count in message/order/items doesn't match with item count of /${constants.ON_SELECT}`
+            `itemid ${item.id} with quantity.count ${item.quantity.count} & cancel fulfillment_id ${item.fulfillment_id} in message/order/items cant't match with item count of /${constants.ON_SELECT} i.e ${selectItems[item.count]}`
         }
-        onCancelItemCount += item.quantity.count
+        onCancelItemCount += item.quantity.count/1
       })
-
       if (onSelectItemCount !== onCancelItemCount) {
         onCnclObj[`itemCount`] =
           `Total item count in message/order/items doesn't match with item count of /${constants.ON_SELECT}`

@@ -135,7 +135,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
           cnfrmObj[itemkey] =
             `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.SELECT} and /${constants.CONFIRM}`
         }
-        if (parentItemIdSet && !parentItemIdSet.includes(item.parent_item_id)) {
+        if (parentItemIdSet && item.parent_item_id && !parentItemIdSet.includes(item.parent_item_id)) {
           const itemkey = `item_PrntItmId${i}`
           cnfrmObj[itemkey] =
             `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SEARCH} and /${constants.CONFIRM}`

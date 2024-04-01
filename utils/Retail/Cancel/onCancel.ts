@@ -151,24 +151,13 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       let onCancelItemCount: number = 0
       let onSelectItemCount: number = 0
       let selectItems: any = {}
-      const fulfillmentIdsOnSelect = getValue('selectFlflmntSet')
-
       select_items.forEach((selectItem: any) => {
         onSelectItemCount += selectItem.quantity.count/1
         selectItems[selectItem.count] = selectItem.quantity.count
         selectItems[selectItem.id] = selectItem.id
       })
 
-      onCancelItems.forEach((item: any, index: number) => {
-        if (
-          selectItems.hasOwnProperty(item.count) &&
-          !fulfillmentIdsOnSelect?.includes(item.fulfillment_id) &&
-          selectItems[item.count] === item.quantity.count &&
-          selectItems[item.id] === item.id
-        ) {
-          onCnclObj[`itemQuantity[${index}]`] =
-            `itemid ${item.id} with quantity.count ${item.quantity.count} & cancel fulfillment_id ${item.fulfillment_id} in message/order/items cant't match with item count of /${constants.ON_SELECT} i.e ${selectItems[item.count]}`
-        }
+      onCancelItems.forEach((item: any) => {
         onCancelItemCount += item.quantity.count/1
       })
       if (onSelectItemCount !== onCancelItemCount) {

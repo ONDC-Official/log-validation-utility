@@ -432,6 +432,7 @@ export const onSearchIncSchema = {
                                       enum: ['unit', 'dozen', 'gram', 'kilogram', 'tonne', 'litre', 'millilitre'],
                                     },
                                     value: {
+                                      pattern :"^[0-9]+(\.[0-9]+)?$",
                                       type: 'string',
                                     },
                                   },

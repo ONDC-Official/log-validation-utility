@@ -406,31 +406,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
   } catch (error: any) {
     logger.error(`!!Errors while checking parent_item_id in bpp/providers/[]/items/[]/parent_item_id/, ${error.stack}`)
   }
-
-  // Checking for code in items
-  try {
-    logger.info(`Checking for code in items`)
-
-    const providers = onSearchCatalog['bpp/providers']
-
-    providers.forEach((provider: any, i: number) => {
-      const items = provider.items
-
-      items.forEach((item: any, j: number) => {
-        const code = item.descriptor?.code
-        const startsWith5 = code?.startsWith('5')
-
-        const validFormat = startsWith5 ? /^(5):.+$/ : /^(1|2|3|4):[a-zA-Z0-9]+$/
-
-        if (!code || !code.match(validFormat)) {
-          errorObj[`provider[${i}]code[${j}]`] =
-            `item/descriptor/code should be in this format - "type:code" where type is 1 - EAN, 2 - ISBN, 3 - GTIN, 4 - HSN, 5 - others`
-        }
-      })
-    })
-  } catch (error: any) {
-    logger.error(`Error while checking code in items for /${constants.ON_SEARCH}, ${error.stack}`)
-  }
   try{
     logger.info(`Checking for np_type in bpp/descriptor`)
     const descriptor = onSearchCatalog['bpp/descriptor']

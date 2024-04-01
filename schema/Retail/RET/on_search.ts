@@ -544,7 +544,7 @@ export const onSearchSchema = {
                                     },
                                     value: {
                                       type: 'string',
-                                      pattern: '-?^\\d*(.\\d{0,2})?$',
+                                      pattern: '^[0-9]+(\.[0-9]+)?$',
                                       errorMessage: 'enter a valid number',
                                     },
                                   },

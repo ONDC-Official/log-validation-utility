@@ -328,8 +328,8 @@ export const checkOnConfirm = (data: any) => {
     try {
       logger.info(`Comparing Quote object for /${constants.ON_SELECT} and /${constants.ON_CONFIRM}`)
 
-      const confirm_quote: any = getValue('quoteObj')
-      const quoteErrors = compareQuoteObjects(confirm_quote, on_confirm.quote, constants.ON_CONFIRM, constants.CONFIRM)
+      const on_select_quote: any = getValue('quoteObj')
+      const quoteErrors = compareQuoteObjects(on_select_quote, on_confirm.quote, constants.ON_CONFIRM, constants.ON_SELECT)
 
       const hasItemWithQuantity = _.some(on_confirm.quote.breakup, item => _.has(item, 'item.quantity'));
       if (hasItemWithQuantity){

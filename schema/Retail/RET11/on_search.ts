@@ -536,7 +536,7 @@ export const FnBonSearchSchema = {
                                     },
                                     value: {
                                       type: 'string',
-                                      pattern: '^[0-9]+$',
+                                      pattern: '^[0-9]+(\.[0-9]+)?$',
                                       errorMessage: 'enter a valid number',
                                     },
                                   },

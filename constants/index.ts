@@ -217,7 +217,7 @@ export const statusArray = [
 ]
 
 export const buyerCancellationRid = new Set(['001', '003', '006', '009', '010'])
-
+export const buyerReturnId = new Set(['001', '002', '003', '004', '005'])
 export const rtoCancellationRid = new Set(['003', '006', '009', '010', '011', '012', '013', '014', '015', '016', '017'])
 
 export const sellerCancellationRid = new Set([

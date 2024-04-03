@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { logger } from '../../../shared/logger'
-import constants, { ApiSequence, buyerCancellationRid } from '../../../constants'
+import constants, { ApiSequence, buyerReturnId } from '../../../constants'
 import { validateSchema, isObjectEmpty, checkBppIdOrBapId, checkContext, isValidUrl } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -160,7 +160,7 @@ export const checkUpdate = (data: any) => {
                   logger.info(`Checking for valid buyer reasonID for /${constants.UPDATE}`)
                   let reasonId = item.value
 
-                  if (!buyerCancellationRid.has(reasonId)) {
+                  if (!buyerReturnId.has(reasonId)) {
                     logger.error(`reason_id should be a valid cancellation id (buyer app initiated)`)
                     updtObj.updateRid = `reason_id is not a valid reason id (buyer app initiated)`
                   }

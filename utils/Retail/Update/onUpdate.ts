@@ -72,22 +72,6 @@ export const checkOnUpdate = (data: any) => {
       logger.error(`!!Error while comparing city in /${constants.SEARCH} and /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
-    // Comaring Timestamp of /update with /init API
-    if (flow !== '6-a'){
-      try {
-        logger.info(`Comparing timestamp of /${constants.ON_INIT} and /${constants.ON_UPDATE}`)
-        if (_.gte(getValue('tmpstmp'), context.timestamp)) {
-          onupdtObj.tmpstmp = `Timestamp for /${constants.ON_INIT} api cannot be greater than or equal to /${constants.ON_UPDATE} api`
-        }
-
-        setValue('tmpstmp', context.timestamp)
-      } catch (error: any) {
-        logger.error(
-          `!!Error while comparing timestamp for /${constants.ON_INIT} and /${constants.ON_UPDATE} api, ${error.stack}`,
-        )
-      }
-    }
-
     // Comparing transaction ID with /select API
     try {
       logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.ON_UPDATE}`)

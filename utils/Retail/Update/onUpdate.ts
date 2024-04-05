@@ -12,6 +12,7 @@ import {
   checkQuoteTrailSum,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
+import { return_request_reasonCodes } from '../../../constants/reasonCode'
 
 export const checkOnUpdate = (data: any) => {
   const onupdtObj: any = {}
@@ -249,8 +250,11 @@ export const checkOnUpdate = (data: any) => {
                   if (list.code == 'reason_id') {
                     reason_id = list.value
                   }
-                  if (list.code == 'initiated_by' && list.value === context.bap_id) {
-                    mapCancellationID('BNP', reason_id, onupdtObj)
+                  if (list.code == 'initiated_by' && list.value !== context.bap_id) {
+                    onupdtObj['invalid_initiated_by']=`initiated_by should be ${context.bap_id}`
+                  }
+                  if (list.code == 'initiated_by' && list.value === context.bap_id && !return_request_reasonCodes.includes(reason_id)) {
+                    onupdtObj['invalid_return_request_reason']=`initiated_by should be ${context.bap_id}`
                   }
                 })
               }
@@ -261,7 +265,6 @@ export const checkOnUpdate = (data: any) => {
         logger.error(`!!Error while mapping cancellation_reason_id in ${constants.ON_UPDATE}`)
       }
     }
-
     if (flow === '6-c') {
       try {
         logger.info(`Reason_id mapping for cancel_request`)
@@ -277,8 +280,11 @@ export const checkOnUpdate = (data: any) => {
                   if (list.code == 'reason_id') {
                     reason_id = list.value
                   }
-                  if (list.code == 'initiated_by' && list.value === context.bap_id) {
-                    mapCancellationID('BNP', reason_id, onupdtObj)
+                  if (list.code == 'initiated_by' && list.value !== context.bap_id) {
+                    onupdtObj['invalid_initiated_by']=`initiated_by should be ${context.bap_id}`
+                  }
+                  if (list.code == 'initiated_by' && list.value === context.bap_id && !return_request_reasonCodes.includes(reason_id)) {
+                    onupdtObj['invalid_return_request_reason']=`initiated_by should be ${context.bap_id}`
                   }
                 })
               }
@@ -308,7 +314,6 @@ export const checkOnUpdate = (data: any) => {
         )
       }
     }
-
     try {
       logger.info(`Checking for the availability of initiated_by code in ${constants.ON_UPDATE}`)
       const fulfillments = on_update.fulfillments
@@ -385,9 +390,13 @@ export const checkOnUpdate = (data: any) => {
                     if (list.code == 'reason_id') {
                       reason_id = list.value
                     }
+                    if (list.code == 'initiated_by' && list.value !== context.bpp_id) {
+                      onupdtObj['invalid_initiated_by']=`initiated_by should be ${context.bpp_id}`
+                    }
                     if (list.code == 'initiated_by' && list.value === context.bpp_id) {
                       mapCancellationID('SNP', reason_id, onupdtObj)
                     }
+                    
                   })
                 }
               })

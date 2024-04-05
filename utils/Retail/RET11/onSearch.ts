@@ -155,28 +155,6 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     logger.error(`Error while mapping items with thier respective providers ${e.stack}`)
   }
 
-  // Checking for long_desc and short_desc in bpp/providers/items/descriptor/
-  try {
-    logger.info(`Checking for long_desc and short_desc in bpp/providers/items/descriptor/`)
-    for (let i in onSearchCatalog['bpp/providers']) {
-      const items = onSearchCatalog['bpp/providers'][i].items
-      items.forEach((item: any, index: number) => {
-        if (!item.descriptor.short_desc || !item.descriptor.long_desc) {
-          logger.error(
-            `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor`,
-          )
-          const key = `bpp/providers[${i}]/items[${index}]/descriptor`
-          errorObj[key] =
-            `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor`
-        }
-      })
-    }
-  } catch (error: any) {
-    logger.error(
-      `!!Errors while checking timestamp in context.timestamp and bpp/providers/items/time/timestamp, ${error.stack}`,
-    )
-  }
-
   try {
     logger.info(`Storing Item IDs in /${constants.ON_SEARCH}`)
     const providers = onSearchCatalog['bpp/providers']

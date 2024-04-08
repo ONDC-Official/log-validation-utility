@@ -105,8 +105,10 @@ export const FIS13HealthSequence = {
   ON_CONFIRM: 'on_confirm',
   CANCEL: 'cancel',
   ON_CANCEL: 'on_cancel',
+  STATUS_2: 'status_2',
   STATUS: 'status',
   ON_STATUS: 'on_status',
+  ON_SATUS_2: 'on_status_2',
   UPDATE: 'update',
   ON_UPDATE: 'on_update',
   ON_UPDATE_UNCOLICATED: 'on_update_uncolicated',
@@ -171,6 +173,8 @@ export const fisFlows = {
 export const insuranceFlows = {
   HEALTH: 'HEALTH_INSURANCE',
   MARINE: 'MARINE_INSURANCE',
+  CLAIM_HEALTH: 'CLAIM_HEALTH_INSURANCE',
+  RENEW_HEALTH: 'RENEW_HEALTH_INSURANCE',
 }
 
 export const onDemandFlows = {

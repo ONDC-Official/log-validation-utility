@@ -74,9 +74,8 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
             onStatusObj.phone = `contact.phone should be present with valid number in fulfillment${i} at /${constants.ON_STATUS}`
 
           if (fulfillment?.state?.descriptor?.code != 'FORM_PROCESSED')
-            onStatusObj[
-              `fulfillments.state`
-            ] = `code should be 'FORM_PROCESSED' in fulfillment${i} at /${constants.ON_STATUS}`
+            onStatusObj[`fulfillments.state`] =
+              `code should be 'FORM_PROCESSED' in fulfillment${i} at /${constants.ON_STATUS}`
         })
       }
     } catch (error: any) {
@@ -89,9 +88,8 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
       on_status.items.forEach((item: any, index: number) => {
         if (!newItemIDSValue.includes(item.id)) {
           const key = `item[${index}].item_id`
-          onStatusObj[
-            key
-          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+          onStatusObj[key] =
+            `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
         }
 
         if (
@@ -153,9 +151,8 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
           } else {
             const updateValue = getValue(`updatePayment`)
             if (payment?.params?.amount !== updateValue)
-              onStatusObj[
-                'invalidPaymentAmount'
-              ] = `Invalid payment amount (${payment.url}) at index ${i}, should be the same as sent in update call`
+              onStatusObj['invalidPaymentAmount'] =
+                `Invalid payment amount (${payment.url}) at index ${i}, should be the same as sent in update call`
           }
         }
 
@@ -269,6 +266,17 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while checking documents in /${constants.ON_STATUS}, ${error.stack}`)
+    }
+
+    //check claim health status
+    try {
+      logger.info(`Checking claim health insurance status in /${constants.ON_STATUS}`)
+      const claimHealthStatus = message.order.fulfillments[1].state.descriptor.code
+      if (claimHealthStatus !== 'CLAIM_PROCESSING' || claimHealthStatus !== 'CLAIM_PROCESSED') {
+        onStatusObj.claimHealthStatus = `Claim health insurance status should be CLAIM_PROCESSING or CLAIM_PROCESSED in /${constants.ON_STATUS}`
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking claim health insurance status in /${constants.ON_STATUS}`, error.stack)
     }
 
     return onStatusObj

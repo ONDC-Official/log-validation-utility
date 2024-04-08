@@ -102,7 +102,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
         const fulfillmentErrors = validateFulfillments(fulfillment, i, on_update.documents)
         if (
           flow == fisFlows.LOAN_FORECLOSURE &&
-          action == FisApiSequence.ON_UPDATE_UNCOLICATED &&
+          action == FisApiSequence.ON_UPDATE_UNSOLICATED &&
           fulfillment?.state?.descriptor?.code &&
           fulfillment.state.descriptor.code !== 'COMPLETED'
         ) {
@@ -193,7 +193,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
             onUpdateObj['label'] = `label should be present & it's value should be ${flow}`
           }
 
-          if (action == FisApiSequence.ON_UPDATE_UNCOLICATED) {
+          if (action == FisApiSequence.ON_UPDATE_UNSOLICATED) {
             if (payment?.status !== 'PAID') {
               onUpdateObj.invalidPaymentStatus = `payment status should be PAID at index ${i}`
             }
@@ -212,11 +212,11 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
 
         if (flow === fisFlows.LOAN_FORECLOSURE && payment?.status) {
           if (payment?.status == 'NOT-PAID') unPaidInstallments++
-          if (action == FisApiSequence.ON_UPDATE_UNCOLICATED && payment?.status == 'DEFERRED') defferedInstallments++
+          if (action == FisApiSequence.ON_UPDATE_UNSOLICATED && payment?.status == 'DEFERRED') defferedInstallments++
         }
 
         if (flow === fisFlows.MISSED_EMI_PAYMENT && payment?.status) {
-          if (action == FisApiSequence.ON_UPDATE_UNCOLICATED && payment?.status == 'DEFERRED') defferedInstallments++
+          if (action == FisApiSequence.ON_UPDATE_UNSOLICATED && payment?.status == 'DEFERRED') defferedInstallments++
           if (action == FisApiSequence.ON_UPDATE && payment?.status == 'DELAYED') delayedInstallments++
         }
 
@@ -280,7 +280,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
         }
       }
 
-      if (action != FisApiSequence.ON_UPDATE_UNCOLICATED) {
+      if (action != FisApiSequence.ON_UPDATE_UNSOLICATED) {
         const buyerFinderFeesTag = payments[0].tags?.find((tag: any) => tag.descriptor.code === 'BUYER_FINDER_FEES')
         const settlementTermsTag = payments[0].tags?.find((tag: any) => tag.descriptor.code === 'SETTLEMENT_TERMS')
 

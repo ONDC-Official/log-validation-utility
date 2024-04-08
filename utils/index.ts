@@ -674,7 +674,7 @@ export const isValidISO8601Duration = (duration: string): boolean => {
   const iso8601DurationRegex =
     /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$/
 
-  return iso8601DurationRegex.test(duration)
+  return iso8601DurationRegex.test(duration.trim())
 }
 
 export const checkIdAndUri = (id: string, uri: string, type: string) => {

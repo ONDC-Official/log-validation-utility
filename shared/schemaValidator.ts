@@ -650,6 +650,22 @@ const FIS12Validator = {
   validate_schema_on_status_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_status.yaml'),
 }
 
+const FIS13Validator = {
+  validate_schema_search_FIS13_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/search.yaml'),
+  validate_schema_on_search_FIS13_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_search.yaml'),
+  validate_schema_select_FIS13_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/select.yaml'),
+  validate_schema_on_select_FIS13_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_select.yaml'),
+  validate_schema_init_FIS13_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/init.yaml'),
+  validate_schema_on_init_FIS13_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_init.yaml'),
+  validate_schema_confirm_FIS13_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/confirm.yaml'),
+  validate_schema_on_confirm_FIS13_for_json: (data: any) =>
+    validate_schema_for_json(data, 'schema/FIS/on_confirm.yaml'),
+  validate_schema_update_FIS13_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/update.yaml'),
+  validate_schema_on_update_FIS13_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_update.yaml'),
+  validate_schema_status_FIS13_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/status.yaml'),
+  validate_schema_on_status_FIS13_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_status.yaml'),
+}
+
 const TRV10Validator = {
   validate_schema_search_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/search.yaml'),
   validate_schema_on_search_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_search.yaml'),
@@ -803,5 +819,6 @@ export default {
   validate_schema_track_RET10_for_json,
   validate_schema_on_track_RET10_for_json,
   ...FIS12Validator,
+  ...FIS13Validator,
   ...TRV10Validator,
 }

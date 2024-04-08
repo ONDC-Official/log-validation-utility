@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { dropDB } from '../dao'
 import { logger } from '../logger'
-import { FisApiSequence, fisFlows } from '../../constants'
+import { FIS13HealthSequence, insuranceFlows } from '../../constants'
 import { search } from '../../utils/FIS/FIS13/search'
 import { checkOnSearch } from '../../utils/FIS/FIS13/onSearch'
 import { checkSelect } from '../../utils/FIS/FIS13/select'
@@ -10,10 +10,10 @@ import { checkInit } from '../../utils/FIS/FIS13/init'
 import { checkOnInit } from '../../utils/FIS/FIS13/onInit'
 import { checkConfirm } from '../../utils/FIS/FIS13/confirm'
 import { checkOnConfirm } from '../../utils/FIS/FIS13/onConfirm'
-import { checkUpdate } from '../../utils/FIS/FIS13/update'
-import { checkOnUpdate } from '../../utils/FIS/FIS13/onUpdate'
 import { checkStatus } from '../../utils/FIS/FIS13/status'
 import { checkOnStatus } from '../../utils/FIS/FIS13/onStatus'
+import { checkCancel } from '../../utils/mobility/cancel'
+// import { checkOnCancel } from '../../utils/mobility/onCancel'
 
 export function validateLogsForFIS13(data: any, domain: string, flow: string, version: string) {
   const msgIdSet = new Set()
@@ -30,178 +30,151 @@ export function validateLogsForFIS13(data: any, domain: string, flow: string, ve
     logReport = { ...logReport, version: `Invalid version ${version}` }
   }
 
-  if (!(flow in fisFlows)) {
+  if (!(flow in insuranceFlows)) {
     logReport = { ...logReport, version: `Invalid flow ${flow}` }
   }
 
   try {
-    if (data[FisApiSequence.SEARCH]) {
-      const searchResp = search(data[FisApiSequence.SEARCH], msgIdSet, flow)
+    if (data[FIS13HealthSequence.SEARCH]) {
+      const searchResp = search(data[FIS13HealthSequence.SEARCH], msgIdSet, flow, FIS13HealthSequence.SEARCH)
       if (!_.isEmpty(searchResp)) {
-        logReport = { ...logReport, [FisApiSequence.SEARCH]: searchResp }
+        logReport = { ...logReport, [FIS13HealthSequence.SEARCH]: searchResp }
       }
     }
 
-    if (data[FisApiSequence.ON_SEARCH]) {
-      const onSearchResp = checkOnSearch(data[FisApiSequence.ON_SEARCH], msgIdSet, flow)
+    if (data[FIS13HealthSequence.ON_SEARCH]) {
+      const onSearchResp = checkOnSearch(
+        data[FIS13HealthSequence.ON_SEARCH],
+        msgIdSet,
+        flow,
+        FIS13HealthSequence.ON_SEARCH,
+      )
       if (!_.isEmpty(onSearchResp)) {
-        logReport = { ...logReport, [FisApiSequence.ON_SEARCH]: onSearchResp }
+        logReport = { ...logReport, [FIS13HealthSequence.ON_SEARCH]: onSearchResp }
       }
     }
 
-    if (data[FisApiSequence.SELECT_1]) {
-      const selectResp = checkSelect(data[FisApiSequence.SELECT_1], msgIdSet, FisApiSequence.SELECT_1)
+    if (data[FIS13HealthSequence.SEARCH_OFFER]) {
+      const searchResp = search(
+        data[FIS13HealthSequence.SEARCH_OFFER],
+        msgIdSet,
+        flow,
+        FIS13HealthSequence.SEARCH_OFFER,
+      )
+      if (!_.isEmpty(searchResp)) {
+        logReport = { ...logReport, [FIS13HealthSequence.SEARCH_OFFER]: searchResp }
+      }
+    }
+
+    if (data[FIS13HealthSequence.ON_SEARCH_OFFER]) {
+      const onSearchResp = checkOnSearch(
+        data[FIS13HealthSequence.ON_SEARCH_OFFER],
+        msgIdSet,
+        flow,
+        FIS13HealthSequence.ON_SEARCH_OFFER,
+      )
+      if (!_.isEmpty(onSearchResp)) {
+        logReport = { ...logReport, [FIS13HealthSequence.ON_SEARCH_OFFER]: onSearchResp }
+      }
+    }
+
+    if (data[FIS13HealthSequence.SELECT]) {
+      const selectResp = checkSelect(data[FIS13HealthSequence.SELECT], msgIdSet, FIS13HealthSequence.SELECT)
       if (!_.isEmpty(selectResp)) {
-        logReport = { ...logReport, [FisApiSequence.SELECT_1]: selectResp }
+        logReport = { ...logReport, [FIS13HealthSequence.SELECT]: selectResp }
       }
     }
 
-    if (data[FisApiSequence.ON_SELECT_1]) {
-      const onSelectResp = checkOnSelect(data[FisApiSequence.ON_SELECT_1], msgIdSet, FisApiSequence.ON_SELECT_1)
+    if (data[FIS13HealthSequence.ON_SELECT]) {
+      const onSelectResp = checkOnSelect(data[FIS13HealthSequence.ON_SELECT], msgIdSet, FIS13HealthSequence.ON_SELECT)
       if (!_.isEmpty(onSelectResp)) {
-        logReport = { ...logReport, [FisApiSequence.ON_SELECT_1]: onSelectResp }
+        logReport = { ...logReport, [FIS13HealthSequence.ON_SELECT]: onSelectResp }
       }
     }
 
-    if (data[FisApiSequence.SELECT_2]) {
-      const select2Resp = checkSelect(data[FisApiSequence.SELECT_2], msgIdSet, FisApiSequence.SELECT_2)
-      if (!_.isEmpty(select2Resp)) {
-        logReport = { ...logReport, [FisApiSequence.SELECT_2]: select2Resp }
-      }
-    }
-
-    if (data[FisApiSequence.ON_SELECT_2]) {
-      const onSelect2Resp = checkOnSelect(data[FisApiSequence.ON_SELECT_2], msgIdSet, FisApiSequence.ON_SELECT_2)
-      if (!_.isEmpty(onSelect2Resp)) {
-        logReport = { ...logReport, [FisApiSequence.ON_SELECT_2]: onSelect2Resp }
-      }
-    }
-
-    if (data[FisApiSequence.SELECT_3]) {
-      const select3Resp = checkSelect(data[FisApiSequence.SELECT_3], msgIdSet, FisApiSequence.SELECT_3)
-      if (!_.isEmpty(select3Resp)) {
-        logReport = { ...logReport, [FisApiSequence.SELECT_3]: select3Resp }
-      }
-    }
-
-    if (data[FisApiSequence.ON_SELECT_3]) {
-      const onSelect3Resp = checkOnSelect(data[FisApiSequence.ON_SELECT_3], msgIdSet, FisApiSequence.ON_SELECT_3)
-      if (!_.isEmpty(onSelect3Resp)) {
-        logReport = { ...logReport, [FisApiSequence.ON_SELECT_3]: onSelect3Resp }
-      }
-    }
-
-    if (data[FisApiSequence.INIT_1]) {
-      const init = checkInit(data[FisApiSequence.INIT_1], msgIdSet, FisApiSequence.INIT_1)
+    if (data[FIS13HealthSequence.INIT_1]) {
+      const init = checkInit(data[FIS13HealthSequence.INIT_1], msgIdSet, FIS13HealthSequence.INIT_1)
       if (!_.isEmpty(init)) {
-        logReport = { ...logReport, [FisApiSequence.INIT_1]: init }
+        logReport = { ...logReport, [FIS13HealthSequence.INIT_1]: init }
       }
     }
 
-    if (data[FisApiSequence.ON_INIT_1]) {
-      const onInit = checkOnInit(data[FisApiSequence.ON_INIT_1], msgIdSet, FisApiSequence.ON_INIT_1)
+    if (data[FIS13HealthSequence.ON_INIT_1]) {
+      const onInit = checkOnInit(data[FIS13HealthSequence.ON_INIT_1], msgIdSet, FIS13HealthSequence.ON_INIT_1)
       if (!_.isEmpty(onInit)) {
-        logReport = { ...logReport, [FisApiSequence.ON_INIT_1]: onInit }
+        logReport = { ...logReport, [FIS13HealthSequence.ON_INIT_1]: onInit }
       }
     }
 
-    if (data[FisApiSequence.INIT_2]) {
-      const init2 = checkInit(data[FisApiSequence.INIT_2], msgIdSet, FisApiSequence.INIT_2)
+    if (data[FIS13HealthSequence.INIT_2]) {
+      const init2 = checkInit(data[FIS13HealthSequence.INIT_2], msgIdSet, FIS13HealthSequence.INIT_2)
       if (!_.isEmpty(init2)) {
-        logReport = { ...logReport, [FisApiSequence.INIT_2]: init2 }
+        logReport = { ...logReport, [FIS13HealthSequence.INIT_2]: init2 }
       }
     }
 
-    if (data[FisApiSequence.ON_INIT_2]) {
-      const onInit2 = checkOnInit(data[FisApiSequence.ON_INIT_2], msgIdSet, FisApiSequence.ON_INIT_2)
+    if (data[FIS13HealthSequence.ON_INIT_2]) {
+      const onInit2 = checkOnInit(data[FIS13HealthSequence.ON_INIT_2], msgIdSet, FIS13HealthSequence.ON_INIT_2)
       if (!_.isEmpty(onInit2)) {
-        logReport = { ...logReport, [FisApiSequence.ON_INIT_2]: onInit2 }
+        logReport = { ...logReport, [FIS13HealthSequence.ON_INIT_2]: onInit2 }
       }
     }
 
-    if (data[FisApiSequence.INIT_3]) {
-      const init3 = checkInit(data[FisApiSequence.INIT_3], msgIdSet, FisApiSequence.INIT_3)
-      if (!_.isEmpty(init3)) {
-        logReport = { ...logReport, [FisApiSequence.INIT_3]: init3 }
-      }
-    }
-
-    if (data[FisApiSequence.ON_INIT_3]) {
-      const onInit3 = checkOnInit(data[FisApiSequence.ON_INIT_3], msgIdSet, FisApiSequence.ON_INIT_3)
-      if (!_.isEmpty(onInit3)) {
-        logReport = { ...logReport, [FisApiSequence.ON_INIT_3]: onInit3 }
-      }
-    }
-
-    if (data[FisApiSequence.CONFIRM]) {
-      const confirm = checkConfirm(data[FisApiSequence.CONFIRM], msgIdSet)
-      if (!_.isEmpty(confirm)) {
-        logReport = { ...logReport, [FisApiSequence.CONFIRM]: confirm }
-      }
-    }
-
-    if (data[FisApiSequence.ON_CONFIRM]) {
-      const onConfirm = checkOnConfirm(data[FisApiSequence.ON_CONFIRM], msgIdSet, flow)
-      if (!_.isEmpty(onConfirm)) {
-        logReport = { ...logReport, [FisApiSequence.ON_CONFIRM]: onConfirm }
-      }
-    }
-
-    if (flow === fisFlows.PERSONAL) {
-      if (data[FisApiSequence.ON_UPDATE_UNCOLICATED]) {
-        const onUpdate = checkOnUpdate(
-          data[FisApiSequence.ON_UPDATE_UNCOLICATED],
-          msgIdSet,
-          flow,
-          FisApiSequence.ON_UPDATE_UNCOLICATED,
-        )
-        if (!_.isEmpty(onUpdate)) {
-          logReport = { ...logReport, [FisApiSequence.ON_UPDATE_UNCOLICATED]: onUpdate }
-        }
-      }
-    }
-
-    if (data[FisApiSequence.UPDATE]) {
-      const update = checkUpdate(data[FisApiSequence.UPDATE], msgIdSet, flow)
-      if (!_.isEmpty(update)) {
-        logReport = { ...logReport, [FisApiSequence.UPDATE]: update }
-      }
-    }
-
-    if (data[FisApiSequence.ON_UPDATE]) {
-      const onUpdate = checkOnUpdate(data[FisApiSequence.ON_UPDATE], msgIdSet, flow, FisApiSequence.ON_UPDATE)
-      if (!_.isEmpty(onUpdate)) {
-        logReport = { ...logReport, [FisApiSequence.ON_UPDATE]: onUpdate }
-      }
-    }
-
-    if (flow === fisFlows.LOAN_FORECLOSURE) {
-      if (data[FisApiSequence.ON_UPDATE_UNCOLICATED]) {
-        const onUpdate = checkOnUpdate(
-          data[FisApiSequence.ON_UPDATE_UNCOLICATED],
-          msgIdSet,
-          flow,
-          FisApiSequence.ON_UPDATE_UNCOLICATED,
-        )
-        if (!_.isEmpty(onUpdate)) {
-          logReport = { ...logReport, [FisApiSequence.ON_UPDATE_UNCOLICATED]: onUpdate }
-        }
-      }
-    }
-
-    if (data[FisApiSequence.STATUS]) {
-      const status = checkStatus(data[FisApiSequence.STATUS], msgIdSet)
+    if (data[FIS13HealthSequence.STATUS]) {
+      const status = checkStatus(data[FIS13HealthSequence.STATUS], msgIdSet)
       if (!_.isEmpty(status)) {
-        logReport = { ...logReport, [FisApiSequence.STATUS]: status }
+        logReport = { ...logReport, [FIS13HealthSequence.STATUS]: status }
       }
     }
 
-    if (data[FisApiSequence.ON_STATUS]) {
-      const onStatus = checkOnStatus(data[FisApiSequence.ON_STATUS], msgIdSet, flow)
+    if (data[FIS13HealthSequence.ON_STATUS]) {
+      const onStatus = checkOnStatus(data[FIS13HealthSequence.ON_STATUS], msgIdSet, flow)
       if (!_.isEmpty(onStatus)) {
-        logReport = { ...logReport, [FisApiSequence.ON_STATUS]: onStatus }
+        logReport = { ...logReport, [FIS13HealthSequence.ON_STATUS]: onStatus }
       }
     }
+
+    if (data[FIS13HealthSequence.INIT_3]) {
+      const init3 = checkInit(data[FIS13HealthSequence.INIT_3], msgIdSet, FIS13HealthSequence.INIT_3)
+      if (!_.isEmpty(init3)) {
+        logReport = { ...logReport, [FIS13HealthSequence.INIT_3]: init3 }
+      }
+    }
+
+    if (data[FIS13HealthSequence.ON_INIT_3]) {
+      const onInit3 = checkOnInit(data[FIS13HealthSequence.ON_INIT_3], msgIdSet, FIS13HealthSequence.ON_INIT_3)
+      if (!_.isEmpty(onInit3)) {
+        logReport = { ...logReport, [FIS13HealthSequence.ON_INIT_3]: onInit3 }
+      }
+    }
+
+    if (data[FIS13HealthSequence.CONFIRM]) {
+      const confirm = checkConfirm(data[FIS13HealthSequence.CONFIRM], msgIdSet)
+      if (!_.isEmpty(confirm)) {
+        logReport = { ...logReport, [FIS13HealthSequence.CONFIRM]: confirm }
+      }
+    }
+
+    if (data[FIS13HealthSequence.ON_CONFIRM]) {
+      const onConfirm = checkOnConfirm(data[FIS13HealthSequence.ON_CONFIRM], msgIdSet)
+      if (!_.isEmpty(onConfirm)) {
+        logReport = { ...logReport, [FIS13HealthSequence.ON_CONFIRM]: onConfirm }
+      }
+    }
+
+    if (data[FIS13HealthSequence.CANCEL]) {
+      const cancel = checkCancel(data[FIS13HealthSequence.CANCEL], msgIdSet, flow)
+      if (!_.isEmpty(cancel)) {
+        logReport = { ...logReport, [FIS13HealthSequence.CANCEL]: cancel }
+      }
+    }
+
+    // if (data[FIS13HealthSequence.ON_CANCEL]) {
+    //   const onCancel = checkOnCancel(data[FIS13HealthSequence.ON_CANCEL], msgIdSet, flow)
+    //   if (!_.isEmpty(onCancel)) {
+    //     logReport = { ...logReport, [FIS13HealthSequence.ON_CANCEL]: onCancel }
+    //   }
+    // }
 
     logger.info(logReport, 'Report Generated Successfully!!')
     return logReport

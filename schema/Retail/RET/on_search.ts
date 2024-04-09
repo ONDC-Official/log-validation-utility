@@ -544,7 +544,7 @@ export const onSearchSchema = {
                                     },
                                     value: {
                                       type: 'string',
-                                      pattern: '-?^\\d*(.\\d{0,2})?$',
+                                      pattern: '^[0-9]+(\.[0-9]+)?$',
                                       errorMessage: 'enter a valid number',
                                     },
                                   },
@@ -588,6 +588,7 @@ export const onSearchSchema = {
                             },
                             value: {
                               type: 'string',
+                              pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                             },
                             maximum_value: {
                               type: 'string',
@@ -943,8 +944,6 @@ export const onSearchSchema = {
                                         properties: {
                                           value: {
                                             type: 'string',
-                                            pattern: '^[0-9]+$',
-                                            errorMessage: "Value for 'val' must be numeric characters only",
                                           },
                                         },
                                         required: ['value'],

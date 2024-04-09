@@ -179,3 +179,5 @@ export const reasonCodes: ReasonCodes = {
     'Applicable for part cancel?': 'N/A',
   },
 }
+
+export const return_request_reasonCodes =['001', '002', '003', '004', '005'];

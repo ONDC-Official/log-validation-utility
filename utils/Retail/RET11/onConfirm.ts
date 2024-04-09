@@ -160,7 +160,7 @@ export const checkOnConfirm = (data: any) => {
             `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.SELECT} and /${constants.INIT}`
         }
 
-        if (parentItemIdSet && !parentItemIdSet.includes(item.parent_item_id)) {
+        if (parentItemIdSet && item.parent_item_id && !parentItemIdSet.includes(item.parent_item_id)) {
           const itemkey = `item_PrntItmId${i}`
           onCnfrmObj[itemkey] =
             `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SEARCH} and /${constants.ON_INIT}`
@@ -328,8 +328,8 @@ export const checkOnConfirm = (data: any) => {
     try {
       logger.info(`Comparing Quote object for /${constants.ON_SELECT} and /${constants.ON_CONFIRM}`)
 
-      const confirm_quote: any = getValue('quoteObj')
-      const quoteErrors = compareQuoteObjects(confirm_quote, on_confirm.quote, constants.ON_CONFIRM, constants.CONFIRM)
+      const on_select_quote: any = getValue('quoteObj')
+      const quoteErrors = compareQuoteObjects(on_select_quote, on_confirm.quote, constants.ON_CONFIRM, constants.ON_SELECT)
 
       const hasItemWithQuantity = _.some(on_confirm.quote.breakup, item => _.has(item, 'item.quantity'));
       if (hasItemWithQuantity){

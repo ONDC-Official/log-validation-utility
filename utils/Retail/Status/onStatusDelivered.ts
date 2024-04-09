@@ -185,7 +185,7 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any) 
               try {
                 //checking delivery time matching with context timestamp
                 if (!_.lte(deliveryTime, contextTime)) {
-                  onStatusObj.deliveryTime = `delivery timestamp should match context/timestamp and can't be future dated; as delivery timestamp is ${deliveryTime} and context timestamp is ${contextTime}`
+                  onStatusObj.deliveryTime = `delivery timestamp should be less than or equal to context/timestamp and can't be future dated as this on_status is sent after the the product is delivered; as delivery timestamp is ${deliveryTime} and context timestamp is ${contextTime}`
                 }
               } catch (error) {
                 logger.error(

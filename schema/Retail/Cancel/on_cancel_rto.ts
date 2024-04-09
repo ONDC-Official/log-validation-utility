@@ -82,7 +82,8 @@ export const cancel_RTO_Schema = {
             id: {
               type: 'string',
               minLength: 1,
-              pattern: '^[a-zA-Z0-9-]{1,32}$|^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+              pattern:
+                '^[a-zA-Z0-9-]{1,32}$|^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
               errorMessage: 'Order ID should be alphanumeric upto 32 letters max or UUID',
             },
             state: {
@@ -461,7 +462,7 @@ export const cancel_RTO_Schema = {
                                   'id',
                                   'currency',
                                   'value',
-                                  'type'
+                                  'type',
                                 ],
                               },
                               value: {
@@ -491,7 +492,8 @@ export const cancel_RTO_Schema = {
                     },
                     value: {
                       type: 'string',
-                    },
+                      pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                      errorMessage: 'Price value should be a number in string with upto 2 decimal places'                    },
                   },
                   required: ['currency', 'value'],
                 },
@@ -526,7 +528,8 @@ export const cancel_RTO_Schema = {
                           },
                           value: {
                             type: 'string',
-                          },
+                            pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                            errorMessage: 'Price value should be a number in string with upto 2 decimal places'                          },
                         },
                         required: ['currency', 'value'],
                       },
@@ -541,7 +544,8 @@ export const cancel_RTO_Schema = {
                               },
                               value: {
                                 type: 'string',
-                              },
+                                pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                                errorMessage: 'Price value should be a number in string with upto 2 decimal places'                              },
                             },
                             required: ['currency', 'value'],
                           },

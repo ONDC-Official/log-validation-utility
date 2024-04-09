@@ -630,7 +630,7 @@ curl --location 'http://localhost:3008/api/validate' \
         "update": {},
         "on_update_interim": {},
         "on_update_liquidated": {},
-        "update_settlement": {},
+        "update_settlement": {}
     },
     "flow": "6-c"
 }'

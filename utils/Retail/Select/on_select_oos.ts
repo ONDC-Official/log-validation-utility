@@ -359,33 +359,6 @@ export const checkOnSelect_OOS = (data: any) => {
         }
 
         logger.info(`checking available and maximum count in ${constants.ON_SELECT}`)
-        if (
-          element.item.quantity &&
-          element.item.quantity.available &&
-          typeof element.item.quantity.available.count === 'string'
-        ) {
-          const availCount = parseInt(element.item.quantity.available.count, 10)
-          const maxCount = parseInt(element.item.quantity.maximum.count, 10)
-
-          if (availCount < 0 || maxCount < 0) {
-            const key = `qntcnt${i}`
-            errorObj[key] =
-              `Available and Maximum count should be greater than 0 for item id: ${element['@ondc/org/item_id']} in quote.breakup[${i}]`
-          }
-          if (availCount > maxCount) {
-            const key = `qntcnt${i}`
-            errorObj[key] =
-              `Available count should not be greater than maximum count for item id: ${element['@ondc/org/item_id']} in quote.breakup[${i}]`
-          }
-          if (
-            element.item.quantity.available.count.trim() === '' ||
-            element.item.quantity.maximum.count.trim() === ''
-          ) {
-            const key = `qntcnt${i}`
-            errorObj[key] =
-              `Available or Maximum count should not be empty string for item id: ${element['@ondc/org/item_id']} in quote.breakup[${i}]`
-          }
-        }
 
         if (
           element.item.quantity &&
@@ -408,7 +381,7 @@ export const checkOnSelect_OOS = (data: any) => {
           if (availCount == 0 && maxCount > 0) {
             const key = `qntcnt${i}`
             errorObj[key] =
-              `item.quantity.maximum.count cannont be greater than 0 if item.quantity.available.count is 0 `
+              `item.quantity.maximum.count can not be greater than 0 if item.quantity.available.count is 0 `
           }
           if (availCount < element['@ondc/org/item_quantity'].count) {
             const key = `brkcnt${i}`

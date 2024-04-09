@@ -143,7 +143,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
     } catch (error: any) {
       logger.error(`Error while checking for fulfillment IDs for /${constants.ON_CANCEL}`, error.stack)
     }
-    //Comparing item count in /on_update and /select
+    //Comparing item count in /on_cancel and /select
     const select_items: any = getValue('items')
     try {
       logger.info(`Matching the item count in message/order/items with that in /select`)
@@ -151,25 +151,15 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       let onCancelItemCount: number = 0
       let onSelectItemCount: number = 0
       let selectItems: any = {}
-      const fulfillmentIdsOnSelect = getValue('selectFlflmntSet')
-
       select_items.forEach((selectItem: any) => {
-        onSelectItemCount += selectItem.quantity.count
-        selectItems[selectItem.id] = selectItem.quantity.count
+        onSelectItemCount += selectItem.quantity.count/1
+        selectItems[selectItem.count] = selectItem.quantity.count
+        selectItems[selectItem.id] = selectItem.id
       })
 
-      onCancelItems.forEach((item: any, index: number) => {
-        if (
-          selectItems.hasOwnProperty(item.id) &&
-          !fulfillmentIdsOnSelect?.includes(item.fulfillment_id) &&
-          selectItems[item.id] !== item.quantity.count
-        ) {
-          onCnclObj[`itemQuantity[${index}]`] =
-            `Total item count in message/order/items doesn't match with item count of /${constants.ON_SELECT}`
-        }
-        onCancelItemCount += item.quantity.count
+      onCancelItems.forEach((item: any) => {
+        onCancelItemCount += item.quantity.count/1
       })
-
       if (onSelectItemCount !== onCancelItemCount) {
         onCnclObj[`itemCount`] =
           `Total item count in message/order/items doesn't match with item count of /${constants.ON_SELECT}`

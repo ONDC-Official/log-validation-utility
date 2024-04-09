@@ -493,7 +493,7 @@ export const cancel_RTO_Schema = {
                     value: {
                       type: 'string',
                       pattern: '^[0-9]+(.[0-9]{1,2})?$',
-                      errorMessage: 'Price value should be a number in string with upto decimal places'                    },
+                      errorMessage: 'Price value should be a number in string with upto 2 decimal places'                    },
                   },
                   required: ['currency', 'value'],
                 },
@@ -529,7 +529,7 @@ export const cancel_RTO_Schema = {
                           value: {
                             type: 'string',
                             pattern: '^[0-9]+(.[0-9]{1,2})?$',
-                            errorMessage: 'Price value should be a number in string with upto decimal places'                          },
+                            errorMessage: 'Price value should be a number in string with upto 2 decimal places'                          },
                         },
                         required: ['currency', 'value'],
                       },
@@ -545,7 +545,7 @@ export const cancel_RTO_Schema = {
                               value: {
                                 type: 'string',
                                 pattern: '^[0-9]+(.[0-9]{1,2})?$',
-                                errorMessage: 'Price value should be a number in string with upto decimal places'                              },
+                                errorMessage: 'Price value should be a number in string with upto 2 decimal places'                              },
                             },
                             required: ['currency', 'value'],
                           },

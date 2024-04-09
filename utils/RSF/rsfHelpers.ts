@@ -1,5 +1,6 @@
 import { logger } from '../../shared/logger'
 import _ from 'lodash'
+import { getValue } from '../../shared/dao'
 
 /**
  * @description Verify all relevant timestamps in the payload of rsf receiver_recon
@@ -32,5 +33,37 @@ export function CompareTimeStamps({
     }
   } catch (error) {
     logger.error(`Error occurred while checking time of creation and updation for rsf`)
+  }
+}
+/**
+ * @description check if all Collector Ids are same
+ * @param {string} collectorId - The collector id.
+ * @param {string} receiver_app_id - The receiver id.
+ * @param {string} endpoint - The API endpoint being checked.
+ * @param {Object} issueReportObj - An object to collect and report discrepancies.
+ */
+export function checkCollectorAndReciverIdSettle({
+  collectorId,
+  receiver_app_id,
+  endpoint,
+  issueReportObj,
+}: {
+  collectorId: string
+  receiver_app_id: string
+  endpoint: string
+  issueReportObj: any
+}) {
+  try {
+    logger.info(`Checking collector id for rsf`)
+
+    if (collectorId !== getValue('rsfColAppId')) {
+      issueReportObj.collectorId = `Collector Id should be same in all the APIs`
+    }
+
+    if (receiver_app_id !== getValue('rsfRecAppId')) {
+      issueReportObj.receiverId = `Receiver Id should be same in all the APIs`
+    }
+  } catch (error) {
+    logger.error(`Error occurred while checking collector id for rsf ${endpoint}`)
   }
 }

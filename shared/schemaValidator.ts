@@ -37,6 +37,8 @@ import { onUpdateSchema } from '../schema/Retail/Update/on_update'
 import { updateSchema } from '../schema/Retail/Update/update'
 import receiverReconSchema from '../schema/RSF/receiverReconSchema'
 import onReceiverReconSchema from '../schema/RSF/onReciverReconSchema'
+import settleSchema from '../schema/RSF/settleSchema'
+import onSettleSchema from '../schema/RSF/onSettleScehma'
 
 const ajv = new Ajv({
   allErrors: true,
@@ -900,6 +902,15 @@ const validate_schema_on_receiver_recon_rsf_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+const validate_schema_settle_rsf_for_json = (data: any) => {
+  const error_list = validate_schema(data, settleSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_settle_rsf_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSettleSchema)
+  return formatted_error(error_list)
+}
+
 export default {
   validate_schema_search_RET11_for_json,
   validate_schema_search_RET19_for_json,
@@ -1085,6 +1096,8 @@ export default {
   validate_schema_on_track_RET10_for_json,
   validate_schema_receiver_recon_rsf_for_json,
   validate_schema_on_receiver_recon_rsf_for_json,
+  validate_schema_settle_rsf_for_json,
+  validate_schema_on_settle_rsf_for_json,
   ...FIS12Validator,
   ...TRV10Validator,
 }

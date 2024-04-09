@@ -42,6 +42,8 @@ import { checkCancel } from '../utils/Retail/Cancel/cancel'
 import { checkOnCancel } from '../utils/Retail/Cancel/onCancel'
 import checkRsfReceiverRecon from '../utils/RSF/rsfReceiverRecon'
 import checkRsfOnReceiverRecon from '../utils/RSF/rsfOnReciverRecon'
+import checkRsfSettle from '../utils/RSF/rsfSettle'
+import checkRsfOnSettle from '../utils/RSF/rsfOnSettle'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
@@ -419,6 +421,18 @@ export const RSFvalidateLogs = (data: any) => {
 
       if (!_.isEmpty(on_receiver_recon)) {
         logReport = { ...logReport, [RSFapiSequence.ON_RECEIVER_RECON]: on_receiver_recon }
+      }
+    }
+    if (data[RSFapiSequence.SETTLE]) {
+      const settle = checkRsfSettle(data[RSFapiSequence.SETTLE])
+      if (!_.isEmpty(settle)) {
+        logReport = { ...logReport, [RSFapiSequence.SETTLE]: settle }
+      }
+    }
+    if (data[RSFapiSequence.ON_SETTLE]) {
+      const on_settle = checkRsfOnSettle(data[RSFapiSequence.ON_SETTLE])
+      if (!_.isEmpty(on_settle)) {
+        logReport = { ...logReport, [RSFapiSequence.ON_SETTLE]: on_settle }
       }
     }
 

@@ -3,6 +3,7 @@ import _ from 'lodash'
 import { isObjectEmpty } from '../index'
 import { validateSchema } from '../index'
 import { logger } from '../../shared/logger'
+import { checkCollectorAndReciverIdSettle } from './rsfHelpers'
 
 const checkRsfOnReceiverRecon = (data: any) => {
   const rsfObj: any = {}
@@ -24,6 +25,14 @@ const checkRsfOnReceiverRecon = (data: any) => {
         `!!Error occurred while performing schema validation for /${constants.ON_RECEIVER_RECON}_lsp, ${error.stack}`,
       )
     }
+
+    checkCollectorAndReciverIdSettle({
+      collectorId: issue.message.orderbook.orders[0].collector_app_id,
+      receiver_app_id: issue.message.orderbook.orders[0].receiver_app_id,
+      endpoint: constants.ON_RECEIVER_RECON,
+      issueReportObj: rsfObj,
+    })
+
     return rsfObj
   } catch (err: any) {
     if (err.code === 'ENOENT') {

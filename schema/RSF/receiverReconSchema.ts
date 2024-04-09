@@ -305,7 +305,6 @@ const receiverReconSchema = {
                             },
                             settlement_ifsc_code: {
                               type: 'string',
-                              pattern: '^[A-Z]{4}0[A-Z0-9]{6}$',
                             },
                             upi_address: {
                               type: ['string', 'null'],
@@ -485,7 +484,6 @@ const receiverReconSchema = {
                       value: {
                         type: 'number',
                         minimum: 0,
-                        multipleOf: 0.01,
                       },
                     },
                   },
@@ -518,7 +516,6 @@ const receiverReconSchema = {
                       },
                     },
                   },
-                  // Additional properties for each order need to be defined here
                 },
               },
               minItems: 5,

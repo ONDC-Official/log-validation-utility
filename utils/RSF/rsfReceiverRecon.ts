@@ -3,7 +3,7 @@ import _ from 'lodash'
 import { isObjectEmpty } from '../index'
 import { validateSchema } from '../index'
 import { logger } from '../../shared/logger'
-import { CompareTimeStamps } from './rsfHelpers'
+import { CompareTimeStamps, checkCollectorAndReciverIdSettle } from './rsfHelpers'
 
 const checkRsfReceiverRecon = (data: any) => {
   const rsfObj: any = {}
@@ -33,6 +33,14 @@ const checkRsfReceiverRecon = (data: any) => {
         issueReportObj: rsfObj,
       })
     })
+
+    checkCollectorAndReciverIdSettle({
+      collectorId: issue.message.orderbook.orders[0].collector_app_id,
+      receiver_app_id: issue.message.orderbook.orders[0].receiver_app_id,
+      endpoint: constants.RECEIVER_RECON,
+      issueReportObj: rsfObj,
+    })
+
     return rsfObj
   } catch (err: any) {
     if (err.code === 'ENOENT') {

@@ -43,6 +43,12 @@ const ajv = new Ajv({
 addFormats(ajv)
 require('ajv-errors')(ajv)
 
+ajv.addFormat('rfc3339-date-time', function(dateTimeString) {
+ // RFC3339 date-time format regex
+ const rfc3339Regex = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(\.\d+)?Z$/;
+ return rfc3339Regex.test(dateTimeString);
+});
+
 const formatted_error = (errors: any) => {
   const error_list: any = []
   let status = ''

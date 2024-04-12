@@ -58,7 +58,7 @@ export const onSearchSchema = {
         },
         timestamp: {
           type: 'string',
-          format: 'date-time',
+          format: 'rfc3339-date-time',
           errorMessage: 'Time must be RFC3339 UTC timestamp format.',
         },
         ttl: {
@@ -238,7 +238,7 @@ export const onSearchSchema = {
                       },
                       timestamp: {
                         type: 'string',
-                        format: 'date-time',
+                        format: 'rfc3339-date-time',
                       },
                     },
                     required: ['label', 'timestamp'],
@@ -317,7 +317,7 @@ export const onSearchSchema = {
                             },
                             timestamp: {
                               type: 'string',
-                              format: 'date-time',
+                              format: 'rfc3339-date-time',
                             },
                             days: {
                               type: 'string',
@@ -491,7 +491,7 @@ export const onSearchSchema = {
                             },
                             timestamp: {
                               type: 'string',
-                              format: 'date-time',
+                              format: 'rfc3339-date-time',
                             },
                           },
                           required: ['label', 'timestamp'],
@@ -1019,7 +1019,7 @@ export const onSearchSchema = {
                                         properties: {
                                           value: {
                                             description: 'RFC3339 UTC timestamp format',
-                                            format: 'date-time',
+                                            format: 'rfc3339-date-time',
                                             errorMessage: 'Time must be RFC3339 UTC timestamp format.',
                                           },
                                         },
@@ -1058,7 +1058,7 @@ export const onSearchSchema = {
                                         properties: {
                                           value: {
                                             description: 'RFC3339 UTC timestamp format',
-                                            format: 'date-time',
+                                            format: 'rfc3339-date-time',
                                             errorMessage: 'Time must be RFC3339 UTC timestamp format.',
                                           },
                                         },

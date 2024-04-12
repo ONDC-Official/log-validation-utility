@@ -50,7 +50,7 @@ export const onCancelSchema = {
         },
         timestamp: {
           type: 'string',
-          format: 'date-time',
+          format: 'rfc3339-date-time',
         },
         ttl: {
           type: 'string',
@@ -190,11 +190,11 @@ export const onCancelSchema = {
                 },
                 created_at: {
                   type: 'string',
-                  format: 'date-time',
+                  format: 'rfc3339-date-time',
                 },
                 updated_at: {
                   type: 'string',
-                  format: 'date-time',
+                  format: 'rfc3339-date-time',
                 },
               },
               required: ['name', 'address', 'phone', 'created_at', 'updated_at'],
@@ -312,11 +312,11 @@ export const onCancelSchema = {
                             properties: {
                               start: {
                                 type: 'string',
-                                format: 'date-time',
+                                format: 'rfc3339-date-time',
                               },
                               end: {
                                 type: 'string',
-                                format: 'date-time',
+                                format: 'rfc3339-date-time',
                               },
                             },
                             required: ['start', 'end'],
@@ -397,11 +397,11 @@ export const onCancelSchema = {
                             properties: {
                               start: {
                                 type: 'string',
-                                format: 'date-time',
+                                format: 'rfc3339-date-time',
                               },
                               end: {
                                 type: 'string',
-                                format: 'date-time',
+                                format: 'rfc3339-date-time',
                               },
                             },
                             required: ['start', 'end'],
@@ -649,11 +649,11 @@ export const onCancelSchema = {
             },
             created_at: {
               type: 'string',
-              format: 'date-time',
+              format: 'rfc3339-date-time',
             },
             updated_at: {
               type: 'string',
-              format: 'date-time',
+              format: 'rfc3339-date-time',
             },
           },
           required: [

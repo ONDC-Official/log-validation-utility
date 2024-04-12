@@ -45,7 +45,7 @@ export const FnBonSearchSchema = {
         },
         timestamp: {
           type: 'string',
-          format: 'date-time',
+          format: 'rfc3339-rfc3339-date-time'
         },
         ttl: {
           type: 'string',
@@ -225,7 +225,7 @@ export const FnBonSearchSchema = {
                       },
                       timestamp: {
                         type: 'string',
-                        format: 'date-time',
+                        format: 'rfc3339-date-time',
                       },
                     },
                     required: ['label', 'timestamp'],
@@ -310,7 +310,7 @@ export const FnBonSearchSchema = {
                             },
                             timestamp: {
                               type: 'string',
-                              format: 'date-time',
+                              format: 'rfc3339-date-time',
                             },
                             days: {
                               type: 'string',
@@ -492,7 +492,7 @@ export const FnBonSearchSchema = {
                             },
                             timestamp: {
                               type: 'string',
-                              format: 'date-time',
+                              format: 'rfc3339-date-time',
                             },
                           },
                           required: ['label', 'timestamp'],
@@ -745,11 +745,11 @@ export const FnBonSearchSchema = {
                               properties: {
                                 start: {
                                   type: 'string',
-                                  format: 'date-time',
+                                  format: 'rfc3339-date-time',
                                 },
                                 end: {
                                   type: 'string',
-                                  format: 'date-time',
+                                  format: 'rfc3339-date-time',
                                 },
                               },
                             },
@@ -1084,7 +1084,7 @@ export const FnBonSearchSchema = {
                                         properties: {
                                           value: {
                                             description: 'RFC3339 UTC timestamp format',
-                                            format: 'date-time',
+                                            format: 'rfc3339-date-time',
                                             errorMessage: 'Time must be RFC3339 UTC timestamp format.',
                                           },
                                         },
@@ -1123,7 +1123,7 @@ export const FnBonSearchSchema = {
                                         properties: {
                                           value: {
                                             description: 'RFC3339 UTC timestamp format',
-                                            format: 'date-time',
+                                            format: 'rfc3339-date-time',
                                             errorMessage: 'Time must be RFC3339 UTC timestamp format.',
                                           },
                                         },

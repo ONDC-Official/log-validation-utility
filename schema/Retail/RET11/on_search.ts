@@ -45,7 +45,7 @@ export const FnBonSearchSchema = {
         },
         timestamp: {
           type: 'string',
-          format: 'rfc3339-rfc3339-date-time'
+          format: 'rfc3339-date-time'
         },
         ttl: {
           type: 'string',

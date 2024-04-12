@@ -80,7 +80,7 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
 
         if (!fulfillment.type) {
           errorObj[`${fulfillmentKey}.type`] = `Fulfillment type is missing`
-        } else if (fulfillment.type !== 'DELIVERY') {
+        } else if (fulfillment?.type !== 'DELIVERY') {
           errorObj[`${fulfillmentKey}.type`] =
             `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_SELECT}`
         }

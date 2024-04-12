@@ -36,114 +36,119 @@ export function validateLogsForMobility(data: any, flow: string, version: string
 
   try {
     if (data[mobilitySequence.SEARCH]) {
-      const searchResp = search(data[mobilitySequence.SEARCH], msgIdSet)
-      if (!_.isEmpty(searchResp)) {
-        logReport = { ...logReport, [mobilitySequence.SEARCH]: searchResp }
+      const errors = search(data[mobilitySequence.SEARCH], msgIdSet, version)
+      if (!_.isEmpty(errors)) {
+        logReport = { ...logReport, [mobilitySequence.SEARCH]: errors }
       }
     }
 
     if (data[mobilitySequence.ON_SEARCH]) {
-      const searchResp = checkOnSearch(data[mobilitySequence.ON_SEARCH], msgIdSet)
-      if (!_.isEmpty(searchResp)) {
-        logReport = { ...logReport, [mobilitySequence.ON_SEARCH]: searchResp }
+      const errors = checkOnSearch(data[mobilitySequence.ON_SEARCH], msgIdSet, version)
+      if (!_.isEmpty(errors)) {
+        logReport = { ...logReport, [mobilitySequence.ON_SEARCH]: errors }
       }
     }
 
     if (data[mobilitySequence.SELECT]) {
-      const searchResp = checkSelect(data[mobilitySequence.SELECT], msgIdSet)
-      if (!_.isEmpty(searchResp)) {
-        logReport = { ...logReport, [mobilitySequence.SELECT]: searchResp }
+      const errors = checkSelect(data[mobilitySequence.SELECT], msgIdSet)
+      if (!_.isEmpty(errors)) {
+        logReport = { ...logReport, [mobilitySequence.SELECT]: errors }
       }
     }
 
     if (data[mobilitySequence.ON_SELECT]) {
-      const searchResp = checkOnSelect(data[mobilitySequence.ON_SELECT], msgIdSet)
-      if (!_.isEmpty(searchResp)) {
-        logReport = { ...logReport, [mobilitySequence.ON_SELECT]: searchResp }
+      const errors = checkOnSelect(data[mobilitySequence.ON_SELECT], msgIdSet, version)
+      if (!_.isEmpty(errors)) {
+        logReport = { ...logReport, [mobilitySequence.ON_SELECT]: errors }
       }
     }
 
     if (data[mobilitySequence.INIT]) {
-      const searchResp = checkInit(data[mobilitySequence.INIT], msgIdSet)
-      if (!_.isEmpty(searchResp)) {
-        logReport = { ...logReport, [mobilitySequence.INIT]: searchResp }
+      const errors = checkInit(data[mobilitySequence.INIT], msgIdSet, version)
+      if (!_.isEmpty(errors)) {
+        logReport = { ...logReport, [mobilitySequence.INIT]: errors }
       }
     }
 
     if (data[mobilitySequence.ON_INIT]) {
-      const searchResp = checkOnInit(data[mobilitySequence.ON_INIT], msgIdSet)
-      if (!_.isEmpty(searchResp)) {
-        logReport = { ...logReport, [mobilitySequence.ON_INIT]: searchResp }
+      const errors = checkOnInit(data[mobilitySequence.ON_INIT], msgIdSet, version)
+      if (!_.isEmpty(errors)) {
+        logReport = { ...logReport, [mobilitySequence.ON_INIT]: errors }
       }
     }
 
     if (data[mobilitySequence.CONFIRM]) {
-      const searchResp = checkConfirm(data[mobilitySequence.CONFIRM], msgIdSet)
-      if (!_.isEmpty(searchResp)) {
-        logReport = { ...logReport, [mobilitySequence.CONFIRM]: searchResp }
+      const errors = checkConfirm(data[mobilitySequence.CONFIRM], msgIdSet, version)
+      if (!_.isEmpty(errors)) {
+        logReport = { ...logReport, [mobilitySequence.CONFIRM]: errors }
       }
     }
 
     if (data[mobilitySequence.ON_CONFIRM]) {
-      const searchResp = checkOnConfirm(data[mobilitySequence.ON_CONFIRM], msgIdSet)
-      if (!_.isEmpty(searchResp)) {
-        logReport = { ...logReport, [mobilitySequence.ON_CONFIRM]: searchResp }
+      const errors = checkOnConfirm(data[mobilitySequence.ON_CONFIRM], msgIdSet, version)
+      if (!_.isEmpty(errors)) {
+        logReport = { ...logReport, [mobilitySequence.ON_CONFIRM]: errors }
       }
     }
 
     if (data[mobilitySequence.UPDATE]) {
-      const searchResp = checkUpdate(data[mobilitySequence.UPDATE], msgIdSet)
-      if (!_.isEmpty(searchResp)) {
-        logReport = { ...logReport, [mobilitySequence.UPDATE]: searchResp }
+      const errors = checkUpdate(data[mobilitySequence.UPDATE], msgIdSet)
+      if (!_.isEmpty(errors)) {
+        logReport = { ...logReport, [mobilitySequence.UPDATE]: errors }
       }
     }
 
     if (data[mobilitySequence.ON_UPDATE]) {
-      const searchResp = checkOnUpdate(data[mobilitySequence.ON_UPDATE])
-      if (!_.isEmpty(searchResp)) {
-        logReport = { ...logReport, [mobilitySequence.ON_UPDATE]: searchResp }
+      const errors = checkOnUpdate(data[mobilitySequence.ON_UPDATE], version)
+      if (!_.isEmpty(errors)) {
+        logReport = { ...logReport, [mobilitySequence.ON_UPDATE]: errors }
       }
     }
 
     if (data[mobilitySequence.STATUS]) {
-      const searchResp = checkStatus(data[mobilitySequence.STATUS], msgIdSet)
-      if (!_.isEmpty(searchResp)) {
-        logReport = { ...logReport, [mobilitySequence.STATUS]: searchResp }
+      const errors = checkStatus(data[mobilitySequence.STATUS], msgIdSet)
+      if (!_.isEmpty(errors)) {
+        logReport = { ...logReport, [mobilitySequence.STATUS]: errors }
       }
     }
 
     if (data[mobilitySequence.ON_STATUS]) {
-      const searchResp = checkOnStatus(data[mobilitySequence.ON_STATUS], msgIdSet)
-      if (!_.isEmpty(searchResp)) {
-        logReport = { ...logReport, [mobilitySequence.ON_STATUS]: searchResp }
+      const errors = checkOnStatus(data[mobilitySequence.ON_STATUS], msgIdSet, version)
+      if (!_.isEmpty(errors)) {
+        logReport = { ...logReport, [mobilitySequence.ON_STATUS]: errors }
       }
     }
 
     if (data[mobilitySequence.SOFT_CANCEL]) {
-      const searchResp = checkCancel(data[mobilitySequence.SOFT_CANCEL], msgIdSet, mobilitySequence.SOFT_CANCEL)
-      if (!_.isEmpty(searchResp)) {
-        logReport = { ...logReport, [mobilitySequence.SOFT_CANCEL]: searchResp }
+      const errors = checkCancel(data[mobilitySequence.SOFT_CANCEL], msgIdSet, mobilitySequence.SOFT_CANCEL)
+      if (!_.isEmpty(errors)) {
+        logReport = { ...logReport, [mobilitySequence.SOFT_CANCEL]: errors }
       }
     }
 
     if (data[mobilitySequence.SOFT_ON_CANCEL]) {
-      const searchResp = checkOnCancel(data[mobilitySequence.SOFT_ON_CANCEL], msgIdSet, mobilitySequence.SOFT_ON_CANCEL)
-      if (!_.isEmpty(searchResp)) {
-        logReport = { ...logReport, [mobilitySequence.SOFT_ON_CANCEL]: searchResp }
+      const errors = checkOnCancel(
+        data[mobilitySequence.SOFT_ON_CANCEL],
+        msgIdSet,
+        mobilitySequence.SOFT_ON_CANCEL,
+        version,
+      )
+      if (!_.isEmpty(errors)) {
+        logReport = { ...logReport, [mobilitySequence.SOFT_ON_CANCEL]: errors }
       }
     }
 
     if (data[mobilitySequence.CANCEL]) {
-      const searchResp = checkCancel(data[mobilitySequence.CANCEL], msgIdSet, mobilitySequence.CANCEL)
-      if (!_.isEmpty(searchResp)) {
-        logReport = { ...logReport, [mobilitySequence.CANCEL]: searchResp }
+      const errors = checkCancel(data[mobilitySequence.CANCEL], msgIdSet, mobilitySequence.CANCEL)
+      if (!_.isEmpty(errors)) {
+        logReport = { ...logReport, [mobilitySequence.CANCEL]: errors }
       }
     }
 
     if (data[mobilitySequence.ON_CANCEL]) {
-      const searchResp = checkOnCancel(data[mobilitySequence.ON_CANCEL], msgIdSet, mobilitySequence.ON_CANCEL)
-      if (!_.isEmpty(searchResp)) {
-        logReport = { ...logReport, [mobilitySequence.ON_CANCEL]: searchResp }
+      const errors = checkOnCancel(data[mobilitySequence.ON_CANCEL], msgIdSet, mobilitySequence.ON_CANCEL, version)
+      if (!_.isEmpty(errors)) {
+        logReport = { ...logReport, [mobilitySequence.ON_CANCEL]: errors }
       }
     }
 

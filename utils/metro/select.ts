@@ -56,9 +56,8 @@ export const checkSelect = (data: any, msgIdSet: any) => {
       select.items.forEach((item: any, index: number) => {
         if (storedItemIDS && !storedItemIDS.includes(item.id)) {
           const key = `item[${index}].item_id`
-          errorObj[
-            key
-          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+          errorObj[key] =
+            `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
         } else {
           setValue('itemId', item.id)
         }
@@ -79,7 +78,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
           fulfillmentErrors[`${fulfillmentKey}.id`] = `${fulfillmentKey}/id is required`
         }
 
-        if (fulfillment.type && fulfillment.type !== 'DELIVERY') {
+        if (fulfillment?.type !== 'DELIVERY') {
           fulfillmentErrors[`${fulfillmentKey}.type`] = `Fulfillment type should be 'DELIVERY' in provoider}`
         }
 

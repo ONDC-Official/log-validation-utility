@@ -134,7 +134,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       logger.info(`Checking for tax_number for ${constants.ON_INIT}`)
       const tags = on_init.tags[0].list
       let tax_number = {}
-      let provider_tax_number ={}
+      let provider_tax_number = {}
       tags.forEach((e: any) => {
         if (e.code === 'tax_number') {
           if (!e.value) {
@@ -224,6 +224,23 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       logger.error(
         `!!Error while comparing Item and Fulfillment Id in /${constants.ON_SELECT} and /${constants.ON_INIT}, ${error.stack}`,
       )
+    }
+
+    try {
+      logger.info(`Validating fulfillments`)
+      on_init?.fulfillments.forEach((fulfillment: any) => {
+        const { type } = fulfillment
+        if (type == 'Delivery') {
+          if (fulfillment.tags && fulfillment.tags.length > 0) {
+            onInitObj[`fulfillments[${fulfillment.id}]`] =
+              `/message/order/fulfillment of type 'delivery' should not have tags `
+          }
+        } else if (type !== 'Delivery') {
+          onInitObj[`fulfillments[${fulfillment.id}]`] = `Fulfillment type should be 'Delivery' (case-sensitive)`
+        }
+      })
+    } catch (error: any) {
+      logger.error(`Error while validating fulfillments, ${error.stack}`)
     }
 
     try {
@@ -338,12 +355,12 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       logger.info(`Checking Quote Object in /${constants.ON_SELECT} and /${constants.ON_INIT}`)
       const on_select_quote: any = getValue('quoteObj')
       const quoteErrors = compareQuoteObjects(on_select_quote, on_init.quote, constants.ON_SELECT, constants.ON_INIT)
-      const hasItemWithQuantity = _.some(on_init.quote.breakup, item => _.has(item, 'item.quantity'));
-      if (hasItemWithQuantity){
+      const hasItemWithQuantity = _.some(on_init.quote.breakup, (item) => _.has(item, 'item.quantity'))
+      if (hasItemWithQuantity) {
         const key = `quantErr`
-        onInitObj[key] = `Extra attribute Quantity provided in quote object i.e not supposed to be provided after on_select so invalid quote object`
-      }
-      else if (quoteErrors) {
+        onInitObj[key] =
+          `Extra attribute Quantity provided in quote object i.e not supposed to be provided after on_select so invalid quote object`
+      } else if (quoteErrors) {
         let i = 0
         const len = quoteErrors.length
         while (i < len) {
@@ -444,6 +461,21 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       }
     } catch (err: any) {
       logger.error(`Error while checking transaction is in message.order.payment`)
+    }
+
+    try {
+      logger.info(`Validating tags`)
+      on_init?.tags.forEach((tag: any) => {
+        const providerTaxNumber = tag.list.find((item: any) => item.code === 'provider_tax_number')
+        if (providerTaxNumber) {
+          const panRegex = /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/
+          if (!panRegex.test(providerTaxNumber.value)) {
+            onInitObj[`tags`] = `'provider_tax_number' should have a valid PAN number format`
+          }
+        }
+      })
+    } catch (error: any) {
+      logger.error(`Error while validating tags, ${error.stack}`)
     }
 
     return onInitObj

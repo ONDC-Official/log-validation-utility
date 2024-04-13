@@ -49,6 +49,14 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
   }
 
   try {
+    logger.info(`Comparing city Ids of  /${ApiSequence.INC_ONSEARCH}`)
+    if (context.city !== '*') {
+      errorObj.city = `context/city should be "*" in  /${ApiSequence.INC_ONSEARCH} `
+    }
+  } catch (error: any) {
+    logger.info(`Error while comparing transaction ids for  /${ApiSequence.INC_ONSEARCH} api, ${error.stack}`)
+  }
+  try {
     logger.info(`Comparing transaction Ids of /${ApiSequence.INC_SEARCH} and /${ApiSequence.INC_ONSEARCH}`)
     if (!_.isEqual(incSearchContext.transaction_id, context.transaction_id)) {
       errorObj.transaction_id = `Transaction Id for /${ApiSequence.INC_SEARCH} and /${ApiSequence.INC_ONSEARCH} api should be same`

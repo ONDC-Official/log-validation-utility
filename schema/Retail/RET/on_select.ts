@@ -50,7 +50,7 @@ export const onSelectSchema = {
         },
         timestamp: {
           type: 'string',
-          format: 'date-time',
+          format: 'rfc3339-date-time',
         },
         ttl: {
           type: 'string',

@@ -37,7 +37,7 @@ export const FnBonSearchIncSchema = {
         },
         timestamp: {
           type: 'string',
-          format: 'date-time',
+          format: 'rfc3339-date-time',
         },
         ttl: {
           type: 'string',
@@ -129,7 +129,7 @@ export const FnBonSearchIncSchema = {
                       },
                       timestamp: {
                         type: 'string',
-                        format: 'date-time',
+                        format: 'rfc3339-date-time',
                       },
                     },
                     required: ['label', 'timestamp'],
@@ -208,7 +208,7 @@ export const FnBonSearchIncSchema = {
                             },
                             timestamp: {
                               type: 'string',
-                              format: 'date-time',
+                              format: 'rfc3339-date-time',
                             },
                             days: {
                               type: 'string',
@@ -389,7 +389,7 @@ export const FnBonSearchIncSchema = {
                             },
                             timestamp: {
                               type: 'string',
-                              format: 'date-time',
+                              format: 'rfc3339-date-time',
                             },
                           },
                           required: ['label', 'timestamp'],

@@ -50,7 +50,7 @@ export const onUpdateSchema = {
         },
         timestamp: {
           type: 'string',
-          format: 'date-time',
+          format: 'rfc3339-date-time',
         },
       },
       required: [
@@ -124,8 +124,8 @@ export const onUpdateSchema = {
                 },
                 email: { type: 'string' },
                 phone: { type: 'string' },
-                created_at: { type: 'string', format: 'date-time' },
-                updated_at: { type: 'string', format: 'date-time' },
+                created_at: { type: 'string', format: 'rfc3339-date-time' },
+                updated_at: { type: 'string', format: 'rfc3339-date-time' },
               },
               required: ['name', 'address', 'email', 'phone', 'created_at', 'updated_at'],
             },
@@ -199,12 +199,12 @@ export const onUpdateSchema = {
                       time: {
                         type: 'object',
                         properties: {
-                          timestamp: { type: 'string', format: 'date-time' },
+                          timestamp: { type: 'string', format: 'rfc3339-date-time' },
                           range: {
                             type: 'object',
                             properties: {
-                              start: { type: 'string', format: 'date-time' },
-                              end: { type: 'string', format: 'date-time' },
+                              start: { type: 'string', format: 'rfc3339-date-time' },
+                              end: { type: 'string', format: 'rfc3339-date-time' },
                             },
                           },
                         },
@@ -224,8 +224,8 @@ export const onUpdateSchema = {
                         properties: {
                           type: { type: 'string' },
                           token: { type: 'string' },
-                          valid_from: { type: 'string', format: 'date-time' },
-                          valid_to: { type: 'string', format: 'date-time' },
+                          valid_from: { type: 'string', format: 'rfc3339-date-time' },
+                          valid_to: { type: 'string', format: 'rfc3339-date-time' },
                         },
                       },
                       contact: {
@@ -264,7 +264,7 @@ export const onUpdateSchema = {
                       time: {
                         type: 'object',
                         properties: {
-                          timestamp: { type: 'string', format: 'date-time' },
+                          timestamp: { type: 'string', format: 'rfc3339-date-time' },
                         },
                       },
                       instructions: {
@@ -280,8 +280,8 @@ export const onUpdateSchema = {
                         properties: {
                           type: { type: 'string' },
                           token: { type: 'string' },
-                          valid_from: { type: 'string', format: 'date-time' },
-                          valid_to: { type: 'string', format: 'date-time' },
+                          valid_from: { type: 'string', format: 'rfc3339-date-time' },
+                          valid_to: { type: 'string', format: 'rfc3339-date-time' },
                         },
                       },
                       person: {
@@ -536,8 +536,8 @@ export const onUpdateSchema = {
                 required: ['url', 'label'],
               },
             },
-            created_at: { type: 'string', format: 'date-time' },
-            updated_at: { type: 'string', format: 'date-time' },
+            created_at: { type: 'string', format: 'rfc3339-date-time' },
+            updated_at: { type: 'string', format: 'rfc3339-date-time' },
           },
           required: [
             'id',

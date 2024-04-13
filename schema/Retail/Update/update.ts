@@ -50,7 +50,7 @@ export const updateSchema = {
         },
         timestamp: {
           type: 'string',
-          format: 'date-time',
+          format: 'rfc3339-date-time',
         },
       },
       required: [
@@ -122,7 +122,7 @@ export const updateSchema = {
                       settlement_phase: { type: 'string' },
                       settlement_type: { type: 'string' },
                       settlement_amount: { type: 'string' },
-                      settlement_timestamp: { type: 'string', format: 'date-time' },
+                      settlement_timestamp: { type: 'string', format: 'rfc3339-date-time' },
                     },
                     required: [
                       'settlement_counterparty',

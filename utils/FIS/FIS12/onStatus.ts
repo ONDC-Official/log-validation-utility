@@ -205,11 +205,15 @@ export const checkOnStatus = (data: any, msgIdSet: any, sequence: string) => {
                 value: ['INVOICE_RECEIPT', 'Delivery'],
               },
               { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
-              // { code: 'STATIC_TERMS', type: 'url' },
+              { code: 'STATIC_TERMS', type: 'url' },
               { code: 'COURT_JURISDICTION', type: 'string' },
               { code: 'DELAY_INTEREST', type: 'amount' },
               { code: 'SETTLEMENT_AMOUNT', type: 'amount' },
               { code: 'SETTLEMENT_TYPE', type: 'enum', value: ['upi', 'neft', 'rtgs'] },
+              {
+                code: 'OFFLINE_CONTRACT',
+                type: 'boolean',
+              },
             ]
 
             if (!arr?.collected_by) {

@@ -107,9 +107,13 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
               value: ['INVOICE_RECEIPT', 'Delivery'],
             },
             { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
-            // { code: 'STATIC_TERMS', type: 'url' },
+            { code: 'STATIC_TERMS', type: 'url' },
             { code: 'COURT_JURISDICTION', type: 'string' },
             { code: 'DELAY_INTEREST', type: 'amount' },
+            {
+              code: 'OFFLINE_CONTRACT',
+              type: 'boolean',
+            },
           ]
 
           if (!arr?.collected_by) {

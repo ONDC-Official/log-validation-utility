@@ -22,7 +22,7 @@ export const search = (data: any, msgIdSet: any, flow: string) => {
       return Object.keys(errorObj).length > 0 && errorObj
     }
 
-    const schemaValidation = validateSchema(data?.context?.domain.split(':')[1], constants.SEARCH, data)
+    const schemaValidation = validateSchema('FIS', constants.SEARCH, data)
     const contextRes: any = checkFISContext(data.context, constants.SEARCH)
 
     setValue(`${constants.SEARCH}_context`, data.context)
@@ -59,15 +59,19 @@ export const search = (data: any, msgIdSet: any, flow: string) => {
       const payment = data?.message.intent?.payment
       const collectedBy = payment?.collected_by
       const allowedCollectedByValues = ['BPP', 'BAP']
-      const terms: any = [{ code: 'STATIC_TERMS', type: 'url' }]
+      const terms: any = [
+        { code: 'STATIC_TERMS', type: 'url' },
+        {
+          code: 'OFFLINE_CONTRACT',
+          type: 'boolean',
+        },
+      ]
 
       if (!collectedBy) {
         errorObj[`collected_by`] = `payment.collected_by must be present in ${constants.SEARCH}`
       } else if (!allowedCollectedByValues.includes(collectedBy)) {
         errorObj['collected_by'] = `Invalid value for collected_by, should be either of ${allowedCollectedByValues}`
       } else {
-        terms?.push({ code: 'STATIC_TERMS', type: 'url' })
-
         if (collectedBy == 'BPP') terms?.push({ code: 'DELAY_INTEREST', type: 'amount' })
         else {
           terms?.push({ code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' })

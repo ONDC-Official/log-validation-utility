@@ -495,7 +495,7 @@ export const validatePaymentsObject = (payments: any, action: string) => {
   try {
     logger.info(`checking payment object in /${action}`)
     const errorObj: any = {}
-    const mainPaymentObjectCount = 0
+    let mainPaymentObjectCount = 0
 
     if (_.isEmpty(payments)) errorObj.payments = `payments array is missing or empty in ${action}`
     else {
@@ -531,6 +531,7 @@ export const validatePaymentsObject = (payments: any, action: string) => {
             errorObj.missingTimeRange = `Missing time range for payment at index ${index}`
           }
         } else {
+          mainPaymentObjectCount++
           const terms = [
             { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' },
             {
@@ -539,11 +540,15 @@ export const validatePaymentsObject = (payments: any, action: string) => {
               value: ['INVOICE_RECEIPT', 'Delivery'],
             },
             { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
-            // { code: 'STATIC_TERMS', type: 'url' },
+            { code: 'STATIC_TERMS', type: 'url' },
             { code: 'COURT_JURISDICTION', type: 'string' },
             { code: 'DELAY_INTEREST', type: 'amount' },
             { code: 'SETTLEMENT_AMOUNT', type: 'amount' },
             { code: 'SETTLEMENT_TYPE', type: 'enum', value: ['upi', 'neft', 'rtgs'] },
+            {
+              code: 'OFFLINE_CONTRACT',
+              type: 'boolean',
+            },
           ]
 
           if (!payment?.collected_by) {

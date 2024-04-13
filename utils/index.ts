@@ -3,6 +3,11 @@ import _ from 'lodash'
 import { logger } from '../shared/logger'
 import constants, { statusArray } from '../constants'
 import schemaValidator from '../shared/schemaValidator'
+import data from '../constants/AreacodeMap.json'
+import { reasonCodes } from '../constants/reasonCode'
+import { InputObject } from '../shared/interface'
+import { setValue } from '../shared/dao'
+export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
 
 export const getObjValues = (obj: any) => {
   let values = ''
@@ -89,7 +94,6 @@ export const checkFISContext = (
   }
 
   if (data.action != path) {
-    console.log('data.action', data.action, path)
     errObj.action_err = `context.action should be ${path}`
   }
 
@@ -136,6 +140,48 @@ export const checkMobilityContext = (
   }
 
   if (!data.ttl) {
+    errObj.ttl_err = 'ttl is required in the context'
+  } else {
+    const ttlRegex = /^PT(\d+M|\d+H\d+M|\d+H|\d+S)$/
+    if (!ttlRegex.test(data.ttl)) {
+      errObj.ttl_err = 'Invalid TTL format. Should be in the format PT10M.'
+    }
+  }
+
+  if (data.timestamp) {
+    const date = data.timestamp
+    const result = timestampCheck(date)
+    if (result && result.err === 'FORMAT_ERR') {
+      errObj.timestamp_err = 'Timestamp not in RFC 3339 (YYYY-MM-DDTHH:MN:SS.MSSZ) Format'
+    } else if (result && result.err === 'INVLD_DT') {
+      errObj.timestamp_err = 'Timestamp should be in date-time format'
+    }
+  }
+
+  if (_.isEmpty(errObj)) {
+    const result = { valid: true, SUCCESS: 'Context Valid' }
+    return result
+  } else {
+    const result = { valid: false, ERRORS: errObj }
+    return result
+  }
+}
+
+export const checkMetroContext = (
+  data: { transaction_id: string; message_id: string; action: string; ttl: string; timestamp: string },
+  path: any,
+) => {
+  if (!data) return
+  const errObj: any = {}
+  if (data.transaction_id === data.message_id) {
+    errObj.id_err = "transaction_id and message id can't be same"
+  }
+
+  if (data.action != path) {
+    errObj.action_err = `context.action should be ${path}`
+  }
+
+  if (!data.ttl) {
     {
       errObj.ttl_err = `ttl should be present in context`
     }
@@ -167,24 +213,28 @@ const validate_schema_for_retail_json = (vertical: string, api: string, data: an
 }
 
 export const validateSchema = (domain: string, api: string, data: any) => {
-  logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
-  const errObj: any = {}
+  try {
+    logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
+    const errObj: any = {}
 
-  const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
+    const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
 
-  const datavld = schmaVldtr
-  if (datavld.status === 'fail') {
-    const res = datavld.errors
-    let i = 0
-    const len = res.length
-    while (i < len) {
-      const key = `schemaErr${i}`
-      errObj[key] = `${res[i].details} ${res[i].message}`
-      i++
-    }
+    const datavld = schmaVldtr
+    if (datavld.status === 'fail') {
+      const res = datavld.errors
+      let i = 0
+      const len = res.length
+      while (i < len) {
+        const key = `schemaErr${i}`
+        errObj[key] = `${res[i].details} ${res[i].message}`
+        i++
+      }
 
-    return errObj
-  } else return 'error'
+      return errObj
+    } else return 'error'
+  } catch (e: any) {
+    logger.error(`Some error occured while validating schema, ${e.stack}`)
+  }
 }
 
 const getDecimalPrecision = (numberString: string) => {
@@ -244,6 +294,9 @@ export const checkTagConditions = (message: any, context: any) => {
 
       const modeTag = catalogIncTags.list.find((tag: { code: string; value: string }) => tag.code === 'mode')
 
+      if (modeTag) {
+        setValue('multiIncSearch', 'true')
+      }
       if (modeTag && modeTag.value !== 'start' && modeTag.value !== 'stop') {
         tags.push('/message/intent/tags/list/value should be one of start or stop')
       }
@@ -271,7 +324,6 @@ export const checkTagConditions = (message: any, context: any) => {
   } else {
     tags.push('/message/intent should have a required property tags')
   }
-
   return tags.length ? tags : null
 }
 
@@ -372,11 +424,13 @@ export const isObjectEqual = (obj1: any, obj2: any, parentKey: string = ''): str
 }
 
 export function checkItemTag(item: any, itemArray: any[]) {
-  for (const tag of item.tags) {
-    if (tag.code === 'parent') {
-      for (const list of tag.list) {
-        if (list.code === 'id' && !itemArray.includes(list.value)) {
-          return true
+  if (item.tags) {
+    for (const tag of item.tags) {
+      if (tag.code === 'parent') {
+        for (const list of tag.list) {
+          if (list.code === 'id' && !itemArray.includes(list.value)) {
+            return true
+          }
         }
       }
     }
@@ -411,6 +465,7 @@ export function deepEqual(obj1: any, obj2: any): boolean {
 }
 
 export const compareCoordinates = (coord1: any, coord2: any) => {
+  if (!coord1 || !coord2) return false
   // Remove all spaces from the coordinates
   const cleanCoord1 = coord1.replace(/\s/g, '')
   const cleanCoord2 = coord2.replace(/\s/g, '')
@@ -432,17 +487,19 @@ const replaceValueType = (key: any, value: any): number => {
 
 export const checkBppIdOrBapId = (input: string, type?: string) => {
   try {
-    console.log('input', input)
     if (!input) {
-      console.log('input', input)
-
       return `${type} Id is not present`
     }
 
-    if (input?.includes('https://') || input.includes('www') || input.includes('https:') || input.includes('http'))
+    if (
+      input?.startsWith('https://') ||
+      input.startsWith('www') ||
+      input.startsWith('https:') ||
+      input.startsWith('http')
+    )
       return `context/${type}_id should not be a url`
+    return
   } catch (e) {
-    console.log('e', e)
     return e
   }
 }
@@ -597,23 +654,28 @@ function findTaxNumber(termObject: any): string | undefined {
 
 function findGSTNumber(tags: any[], termToMatch: string): string | undefined {
   // Find the object with the specified term
-  const termObject = tags.find((tag) => tag.code === termToMatch)
+  try {
+    const termObject = tags.find((tag) => tag.code === termToMatch)
 
-  // If termObject is found, check the list for the GST number
-  if (termObject) {
-    const taxNumberObject = termObject.list.find((item: { code: string }) => item.code === 'tax_number')
+    // If termObject is found, check the list for the GST number
+    if (termObject) {
+      const taxNumberObject = termObject.list.find((item: { code: string }) => item.code === 'tax_number')
 
-    // If taxNumberObject is found, return the GST number
-    if (taxNumberObject) {
-      const value = taxNumberObject.value
+      // If taxNumberObject is found, return the GST number
+      if (taxNumberObject) {
+        const value = taxNumberObject.value
 
-      if (typeof value === 'string' && value.length <= 15) {
-        return value // Return the GST number
+        if (typeof value === 'string' && value.length <= 15) {
+          return value // Return the GST number
+        }
       }
     }
-  }
 
-  return undefined // GST number not found or not valid
+    return undefined // GST number not found or not valid
+  } catch (error: any) {
+    logger.error(`Error in finding GST number: ${error.stack}`)
+  }
+  return undefined
 }
 
 export function areTimestampsLessThanOrEqualTo(timestamp1: string, timestamp2: string): boolean {
@@ -624,7 +686,7 @@ export function areTimestampsLessThanOrEqualTo(timestamp1: string, timestamp2: s
 
 export function validateStatusOrderAndTimestamp(set: any) {
   const errObj: any = {}
-  let previousTimestamp = null
+  let previousTimestamp: any = null
   let previousStatusIndex = -1
 
   for (const obj of set) {
@@ -661,6 +723,10 @@ export const isValidEmail = (value: string): boolean => {
 
 export const isValidPhoneNumber = (value: string): boolean => {
   const phoneRegex = /^(\d{10}|\d{11})$/
+  if (value.startsWith('0')) {
+    value = value.substring(1)
+  }
+
   const val = value?.replace(/[^\d]/g, '')
   return phoneRegex.test(val)
 }
@@ -700,7 +766,6 @@ export const checkIdAndUri = (id: string, uri: string, type: string) => {
 
     return errors.length > 0 ? errors.join(', ') : null
   } catch (e: any) {
-    console.error('Error:', e)
     return e.message || 'An error occurred during validation'
   }
 }
@@ -733,6 +798,270 @@ export function compareObjects(obj1: any, obj2: any, parentKey?: string): string
       errors.push(`Key '${fullKey}' mismatch: ${obj1[key]} !== ${obj2[key]}`)
     }
   }
+
+  return errors
+}
+
+export const compareSTDwithArea = (pincode: number, std: string): boolean => {
+  return data.some((e: any) => e.Pincode === pincode && e['STD Code'] === std)
+}
+
+export const checkMandatoryTags = (i: string, items: any, errorObj: any, categoryJSON: any, categoryName: string) => {
+  items.forEach((item: any, index: number) => {
+    let attributeTag = null
+    let originTag = null
+    for (const tag of item.tags) {
+      originTag = tag.code === 'origin' ? tag : originTag
+      attributeTag = tag.code === 'attribute' ? tag : attributeTag
+    }
+
+    if (!originTag) {
+      logger.error(`Origin tag fields are missing for ${categoryName} item[${index}]`)
+      const key = `missingOriginTag[${i}][${index}]`
+      errorObj[key] = `Origin tag fields are missing for ${categoryName} item[${index}]`
+    }
+
+    if (!attributeTag && categoryName !== 'Grocery') {
+      logger.error(`Attribute tag fields are missing for ${categoryName} item[${index}]`)
+      const key = `missingAttributeTag[${i}][${index}]`
+      errorObj[key] = `Attribute tag fields are missing for ${categoryName} item[${index}]`
+      return
+    }
+    if (attributeTag) {
+      const tags = attributeTag.list
+      const ctgrID = item.category_id
+
+      if (categoryJSON.hasOwnProperty(ctgrID)) {
+        logger.info(`Checking for item tags for ${categoryName} item[${index}]`)
+        const mandatoryTags = categoryJSON[ctgrID]
+        for (const tagName in mandatoryTags) {
+          if (mandatoryTags.hasOwnProperty(tagName)) {
+            const tagInfo = mandatoryTags[tagName]
+            const isTagMandatory = tagInfo.mandatory
+            if (isTagMandatory) {
+              let tagValue: any = null
+              let originalTag:any = null
+              const tagFound = tags.some((tag: any) => {
+                const res = tag.code.toLowerCase() === tagName.toLowerCase()
+                if (res) {
+                  tagValue = tag.value.toLowerCase()
+                  originalTag = tag.value
+                }
+
+                return res
+              })
+              if (!tagFound) {
+                logger.error(`Mandatory tag field [${tagName}] missing for ${categoryName} item[${index}]`)
+                const key = `missingTagsItem[${i}][${index}] : ${tagName}`
+                errorObj[key] = `Mandatory tag field [${tagName}] missing for ${categoryName} item[${index}]`
+              } else {
+                if (
+                  tagInfo.value.length > 0 &&
+                  !tagInfo.value.includes(originalTag) &&
+                  !tagInfo.value.includes(tagValue) 
+                ) {
+                  logger.error(`The item value can only be of possible values.`)
+                  const key = `InvldValueforItem[${i}][${index}] : ${tagName}`
+                  errorObj[key] =
+                    `Invalid item value: [${originalTag}]. It can only be of possible values as provided in https://github.com/ONDC-Official/protocol-network-extension/tree/main/enums/retail.`
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  })
+  return errorObj
+}
+
+export const checkDuplicateParentIdItems = (items: any) => {
+  const map: any = {}
+
+  items.forEach((item: any) => {
+    const parent_item_id = item.parent_item_id
+    if (parent_item_id) {
+      if (!map[parent_item_id]) {
+        map[parent_item_id] = [item]
+      } else {
+        map[parent_item_id].push(item)
+      }
+    }
+  })
+  return map
+}
+
+export const checkForDuplicates = (arr: any, errorObj: any) => {
+  let index = 0
+  const seen = new Set()
+  for (const value of arr) {
+    const stringValue = JSON.stringify(value)
+    if (seen.has(stringValue)) {
+      const key = `DuplicateVarient[${index}]`
+      errorObj[key] = `Duplicate varient found for item in bpp/providers/items`
+      logger.error(`Error: Duplicate varient of item found in bpp/providers/items`)
+      index++
+    }
+    seen.add(stringValue)
+  }
+}
+
+export const sumQuoteBreakUp = (quote: any) => {
+  logger.info(`Checking for quote breakup price sum and total Price`)
+  const totalPrice = Number(quote.price.value)
+  let currentPrice = 0
+  quote.breakup.forEach((item: any) => {
+    currentPrice += Number(item.price.value)
+  })
+  return Math.round(totalPrice) === Math.round(currentPrice)
+}
+
+export const findVariantPath = (arr: any) => {
+  const groupedByItemID = _.groupBy(arr, 'id')
+
+  // Map over the grouped items and collect attribute paths for each item_id into an array
+  const variantPath = _.map(groupedByItemID, (group, item_id) => {
+    let paths = _.chain(group).flatMap('tags').filter({ code: 'attr' }).map('list[0].value').value()
+    return { item_id, paths }
+  })
+
+  return variantPath
+}
+
+export const findValueAtPath = (path: string, item: any) => {
+  const key = path.split('.').pop()
+  let value = null
+  item.tags[1].list.forEach((item: any) => {
+    if (item.code === key) {
+      value = item.value
+    }
+  })
+
+  return { key, value }
+}
+
+export const mapCancellationID = (cancelled_by: string, reason_id: string, errorObj: any) => {
+  logger.info(`Mapping cancellationID with valid ReasonID`)
+  if (reason_id in reasonCodes && reasonCodes[reason_id].USED_BY.includes(cancelled_by)) {
+    logger.info(`CancellationID ${reason_id} mapped with valid ReasonID for ${cancelled_by}`)
+    return true
+  } else {
+    logger.error(`Invalid CancellationID ${reason_id} or not allowed for ${cancelled_by}`)
+    errorObj['invldCancellationID'] = `Invalid CancellationID ${reason_id} or not allowed for ${cancelled_by}`
+    return false
+  }
+}
+
+export const payment_status = (payment: any) => {
+  if (payment.status == 'PAID') {
+    if (!payment.params.transaction_id) {
+      return false
+    }
+  }
+  return true
+}
+
+export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAtConfirm: number, errorObj: any) => {
+  for (let obj of fulfillmentArr) {
+    let quoteTrailSum = 0
+    const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
+    for (let item of quoteTrailItems) {
+      for (let val of item.list) {
+        if (val.code === 'value') {
+          quoteTrailSum += Math.abs(val.value)
+        }
+      }
+    }
+    if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
+      const key = `invldQuoteTrailPrices`
+      errorObj[key] =
+        `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM}`
+      logger.error(
+        `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM} `,
+      )
+    }
+  }
+}
+
+export const checkQuoteTrail = (quoteTrailItems: any[], errorObj: any, selectPriceMap: any, itemSet: any) => {
+  try {
+    for (let item of quoteTrailItems) {
+      let value = null
+      let itemValue = null
+      let itemID = null
+      let type = null
+      for (let val of item.list) {
+        if (val.code === 'id') {
+          itemID = val.value
+          value = selectPriceMap.get(val.value)
+        } else if (val.code === 'value') {
+          itemValue = Math.abs(parseFloat(val.value))
+        } else if (val.code === 'type') {
+          type = val.value
+        }
+      }
+      if (value && itemValue && value !== itemValue && type === 'item') {
+        const key = `invalidPrice[${itemID}]`
+        errorObj[key] =
+          `Price mismatch for  [${itemID}] provided in quote object '[${value}]'. Should be same as in quote of ${constants.ON_SELECT}`
+      }
+      if (!itemSet.has(itemID) && type === 'item') {
+        const key = `invalidItemID[${itemID}]`
+        errorObj[key] = `Item ID [${itemID}] not present in items array`
+      }
+    }
+  } catch (error: any) {
+    logger.error(error)
+  }
+}
+
+function deepCompare(obj1: any, obj2: any): boolean {
+  if (typeof obj1 !== 'object' || typeof obj2 !== 'object') {
+    return obj1 === obj2
+  }
+
+  const keys1 = Object.keys(obj1)
+  const keys2 = Object.keys(obj2)
+
+  if (keys1.length !== keys2.length) {
+    return false
+  }
+
+  for (const key of keys1) {
+    if (!keys2.includes(key) || !deepCompare(obj1[key], obj2[key])) {
+      return false
+    }
+  }
+
+  return true
+}
+
+export function compareQuoteObjects(obj1: InputObject, obj2: InputObject, api1: string, api2: string): string[] {
+  const errors: string[] = []
+
+  // Compare root level properties
+  const rootKeys1 = Object.keys(obj1)
+  const rootKeys2 = Object.keys(obj2)
+
+  if (rootKeys1.length !== rootKeys2.length) {
+    errors.push('Root level properties mismatch')
+    return errors
+  }
+
+  // Compare breakup array
+  obj1.breakup.forEach((item1) => {
+    const matchingItem = obj2.breakup.find(
+      (item2) =>
+        item1['@ondc/org/item_id'] === item2['@ondc/org/item_id'] &&
+        item1['@ondc/org/title_type'] === item2['@ondc/org/title_type'],
+    )
+
+    if (!matchingItem || !deepCompare(item1, matchingItem)) {
+      errors.push(
+        `Mismatch found for item with item_id ${item1['@ondc/org/item_id']} while comparing quote object of ${api1} and ${api2}`,
+      )
+    }
+  })
 
   return errors
 }

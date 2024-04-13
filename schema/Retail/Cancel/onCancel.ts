@@ -82,10 +82,12 @@ export const onCancelSchema = {
             id: {
               type: 'string',
               minLength: 1,
+              pattern: '^[a-zA-Z0-9-]{1,32}$|^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+              errorMessage: 'Order ID should be alphanumeric upto 32 letters max or UUID',
             },
             state: {
               type: 'string',
-              const: 'Cancelled',
+              enum: ['Cancelled'],
             },
             provider: {
               type: 'object',
@@ -240,7 +242,7 @@ export const onCancelSchema = {
                           code: {
                             type: 'string',
                             minLength: 1,
-                            const: 'Cancelled',
+                            enum: ['Cancelled', 'RTO-Initiated'],
                           },
                         },
                         required: ['code'],
@@ -442,6 +444,7 @@ export const onCancelSchema = {
                       properties: {
                         code: {
                           type: 'string',
+                          enum: ['cancel_request', 'igm_request', 'precancel_state', 'quote_trail'],
                         },
                         list: {
                           type: 'array',
@@ -450,6 +453,19 @@ export const onCancelSchema = {
                             properties: {
                               code: {
                                 type: 'string',
+                                enum: [
+                                  'reason_id',
+                                  'initiated_by',
+                                  'fulfillment_state',
+                                  'updated_at',
+                                  'retry_count',
+                                  'rto_id',
+                                  'id',
+                                  'currency',
+                                  'value',
+                                  'type',
+                                  'subtype'
+                                ],
                               },
                               value: {
                                 type: 'string',
@@ -461,9 +477,10 @@ export const onCancelSchema = {
                       },
                       required: ['code', 'list'],
                     },
+                    additionalProperties: false,
                   },
                 },
-                required: ['id', '@ondc/org/provider_name', 'state', 'type', 'tracking', 'start', 'end', 'tags'],
+                required: ['id', 'state', 'type'],
               },
             },
             quote: {
@@ -477,6 +494,7 @@ export const onCancelSchema = {
                     },
                     value: {
                       type: 'string',
+                      pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                     },
                   },
                   required: ['currency', 'value'],
@@ -498,9 +516,6 @@ export const onCancelSchema = {
                         },
                         required: ['count'],
                       },
-                      title: {
-                        type: 'string',
-                      },
                       '@ondc/org/title_type': {
                         type: 'string',
                       },
@@ -512,6 +527,7 @@ export const onCancelSchema = {
                           },
                           value: {
                             type: 'string',
+                            pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                           },
                         },
                         required: ['currency', 'value'],
@@ -527,6 +543,7 @@ export const onCancelSchema = {
                               },
                               value: {
                                 type: 'string',
+                                pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                               },
                             },
                             required: ['currency', 'value'],
@@ -535,7 +552,7 @@ export const onCancelSchema = {
                         required: ['price'],
                       },
                     },
-                    required: ['@ondc/org/item_id', 'title', '@ondc/org/title_type', 'price'],
+                    required: ['@ondc/org/item_id', '@ondc/org/title_type', 'price'],
                   },
                 },
                 ttl: {
@@ -567,7 +584,7 @@ export const onCancelSchema = {
                       type: 'string',
                     },
                   },
-                  required: ['currency', 'transaction_id', 'amount'],
+                  required: ['currency', 'amount'],
                 },
                 status: {
                   type: 'string',
@@ -617,17 +634,6 @@ export const onCancelSchema = {
                         type: 'string',
                       },
                     },
-                    required: [
-                      'settlement_counterparty',
-                      'settlement_phase',
-                      'beneficiary_name',
-                      'settlement_type',
-                      'upi_address',
-                      'settlement_bank_account_no',
-                      'settlement_ifsc_code',
-                      'bank_name',
-                      'branch_name',
-                    ],
                   },
                 },
               },
@@ -663,6 +669,7 @@ export const onCancelSchema = {
             'created_at',
             'updated_at',
           ],
+          additionalProperties: false,
         },
       },
       required: ['order'],

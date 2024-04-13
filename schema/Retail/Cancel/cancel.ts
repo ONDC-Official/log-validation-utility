@@ -82,6 +82,8 @@ export const cancelSchema = {
         order_id: {
           type: 'string',
           minLength: 1,
+          pattern: '^[a-zA-Z0-9-]{1,32}$|^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+          errorMessage: 'Order ID should be alphanumeric upto 32 letters max or UUID',
         },
         cancellation_reason_id: {
           type: 'string',
@@ -103,7 +105,7 @@ export const cancelSchema = {
           required: ['name', 'short_desc'],
         },
       },
-      required: ['order_id', 'cancellation_reason_id', 'descriptor'],
+      required: ['order_id', 'cancellation_reason_id'],
     },
   },
   required: ['context', 'message'],

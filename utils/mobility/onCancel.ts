@@ -280,7 +280,7 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string, versio
       logger.info(`Checking quote details in /${constants.ON_CANCEL}`)
       const quote = onCancel.quote
       const quoteBreakup = quote.breakup
-      const requiredBreakupItems = ['BASE_FARE', 'DISTANCE_FARE', 'CURRENT_FARE_CHARGE']
+      const requiredBreakupItems = ['BASE_FARE', 'DISTANCE_FARE']
 
       if (sequence == 'soft_on_cancel') {
         requiredBreakupItems.push('CANCELLATION_CHARGES')

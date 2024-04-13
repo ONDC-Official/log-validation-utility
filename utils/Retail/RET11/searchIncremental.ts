@@ -1,5 +1,5 @@
 import { logger } from '../../../shared/logger'
-import { setValue } from '../../../shared/dao'
+import { getValue, setValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
 import {
   validateSchema,
@@ -9,25 +9,24 @@ import {
   hasProperty,
   checkContext,
 } from '../../../utils'
+import _ from 'lodash'
 
 export const checkSearchIncremental = (data: any, msgIdSet: any) => {
   try {
+    const errorObj: any = {}
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.INC_SEARCH]: 'Json cannot be empty' }
+      errorObj[ApiSequence.INC_SEARCH] = 'JSON cannot be empty'
+      return
     }
 
     const { message, context } = data
-
     if (!message || !context || !message.intent || isObjectEmpty(message) || isObjectEmpty(message.intent)) {
       return { missingFields: '/context, /message, /intent or /message/intent is missing or empty' }
     }
-
-    const schemaValidation = validateSchema(context.domain.split(':')[1] || 'RET11', constants.SEARCH, data)
+    const schemaValidation = validateSchema(context.domain.split(':')[1] || 'RET11', constants.INC_SEARCH, data)
     const contextRes: any = checkContext(context, constants.SEARCH)
     setValue(`${ApiSequence.INC_SEARCH}_context`, context)
     msgIdSet.add(context.message_id)
-
-    const errorObj: any = {}
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
@@ -35,6 +34,9 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
 
     if (!contextRes?.valid) {
       Object.assign(errorObj, contextRes.ERRORS)
+    }
+    if (_.isEqual(data.context, getValue(`domain`))) {
+      errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
     if (context.city !== '*') {
@@ -73,7 +75,10 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
     }
 
     if (message.intent?.tags) {
-      errorObj.intent = { ...errorObj.intent, tags: checkTagConditions(message, context) }
+      let tags = checkTagConditions(message, context)
+      if (tags) {
+        errorObj.intent = { ...errorObj.intent, tags }
+      }
     } else {
       errorObj.intent = '/message/intent should have a required property tags'
     }

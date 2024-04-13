@@ -221,11 +221,6 @@ export const validateQuote = (quote: any, action: string) => {
     if (new Set(currencies).size !== 1) {
       errorObj.multipleCurrencies = 'Currency must be the same for all items in the quote breakup'
     }
-
-    // const regex = /^PT(\d+H)?(\d+M)?(\d+S)?$/
-    // if (quote.ttl && regex.test(quote.ttl)) {
-    //   errorObj.missingTTL = 'TTL must be in format'
-    // }
   } catch (error: any) {
     logger.error(`!!Error while checking quote details in /${action}`, error.stack)
   }

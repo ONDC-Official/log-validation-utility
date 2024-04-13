@@ -5,11 +5,11 @@ import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, checkBppIdOrBapId } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkCancel = (data: any) => {
+export const checkCancel = (data: any, msgIdSet: any) => {
   const cnclObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.CANCEL]: 'Json cannot be empty' }
+      return { [ApiSequence.CANCEL]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -35,6 +35,13 @@ export const checkCancel = (data: any) => {
       Object.assign(cnclObj, contextRes.ERRORS)
     }
 
+    if (!msgIdSet.add(context.message_id)) {
+      cnclObj['messageId'] = 'message_id should be unique'
+    }
+
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      cnclObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+    }
     setValue(`${ApiSequence.CANCEL}`, data)
 
     try {
@@ -93,7 +100,7 @@ export const checkCancel = (data: any) => {
     }
 
     try {
-      logger.info('Checking the validity of cancellation reason id')
+      logger.info('Checking the validity of cancellation reason id for buyer')
       if (!buyerCancellationRid.has(cancel.cancellation_reason_id)) {
         logger.info(`cancellation_reason_id should be a valid cancellation id (buyer app initiated)`)
 

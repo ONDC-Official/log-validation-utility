@@ -85,8 +85,20 @@ export const onSelectSchema = {
                   type: 'string',
                   minLength: 1,
                 },
+                locations: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    properties: {
+                      id: {
+                        type: 'string',
+                      },
+                    },
+                    required: ['id'],
+                  },
+                },
               },
-              required: ['id'],
+              required: ['id', 'locations'],
             },
             items: {
               type: 'array',
@@ -104,31 +116,10 @@ export const onSelectSchema = {
                   parent_item_id: {
                     type: 'string',
                   },
-                  tags: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        code: {
-                          type: 'string',
-                        },
-                        list: {
-                          type: 'array',
-                          items: {
-                            type: 'object',
-                            properties: {
-                              code: {
-                                type: 'string',
-                              },
-                              value: {
-                                type: 'string',
-                              },
-                            },
-                            required: ['code', 'value'],
-                          },
-                        },
-                      },
-                      required: ['code', 'list'],
+                  quantity: {
+                    type: 'object',
+                    properties: {
+                      count: { type: 'integer' },
                     },
                   },
                 },
@@ -154,6 +145,7 @@ export const onSelectSchema = {
                   },
                   '@ondc/org/TAT': {
                     type: 'string',
+                    format: 'duration',
                   },
                   state: {
                     type: 'object',
@@ -186,6 +178,7 @@ export const onSelectSchema = {
                     },
                     value: {
                       type: 'string',
+                      pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                     },
                   },
                   required: ['currency', 'value'],
@@ -221,6 +214,7 @@ export const onSelectSchema = {
                           },
                           value: {
                             type: 'string',
+                            pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                           },
                         },
                         required: ['currency', 'value'],
@@ -263,6 +257,7 @@ export const onSelectSchema = {
                               },
                               value: {
                                 type: 'string',
+                                pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                               },
                             },
                             required: ['currency', 'value'],

@@ -4,12 +4,17 @@ export default Object.freeze({
   DB_PATH: 'dbfiles',
   DECIMAL_PRECISION: 6,
   ORDER_PICKED: 'Order-picked-up',
+  ORDER_PACKED: 'Packed',
+  ORDER_OUT_FOR_DELIVERY: 'Out-for-delivery',
   ORDER_DELIVERED: 'Order-delivered',
   SEARCH: 'search',
+  INC_SEARCH: 'inc_search',
   ON_SEARCH: 'on_search',
   ON_SEARCHINC: 'on_search_inc',
   SELECT: 'select',
   ON_SELECT: 'on_select',
+  SELECT_OUT_OF_STOCK: 'select_out_of_stock',
+  ON_SELECT_OUT_OF_STOCK: 'on_select_out_of_stock',
   CONFIRM: 'confirm',
   ON_CONFIRM: 'on_confirm',
   INIT: 'init',
@@ -20,6 +25,7 @@ export default Object.freeze({
   ON_STATUS: 'on_status',
   CANCEL: 'cancel',
   ON_CANCEL: 'on_cancel',
+  ON_CANCEL_RTO: 'on_cancel_rto',
   TRACK: 'track',
   ON_TRACK: 'on_track',
   SUPPORT: 'support',
@@ -28,6 +34,8 @@ export default Object.freeze({
   RET_ONISSUE: 'on_issue',
   RET_ISSUE_STATUS: 'issue_status',
   RET_ONISSUE_STATUS: 'on_issue_status',
+  RECEIVER_RECON: 'receiver_recon',
+  ON_RECEIVER_RECON: 'on_receiver_recon',
 })
 
 export const ApiSequence = {
@@ -47,10 +55,20 @@ export const ApiSequence = {
   ON_TRACK: 'on_track',
   STATUS: 'status',
   ON_STATUS_PENDING: 'on_status_pending',
+  ON_STATUS_PACKED: 'on_status_packed',
   ON_STATUS_PICKED: 'on_status_picked',
+  ON_STATUS_OUT_FOR_DELIVERY: 'on_status_out_for_delivery',
   ON_STATUS_DELIVERED: 'on_status_delivered',
   UPDATE: 'update',
+  UPDATE_SETTLEMENT: 'update_settlement',
   ON_UPDATE: 'on_update',
+  ON_UPDATE_INTERIM: 'on_update_interim',
+  ON_UPDATE_PICKED: 'on_update_picked',
+  ON_UPDATE_DELIVERED: 'on_update_delivered',
+  ON_UPDATE_APPROVAL: 'on_update_approval',
+  ON_UPDATE_LIQUIDATED: 'on_update_liquidated',
+  SELECT_OUT_OF_STOCK: 'select_out_of_stock',
+  ON_SELECT_OUT_OF_STOCK: 'on_select_out_of_stock',
 }
 
 export const FisApiSequence = {
@@ -148,6 +166,33 @@ export const mobilitySequence = {
   ON_STATUS: 'on_status',
 }
 
+export const metroSequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SELECT: 'select',
+  ON_SELECT: 'on_select',
+  INIT: 'init',
+  ON_INIT: 'on_init',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  CANCEL: 'cancel',
+  SOFT_CANCEL: 'soft_cancel',
+  ON_CANCEL: 'on_cancel',
+  SOFT_ON_CANCEL: 'soft_on_cancel',
+  UPDATE: 'update',
+  ON_UPDATE: 'on_update',
+  STATUS: 'status',
+  ON_STATUS: 'on_status',
+}
+
+export const mobilityFlow: any = {
+  AIRLINES: 'airlines',
+  METRO: 'metro',
+  ONDEMAND: 'on-demand',
+  INTERCITY: 'intercity',
+  INTRACITY: 'intracity',
+}
+
 export const formHeadingsFis: any = {
   INVOICE_BASED_LOAN: {
     on_search: ['Organization Information'],
@@ -219,6 +264,11 @@ export const IGMApiSequence = {
   LSP_ON_ISSUE_STATUS: 'lsp_on_issue_status',
 }
 
+export const RSFapiSequence = {
+  RECEIVER_RECON: 'receiver_recon',
+  ON_RECEIVER_RECON: 'on_receiver_recon',
+}
+
 export const actionsArray = [
   'search',
   'on_search',
@@ -249,6 +299,25 @@ export const statusArray = [
 ]
 
 export const buyerCancellationRid = new Set(['001', '003', '006', '009', '010'])
+export const buyerReturnId = new Set(['001', '002', '003', '004', '005'])
+export const rtoCancellationRid = new Set(['003', '006', '009', '010', '011', '012', '013', '014', '015', '016', '017'])
+
+export const sellerCancellationRid = new Set([
+  '002',
+  '005',
+  '008',
+  '011',
+  '012',
+  '013',
+  '014',
+  '015',
+  '016',
+  '017',
+  '018',
+  '019',
+  '020',
+  '021',
+])
 
 export const retailDomains = [
   'ONDC:RET10',

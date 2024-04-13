@@ -86,7 +86,9 @@ export const confirmSchema = {
           properties: {
             id: {
               type: 'string',
-              minLength: 1,
+              minLength: 2,
+              pattern: '^[a-zA-Z0-9-]{1,32}$|^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+              errorMessage: 'Order ID should be alphanumeric upto 32 letters max or UUID',
             },
             state: {
               type: 'string',
@@ -340,6 +342,7 @@ export const confirmSchema = {
                     },
                     value: {
                       type: 'string',
+                      pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                     },
                   },
                   required: ['currency', 'value'],
@@ -380,6 +383,7 @@ export const confirmSchema = {
                           value: {
                             type: 'string',
                             minLength: 1,
+                            pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                           },
                         },
                         required: ['currency', 'value'],
@@ -400,6 +404,7 @@ export const confirmSchema = {
                               value: {
                                 type: 'string',
                                 minLength: 1,
+                                pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                               },
                             },
                             required: ['currency', 'value'],
@@ -467,16 +472,19 @@ export const confirmSchema = {
                       type: 'string',
                     },
                   },
-                  required: ['currency', 'transaction_id', 'amount'],
+                  required: ['currency', 'amount'],
                 },
                 status: {
                   type: 'string',
+                  enum: ['PAID', 'NOT-PAID'],
                 },
                 type: {
                   type: 'string',
+                  enum: ['ON-ORDER', 'ON-FULFILLMENT'],
                 },
                 collected_by: {
                   type: 'string',
+                  enum: ['BAP', 'BPP'],
                 },
                 '@ondc/org/buyer_app_finder_fee_type': {
                   type: 'string',
@@ -486,6 +494,7 @@ export const confirmSchema = {
                 },
                 '@ondc/org/settlement_basis': {
                   type: 'string',
+                  enum: ['shipment', 'delivery', 'return_window_expiry'],
                 },
                 '@ondc/org/settlement_window': {
                   type: 'string',
@@ -503,40 +512,67 @@ export const confirmSchema = {
                       },
                       settlement_phase: {
                         type: 'string',
+                        const: 'sale-amount',
                       },
                       settlement_type: {
                         type: 'string',
+                        enum: ['upi', 'neft', 'rtgs'],
                       },
-                      upi_address: {
-                        type: 'string',
-                      },
+                      upi_address: { type: 'string' },
                       settlement_bank_account_no: {
                         type: 'string',
                       },
                       settlement_ifsc_code: {
                         type: 'string',
                       },
+                      bank_name: { type: 'string' },
                       beneficiary_name: {
                         type: 'string',
                       },
-                      bank_name: {
-                        type: 'string',
-                      },
-                      branch_name: {
-                        type: 'string',
-                      },
+                      branch_name: { type: 'string' },
                     },
-                    required: [
-                      'settlement_counterparty',
-                      'settlement_phase',
-                      'settlement_type',
-                      'upi_address',
-                      'settlement_bank_account_no',
-                      'settlement_ifsc_code',
-                      'beneficiary_name',
-                      'bank_name',
-                      'branch_name',
+                    allOf: [
+                      {
+                        if: {
+                          properties: {
+                            settlement_type: {
+                              const: 'upi',
+                            },
+                          },
+                        },
+                        then: {
+                          properties: {
+                            upi_address: {
+                              type: 'string',
+                            },
+                          },
+                          required: ['upi_address'],
+                        },
+                      },
+                      {
+                        if: {
+                          properties: {
+                            settlement_type: {
+                              enum: ['rtgs', 'neft'],
+                            },
+                          },
+                        },
+                        then: {
+                          properties: {
+                            settlement_bank_account_no: {
+                              type: 'string',
+                            },
+                            settlement_ifsc_code: {
+                              type: 'string',
+                            },
+                            bank_name: { type: 'string' },
+                            branch_name: { type: 'string' },
+                          },
+                          required: ['settlement_ifsc_code', 'settlement_bank_account_no', 'bank_name', 'branch_name'],
+                        },
+                      },
                     ],
+                    required: ['settlement_counterparty', 'settlement_phase', 'settlement_type'],
                   },
                 },
               },

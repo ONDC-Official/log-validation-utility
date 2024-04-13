@@ -82,6 +82,8 @@ export const statusSchema = {
         order_id: {
           type: 'string',
           minLength: 1,
+          pattern: '^[a-zA-Z0-9-]{1,32}$|^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+          errorMessage: 'Order ID should be alphanumeric upto 32 letters max or UUID'
         },
       },
       required: ['order_id'],

@@ -14,6 +14,8 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
 --data '{
     "domain": "",
     "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
         "search_full_catalog_refresh": {},
         "on_search_full_catalog_refresh": {},
@@ -25,12 +27,37 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
         "on_init": {},
         "confirm": {},
         "on_confirm": {},
-        "on_status_pending": {},
+        "update(initiated)": {},
+        "on_update(interim)":{},
         "on_status_picked": {},
+        "on_status_out_for_delivery": {},
         "on_status_delivered": {}
-    }
+    },
+    "flow":""
 }'
 ```
+
+The table below outlines the payload structure for various transaction flows in the Retail Log Validation Utility. Each flow corresponds to specific actions within the ONDC network, and the payload structure provides a clear representation of the data expected for each action. This comprehensive reference assists developers in constructing accurate and valid JSON payloads for their transactions.
+
+| Flow 1        | Flow 2                     | Flow 3                     | Flow 4     | Flow 5                     | Flow 6-a   | Flow 6-b            | Flow 6-c                   |
+| ------------- | -------------------------- | -------------------------- | ---------- | -------------------------- | ---------- | ------------------- | -------------------------- |
+| search        | search                     | search                     | search     | search                     | search     | search              | search                     |
+| on_search     | on_search                  | on_search                  | on_search  | on_search                  | on_search  | on_search           | on_search                  |
+| search_inc    | select                     | select_out_of_stock        | select     | select                     | select     | select              | select                     |
+| on_search_inc | on_select                  | on_select_out_of_stock     | on_select  | on_select                  | on_select  | on_select           | on_select                  |
+|               | init                       | select                     | init       | init                       | init       | init                | init                       |
+|               | on_init                    | on_select                  | on_init    | on_init                    | on_init    | on_init             | on_init                    |
+|               | confirm                    | init                       | confirm    | confirm                    | confirm    | confirm             | confirm                    |
+|               | on_confirm                 | on_init                    | on_confirm | on_confirm                 | on_confirm | on_confirm          | on_confirm                 |
+|               | on_status_pending          | confirm                    | cancel     | on_status_pending          | on_update  | update              | on_status_pending          |
+|               | on_status_packed           | on_confirm                 | on_cancel  | on_status_packed           | update     | on_update_interim   | on_status_packed           |
+|               | on_status_picked           | on_status_pending          |            | on_status_picked           |            | on_update_approval  | on_status_picked           |
+|               | on_status_out_for_delivery | on_status_packed           |            | on_status_out_for_delivery |            | on_update_picked    | on_status_out_for_delivery |
+|               | on_status_delivered        | on_status_picked           |            | on_cancel                  |            | update_settlement   | on_status_delivered        |
+|               |                            | on_status_out_for_delivery |            |                            |            | on_update_delivered | update                     |
+|               |                            | on_status_delivered        |            |                            |            |                     | on_update_interim          |
+|               |                            |                            |            |                            |            |                     | on_update_liquidated       |
+|               |                            |                            |            |                            |            |                     | update_settlement          |
 
 ### Sample Postman Request/Response
 
@@ -40,20 +67,15 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
 --data-raw '{
     "domain": "ONDC:RET10",
     "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
         "search_full_catalog_refresh": {
             "context": {
                 "action": "search",
                 "bap_id": "buyer-app.ondc.or",
                 "bap_uri": "https://buyer-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "a0b9f3a3-a960-4f7e-a0ca-02c30fa6fc9b",
-                "timestamp": "2023-10-25T12:00:01.160Z",
-                "transaction_id": "5c2e9202-2056-49db-9efa-8a69b262a36d",
-                "ttl": "PT30S"
+                ...
             },
            "message": {...}
         },
@@ -64,32 +86,18 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "a0b9f3a3-a960-4f7e-a0ca-02c30fa6fc9b",
-                "timestamp": "2023-10-25T12:00:40.526Z",
-                "transaction_id": "5c2e9202-2056-49db-9efa-8a69b262a36d",
-                "ttl": "PT30S"
+                ...
             },
             "message": {...}
         },
         "on_search_inc_refresh": {
             "context": {
-                "transaction_id": "0686430c-1570-440f-b494-1f526f92c55b",
-                "country": "IND",
-                "bpp_id": "seller-app.ondc.org",
-                "city": "std:080",
-                "message_id": "e9217862-0f7a-43ab-843d-7c37386115c2",
-                "core_version": "1.2.0",
-                "ttl": "PT30S",
-                "bap_id": "buyer-app.ondc.or",
-                "bpp_uri": "https://seller-app.ondc.org",
-                "domain": "ONDC:RET10",
                 "action": "on_search",
+                "bap_id": "buyer-app.ondc.or",
                 "bap_uri": "https://buyer-app.ondc.org",
-                "timestamp": "2023-10-26T17:21:07.223Z"
+                "bpp_id": "seller-app.ondc.org",
+                "bpp_uri": "https://seller-app.ondc.org",
+                ...
             },
             "message": {...}
         },
@@ -100,14 +108,7 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "e0eb6e6a-7264-474a-899d-d47fdb996ebb",
-                "timestamp": "2023-10-23T17:50:16.057Z",
-                "transaction_id": "dbd370b9-80fc-4384-9a67-5dd05aca4213",
-                "ttl": "PT30S"
+                ...
             },
             "message": {...}
         },
@@ -118,14 +119,7 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "e0eb6e6a-7264-474a-899d-d47fdb996ebb",
-                "timestamp": "2023-10-23T17:50:16.729Z",
-                "transaction_id": "dbd370b9-80fc-4384-9a67-5dd05aca4213",
-                "ttl": "PT30S"
+                ...
             },
            "message": {...}
         },
@@ -136,14 +130,7 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "ad0aa01d-a367-4409-8d2d-a6e1bb4823d3",
-                "timestamp": "2023-10-23T17:50:28.426Z",
-                "transaction_id": "dbd370b9-80fc-4384-9a67-5dd05aca4213",
-                "ttl": "PT30S"
+                ...
             },
             "message": {...}
         },
@@ -154,14 +141,7 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "ad0aa01d-a367-4409-8d2d-a6e1bb4823d3",
-                "timestamp": "2023-10-23T17:50:34.000Z",
-                "transaction_id": "dbd370b9-80fc-4384-9a67-5dd05aca4213",
-                "ttl": "PT30S"
+                ...
             },
            "message": {...}
 
@@ -173,14 +153,7 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "a0bd7111-0917-4500-81ec-8957ebde11da",
-                "timestamp": "2023-10-23T17:50:37.740Z",
-                "transaction_id": "dbd370b9-80fc-4384-9a67-5dd05aca4213",
-                "ttl": "PT30S"
+                ...
             },
            "message": {...}
         },
@@ -191,14 +164,7 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "a0bd7111-0917-4500-81ec-8957ebde11da",
-                "timestamp": "2023-10-23T17:50:47.000Z",
-                "transaction_id": "dbd370b9-80fc-4384-9a67-5dd05aca4213",
-                "ttl": "PT30S"
+                ...
             },
             "message": {...}
         },
@@ -209,14 +175,7 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "76242cea-6253-40f6-949b-211189c4c5e2",
-                "timestamp": "2023-10-23T17:50:49.000Z",
-                "transaction_id": "dbd370b9-80fc-4384-9a67-5dd05aca4213",
-                "ttl": "PT30S"
+                ...
             },
            "message": {...}
         },
@@ -227,32 +186,18 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "d45104f7-8c88-4722-9a1a-075bd520259a",
-                "timestamp": "2023-10-23T18:41:15.000Z",
-                "transaction_id": "dbd370b9-80fc-4384-9a67-5dd05aca4213",
-                "ttl": "PT30S"
+                ...
             },
            "message": {...}
         },
         "on_status_delivered": {
             "context": {
                 "action": "on_status",
-                "bap_id": "buyer-app.ondc.org",
+                "bap_id": "buyer-app.ondc.or",
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "ac88172c-4c2c-4b8c-8538-77185383a7f6",
-                "timestamp": "2023-10-23T18:41:46.000Z",
-                "transaction_id": "dbd370b9-80fc-4384-9a67-5dd05aca4213",
-                "ttl": "PT30S"
+                ...
             },
             "message": {...}
         }
@@ -270,9 +215,14 @@ If your log are successfully approved, you will receive a similar response as de
   "success": true,
   "response": {
     "message": "Logs were verified successfully",
-    "signature": "bM9OD0PUQ6J0vtXNST/nlLnZmDFB2FysCVc+DEficPh+Crx6uUdZhR33mbn9ePUrjn7Vl0qQWckyVxVpcYyDAQ==",
-    "signTimestamp": "2024-01-23T14:15:21.719Z"
-  }
+    "report": {},
+    "bap_id": "BUYER_APP_ID", // example: buyer-app-preprod-v2.ondc.org
+    "bpp_id": "SELLER_APP_ID", // example: seller-app-preprod-v2.ondc.org
+    "domain": "DOMAIN", // example: ONDC:RET10
+    "reportTimestamp": "2024-02-08T08:10:10.805Z"
+  },
+  "signature": "Ishpxpy8p3SPE1CXnMTkxKDt9S/X7v8OigL4DqVWphcr0jXTQOPotX/Y710WKZoCvWgCDOJahf7sXvJzgmRHAg==",
+  "signTimestamp": "2024-02-08T08:10:10.805Z"
 }
 ```
 
@@ -285,19 +235,12 @@ curl --location 'https://log-validation.ondc.org/api/validate/token' \
 --header 'Content-Type: application/json' \
 --header 'Cookie: connect.sid=s%3AjQe2v39s-ZeiHTOm-dkGI1NK5rqN0Lj4.PLxLV6QlhCtGTHP2ZKe0a5OpHl2ng0oQ%2BAqWmd56POU' \
 --data-raw '{
-        "search_full_catalog_refresh": {
+       "search_full_catalog_refresh": {
             "context": {
                 "action": "search",
                 "bap_id": "buyer-app.ondc.or",
                 "bap_uri": "https://buyer-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "a0b9f3a3-a960-4f7e-a0ca-02c30fa6fc9b",
-                "timestamp": "2023-10-25T12:00:01.160Z",
-                "transaction_id": "5c2e9202-2056-49db-9efa-8a69b262a36d",
-                "ttl": "PT30S"
+                ...
             },
            "message": {...}
         },
@@ -308,32 +251,18 @@ curl --location 'https://log-validation.ondc.org/api/validate/token' \
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "a0b9f3a3-a960-4f7e-a0ca-02c30fa6fc9b",
-                "timestamp": "2023-10-25T12:00:40.526Z",
-                "transaction_id": "5c2e9202-2056-49db-9efa-8a69b262a36d",
-                "ttl": "PT30S"
+                ...
             },
             "message": {...}
         },
         "on_search_inc_refresh": {
             "context": {
-                "transaction_id": "0686430c-1570-440f-b494-1f526f92c55b",
-                "country": "IND",
-                "bpp_id": "seller-app.ondc.org",
-                "city": "std:080",
-                "message_id": "e9217862-0f7a-43ab-843d-7c37386115c2",
-                "core_version": "1.2.0",
-                "ttl": "PT30S",
-                "bap_id": "buyer-app.ondc.or",
-                "bpp_uri": "https://seller-app.ondc.org",
-                "domain": "ONDC:RET10",
                 "action": "on_search",
+                "bap_id": "buyer-app.ondc.or",
                 "bap_uri": "https://buyer-app.ondc.org",
-                "timestamp": "2023-10-26T17:21:07.223Z"
+                "bpp_id": "seller-app.ondc.org",
+                "bpp_uri": "https://seller-app.ondc.org",
+                ...
             },
             "message": {...}
         },
@@ -344,14 +273,7 @@ curl --location 'https://log-validation.ondc.org/api/validate/token' \
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "e0eb6e6a-7264-474a-899d-d47fdb996ebb",
-                "timestamp": "2023-10-23T17:50:16.057Z",
-                "transaction_id": "dbd370b9-80fc-4384-9a67-5dd05aca4213",
-                "ttl": "PT30S"
+                ...
             },
             "message": {...}
         },
@@ -362,14 +284,7 @@ curl --location 'https://log-validation.ondc.org/api/validate/token' \
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "e0eb6e6a-7264-474a-899d-d47fdb996ebb",
-                "timestamp": "2023-10-23T17:50:16.729Z",
-                "transaction_id": "dbd370b9-80fc-4384-9a67-5dd05aca4213",
-                "ttl": "PT30S"
+                ...
             },
            "message": {...}
         },
@@ -380,14 +295,7 @@ curl --location 'https://log-validation.ondc.org/api/validate/token' \
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "ad0aa01d-a367-4409-8d2d-a6e1bb4823d3",
-                "timestamp": "2023-10-23T17:50:28.426Z",
-                "transaction_id": "dbd370b9-80fc-4384-9a67-5dd05aca4213",
-                "ttl": "PT30S"
+                ...
             },
             "message": {...}
         },
@@ -398,14 +306,7 @@ curl --location 'https://log-validation.ondc.org/api/validate/token' \
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "ad0aa01d-a367-4409-8d2d-a6e1bb4823d3",
-                "timestamp": "2023-10-23T17:50:34.000Z",
-                "transaction_id": "dbd370b9-80fc-4384-9a67-5dd05aca4213",
-                "ttl": "PT30S"
+                ...
             },
            "message": {...}
 
@@ -417,14 +318,7 @@ curl --location 'https://log-validation.ondc.org/api/validate/token' \
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "a0bd7111-0917-4500-81ec-8957ebde11da",
-                "timestamp": "2023-10-23T17:50:37.740Z",
-                "transaction_id": "dbd370b9-80fc-4384-9a67-5dd05aca4213",
-                "ttl": "PT30S"
+                ...
             },
            "message": {...}
         },
@@ -435,14 +329,7 @@ curl --location 'https://log-validation.ondc.org/api/validate/token' \
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "a0bd7111-0917-4500-81ec-8957ebde11da",
-                "timestamp": "2023-10-23T17:50:47.000Z",
-                "transaction_id": "dbd370b9-80fc-4384-9a67-5dd05aca4213",
-                "ttl": "PT30S"
+                ...
             },
             "message": {...}
         },
@@ -453,14 +340,7 @@ curl --location 'https://log-validation.ondc.org/api/validate/token' \
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "76242cea-6253-40f6-949b-211189c4c5e2",
-                "timestamp": "2023-10-23T17:50:49.000Z",
-                "transaction_id": "dbd370b9-80fc-4384-9a67-5dd05aca4213",
-                "ttl": "PT30S"
+                ...
             },
            "message": {...}
         },
@@ -471,32 +351,18 @@ curl --location 'https://log-validation.ondc.org/api/validate/token' \
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "d45104f7-8c88-4722-9a1a-075bd520259a",
-                "timestamp": "2023-10-23T18:41:15.000Z",
-                "transaction_id": "dbd370b9-80fc-4384-9a67-5dd05aca4213",
-                "ttl": "PT30S"
+                ...
             },
            "message": {...}
         },
         "on_status_delivered": {
             "context": {
                 "action": "on_status",
-                "bap_id": "buyer-app.ondc.org",
+                "bap_id": "buyer-app.ondc.or",
                 "bap_uri": "https://buyer-app.ondc.org",
                 "bpp_id": "seller-app.ondc.org",
                 "bpp_uri": "https://seller-app.ondc.org",
-                "city": "std:080",
-                "core_version": "1.2.0",
-                "country": "IND",
-                "domain": "ONDC:RET10",
-                "message_id": "ac88172c-4c2c-4b8c-8538-77185383a7f6",
-                "timestamp": "2023-10-23T18:41:46.000Z",
-                "transaction_id": "dbd370b9-80fc-4384-9a67-5dd05aca4213",
-                "ttl": "PT30S"
+                ...
             },
             "message": {...}
         }
@@ -511,7 +377,7 @@ You will receive `verification: true` if the signature was verified to be genera
 - The output of the utility service provides the report in a JSON format along with a success flag (true/false). Refer to the above sample payloads.
 - The service can be used to validate the entire transaction on the network or a particular schema of any payload.
   - Endpoint for the validation of the entire transaction: [https://log-validation.ondc.org/api/validate](https://log-validation.ondc.org/api/validate)
-  - Endpoint for the validation of schema: [https://log-validation.ondc.org/api/validate-schema/api-endpoint](https://log-validation.ondc.org/api/validate-schema/api-endpoint) (replace `api-endpoint` with the specific API endpoint you want to validate, e.g., search, select, on_confirm, etc.)
+  - Endpoint for the validation of schema: [https://log-validation.ondc.org/api/validate-schema](https://log-validation.ondc.org/api/validate-schema)
 - Community contributions are welcome to enhance this utility for future releases. To contribute, please raise a PR or create an issue. Contribution through either way works!
 
 ## Installation (Local Server)
@@ -546,17 +412,39 @@ http://localhost:3006/api/validate
 
 You can use the following `curl` command to make a POST request to the local validation endpoint:
 
+### FOR FLOW 1
+
 ```shell
-curl --location --request POST 'http://localhost:3006/api/validate' \
+curl --location 'http://localhost:3008/api/validate' \
 --header 'Content-Type: application/json' \
 --data '{
-    "domain": "",
+    "domain": "ONDC:RET18",
     "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
         "search_full_catalog_refresh": {},
-        "on_search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh":{},
         "search_inc_refresh": {},
-        "on_search_inc_refresh": {},
+        "on_search_inc_refresh": {}
+    },
+    "flow": "1"
+}'
+```
+
+### FOR FLOW 2
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET18",
+    "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh":{},
         "select": {},
         "on_select": {},
         "init": {},
@@ -564,9 +452,187 @@ curl --location --request POST 'http://localhost:3006/api/validate' \
         "confirm": {},
         "on_confirm": {},
         "on_status_pending": {},
+        "on_status_packed": {},
         "on_status_picked": {},
+        "on_status_out_for_delivery": {},
         "on_status_delivered": {}
-    }
+    },
+    "flow": "2"
+}'
+```
+
+### FOR FLOW 3
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET18",
+    "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh":{},
+        "select_out_of_stock": {},
+        "on_select_out_of_stock": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {}
+    },
+    "flow": "3"
+}'
+```
+
+### FOR FLOW 4
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET18",
+    "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh":{},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "cancel": {},
+        "on_cancel": {}
+    },
+    "flow": "4"
+}'
+```
+
+### FOR FLOW 5
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET18",
+    "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh":{},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {}
+        "on_cancel": {},
+    },
+    "flow": "5"
+}'
+```
+
+### FOR FLOW 6-a (Part cancel)
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "",
+    "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh":{},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_update": {},
+        "update": {}
+    },
+    "flow": "6-a"
+}'
+```
+
+### FOR FLOW 6-b (reverseQC)
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "",
+    "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh":{},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "update": {},
+        "on_update_interim": {},
+        "on_update_approval": {},
+        "on_update_picked": {},
+        "update_settlement": {},
+        "on_update_delivered": {}
+    },
+    "flow": "6-b"
+}'
+```
+
+### FOR FLOW 6-c (Liquidation)
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "",
+    "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh":{},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {},
+        "update": {},
+        "on_update_interim": {},
+        "on_update_liquidated": {},
+        "update_settlement": {}
+    },
+    "flow": "6-c"
 }'
 ```
 
@@ -578,6 +644,8 @@ curl --location 'https://localhost:3006/api/validate/igm' \
 --data '{
     "domain": "",
     "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
         "ret_issue": {},
         "ret_issue_close":{},
@@ -603,6 +671,8 @@ curl --location 'https://log-validation.ondc.org/api/validate/fis/fis12' \
     "domain": "ONDC:FIS12",
     "version": "2.0.0",
     "flow": "PERSONAL",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
     "search": {},
         "on_search":{},
@@ -637,6 +707,8 @@ curl --location 'https://localhost:3006/api/validate/trv/trv10' \
     "domain": "ONDC:TRV10",
     "version": "2.0.0",
     "flow": "RIDER_CANCEL",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
         "search": {},
         "on_search":{},

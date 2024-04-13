@@ -204,7 +204,7 @@ export const onSearchIncSchema = {
                           properties: {
                             label: {
                               type: 'string',
-                              enum: ['enable', 'disable', 'close'],
+                              enum: ['enable', 'disable', 'open', 'close'],
                             },
                             timestamp: {
                               type: 'string',
@@ -285,6 +285,9 @@ export const onSearchIncSchema = {
                           properties: {
                             gps: {
                               type: 'string',
+
+                              errorMessage:
+                                'The gps co-ordinates should be precise atleast upto 6 digits after decimal',
                             },
                             radius: {
                               type: 'object',
@@ -303,7 +306,7 @@ export const onSearchIncSchema = {
                           required: ['radius', 'gps'],
                         },
                       },
-                      required: ['id', 'time'],
+                      required: ['id', 'time', 'gps', 'address', 'circle'],
                     },
                   },
                   categories: {
@@ -429,6 +432,7 @@ export const onSearchIncSchema = {
                                       enum: ['unit', 'dozen', 'gram', 'kilogram', 'tonne', 'litre', 'millilitre'],
                                     },
                                     value: {
+                                      pattern :"^[0-9]+(\.[0-9]+)?$",
                                       type: 'string',
                                     },
                                   },
@@ -442,6 +446,9 @@ export const onSearchIncSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
+                                  pattern: '^[0-9]+$',
+                                  errorMessage:
+                                    'available count must be numbers only',
                                 },
                               },
                               required: ['count'],
@@ -451,6 +458,9 @@ export const onSearchIncSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
+                                  pattern: '^[0-9]+$',
+                                  errorMessage:
+                                    'maximum count must be numbers only ',
                                 },
                               },
                               required: ['count'],
@@ -467,9 +477,12 @@ export const onSearchIncSchema = {
                             },
                             value: {
                               type: 'string',
+                              pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                             },
                             maximum_value: {
                               type: 'string',
+                              pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+
                             },
                           },
                           required: ['currency', 'value', 'maximum_value'],

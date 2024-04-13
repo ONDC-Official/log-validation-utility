@@ -1,5 +1,5 @@
 /* eslint-disable no-prototype-builtins */
-import _ from 'lodash'
+import _, { isArray } from 'lodash'
 import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import {
@@ -12,14 +12,17 @@ import {
   isTagsValid,
   areGSTNumbersDifferent,
   compareObjects,
+  sumQuoteBreakUp,
+  payment_status,
+  compareQuoteObjects,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkConfirm = (data: any) => {
+export const checkConfirm = (data: any, msgIdSet: any) => {
   const cnfrmObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.CONFIRM]: 'Json cannot be empty' }
+      return { [ApiSequence.CONFIRM]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -28,7 +31,6 @@ export const checkConfirm = (data: any) => {
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const select: any = getValue(`${ApiSequence.SELECT}`)
     const parentItemIdSet: any = getValue(`parentItemIdSet`)
     const select_customIdArray: any = getValue(`select_customIdArray`)
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.CONFIRM, data)
@@ -42,6 +44,13 @@ export const checkConfirm = (data: any) => {
     if (checkBpp) Object.assign(cnfrmObj, { bpp_id: 'context/bpp_id should not be a url' })
     if (schemaValidation !== 'error') {
       Object.assign(cnfrmObj, schemaValidation)
+    }
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      cnfrmObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+    }
+
+    if (!msgIdSet.add(context.message_id)) {
+      cnfrmObj['messageId'] = 'message_id should be unique'
     }
 
     if (!contextRes?.valid) {
@@ -66,6 +75,7 @@ export const checkConfirm = (data: any) => {
       }
 
       setValue('tmpstmp', context.timestamp)
+      setValue('cnfrmTmpstmp', context.timestamp)
     } catch (error: any) {
       logger.error(
         `!!Error while comparing timestamp for /${constants.ON_INIT} and /${constants.CONFIRM} api, ${error.stack}`,
@@ -74,7 +84,7 @@ export const checkConfirm = (data: any) => {
 
     try {
       logger.info(`Comparing transaction Ids of /${constants.SELECT} and /${constants.CONFIRM}`)
-      if (!_.isEqual(select.context.transaction_id, context.transaction_id)) {
+      if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
         cnfrmObj.txnId = `Transaction Id should be same from /${constants.SELECT} onwards`
       }
     } catch (error: any) {
@@ -120,27 +130,21 @@ export const checkConfirm = (data: any) => {
       while (i < len) {
         const itemId = confirm.items[i].id
         const item = confirm.items[i]
-
         if (checkItemTag(item, select_customIdArray)) {
           const itemkey = `item${i}tags.parent_id`
-          cnfrmObj[
-            itemkey
-          ] = `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.SELECT} and /${constants.CONFIRM}`
+          cnfrmObj[itemkey] =
+            `items[${i}].tags.parent_id mismatches for Item ${itemId} in /${constants.SELECT} and /${constants.CONFIRM}`
         }
-
-        if (!parentItemIdSet.includes(item.parent_item_id)) {
+        if (parentItemIdSet && item.parent_item_id && !parentItemIdSet.includes(item.parent_item_id)) {
           const itemkey = `item_PrntItmId${i}`
-          cnfrmObj[
-            itemkey
-          ] = `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.CONFIRM}`
+          cnfrmObj[itemkey] =
+            `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SEARCH} and /${constants.CONFIRM}`
         }
-
         if (itemId in itemFlfllmnts) {
           if (confirm.items[i].fulfillment_id != itemFlfllmnts[itemId]) {
             const itemkey = `item_FFErr${i}`
-            cnfrmObj[
-              itemkey
-            ] = `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.CONFIRM}`
+            cnfrmObj[itemkey] =
+              `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.CONFIRM}`
           }
         } else {
           const itemkey = `item_FFErr${i}`
@@ -151,7 +155,7 @@ export const checkConfirm = (data: any) => {
           if (confirm.items[i].quantity.count != itemsIdList[itemId]) {
             itemsIdList[itemId] = confirm.items[i].quantity.count //changing the item quantity as per the order confirmation
             itemsCountChange = true
-            cnfrmObj.cntErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
+            cnfrmObj.countErr = `Warning: items[${i}].quantity.count for item ${itemId} mismatches with the items quantity selected in /${constants.SELECT}`
           }
         }
 
@@ -168,6 +172,24 @@ export const checkConfirm = (data: any) => {
     }
 
     try {
+      logger.info(`Checking for number of digits in tax number in message.order.tags[0].list`)
+      if (message.order.tags && isArray(message.order.tags)) {
+        const list = message.order.tags[0]?.list
+
+        list.map((item: any) => {
+          if (item.code == 'tax_number') {
+            if (item.value.length !== 15) {
+              const key = `message.order.tags[0].list`
+              cnfrmObj[key] = `Number of digits in tax number in  message.order.tags[0].list should be 15`
+            }
+          }
+        })
+      }
+    } catch (error: any) {
+      logger.error(`Error while checking for the number of digits in tax_number, ${error.stack}`)
+    }
+
+    try {
       logger.info(`Comparing billing object in /${constants.INIT} and /${constants.CONFIRM}`)
       const billing = getValue('billing')
 
@@ -178,7 +200,7 @@ export const checkConfirm = (data: any) => {
         const len = billingErrors.length
         while (i < len) {
           const key = `billingErr${i}`
-          cnfrmObj[key] = `${billingErrors[i]}`
+          cnfrmObj[key] = `${billingErrors[i]} when compared with init billing object`
           i++
         }
       }
@@ -196,7 +218,7 @@ export const checkConfirm = (data: any) => {
         if (confirm.fulfillments[i].id) {
           const id = confirm.fulfillments[i].id
           if (!Object.values(itemFlfllmnts).includes(id)) {
-            const key = `ffID${id}`
+            const key = `ffID ${id}`
             //MM->Mismatch
             cnfrmObj[key] = `fulfillment id ${id} does not exist in /${constants.ON_SELECT}`
           }
@@ -257,10 +279,14 @@ export const checkConfirm = (data: any) => {
 
     try {
       logger.info(`Comparing Quote object for /${constants.ON_SELECT} and /${constants.CONFIRM}`)
-      const on_select_quote = getValue('quoteObj')
-      const quoteErrors = compareObjects(on_select_quote, confirm.quote)
-
-      if (quoteErrors) {
+      const on_select_quote: any = getValue('quoteObj')
+      const quoteErrors = compareQuoteObjects(on_select_quote, confirm.quote, constants.ON_SELECT, constants.CONFIRM)
+      const hasItemWithQuantity = _.some(confirm.quote.breakup, item => _.has(item, 'item.quantity'));
+      if (hasItemWithQuantity){
+        const key = `quantErr`
+        cnfrmObj[key] = `Extra attribute Quantity provided in quote object i.e not supposed to be provided after on_select so invalid quote object`
+      }
+      else if (quoteErrors) {
         let i = 0
         const len = quoteErrors.length
         while (i < len) {
@@ -271,6 +297,17 @@ export const checkConfirm = (data: any) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while Comparing Quote object for /${constants.ON_SELECT} and /${constants.CONFIRM}`)
+    }
+
+    try {
+      logger.info(`Checking quote breakup prices for /${constants.CONFIRM}`)
+      if (!sumQuoteBreakUp(confirm.quote)) {
+        const key = `invldPrices`
+        cnfrmObj[key] = `item quote breakup prices for ${constants.CONFIRM} should be equal to the total price.`
+        logger.error(`item quote breakup prices for ${constants.CONFIRM} should be equal to the total price`)
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while Comparing Quote object for /${constants.CONFIRM}`)
     }
 
     try {
@@ -338,6 +375,17 @@ export const checkConfirm = (data: any) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while Comparing tags in /${constants.ON_INIT} and /${constants.CONFIRM} ${error.stack}`)
+    }
+
+    try {
+      logger.info(`Checking if transaction_id is present in message.order.payment`)
+      const payment = confirm.payment
+      const status = payment_status(payment)
+      if (!status) {
+        cnfrmObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
+      }
+    } catch (err: any) {
+      logger.error(`Error while checking transaction is in message.order.payment`)
     }
 
     return cnfrmObj

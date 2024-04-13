@@ -96,6 +96,12 @@ export const FnBonSelectSchema = {
                   parent_item_id: {
                     type: 'string',
                   },
+                  quantity: {
+                    type: 'object',
+                    properties: {
+                      count: { type: 'integer' },
+                    },
+                  },
                   tags: {
                     type: 'array',
                     items: {
@@ -146,6 +152,7 @@ export const FnBonSelectSchema = {
                   },
                   '@ondc/org/TAT': {
                     type: 'string',
+                    format: 'duration',
                   },
                   state: {
                     type: 'object',
@@ -178,6 +185,7 @@ export const FnBonSelectSchema = {
                     },
                     value: {
                       type: 'string',
+                      pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                     },
                   },
                   required: ['currency', 'value'],
@@ -213,6 +221,7 @@ export const FnBonSelectSchema = {
                           },
                           value: {
                             type: 'string',
+                            pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                           },
                         },
                         required: ['currency', 'value'],
@@ -255,6 +264,7 @@ export const FnBonSelectSchema = {
                               },
                               value: {
                                 type: 'string',
+                                pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                               },
                             },
                             required: ['currency', 'value'],

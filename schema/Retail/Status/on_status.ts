@@ -84,6 +84,8 @@ export const onStatusSchema = {
             id: {
               type: 'string',
               minLength: 1,
+              pattern: '^[a-zA-Z0-9-]{1,32}$|^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+              errorMessage: 'Order ID should be alphanumeric upto 32 letters max or UUID',
             },
             state: {
               type: 'string',
@@ -104,7 +106,7 @@ export const onStatusSchema = {
                       minLength: 1,
                     },
                   },
-                  required: ['id'],
+                  required: ['id', 'state'],
                 },
               },
               required: ['cancelled_by', 'reason'],
@@ -547,6 +549,7 @@ export const onStatusSchema = {
                     },
                     value: {
                       type: 'string',
+                      pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                     },
                   },
                   required: ['currency', 'value'],
@@ -582,6 +585,7 @@ export const onStatusSchema = {
                           },
                           value: {
                             type: 'string',
+                            pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                           },
                         },
                         required: ['currency', 'value'],
@@ -600,6 +604,7 @@ export const onStatusSchema = {
                               },
                               value: {
                                 type: 'string',
+                                pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                               },
                             },
                             required: ['currency', 'value'],
@@ -665,16 +670,19 @@ export const onStatusSchema = {
                       type: 'string',
                     },
                   },
-                  required: ['currency', 'transaction_id', 'amount'],
+                  required: ['currency', 'amount'],
                 },
                 status: {
                   type: 'string',
+                  enum:["PAID","NOT-PAID"]
                 },
                 type: {
                   type: 'string',
+                  enum:["ON-ORDER","ON-FULFILLMENT"]
                 },
                 collected_by: {
                   type: 'string',
+                  enum:["BAP","BPP"]
                 },
                 '@ondc/org/buyer_app_finder_fee_type': {
                   type: 'string',
@@ -684,6 +692,7 @@ export const onStatusSchema = {
                 },
                 '@ondc/org/settlement_basis': {
                   type: 'string',
+                  enum:['shipment','delivery','return_window_expiry']
                 },
                 '@ondc/org/settlement_window': {
                   type: 'string',

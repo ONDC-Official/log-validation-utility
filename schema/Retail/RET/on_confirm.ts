@@ -479,6 +479,7 @@ export const onConfirmSchema = {
                     value: {
                       type: 'string',
                       minLength: 1,
+                      pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                     },
                   },
                   required: ['currency', 'value'],
@@ -518,6 +519,7 @@ export const onConfirmSchema = {
                           value: {
                             type: 'string',
                             minLength: 1,
+                            pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                           },
                         },
                         required: ['currency', 'value'],
@@ -538,6 +540,7 @@ export const onConfirmSchema = {
                               value: {
                                 type: 'string',
                                 minLength: 1,
+                                pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                               },
                             },
                             required: ['currency', 'value'],
@@ -606,16 +609,19 @@ export const onConfirmSchema = {
                       type: 'string',
                     },
                   },
-                  required: ['currency', 'transaction_id', 'amount'],
+                  required: ['currency', 'amount'],
                 },
                 status: {
                   type: 'string',
+                  enum:["PAID","NOT-PAID"]
                 },
                 type: {
                   type: 'string',
+                  enum:["ON-ORDER","ON-FULFILLMENT"]
                 },
                 collected_by: {
                   type: 'string',
+                  enum:["BAP","BPP"]
                 },
                 '@ondc/org/buyer_app_finder_fee_type': {
                   type: 'string',
@@ -625,6 +631,7 @@ export const onConfirmSchema = {
                 },
                 '@ondc/org/settlement_basis': {
                   type: 'string',
+                  enum:['shipment','delivery','return_window_expiry']
                 },
                 '@ondc/org/settlement_window': {
                   type: 'string',
@@ -642,40 +649,67 @@ export const onConfirmSchema = {
                       },
                       settlement_phase: {
                         type: 'string',
-                      },
-                      beneficiary_name: {
-                        type: 'string',
+                        const: 'sale-amount',
                       },
                       settlement_type: {
                         type: 'string',
+                        enum: ['upi', 'neft', 'rtgs'],
                       },
-                      upi_address: {
-                        type: 'string',
-                      },
+                      upi_address: { type: 'string' },
                       settlement_bank_account_no: {
                         type: 'string',
                       },
                       settlement_ifsc_code: {
                         type: 'string',
                       },
-                      bank_name: {
+                      bank_name: { type: 'string' },
+                      beneficiary_name: {
                         type: 'string',
                       },
-                      branch_name: {
-                        type: 'string',
-                      },
+                      branch_name: { type: 'string' },
                     },
-                    required: [
-                      'settlement_counterparty',
-                      'settlement_phase',
-                      'beneficiary_name',
-                      'settlement_type',
-                      'upi_address',
-                      'settlement_bank_account_no',
-                      'settlement_ifsc_code',
-                      'bank_name',
-                      'branch_name',
+                    allOf: [
+                      {
+                        if: {
+                          properties: {
+                            settlement_type: {
+                              const: 'upi',
+                            },
+                          },
+                        },
+                        then: {
+                          properties: {
+                            upi_address: {
+                              type: 'string',
+                            },
+                          },
+                          required: ['upi_address'],
+                        },
+                      },
+                      {
+                        if: {
+                          properties: {
+                            settlement_type: {
+                              enum: ['rtgs', 'neft'],
+                            },
+                          },
+                        },
+                        then: {
+                          properties: {
+                            settlement_bank_account_no: {
+                              type: 'string',
+                            },
+                            settlement_ifsc_code: {
+                              type: 'string',
+                            },
+                            bank_name: { type: 'string' },
+                            branch_name: { type: 'string' },
+                          },
+                          required: ['settlement_ifsc_code', 'settlement_bank_account_no', 'bank_name', 'branch_name'],
+                        },
+                      },
                     ],
+                    required: ['settlement_counterparty', 'settlement_phase', 'settlement_type'],
                   },
                 },
               },
@@ -695,25 +729,81 @@ export const onConfirmSchema = {
                 properties: {
                   code: {
                     type: 'string',
+                    enum: ['bpp_terms', 'bap_terms'],
                   },
                   list: {
                     type: 'array',
                     items: {
-                      type: 'object',
-                      properties: {
-                        code: {
-                          type: 'string',
+                      allOf: [
+                        {
+                          if: {
+                            properties: {
+                              code: { const: 'np_type' },
+                            },
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                                enum: ['np_type'],
+                              },
+                              value: {
+                                type: 'string',
+                                enum: ['MSN', 'ISN'],
+                              },
+                            },
+                            required: ['code', 'value'],
+                            additionalProperties: false,
+                          },
                         },
-                        value: {
-                          type: 'string',
-                          minLength: 1,
+                        {
+                          if: {
+                            properties: {
+                              code: { const: 'tax_number' },
+                            },
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                              },
+                              value: {
+                                type: 'string',
+                              },
+                            },
+                            required: ['code', 'value'],
+                            additionalProperties: false,
+                          },
                         },
-                      },
-                      required: ['code', 'value'],
+                        {
+                          if: {
+                            properties: {
+                              code: { const: 'provider_tax_number' },
+                            },
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                              },
+                              value: {
+                                type: 'string',
+                              },
+                            },
+                            required: ['code', 'value'],
+                            additionalProperties: false,
+                          },
+                        },
+                      ],
                     },
+                    minItems: 1,
                   },
                 },
                 required: ['code', 'list'],
+                additionalProperties: false,
               },
             },
             created_at: {

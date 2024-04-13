@@ -1,7 +1,19 @@
-import { setValue } from '../../../shared/dao'
+import { getValue, setValue } from '../../../shared/dao'
 import constants, { FisApiSequence, fisFlows } from '../../../constants'
 import { validateSchema, isObjectEmpty } from '../..'
 import { validateContext } from './fisChecks'
+import { logger } from '../../../shared/logger'
+import _ from 'lodash'
+
+interface Payment {
+  time?: {
+    label?: string
+  }
+  params?: {
+    amount?: number
+    currency?: string
+  }
+}
 
 export const checkUpdate = (data: any, msgIdSet: any, flow: string) => {
   if (!data || isObjectEmpty(data)) {
@@ -13,7 +25,7 @@ export const checkUpdate = (data: any, msgIdSet: any, flow: string) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.UPDATE, data)
+  const schemaValidation = validateSchema('FIS', constants.UPDATE, data)
   const contextRes: any = validateContext(context, msgIdSet, constants.ON_CONFIRM, constants.UPDATE)
   msgIdSet.add(context.message_id)
 
@@ -29,29 +41,28 @@ export const checkUpdate = (data: any, msgIdSet: any, flow: string) => {
 
   setValue(`${FisApiSequence.UPDATE}`, data)
 
-  if (!message.update_target || !message.order[message.update_target] || !message.order.id) {
-    const key = `${FisApiSequence.UPDATE}_message`
-    errorObj[key] =
-      'Invalid payload. update_target attribute must be present in message and order object must contain the specified update_target and order id.'
+  //check order.id
+  try {
+    logger.info(`Checking id in message object  /${constants.UPDATE}`)
+    if (!message?.order?.id) {
+      errorObj.id = `order.id must be present in message object at /${constants.UPDATE}`
+    } else {
+      const orderId = getValue('orderId')
+      if (!_.isEqual(message?.order?.id, orderId)) {
+        errorObj.id = `order.id: ${message?.order?.id} mismatches with id:${orderId} provided is past call /${constants.UPDATE}`
+      }
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while checking id in message object  /${constants.UPDATE}, ${error.stack}`)
   }
 
-  if (!message.update_target || !message.order[message.update_target] || !message.order.id) {
+  if (!message.update_target || !message.order[message.update_target]) {
     const key = `${FisApiSequence.UPDATE}_message`
     errorObj[key] =
-      'Invalid payload. update_target attribute must be present in message and order object must contain the specified update_target and order id.'
+      'Invalid payload. update_target attribute must be present in message and order object must contain the specified update_target.'
   }
 
   const keyPrefix: string = `${FisApiSequence.UPDATE}`
-
-  interface Payment {
-    time?: {
-      label?: string
-    }
-    params?: {
-      amount?: number
-      currency?: string
-    }
-  }
 
   const validatePayments = (flowType: string, paramsCheck?: boolean): void => {
     const payments: Payment[] = message.order['payments']

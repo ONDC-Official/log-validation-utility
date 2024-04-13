@@ -88,6 +88,21 @@ export const FisApiSequence = {
   ON_UPDATE_UNSOLICATED: 'on_update_unsolicated',
 }
 
+export const Fis10ApiSequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SELECT: 'select',
+  ON_SELECT: 'on_select',
+  INIT: 'init',
+  ON_INIT: 'on_init',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  ON_CANCEL: 'on_cancel',
+  STATUS: 'status',
+  ON_STATUS: 'on_status',
+  ON_UPDATE: 'on_update',
+}
+
 export const FIS13HealthSequence = {
   SEARCH: 'search',
   ON_SEARCH: 'on_search',
@@ -178,6 +193,12 @@ export const onDemandFlows = {
   RIDER_CANCEL: 'RIDER_CANCEL',
   DRIVER_CANCEL: 'DRIVER_CANCEL',
   PRICE_UPDATE: 'PRICE_UPDATE',
+}
+
+export const flowsFis10 = {
+  FLOW_1: 'FLOW_1',
+  FLOW_2: 'FLOW_2',
+  FLOW_3: 'FLOW_3',
 }
 
 export const IGMApiSequence = {

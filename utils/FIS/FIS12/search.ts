@@ -40,11 +40,10 @@ export const search = (data: any, msgIdSet: any, flow: string) => {
       logger.info(`Validating category in /${constants.SEARCH}`)
       const code = data.message.intent?.category?.descriptor?.code
       if (code) {
-        console.log('fisFlows[flow as keyof typeof fisFlows]', fisFlows[flow as keyof typeof fisFlows], code)
         if (code != fisFlows[flow as keyof typeof fisFlows]) {
-          errorObj['category'] = `code must be in a standard enum format as ${
-            fisFlows[flow as keyof typeof fisFlows]
-          } at category.descriptor`
+          errorObj[
+            'category'
+          ] = `code must be in a standard enum format as PERSONAL_LOAN or INVOICE_BASED_LOAN at category.descriptor`
         }
 
         setValue(`LoanType`, code)
@@ -54,22 +53,36 @@ export const search = (data: any, msgIdSet: any, flow: string) => {
       logger.error(`!!Error occcurred while validating category in /${constants.SEARCH},  ${error.message}`)
     }
 
+    // validate payments
     try {
       logger.info(`Validating payments in /${constants.SEARCH}`)
-      const payment = data.message.intent?.payment
+      const payment = data?.message.intent?.payment
       const collectedBy = payment?.collected_by
+      const allowedCollectedByValues = ['BPP', 'BAP']
+      const terms: any = [{ code: 'STATIC_TERMS', type: 'url' }]
 
       if (!collectedBy) {
         errorObj[`collected_by`] = `payment.collected_by must be present in ${constants.SEARCH}`
-      } else if (collectedBy !== 'BPP' && collectedBy !== 'BAP') {
-        errorObj['collected_by'] = `payment.collected_by can only be either 'BPP' or 'BAP' in ${constants.SEARCH}`
+      } else if (!allowedCollectedByValues.includes(collectedBy)) {
+        errorObj['collected_by'] = `Invalid value for collected_by, should be either of ${allowedCollectedByValues}`
       } else {
+        terms?.push({ code: 'STATIC_TERMS', type: 'url' })
+
+        if (collectedBy == 'BPP') terms?.push({ code: 'DELAY_INTEREST', type: 'amount' })
+        else {
+          terms?.push({ code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' })
+          terms?.push({
+            code: 'SETTLEMENT_BASIS',
+            type: 'enum',
+            value: ['INVOICE_RECEIPT', 'Delivery'],
+          })
+        }
+
         setValue(`collected_by`, collectedBy)
       }
 
       // Validate payment tags
-      const tagsValidation = validatePaymentTags(payment.tags)
-      console.log('tagsValidation', tagsValidation)
+      const tagsValidation = validatePaymentTags(payment.tags, terms)
       if (!tagsValidation.isValid) {
         Object.assign(errorObj, { tags: tagsValidation.errors })
       }

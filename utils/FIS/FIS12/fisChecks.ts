@@ -4,6 +4,7 @@ import { logger } from '../../../shared/logger'
 import { checkIdAndUri, checkFISContext } from '../../'
 import _ from 'lodash'
 import { validatePaymentTags } from './tags'
+// import { validatePaymentTags } from './tags'
 const FULFILLMENT_STATE_CODES = ['INITIATED', 'SANCTIONED', 'DISBURSED', 'PENDING', 'REJECTED', 'COMPLETED']
 
 export const checkUniqueCategoryIds = (categoryIds: (string | number)[], availableCategoryIds: any): boolean => {
@@ -19,7 +20,7 @@ const getFormHeading = (action: any, loanType: any): string[] | string | null =>
   return null
 }
 
-export const validateFulfillments = (fulfillment: any, i: number, documents: any[]): any | null => {
+export const validateFulfillments = (fulfillment: any, i: number, documents: any[] = []): any | null => {
   const errors: any = {}
 
   const loanType: any = getValue(`LoanType`)
@@ -76,90 +77,99 @@ export const validateFulfillments = (fulfillment: any, i: number, documents: any
     }
   }
 
-  return Object.keys(errors).length > 0 ? errors : null
-}
-
-export const validateXInput = (xinput: any, i: number, j: number, action: string): any | null => {
-  const errors: any = {}
-  console.log('action', action)
-
-  if (!xinput || typeof xinput !== 'object') {
-    errors[`prvdr${i}item${j}_xinput`] = `xinput is missing or not an object in providers[${i}].items[${j}]`
-  } else {
-    const head = xinput.head
-    const form = xinput.form
-
-    if (!head || typeof head !== 'object') {
-      errors[`prvdr${i}item${j}_xinput_head`] = `head is missing or not an object in providers[${i}].items[${j}].xinput`
-    } else {
-      const descriptor = head.descriptor
-      const index = head.index
-      const headings = head.headings
-
-      if (!descriptor || typeof descriptor !== 'object' || !descriptor.name || typeof descriptor.name !== 'string') {
-        errors[
-          `prvdr${i}item${j}_xinput_head_descriptor`
-        ] = `descriptor is missing or invalid in providers[${i}].items[${j}].xinput.head`
-      }
-
-      if (
-        !index ||
-        typeof index !== 'object' ||
-        typeof index.min !== 'number' ||
-        typeof index.cur !== 'number' ||
-        typeof index.max !== 'number'
-      ) {
-        errors[
-          `prvdr${i}item${j}_xinput_head_index`
-        ] = `index is missing or invalid in providers[${i}].items[${j}].xinput.head`
-      } else if (index.cur < index.min || index.cur > index.max) {
-        errors[
-          `prvdr${i}item${j}_xinput_head_index`
-        ] = `cur should be between min and max in providers[${i}].items[${j}].xinput.head.index`
-      }
-
-      const loanType: any = getValue(`LoanType`)
-      if (loanType && action) {
-        const formHeading: any = getFormHeading(action, loanType)
-
-        if (!headings || !Array.isArray(headings) || formHeading.length !== index.max + 1) {
-          errors[`prvdr${i}item${j}_xinput_head_index`] = `max value should be ${
-            formHeading?.length - 1
-          } in providers[${i}].items[${j}].xinput.head`
-        }
-        // headings?.forEach((heading: string) => {
-        //   if (!formHeading.includes(heading))``
-        //     errors[
-        //       `prvdr${i}item${j}_xinput_head_headings`
-        //     ] = `Form headings array must only contain headings as defined in Api contract`
-        // })
-      }
-    }
-
-    if (!form || typeof form !== 'object') {
-      errors[`prvdr${i}item${j}_xinput_form`] = `form is missing or not an object in providers[${i}].items[${j}].xinput`
-    } else {
-      const url = form.url
-      const id = form.id
-
-      if (!url || typeof url !== 'string' || !isValidUrl(url)) {
-        errors[
-          `prvdr${i}item${j}_xinput_form_url`
-        ] = `url is missing, not a string, or not a valid URL in providers[${i}].items[${j}].xinput.form`
-      }
-
-      if (!id || typeof id !== 'string') {
-        errors[
-          `prvdr${i}item${j}_xinput_form_id`
-        ] = `id is missing or not a string in providers[${i}].items[${j}].xinput.form`
-      } else {
-        setValue('formId', id)
-      }
-    }
+  if (Object.keys(errors).length > 0) {
+    const indexedErrors: any = {}
+    Object.keys(errors).forEach((key) => {
+      indexedErrors[`fulfillments[${i}].${key}`] = errors[key]
+    })
+    return indexedErrors
   }
 
-  return Object.keys(errors).length > 0 ? errors : null
+  return null
+  // return Object.keys(errors).length > 0 ? errors : null
 }
+
+// export const validateXInput = (xinput: any, i: number, j: number, action: string): any | null => {
+//   const errors: any = {}
+//   console.log('action', action)
+
+//   if (!xinput || typeof xinput !== 'object') {
+//     errors[`prvdr${i}item${j}_xinput`] = `xinput is missing or not an object in providers[${i}].items[${j}]`
+//   } else {
+//     const head = xinput.head
+//     const form = xinput.form
+
+//     if (!head || typeof head !== 'object') {
+//       errors[`prvdr${i}item${j}_xinput_head`] = `head is missing or not an object in providers[${i}].items[${j}].xinput`
+//     } else {
+//       const descriptor = head.descriptor
+//       const index = head.index
+//       const headings = head.headings
+
+//       if (!descriptor || typeof descriptor !== 'object' || !descriptor.name || typeof descriptor.name !== 'string') {
+//         errors[
+//           `prvdr${i}item${j}_xinput_head_descriptor`
+//         ] = `descriptor is missing or invalid in providers[${i}].items[${j}].xinput.head`
+//       }
+
+//       if (
+//         !index ||
+//         typeof index !== 'object' ||
+//         typeof index.min !== 'number' ||
+//         typeof index.cur !== 'number' ||
+//         typeof index.max !== 'number'
+//       ) {
+//         errors[
+//           `prvdr${i}item${j}_xinput_head_index`
+//         ] = `index is missing or invalid in providers[${i}].items[${j}].xinput.head`
+//       } else if (index.cur < index.min || index.cur > index.max) {
+//         errors[
+//           `prvdr${i}item${j}_xinput_head_index`
+//         ] = `cur should be between min and max in providers[${i}].items[${j}].xinput.head.index`
+//       }
+
+//       const loanType: any = getValue(`LoanType`)
+//       if (loanType && action) {
+//         const formHeading: any = getFormHeading(action, loanType)
+
+//         if (!headings || !Array.isArray(headings) || formHeading.length !== index.max + 1) {
+//           errors[`prvdr${i}item${j}_xinput_head_index`] = `max value should be ${
+//             formHeading?.length - 1
+//           } in providers[${i}].items[${j}].xinput.head`
+//         }
+//         // headings?.forEach((heading: string) => {
+//         //   if (!formHeading.includes(heading))``
+//         //     errors[
+//         //       `prvdr${i}item${j}_xinput_head_headings`
+//         //     ] = `Form headings array must only contain headings as defined in Api contract`
+//         // })
+//       }
+//     }
+
+//     if (!form || typeof form !== 'object') {
+//       errors[`prvdr${i}item${j}_xinput_form`] = `form is missing or not an object in providers[${i}].items[${j}].xinput`
+//     } else {
+//       const url = form.url
+//       const id = form.id
+
+//       if (!url || typeof url !== 'string' || !isValidUrl(url)) {
+//         errors[
+//           `prvdr${i}item${j}_xinput_form_url`
+//         ] = `url is missing, not a string, or not a valid URL in providers[${i}].items[${j}].xinput.form`
+//       }
+
+//       if (!id || typeof id !== 'string') {
+//         errors[
+//           `prvdr${i}item${j}_xinput_form_id`
+//         ] = `id is missing or not a string in providers[${i}].items[${j}].xinput.form`
+//       } else {
+//         setValue('formId', id)
+//       }
+//     }
+//   }
+
+//   return Object.keys(errors).length > 0 ? errors : null
+// }
 
 const isValidUrl = (url: string): boolean => {
   try {
@@ -353,82 +363,571 @@ export const validateCancellationTerms = (cancellationTerms: any, action: string
   return errorObj
 }
 
-export const validatePayments = (payments: any, action: string, quote: any) => {
-  try {
-    const errorObj: any = {}
-    const totalPaymentsAmount = payments
-      .filter((payment: any) => payment.params && payment.params.amount)
-      .reduce((total: any, payment: any) => total + parseFloat(payment.params.amount), 0)
-    const quotePriceValue = parseFloat(quote.price.value)
+// export const validatePayments = (payments: any, action: string, quote: any) => {
+//   try {
+//     const errorObj: any = {}
+//     const totalPaymentsAmount = payments
+//       .filter((payment: any) => payment.params && payment.params.amount)
+//       .reduce((total: any, payment: any) => total + parseFloat(payment.params.amount), 0)
+//     const quotePriceValue = parseFloat(quote.price.value)
 
-    if (totalPaymentsAmount !== quotePriceValue) {
-      errorObj.paymentsAmountMismatch = `Total payments amount (${totalPaymentsAmount}) does not match with quote.price.value (${quotePriceValue})`
+//     if (totalPaymentsAmount !== quotePriceValue) {
+//       errorObj.paymentsAmountMismatch = `Total payments amount (${totalPaymentsAmount}) does not match with quote.price.value (${quotePriceValue})`
+//     }
+
+//     for (let i = 1; i < payments.length; i++) {
+//       const payment = payments[i]
+
+//       if (!payment.status) {
+//         errorObj.payments = `status is missing in payments`
+//       } else {
+//         const allowedStatusValues = ['NOT-PAID', 'PAID']
+//         if (!allowedStatusValues.includes(payment.status)) {
+//           errorObj.paymentStatus = `Invalid value for status. It should be either of NOT-PAID or PAID.`
+//         }
+//       }
+
+//       if (payment.time && payment.time.range) {
+//         const { start, end } = payment.time.range
+//         const startTime = new Date(start).getTime()
+//         const endTime = new Date(end).getTime()
+
+//         if (isNaN(startTime) || isNaN(endTime) || startTime > endTime) {
+//           errorObj.invalidTimeRange = `Invalid time range for payment at index ${i}`
+//         }
+
+//         if (i > 0) {
+//           const prevEndTime = new Date(payments[i - 1].time.range.end).getTime()
+//           if (startTime <= prevEndTime) {
+//             errorObj.timeRangeOrderError = `Time range order error for payment at index ${i}`
+//           }
+//         }
+//       } else {
+//         errorObj.missingTimeRange = `Missing time range for payment at index ${i}`
+//       }
+//     }
+
+//     if (payments[0].tags) {
+//       // Validate payment tags
+//       const tagsValidation = validatePaymentTags(payments[0].tags)
+//       if (!tagsValidation.isValid) {
+//         Object.assign(errorObj, { tags: tagsValidation.errors })
+//       }
+//     }
+
+//     if (!payments[0].collected_by) {
+//       errorObj.payments = `collected_by  is missing in payments`
+//     } else {
+//       const allowedCollectedByValues = ['BPP', 'BAP']
+//       const allowedStatusValues = ['NOT-PAID', 'PAID']
+
+//       const collectedBy = getValue(`collected_by`)
+//       if (collectedBy && collectedBy !== payments[0].collected_by) {
+//         errorObj.collectedBy = `Collected_By didn't match with what was sent in previous call.`
+//       } else {
+//         if (!allowedCollectedByValues.includes(payments[0].collected_by)) {
+//           errorObj.collectedBy = `Invalid value for collected_by. It should be either BPP or BAP.`
+//         }
+
+//         setValue(`collected_by`, payments[0].collected_by)
+//       }
+
+//       if (!allowedStatusValues.includes(payments[0].status)) {
+//         errorObj.paymentStatus = `Invalid value for status. It should be either of NOT-PAID or PAID.`
+//       }
+//     }
+
+//     return errorObj
+//   } catch (error: any) {
+//     logger.error(`!!Error /${action}`, error.stack)
+//   }
+// }
+
+export const validateXInputSubmission = (xinput: any, index: number, sequence: string) => {
+  const errorObj: any = {}
+
+  if (!xinput) {
+    errorObj[`item${index}`] = `xinput is missing in item${index}`
+  } else {
+    const version: any = getValue('version')
+    if (!Object.prototype.hasOwnProperty.call(xinput?.form, 'id')) {
+      errorObj[`item${index}_form`] = `/message/order/items/form in item[${index}] must have id in form`
+    } else {
+      const formId: any = getValue(`formId`)
+      if (!formId?.includes(xinput?.form?.id)) {
+        errorObj[`item${index}_formId`] = `form.id: ${xinput?.form?.id} mismatches with form.id sent in past call`
+      }
     }
 
-    for (let i = 1; i < payments.length; i++) {
-      const payment = payments[i]
+    if (!Object.prototype.hasOwnProperty.call(xinput?.form_response, 'status')) {
+      errorObj[
+        `item${index}_xinput`
+      ] = `/message/order/items/xinput in item[${index}] must have status in form_response`
+    } else {
+      const status = xinput?.form_response?.status
 
-      if (!payment.status) {
-        errorObj.payments = `status is missing in payments`
-      } else {
-        const allowedStatusValues = ['NOT-PAID', 'PAID']
-        if (!allowedStatusValues.includes(payment.status)) {
-          errorObj.paymentStatus = `Invalid value for status. It should be either of NOT-PAID or PAID.`
-        }
+      const code =
+        version == '2.0.0' && sequence == 'on_select_1'
+          ? 'PENDING'
+          : version == '2.0.0' && sequence == 'select_2'
+          ? 'APPROVED'
+          : 'SUCCESS'
+      if (status !== code) {
+        errorObj[
+          `item${index}_status`
+        ] = `/message/order/items/xinput/form_response/status in item[${index}] should be '${code}'`
       }
+    }
 
-      if (payment.time && payment.time.range) {
-        const { start, end } = payment.time.range
-        const startTime = new Date(start).getTime()
-        const endTime = new Date(end).getTime()
+    if (!Object.prototype.hasOwnProperty.call(xinput?.form_response, 'submission_id')) {
+      errorObj[
+        `item${index}_xinput`
+      ] = `/message/order/items/xinput in item[${index}] must have submission_id in form_response`
+    } else {
+      setValue(`${sequence}_submission_id`, xinput?.form_response?.submission_id)
+    }
+  }
 
-        if (isNaN(startTime) || isNaN(endTime) || startTime > endTime) {
-          errorObj.invalidTimeRange = `Invalid time range for payment at index ${i}`
-        }
+  return errorObj
+}
 
-        if (i > 0) {
-          const prevEndTime = new Date(payments[i - 1].time.range.end).getTime()
-          if (startTime <= prevEndTime) {
-            errorObj.timeRangeOrderError = `Time range order error for payment at index ${i}`
+export const validatePaymentsObject = (payments: any, action: string) => {
+  try {
+    logger.info(`checking payment object in /${action}`)
+    const errorObj: any = {}
+    const mainPaymentObjectCount = 0
+
+    if (_.isEmpty(payments)) errorObj.payments = `payments array is missing or empty in ${action}`
+    else {
+      const allowedStatusValues = ['NOT-PAID', 'PAID']
+      // const allowedTypeValues = ['PRE-ORDER', 'ON-FULFILLMENT']
+      payments?.forEach((payment: any, index: number) => {
+        if (payment?.time?.label) {
+          if (!payment.status) {
+            errorObj.payments = `status is missing in payments`
+          } else {
+            const allowedStatusValues = ['NOT-PAID', 'PAID']
+            if (!allowedStatusValues.includes(payment.status)) {
+              errorObj.paymentStatus = `Invalid value for status. It should be either of NOT-PAID or PAID.`
+            }
+          }
+
+          if (payment.time && payment.time.range) {
+            const { start, end } = payment.time.range
+            const startTime = new Date(start).getTime()
+            const endTime = new Date(end).getTime()
+
+            if (isNaN(startTime) || isNaN(endTime) || startTime > endTime) {
+              errorObj.invalidTimeRange = `Invalid time range for payment at index ${index}`
+            }
+
+            // if (index > 0) {
+            //   const prevEndTime = new Date(payments[i - 1].time.range.end).getTime()
+            //   if (startTime <= prevEndTime) {
+            //     errorObj.timeRangeOrderError = `Time range order error for payment at index ${index}`
+            //   }
+            // }
+          } else {
+            errorObj.missingTimeRange = `Missing time range for payment at index ${index}`
+          }
+        } else {
+          const terms = [
+            { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' },
+            {
+              code: 'SETTLEMENT_BASIS',
+              type: 'enum',
+              value: ['INVOICE_RECEIPT', 'Delivery'],
+            },
+            { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
+            // { code: 'STATIC_TERMS', type: 'url' },
+            { code: 'COURT_JURISDICTION', type: 'string' },
+            { code: 'DELAY_INTEREST', type: 'amount' },
+            { code: 'SETTLEMENT_AMOUNT', type: 'amount' },
+            { code: 'SETTLEMENT_TYPE', type: 'enum', value: ['upi', 'neft', 'rtgs'] },
+          ]
+
+          if (!payment?.collected_by) {
+            errorObj[`payemnts[${index}]_collected_by`] = `payments.collected_by must be present in ${action}`
+          } else {
+            const collectedBy = getValue(`collected_by`)
+            if (collectedBy && collectedBy != payment?.collected_by)
+              errorObj[
+                `payemnts[${index}]_collected_by`
+              ] = `payments.collected_by value sent in ${action} should be same as sent in past call: ${collectedBy}`
+          }
+
+          // check status
+          if (!payment?.status) errorObj.paymentStatus = `payment.status is missing for index:${index} in payments`
+          else if (!payment?.status || !allowedStatusValues.includes(payment?.status)) {
+            errorObj.paymentStatus = `invalid status at index:${index} in payments, should be either of ${allowedStatusValues}`
+          }
+
+          // check type
+          const validTypes = ['ON-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
+          if (!payment?.type || !validTypes.includes(payment.type)) {
+            errorObj[
+              `payments[${index}]_type`
+            ] = `payments.type must be present in ${action} & its value must be one of: ${validTypes.join(', ')}`
+          }
+
+          // Validate payment tags
+          const tagsValidation = validatePaymentTags(payment?.tags, terms)
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { tags: tagsValidation.errors })
           }
         }
-      } else {
-        errorObj.missingTimeRange = `Missing time range for payment at index ${i}`
-      }
-    }
+      })
 
-    if (payments[0].tags) {
-      // Validate payment tags
-      const tagsValidation = validatePaymentTags(payments[0].tags)
-      if (!tagsValidation.isValid) {
-        Object.assign(errorObj, { tags: tagsValidation.errors })
-      }
+      if (mainPaymentObjectCount === 0) errorObj.mainPaymentObject = 'main paymnet object is missing'
+      return errorObj
     }
+  } catch (error: any) {
+    logger.error(`!!Error while checking payment object in /${action}, ${error.stack}`)
+  }
+}
 
-    if (!payments[0].collected_by) {
-      errorObj.payments = `collected_by  is missing in payments`
+export const validateDescriptor = (descriptor: any, action: string, path: string, checkCode: boolean): any => {
+  try {
+    const errorObj: any = {}
+    if (!descriptor) {
+      errorObj.descriptor = `descriptor is missing at ${path}.`
     } else {
-      const allowedCollectedByValues = ['BPP', 'BAP']
-      const allowedStatusValues = ['NOT-PAID', 'PAID']
-
-      const collectedBy = getValue(`collected_by`)
-      if (collectedBy && collectedBy !== payments[0].collected_by) {
-        errorObj.collectedBy = `Collected_By didn't match with what was sent in previous call.`
-      } else {
-        if (!allowedCollectedByValues.includes(payments[0].collected_by)) {
-          errorObj.collectedBy = `Invalid value for collected_by. It should be either BPP or BAP.`
+      if (checkCode) {
+        if (!descriptor.code.trim()) {
+          errorObj.code = `code is missing at ${path}.`
+        } else if (descriptor.code?.trim() !== descriptor.code?.trim()?.toUpperCase()) {
+          errorObj.code = `code must be in uppercase at ${path}., ${descriptor.code}`
         }
-
-        setValue(`collected_by`, payments[0].collected_by)
       }
 
-      if (!allowedStatusValues.includes(payments[0].status)) {
-        errorObj.paymentStatus = `Invalid value for status. It should be either of NOT-PAID or PAID.`
+      if (descriptor.images) {
+        descriptor.images.forEach((image: any, index: number) => {
+          const { url, size_type } = image
+          if (typeof url !== 'string' || !isValidUrl(url)) {
+            errorObj[`image_url_[${index}]`] = `Invalid URL for image in descriptor at ${path}.`
+          }
+
+          const validSizes = ['xs', 'md', 'sm', 'lg']
+          if (!validSizes.includes(size_type)) {
+            errorObj[
+              `image_size_[${index}]`
+            ] = `Invalid image size in descriptor. It should be one of: ${validSizes.join(', ')} at ${path}.`
+          }
+        })
+      }
+
+      //validate name only if checkCode is false or name is present
+      if (!checkCode || descriptor.name) {
+        if (!descriptor.name.trim()) {
+          errorObj.name = `name cannot be empty at ${path}.`
+        }
+      }
+
+      if (descriptor.short_desc) {
+        if (!descriptor.short_desc.trim()) {
+          errorObj.short_desc = `short_desc cannot be empty at ${path}.`
+        }
+      }
+
+      if (descriptor.long_desc) {
+        if (!descriptor.long_desc.trim()) {
+          errorObj.long_desc = `long_desc cannot be empty at ${path}.`
+        }
       }
     }
 
     return errorObj
   } catch (error: any) {
-    logger.error(`!!Error /${action}`, error.stack)
+    logger.info(`Error while validating descriptor for /${action} at ${path}, ${error.stack}`)
+  }
+}
+
+export const validateProvider = (provider: any, action: string) => {
+  try {
+    const providerErrors: any = {}
+    if (!provider) {
+      providerErrors.provider = 'Provider details are missing or invalid.'
+      return providerErrors
+    }
+
+    if (!provider?.id) providerErrors.prvdrId = `provider.id is missing`
+    else {
+      logger.info(`Comparing provider id of /${action} & past call`)
+      const prvrdID: any = getValue('providerId')
+      if (!_.isEqual(prvrdID, provider?.id)) {
+        providerErrors.prvdrId = `provider.id for /${action} & past call api should be same`
+        setValue('providerId', provider?.id)
+      }
+    }
+
+    // send true as last argument in case if descriptor.code validation is required
+    const descriptorError = validateDescriptor(provider?.descriptor, action, `provider.descriptor`, false)
+    if (descriptorError) Object.assign(providerErrors, descriptorError)
+    return providerErrors
+  } catch (error: any) {
+    logger.info(`Error while checking provider object in /${action} api, ${error.stack}`)
+  }
+}
+
+export const validateXInput = (xinput: any, j: number, action: string, currIndex: number): any | null => {
+  const errors: any = {}
+  if (!xinput || typeof xinput !== 'object') {
+    errors[`item${j}_xinput`] = `xinput is missing or not an object in items[${j}]`
+  } else {
+    const head = xinput.head
+    const form = xinput.form
+
+    if (!head || typeof head !== 'object') {
+      errors[`item${j}_xinput_head`] = `head is missing or not an object in items[${j}].xinput`
+    } else {
+      const descriptor = head.descriptor
+      const index = head.index
+      const headings = head.headings
+
+      if (!descriptor || typeof descriptor !== 'object' || !descriptor.name || typeof descriptor.name !== 'string') {
+        errors[`item${j}_xinput_head_descriptor`] = `descriptor is missing or invalid in items[${j}].xinput.head`
+      }
+
+      console.log('currIndex', currIndex)
+
+      // if (currIndex != index?.cur) {
+      //   errors[`index`] = `index should be ${currIndex} items[${j}].xinput.head`
+      // }
+
+      if (
+        !index ||
+        typeof index !== 'object' ||
+        typeof index.min !== 'number' ||
+        typeof index.cur !== 'number' ||
+        typeof index.max !== 'number'
+      ) {
+        errors[`item${j}_xinput_head_index`] = `index is missing or invalid in items[${j}].xinput.head`
+      } else if (index.cur < index.min || index.cur > index.max) {
+        errors[`item${j}_xinput_head_index`] = `cur should be between min and max in items[${j}].xinput.head.index`
+      }
+
+      const insuranceType: any = getValue(`insuranceType`)
+      if (insuranceType && action) {
+        const formHeading: any = getFormHeading(action, insuranceType)
+
+        if (!headings || !Array.isArray(headings) || formHeading.length !== index.max + 1) {
+          errors[`item${j}_xinput_head_index`] = `max value should be ${
+            formHeading?.length - 1
+          } in items[${j}].xinput.head`
+        }
+      }
+    }
+
+    if (!form || typeof form !== 'object') {
+      errors[`item${j}_xinput_form`] = `form is missing or not an object in items[${j}].xinput`
+    } else {
+      const url = form.url
+      const id = form.id
+
+      if (!url || typeof url !== 'string' || !isValidUrl(url)) {
+        errors[
+          `item${j}_xinput_form_url`
+        ] = `url is missing, not a string, or not a valid URL in items[${j}].xinput.form`
+      }
+
+      if (!id || typeof id !== 'string') {
+        errors[`item${j}_xinput_form_id`] = `id is missing or not a string in items[${j}].xinput.form`
+      } else {
+        const formId: string[] | any = getValue('formId')
+        if (Array.isArray(formId)) {
+          formId.push(id)
+          setValue('formId', formId)
+        } else if (typeof formId === 'string') {
+          const newArray: string[] = [formId, id]
+          setValue('formId', newArray)
+        } else if (formId === undefined) {
+          setValue('formId', [id])
+        }
+      }
+
+      if (!('resubmit' in form)) {
+        errors.resubmit = `resubmit is missing in items[${j}].xinput.form`
+      }
+
+      if (!('multiple_sumbissions' in form)) {
+        errors.multiple_sumbissions = `multiple_sumbissions is missing in items[${j}].xinput.form`
+      }
+
+      if (!('mime_type' in form)) {
+        errors.mime_type = `mime_type is missing in items[${j}].xinput.form`
+      }
+    }
+  }
+
+  return Object.keys(errors).length > 0 ? errors : null
+}
+
+export const validateQuote = (onSelect: any, action: string) => {
+  const errorObj: any = {}
+
+  try {
+    logger.info(`Checking quote details in /${action}`)
+
+    const quote = onSelect.quote
+    const quoteBreakup = quote.breakup
+
+    const validBreakupItems = [
+      'PRINCIPAL',
+      'INTEREST',
+      'NET_DISBURSED_AMOUNT',
+      'OTHER_UPFRONT_CHARGES',
+      'INSURANCE_CHARGES',
+      'OTHER_CHARGES',
+      'PROCESSING_FEE',
+    ]
+
+    const requiredBreakupItems = validBreakupItems.filter((item) =>
+      quoteBreakup.some((breakupItem: any) => breakupItem.title.toUpperCase() === item),
+    )
+
+    const missingBreakupItems = validBreakupItems.filter((item) => !requiredBreakupItems.includes(item))
+
+    if (missingBreakupItems.length > 0) {
+      errorObj.missingBreakupItems = `Quote breakup is missing the following items: ${missingBreakupItems.join(', ')}`
+    }
+
+    const totalBreakupValue = quoteBreakup.reduce((total: any, item: any) => {
+      const itemTitle = item.title.toUpperCase()
+      if (requiredBreakupItems.includes(itemTitle) && itemTitle !== 'NET_DISBURSED_AMOUNT') {
+        const itemValue = parseFloat(item.price.value)
+        return isNaN(itemValue) ? total : total + itemValue
+      }
+
+      return total
+    }, 0)
+
+    const priceValue = parseFloat(quote.price.value)
+
+    if (isNaN(totalBreakupValue)) {
+      errorObj.breakupTotalMismatch = 'Invalid values in quote breakup'
+    } else if (totalBreakupValue !== priceValue) {
+      errorObj.breakupTotalMismatch = `Total of quote breakup (${totalBreakupValue}) does not match with price.value (${priceValue})`
+    }
+
+    const currencies = quoteBreakup.map((item: any) => item.currency)
+    if (new Set(currencies).size !== 1) {
+      errorObj.multipleCurrencies = 'Currency must be the same for all items in the quote breakup'
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while checking quote details in /${action}`, error.stack)
+  }
+
+  return errorObj
+}
+
+export const validateBAPItem = (select: any, action: string, prevCall: string, sequence: string) => {
+  const errorObj: any = {}
+
+  try {
+    logger.info(`checking item array in /${action}`)
+    if (!select.items) {
+      errorObj.items = `items must be present & should non empty in /${action}`
+    } else {
+      const itemId = getValue(`${prevCall}_itemsId`)
+      const parentItemId: any = getValue('parentItemId')
+      const version: any = getValue('version')
+      const selectedItemId = new Set()
+
+      select?.items?.forEach((item: any, index: number) => {
+        // Validate item id
+        if (!item?.id) {
+          errorObj[`item[${index}].id`] = `id should be present at item[${index}] /$${action}`
+        } else {
+          selectedItemId?.add(item?.id)
+          if (itemId && !itemId.includes(item.id)) {
+            const key = `item[${index}].item_id`
+            errorObj[
+              key
+            ] = `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
+          }
+        }
+
+        // Validate parent_item_id
+        if (version == '2.1.0') {
+          if (!item?.parent_item_id) errorObj.parent_item_id = `sub-parent_item_id not found in providers[${index}]`
+          else if (!_.isEqual(item.parent_item_id, parentItemId)) {
+            setValue('parentItemId', item.parent_item_id)
+            errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id from past call in providers[${index}]`
+          }
+        }
+
+        //validate xInput form
+        const xinputErrors = validateXInputSubmission(item?.xinput, index, sequence)
+        Object.assign(errorObj, xinputErrors)
+      })
+
+      setValue('selectedItemId', selectedItemId)
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while checking item in /${action}`)
+  }
+
+  return errorObj
+}
+
+export const validateDocuments = (documents: any, action: string, requiredDocumentCodes: string[]) => {
+  try {
+    logger.info(`Checking documents in /${action}`)
+    const errors: any = {}
+
+    if (!documents || !Array.isArray(documents) || documents.length === 0) {
+      errors.documents = 'Documents array is missing or empty in order'
+    } else {
+      documents.forEach((document, index) => {
+        console.log('document', document)
+        const documentKey = `documents[${index}]`
+
+        if (!document.descriptor || !document.descriptor.code) {
+          errors[`${documentKey}.code`] = 'Document descriptor is missing or empty'
+        }
+
+        if (!document.descriptor || !document.descriptor.name) {
+          errors[`${documentKey}.name`] = 'Document descriptor name is missing or empty'
+        }
+
+        if (!document.descriptor || !document.descriptor.short_desc) {
+          errors[`${documentKey}.short_desc`] = 'Document descriptor short_desc is missing or empty'
+        }
+
+        if (!document.descriptor || !document.descriptor.long_desc) {
+          errors[`${documentKey}.long_desc`] = 'Document descriptor long_desc is missing or empty'
+        }
+
+        if (!document.mime_type) {
+          errors[`${documentKey}.mime_type`] = 'Document mime_type is missing or empty'
+        } else {
+          const allowedMimeTypes = ['application/pdf']
+          if (!allowedMimeTypes.includes(document.mime_type)) {
+            errors[`${documentKey}.mime_type`] = `Invalid mime_type: ${document.mime_type}`
+          }
+        }
+
+        if (!document.url) {
+          errors[`${documentKey}.url`] = 'Document URL is missing or empty'
+        }
+
+        if (!requiredDocumentCodes.includes(document.descriptor.code)) {
+          errors[`${documentKey}.code`] = `Invalid document code: ${document.descriptor.code}`
+        }
+      })
+
+      // missing docs
+      const missingDocuments = requiredDocumentCodes.filter(
+        (code) => !documents.some((document) => document.descriptor.code === code),
+      )
+
+      if (missingDocuments.length > 0) {
+        errors.missingDocuments = `Missing required documents: ${missingDocuments.join(', ')}`
+      }
+    }
+
+    return errors
+  } catch (error: any) {
+    logger.error(`!!Error while checking documents in /${action}, ${error.stack}`)
   }
 }

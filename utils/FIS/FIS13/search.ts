@@ -28,7 +28,7 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
     msgIdSet.add(context.message_id)
 
     // validate schema
-    const schemaValidation = validateSchema(context?.domain.split(':')[1], constants.SEARCH, data)
+    const schemaValidation = validateSchema('FIS', constants.SEARCH, data)
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
     }

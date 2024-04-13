@@ -17,7 +17,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_UPDATE, data)
+    const schemaValidation = validateSchema('FIS', constants.ON_UPDATE, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.UPDATE, constants.ON_UPDATE)
 
     if (schemaValidation !== 'error') {
@@ -68,8 +68,9 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
       on_update.items.forEach((item: any, index: number) => {
         if (!newItemIDSValue.includes(item.id)) {
           const key = `item[${index}].item_id`
-          onUpdateObj[key] =
-            `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+          onUpdateObj[
+            key
+          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
         }
 
         if (item.tags) {
@@ -80,8 +81,9 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
         }
 
         if (item?.descriptor?.code !== fisFlows.PERSONAL)
-          onUpdateObj[`item[${index}].code`] =
-            `Descriptor code: ${item?.descriptor?.code} in item[${index}] must be the same as ${flow}`
+          onUpdateObj[
+            `item[${index}].code`
+          ] = `Descriptor code: ${item?.descriptor?.code} in item[${index}] must be the same as ${flow}`
 
         if (on_update.quote.price.value !== item?.price?.value) {
           onUpdateObj[`item${index}_price`] = `Price mismatch for item: ${item.id}`
@@ -228,8 +230,9 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
           } else {
             const updateValue = getValue(`updatePayment`)
             if (payment?.params?.amount !== updateValue)
-              onUpdateObj['invalidPaymentAmount'] =
-                `Invalid payment amount (${payment.url}) at index ${i}, should be the same as sent in update call`
+              onUpdateObj[
+                'invalidPaymentAmount'
+              ] = `Invalid payment amount (${payment.url}) at index ${i}, should be the same as sent in update call`
           }
         }
 
@@ -276,29 +279,36 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
             onUpdateObj.deffered = `No. of DEFERRED status object should be the same as no. of DELAYED status object from previous call`
         }
       }
+
       if (flow == insuranceFlows.CLAIM_HEALTH || flow == insuranceFlows.RENEW_HEALTH) {
         const ins_status = on_update.status
         if (['ACTIVE', 'COMPLETE', 'CANCELLED'].indexOf(ins_status) == -1) {
           onUpdateObj.ins_status = `Invalid status for insurance order`
         }
+
         if (!Object.hasOwnProperty.call(on_update.order, 'updated_at')) {
           onUpdateObj.updated_at = `updated_at is missing in insurance order`
         }
+
         if (!Object.hasOwnProperty.call(on_update.order, 'created_at')) {
           onUpdateObj.created_at = `created_at is missing in insurance order`
         }
+
         if (flow == insuranceFlows.RENEW_HEALTH) {
           if (message.order.fulfillments[1].type != 'RENEWAL') {
             onUpdateObj.fulfillments = `Fulfillment type should be RENEWAL`
           }
+
           if (message.order.fulfillments[1].state.descriptor.code != 'RENEWAL_INITIATED') {
             onUpdateObj.fulfillments = `Fulfillment state descriptor code should be RENEWAL_INITIATED`
           }
         }
+
         if (flow == insuranceFlows.CLAIM_HEALTH) {
           if (message.order.fulfillments[1].type != 'CLAIM') {
             onUpdateObj.fulfillments = `Fulfillment type should be CLAIM`
           }
+
           if (message.order.fulfillments[1].state.descriptor.code != 'CLAIM_INITIATED') {
             onUpdateObj.fulfillments = `Fulfillment state descriptor code should be CLAIM_INITIATED`
           }

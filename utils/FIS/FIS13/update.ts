@@ -13,7 +13,7 @@ export const checkUpdate = (data: any, msgIdSet: any, flow: string) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.UPDATE, data)
+  const schemaValidation = validateSchema('FIS', constants.UPDATE, data)
   const contextRes: any = validateContext(context, msgIdSet, constants.ON_CONFIRM, constants.UPDATE)
   msgIdSet.add(context.message_id)
 

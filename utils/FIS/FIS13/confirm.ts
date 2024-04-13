@@ -19,7 +19,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.CONFIRM, data)
+    const schemaValidation = validateSchema('FIS', constants.CONFIRM, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.ON_INIT, constants.CONFIRM)
 
     if (schemaValidation !== 'error') {
@@ -158,7 +158,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
           // check type
           const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
           if (!arr?.type || !validTypes.includes(arr.type)) {
-            errorObj[`payments[${i}]_type`] = `payments.params.type must be present in ${
+            errorObj[`payments[${i}]_type`] = `payments.type must be present in ${
               constants.CONFIRM
             } & its value must be one of: ${validTypes.join(', ')}`
           }

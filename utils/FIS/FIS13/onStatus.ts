@@ -17,7 +17,7 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_STATUS, data)
+    const schemaValidation = validateSchema('FIS', constants.ON_STATUS, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.STATUS, constants.ON_STATUS)
 
     if (schemaValidation !== 'error') {
@@ -74,8 +74,9 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
             onStatusObj.phone = `contact.phone should be present with valid number in fulfillment${i} at /${constants.ON_STATUS}`
 
           if (fulfillment?.state?.descriptor?.code != 'FORM_PROCESSED')
-            onStatusObj[`fulfillments.state`] =
-              `code should be 'FORM_PROCESSED' in fulfillment${i} at /${constants.ON_STATUS}`
+            onStatusObj[
+              `fulfillments.state`
+            ] = `code should be 'FORM_PROCESSED' in fulfillment${i} at /${constants.ON_STATUS}`
         })
       }
     } catch (error: any) {
@@ -88,8 +89,9 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
       on_status.items.forEach((item: any, index: number) => {
         if (!newItemIDSValue.includes(item.id)) {
           const key = `item[${index}].item_id`
-          onStatusObj[key] =
-            `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+          onStatusObj[
+            key
+          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
         }
 
         if (
@@ -151,8 +153,9 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
           } else {
             const updateValue = getValue(`updatePayment`)
             if (payment?.params?.amount !== updateValue)
-              onStatusObj['invalidPaymentAmount'] =
-                `Invalid payment amount (${payment.url}) at index ${i}, should be the same as sent in update call`
+              onStatusObj[
+                'invalidPaymentAmount'
+              ] = `Invalid payment amount (${payment.url}) at index ${i}, should be the same as sent in update call`
           }
         }
 

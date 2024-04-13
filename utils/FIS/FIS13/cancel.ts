@@ -14,7 +14,7 @@ export const checkCancel = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.CANCEL, data)
+  const schemaValidation = validateSchema('FIS', constants.CANCEL, data)
   const contextRes: any = validateContext(context, msgIdSet, constants.ON_CONFIRM, constants.CANCEL)
   msgIdSet.add(context.message_id)
 

@@ -3,7 +3,9 @@ import constants, { FisApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
-import { validateContext } from './fisChecks'
+import { validateContext, validateXInputSubmission } from './fisChecks'
+import _, { isEmpty } from 'lodash'
+import { validatePaymentTags } from './tags'
 
 export const checkConfirm = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
@@ -17,7 +19,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.CONFIRM, data)
+    const schemaValidation = validateSchema('FIS', constants.CONFIRM, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.ON_INIT, constants.CONFIRM)
 
     if (schemaValidation !== 'error') {
@@ -32,126 +34,125 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
 
     const confirm = message.order
     const itemIDS: any = getValue('ItmIDS')
-    const itemIdArray: any[] = []
-    const storedFormIds: any = getValue('select_storedFormIds')
+    const version: any = getValue('version')
 
-    let newItemIDSValue: any[]
-
-    if (itemIDS && itemIDS.length > 0) {
-      newItemIDSValue = itemIDS
-    } else {
-      confirm.items.map((item: { id: string }) => {
-        itemIdArray.push(item.id)
-      })
-      newItemIDSValue = itemIdArray
-    }
-
-    setValue('ItmIDS', newItemIDSValue)
-
-    const cnfrmOrdrId = confirm.id
-    setValue('cnfrmOrdrId', cnfrmOrdrId)
-
+    // check provider
     try {
-      logger.info(`Checking provider id in /${constants.CONFIRM}`)
-      if (confirm.provider.id != getValue('providerId')) {
-        errorObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.CONFIRM}`
+      logger.info(`Comparing Provider object in /${constants.ON_INIT} and /${constants.CONFIRM}`)
+      const selectedProviderId = getValue('selectedProviderId')
+      const providerId = confirm?.provider?.id
+
+      if (!providerId) {
+        errorObj.prvdrId = `provider.id is missing in /${constants.CONFIRM}`
+      } else if (selectedProviderId && !_.isEqual(selectedProviderId, providerId)) {
+        errorObj.prvdrId = `provider.id: ${providerId} in /${constants.CONFIRM} does'nt exist in /${constants.ON_INIT}`
+        setValue('selectedProviderId', providerId)
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking provider id in /${constants.CONFIRM}, ${error.stack}`)
-    }
-
-    try {
-      logger.info(`Comparing item in /${constants.CONFIRM}`)
-
-      confirm.items.forEach((item: any, index: number) => {
-        if (!newItemIDSValue.includes(item.id)) {
-          const key = `item[${index}].item_id`
-          errorObj[
-            key
-          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
-        }
-
-        if (
-          !Object.prototype.hasOwnProperty.call(item?.xinput?.form_response, 'submission_id') ||
-          !Object.prototype.hasOwnProperty.call(item?.xinput?.form_response, 'status')
-        )
-          errorObj[
-            `item${index}_xinput`
-          ] = `/message/order/items/xinput in item: ${item.id} must have both status & submission_id in form_response`
-
-        const formId = item?.xinput?.form.id
-        const status = item?.xinput?.form_response?.status
-
-        if (storedFormIds === undefined) {
-          storedFormIds.add(formId)
-        }
-
-        if (getValue(`${constants.SELECT}_form_${formId}_status`) === status) {
-          const key = `item${index}_status`
-          errorObj[
-            key
-          ] = `/message/order/items/xinput/form_response/status in item: ${item.id} should be different from previous select calls for the same form_id: ${formId}`
-        }
-      })
-    } catch (error: any) {
-      logger.error(`!!Error while comparing Item Id in /${constants.ON_SELECT} and /${constants.CONFIRM}`)
-    }
-
-    try {
-      logger.info(`Checking payment object in /${constants.CONFIRM}`)
-
-      const buyerFinderFeesTag = confirm.payments[0].tags.find(
-        (tag: any) => tag.descriptor.code === 'BUYER_FINDER_FEES',
+      logger.error(
+        `!!Error while checking provider object in /${constants.ON_INIT} and /${constants.CONFIRM}, ${error.stack}`,
       )
-      const settlementTermsTag = confirm.payments[0].tags.find((tag: any) => tag.descriptor.code === 'SETTLEMENT_TERMS')
+    }
 
-      if (!buyerFinderFeesTag) {
-        errorObj.buyerFinderFees = `BUYER_FINDER_FEES tag is missing in payments`
-      }
-
-      if (!settlementTermsTag) {
-        errorObj.settlementTerms = `SETTLEMENT_TERMS tag is missing in payments`
-      }
-
-      if (!confirm.payments[0].collected_by || !confirm.payments[0].params) {
-        errorObj.payments = `collected_by or params is missing in payments`
+    //check items
+    try {
+      logger.info(`checking item array in /${constants.CONFIRM}`)
+      if (!confirm.items) {
+        errorObj.items = `items must be present & should non empty in /${constants.CONFIRM}`
       } else {
-        const allowedCollectedByValues = ['BPP', 'BAP']
-        const allowedStatusValues = ['NOT-PAID', 'PAID']
-
-        const collectedBy = getValue(`collected_by`)
-        if (collectedBy && collectedBy !== confirm.payments[0].collected_by) {
-          errorObj.collectedBy = `Collected_By didn't match with what was sent in previous call.`
-        } else {
-          if (!allowedCollectedByValues.includes(confirm.payments[0].collected_by)) {
-            errorObj.collectedBy = `Invalid value for collected_by. It should be either BPP or BAP.`
+        const parentItemId: any = getValue('parentItemId')
+        confirm.items.forEach((item: any, index: number) => {
+          // Validate item id
+          if (!item?.id) {
+            errorObj[`item[${index}].id`] = `id should be present at item[${index}] /${constants.CONFIRM}`
+          } else {
+            if (itemIDS && !itemIDS.includes(item.id)) {
+              const key = `item[${index}].item_id`
+              errorObj[
+                key
+              ] = `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
+            }
           }
 
-          setValue(`collected_by`, confirm.payments[0].collected_by)
-        }
+          // Validate parent_item_id
+          if (version == '2.1.0') {
+            if (!item?.parent_item_id) errorObj.parent_item_id = `sub-parent_item_id not found in providers[${index}]`
+            else if (!_.isEqual(item.parent_item_id, parentItemId)) {
+              setValue('parentItemId', item.parent_item_id)
+              errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id from past call in providers[${index}]`
+            }
+          }
 
-        if (!allowedStatusValues.includes(confirm.payments[0].status)) {
-          errorObj.paymentStatus = `Invalid value for status. It should be either of NOT-PAID or PAID.`
-        }
-
-        const params = confirm.payments[0].params
-        const requiredParams = ['bank_code', 'bank_account_number', 'virtual_payment_address']
-
-        const missingParams = requiredParams.filter((param) => !params.hasOwnProperty(param))
-
-        if (missingParams.length > 0) {
-          errorObj.missingParams = `Required params ${missingParams.join(', ')} are missing in payments`
-        }
+          //validate xInput form
+          const xinputErrors = validateXInputSubmission(item?.xinput, index, constants?.CONFIRM)
+          Object.assign(errorObj, xinputErrors)
+        })
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking payment object in /${constants.CONFIRM}, ${error.stack}`)
+      logger.error(`!!Error while checking item in /${constants.CONFIRM}`)
     }
 
+    // check payments
     try {
-      logger.info(`storing payment object in /${constants.CONFIRM}`)
-      setValue('cnfrmpymnt', confirm.payments)
+      logger.info(`Checking payments in /${constants.CONFIRM}`)
+      const payments = confirm?.payments
+      if (isEmpty(payments)) {
+        errorObj.payments = `payments array is missing or is empty`
+      } else {
+        const allowedStatusValues = ['NOT-PAID', 'PAID']
+        payments?.forEach((arr: any, i: number) => {
+          const terms = [
+            { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' },
+            {
+              code: 'SETTLEMENT_BASIS',
+              type: 'enum',
+              value: ['INVOICE_RECEIPT', 'Delivery'],
+            },
+            { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
+            { code: 'STATIC_TERMS', type: 'url' },
+            { code: 'COURT_JURISDICTION', type: 'string' },
+            { code: 'DELAY_INTEREST', type: 'amount' },
+            { code: 'SETTLEMENT_AMOUNT', type: 'amount' },
+            { code: 'SETTLEMENT_TYPE', type: 'enum', value: ['upi', 'neft', 'rtgs'] },
+            {
+              code: 'OFFLINE_CONTRACT',
+              type: 'boolean',
+            },
+          ]
+
+          if (!arr?.collected_by) {
+            errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.CONFIRM}`
+          } else {
+            const collectedBy = getValue(`collected_by`)
+            if (collectedBy && collectedBy != arr?.collected_by)
+              errorObj[
+                `payemnts[${i}]_collected_by`
+              ] = `payments.collected_by value sent in ${constants.CONFIRM} should be same as sent in past call: ${collectedBy}`
+          }
+
+          // check status
+          if (!arr?.status) errorObj.paymentStatus = `payment.status is missing for index:${i} in payments`
+          else if (!arr?.status || !allowedStatusValues.includes(arr?.status)) {
+            errorObj.paymentStatus = `invalid status at index:${i} in payments, should be either of ${allowedStatusValues}`
+          }
+
+          // check type
+          const validTypes = ['ON-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
+          if (!arr?.type || !validTypes.includes(arr.type)) {
+            errorObj[`payments[${i}]_type`] = `payments.type must be present in ${
+              constants.CONFIRM
+            } & its value must be one of: ${validTypes.join(', ')}`
+          }
+
+          // Validate payment tags
+          const tagsValidation = validatePaymentTags(arr?.tags, terms)
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { tags: tagsValidation.errors })
+          }
+        })
+      }
     } catch (error: any) {
-      logger.error(`!!Error while storing payment object in /${constants.CONFIRM}, ${error.stack}`)
+      logger.error(`!!Errors while checking payments in /${constants.CONFIRM}, ${error.stack}`)
     }
 
     return errorObj

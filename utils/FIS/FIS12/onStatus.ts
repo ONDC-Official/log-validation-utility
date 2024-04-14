@@ -1,11 +1,20 @@
 /* eslint-disable no-prototype-builtins */
-import constants, { FisApiSequence, fisFlows } from '../../../constants'
+import constants, { FisApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, isValidUrl } from '../../'
+import { validateSchema, isObjectEmpty } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
-import { validateCancellationTerms, validateContext, validateFulfillments } from './fisChecks'
+import {
+  validateCancellationTerms,
+  validateContext,
+  validateDocuments,
+  validateFulfillments,
+  validatePaymentsObject,
+  validateXInputSubmission,
+} from './fisChecks'
+import { isEmpty } from 'lodash'
+import { validatePaymentTags } from './tags'
 
-export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
+export const checkOnStatus = (data: any, msgIdSet: any, sequence: string) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -17,7 +26,7 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_STATUS, data)
+    const schemaValidation = validateSchema('FIS', constants.ON_STATUS, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.STATUS, constants.ON_STATUS)
 
     if (schemaValidation !== 'error') {
@@ -74,11 +83,19 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
           ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
         }
 
-        if (
-          item.xinput &&
-          (!item.xinput.form_response || !item.xinput.form_response.status || !item.xinput.form_response.submission_id)
-        ) {
-          onStatusObj.xinput = `xinput or xinput.form_response is missing in /${constants.ON_STATUS}`
+        if (sequence === FisApiSequence.ON_STATUS) {
+          if (
+            item.xinput &&
+            (!item.xinput.form_response ||
+              !item.xinput.form_response.status ||
+              !item.xinput.form_response.submission_id)
+          ) {
+            onStatusObj.xinput = `xinput or xinput.form_response is missing in /${constants.ON_STATUS}`
+          }
+        } else {
+          //validate xInput form
+          const xinputErrors = validateXInputSubmission(item?.xinput, index, sequence)
+          Object.assign(onStatusObj, xinputErrors)
         }
 
         if (item.tags) {
@@ -88,10 +105,10 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
           }
         }
 
-        if (item?.descriptor?.code !== fisFlows[flow as keyof typeof fisFlows])
-          onStatusObj[`item[${index}].code`] = `Descriptor code: ${
-            item?.descriptor?.code
-          } in item[${index}] must be the same as ${fisFlows[flow as keyof typeof fisFlows]}`
+        // if (item?.descriptor?.code !== fisFlows[flow as keyof typeof fisFlows])
+        //   onStatusObj[`item[${index}].code`] = `Descriptor code: ${
+        //     item?.descriptor?.code
+        //   } in item[${index}] must be the same as ${fisFlows[flow as keyof typeof fisFlows]}`
 
         if (on_status.quote.price.value !== item?.price?.value) {
           onStatusObj[`item${index}_price`] = `Price mismatch for item: ${item.id}`
@@ -166,93 +183,75 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
       logger.error(`!!Error while checking quote details in /${constants.ON_STATUS}`, error.stack)
     }
 
+    // check payments
     try {
-      logger.info(`Checking payments details in /${constants.ON_STATUS}`)
+      logger.info(`Checking payments in /${constants.ON_STATUS}`)
+      const payments = on_status?.payments
 
-      const payments = on_status.payments
-
-      const totalPaymentsAmount = payments
-        .filter((payment: any) => payment.params && payment.params.amount)
-        .reduce((total: any, payment: any) => total + parseFloat(payment.params.amount), 0)
-      const quotePriceValue = parseFloat(on_status.quote.price.value)
-
-      if (totalPaymentsAmount !== quotePriceValue) {
-        onStatusObj.paymentsAmountMismatch = `Total payments amount (${totalPaymentsAmount}) does not match with quote.price.value (${quotePriceValue})`
-      }
-
-      for (let i = 1; i < payments.length; i++) {
-        const payment = payments[i]
-
-        if (payment.url) {
-          if (!isValidUrl(payment.url)) {
-            onStatusObj['invalidPaymentUrl'] = `Invalid payment url (${payment.url}) at index ${i}`
-          } else {
-            const updateValue = getValue(`updatePayment`)
-            if (payment?.params?.amount !== updateValue)
-              onStatusObj[
-                'invalidPaymentAmount'
-              ] = `Invalid payment amount (${payment.url}) at index ${i}, should be the same as sent in update call`
-          }
-        }
-
-        if (payment.status !== 'PAID' && payment.status !== 'NOT-PAID') {
-          onStatusObj.invalidPaymentStatus = `Invalid payment status (${payment.status}) at index ${i}`
-        }
-
-        if (payment.time && payment.time.range) {
-          const { start, end } = payment.time.range
-          const startTime = new Date(start).getTime()
-          const endTime = new Date(end).getTime()
-
-          if (isNaN(startTime) || isNaN(endTime) || startTime > endTime) {
-            onStatusObj.invalidTimeRange = `Invalid time range for payment at index ${i}`
-          }
-
-          if (i > 0) {
-            const prevEndTime = new Date(payments[i - 1].time.range.end).getTime()
-            if (startTime <= prevEndTime) {
-              onStatusObj.timeRangeOrderError = `Time range order error for payment at index ${i}`
-            }
-          }
-        } else {
-          onStatusObj.missingTimeRange = `Missing time range for payment at index ${i}`
-        }
-      }
-
-      const buyerFinderFeesTag = payments[0].tags.find((tag: any) => tag.descriptor.code === 'BUYER_FINDER_FEES')
-      const settlementTermsTag = payments[0].tags.find((tag: any) => tag.descriptor.code === 'SETTLEMENT_TERMS')
-
-      if (!buyerFinderFeesTag) {
-        onStatusObj.buyerFinderFees = `BUYER_FINDER_FEES tag is missing in payments`
-      }
-
-      if (!settlementTermsTag) {
-        onStatusObj.settlementTerms = `SETTLEMENT_TERMS tag is missing in payments`
-      }
-
-      if (!payments[0].collected_by) {
-        onStatusObj.payments = `collected_by  is missing in payments`
+      if (sequence === FisApiSequence.ON_STATUS) {
+        const paymentError = validatePaymentsObject(payments, constants.ON_STATUS)
+        if (paymentError) Object.assign(onStatusObj, paymentError)
       } else {
-        const allowedCollectedByValues = ['BPP', 'BAP']
-        const allowedStatusValues = ['NOT-PAID', 'PAID']
-
-        const collectedBy = getValue(`collected_by`)
-        if (collectedBy && collectedBy !== payments[0].collected_by) {
-          onStatusObj.collectedBy = `Collected_By didn't match with what was sent in previous call.`
+        if (isEmpty(payments)) {
+          onStatusObj.payments = `payments array is missing or is empty`
         } else {
-          if (!allowedCollectedByValues.includes(payments[0].collected_by)) {
-            onStatusObj.collectedBy = `Invalid value for collected_by. It should be either BPP or BAP.`
-          }
+          const allowedStatusValues = ['NOT-PAID', 'PAID']
+          payments?.forEach((arr: any, i: number) => {
+            const terms = [
+              { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' },
+              {
+                code: 'SETTLEMENT_BASIS',
+                type: 'enum',
+                value: ['INVOICE_RECEIPT', 'Delivery'],
+              },
+              { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
+              { code: 'STATIC_TERMS', type: 'url' },
+              { code: 'COURT_JURISDICTION', type: 'string' },
+              { code: 'DELAY_INTEREST', type: 'amount' },
+              { code: 'SETTLEMENT_AMOUNT', type: 'amount' },
+              { code: 'SETTLEMENT_TYPE', type: 'enum', value: ['upi', 'neft', 'rtgs'] },
+              {
+                code: 'OFFLINE_CONTRACT',
+                type: 'boolean',
+              },
+            ]
 
-          setValue(`collected_by`, payments[0].collected_by)
-        }
+            if (!arr?.collected_by) {
+              onStatusObj[
+                `payemnts[${i}]_collected_by`
+              ] = `payments.collected_by must be present in ${constants.ON_STATUS}`
+            } else {
+              const collectedBy = getValue(`collected_by`)
+              if (collectedBy && collectedBy != arr?.collected_by)
+                onStatusObj[
+                  `payemnts[${i}]_collected_by`
+                ] = `payments.collected_by value sent in ${constants.ON_STATUS} should be same as sent in past call: ${collectedBy}`
+            }
 
-        if (!allowedStatusValues.includes(payments[0].status)) {
-          onStatusObj.paymentStatus = `Invalid value for status. It should be either of NOT-PAID or PAID.`
+            // check status
+            if (!arr?.status) onStatusObj.paymentStatus = `payment.status is missing for index:${i} in payments`
+            else if (!arr?.status || !allowedStatusValues.includes(arr?.status)) {
+              onStatusObj.paymentStatus = `invalid status at index:${i} in payments, should be either of ${allowedStatusValues}`
+            }
+
+            // check type
+            const validTypes = ['ON-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
+            if (!arr?.type || !validTypes.includes(arr.type)) {
+              onStatusObj[`payments[${i}]_type`] = `payments.type must be present in ${
+                constants.ON_STATUS
+              } & its value must be one of: ${validTypes.join(', ')}`
+            }
+
+            // Validate payment tags
+            const tagsValidation = validatePaymentTags(arr?.tags, terms)
+            if (!tagsValidation.isValid) {
+              Object.assign(onStatusObj, { tags: tagsValidation.errors })
+            }
+          })
         }
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking payments details in /${constants.ON_STATUS}`, error.stack)
+      logger.error(`!!Errors while checking payments in /${constants.ON_STATUS}, ${error.stack}`)
     }
 
     try {
@@ -263,46 +262,12 @@ export const checkOnStatus = (data: any, msgIdSet: any, flow: string) => {
       logger.error(`!!Error while checking cancellation_terms in /${constants.ON_STATUS}, ${error.stack}`)
     }
 
+    //check documents
     try {
       logger.info(`Checking documents in /${constants.ON_STATUS}`)
-      const documents = on_status.documents
-
-      if (!documents || !Array.isArray(documents) || documents.length === 0) {
-        onStatusObj.documents = 'Documents array is missing or empty in order'
-      } else {
-        documents.forEach((document, index) => {
-          const documentKey = `documents[${index}]`
-
-          if (!document.descriptor || !document.descriptor.code) {
-            onStatusObj[`${documentKey}.code`] = 'Document descriptor is missing or empty'
-          }
-
-          if (!document.descriptor || !document.descriptor.name) {
-            onStatusObj[`${documentKey}.name`] = 'Document descriptor name is missing or empty'
-          }
-
-          if (!document.descriptor || !document.descriptor.short_desc) {
-            onStatusObj[`${documentKey}.short_desc`] = 'Document descriptor short_desc is missing or empty'
-          }
-
-          if (!document.descriptor || !document.descriptor.long_desc) {
-            onStatusObj[`${documentKey}.long_desc`] = 'Document descriptor long_desc is missing or empty'
-          }
-
-          if (!document.mime_type) {
-            onStatusObj[`${documentKey}.mime_type`] = 'Document mime_type is missing or empty'
-          } else {
-            const allowedMimeTypes = ['application/pdf']
-            if (!allowedMimeTypes.includes(document.mime_type)) {
-              onStatusObj[`${documentKey}.mime_type`] = `Invalid mime_type: ${document.mime_type}`
-            }
-          }
-
-          if (!document.url) {
-            onStatusObj[`${documentKey}.url`] = 'Document URL is missing or empty'
-          }
-        })
-      }
+      const requiredDocumentCodes = ['LOAN_AGREEMENT', 'LOAN_CANCELLATION']
+      const cancellationErrors = validateDocuments(on_status?.documents, constants.ON_STATUS, requiredDocumentCodes)
+      Object.assign(onStatusObj, cancellationErrors)
     } catch (error: any) {
       logger.error(`!!Error while checking documents in /${constants.ON_STATUS}, ${error.stack}`)
     }

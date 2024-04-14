@@ -1,13 +1,22 @@
 /* eslint-disable no-prototype-builtins */
 import _ from 'lodash'
-import constants, { mobilitySequence } from '../../constants'
+import constants, { mobilitySequence, ON_DEMAND_VEHICLE, MOB_FULL_STATE as VALID_FULL_STATE } from '../../constants'
 import { logger } from '../../shared/logger'
 import { validateSchema, isObjectEmpty, checkMobilityContext, timeDiff as timeDifference, checkBppIdOrBapId } from '../'
 import { getValue, setValue } from '../../shared/dao'
-import { validateCancellationTerms } from './mobilityChecks'
+import {
+  validateCancellationTerms,
+  validateEntity,
+  validateItemRefIds,
+  validateQuote,
+  validateStops,
+  validatePayloadAgainstSchema,
+} from './mobilityChecks'
+import { validateItemsTags, validateRouteInfoTags } from './tags'
+import attributeConfig from './config/config2.0.1.json'
 
-export const checkOnUpdate = (data: any) => {
-  const onUpdateObj: any = {}
+export const checkOnUpdate = (data: any, version: any) => {
+  const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
       return { [mobilitySequence.ON_UPDATE]: 'JSON cannot be empty' }
@@ -26,25 +35,25 @@ export const checkOnUpdate = (data: any) => {
     const contextRes: any = checkMobilityContext(context, constants.ON_UPDATE)
 
     if (!context.bap_id) {
-      onUpdateObj['bap_id'] = 'context/bap_id is required'
+      errorObj['bap_id'] = 'context/bap_id is required'
     } else {
       const checkBap = checkBppIdOrBapId(context.bap_id)
-      if (checkBap) Object.assign(onUpdateObj, { bap_id: 'context/bap_id should not be a url' })
+      if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
     }
 
     if (!context.bpp_id) {
-      onUpdateObj['bpp_id'] = 'context/bpp_id is required'
+      errorObj['bpp_id'] = 'context/bpp_id is required'
     } else {
       const checkBpp = checkBppIdOrBapId(context.bpp_id)
-      if (checkBpp) Object.assign(onUpdateObj, { bpp_id: 'context/bpp_id should not be a url' })
+      if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
     }
 
     if (schemaValidation !== 'error') {
-      Object.assign(onUpdateObj, schemaValidation)
+      Object.assign(errorObj, schemaValidation)
     }
 
     if (!contextRes?.valid) {
-      Object.assign(onUpdateObj, contextRes.ERRORS)
+      Object.assign(errorObj, contextRes.ERRORS)
     }
 
     setValue(`${mobilitySequence.ON_UPDATE}`, data)
@@ -52,7 +61,7 @@ export const checkOnUpdate = (data: any) => {
     try {
       logger.info(`Comparing city of /${constants.SEARCH} and /${constants.ON_UPDATE}`)
       if (!_.isEqual(searchContext.location.city, context.location.city)) {
-        onUpdateObj.city = `City code mismatch in /${constants.SEARCH} and /${constants.ON_UPDATE}`
+        errorObj.city = `City code mismatch in /${constants.SEARCH} and /${constants.ON_UPDATE}`
       }
     } catch (error: any) {
       logger.info(`Error while comparing city in /${constants.SEARCH} and /${constants.ON_UPDATE}, ${error.stack}`)
@@ -61,7 +70,7 @@ export const checkOnUpdate = (data: any) => {
     try {
       logger.info(`Comparing country of /${constants.SEARCH} and /${constants.ON_UPDATE}`)
       if (!_.isEqual(searchContext.location.country, context.location.country)) {
-        onUpdateObj.country = `Country code mismatch in /${constants.SEARCH} and /${constants.ON_UPDATE}`
+        errorObj.country = `Country code mismatch in /${constants.SEARCH} and /${constants.ON_UPDATE}`
       }
     } catch (error: any) {
       logger.info(`Error while comparing country in /${constants.SEARCH} and /${constants.ON_UPDATE}, ${error.stack}`)
@@ -71,12 +80,12 @@ export const checkOnUpdate = (data: any) => {
       logger.info(`Comparing timestamp of /${constants.UPDATE} and /${constants.ON_UPDATE}`)
       const tmpstmp = getValue('tmpstmp')
       if (_.gte(tmpstmp, context.timestamp)) {
-        onUpdateObj.tmpstmp = `Timestamp for /${constants.UPDATE} api cannot be greater than or equal to /${constants.ON_UPDATE} api`
+        errorObj.tmpstmp = `Timestamp for /${constants.UPDATE} api cannot be greater than or equal to /${constants.ON_UPDATE} api`
       } else {
         const timeDiff = timeDifference(context.timestamp, tmpstmp)
         logger.info(timeDiff)
         if (timeDiff > 5000) {
-          onUpdateObj.tmpstmp = `context/timestamp difference between /${constants.ON_UPDATE} and /${constants.UPDATE} should be smaller than 5 sec`
+          errorObj.tmpstmp = `context/timestamp difference between /${constants.ON_UPDATE} and /${constants.UPDATE} should be smaller than 5 sec`
         }
       }
 
@@ -90,7 +99,7 @@ export const checkOnUpdate = (data: any) => {
     try {
       logger.info(`Comparing transaction Ids of /${constants.CONFIRM} and /${constants.ON_UPDATE}`)
       if (!_.isEqual(getValue('txnId'), context.transaction_id)) {
-        onUpdateObj.txnId = `Transaction Id should be same from /${constants.CONFIRM} onwards`
+        errorObj.txnId = `Transaction Id should be same from /${constants.CONFIRM} onwards`
       }
     } catch (error: any) {
       logger.error(
@@ -101,6 +110,8 @@ export const checkOnUpdate = (data: any) => {
     const on_update = message.order
     const itemIDS: any = getValue('ItmIDS')
     const itemIdArray: any[] = []
+    const storedFull: any = getValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`)
+    const fulfillmentIdsSet = new Set()
 
     let newItemIDSValue: any[]
 
@@ -115,32 +126,115 @@ export const checkOnUpdate = (data: any) => {
 
     setValue('ItmIDS', newItemIDSValue)
 
+    //fulfillment checks
     try {
-      logger.info(`Checking fulfillments objects in /${constants.ON_UPDATE}`)
-      const fulfillments = on_update.fulfillments
+      logger.info(`Validating fulfillments object for /${constants.ON_UPDATE}`)
+      on_update.fulfillments.forEach((fulfillment: any, index: number) => {
+        const fulfillmentKey = `fulfillments[${index}]`
 
-      if (fulfillments && fulfillments.length > 0) {
-        const fulfillment = fulfillments[0]
-
-        if (
-          !fulfillment.customer &&
-          !fulfillment.customer.person &&
-          !fulfillment.customer.person.name &&
-          !fulfillment.customer.contact &&
-          !fulfillment.customer.contact.phone &&
-          !fulfillment.agent &&
-          !fulfillment.agent.person &&
-          !fulfillment.agent.person.name &&
-          !fulfillment.agent.contact &&
-          !fulfillment.agent.contact.phone
-        ) {
-          onUpdateObj.missingFulfillmentCustomerDetails = 'Fulfillment customer or agent details are incomplete'
+        if (!fulfillment?.id) {
+          errorObj[fulfillmentKey] = `id is missing in fulfillments[${index}]`
+        } else if (!storedFull.includes(fulfillment.id)) {
+          errorObj[
+            `${fulfillmentKey}.id`
+          ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+        } else {
+          fulfillmentIdsSet.add(fulfillment.id)
         }
-      } else {
-        onUpdateObj.missingFulfillmentDetails = 'Fulfillment details are missing'
+
+        if (!VALID_FULL_STATE.includes(fulfillment?.state?.descriptor?.code)) {
+          errorObj[`${fulfillmentKey}.state`] = `Invalid or missing descriptor.code for fulfillment ${index}`
+        }
+
+        const vehicle = fulfillment.vehicle
+
+        if (!ON_DEMAND_VEHICLE.includes(vehicle.category)) {
+          errorObj[`${fulfillmentKey}.vehicleCategory`] = `Vehicle category should be one of ${ON_DEMAND_VEHICLE}`
+        }
+
+        if (!vehicle?.registration || !vehicle?.model || !vehicle?.make) {
+          errorObj[`${fulfillmentKey}.details`] = `Vehicle object is incomplete for fulfillment ${index}`
+        }
+
+        if (fulfillment.type !== 'DELIVERY') {
+          errorObj[
+            `${fulfillmentKey}.type`
+          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_UPDATE}`
+        }
+
+        //customer checks
+        const customerErrors = validateEntity(fulfillment.customer, 'customer', constants.ON_UPDATE, index)
+        Object.assign(errorObj, customerErrors)
+
+        //agent checks
+        const agentErrors = validateEntity(fulfillment.agent, 'customer', constants.ON_UPDATE, index)
+        Object.assign(errorObj, agentErrors)
+
+        // Check stops for START and END, or time range with valid timestamp and GPS
+        const otp = false
+        const cancel = false
+        const stopsError = validateStops(fulfillment?.stops, index, otp, cancel)
+        if (!stopsError?.valid) Object.assign(errorObj, stopsError)
+
+        if (fulfillment.tags) {
+          // Validate route info tags
+          const tagsValidation = validateRouteInfoTags(fulfillment.tags)
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { tags: tagsValidation.errors })
+          }
+        }
+      })
+    } catch (error: any) {
+      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_UPDATE},  ${error.message}`)
+      return { error: error.message }
+    }
+
+    //items checks
+    try {
+      logger.info(`Validating items object for /${constants.ON_UPDATE}`)
+      if (!on_update?.items) errorObj.items = `items is missing in /${constants.ON_UPDATE}`
+      else {
+        on_update.items.forEach((item: any, index: number) => {
+          const itemKey = `items[${index}]`
+          if (!newItemIDSValue.includes(item.id)) {
+            errorObj[
+              `${itemKey}.id`
+            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_UPDATE}`
+          }
+
+          //price check
+          if (!item?.price) errorObj[`${itemKey}.price`] = `price is missing at item.index ${index} `
+
+          //fulfillment_ids, location_ids & payment_ids checks
+          const refIdsErrors = validateItemRefIds(
+            item,
+            constants.ON_UPDATE,
+            index,
+            fulfillmentIdsSet,
+            new Set(),
+            new Set(),
+          )
+          Object.assign(errorObj, refIdsErrors)
+
+          //descriptor.code
+          if (item.descriptor.code !== 'RIDE') {
+            errorObj[
+              `${itemKey}.type`
+            ] = `descriptor.code must be RIDE at item.index ${index} in /${constants.ON_UPDATE}`
+          }
+
+          // FARE_POLICY & INFO checks
+          if (item.tags) {
+            const tagsValidation = validateItemsTags(item.tags)
+            if (!tagsValidation.isValid) {
+              Object.assign(errorObj, { tags: tagsValidation.errors })
+            }
+          }
+        })
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking fulfillments object in /${constants.ON_UPDATE}, ${error.stack}`)
+      logger.error(`!!Error occcurred while checking items info in /${constants.ON_UPDATE},  ${error.message}`)
+      return { error: error.message }
     }
 
     try {
@@ -155,9 +249,7 @@ export const checkOnUpdate = (data: any) => {
       )
 
       if (missingBreakupItems.length > 0) {
-        onUpdateObj.missingBreakupItems = `Quote breakup is missing the following items: ${missingBreakupItems.join(
-          ', ',
-        )}`
+        errorObj.missingBreakupItems = `Quote breakup is missing the following items: ${missingBreakupItems.join(', ')}`
       }
 
       const totalBreakupValue = quoteBreakup.reduce(
@@ -168,16 +260,16 @@ export const checkOnUpdate = (data: any) => {
       const priceValue = parseFloat(quote.price.value)
 
       if (totalBreakupValue !== priceValue) {
-        onUpdateObj.breakupTotalMismatch = `Total of quote breakup (${totalBreakupValue}) does not match with price.value (${priceValue})`
+        errorObj.breakupTotalMismatch = `Total of quote breakup (${totalBreakupValue}) does not match with price.value (${priceValue})`
       }
 
       const currencies = quoteBreakup.map((item: any) => item.currency)
       if (new Set(currencies).size !== 1) {
-        onUpdateObj.multipleCurrencies = 'Currency must be the same for all items in the quote breakup'
+        errorObj.multipleCurrencies = 'Currency must be the same for all items in the quote breakup'
       }
 
       if (!quote.ttl) {
-        onUpdateObj.missingTTL = 'TTL is required in the quote'
+        errorObj.missingTTL = 'TTL is required in the quote'
       }
     } catch (error: any) {
       logger.error(`!!Error while checking quote details in /${constants.ON_UPDATE}`, error.stack)
@@ -192,7 +284,7 @@ export const checkOnUpdate = (data: any) => {
         const payment = payments[i]
 
         if (payment.status !== 'PAID' && payment.status !== 'NOT-PAID') {
-          onUpdateObj.invalidPaymentStatus = `Invalid payment status (${payment.status}) at index ${i}`
+          errorObj.invalidPaymentStatus = `Invalid payment status (${payment.status}) at index ${i}`
         }
       }
 
@@ -200,32 +292,32 @@ export const checkOnUpdate = (data: any) => {
       const settlementTermsTag = payments[0].tags.find((tag: any) => tag.descriptor.code === 'SETTLEMENT_TERMS')
 
       if (!buyerFinderFeesTag) {
-        onUpdateObj.buyerFinderFees = `BUYER_FINDER_FEES tag is missing in payments`
+        errorObj.buyerFinderFees = `BUYER_FINDER_FEES tag is missing in payments`
       }
 
       if (!settlementTermsTag) {
-        onUpdateObj.settlementTerms = `SETTLEMENT_TERMS tag is missing in payments`
+        errorObj.settlementTerms = `SETTLEMENT_TERMS tag is missing in payments`
       }
 
       if (!payments[0].collected_by) {
-        onUpdateObj.payments = `collected_by  is missing in payments`
+        errorObj.payments = `collected_by  is missing in payments`
       } else {
         const allowedCollectedByValues = ['BPP', 'BAP']
         const allowedStatusValues = ['NOT-PAID', 'PAID']
 
         const collectedBy = getValue(`collected_by`)
         if (collectedBy && collectedBy !== payments[0].collected_by) {
-          onUpdateObj.collectedBy = `Collected_By didn't match with what was sent in previous call.`
+          errorObj.collectedBy = `Collected_By didn't match with what was sent in previous call.`
         } else {
           if (!allowedCollectedByValues.includes(payments[0].collected_by)) {
-            onUpdateObj.collectedBy = `Invalid value for collected_by. It should be either BPP or BAP.`
+            errorObj.collectedBy = `Invalid value for collected_by. It should be either BPP or BAP.`
           }
 
           setValue(`collected_by`, payments[0].collected_by)
         }
 
         if (!allowedStatusValues.includes(payments[0].status)) {
-          onUpdateObj.paymentStatus = `Invalid value for status. It should be either of NOT-PAID or PAID.`
+          errorObj.paymentStatus = `Invalid value for status. It should be either of NOT-PAID or PAID.`
         }
       }
     } catch (error: any) {
@@ -235,21 +327,37 @@ export const checkOnUpdate = (data: any) => {
     try {
       logger.info(`Checking provider id /${constants.ON_UPDATE}`)
       if (on_update.provider.id != getValue('providerId')) {
-        onUpdateObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.ON_UPDATE}`
+        errorObj.prvdrId = `Provider Id mismatches in /${constants.ON_CONFIRM} and /${constants.ON_UPDATE}`
       }
     } catch (error: any) {
       logger.error(`!!Error while checking provider id /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
+    //cancellation_terms checks
     try {
       logger.info(`Checking cancellation terms in /${constants.ON_UPDATE}`)
       const cancellationErrors = validateCancellationTerms(on_update.cancellation_terms, constants.ON_UPDATE)
-      Object.assign(onUpdateObj, cancellationErrors)
+      Object.assign(errorObj, cancellationErrors)
     } catch (error: any) {
       logger.error(`!!Error while checking cancellation_terms in /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
-    return onUpdateObj
+    //quote checks
+    try {
+      logger.info(`Checking quote details in /${constants.ON_UPDATE}`)
+      const quoteErrors = validateQuote(on_update?.quote, constants.ON_UPDATE)
+      Object.assign(errorObj, quoteErrors)
+    } catch (error: any) {
+      logger.error(`!!Error occcurred while checking Quote in /${constants.ON_UPDATE},  ${error.message}`)
+      return { error: error.message }
+    }
+
+    if (version === '2.0.1') {
+      const additionalAttributes: any = attributeConfig.on_update
+      validatePayloadAgainstSchema(additionalAttributes, data, errorObj, '', '')
+    }
+
+    return errorObj
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.ON_UPDATE} API`, JSON.stringify(err.stack))
     return { error: err.message }

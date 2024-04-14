@@ -1,22 +1,13 @@
 import { getValue, setValue } from '../../../shared/dao'
 import constants, { flowsFis10 } from '../../../constants/'
 import { logger } from '../../../shared/logger'
-import { checkIdAndUri, checkFISContext, isValidEmail, isValidPhoneNumber } from '../../'
+import { checkIdAndUri, checkFISContext, isValidEmail, isValidPhoneNumber, isValidUrl } from '../../'
 import _, { isEmpty, isEqual } from 'lodash'
 import { validatePaymentTags } from './tags'
 
 export const checkUniqueCategoryIds = (categoryIds: (string | number)[], availableCategoryIds: any): boolean => {
   const uniqueCategoryIds = new Set(categoryIds)
   return categoryIds.length === uniqueCategoryIds.size && categoryIds.every((id) => availableCategoryIds.has(id))
-}
-
-const isValidUrl = (url: string): boolean => {
-  try {
-    new URL(url)
-    return true
-  } catch (error) {
-    return false
-  }
 }
 
 export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any) => {
@@ -140,68 +131,6 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
   }
 }
 
-export const validateCancellationTerms = (cancellationTerms: any, action: string) => {
-  const errorObj: any = {}
-  try {
-    logger.info(`Checking cancellation terms in /${action}`)
-    const cancellationTermsState = new Map()
-    if (!cancellationTerms) {
-      errorObj.cancellationTerms = `cancellation_terms are required in /${action}`
-    } else if (cancellationTerms && cancellationTerms.length > 0) {
-      for (let i = 0; i < cancellationTerms.length; i++) {
-        const cancellationTerm = cancellationTerms[i]
-
-        const hasExternalRef = cancellationTerm?.external_ref !== undefined
-        const hasFulfillmentState = cancellationTerm?.fulfillment_state !== undefined
-        const hasCancellationFee = cancellationTerm?.cancellation_fee !== undefined
-        const hasPercentage = hasCancellationFee && cancellationTerm?.cancellation_fee?.percentage !== undefined
-        const hasAmount = hasCancellationFee && cancellationTerm?.cancellation_fee?.amount !== undefined
-
-        const isValidTerm =
-          (hasExternalRef || (hasFulfillmentState && hasCancellationFee && (hasPercentage || hasAmount))) &&
-          (!hasFulfillmentState ||
-            (hasFulfillmentState &&
-              cancellationTerm.fulfillment_state.descriptor &&
-              cancellationTerm.fulfillment_state.descriptor.code &&
-              ((hasPercentage &&
-                !isNaN(parseFloat(cancellationTerm.cancellation_fee.percentage)) &&
-                parseFloat(cancellationTerm.cancellation_fee.percentage) > 0 &&
-                Number.isInteger(parseFloat(cancellationTerm.cancellation_fee.percentage))) ||
-                (hasAmount &&
-                  !isNaN(parseFloat(cancellationTerm.cancellation_fee.amount)) &&
-                  parseFloat(cancellationTerm.cancellation_fee.amount) > 0))))
-
-        if (!isValidTerm) {
-          errorObj.cancellationFee = `Invalid Cancellation Term[${i}] - Either external_ref or fulfillment_state with valid cancellation_fee is required`
-        }
-
-        if (hasFulfillmentState) {
-          const descriptorCode = cancellationTerm.fulfillment_state.descriptor.code
-          const storedPercentage = cancellationTermsState.get(descriptorCode)
-
-          if (storedPercentage === undefined) {
-            cancellationTermsState.set(
-              descriptorCode,
-              hasPercentage ? cancellationTerm.cancellation_fee.percentage : cancellationTerm.cancellation_fee.amount,
-            )
-          } else if (
-            storedPercentage !==
-            (hasPercentage ? cancellationTerm.cancellation_fee.percentage : cancellationTerm.cancellation_fee.amount)
-          ) {
-            errorObj.cancellationFee = `Cancellation terms percentage or amount for ${descriptorCode} has changed`
-          }
-        }
-      }
-    } else {
-      errorObj.cancellationTerms = `cancellation_terms should be an array in /${action}`
-    }
-  } catch (error: any) {
-    logger.error(`!!Error while checking cancellation_terms in /${action}, ${error.stack}`)
-  }
-
-  return errorObj
-}
-
 export const validateDescriptor = (
   descriptor: any,
   action: string,
@@ -263,47 +192,6 @@ export const validateDescriptor = (
   } catch (error: any) {
     logger.info(`Error while validating descriptor for /${action} at ${path}, ${error.stack}`)
   }
-}
-
-export const validateXInputSubmission = (xinput: any, index: number, sequence: string) => {
-  const errorObj: any = {}
-
-  if (!xinput) {
-    errorObj[`item${index}`] = `xinput is missing in item${index}`
-  } else {
-    if (!Object.prototype.hasOwnProperty.call(xinput?.form, 'id')) {
-      errorObj[`item${index}_form`] = `/message/order/items/form in item[${index}] must have id in form`
-    } else {
-      const formId: any = getValue(`formId`)
-      if (!formId?.includes(xinput?.form?.id)) {
-        errorObj[`item${index}_formId`] = `form.id: ${xinput?.form?.id} mismatches with form.id sent in past call`
-      }
-    }
-
-    if (!Object.prototype.hasOwnProperty.call(xinput?.form_response, 'status')) {
-      errorObj[
-        `item${index}_xinput`
-      ] = `/message/order/items/xinput in item[${index}] must have status in form_response`
-    } else {
-      const status = xinput?.form_response?.status
-      const code = 'SUCCESS'
-      if (status !== code) {
-        errorObj[
-          `item${index}_status`
-        ] = `/message/order/items/xinput/form_response/status in item[${index}] should be '${code}'`
-      }
-    }
-
-    if (!Object.prototype.hasOwnProperty.call(xinput?.form_response, 'submission_id')) {
-      errorObj[
-        `item${index}_xinput`
-      ] = `/message/order/items/xinput in item[${index}] must have submission_id in form_response`
-    } else {
-      setValue(`${sequence}_submission_id`, xinput?.form_response?.submission_id)
-    }
-  }
-
-  return errorObj
 }
 
 export const validateQuote = (quote: any) => {
@@ -376,129 +264,6 @@ export const validateQuote = (quote: any) => {
   }
 
   return errorObj
-}
-
-export const validateProvider = (provider: any, action: string) => {
-  try {
-    const providerErrors: any = {}
-    if (!provider) {
-      providerErrors.provider = 'Provider details are missing or invalid.'
-      return providerErrors
-    }
-
-    if (!provider?.id) providerErrors.prvdrId = `provider.id is missing`
-    else {
-      logger.info(`Comparing provider id of /${action} & past call`)
-      const prvrdID: any = getValue('providerId')
-      if (!_.isEqual(prvrdID, provider?.id)) {
-        providerErrors.prvdrId = `provider.id for /${action} & past call api should be same`
-        setValue('providerId', provider?.id)
-      }
-    }
-
-    // send true as last argument in case if code validation is needed
-    const descriptorError = validateDescriptor(provider?.descriptor, action, `provider.descriptor`, false, [])
-    if (descriptorError) Object.assign(providerErrors, descriptorError)
-    return providerErrors
-  } catch (error: any) {
-    logger.info(`Error while checking provider object in /${action} api, ${error.stack}`)
-  }
-}
-
-export const validateDocuments = (documents: any, action: string) => {
-  try {
-    logger.info(`Checking documents in /${action}`)
-    const errors: any = {}
-
-    if (!documents || !Array.isArray(documents) || documents.length === 0) {
-      errors.documents = 'Documents array is missing or empty in order'
-    } else {
-      const requiredDocumentCodes = ['POLICY_DOC', 'CLAIM_DOC', 'RENEW_DOC']
-
-      documents.forEach((document, index) => {
-        const documentKey = `documents[${index}]`
-
-        if (!document.descriptor || !document.descriptor.code) {
-          errors[`${documentKey}.code`] = 'Document descriptor is missing or empty'
-        }
-
-        if (!document.descriptor || !document.descriptor.name) {
-          errors[`${documentKey}.name`] = 'Document descriptor name is missing or empty'
-        }
-
-        if (!document.descriptor || !document.descriptor.short_desc) {
-          errors[`${documentKey}.short_desc`] = 'Document descriptor short_desc is missing or empty'
-        }
-
-        if (!document.descriptor || !document.descriptor.long_desc) {
-          errors[`${documentKey}.long_desc`] = 'Document descriptor long_desc is missing or empty'
-        }
-
-        if (!document.mime_type) {
-          errors[`${documentKey}.mime_type`] = 'Document mime_type is missing or empty'
-        } else {
-          const allowedMimeTypes = ['application/pdf']
-          if (!allowedMimeTypes.includes(document.mime_type)) {
-            errors[`${documentKey}.mime_type`] = `Invalid mime_type: ${document.mime_type}`
-          }
-        }
-
-        if (!document.url) {
-          errors[`${documentKey}.url`] = 'Document URL is missing or empty'
-        }
-
-        if (!requiredDocumentCodes.includes(document.descriptor.code)) {
-          errors[`${documentKey}.code`] = `Invalid document code: ${document.descriptor.code}`
-        }
-      })
-
-      // missing docs
-      const missingDocuments = requiredDocumentCodes.filter(
-        (code) => !documents.some((document) => document.descriptor.code === code),
-      )
-      if (missingDocuments.length > 0) {
-        errors.missingDocuments = `Missing required documents: ${missingDocuments.join(', ')}`
-      }
-    }
-
-    return errors
-  } catch (error: any) {
-    logger.error(`!!Error while checking documents in /${action}, ${error.stack}`)
-  }
-}
-
-export const validateAddOns = (addOns: any, action: string) => {
-  const errors: any = {}
-  const idSet = new Set()
-
-  try {
-    logger.info(`Checking add_ons`)
-    if (isEmpty(addOns)) errors.add_ons = `add_ons array is missing or empty in ${action}`
-    else {
-      addOns?.forEach((addOn: any, index: number) => {
-        const key = `add_ons[${index}]`
-
-        if (!addOn?.id) {
-          errors[`${key}.id`] = `id is missing in add_ons[${index}]`
-        } else if (idSet.has(addOn?.id)) {
-          errors[`${key}.id`] = `duplicate provider id: ${addOn?.id} in add_ons`
-        } else {
-          idSet.add(addOn?.id)
-        }
-
-        if (!addOn?.descriptor?.code || !/^[A-Z_]+$/.test(addOn?.descriptor?.code))
-          errors[`${key}.code`] = 'code should be present in a generic enum format'
-
-        if (!addOn?.quantity.selected || !Number.isInteger(addOn?.quantity.selected) || addOn?.quantity.selected <= 0) {
-          errors[`${key}.code`] = 'Invalid quantity.selected count'
-        }
-      })
-    }
-
-    return errors
-  } catch (error: any) {
-    logger.error(`!!Error while checking add_ons in /${action}, ${error.stack}`)
-  }
 }
 
 export const validateBillingObject = (billing: any, action: string) => {

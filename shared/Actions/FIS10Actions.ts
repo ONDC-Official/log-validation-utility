@@ -15,7 +15,7 @@ import { checkOnStatus } from '../../utils/FIS/FIS10/onStatus'
 import { checkOnCancel } from '../../utils/FIS/FIS10/onCancel'
 import { checkOnUpdate } from '../../utils/FIS/FIS10/onUpdate'
 
-export function validateLogsForFIS10(data: any, domain: string, flow: string, version: string) {
+export function validateLogsForFIS10(data: any, flow: string, version: string) {
   const msgIdSet = new Set()
   let logReport: any = {}
   try {
@@ -23,8 +23,6 @@ export function validateLogsForFIS10(data: any, domain: string, flow: string, ve
   } catch (error) {
     logger.error('!!Error while removing LMDB', error)
   }
-
-  console.log('domain', domain)
 
   if (!_.isEqual(version, '2.0.0')) {
     logReport = { ...logReport, version: `Invalid version ${version}` }

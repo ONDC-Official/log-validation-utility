@@ -815,7 +815,7 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
             const isTagMandatory = tagInfo.mandatory
             if (isTagMandatory) {
               let tagValue: any = null
-              let originalTag:any = null
+              let originalTag: any = null
               const tagFound = tags.some((tag: any) => {
                 const res = tag.code.toLowerCase() === tagName.toLowerCase()
                 if (res) {
@@ -833,7 +833,7 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
                 if (
                   tagInfo.value.length > 0 &&
                   !tagInfo.value.includes(originalTag) &&
-                  !tagInfo.value.includes(tagValue) 
+                  !tagInfo.value.includes(tagValue)
                 ) {
                   logger.error(`The item value can only be of possible values.`)
                   const key = `InvldValueforItem[${i}][${index}] : ${tagName}`
@@ -1037,6 +1037,46 @@ export function compareQuoteObjects(obj1: InputObject, obj2: InputObject, api1: 
       )
     }
   })
+
+  return errors
+}
+
+type ObjectType = {
+  [key: string]: string | string[]
+}
+
+export function validateObjectString(obj: ObjectType): string | null {
+  const errors: string[] = []
+
+  Object.entries(obj).forEach(([key, value]) => {
+    if (typeof value === 'string' && value.trim() === '') {
+      errors.push(`'${key}'`)
+    } else if (Array.isArray(value) && value.some((v) => typeof v === 'string' && v.trim() === '')) {
+      errors.push(`'${key}'`)
+    }
+  })
+
+  if (errors.length > 0) {
+    return `${errors.join(', ')} cannot be empty`
+  }
+
+  return null
+}
+
+export function compareLists(list1: any[], list2: any[]): string[] {
+  const errors: string[] = []
+
+  for (const obj1 of list1) {
+    const matchingObj = list2.find((obj2) => obj2.code === obj1.code)
+
+    if (!matchingObj) {
+      errors.push(`Code '${obj1.code}' present in first list but not in second list.`)
+    } else {
+      if (obj1.value !== matchingObj.value) {
+        errors.push(`Code '${obj1.code}' value not matching.`)
+      }
+    }
+  }
 
   return errors
 }

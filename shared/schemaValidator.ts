@@ -45,6 +45,23 @@ const ajv = new Ajv({
 addFormats(ajv)
 require('ajv-errors')(ajv)
 
+ajv.addFormat('rfc3339-date-time', function(dateTimeString) {
+  // Parse the date-time string
+  const date = new Date(dateTimeString);
+ 
+  // Check if the date is valid and if it matches the RFC3339 format
+  if (isNaN(date.getTime())) {
+     return false; // Invalid date
+  }
+ 
+  // Convert the date to an RFC3339 string
+  const rfc3339String = date.toISOString();
+ 
+  // Compare the original string with the RFC3339 string
+  // This ensures the string is in the correct format and represents a valid date
+  return rfc3339String === dateTimeString;
+ });
+
 const formatted_error = (errors: any) => {
   const error_list: any = []
   let status = ''

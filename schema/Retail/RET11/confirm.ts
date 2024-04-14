@@ -55,7 +55,7 @@ export const FnBconfirmSchema = {
         timestamp: {
           type: 'string',
           minLength: 1,
-          format: 'date-time',
+          format: 'rfc3339-date-time',
         },
         ttl: {
           type: 'string',
@@ -227,11 +227,11 @@ export const FnBconfirmSchema = {
                 },
                 created_at: {
                   type: 'string',
-                  format: 'date-time',
+                  format: 'rfc3339-date-time',
                 },
                 updated_at: {
                   type: 'string',
-                  format: 'date-time',
+                  format: 'rfc3339-date-time',
                 },
               },
               required: ['name', 'address', 'phone', 'created_at', 'updated_at'],
@@ -614,11 +614,11 @@ export const FnBconfirmSchema = {
             },
             created_at: {
               type: 'string',
-              format: 'date-time',
+              format: 'rfc3339-date-time',
             },
             updated_at: {
               type: 'string',
-              format: 'date-time',
+              format: 'rfc3339-date-time',
             },
           },
           required: [

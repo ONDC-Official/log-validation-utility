@@ -1,14 +1,22 @@
 /* eslint-disable no-prototype-builtins */
 // import _ from 'lodash'
-import constants, { mobilitySequence } from '../../constants'
+import constants, { ON_DEMAND_VEHICLE, MOB_FULL_STATE as VALID_FULL_STATE, mobilitySequence } from '../../constants'
 import { logger } from '../../shared/logger'
 import { validateSchema, isObjectEmpty } from '../'
 import { getValue, setValue } from '../../shared/dao'
-import { validateContext, validateStops } from './mobilityChecks'
-import { validateRouteInfoTags, validateCancellationTerm } from './tags'
+import {
+  validateCancellationTerms,
+  validateContext,
+  validateEntity,
+  validateItemRefIds,
+  validateStops,
+  validatePayloadAgainstSchema,
+} from './mobilityChecks'
+import { validateRouteInfoTags, validateItemsTags } from './tags'
 import _ from 'lodash'
+import attributeConfig from './config/config2.0.1.json'
 
-export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
+export const checkOnCancel = (data: any, msgIdSet: any, sequence: string, version: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -35,6 +43,22 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
     const onCancel: any = message.order
     const fulfillmentIdsSet = new Set()
     const paymentIdsSet = new Set()
+    const storedFull: any = getValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`)
+    const itemIDS: any = getValue('ItmIDS')
+    const itemIdArray: any[] = []
+
+    let newItemIDSValue: any[]
+
+    if (itemIDS && itemIDS.length > 0) {
+      newItemIDSValue = itemIDS
+    } else {
+      onCancel.items.map((item: { id: string }) => {
+        itemIdArray.push(item.id)
+      })
+      newItemIDSValue = itemIdArray
+    }
+
+    setValue('ItmIDS', newItemIDSValue)
 
     if (!('id' in onCancel)) {
       errorObj['order'] = `id should be sent in /${constants.ON_CANCEL}`
@@ -76,68 +100,121 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
       logger.error(`!!Error while validating provider for /${constants.ON_CANCEL}, ${error.stack}`)
     }
 
+    // fullfilment checks
     try {
       logger.info(`Validating fulfillments object for /${constants.ON_CANCEL}`)
+      onCancel.fulfillments.forEach((fulfillment: any, index: number) => {
+        const fulfillmentKey = `fulfillments[${index}]`
 
-      if (!onCancel?.fulfillments || onCancel.fulfillments.length === 0) {
-        errorObj['fulfillments'] = `fulfillments array must be present in /${constants.ON_CANCEL}`
-      } else {
-        onCancel.fulfillments.forEach((fulfillment: any, i: number) => {
-          const fulfillmentId = fulfillment.id
+        if (!fulfillment?.id) {
+          errorObj[fulfillmentKey] = `id is missing in fulfillments[${index}]`
+        } else if (!storedFull.includes(fulfillment.id)) {
+          errorObj[
+            `${fulfillmentKey}.id`
+          ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+        } else {
+          fulfillmentIdsSet.add(fulfillment.id)
+        }
 
-          // Check if fulfillment ID is unique
-          if (fulfillmentIdsSet.has(fulfillmentId)) {
-            errorObj[`fulfillmentId_${i}`] =
-              `Duplicate fulfillment ID '${fulfillmentId}' at index ${i} in /${constants.ON_CANCEL}`
-          } else {
-            fulfillmentIdsSet.add(fulfillmentId)
+        const stateCode = fulfillment.state?.descriptor?.code
+        if (sequence === 'on_cancel' && stateCode !== 'RIDE_CANCELLED') {
+          errorObj[
+            `fulfillmentStateCode_${index}`
+          ] = `Fulfillment state code must be RIDE_CANCELLED at index ${index} in /${constants.ON_CANCEL}`
+        } else {
+          if (!VALID_FULL_STATE.includes(fulfillment?.state?.descriptor?.code)) {
+            errorObj[`${fulfillmentKey}.state`] = `Invalid or missing descriptor.code for fulfillment ${index}`
+          }
+        }
+
+        const vehicle = fulfillment.vehicle
+
+        if (!ON_DEMAND_VEHICLE.includes(vehicle.category)) {
+          errorObj[`${fulfillmentKey}.vehicleCategory`] = `Vehicle category should be one of ${ON_DEMAND_VEHICLE}`
+        }
+
+        if (!vehicle?.registration || !vehicle?.model || !vehicle?.make) {
+          errorObj[`${fulfillmentKey}.details`] = `Vehicle object is incomplete for fulfillment ${index}`
+        }
+
+        if (fulfillment.type !== 'DELIVERY') {
+          errorObj[
+            `${fulfillmentKey}.type`
+          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_CANCEL}`
+        }
+
+        //customer checks
+        const customerErrors = validateEntity(fulfillment.customer, 'customer', constants.ON_CANCEL, index)
+        Object.assign(errorObj, customerErrors)
+
+        //agent checks
+        const agentErrors = validateEntity(fulfillment.agent, 'customer', constants.ON_CANCEL, index)
+        Object.assign(errorObj, agentErrors)
+
+        // Check stops for START and END, or time range with valid timestamp and GPS
+        const otp = true
+        const cancel = true
+        const stopsError = validateStops(fulfillment?.stops, index, otp, cancel)
+        if (!stopsError?.valid) Object.assign(errorObj, stopsError)
+
+        if (fulfillment.tags) {
+          // Validate route info tags
+          const tagsValidation = validateRouteInfoTags(fulfillment.tags)
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { tags: tagsValidation.errors })
+          }
+        }
+      })
+    } catch (error: any) {
+      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_CANCEL},  ${error.message}`)
+      return { error: error.message }
+    }
+
+    //items checks
+    try {
+      logger.info(`Validating items object for /${constants.ON_CANCEL}`)
+      if (!onCancel?.items) errorObj.items = `items is missing in /${constants.ON_CANCEL}`
+      else {
+        onCancel.items.forEach((item: any, index: number) => {
+          const itemKey = `items[${index}]`
+          if (!newItemIDSValue.includes(item.id)) {
+            errorObj[
+              `${itemKey}.id`
+            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_CANCEL}`
           }
 
-          if (fulfillment.type !== 'DELIVERY') {
-            errorObj[`fulfillmentType_${i}`] =
-              `Fulfillment type must be DELIVERY at index ${i} in /${constants.ON_CANCEL}`
+          //price check
+          if (!item?.price) errorObj[`${itemKey}.price`] = `price is missing at item.index ${index} `
+
+          //fulfillment_ids, location_ids & payment_ids checks
+          const refIdsErrors = validateItemRefIds(
+            item,
+            constants.ON_CANCEL,
+            index,
+            fulfillmentIdsSet,
+            new Set(),
+            paymentIdsSet,
+          )
+          Object.assign(errorObj, refIdsErrors)
+
+          //descriptor.code
+          if (item.descriptor.code !== 'RIDE') {
+            errorObj[
+              `${itemKey}.type`
+            ] = `descriptor.code must be RIDE at item.index ${index} in /${constants.ON_CANCEL}`
           }
 
-          const stateCode = fulfillment.state?.descriptor?.code
-          if (sequence === 'on_cancel' && stateCode !== 'RIDE_CANCELLED') {
-            errorObj[`fulfillmentStateCode_${i}`] =
-              `Fulfillment state code must be RIDE_CANCELLED at index ${i} in /${constants.ON_CANCEL}`
-          } else {
-            const validStateCodes = [
-              'RIDE_CANCELLED',
-              'RIDE_ENDED',
-              'RIDE_STARTED',
-              'RIDE_ASSIGNED',
-              'RIDE_ENROUTE_PICKUP',
-              'RIDE_ARRIVED_PICKUP',
-            ]
-
-            if (!validStateCodes.includes(stateCode)) {
-              errorObj[`fulfillmentStateCode_${i}`] =
-                `Invalid fulfillment state code at index ${i} in /${constants.ON_CANCEL}`
-            }
-          }
-
-          validateCustomer(errorObj, fulfillment.customer, i)
-          validateAgent(errorObj, fulfillment.agent, i)
-          validateVehicle(errorObj, fulfillment.vehicle, i)
-
-          if (fulfillment.tags) {
-            // Validate route info tags
-            const tagsValidation = validateRouteInfoTags(fulfillment.tags)
+          // FARE_POLICY & INFO checks
+          if (item.tags) {
+            const tagsValidation = validateItemsTags(item.tags)
             if (!tagsValidation.isValid) {
               Object.assign(errorObj, { tags: tagsValidation.errors })
             }
           }
-
-          // Check stops for START and END, or time range with valid timestamp and GPS
-          const otp = true
-          const cancel = true
-          validateStops(fulfillment?.stops, i, otp, cancel)
         })
       }
     } catch (error: any) {
-      logger.error(`!!Error while validating fulfillments for /${constants.ON_CANCEL}, ${error.stack}`)
+      logger.error(`!!Error occcurred while checking items info in /${constants.ON_CANCEL},  ${error.message}`)
       return { error: error.message }
     }
 
@@ -152,8 +229,9 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
           const paymentId = payment.id
 
           if (paymentIdsSet.has(paymentId)) {
-            errorObj[`paymentId_${index}`] =
-              `Duplicate payment ID '${paymentId}' at index ${index} in /${constants.ON_CANCEL}`
+            errorObj[
+              `paymentId_${index}`
+            ] = `Duplicate payment ID '${paymentId}' at index ${index} in /${constants.ON_CANCEL}`
           } else {
             paymentIdsSet.add(paymentId)
           }
@@ -179,91 +257,22 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
           }
 
           // Validate tags
-          const requiredTagGroups = ['SETTLEMENT_DETAILS', 'SETTLEMENT_TERMS', 'BUYER_FINDER_FEES']
+          const requiredTagGroups = ['SETTLEMENT_TERMS', 'BUYER_FINDER_FEES']
           const tags = payment.tags || []
 
           requiredTagGroups.forEach((tagGroup) => {
             const tagGroupFound = tags.some((tag: any) => tag.descriptor?.code === tagGroup)
 
             if (!tagGroupFound) {
-              errorObj[`${tagGroup}_${index}`] =
-                `${tagGroup} tag group is missing at index ${index} in /${constants.ON_CANCEL}`
+              errorObj[
+                `${tagGroup}_${index}`
+              ] = `${tagGroup} tag group is missing at index ${index} in /${constants.ON_CANCEL}`
             }
           })
         })
       }
     } catch (error: any) {
       logger.error(`!!Error while validating payments for /${constants.ON_CANCEL}, ${error.stack}`)
-      return { error: error.message }
-    }
-
-    try {
-      logger.info(`Validating items object for /${constants.ON_CANCEL}`)
-      const onCancel: any = message.order
-      const itemsId = new Set()
-
-      if (!onCancel?.items || onCancel.items.length === 0) {
-        errorObj['items'] = 'items array must be present in /${constants.ON_CANCEL}'
-      } else {
-        onCancel.items.forEach((item: any, index: number) => {
-          const itemId = item.id
-
-          if (!itemId) {
-            errorObj[`itemId_${index}`] = `Item ID is missing at index ${index} in /${constants.ON_CANCEL}`
-          } else if (itemsId.has(itemId)) {
-            errorObj[`itemId_${index}`] = `Duplicate Item ID '${itemId}' at index ${index} in /${constants.ON_CANCEL}`
-          } else {
-            itemsId.add(itemId)
-          }
-
-          if (!item.descriptor || !item.descriptor.code) {
-            errorObj[`descriptorCode_${index}`] =
-              `Descriptor code is missing at index ${index} in /${constants.ON_CANCEL}`
-          }
-
-          if (!item.price || !item.price.currency || !item.price.value) {
-            errorObj[`price_${index}`] = `Price details are incomplete at index ${index} in /${constants.ON_CANCEL}`
-          }
-
-          if (!item?.payment_ids) {
-            errorObj[`payment_ids`] = `payment_ids should be present at index ${index} in /${constants.ON_CANCEL}`
-          } else {
-            item.payment_ids.forEach((paymentId: string) => {
-              if (!paymentIdsSet.has(paymentId)) {
-                errorObj[`invalidPaymentId_${index}`] =
-                  `Payment ID '${paymentId}' at index ${index} in /${constants.ON_CANCEL} is not valid`
-              }
-            })
-          }
-
-          if (!item?.fulfillment_ids) {
-            errorObj[`fulfillment_ids`] =
-              `fulfillment_ids should be present at index ${index} in /${constants.ON_CANCEL}`
-          } else {
-            item.fulfillment_ids.forEach((fulfillmentId: string) => {
-              if (!_.isEmpty(fulfillmentIdsSet) && !fulfillmentIdsSet.has(fulfillmentId)) {
-                errorObj[`invalidFulfillmentId_${index}`] =
-                  `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.ON_CANCEL} is not valid`
-              }
-            })
-          }
-
-          // Validate tags
-          const requiredTagGroups = ['FARE_POLICY', 'INFO']
-          const tags = item.tags || []
-
-          requiredTagGroups.forEach((tagGroup) => {
-            const tagGroupFound = tags.some((tag: any) => tag.descriptor?.code === tagGroup)
-
-            if (!tagGroupFound) {
-              errorObj[`tagGroup_${tagGroup}_${index}`] =
-                `${tagGroup} tag group is missing at index ${index} in /${constants.ON_CANCEL}`
-            }
-          })
-        })
-      }
-    } catch (error: any) {
-      logger.error(`!!Error while validating items for /${constants.ON_CANCEL}, ${error.stack}`)
       return { error: error.message }
     }
 
@@ -305,51 +314,21 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
     }
 
     try {
-      const cancellationTerms = onCancel?.cancellation_terms
-
-      if (!cancellationTerms || cancellationTerms?.length === 0) {
-        errorObj['cancellation_terms'] = `cancellation_terms array must be present in /${constants.ON_CANCEL}`
-      } else {
-        cancellationTerms.forEach((term: any, index: number) => {
-          Object.assign(errorObj, validateCancellationTerm(term, index))
-        })
-      }
+      logger.info(`Checking cancellation terms in /${constants.ON_CANCEL}`)
+      const cancellationErrors = validateCancellationTerms(onCancel.cancellation_terms, constants.ON_CANCEL)
+      Object.assign(errorObj, cancellationErrors)
     } catch (error: any) {
-      logger.error(`!!Error while validating cancellation_terms for /${constants.ON_CANCEL}, ${error.stack}`)
-      return { error: error.message }
+      logger.error(`!!Error while checking cancellation_terms in /${constants.ON_CANCEL}, ${error.stack}`)
+    }
+
+    if (version === '2.0.1') {
+      const additionalAttributes: any = attributeConfig.on_cancel
+      validatePayloadAgainstSchema(additionalAttributes, data, errorObj, '', '')
     }
 
     return Object.keys(errorObj).length > 0 && errorObj
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.ON_CANCEL} API`, JSON.stringify(err.stack))
     return { error: err.message }
-  }
-}
-
-const validateCustomer = (errorObj: any, customer: any, i: number) => {
-  if (!customer || !customer.person || !customer.contact || !customer.person.name || !customer.contact.phone) {
-    errorObj[`fulfillment_${i}_customer`] = `Customer details are incomplete at index ${i} in /${constants.ON_CANCEL}`
-  }
-}
-
-const validateAgent = (errorObj: any, agent: any, i: number) => {
-  if (!agent || !agent.person || !agent.contact || !agent.person.name || !agent.contact.phone) {
-    errorObj[`fulfillment_${i}_agent`] = `Agent details are incomplete at index ${i} in /${constants.ON_CANCEL}`
-  }
-}
-
-const validateVehicle = (errorObj: any, vehicle: any, i: number) => {
-  if (
-    !vehicle ||
-    !vehicle.category ||
-    !['METRO', 'AUTO_RICKSHAW', 'CAB', 'BUS', 'AIRLINE'].includes(vehicle.category)
-  ) {
-    errorObj[`fulfillment_${i}_vehicle_category`] =
-      `Invalid or missing vehicle category at index ${i} in /${constants.ON_CANCEL}`
-  }
-
-  if (!vehicle.make || !vehicle.model || !vehicle.registration) {
-    errorObj[`fulfillment_${i}_vehicle_details`] =
-      `Vehicle details are incomplete at index ${i} in /${constants.ON_CANCEL}`
   }
 }

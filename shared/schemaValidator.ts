@@ -868,20 +868,19 @@ const validate_schema_for_json = (data: any, schemaPath: any) => {
   return formatted_error(error_list)
 }
 
-const FIS12Validator = {
-  validate_schema_search_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/search.yaml'),
-  validate_schema_on_search_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_search.yaml'),
-  validate_schema_select_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/select.yaml'),
-  validate_schema_on_select_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_select.yaml'),
-  validate_schema_init_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/init.yaml'),
-  validate_schema_on_init_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_init.yaml'),
-  validate_schema_confirm_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/confirm.yaml'),
-  validate_schema_on_confirm_FIS12_for_json: (data: any) =>
-    validate_schema_for_json(data, 'schema/FIS/on_confirm.yaml'),
-  validate_schema_update_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/update.yaml'),
-  validate_schema_on_update_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_update.yaml'),
-  validate_schema_status_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/status.yaml'),
-  validate_schema_on_status_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_status.yaml'),
+const FISValidator = {
+  validate_schema_search_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/search.yaml'),
+  validate_schema_on_search_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_search.yaml'),
+  validate_schema_select_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/select.yaml'),
+  validate_schema_on_select_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_select.yaml'),
+  validate_schema_init_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/init.yaml'),
+  validate_schema_on_init_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_init.yaml'),
+  validate_schema_confirm_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/confirm.yaml'),
+  validate_schema_on_confirm_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_confirm.yaml'),
+  validate_schema_update_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/update.yaml'),
+  validate_schema_on_update_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_update.yaml'),
+  validate_schema_status_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/status.yaml'),
+  validate_schema_on_status_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_status.yaml'),
 }
 
 const TRV10Validator = {
@@ -1102,6 +1101,6 @@ export default {
   validate_schema_on_track_RET10_for_json,
   validate_schema_receiver_recon_rsf_for_json,
   validate_schema_on_receiver_recon_rsf_for_json,
-  ...FIS12Validator,
   ...TRV10Validator,
+  ...FISValidator,
 }

@@ -1,19 +1,22 @@
 /* eslint-disable no-prototype-builtins */
-import _ from 'lodash'
-import constants from '../../../constants'
+import _, { isEmpty } from 'lodash'
+import constants, { FisApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty } from '../../'
 import {
   validateCancellationTerms,
   validateContext,
+  validateDescriptor,
   validateFulfillments,
-  validatePayments,
   validateXInput,
+  validateProvider,
+  validateQuote,
+  validatePaymentsObject,
 } from './fisChecks'
 import { getValue, setValue } from '../../../shared/dao'
-import { validateProviderTags } from './tags'
+import { validateLoanInfoTags, validatePaymentTags } from './tags'
 
-export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
+export const checkOnInit = (data: any, msgIdSet: any, sequence: string, flow: string) => {
   try {
     const errorObj: any = {}
     if (!data || isObjectEmpty(data)) {
@@ -25,7 +28,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_INIT, data)
+    const schemaValidation = validateSchema('FIS', constants.ON_INIT, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.INIT, constants.ON_INIT)
 
     if (schemaValidation !== 'error') {
@@ -39,60 +42,72 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
     setValue(`${constants.ON_INIT}`, data)
 
     const on_init = message.order
-    const itemIDS: any = getValue('ItmIDS')
-    const itemIdArray: any[] = []
+    const version: any = getValue('version')
 
     //provider checks
-    const providerErrors = validateProvider(on_init?.provider)
-    Object.assign(errorObj, providerErrors)
-
-    let newItemIDSValue: any[]
-    if (itemIDS && itemIDS.length > 0) {
-      newItemIDSValue = itemIDS
-    } else {
-      on_init.items.map((item: { id: string }) => {
-        itemIdArray.push(item.id)
-      })
-      newItemIDSValue = itemIdArray
-    }
-
-    setValue('ItmIDS', newItemIDSValue)
-
     try {
-      logger.info(`Comparing Items object for /${constants.ON_SELECT} and /${constants.ON_INIT}`)
-      on_init.items.forEach((item: any, index: number) => {
-        if (!newItemIDSValue.includes(item.id)) {
-          const key = `item[${index}].item_id`
-          errorObj[
-            key
-          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
-        }
-
-        const itemPrice = parseFloat(item.price.value)
-        const quotePrice = parseFloat(message.order.quote.price.value)
-        if (itemPrice !== quotePrice) {
-          errorObj[`item${index}_price`] = `Price value mismatch for item: ${item.id}`
-        }
-
-        const xinputValidationErrors = validateXInput(item?.xinput, 0, index, constants.ON_INIT)
-        if (xinputValidationErrors) {
-          Object.assign(errorObj, xinputValidationErrors)
-        }
-
-        if (
-          !item?.tags?.some((tag: any) => tag.descriptor.code === 'CONSENT_INFO' || tag.descriptor.code === 'LOAN_INFO')
-        ) {
-          errorObj['on_init_items'] = {
-            tags: 'CONSENT_INFO or LOAN_INFO tag group must be present.',
-          }
-        }
-      })
+      logger.info(`Checking provider details in /${constants.ON_INIT}`)
+      const providerErrors = validateProvider(on_init?.provider, constants.ON_INIT)
+      Object.assign(errorObj, providerErrors)
     } catch (error: any) {
-      logger.error(
-        `!!Error while comparing Item and Fulfillment Id in /${constants.ON_SELECT} and /${constants.ON_INIT}, ${error.stack}`,
-      )
+      logger.error(`!!Error while checking provider details in /${constants.ON_INIT}`, error.stack)
     }
 
+    //checks items
+    try {
+      logger.info(`Comparing item in /${constants.ON_INIT}`)
+
+      if (_.isEmpty(on_init?.items)) {
+        errorObj['items'] = 'items array is missing or empty in message.order'
+      } else {
+        const selectedItemId = getValue('selectedItemId')
+        on_init.items.forEach((item: any, index: number) => {
+          if (selectedItemId && !selectedItemId.includes(item.id)) {
+            const key = `item[${index}].item_id`
+            errorObj[
+              key
+            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+          }
+
+          // Validate parent_item_id
+          if (version == '2.1.0') {
+            if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in providers[${index}]`
+            else {
+              const parentItemId: any = getValue('parentItemId')
+              if (parentItemId && !parentItemId.has(item?.parent_item_id)) {
+                errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id's from past call in providers[${index}]`
+              }
+            }
+          }
+
+          // Validate descriptor
+          const descriptorError = validateDescriptor(
+            item?.descriptor,
+            constants.ON_INIT,
+            `items[${index}].descriptor`,
+            false,
+          )
+          if (descriptorError) Object.assign(errorObj, descriptorError)
+
+          // Validate xinput
+          const xinput = item?.xinput
+          const xinputValidationErrors = validateXInput(xinput, index, constants.ON_SEARCH, 0)
+          if (xinputValidationErrors) {
+            Object.assign(errorObj, xinputValidationErrors)
+          }
+
+          // Validate Item tags
+          const tagsValidation = validateLoanInfoTags(item?.tags, flow)
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { tags: tagsValidation.errors })
+          }
+        })
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking items object in /${constants.ON_INIT}, ${error.stack}`)
+    }
+
+    //checks cancellation_terms
     try {
       logger.info(`Checking cancellation terms in /${constants.ON_INIT}`)
       const cancellationErrors = validateCancellationTerms(on_init?.cancellation_terms, constants.ON_INIT)
@@ -101,13 +116,14 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
       logger.error(`!!Error while checking cancellation_terms in /${constants.ON_INIT}, ${error.stack}`)
     }
 
+    //fulfillments checks
     try {
       logger.info(`Checking fulfillments objects in /${constants.ON_INIT}`)
       let i = 0
       const len = on_init.fulfillments.length
       while (i < len) {
         const fulfillment = on_init.fulfillments[i]
-        const fulfillmentErrors = validateFulfillments(fulfillment, i, [])
+        const fulfillmentErrors = validateFulfillments(fulfillment, i)
         if (fulfillmentErrors) {
           Object.assign(errorObj, fulfillmentErrors)
         }
@@ -118,19 +134,82 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
       logger.error(`!!Error while checking fulfillments object in /${constants.ON_INIT}, ${error.stack}`)
     }
 
+    // check payments
     try {
-      logger.info(`Checking payments details in /${constants.ON_INIT}`)
+      logger.info(`Checking payments in /${constants.ON_INIT}`)
+      const payments = on_init?.payments
 
-      const paymentErrors = validatePayments(on_init?.payments, constants.ON_INIT, on_init?.quote)
-      Object.assign(errorObj, paymentErrors)
+      if (sequence === FisApiSequence.ON_INIT_3 && version == '2.0.0') {
+        const paymentError = validatePaymentsObject(payments, constants.ON_INIT)
+        if (paymentError) Object.assign(errorObj, paymentError)
+      } else {
+        if (isEmpty(payments)) {
+          errorObj.payments = `payments array is missing or is empty`
+        } else {
+          const allowedStatusValues = ['NOT-PAID', 'PAID']
+          payments?.forEach((arr: any, i: number) => {
+            const terms = [
+              { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' },
+              {
+                code: 'SETTLEMENT_BASIS',
+                type: 'enum',
+                value: ['INVOICE_RECEIPT', 'Delivery'],
+              },
+              { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
+              { code: 'STATIC_TERMS', type: 'url' },
+              { code: 'COURT_JURISDICTION', type: 'string' },
+              { code: 'DELAY_INTEREST', type: 'amount' },
+              { code: 'SETTLEMENT_AMOUNT', type: 'amount' },
+              { code: 'SETTLEMENT_TYPE', type: 'enum', value: ['upi', 'neft', 'rtgs'] },
+              {
+                code: 'OFFLINE_CONTRACT',
+                type: 'boolean',
+              },
+            ]
+
+            if (!arr?.collected_by) {
+              errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.ON_INIT}`
+            } else {
+              const collectedBy = getValue(`collected_by`)
+              if (collectedBy && collectedBy != arr?.collected_by)
+                errorObj[
+                  `payemnts[${i}]_collected_by`
+                ] = `payments.collected_by value sent in ${constants.ON_INIT} should be same as sent in past call: ${collectedBy}`
+            }
+
+            // check status
+            if (!arr?.status) errorObj.paymentStatus = `payment.status is missing for index:${i} in payments`
+            else if (!arr?.status || !allowedStatusValues.includes(arr?.status)) {
+              errorObj.paymentStatus = `invalid status at index:${i} in payments, should be either of ${allowedStatusValues}`
+            }
+
+            // check type
+            const validTypes = ['ON-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
+            if (!arr?.type || !validTypes.includes(arr.type)) {
+              errorObj[`payments[${i}]_type`] = `payments.type must be present in ${
+                constants.ON_INIT
+              } & its value must be one of: ${validTypes.join(', ')}`
+            }
+
+            // Validate payment tags
+            const tagsValidation = validatePaymentTags(arr?.tags, terms)
+            if (!tagsValidation.isValid) {
+              Object.assign(errorObj, { tags: tagsValidation.errors })
+            }
+          })
+        }
+      }
     } catch (error: any) {
-      logger.error(`!!Error while checking payments details in /${constants.ON_INIT}`, error.stack)
+      logger.error(`!!Errors while checking payments in /${constants.ON_INIT}, ${error.stack}`)
     }
 
     //quote checks
-    if (sequence !== 'on_select') {
-      const quoteErrors = validateQuote(on_init)
+    try {
+      logger.info(`Checking quote object in /${constants.ON_INIT}`)
+      const quoteErrors = validateQuote(on_init, constants?.ON_INIT)
       Object.assign(errorObj, quoteErrors)
+    } catch (error: any) {
+      logger.error(`!!Error while checking quote object in /${constants.ON_INIT}`, error.stack)
     }
 
     return errorObj
@@ -138,142 +217,4 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
     logger.error(`!!Some error occurred while checking /${constants.ON_INIT} API`, err)
     return { error: err.message }
   }
-}
-
-const validateProvider = (provider: any) => {
-  const providerErrors: any = {}
-
-  try {
-    if (!provider) {
-      providerErrors.provider = 'Provider details are missing or invalid.'
-      return providerErrors
-    }
-
-    logger.info(`Comparing Provider Ids of /${constants.ON_SEARCH} and /${constants.ON_INIT}`)
-    const prvrdID: any = getValue('providerId')
-    if (!_.isEqual(prvrdID, provider.id)) {
-      providerErrors.prvdrId = `Provider Id for /${constants.ON_SEARCH} and /${constants.ON_INIT} api should be same`
-    }
-  } catch (error: any) {
-    logger.info(
-      `Error while comparing provider ids for /${constants.ON_SEARCH} and /${constants.ON_INIT} api, ${error.stack}`,
-    )
-  }
-
-  try {
-    logger.info(`Validating Descriptor for /${constants.ON_INIT}`)
-
-    if (!provider?.descriptor) {
-      providerErrors.descriptor = 'Provider descriptor is missing or invalid.'
-      return providerErrors
-    }
-
-    if (!Array.isArray(provider?.descriptor?.images) || provider?.descriptor?.images?.length < 1) {
-      providerErrors.images = 'Descriptor images must be an array with a minimum length of one.'
-    } else {
-      provider?.descriptor?.images.forEach((image: any, index: number) => {
-        if (!image || typeof image !== 'object' || Array.isArray(image) || Object.keys(image).length !== 2) {
-          providerErrors[
-            `images[${index}]`
-          ] = `Invalid image structure in descriptor. Each image should be an object with "url" and "size_type" properties.`
-        } else {
-          const { url, size_type } = image
-          if (typeof url !== 'string' || !url.trim()) {
-            providerErrors[`images[${index}].url`] = `Invalid URL for image in descriptor.`
-          }
-
-          const validSizes = ['md', 'sm', 'lg']
-          if (size_type && !validSizes.includes(size_type)) {
-            providerErrors[
-              `images[${index}].size_type`
-            ] = `Invalid image size in descriptor. It should be one of: ${validSizes.join(', ')}`
-          }
-        }
-      })
-    }
-
-    if (!provider?.descriptor?.name || !provider?.descriptor?.name?.trim()) {
-      providerErrors.name = `Provider name cannot be empty.`
-    }
-
-    if (provider?.descriptor?.short_desc && !provider?.descriptor?.short_desc?.trim()) {
-      providerErrors.short_desc = `Short description cannot be empty.`
-    }
-
-    if (provider?.descriptor?.long_desc && !provider?.descriptor?.long_desc.trim()) {
-      providerErrors.long_desc = `Long description cannot be empty.`
-    }
-  } catch (error: any) {
-    logger.info(`Error while validating descriptor for /${constants.ON_INIT}, ${error.stack}`)
-  }
-
-  // Validate tags
-  const tagsValidation = validateProviderTags(provider?.tags)
-  if (!tagsValidation.isValid) {
-    Object.assign(providerErrors, { tags: tagsValidation.errors })
-  }
-
-  return providerErrors
-}
-
-const validateQuote = (onSelect: any) => {
-  const errorObj: any = {}
-
-  try {
-    logger.info(`Checking quote details in /${constants.ON_INIT}`)
-
-    const quote = onSelect.quote
-    const quoteBreakup = quote.breakup
-
-    const validBreakupItems = [
-      'PRINCIPAL',
-      'INTEREST',
-      'NET_DISBURSED_AMOUNT',
-      'OTHER_UPFRONT_CHARGES',
-      'INSURANCE_CHARGES',
-      'OTHER_CHARGES',
-      'PROCESSING_FEE',
-    ]
-
-    const requiredBreakupItems = validBreakupItems.filter((item) =>
-      quoteBreakup.some((breakupItem: any) => breakupItem.title.toUpperCase() === item),
-    )
-
-    const missingBreakupItems = validBreakupItems.filter((item) => !requiredBreakupItems.includes(item))
-
-    if (missingBreakupItems.length > 0) {
-      errorObj.missingBreakupItems = `Quote breakup is missing the following items: ${missingBreakupItems.join(', ')}`
-    }
-
-    const totalBreakupValue = quoteBreakup.reduce((total: any, item: any) => {
-      const itemTitle = item.title.toUpperCase()
-      if (requiredBreakupItems.includes(itemTitle) && itemTitle !== 'NET_DISBURSED_AMOUNT') {
-        const itemValue = parseFloat(item.price.value)
-        return isNaN(itemValue) ? total : total + itemValue
-      }
-
-      return total
-    }, 0)
-
-    const priceValue = parseFloat(quote.price.value)
-
-    if (isNaN(totalBreakupValue)) {
-      errorObj.breakupTotalMismatch = 'Invalid values in quote breakup'
-    } else if (totalBreakupValue !== priceValue) {
-      errorObj.breakupTotalMismatch = `Total of quote breakup (${totalBreakupValue}) does not match with price.value (${priceValue})`
-    }
-
-    const currencies = quoteBreakup.map((item: any) => item.currency)
-    if (new Set(currencies).size !== 1) {
-      errorObj.multipleCurrencies = 'Currency must be the same for all items in the quote breakup'
-    }
-
-    if (!quote.ttl) {
-      errorObj.missingTTL = 'TTL is required in the quote'
-    }
-  } catch (error: any) {
-    logger.error(`!!Error while checking quote details in /${constants.ON_INIT}`, error.stack)
-  }
-
-  return errorObj
 }

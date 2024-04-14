@@ -22,7 +22,7 @@ export const search = (data: any, msgIdSet: any, flow: string) => {
       return Object.keys(errorObj).length > 0 && errorObj
     }
 
-    const schemaValidation = validateSchema(data?.context?.domain.split(':')[1], constants.SEARCH, data)
+    const schemaValidation = validateSchema('FIS', constants.SEARCH, data)
     const contextRes: any = checkFISContext(data.context, constants.SEARCH)
 
     setValue(`${constants.SEARCH}_context`, data.context)
@@ -41,9 +41,9 @@ export const search = (data: any, msgIdSet: any, flow: string) => {
       const code = data.message.intent?.category?.descriptor?.code
       if (code) {
         if (code != fisFlows[flow as keyof typeof fisFlows]) {
-          errorObj['category'] = `code must be in a standard enum format as ${
-            fisFlows[flow as keyof typeof fisFlows]
-          } at category.descriptor`
+          errorObj[
+            'category'
+          ] = `code must be in a standard enum format as PERSONAL_LOAN or INVOICE_BASED_LOAN at category.descriptor`
         }
 
         setValue(`LoanType`, code)
@@ -53,21 +53,40 @@ export const search = (data: any, msgIdSet: any, flow: string) => {
       logger.error(`!!Error occcurred while validating category in /${constants.SEARCH},  ${error.message}`)
     }
 
+    // validate payments
     try {
       logger.info(`Validating payments in /${constants.SEARCH}`)
-      const payment = data.message.intent?.payment
+      const payment = data?.message.intent?.payment
       const collectedBy = payment?.collected_by
+      const allowedCollectedByValues = ['BPP', 'BAP']
+      const terms: any = [
+        { code: 'STATIC_TERMS', type: 'url' },
+        {
+          code: 'OFFLINE_CONTRACT',
+          type: 'boolean',
+        },
+      ]
 
       if (!collectedBy) {
         errorObj[`collected_by`] = `payment.collected_by must be present in ${constants.SEARCH}`
-      } else if (collectedBy !== 'BPP' && collectedBy !== 'BAP') {
-        errorObj['collected_by'] = `payment.collected_by can only be either 'BPP' or 'BAP' in ${constants.SEARCH}`
+      } else if (!allowedCollectedByValues.includes(collectedBy)) {
+        errorObj['collected_by'] = `Invalid value for collected_by, should be either of ${allowedCollectedByValues}`
       } else {
+        if (collectedBy == 'BPP') terms?.push({ code: 'DELAY_INTEREST', type: 'amount' })
+        else {
+          terms?.push({ code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' })
+          terms?.push({
+            code: 'SETTLEMENT_BASIS',
+            type: 'enum',
+            value: ['INVOICE_RECEIPT', 'Delivery'],
+          })
+        }
+
         setValue(`collected_by`, collectedBy)
       }
 
       // Validate payment tags
-      const tagsValidation = validatePaymentTags(payment.tags)
+      const tagsValidation = validatePaymentTags(payment.tags, terms)
       if (!tagsValidation.isValid) {
         Object.assign(errorObj, { tags: tagsValidation.errors })
       }

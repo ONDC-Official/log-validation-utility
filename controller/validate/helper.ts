@@ -6,6 +6,8 @@ import { IGMvalidateLogs, validateLogs, RSFvalidateLogs } from '../../shared/val
 import { validateLogsForFIS12 } from '../../shared/Actions/FIS12Actions'
 import { validateLogsForMobility } from '../../shared/Actions/mobilityActions'
 import { validateLogsForMetro } from '../../shared/Actions/metroActions'
+import { validateLogsForFIS10 } from '../../shared/Actions/FIS10Actions'
+import { validateLogsForFIS13 } from '../../shared/Actions/FIS13Actions'
 
 const createSignature = async ({ message }: { message: string }) => {
   const privateKey = process.env.SIGN_PRIVATE_KEY as string
@@ -44,6 +46,7 @@ const validateRetail = async (
     message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_PAYLOAD
     return { response, success, message }
   }
+
   switch (version) {
     case '1.2.0':
       response = await validateLogs(payload, domain, flow)
@@ -68,9 +71,29 @@ const validateFinance = async (domain: string, payload: string, version: string,
 
   if (!flow) throw new Error('Flow not defined')
 
-  switch (version) {
-    case '2.0.0':
-      response = validateLogsForFIS12(payload, domain, flow)
+  switch (domain) {
+    case 'ONDC:FIS10':
+      response = validateLogsForFIS10(payload, flow, version)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+
+      break
+
+    case 'ONDC:FIS12':
+      response = validateLogsForFIS12(payload, flow, version)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+
+      break
+
+    case 'ONDC:FIS13':
+      response = validateLogsForFIS13(payload, flow, version)
 
       if (_.isEmpty(response)) {
         success = true
@@ -164,8 +187,10 @@ const validateRSF = async (payload: string, version: string) => {
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
       logger.warn('Invalid Version!!')
   }
+
   return { response, success, message }
 }
+
 export default {
   validateFinance,
   validateIGM,

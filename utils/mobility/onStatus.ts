@@ -1,23 +1,23 @@
 /* eslint-disable no-prototype-builtins */
 // import _ from 'lodash'
-import constants, {
-  mobilitySequence,
-  MOB_VEHICLE_CATEGORIES as VALID_VEHICLE_CATEGORIES,
-  MOB_FULL_STATE as VALID_FULL_STATE,
-} from '../../constants'
+import constants, { mobilitySequence, MOB_FULL_STATE as VALID_FULL_STATE, ON_DEMAND_VEHICLE } from '../../constants'
 import { logger } from '../../shared/logger'
 import { validateSchema, isObjectEmpty } from '../'
 import { getValue, setValue } from '../../shared/dao'
 import {
   validateCancellationTerms,
   validateContext,
-  validatePaymentParams,
+  validateEntity,
+  validateItemRefIds,
   validateQuote,
   validateStops,
+  validatePayloadAgainstSchema,
+  validatePaymentObject,
 } from './mobilityChecks'
-import { validatePaymentTags, validateRouteInfoTags } from './tags'
+import { validateItemsTags, validateRouteInfoTags } from './tags'
+import attributeConfig from './config/config2.0.1.json'
 
-export const checkOnStatus = (data: any, msgIdSet: any) => {
+export const checkOnStatus = (data: any, msgIdSet: any, version: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -62,7 +62,7 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
 
     try {
       logger.info(`Comparing provider object in /${constants.STATUS} and /${constants.ON_STATUS}`)
-      if (on_status.provider.id != getValue('providerId')) {
+      if (on_status?.provider?.id != getValue('providerId')) {
         errorObj.prvdrId = `Provider Id mismatches in /${constants.STATUS} and /${constants.ON_STATUS}`
       }
     } catch (error: any) {
@@ -71,12 +71,15 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
       )
     }
 
+    //fulfillment checks
     try {
       logger.info(`Validating fulfillments object for /${constants.ON_STATUS}`)
       on_status.fulfillments.forEach((fulfillment: any, index: number) => {
         const fulfillmentKey = `fulfillments[${index}]`
 
-        if (!storedFull.includes(fulfillment.id)) {
+        if (!fulfillment?.id) {
+          errorObj[fulfillmentKey] = `id is missing in fulfillments[${index}]`
+        } else if (!storedFull.includes(fulfillment.id)) {
           errorObj[
             `${fulfillmentKey}.id`
           ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
@@ -84,15 +87,15 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
           fulfillmentIdsSet.add(fulfillment.id)
         }
 
-        if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
-          errorObj[`${fulfillmentKey}.vehicleCategory`] = `Invalid vehicle category for fulfillment ${index}`
-        }
-
         if (!VALID_FULL_STATE.includes(fulfillment?.state?.descriptor?.code)) {
           errorObj[`${fulfillmentKey}.state`] = `Invalid or missing descriptor.code for fulfillment ${index}`
         }
 
         const vehicle = fulfillment.vehicle
+
+        if (!ON_DEMAND_VEHICLE.includes(vehicle.category)) {
+          errorObj[`${fulfillmentKey}.vehicleCategory`] = `Vehicle category should be one of ${ON_DEMAND_VEHICLE}`
+        }
 
         if (!vehicle?.registration || !vehicle?.model || !vehicle?.make) {
           errorObj[`${fulfillmentKey}.details`] = `Vehicle object is incomplete for fulfillment ${index}`
@@ -104,54 +107,19 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
           ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_STATUS}`
         }
 
-        if (!Object.prototype.hasOwnProperty.call(fulfillment.customer?.person, 'name')) {
-          errorObj[`fulfillments${index}_customer`] = `/message/order/fulfillments/customer in customer: must have name`
-        } else {
-          if (fulfillment.customer.person.name.trim() === '') {
-            errorObj[`fulfillments${index}_customer_name`] = `Empty name is not allowed for fulfillment ${index}`
-          } else {
-            setValue(`customer_name`, fulfillment.customer.person.name)
-          }
-        }
+        //customer checks
+        const customerErrors = validateEntity(fulfillment.customer, 'customer', constants.ON_STATUS, index)
+        Object.assign(errorObj, customerErrors)
 
-        if (!Object.prototype.hasOwnProperty.call(fulfillment.customer?.contact, 'phone')) {
-          errorObj[`fulfillments${index}_customer`] = `/message/order/fulfillments/customer in customer: must have name`
-        } else {
-          const phoneRegex = /^[0-9]{10}$/
-          const isValidPhone = phoneRegex.test(fulfillment.customer.contact.phone)
-          if (!isValidPhone) {
-            errorObj[`fulfillments${index}_customer_phone`] = `Invalid phone format for fulfillment ${index}`
-          } else {
-            setValue(`customer_phone`, fulfillment.customer.contact.phone)
-          }
-        }
-
-        if (!Object.prototype.hasOwnProperty.call(fulfillment.agent?.person, 'name')) {
-          errorObj[`fulfillments${index}_agent`] = `/message/order/fulfillments/agent in agent: must have name`
-        } else {
-          if (fulfillment.agent.person.name.trim() === '') {
-            errorObj[`fulfillments${index}_agent_name`] = `Empty name is not allowed for fulfillment ${index}`
-          } else {
-            setValue(`agent_name`, fulfillment.agent.person.name)
-          }
-        }
-
-        if (!Object.prototype.hasOwnProperty.call(fulfillment.agent?.contact, 'phone')) {
-          errorObj[`fulfillments${index}_agent`] = `/message/order/fulfillments/agent in agent: must have name`
-        } else {
-          const phoneRegex = /^[0-9]{10}$/
-          const isValidPhone = phoneRegex.test(fulfillment.agent.contact.phone)
-          if (!isValidPhone) {
-            errorObj[`fulfillments${index}_agent_phone`] = `Invalid phone format for fulfillment ${index}`
-          } else {
-            setValue(`agent_phone`, fulfillment.agent.contact.phone)
-          }
-        }
+        //agent checks
+        const agentErrors = validateEntity(fulfillment.agent, 'customer', constants.ON_STATUS, index)
+        Object.assign(errorObj, agentErrors)
 
         // Check stops for START and END, or time range with valid timestamp and GPS
-        const otp = true
+        const otp = false
         const cancel = false
-        validateStops(fulfillment?.stops, index, otp, cancel)
+        const stopsError = validateStops(fulfillment?.stops, index, otp, cancel)
+        if (!stopsError?.valid) Object.assign(errorObj, stopsError)
 
         if (fulfillment.tags) {
           // Validate route info tags
@@ -162,86 +130,69 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
         }
       })
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_INIT},  ${error.message}`)
+      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_STATUS},  ${error.message}`)
       return { error: error.message }
     }
 
+    //items checks
     try {
-      logger.info(`Checking payments in /${constants.ON_STATUS}`)
-      on_status?.payments?.forEach((arr: any, i: number) => {
-        if (!arr?.collected_by) {
-          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.ON_SELECT}`
-        } else {
-          const srchCollectBy = getValue(`collected_by`)
-          if (srchCollectBy != arr?.collected_by)
+      logger.info(`Validating items object for /${constants.ON_STATUS}`)
+      if (!on_status?.items) errorObj.items = `items is missing in /${constants.ON_STATUS}`
+      else {
+        on_status.items.forEach((item: any, index: number) => {
+          const itemKey = `items[${index}]`
+          if (!newItemIDSValue.includes(item.id)) {
             errorObj[
-              `payemnts[${i}]_collected_by`
-            ] = `payments.collected_by value sent in ${constants.ON_SELECT} should be ${srchCollectBy} as sent in ${constants.ON_STATUS}`
-        }
+              `${itemKey}.id`
+            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_STATUS}`
+          }
 
-        const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
-        if (!arr?.type || !validTypes.includes(arr.type)) {
-          errorObj[`payments[${i}]_type`] = `payments.params.type must be present in ${
-            constants.ON_STATUS
-          } & its value must be one of: ${validTypes.join(', ')}`
-        }
+          //price check
+          if (!item?.price) errorObj[`${itemKey}.price`] = `price is missing at item.index ${index} `
 
-        const params = arr.params
-        const bankCode: string | null = getValue('bank_code')
-        const bankAccountNumber: string | null = getValue('bank_account_number')
-        const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
-        // Validate bank_code
-        validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.ON_STATUS)
+          //fulfillment_ids, location_ids & payment_ids checks
+          const refIdsErrors = validateItemRefIds(
+            item,
+            constants.ON_STATUS,
+            index,
+            fulfillmentIdsSet,
+            new Set(),
+            new Set(),
+          )
+          Object.assign(errorObj, refIdsErrors)
 
-        // Validate bank_account_number
-        validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.ON_STATUS)
+          //descriptor.code
+          if (item.descriptor.code !== 'RIDE') {
+            errorObj[
+              `${itemKey}.type`
+            ] = `descriptor.code must be RIDE at item.index ${index} in /${constants.ON_STATUS}`
+          }
 
-        // Validate virtual_payment_address
-        validatePaymentParams(
-          params,
-          virtualPaymentAddress,
-          'virtual_payment_address',
-          errorObj,
-          i,
-          constants.ON_STATUS,
-        )
-
-        const validStatus = ['NOT-PAID', 'PAID']
-        if (!arr?.status || !validStatus.includes(arr.status)) {
-          errorObj[`payments[${i}]_status`] = `payments.status must be present in ${
-            constants.ON_STATUS
-          } & its value must be one of: ${validStatus.join(', ')}`
-        } else {
-          if (arr.status === 'PAID') {
-            if (!arr?.params?.transaction_id) {
-              errorObj[`payments[${i}]_transaction_id`] = `payments.params.transaction_id is required for 'PAID' status`
-            } else {
-              if (typeof arr?.params?.transaction_id !== 'string') {
-                errorObj[`payments[${i}]_transaction_id`] = `payments.params.transaction_id must be a string`
-              }
-            }
-
-            if (!arr?.params?.amount) {
-              errorObj[`payments[${i}]_amount`] = `payments.params.amount is required for 'PAID' status`
-            } else {
-              const amount = parseFloat(arr?.params?.amount)
-              if (isNaN(amount) || amount <= 0 || !Number.isInteger(amount)) {
-                errorObj[`payments[${i}]_amount`] = `payments.params.amount must be a positive integer`
-              }
+          // FARE_POLICY & INFO checks
+          if (item.tags) {
+            const tagsValidation = validateItemsTags(item.tags)
+            if (!tagsValidation.isValid) {
+              Object.assign(errorObj, { tags: tagsValidation.errors })
             }
           }
-        }
+        })
+      }
+    } catch (error: any) {
+      logger.error(`!!Error occcurred while checking items info in /${constants.ON_STATUS},  ${error.message}`)
+      return { error: error.message }
+    }
 
-        // Validate payment tags
-        const tagsValidation = validatePaymentTags(arr.tags)
-        if (!tagsValidation.isValid) {
-          Object.assign(errorObj, { tags: tagsValidation.errors })
-        }
-      })
+    // check payments
+    try {
+      logger.info(`Checking payments in /${constants.ON_STATUS}`)
+      const payments = on_status?.payments
+      const paymentErrors = validatePaymentObject(payments, constants.ON_STATUS)
+      Object.assign(errorObj, paymentErrors)
     } catch (error: any) {
       logger.error(`!!Errors while checking payments in /${constants.ON_STATUS}, ${error.stack}`)
     }
 
+    //quote checks
     try {
       logger.info(`Checking quote details in /${constants.ON_STATUS}`)
       const quoteErrors = validateQuote(on_status?.quote, constants.ON_STATUS)
@@ -251,12 +202,18 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
       return { error: error.message }
     }
 
+    //cancellation_terms checks
     try {
       logger.info(`Checking cancellation terms in /${constants.ON_STATUS}`)
       const cancellationErrors = validateCancellationTerms(on_status.cancellation_terms, constants.ON_STATUS)
       Object.assign(errorObj, cancellationErrors)
     } catch (error: any) {
       logger.error(`!!Error while checking cancellation_terms in /${constants.ON_STATUS}, ${error.stack}`)
+    }
+
+    if (version === '2.0.1') {
+      const additionalAttributes: any = attributeConfig.on_status
+      validatePayloadAgainstSchema(additionalAttributes, data, errorObj, '', '')
     }
 
     return errorObj

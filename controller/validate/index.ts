@@ -62,6 +62,7 @@ const controller = {
             const { response, success, message } = await helper.validateRSF(payload, version)
             result = { response, success, message }
           }
+
           break
         default:
           throw new Error('Internal server error')

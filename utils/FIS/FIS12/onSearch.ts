@@ -4,10 +4,15 @@ import { logger } from '../../../shared/logger'
 import { setValue, getValue } from '../../../shared/dao'
 import constants, { FisApiSequence, fisFlows } from '../../../constants'
 import { validateSchema, isObjectEmpty } from '../../'
-import { checkUniqueCategoryIds, validateContext, validateXInput } from './fisChecks'
-import { validateProviderTags, validatePaymentTags, validateItemsTags } from './tags'
+import { checkUniqueCategoryIds, validateContext, validateXInput, validateXInputSubmission } from './fisChecks'
+import {
+  // validateProviderTags,
+  validatePaymentTags,
+  validateItemsTags,
+} from './tags'
+import { isEmpty } from 'lodash'
 
-export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
+export const checkOnSearch = (data: any, msgIdSet: any, sequence: string, flow: string) => {
   if (!data || isObjectEmpty(data)) {
     return { [FisApiSequence.ON_SEARCH]: 'JSON cannot be empty' }
   }
@@ -17,7 +22,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
     return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(data?.context?.domain.split(':')[1], constants.ON_SEARCH, data)
+  const schemaValidation = validateSchema('FIS', constants.ON_SEARCH, data)
   const contextRes: any = validateContext(context, msgIdSet, constants.SEARCH, constants.ON_SEARCH)
 
   setValue(`${FisApiSequence.ON_SEARCH}_message`, message)
@@ -37,6 +42,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
   const prvdrLocId = new Set()
   const itemsId = new Set()
   const loanCode = getValue(`LoanType`)
+  const version = getValue('version')
 
   try {
     logger.info(`Checking Providers info (providers) in /${constants.ON_SEARCH}`)
@@ -135,27 +141,50 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
         logger.error(`!!Errors while checking categories in providers[${i}], ${error.stack}`)
       }
 
+      // check provider payments
       try {
-        logger.info(`Checking payments for provider (${prvdr.id}) in providers[${i}]`)
-        prvdr?.payments?.forEach((arr: any, i: number) => {
-          if (!arr?.collected_by) {
-            errorObj[
-              `payemnts[${i}]_collected_by`
-            ] = `payments.collected_by must be present in ${FisApiSequence.ON_SEARCH}`
-          } else {
-            const srchCollectBy = getValue(`collected_by`)
-            if (srchCollectBy != arr?.collected_by)
+        logger.info(`Checking payments in providers[${i}]`)
+        const payments = prvdr?.payments
+        if (isEmpty(payments)) {
+          errorObj.payments = `payments array is missing or empty`
+        } else {
+          payments?.forEach((arr: any, i: number) => {
+            const terms = [
+              { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' },
+              {
+                code: 'SETTLEMENT_BASIS',
+                type: 'enum',
+                value: ['INVOICE_RECEIPT', 'Delivery'],
+              },
+              { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
+              { code: 'STATIC_TERMS', type: 'url' },
+              { code: 'COURT_JURISDICTION', type: 'string' },
+              { code: 'DELAY_INTEREST', type: 'amount' },
+              {
+                code: 'OFFLINE_CONTRACT',
+                type: 'boolean',
+              },
+            ]
+
+            if (!arr?.collected_by) {
               errorObj[
                 `payemnts[${i}]_collected_by`
-              ] = `payments.collected_by value sent in ${FisApiSequence.ON_SEARCH} should be ${srchCollectBy} as sent in ${FisApiSequence.SEARCH}`
-          }
+              ] = `payments.collected_by must be present in ${constants.ON_SEARCH}`
+            } else {
+              const srchCollectBy = getValue(`collected_by`)
+              if (srchCollectBy != arr?.collected_by)
+                errorObj[
+                  `payemnts[${i}]_collected_by`
+                ] = `payments.collected_by value sent in ${constants.ON_SEARCH} should be same as sent in ${constants.SEARCH}: ${srchCollectBy}`
+            }
 
-          // Validate payment tags
-          const tagsValidation = validatePaymentTags(arr.tags)
-          if (!tagsValidation.isValid) {
-            Object.assign(errorObj, { tags: tagsValidation.errors })
-          }
-        })
+            // Validate payment tags
+            const tagsValidation = validatePaymentTags(arr.tags, terms)
+            if (!tagsValidation.isValid) {
+              Object.assign(errorObj, { tags: tagsValidation.errors })
+            }
+          })
+        }
       } catch (error: any) {
         logger.error(`!!Errors while checking payments in providers[${i}], ${error.stack}`)
       }
@@ -192,13 +221,26 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
             }
           }
 
-          if (item?.descriptor?.code !== loanCode)
-            errorObj[
-              `prvdr[${i}].item[${j}].code`
-            ] = `Descriptor code: ${item?.descriptor?.code} in item[${j}] must be the same as ${loanCode}`
+          // if (item?.descriptor?.code !== loanCode)
+          //   errorObj[
+          //     `prvdr[${i}].item[${j}].code`
+          //   ] = `Descriptor code: ${item?.descriptor?.code} in item[${j}] must be the same as ${loanCode}`
+
+          // Validate xinput
+          // const xinput = item?.xinput
+          // const xinputValidationErrors =
+          //   version == '2.0.0' && sequence == 'on_select_1'
+          //     ? validateXInputSubmission(xinput, index, sequence)
+          //     : validateXInput(xinput, index, constants.ON_SELECT, 0)
+          // if (xinputValidationErrors) {
+          //   Object.assign(errorObj, xinputValidationErrors)
+          // }
 
           const xinput = item.xinput
-          const xinputValidationErrors = validateXInput(xinput, i, j, constants.ON_SEARCH)
+          const xinputValidationErrors =
+            version == '2.1.0' && sequence == 'on_search_2'
+              ? validateXInputSubmission(xinput, j, sequence)
+              : validateXInput(xinput, i, constants.ON_SEARCH, j)
           if (xinputValidationErrors) {
             Object.assign(errorObj, xinputValidationErrors)
           }
@@ -215,19 +257,19 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string) => {
         logger.error(`!!Errors while checking items in providers[${i}], ${error.stack}`)
       }
 
-      try {
-        logger.info(`Checking tags construct for providers[${i}]`)
+      // try {
+      //   logger.info(`Checking tags construct for providers[${i}]`)
 
-        const tags = onSearchCatalog['providers'][i]['tags']
+      //   const tags = onSearchCatalog['providers'][i]['tags']
 
-        // Validate tags
-        const tagsValidation = validateProviderTags(tags)
-        if (!tagsValidation.isValid) {
-          Object.assign(errorObj, { tags: tagsValidation.errors })
-        }
-      } catch (error: any) {
-        logger.error(`!!Error while checking tags construct for providers[${i}], ${error.stack}`)
-      }
+      //   // Validate tags
+      //   const tagsValidation = validateProviderTags(tags)
+      //   if (!tagsValidation.isValid) {
+      //     Object.assign(errorObj, { tags: tagsValidation.errors })
+      //   }
+      // } catch (error: any) {
+      //   logger.error(`!!Error while checking tags construct for providers[${i}], ${error.stack}`)
+      // }
 
       i++
     }

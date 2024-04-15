@@ -1121,3 +1121,20 @@ export function compareLists(list1: any[], list2: any[]): string[] {
 
   return errors
 }
+
+export const findProviderLocation = (obj: any): boolean => {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      if (key === 'provider_location') {
+        return true
+      }
+      if (typeof obj[key] === 'object') {
+        const found = findProviderLocation(obj[key])
+        if (found) {
+          return true
+        }
+      }
+    }
+  }
+  return false
+}

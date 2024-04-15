@@ -193,7 +193,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
           errorObj['bpp/descriptor'] = `Missing np_type in bpp/descriptor`
         } else {
           const npTypeValue = npType.value.toUpperCase()
-          if (npTypeValue !== 'ISN' || npTypeValue !== 'MSN') {
+          if (npTypeValue !== 'ISN' && npTypeValue !== 'MSN') {
             errorObj['bpp/descriptor/np_type'] =
               `Invalid value '${npType.value}' for np_type. It should be either 'ISN' or 'MSN' in uppercase.`
           }
@@ -1147,7 +1147,12 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
             const typeCode = sc?.list.find((item: any) => item.code === 'type')
             if (typeCode) {
               const timingType = typeCode.value
-              if (timingType === 'Order') {
+              if (
+                timingType === 'Order' ||
+                timingType === 'Delivery' ||
+                timingType === 'Self-Pickup' ||
+                timingType === 'All'
+              ) {
                 isOrderPresent = true
               } else if (!fulfillmentTypes.includes(timingType)) {
                 errorObj[`provider[${i}].timing`] =

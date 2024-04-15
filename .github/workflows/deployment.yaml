@@ -1,0 +1,42 @@
+name: ondc Deployment
+
+on:
+  push:
+    branches: ['master']
+  pull_request:
+    branches: ['master']
+jobs:
+  ssh-ec2:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: SSH setup and creating folders
+        run: |
+          echo "${{ secrets.key }}" > ./key.pem
+          chmod 600 ./key.pem
+          mkdir -p ~/.ssh
+          ssh-keyscan ${{ vars.host }} >> ~/.ssh/known_hosts
+          ssh -i ./key.pem ${{ vars.user }}@${{ vars.host }} -T <<EOF
+          if [ -d "retail-log-utility" ]; then
+            echo "retail-log-utility folder exist"
+            cd ./retail-log-utility && sudo docker-compose down && sudo rm -rf ./../retail-log-utility
+          else
+            echo "Creating retail-log-utility"
+            sudo mkdir retail-log-utility 
+          fi
+          EOF
+      - name: scp to copy files on ec2-server
+        run: |
+          sudo scp -i ./key.pem -r * ${{ vars.user }}@${{ vars.host }}:/home/"${{ vars.user }}"/retail-log-utility
+
+      - name: ondc deployment
+        run: |
+          ssh -o ServerAliveInterval=30 -o TCPKeepAlive=yes -T -i ./key.pem ${{ vars.user }}@${{ vars.host }} <<EOF
+          ssh-keyscan ${{ vars.host }} >> ~/.ssh/known_hosts
+          cd ./retail-log-utility
+          cp ~/.env ~/retail-log-utility/ 
+          sudo docker-compose up -d --build
+          EOF

@@ -487,7 +487,6 @@ export const checkOnConfirm = (data: any) => {
     try {
       logger.info(`Checking if list provided in bpp_terms is same as provided in ${constants.ON_INIT} `)
       const tags = on_confirm.tags
-      console.log('🚀 ~ checkOnConfirm ~ tags:', tags)
 
       for (const tag of tags) {
         if (tag.code === 'bpp_terms') {

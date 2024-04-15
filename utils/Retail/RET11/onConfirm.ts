@@ -228,7 +228,7 @@ export const checkOnConfirm = (data: any) => {
 
         if (tax_number.length == 0) {
           logger.error(`tax_number must present in ${constants.ON_CONFIRM}`)
-          onCnfrmObj[tax_number] = `tax_number must be present for ${constants.ON_CONFIRM}`
+          onCnfrmObj["tax_number"] = `tax_number must be present for ${constants.ON_CONFIRM}`
         }
         if (provider_tax_number.length == 0) {
           logger.error(`tax_number must present in ${constants.ON_CONFIRM}`)

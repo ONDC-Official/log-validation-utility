@@ -771,7 +771,7 @@ export const FnBonConfirmSchema = {
                               value: {
                                 type: 'string',
                                 pattern: '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$',
-                                errorMessage: 'Value for tax_number must be alphanumeric characters only',
+                                errorMessage: 'Value for tax_number must be a valid tax number i.e alphanumeric with 15 characters ',
                               },
                             },
                             required: ['code', 'value'],

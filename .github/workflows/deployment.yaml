@@ -26,7 +26,7 @@ jobs:
             cd ./log-validation-utility && git pull origin master
           else
             echo "Cloning repository"
-            git clone https://github.com/sahil-ondc/log-validation-utility.git
+            git clone https://github.com/ONDC-Official/log-validation-utility.git
           fi
           EOF
 

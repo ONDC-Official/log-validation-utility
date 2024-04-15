@@ -5,6 +5,7 @@ on:
     branches: ['master']
   pull_request:
     branches: ['master']
+
 jobs:
   ssh-ec2:
     runs-on: ubuntu-latest
@@ -13,29 +14,30 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: SSH setup and creating folders
+      - name: SSH Setup and Folder Creation
         run: |
-          echo "${{ secrets.key }}" > ./key.pem
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ./key.pem
           chmod 600 ./key.pem
           mkdir -p ~/.ssh
-          ssh-keyscan ${{ vars.host }} >> ~/.ssh/known_hosts
-          ssh -i ./key.pem ${{ vars.user }}@${{ vars.host }} -T <<EOF
+          ssh-keyscan ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+          ssh -i ./key.pem ${{ secrets.USER }}@${{ secrets.HOST }} -T <<EOF
           if [ -d "retail-log-utility" ]; then
-            echo "retail-log-utility folder exist"
+            echo "retail-log-utility folder exists, cleaning up"
             cd ./retail-log-utility && sudo docker-compose down && sudo rm -rf ./../retail-log-utility
           else
             echo "Creating retail-log-utility"
             sudo mkdir retail-log-utility 
           fi
           EOF
-      - name: scp to copy files on ec2-server
-        run: |
-          sudo scp -i ./key.pem -r * ${{ vars.user }}@${{ vars.host }}:/home/"${{ vars.user }}"/retail-log-utility
 
-      - name: ondc deployment
+      - name: SCP to Copy Files to EC2 Server
         run: |
-          ssh -o ServerAliveInterval=30 -o TCPKeepAlive=yes -T -i ./key.pem ${{ vars.user }}@${{ vars.host }} <<EOF
-          ssh-keyscan ${{ vars.host }} >> ~/.ssh/known_hosts
+          sudo scp -i ./key.pem -r * ${{ secrets.USER }}@${{ secrets.HOST }}:/home/"${{ secrets.USER }}"/retail-log-utility
+
+      - name: Ondc Deployment
+        run: |
+          ssh -o ServerAliveInterval=30 -o TCPKeepAlive=yes -T -i ./key.pem ${{ secrets.USER }}@${{ secrets.HOST }} <<EOF
+          ssh-keyscan ${{ secrets.HOST }} >> ~/.ssh/known_hosts
           cd ./retail-log-utility
           cp ~/.env ~/retail-log-utility/ 
           sudo docker-compose up -d --build

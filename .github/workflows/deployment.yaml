@@ -16,7 +16,7 @@ jobs:
 
       - name: SSH Setup and Folder Creation
         run: |
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ./key.pem
+          echo "${{ secrets.KEY }}" > ./key.pem
           chmod 600 ./key.pem
           mkdir -p ~/.ssh
           ssh-keyscan ${{ secrets.HOST }} >> ~/.ssh/known_hosts

@@ -768,11 +768,10 @@ export const FnBonConfirmSchema = {
                           then: {
                             type: 'object',
                             properties: {
-                              code: {
-                                type: 'string',
-                              },
                               value: {
                                 type: 'string',
+                                pattern: '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$',
+                                errorMessage: 'Value for tax_number must be alphanumeric characters only',
                               },
                             },
                             required: ['code', 'value'],
@@ -788,11 +787,10 @@ export const FnBonConfirmSchema = {
                           then: {
                             type: 'object',
                             properties: {
-                              code: {
-                                type: 'string',
-                              },
                               value: {
                                 type: 'string',
+                                pattern: '[A-Z]{5}[0-9]{4}[A-Z]{1}',
+                                errorMessage: 'Value for provider_tax_number must be alphanumeric characters only',
                               },
                             },
                             required: ['code', 'value'],

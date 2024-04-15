@@ -638,39 +638,39 @@ export const onInitSchema = {
                         {
                           if: {
                             properties: {
-                              code: {
-                                const: 'tax_number',
-                              },
+                              code: { const: 'tax_number' },
                             },
                           },
                           then: {
+                            type: 'object',
                             properties: {
                               value: {
                                 type: 'string',
-                                pattern: '^[A-Za-z0-9]+$',
+                                pattern: '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$',
                                 errorMessage: 'Value for tax_number must be alphanumeric characters only',
                               },
                             },
                             required: ['code', 'value'],
+                            additionalProperties: false,
                           },
                         },
                         {
                           if: {
                             properties: {
-                              code: {
-                                const: 'provider_tax_number',
-                              },
+                              code: { const: 'provider_tax_number' },
                             },
                           },
                           then: {
+                            type: 'object',
                             properties: {
                               value: {
                                 type: 'string',
-                                pattern: '^[A-Za-z0-9]+$',
+                                pattern: '[A-Z]{5}[0-9]{4}[A-Z]{1}',
                                 errorMessage: 'Value for provider_tax_number must be alphanumeric characters only',
                               },
                             },
                             required: ['code', 'value'],
+                            additionalProperties: false,
                           },
                         },
                       ],

@@ -14,31 +14,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: SSH Setup and Folder Creation
+      - name: SSH Setup and Cloning Repository
         run: |
           echo "${{ secrets.KEY }}" > ./key.pem
           chmod 600 ./key.pem
           mkdir -p ~/.ssh
           ssh-keyscan ${{ secrets.HOST }} >> ~/.ssh/known_hosts
           ssh -i ./key.pem ${{ secrets.USER }}@${{ secrets.HOST }} -T <<EOF
-          if [ -d "retail-log-utility" ]; then
-            echo "retail-log-utility folder exists, cleaning up"
-            cd ./retail-log-utility && sudo docker-compose down && sudo rm -rf ./../retail-log-utility
+          if [ -d "log-validation-utility" ]; then
+            echo "Repository already exists, cleaning up"
+            cd ./log-validation-utility && git pull origin master
           else
-            echo "Creating retail-log-utility"
-            sudo mkdir retail-log-utility 
+            echo "Cloning repository"
+            git clone https://github.com/sahil-ondc/log-validation-utility.git
           fi
           EOF
-
-      - name: SCP to Copy Files to EC2 Server
-        run: |
-          sudo scp -i ./key.pem -r * ${{ secrets.USER }}@${{ secrets.HOST }}:/home/"${{ secrets.USER }}"/retail-log-utility
 
       - name: Ondc Deployment
         run: |
           ssh -o ServerAliveInterval=30 -o TCPKeepAlive=yes -T -i ./key.pem ${{ secrets.USER }}@${{ secrets.HOST }} <<EOF
           ssh-keyscan ${{ secrets.HOST }} >> ~/.ssh/known_hosts
-          cd ./retail-log-utility
-          cp ~/.env ~/retail-log-utility/ 
+          cd ./log-validation-utility
+          cp ~/.env ~/log-validation-utility/
           sudo docker-compose up -d --build
           EOF

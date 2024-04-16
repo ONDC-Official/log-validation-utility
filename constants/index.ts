@@ -34,6 +34,8 @@ export default Object.freeze({
   RET_ONISSUE: 'on_issue',
   RET_ISSUE_STATUS: 'issue_status',
   RET_ONISSUE_STATUS: 'on_issue_status',
+  RECEIVER_RECON: 'receiver_recon',
+  ON_RECEIVER_RECON: 'on_receiver_recon',
 })
 
 export const ApiSequence = {
@@ -72,12 +74,60 @@ export const ApiSequence = {
 export const FisApiSequence = {
   SEARCH: 'search',
   ON_SEARCH: 'on_search',
+  SEARCH_2: 'search_2',
+  ON_SEARCH_2: 'on_search_2',
+  SEARCH_3: 'search_3',
+  ON_SEARCH_3: 'on_search_3',
   SELECT_1: 'select_1',
   SELECT_2: 'select_2',
   SELECT_3: 'select_3',
   ON_SELECT_1: 'on_select_1',
   ON_SELECT_2: 'on_select_2',
   ON_SELECT_3: 'on_select_3',
+  INIT_1: 'init_1',
+  INIT_2: 'init_2',
+  INIT_3: 'init_3',
+  INIT_4: 'init_4',
+  ON_INIT_1: 'on_init_1',
+  ON_INIT_2: 'on_init_2',
+  ON_INIT_3: 'on_init_3',
+  ON_INIT_4: 'on_init_4',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  CANCEL: 'cancel',
+  ON_CANCEL: 'on_cancel',
+  STATUS: 'status',
+  ON_STATUS: 'on_status',
+  ON_STATUS_KYC: 'on_status_kyc',
+  ON_STATUS_EMANDATE: 'on_status_emandate',
+  ON_STATUS_LOAN: 'on_status_loan',
+  UPDATE: 'update',
+  ON_UPDATE: 'on_update',
+  ON_UPDATE_UNSOLICATED: 'on_update_unsolicated',
+}
+
+export const Fis10ApiSequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SELECT: 'select',
+  ON_SELECT: 'on_select',
+  INIT: 'init',
+  ON_INIT: 'on_init',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  ON_CANCEL: 'on_cancel',
+  STATUS: 'status',
+  ON_STATUS: 'on_status',
+  ON_UPDATE: 'on_update',
+}
+
+export const FIS13HealthSequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SEARCH_OFFER: 'search_offer',
+  ON_SEARCH_OFFER: 'on_search_offer',
+  SELECT: 'select',
+  ON_SELECT: 'on_select',
   INIT_1: 'init_1',
   INIT_2: 'init_2',
   INIT_3: 'init_3',
@@ -88,13 +138,13 @@ export const FisApiSequence = {
   ON_CONFIRM: 'on_confirm',
   CANCEL: 'cancel',
   ON_CANCEL: 'on_cancel',
-  TRACK: 'track',
-  ON_TRACK: 'on_track',
+  STATUS_2: 'status_2',
   STATUS: 'status',
   ON_STATUS: 'on_status',
+  ON_SATUS_2: 'on_status_2',
   UPDATE: 'update',
   ON_UPDATE: 'on_update',
-  ON_UPDATE_UNSOLICATED: 'on_update_unsolicated',
+  ON_UPDATE_UNCOLICATED: 'on_update_uncolicated',
 }
 
 export const mobilitySequence = {
@@ -156,6 +206,20 @@ export const formHeadingsFis: any = {
   },
 }
 
+export const insuranceFormHeadings: any = {
+  HEALTH_INSURANCE: {
+    on_search: ['Individual Information'],
+    on_search_offer: ['PED, PAN & DOB Details'],
+    on_select: ['EKYC'],
+    on_init: ['Buyer Details', 'Manual Review', 'Nominee Details'],
+  },
+  MARINE_INSURANCE: {
+    on_search: ['Individual Information'],
+    on_select: ['EKYC'],
+    on_init: ['Buyer Details', 'Manual Review', 'Nominee Details'],
+  },
+}
+
 export const fisFlows = {
   INVOICE: 'INVOICE_BASED_LOAN',
   PERSONAL: 'PERSONAL_LOAN',
@@ -166,11 +230,24 @@ export const fisFlows = {
   MISSED_EMI_PAYMENT: 'MISSED_EMI_PAYMENT',
 }
 
+export const insuranceFlows = {
+  HEALTH: 'HEALTH_INSURANCE',
+  MARINE: 'MARINE_INSURANCE',
+  CLAIM_HEALTH: 'CLAIM_HEALTH_INSURANCE',
+  RENEW_HEALTH: 'RENEW_HEALTH_INSURANCE',
+}
+
 export const onDemandFlows = {
   HAPPY_FLOW: 'HAPPY_FLOW',
   RIDER_CANCEL: 'RIDER_CANCEL',
   DRIVER_CANCEL: 'DRIVER_CANCEL',
   PRICE_UPDATE: 'PRICE_UPDATE',
+}
+
+export const flowsFis10 = {
+  FLOW_1: 'FLOW_1',
+  FLOW_2: 'FLOW_2',
+  FLOW_3: 'FLOW_3',
 }
 
 export const IGMApiSequence = {
@@ -185,6 +262,11 @@ export const IGMApiSequence = {
   LSP_ON_ISSUE: 'lsp_on_issue',
   LSP_ISSUE_STATUS: 'lsp_issue_status',
   LSP_ON_ISSUE_STATUS: 'lsp_on_issue_status',
+}
+
+export const RSFapiSequence = {
+  RECEIVER_RECON: 'receiver_recon',
+  ON_RECEIVER_RECON: 'on_receiver_recon',
 }
 
 export const actionsArray = [
@@ -252,6 +334,7 @@ export const retailDomains = [
 ]
 
 export const MOB_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
+export const ON_DEMAND_VEHICLE = ['AUTO_RICKSHAW', 'CAB']
 export const MOB__DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
 export const MOB_FULL_STATE = [
   'RIDE_CANCELLED',

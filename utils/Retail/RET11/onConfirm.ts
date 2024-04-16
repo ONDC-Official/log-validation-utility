@@ -15,6 +15,7 @@ import {
   sumQuoteBreakUp,
   payment_status,
   compareQuoteObjects,
+  compareLists,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -98,6 +99,28 @@ export const checkOnConfirm = (data: any) => {
     }
 
     const on_confirm = message.order
+
+    try {
+      logger.info(`Checking Cancellation terms for /${constants.ON_CONFIRM}`)
+      if (message.order.cancellation_terms && message.order.cancellation_terms.length > 0) {
+        onCnfrmObj[`message.order`] =
+          `'cancellation_terms' in /message/order should not be provided as those are not enabled yet`
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking Cancellation terms for /${constants.ON_CONFIRM}, ${error.stack}`)
+    }
+
+    try {
+      logger.info(`Checking fulfillment ids for  /${constants.ON_CONFIRM}`)
+      message.order.fulfillments.forEach((fulfillment: any) => {
+        if (!fulfillment['@ondc/org/TAT']) {
+          onCnfrmObj[`message.order.fulfillments[${fulfillment.id}]`] =
+            `'TAT' must be provided in message/order/fulfillments`
+        }
+      })
+    } catch (error: any) {
+      logger.error(`!!Error while Checking fulfillment ids for  /${constants.ON_CONFIRM}, ${error.stack}`)
+    }
 
     try {
       logger.info(`Comparing order ids in /${constants.CONFIRM} and /${constants.ON_CONFIRM}`)
@@ -371,14 +394,19 @@ export const checkOnConfirm = (data: any) => {
       logger.info(`Comparing Quote object for /${constants.ON_SELECT} and /${constants.ON_CONFIRM}`)
 
       const on_select_quote: any = getValue('quoteObj')
-      const quoteErrors = compareQuoteObjects(on_select_quote, on_confirm.quote, constants.ON_CONFIRM, constants.ON_SELECT)
+      const quoteErrors = compareQuoteObjects(
+        on_select_quote,
+        on_confirm.quote,
+        constants.ON_CONFIRM,
+        constants.ON_SELECT,
+      )
 
-      const hasItemWithQuantity = _.some(on_confirm.quote.breakup, item => _.has(item, 'item.quantity'));
-      if (hasItemWithQuantity){
+      const hasItemWithQuantity = _.some(on_confirm.quote.breakup, (item) => _.has(item, 'item.quantity'))
+      if (hasItemWithQuantity) {
         const key = `quantErr`
-        onCnfrmObj[key] = `Extra attribute Quantity provided in quote object i.e not supposed to be provided after on_select so invalid quote object`
-      }
-      else if (quoteErrors) {
+        onCnfrmObj[key] =
+          `Extra attribute Quantity provided in quote object i.e not supposed to be provided after on_select so invalid quote object`
+      } else if (quoteErrors) {
         let i = 0
         const len = quoteErrors.length
         while (i < len) {
@@ -496,6 +524,25 @@ export const checkOnConfirm = (data: any) => {
       }
     } catch (err: any) {
       logger.error(`Error while checking transaction is in message.order.payment`)
+    }
+
+    try {
+      logger.info(`Checking if list provided in bpp_terms is same as provided in ${constants.ON_INIT} `)
+      const tags = on_confirm.tags
+
+      for (const tag of tags) {
+        if (tag.code === 'bpp_terms') {
+          const result = compareLists(tag.list, list_ON_INIT)
+          if (result) {
+            onCnfrmObj['message/order/tags/bpp_terms'] =
+              `List of bpp_terms mismatched in message/order/tags/bpp_terms for ${constants.ON_INIT} and ${constants.ON_CONFIRM}`
+          }
+        }
+      }
+    } catch (err: any) {
+      logger.error(
+        `Error while Checking if list provided in bpp_terms is same as provided in ${constants.ON_INIT}, ${err.stack} `,
+      )
     }
 
     return onCnfrmObj

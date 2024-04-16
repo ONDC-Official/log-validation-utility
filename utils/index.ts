@@ -263,6 +263,24 @@ export const checkGpsPrecision = (coordinates: string) => {
   }
 }
 
+export const checkSixDigitGpsPrecision = (coordinates: string) => {
+  try {
+    const [lat, long] = coordinates.split(',')
+    const latPrecision = getDecimalPrecision(lat)
+    const longPrecision = getDecimalPrecision(long)
+    const decimalPrecision = constants.DECIMAL_PRECISION
+
+    if (latPrecision === decimalPrecision && longPrecision === decimalPrecision) {
+      return true
+    } else {
+      return false
+    }
+  } catch (error) {
+    logger.error(error)
+    return false
+  }
+}
+
 export const checkTagConditions = (message: any, context: any) => {
   const tags = []
   if (message.intent?.tags) {
@@ -279,6 +297,7 @@ export const checkTagConditions = (message: any, context: any) => {
       if (modeTag) {
         setValue('multiIncSearch', 'true')
       }
+
       if (modeTag && modeTag.value !== 'start' && modeTag.value !== 'stop') {
         tags.push('/message/intent/tags/list/value should be one of start or stop')
       }
@@ -306,6 +325,7 @@ export const checkTagConditions = (message: any, context: any) => {
   } else {
     tags.push('/message/intent should have a required property tags')
   }
+
   return tags.length ? tags : null
 }
 
@@ -657,6 +677,7 @@ function findGSTNumber(tags: any[], termToMatch: string): string | undefined {
   } catch (error: any) {
     logger.error(`Error in finding GST number: ${error.stack}`)
   }
+
   return undefined
 }
 
@@ -714,8 +735,19 @@ export const isValidPhoneNumber = (value: string): boolean => {
 }
 
 export const isValidUrl = (url: string) => {
-  const urlRegex = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(:[0-9]+)?([/\w.-]*)*\/?$/
-  return urlRegex.test(url)
+  try {
+    new URL(url)
+    return true
+  } catch (error) {
+    return false
+  }
+}
+
+export const isValidISO8601Duration = (duration: string): boolean => {
+  const iso8601DurationRegex =
+    /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$/
+
+  return iso8601DurationRegex.test(duration.trim())
 }
 
 export const checkIdAndUri = (id: string, uri: string, type: string) => {
@@ -802,6 +834,7 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
       errorObj[key] = `Attribute tag fields are missing for ${categoryName} item[${index}]`
       return
     }
+
     if (attributeTag) {
       const tags = attributeTag.list
       const ctgrID = item.category_id
@@ -815,7 +848,7 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
             const isTagMandatory = tagInfo.mandatory
             if (isTagMandatory) {
               let tagValue: any = null
-              let originalTag:any = null
+              let originalTag: any = null
               const tagFound = tags.some((tag: any) => {
                 const res = tag.code.toLowerCase() === tagName.toLowerCase()
                 if (res) {
@@ -833,12 +866,13 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
                 if (
                   tagInfo.value.length > 0 &&
                   !tagInfo.value.includes(originalTag) &&
-                  !tagInfo.value.includes(tagValue) 
+                  !tagInfo.value.includes(tagValue)
                 ) {
                   logger.error(`The item value can only be of possible values.`)
                   const key = `InvldValueforItem[${i}][${index}] : ${tagName}`
-                  errorObj[key] =
-                    `Invalid item value: [${originalTag}]. It can only be of possible values as provided in https://github.com/ONDC-Official/protocol-network-extension/tree/main/enums/retail.`
+                  errorObj[
+                    key
+                  ] = `Invalid item value: [${originalTag}]. It can only be of possible values as provided in https://github.com/ONDC-Official/protocol-network-extension/tree/main/enums/retail.`
                 }
               }
             }
@@ -877,6 +911,7 @@ export const checkForDuplicates = (arr: any, errorObj: any) => {
       logger.error(`Error: Duplicate varient of item found in bpp/providers/items`)
       index++
     }
+
     seen.add(stringValue)
   }
 }
@@ -896,7 +931,7 @@ export const findVariantPath = (arr: any) => {
 
   // Map over the grouped items and collect attribute paths for each item_id into an array
   const variantPath = _.map(groupedByItemID, (group, item_id) => {
-    let paths = _.chain(group).flatMap('tags').filter({ code: 'attr' }).map('list[0].value').value()
+    const paths = _.chain(group).flatMap('tags').filter({ code: 'attr' }).map('list[0].value').value()
     return { item_id, paths }
   })
 
@@ -933,24 +968,27 @@ export const payment_status = (payment: any) => {
       return false
     }
   }
+
   return true
 }
 
 export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAtConfirm: number, errorObj: any) => {
-  for (let obj of fulfillmentArr) {
+  for (const obj of fulfillmentArr) {
     let quoteTrailSum = 0
     const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
-    for (let item of quoteTrailItems) {
-      for (let val of item.list) {
+    for (const item of quoteTrailItems) {
+      for (const val of item.list) {
         if (val.code === 'value') {
           quoteTrailSum += Math.abs(val.value)
         }
       }
     }
+
     if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
       const key = `invldQuoteTrailPrices`
-      errorObj[key] =
-        `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM}`
+      errorObj[
+        key
+      ] = `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM}`
       logger.error(
         `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM} `,
       )
@@ -960,12 +998,12 @@ export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAt
 
 export const checkQuoteTrail = (quoteTrailItems: any[], errorObj: any, selectPriceMap: any, itemSet: any) => {
   try {
-    for (let item of quoteTrailItems) {
+    for (const item of quoteTrailItems) {
       let value = null
       let itemValue = null
       let itemID = null
       let type = null
-      for (let val of item.list) {
+      for (const val of item.list) {
         if (val.code === 'id') {
           itemID = val.value
           value = selectPriceMap.get(val.value)
@@ -975,11 +1013,14 @@ export const checkQuoteTrail = (quoteTrailItems: any[], errorObj: any, selectPri
           type = val.value
         }
       }
+
       if (value && itemValue && value !== itemValue && type === 'item') {
         const key = `invalidPrice[${itemID}]`
-        errorObj[key] =
-          `Price mismatch for  [${itemID}] provided in quote object '[${value}]'. Should be same as in quote of ${constants.ON_SELECT}`
+        errorObj[
+          key
+        ] = `Price mismatch for  [${itemID}] provided in quote object '[${value}]'. Should be same as in quote of ${constants.ON_SELECT}`
       }
+
       if (!itemSet.has(itemID) && type === 'item') {
         const key = `invalidItemID[${itemID}]`
         errorObj[key] = `Item ID [${itemID}] not present in items array`
@@ -1039,4 +1080,61 @@ export function compareQuoteObjects(obj1: InputObject, obj2: InputObject, api1: 
   })
 
   return errors
+}
+
+type ObjectType = {
+  [key: string]: string | string[]
+}
+
+export function validateObjectString(obj: ObjectType): string | null {
+  const errors: string[] = []
+
+  Object.entries(obj).forEach(([key, value]) => {
+    if (typeof value === 'string' && value.trim() === '') {
+      errors.push(`'${key}'`)
+    } else if (Array.isArray(value) && value.some((v) => typeof v === 'string' && v.trim() === '')) {
+      errors.push(`'${key}'`)
+    }
+  })
+
+  if (errors.length > 0) {
+    return `${errors.join(', ')} cannot be empty`
+  }
+
+  return null
+}
+
+export function compareLists(list1: any[], list2: any[]): string[] {
+  const errors: string[] = []
+
+  for (const obj1 of list1) {
+    const matchingObj = list2.find((obj2) => obj2.code === obj1.code)
+
+    if (!matchingObj) {
+      errors.push(`Code '${obj1.code}' present in first list but not in second list.`)
+    } else {
+      if (obj1.value !== matchingObj.value) {
+        errors.push(`Code '${obj1.code}' value not matching.`)
+      }
+    }
+  }
+
+  return errors
+}
+
+export const findProviderLocation = (obj: any): boolean => {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      if (key === 'provider_location') {
+        return true
+      }
+      if (typeof obj[key] === 'object') {
+        const found = findProviderLocation(obj[key])
+        if (found) {
+          return true
+        }
+      }
+    }
+  }
+  return false
 }

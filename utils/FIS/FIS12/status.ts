@@ -13,7 +13,7 @@ export const checkStatus = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.STATUS, data)
+  const schemaValidation = validateSchema('FIS', constants.STATUS, data)
   const contextRes: any = validateContext(context, msgIdSet, constants.ON_CONFIRM, constants.STATUS)
   msgIdSet.add(context.message_id)
 
@@ -33,6 +33,15 @@ export const checkStatus = (data: any, msgIdSet: any) => {
     const key = `${FisApiSequence.STATUS}_ref_id`
     errorObj[key] = `ref_id in /${constants.STATUS} must be present`
   }
+
+  // if (!message?.ref_id && !message?.order_id) {
+  //   const key = `${FisApiSequence.STATUS}_id`
+  //   errorObj[key] = `either of ref_id or order_id must be present in /${constants.STATUS}`
+  // } else {
+  //   if (message?.ref_id && !_.isEqual(message?.ref_id, context.transaction_id)) {
+  //     errorObj['ref_id'] = `ref_id value should be the value of transaction_id`
+  //   }
+  // }
 
   return Object.keys(errorObj).length > 0 && errorObj
 }

@@ -1,4 +1,4 @@
-const issueCloseSChema =  {
+const issueCloseSChema = {
   type: 'object',
   properties: {
     context: {
@@ -198,6 +198,5 @@ const issueCloseSChema =  {
   },
   required: ['context', 'message'],
 }
-
 
 export default issueCloseSChema

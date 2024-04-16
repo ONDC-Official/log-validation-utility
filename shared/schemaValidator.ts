@@ -35,6 +35,9 @@ import issueCloseSchema from '../schema/Igm/issueCloseSchema'
 import { onSearchIncSchema } from '../schema/Retail/RET/on_search_inc'
 import { onUpdateSchema } from '../schema/Retail/Update/on_update'
 import { updateSchema } from '../schema/Retail/Update/update'
+import receiverReconSchema from '../schema/RSF/receiverReconSchema'
+import onReceiverReconSchema from '../schema/RSF/onReciverReconSchema'
+import { findProviderLocation } from '../utils'
 
 const ajv = new Ajv({
   allErrors: true,
@@ -42,7 +45,6 @@ const ajv = new Ajv({
 })
 addFormats(ajv)
 require('ajv-errors')(ajv)
-
 ajv.addFormat('rfc3339-date-time', function(dateTimeString) {
   // Parse the date-time string
   const date = new Date(dateTimeString);
@@ -85,6 +87,15 @@ const validate_schema = (data: any, schema: any) => {
 
   const validate = ajv.compile(schema)
   const valid = validate(data)
+  if (findProviderLocation(data)) {
+    error_list.push({
+      instancePath: '/message/order',
+      message: 'provider_location is not a valid attribute, it should not be provided',
+      schemaPath: '/message/order',
+      details: 'provider_location',
+      params: {},
+    })
+  }
   if (!valid) {
     error_list = validate.errors
   }
@@ -866,20 +877,19 @@ const validate_schema_for_json = (data: any, schemaPath: any) => {
   return formatted_error(error_list)
 }
 
-const FIS12Validator = {
-  validate_schema_search_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/search.yaml'),
-  validate_schema_on_search_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_search.yaml'),
-  validate_schema_select_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/select.yaml'),
-  validate_schema_on_select_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_select.yaml'),
-  validate_schema_init_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/init.yaml'),
-  validate_schema_on_init_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_init.yaml'),
-  validate_schema_confirm_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/confirm.yaml'),
-  validate_schema_on_confirm_FIS12_for_json: (data: any) =>
-    validate_schema_for_json(data, 'schema/FIS/on_confirm.yaml'),
-  validate_schema_update_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/update.yaml'),
-  validate_schema_on_update_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_update.yaml'),
-  validate_schema_status_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/status.yaml'),
-  validate_schema_on_status_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_status.yaml'),
+const FISValidator = {
+  validate_schema_search_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/search.yaml'),
+  validate_schema_on_search_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_search.yaml'),
+  validate_schema_select_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/select.yaml'),
+  validate_schema_on_select_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_select.yaml'),
+  validate_schema_init_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/init.yaml'),
+  validate_schema_on_init_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_init.yaml'),
+  validate_schema_confirm_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/confirm.yaml'),
+  validate_schema_on_confirm_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_confirm.yaml'),
+  validate_schema_update_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/update.yaml'),
+  validate_schema_on_update_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_update.yaml'),
+  validate_schema_status_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/status.yaml'),
+  validate_schema_on_status_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_status.yaml'),
 }
 
 const TRV10Validator = {
@@ -902,6 +912,16 @@ const TRV10Validator = {
 
 const validate_schema_issue_close_igm_for_json = (data: any) => {
   const error_list = validate_schema(data, issueCloseSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_receiver_recon_rsf_for_json = (data: any) => {
+  const error_list = validate_schema(data, receiverReconSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_receiver_recon_rsf_for_json = (data: any) => {
+  const error_list = validate_schema(data, onReceiverReconSchema)
   return formatted_error(error_list)
 }
 
@@ -1088,6 +1108,8 @@ export default {
   validate_schema_update_RET18_for_json,
   validate_schema_track_RET10_for_json,
   validate_schema_on_track_RET10_for_json,
-  ...FIS12Validator,
+  validate_schema_receiver_recon_rsf_for_json,
+  validate_schema_on_receiver_recon_rsf_for_json,
   ...TRV10Validator,
+  ...FISValidator,
 }

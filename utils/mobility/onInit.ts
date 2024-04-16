@@ -1,23 +1,22 @@
 // import _ from 'lodash'
-import constants, {
-  mobilitySequence,
-  MOB_VEHICLE_CATEGORIES as VALID_VEHICLE_CATEGORIES,
-  MOB__DESCRIPTOR_CODES as VALID_DESCRIPTOR_CODES,
-} from '../../constants'
+import constants, { mobilitySequence, ON_DEMAND_VEHICLE } from '../../constants'
 import { logger } from '../../shared/logger'
 import { validateSchema, isObjectEmpty } from '../'
 import { getValue, setValue } from '../../shared/dao'
 import {
   validateContext,
-  validatePaymentParams,
   validateQuote,
   validateStops,
   validateCancellationTerms,
+  validateEntity,
+  validateItemRefIds,
+  validatePayloadAgainstSchema,
+  validatePaymentObject,
 } from './mobilityChecks'
-import { validatePaymentTags, validateRouteInfoTags } from './tags'
-import _ from 'lodash'
+import { validateItemsTags, validateRouteInfoTags } from './tags'
+import attributeConfig from './config/config2.0.1.json'
 
-export const checkOnInit = (data: any, msgIdSet: any) => {
+export const checkOnInit = (data: any, msgIdSet: any, version: any) => {
   try {
     const errorObj: any = {}
     if (!data || isObjectEmpty(data)) {
@@ -42,28 +41,15 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     }
 
     const on_init = message.order
-    const itemIDS: any = getValue('ItmIDS')
-    const itemIdArray: any[] = []
+    const itemIDS: any = getValue(`itemIds`)
+    const locationIds = getValue(`locationIds`)
     const storedFull: any = getValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`)
     const fulfillmentIdsSet = new Set()
-
-    let newItemIDSValue: any[]
-
-    if (itemIDS && itemIDS.length > 0) {
-      newItemIDSValue = itemIDS
-    } else {
-      on_init.items.map((item: { id: string }) => {
-        itemIdArray.push(item.id)
-      })
-      newItemIDSValue = itemIdArray
-    }
-
-    setValue('ItmIDS', newItemIDSValue)
 
     try {
       logger.info(`Checking provider Id in /${constants.ON_SEARCH} and /${constants.ON_INIT}`)
       if (!on_init.provider || on_init.provider.id != getValue('providerId')) {
-        errorObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.ON_INIT}`
+        errorObj.prvdrId = `Provider Id mismatches in /${constants.INIT} and /${constants.ON_INIT}`
       }
     } catch (error: any) {
       logger.error(
@@ -71,21 +57,22 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       )
     }
 
+    //fulfillments
     try {
       logger.info(`Validating fulfillments object for /${constants.ON_INIT}`)
       on_init.fulfillments.forEach((fulfillment: any, index: number) => {
         const fulfillmentKey = `fulfillments[${index}]`
         fulfillmentIdsSet.add(fulfillment.id)
-        if (!storedFull.includes(fulfillment.id)) {
+        if (!fulfillment?.id) {
+          errorObj[fulfillmentKey] = `id is missing in fulfillments[${index}]`
+        } else if (!storedFull.includes(fulfillment.id)) {
           errorObj[
             `${fulfillmentKey}.id`
           ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
         }
 
-        if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
-          errorObj[
-            `${fulfillmentKey}.vehicleCategory`
-          ] = `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
+        if (!ON_DEMAND_VEHICLE.includes(fulfillment.vehicle.category)) {
+          errorObj[`${fulfillmentKey}.vehicleCategory`] = `Vehicle category should be one of ${ON_DEMAND_VEHICLE}`
         }
 
         if (fulfillment.type !== 'DELIVERY') {
@@ -98,10 +85,15 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
           errorObj[`fulfillments${index}_agent`] = `/message/order/agent is not part of /${constants.ON_INIT} call`
         }
 
+        //customer checks
+        const customerErrors = validateEntity(fulfillment.customer, 'customer', constants.ON_INIT, index)
+        Object.assign(errorObj, customerErrors)
+
         // Check stops for START and END, or time range with valid timestamp and GPS
         const otp = false
         const cancel = false
-        validateStops(fulfillment?.stops, index, otp, cancel)
+        const stopsError = validateStops(fulfillment?.stops, index, otp, cancel)
+        if (!stopsError?.valid) Object.assign(errorObj, stopsError.errors)
 
         if (fulfillment.tags) {
           // Validate route info tags
@@ -116,41 +108,52 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       return { error: error.message }
     }
 
+    //items checks
     try {
-      on_init.items.forEach((item: any, index: number) => {
-        if (!newItemIDSValue.includes(item.id)) {
-          const key = `item[${index}].item_id`
-          errorObj[
-            key
-          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_INIT}`
-        }
+      logger.info(`Validating items object for /${constants.ON_INIT}`)
+      if (!on_init?.items) errorObj.items = `items is missing in /${constants.ON_INIT}`
+      else {
+        on_init.items.forEach((item: any, index: number) => {
+          const itemKey = `items[${index}]`
 
-        if (!item.descriptor || !item.descriptor.code) {
-          const key = `item${index}_descriptor`
-          errorObj[key] = `Descriptor is missing in items[${index}]`
-        } else {
-          if (!VALID_DESCRIPTOR_CODES.includes(item.descriptor.code)) {
-            const key = `item${index}_descriptor`
+          if (!item?.id) {
+            errorObj[`${itemKey}.id`] = `id is missing in [${itemKey}]`
+          } else if (!itemIDS.includes(item.id)) {
             errorObj[
-              key
-            ] = `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
+              `${itemKey}.id`
+            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_INIT}`
           }
-        }
 
-        const price = item.price
-        if (!price || !price.currency || !price.value) {
-          const key = `item${index}_price`
-          errorObj[key] = `Price is incomplete in /items[${index}]`
-        }
+          //price check
+          if (!item?.price?.value) errorObj[`${itemKey}.price`] = `value is missing at item.index ${index} `
 
-        item.fulfillment_ids.forEach((fulfillmentId: string) => {
-          if (!_.isEmpty(fulfillmentIdsSet) && !fulfillmentIdsSet.has(fulfillmentId)) {
-            errorObj[
-              `invalidFulfillmentId_${index}`
-            ] = `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_INIT} is not valid`
+          //fulfillment_ids, location_ids & payment_ids checks
+          const refIdsErrors = validateItemRefIds(
+            item,
+            constants.ON_INIT,
+            index,
+            fulfillmentIdsSet,
+            new Set(locationIds),
+            new Set(),
+          )
+          Object.assign(errorObj, refIdsErrors)
+
+          //descriptor.code
+          if (!item?.descriptor?.code)
+            errorObj[`${itemKey}.code`] = `descriptor.code is missing at index: ${index} in /${constants.ON_INIT}`
+          else if (item.descriptor.code !== 'RIDE') {
+            errorObj[`${itemKey}.type`] = `descriptor.code must be RIDE at item.index ${index} in /${constants.ON_INIT}`
+          }
+
+          // FARE_POLICY & INFO checks
+          if (item.tags) {
+            const tagsValidation = validateItemsTags(item.tags)
+            if (!tagsValidation.isValid) {
+              Object.assign(errorObj, { tags: tagsValidation.errors })
+            }
           }
         })
-      })
+      }
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking items info in /${constants.ON_INIT},  ${error.message}`)
       return { error: error.message }
@@ -164,52 +167,12 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       logger.error(`!!Error while checking cancellation_terms in /${constants.ON_INIT}, ${error.stack}`)
     }
 
+    // check payments
     try {
       logger.info(`Checking payments in /${constants.ON_INIT}`)
-      on_init?.payments?.forEach((arr: any, i: number) => {
-        if (!arr?.collected_by) {
-          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.ON_INIT}`
-        } else {
-          const srchCollectBy = getValue(`collected_by`)
-          if (srchCollectBy != arr?.collected_by)
-            errorObj[
-              `payemnts[${i}]_collected_by`
-            ] = `payments.collected_by value sent in ${constants.ON_INIT} should be ${srchCollectBy} as sent in ${constants.ON_SELECT}`
-        }
-
-        const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
-        if (!arr?.type || !validTypes.includes(arr.type)) {
-          errorObj[`payments[${i}]_type`] = `payments.params.type must be present in ${
-            constants.ON_INIT
-          } & its value must be one of: ${validTypes.join(', ')}`
-        }
-
-        const validStatus = ['NOT-PAID', 'PAID']
-        if (!arr?.status || !validStatus.includes(arr.status)) {
-          errorObj[`payments[${i}]_status`] = `payments.status must be present in ${
-            constants.ON_INIT
-          } & its value must be one of: ${validStatus.join(', ')}`
-        }
-
-        const params = arr.params
-        const bankCode: string | null = getValue('bank_code')
-        const bankAccountNumber: string | null = getValue('bank_account_number')
-        const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
-        // Validate bank_code
-        validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.ON_INIT)
-
-        // Validate bank_account_number
-        validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.ON_INIT)
-
-        // Validate virtual_payment_address
-        validatePaymentParams(params, virtualPaymentAddress, 'virtual_payment_address', errorObj, i, constants.ON_INIT)
-
-        // Validate payment tags
-        const tagsValidation = validatePaymentTags(arr.tags)
-        if (!tagsValidation.isValid) {
-          Object.assign(errorObj, { tags: tagsValidation.errors })
-        }
-      })
+      const payments = on_init?.payments
+      const paymentErrors = validatePaymentObject(payments, constants.ON_INIT)
+      Object.assign(errorObj, paymentErrors)
     } catch (error: any) {
       logger.error(`!!Errors while checking payments in /${constants.ON_INIT}, ${error.stack}`)
     }
@@ -221,6 +184,11 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking Quote in /${constants.ON_INIT},  ${error.message}`)
       return { error: error.message }
+    }
+
+    if (version === '2.0.1') {
+      const additionalAttributes: any = attributeConfig.on_init
+      validatePayloadAgainstSchema(additionalAttributes, data, errorObj, '', '')
     }
 
     return errorObj

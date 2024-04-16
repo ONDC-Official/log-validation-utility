@@ -215,20 +215,62 @@ export const checkOnConfirm = (data: any) => {
     }
 
     try {
-      logger.info(`Checking for number of digits in tax number in message.order.tags[0].list`)
-      const list = message.order.tags[0].list
+      logger.info(`Checking for valid pan_id in provider_tax_number and tax_number in /on_confirm`)
+      const bpp_terms_obj:any = message.order.tags.filter((item: any) =>{
+        return item?.code == "bpp_terms"
+      })[0]
+      const list = bpp_terms_obj.list
+      
+      if (!_.isEmpty(bpp_terms_obj)) {
+        let tax_number = ""
+        let provider_tax_number = ""
+        list.map((item: any) => {
+          if (item.code == 'tax_number') {
+            if (item.value.length != 15) {
+              const key = `message.order.tags[0].list`
+              onCnfrmObj[key] = `Number of digits in tax number in  message.order.tags[0].list should be 15`
+            }
+            else {
+              tax_number = item.value
+            }
+          }
 
-      list.map((item: any) => {
-        if (item.code == 'tax_number') {
-          if (item.value.length !== 15) {
-            const key = `message.order.tags[0].list`
-            onCnfrmObj[key] = `Number of digits in tax number in  message.order.tags[0].list should be 15`
+          if (item.code == "provider_tax_number") {
+            console.log(item.value.length)
+            if (item.value.length != 10) {
+              const key = `message.order.tags[0].list`
+              onCnfrmObj[key] = `Number of digits in provider tax number in  message.order.tags[0].list should be 10`
+            }
+            else {
+              provider_tax_number = item.value
+            }
           }
         }
-      })
+
+        )
+
+        if (tax_number.length == 0) {
+          logger.error(`tax_number must present in ${constants.ON_CONFIRM}`)
+          onCnfrmObj["tax_number"] = `tax_number must be present for ${constants.ON_CONFIRM}`
+        }
+        if (provider_tax_number.length == 0) {
+          logger.error(`tax_number must present in ${constants.ON_CONFIRM}`)
+          onCnfrmObj['provider_tax_number'] = `provider_tax_number must be present for ${constants.ON_CONFIRM}`
+        }
+
+        if (tax_number.length == 15 && provider_tax_number.length == 10) {
+          const pan_id = tax_number.slice(2, 12)
+          if (pan_id != provider_tax_number) {
+            onCnfrmObj[`message.order.tags[0].list`] = `Pan_id is different in tax_number and provider_tax_number in message.order.tags[0].list`
+            logger.error("onCnfrmObj[`message.order.tags[0].list`] = `Pan_id is different in tax_number and provider_tax_number in message.order.tags[0].list`")
+          }
+        }
+      }
+
     } catch (error: any) {
-      logger.error(`Error while checking for the number of digits in tax_number`)
+      logger.error(`Error while comparing valid pan_id in tax_number and provider_tax_number`)
     }
+
 
     try {
       logger.info(`Comparing timestamp of context and updatedAt for /${constants.ON_CONFIRM}`)

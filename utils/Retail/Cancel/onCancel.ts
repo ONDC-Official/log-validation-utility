@@ -152,13 +152,13 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       let onSelectItemCount: number = 0
       let selectItems: any = {}
       select_items.forEach((selectItem: any) => {
-        onSelectItemCount += selectItem.quantity.count/1
+        onSelectItemCount += selectItem.quantity.count / 1
         selectItems[selectItem.count] = selectItem.quantity.count
         selectItems[selectItem.id] = selectItem.id
       })
 
       onCancelItems.forEach((item: any) => {
-        onCancelItemCount += item.quantity.count/1
+        onCancelItemCount += item.quantity.count / 1
       })
       if (onSelectItemCount !== onCancelItemCount) {
         onCnclObj[`itemCount`] =
@@ -442,6 +442,13 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       // Checking for igm_request inside fulfillments for /on_cancel
       if (flow === '5') {
         const RTOobj = _.filter(on_cancel.fulfillments, { type: 'RTO' })
+        const DELobj = _.filter(on_cancel.fulfillments, { type: 'Delivery' })
+        let rto_start_location: any = {}
+        let rto_end_location: any = {}
+        let del_start_location: any = {}
+        let del_end_location: any = {}
+
+        // For RTO Object
         if (!RTOobj.length) {
           logger.error(`RTO object is mandatory for ${constants.ON_CANCEL}`)
           const key = `missingRTO`
@@ -458,6 +465,97 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
                 `Delivery state should be one of ['RTO-Initiated','RTO-Approved','RTO-Completed'] for ${constants.ON_CANCEL}`
             }
           }
+
+          // Checking for start object inside RTO
+          if (!_.isEmpty(RTOobj[0]?.start)) {
+            const rto_obj_start = RTOobj[0]?.start
+            if (!_.isEmpty(rto_obj_start.location)) {
+              rto_start_location = rto_obj_start.location
+            }
+            else {
+              onCnclObj['RTOfulfillment.start.location'] = `RTO fulfillment start location object is missing in ${constants.ON_CANCEL}`
+            }
+          } else {
+            onCnclObj['RTOfulfillment.start'] = `RTO fulfillment start object  is missing in ${constants.ON_CANCEL}`
+          }
+
+          // Checking for end object inside RTO
+          if (!_.isEmpty(RTOobj[0]?.end)) {
+            const rto_obj_end = RTOobj[0]?.end
+            if (!_.isEmpty(rto_obj_end?.location)) {
+              rto_end_location = rto_obj_end.location
+            }
+            else {
+              onCnclObj['RTOfulfillment.end.location'] = `RTO fulfillment end location object is missing in ${constants.ON_CANCEL}`
+            }
+          } else {
+            onCnclObj['RTOfulfillment.end'] = `RTO fulfillment end object  is missing in ${constants.ON_CANCEL}`
+          }
+        }
+
+        // For Delivery Object
+        if (!DELobj.length) {
+          logger.error(`Delivery object is mandatory for ${constants.ON_CANCEL}`)
+          const key = `missingDelivery`
+          onCnclObj[key] = `Delivery object is mandatory for ${constants.ON_CANCEL}`
+        } else {
+          
+          // Checking for start object inside Delivery
+          if (!_.isEmpty(DELobj[0]?.start)) {
+            const del_obj_start = DELobj[0]?.start
+
+            if (!_.isEmpty(del_obj_start?.location)) {
+              del_start_location = del_obj_start.location
+            }
+            else {
+              onCnclObj['Delivery.start.location'] = `Delivery fulfillment start location object is missing in ${constants.ON_CANCEL}`
+              logger.error(`Delivery fulfillment start location is missing in ${constants.ON_CANCEL}`)
+            }
+          } else {
+            onCnclObj['DeliveryFulfillment.start'] = `Delivery fulfillment start object is missing in ${constants.ON_CANCEL}`
+          }
+
+          // Checking for end object inside Delivery
+          if (!_.isEmpty(DELobj[0]?.end)) {
+            const del_obj_end = DELobj[0]?.end
+            if (!_.isEmpty(del_obj_end?.location)) {
+              del_end_location = del_obj_end.location
+            }
+            else {
+              onCnclObj['DeliveryFulfillment.end.location'] = `Delivery fulfillment end location object is missing in ${constants.ON_CANCEL}`
+            }
+          } else {
+            onCnclObj['DeliveryFulfillment.end'] = `Delivery fulfillment end object  is missing in ${constants.ON_CANCEL}`
+          }
+        }
+
+        // Comparing rto_start_location and del_end_location
+        if (!_.isEmpty(rto_start_location) && !_.isEmpty(del_end_location)) {
+          if (!_.isEqual(rto_start_location, del_end_location)) {
+            onCnclObj['RTO.start.location/DeliveryFulfillment.end.location'] = `RTO fulfillment start and Delivery fulfillment end location mismatch in ${constants.ON_CANCEL}`
+          }
+        } else {
+          onCnclObj['RTO.start.location/DeliveryFulfillment.end.location'] = `RTO fulfillment start or Delivery fulfillment end location is missing in ${constants.ON_CANCEL}`
+        }
+
+        // Comparing rto_start_location and del_start_location
+        if (!_.isEmpty(rto_start_location) && !_.isEmpty(del_start_location) && _.isEqual(rto_start_location, del_start_location)) {
+          onCnclObj['RTO.start.location/DeliveryFulfillment.start.location'] = `RTO fulfillment start and Delivery fulfillment start location should not be equal in ${constants.ON_CANCEL}`
+        }
+
+        // Comparing rto_end_location and del_start_location
+        if (!_.isEmpty(rto_end_location) && !_.isEmpty(del_start_location)) {
+          if (!_.isEqual(rto_end_location, del_start_location)) {
+            onCnclObj['RTO.end.location/DeliveryFulfillment.start.location'] = `RTO fulfillment end and Delivery fulfillment start location mismatch in ${constants.ON_CANCEL}`
+          }
+        } else {
+          onCnclObj['RTO.end.location/DeliveryFulfillment.start.location'] = `RTO fulfillment end or Delivery fulfillment start location is missing in ${constants.ON_CANCEL}`
+          logger.error(`RTO end or Delivery start location is missing in ${constants.ON_CANCEL}`)
+        }
+
+        // Comparing rto_end_location and del_end_location
+        if (!_.isEmpty(rto_end_location) && !_.isEmpty(del_end_location) && _.isEqual(rto_end_location, del_end_location)) {
+          onCnclObj['RTO.end_location/DeliveryFulfillment_end_location'] = `RTO fulfillment end and Delivery fulfillment end location should not be equal in ${constants.ON_CANCEL}`
         }
       }
 

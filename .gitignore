@@ -9,3 +9,4 @@ dbfiles
 *.md
 .DS_Store
 package-lock.json
+.github/workflows/*

@@ -3,8 +3,6 @@ name: ondc Deployment
 on:
   push:
     branches: ['master']
-  pull_request:
-    branches: ['master']
 
 jobs:
   ssh-ec2:

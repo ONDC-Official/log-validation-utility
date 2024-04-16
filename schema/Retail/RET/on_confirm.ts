@@ -479,7 +479,7 @@ export const onConfirmSchema = {
                     value: {
                       type: 'string',
                       minLength: 1,
-                      pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                      pattern: '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                     },
                   },
                   required: ['currency', 'value'],
@@ -519,7 +519,7 @@ export const onConfirmSchema = {
                           value: {
                             type: 'string',
                             minLength: 1,
-                            pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                            pattern: '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                           },
                         },
                         required: ['currency', 'value'],
@@ -540,7 +540,7 @@ export const onConfirmSchema = {
                               value: {
                                 type: 'string',
                                 minLength: 1,
-                                pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                                pattern: '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                               },
                             },
                             required: ['currency', 'value'],
@@ -613,15 +613,15 @@ export const onConfirmSchema = {
                 },
                 status: {
                   type: 'string',
-                  enum:["PAID","NOT-PAID"]
+                  enum: ["PAID", "NOT-PAID"]
                 },
                 type: {
                   type: 'string',
-                  enum:["ON-ORDER","ON-FULFILLMENT"]
+                  enum: ["ON-ORDER", "ON-FULFILLMENT"]
                 },
                 collected_by: {
                   type: 'string',
-                  enum:["BAP","BPP"]
+                  enum: ["BAP", "BPP"]
                 },
                 '@ondc/org/buyer_app_finder_fee_type': {
                   type: 'string',
@@ -631,7 +631,7 @@ export const onConfirmSchema = {
                 },
                 '@ondc/org/settlement_basis': {
                   type: 'string',
-                  enum:['shipment','delivery','return_window_expiry']
+                  enum: ['shipment', 'delivery', 'return_window_expiry']
                 },
                 '@ondc/org/settlement_window': {
                   type: 'string',
@@ -766,11 +766,10 @@ export const onConfirmSchema = {
                           then: {
                             type: 'object',
                             properties: {
-                              code: {
-                                type: 'string',
-                              },
                               value: {
                                 type: 'string',
+                                pattern: '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$',
+                                errorMessage: 'Value for tax_number must be a valid tax number i.e alphanumeric with 15 characters ',
                               },
                             },
                             required: ['code', 'value'],
@@ -786,11 +785,10 @@ export const onConfirmSchema = {
                           then: {
                             type: 'object',
                             properties: {
-                              code: {
-                                type: 'string',
-                              },
                               value: {
                                 type: 'string',
+                                pattern: '[A-Z]{5}[0-9]{4}[A-Z]{1}',
+                                errorMessage: 'Value for provider_tax_number must be alphanumeric characters only',
                               },
                             },
                             required: ['code', 'value'],

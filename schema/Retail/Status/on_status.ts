@@ -75,6 +75,7 @@ export const onStatusSchema = {
         'city',
         'country',
         'ttl',
+        'timestamp'
       ],
     },
     message: {

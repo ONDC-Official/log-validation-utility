@@ -789,9 +789,18 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
           try {
             logger.info(`Validating item tags`)
             const itemTypeTag = item.tags.find((tag: { code: string }) => tag.code === 'type')
-            if (itemTypeTag && itemTypeTag.list.length > 0 && itemTypeTag.list[0].value === 'item') {
+            const customGroupTag = item.tags.find((tag: { code: string }) => tag.code === 'custom_group')
+            if (itemTypeTag && itemTypeTag.list.length > 0 && itemTypeTag.list[0].value === 'item' && !customGroupTag) {
               errorObj[`items[${item.id}]`] =
                 `/message/catalog/bpp/providers/items/tags/'type' is optional for non-customizable (standalone) SKUs`
+            } else if (
+              itemTypeTag &&
+              itemTypeTag.list.length > 0 &&
+              itemTypeTag.list[0].value === 'item' &&
+              customGroupTag
+            ) {
+              errorObj[`items[${item.id}]`] =
+                `/message/catalog/bpp/providers/items must have default_selection price and lower/upper range for customizable items`
             }
           } catch (error: any) {
             logger.error(`Error while validating item, ${error.stack}`)

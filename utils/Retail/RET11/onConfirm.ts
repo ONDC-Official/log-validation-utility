@@ -220,6 +220,22 @@ export const checkOnConfirm = (data: any) => {
         return item?.code == "bpp_terms"
       })[0]
       const list = bpp_terms_obj.list
+      const np_type_arr = list.filter((item: any) => item.code === "np_type" && item.value === "MSN");
+      const np_type_on_search = getValue(`${ApiSequence.ON_SEARCH}np_type`)
+      let np_type = "no_np_type_found!"
+
+      if (np_type_arr.length > 0) {
+        np_type = "MSN"
+      }
+      else {
+        const key = 'message.order.tags[0].list'
+        onCnfrmObj[key] = `np_type not found in on_confirm`
+      }
+
+      if (np_type != np_type_on_search) {
+        const key = 'message.order.tags[0].list'
+        onCnfrmObj[key] = `np_type of on_search is not same to np_type of on_confirm`
+      }
       
       if (!_.isEmpty(bpp_terms_obj)) {
         let tax_number = ""
@@ -258,7 +274,7 @@ export const checkOnConfirm = (data: any) => {
           onCnfrmObj['provider_tax_number'] = `provider_tax_number must be present for ${constants.ON_CONFIRM}`
         }
 
-        if (tax_number.length == 15 && provider_tax_number.length == 10) {
+        if (tax_number.length == 15 && provider_tax_number.length == 10 && np_type_on_search == "MSN") {
           const pan_id = tax_number.slice(2, 12)
           if (pan_id != provider_tax_number) {
             onCnfrmObj[`message.order.tags[0].list`] = `Pan_id is different in tax_number and provider_tax_number in message.order.tags[0].list`

@@ -191,7 +191,9 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
         const npType = tag.list.find((item) => item.code === 'np_type')
         if (!npType) {
           errorObj['bpp/descriptor'] = `Missing np_type in bpp/descriptor`
+          setValue(`${ApiSequence.ON_SEARCH}np_type`, '')
         } else {
+          setValue(`${ApiSequence.ON_SEARCH}np_type`, npType.value)
           const npTypeValue = npType.value.toUpperCase()
           if (npTypeValue !== 'ISN' && npTypeValue !== 'MSN') {
             errorObj['bpp/descriptor/np_type'] =

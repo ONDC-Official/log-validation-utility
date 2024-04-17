@@ -406,26 +406,30 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
   } catch (error: any) {
     logger.error(`!!Errors while checking parent_item_id in bpp/providers/[]/items/[]/parent_item_id/, ${error.stack}`)
   }
-  try{
+  try {
     logger.info(`Checking for np_type in bpp/descriptor`)
     const descriptor = onSearchCatalog['bpp/descriptor']
     descriptor?.tags.map((tag: { code: any; list: any[] },) => {
       if (tag.code === 'bpp_terms') {
         const npType = tag.list.find((item) => item.code === 'np_type')
-        if(!npType){
+        if (!npType) {
           errorObj['bpp/descriptor'] = `Missing np_type in bpp/descriptor`
+          setValue(`${ApiSequence.ON_SEARCH}np_type`, "")
+        }
+        else {
+          setValue(`${ApiSequence.ON_SEARCH}np_type`, npType.value)
         }
         const accept_bap_terms = tag.list.find((item) => item.code === 'accept_bap_terms')
-        if(accept_bap_terms){
+        if (accept_bap_terms) {
           errorObj['bpp/descriptor/accept_bap_terms'] = `accept_bap_terms is not required in bpp/descriptor/tags for now `
         }
         const collect_payment = tag.list.find((item) => item.code === 'collect_payment')
-        if(collect_payment){
-          errorObj['bpp/descriptor/collect_payment'] = `collect_payment is not required in bpp/descriptor/tags for now `  
+        if (collect_payment) {
+          errorObj['bpp/descriptor/collect_payment'] = `collect_payment is not required in bpp/descriptor/tags for now `
+        }
       }
-    }
     })
-  }catch(error:any){
+  } catch (error: any) {
     logger.error(`Error while checking np_type in bpp/descriptor for /${constants.ON_SEARCH}, ${error.stack}`)
   }
 

@@ -136,6 +136,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         return item?.code == "bpp_terms"
       })[0]
       const tags = bpp_terms_obj.list
+      const np_type_on_search = getValue(`${ApiSequence.ON_SEARCH}np_type`)
       let tax_number: any = {}
       let provider_tax_number: any = {}
       tags.forEach((e: any) => {
@@ -162,7 +163,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         logger.error(`tax_number must present in ${constants.ON_INIT}`)
         onInitObj.providertaxNumber = `provider_tax_number must be present for ${constants.ON_INIT}`
       }
-      if (tax_number.value?.length == 15 && provider_tax_number?.value?.length == 10) {
+      if (tax_number.value?.length == 15 && provider_tax_number?.value?.length == 10 && np_type_on_search == "MSN") {
         const pan_id = tax_number?.value.slice(2, 12)
         if (pan_id != provider_tax_number?.value) {
           logger.error(`Pan_id is different in tax_number and provider_tax_number in ${constants.ON_INIT}`)

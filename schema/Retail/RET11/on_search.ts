@@ -991,9 +991,9 @@ export const FnBonSearchSchema = {
                                         properties: {
                                           value: {
                                             type: 'string',
-                                            enum: ['10', '11', '12', '13'],
+                                            enum: ['10','13'],
                                             errorMessage:
-                                              "Value for 'type' must be enum - '10' (hyperlocal), '11' (intercity), '12' (pan-India), '13' (polygon) only",
+                                              "Value for 'type' must be enum for FnB - '10' (hyperlocal),'13' (polygon) only",
                                           },
                                         },
                                         required: ['value'],

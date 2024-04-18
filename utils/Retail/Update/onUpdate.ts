@@ -11,7 +11,7 @@ import {
   checkQuoteTrailSum,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
-import { partcancel_return_reasonCodes, return_request_reasonCodes } from '../../../constants/reasonCode'
+import { partcancel_return_reasonCodes, return_rejected_request_reasonCodes, return_request_reasonCodes } from '../../../constants/reasonCode'
 
 export const checkOnUpdate = (data: any) => {
   const onupdtObj: any = {}
@@ -266,8 +266,8 @@ export const checkOnUpdate = (data: any) => {
                   if (list.code == 'initiated_by' && list.value !== context.bap_id) {
                     onupdtObj['invalid_initiated_by']=`initiated_by should be ${context.bap_id}`
                   }
-                  if (list.code == 'initiated_by' && list.value === context.bap_id && !return_request_reasonCodes.includes(reason_id)) {
-                    onupdtObj['invalid_return_request_reason']=`reason code allowed are ${return_request_reasonCodes}`
+                  if (list.code == 'initiated_by' && list.value === context.bap_id && !return_rejected_request_reasonCodes.includes(reason_id)) {
+                    onupdtObj['invalid_return_request_reason']=`reason code allowed are ${return_rejected_request_reasonCodes}`
                   }
                 })
               }

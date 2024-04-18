@@ -1,4 +1,6 @@
+
 import { isValidEmail, isValidPhoneNumber, isValidUrl } from '../../index'
+//import constants from '../../../constants'
 
 interface Tag {
   display: any
@@ -17,6 +19,10 @@ interface ValidationResult {
   isValid: boolean
   errors?: string[]
 }
+
+const itemDetails = ['USABILITY', 'EXPIRY_PERIOD', 'TERMS_CONDITION', 'REDEMPTION_INSTRUCTION', 'OCCASION'];
+const customization = ['ENABLED', 'RECEIVER_NAME', 'MESSAGE', 'PREVIEW_IMAGE'];
+const brandDetails = ['BRAND_NAME', 'BRAND_PHONE', 'BRAND_EMAIL'];
 
 export const validatePaymentTags = (tags: Tag[], terms: any, validDescriptorCodes: string[]): ValidationResult => {
   const errors: string[] = []
@@ -190,8 +196,7 @@ export const validateProviderTags = (tags: Tag[]): ValidationResult => {
             case 'CUSTOMER_SUPPORT_CONTACT_NUMBER':
               if (!isValidPhoneNumber(item.value)) {
                 errors.push(
-                  `${
-                    item.descriptor.name
+                  `${item.descriptor.name
                   } in Tag[${index}], List item[${itemIndex}] must be a valid 10-digit phone number ${item.value
                     ?.replace(/\s+/g, ' ')
                     .trim()}`,
@@ -247,73 +252,50 @@ export const validateProviderTags = (tags: Tag[]): ValidationResult => {
   }
 }
 
-export const validateItemsTags = (tags: Tag[]): ValidationResult => {
+export const validateItemsTags = (tags: Tag[], action:string): ValidationResult => {
   const errors: string[] = []
-
+  console.log(action)
   tags.forEach((tag, index) => {
-    if (tag.display !== undefined && typeof tag.display !== 'boolean') {
-      errors.push(`Tag[${index}] has an invalid value for the 'display' property. It should be a boolean.`)
-    }
 
-    switch (tag.descriptor.code) {
-      case 'LOAN_INFO': {
-        tag.list.forEach((item: any, itemIndex) => {
-          switch (item.descriptor.code) {
-            case 'FORECLOSURE_FEE': {
-              const ratio = parseFloat(item.value)
-              if (isNaN(ratio) || ratio < 0 || ratio > 1) {
-                errors.push(
-                  `'CLAIM_SETTLEMENT_RATIO' in Tag[${index}], List item[${itemIndex}] must be a valid decimal between 0 and 1.`,
-                )
-              }
-
-              break
-            }
-
-            case 'OTHER_PENALTY_FEE':
-            case 'DELAY_PENALTY_FEE':
-            case 'INTEREST_RATE_CONVERSION_CHARGE':
-            case 'APPLICATION_FEE':
-            case 'TERM':
-            case 'INTEREST_RATE': {
-              const numericValue = parseInt(item.value, 10)
-              if (isNaN(numericValue) || numericValue < 0) {
-                errors.push(
-                  `'${item.descriptor.code}' in Tag[${index}], List item[${itemIndex}] must be a valid non-negative integer.`,
-                )
-              }
-
-              break
-            }
-
-            // case 'INITIAL_WAITING_PERIOD': {
-            //   if (item.value.toLowerCase() !== 'true' && item.value.toLowerCase() !== 'false') {
-            //     errors.push(
-            //       `'${item.descriptor.code}' in Tag[${index}], List item[${itemIndex}] must be a boolean in string.`,
-            //     )
-            //   }
-
-            //   break
-            // }
-
-            // case 'MATERNITY_COVERAGE':
-            // case 'INITIAL_WAITING_PERIOD':
-            // case 'CO_PAYMENT':
-            // case 'RESTORATION_BENEFIT': {
-            //   if (item.value.toLowerCase() !== 'no' && item.value.toLowerCase() !== 'yes') {
-            //     errors.push(
-            //       `'${item.descriptor.code}' in Tag[${index}], List item[${itemIndex}] must be either of yes or no`,
-            //     )
-            //   }
-
-            //   break
-            // }
+    if (tag.descriptor.code === 'ITEM_DETAILS') {
+      if (!tag.list) {
+        errors.push(`In Tag[${index}] list object is missing`);
+      } else {
+        tag.list.forEach((item, index) => {
+          if (!itemDetails.includes(item?.descriptor?.code)) {
+            errors.push(`In list[${index}] descriptor code is not valid it should be from ${itemDetails}`);
           }
-        })
-
-        break
+        });
       }
     }
+
+    if (tag.descriptor.code === 'CUSTOMIZATION') {
+      if (!tag.list) {
+        errors.push(`In Tag[${index}] list object is missing`);
+      } else {
+        tag.list.forEach((item, index) => {
+          if (customization.includes(item?.descriptor?.code)) {
+            errors.push(`In list[${index}] descriptor code is not valid it should be from ${customization}`);
+          }
+
+        });
+      }
+    }
+
+    if (tag.descriptor.code === 'BRAND_DETAILS') {
+      if (!tag.list) {
+        errors.push(`In Tag[${index}] list object is missing`);
+      } else {
+        tag.list.forEach((item, index) => {
+          if (!brandDetails.includes(item?.descriptor?.code)) {
+            errors.push(`In list[${index}] descriptor code is not valid it should be from ${brandDetails}`);
+          }
+        });
+      }
+    }
+
+    
+
   })
 
   return {

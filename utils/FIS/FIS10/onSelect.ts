@@ -8,6 +8,7 @@ import { validateContext, validateQuote } from './fisChecks'
 // import { validateItemsTags } from './tags'
 import { isEmpty } from 'lodash'
 import _ from 'lodash'
+import { validateItemsTags } from './tags'
 
 export const checkOnSelect = (data: any, msgIdSet: any, flow: string) => {
   if (!data || isObjectEmpty(data)) {
@@ -161,6 +162,16 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: string) => {
             }
           })
         }
+
+        // Validate tags
+
+        if(item?.tags){
+          const tagsValidation = validateItemsTags(item?.tags, constants.ON_SELECT);
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { [`item${j}.tag`]: tagsValidation.errors })
+          }
+        }
+
       })
 
       setValue('itemsId', itemsId)

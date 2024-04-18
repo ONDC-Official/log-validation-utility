@@ -651,7 +651,6 @@ export const onInitSchema = {
                               },
                             },
                             required: ['code', 'value'],
-                            additionalProperties: false,
                           },
                         },
                         {
@@ -670,7 +669,6 @@ export const onInitSchema = {
                               },
                             },
                             required: ['code', 'value'],
-                            additionalProperties: false,
                           },
                         },
                       ],

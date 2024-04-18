@@ -268,10 +268,23 @@ export const checkOnConfirm = (data: any) => {
         if (tax_number.length == 0) {
           logger.error(`tax_number must present in ${constants.ON_CONFIRM}`)
           onCnfrmObj["tax_number"] = `tax_number must be present for ${constants.ON_CONFIRM}`
+        }else {
+          const taxNumberPattern = new RegExp('^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$');
+              if (!taxNumberPattern.test(tax_number)) {
+              logger.error(`Invalid format for tax_number in ${constants.ON_INIT}`);
+              onCnfrmObj.tax_number = `Invalid format for tax_number in ${constants.ON_CONFIRM}`;
+          }
         }
+
         if (provider_tax_number.length == 0) {
           logger.error(`tax_number must present in ${constants.ON_CONFIRM}`)
           onCnfrmObj['provider_tax_number'] = `provider_tax_number must be present for ${constants.ON_CONFIRM}`
+        }else {
+          const taxNumberPattern = new RegExp('^[A-Z]{5}[0-9]{4}[A-Z]{1}$');
+              if (!taxNumberPattern.test(provider_tax_number)) {
+              logger.error(`Invalid format for provider_tax_number in ${constants.ON_INIT}`);
+              onCnfrmObj.provider_tax_number = `Invalid format for provider_tax_number in ${constants.ON_CONFIRM}`;
+          }
         }
 
         if (tax_number.length == 15 && provider_tax_number.length == 10 && np_type_on_search == "MSN") {

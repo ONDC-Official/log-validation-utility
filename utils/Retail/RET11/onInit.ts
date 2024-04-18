@@ -142,16 +142,29 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       tags.forEach((e: any) => {
         if (e.code === 'tax_number') {
           if (!e.value) {
-            logger.error(`value must be present for tax_number in ${constants.ON_INIT}`)
-            onInitObj.taxNumberValue = `value must be present for tax_number in ${constants.ON_INIT}`
-          }
+            logger.error(`value must be present for tax_number in ${constants.ON_INIT}`);
+            onInitObj.taxNumberValue = `value must be present for tax_number in ${constants.ON_INIT}`;
+        } else {
+            const taxNumberPattern = new RegExp('^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$');
+              if (!taxNumberPattern.test(e.value)) {
+                logger.error(`Invalid format for tax_number in ${constants.ON_INIT}`);
+                onInitObj.taxNumberValue = `Invalid format for tax_number in ${constants.ON_INIT}`;
+            }
+        }        
           tax_number = e
         }
         if (e.code === 'provider_tax_number') {
           if (!e.value) {
-            logger.error(`value must be present for provider_tax_number in ${constants.ON_INIT}`)
-            onInitObj.provider_tax_number = `value must be present for provider_tax_number in ${constants.ON_INIT}`
-          }
+            logger.error(`value must be present for provider_tax_number in ${constants.ON_INIT}`);
+            onInitObj.provider_tax_number = `value must be present for provider_tax_number in ${constants.ON_INIT}`;
+        } else {
+            const taxNumberPattern = new RegExp('^[A-Z]{5}[0-9]{4}[A-Z]{1}$');
+                if (!taxNumberPattern.test(e.value)) {
+                logger.error(`Invalid format for provider_tax_number in ${constants.ON_INIT}`);
+                onInitObj.provider_tax_number = `Invalid format for provider_tax_number in ${constants.ON_INIT}`;
+            }
+        }
+        
           provider_tax_number = e
         }
       })

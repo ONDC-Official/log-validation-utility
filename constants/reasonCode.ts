@@ -181,3 +181,4 @@ export const reasonCodes: ReasonCodes = {
 }
 
 export const return_request_reasonCodes =['001', '002', '003', '004', '005'];
+export const partcancel_return_reasonCodes =['002','012'];

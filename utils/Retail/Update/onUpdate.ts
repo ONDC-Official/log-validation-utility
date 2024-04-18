@@ -7,12 +7,11 @@ import {
   checkBppIdOrBapId,
   checkContext,
   sumQuoteBreakUp,
-  mapCancellationID,
   payment_status,
   checkQuoteTrailSum,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
-import { return_request_reasonCodes } from '../../../constants/reasonCode'
+import { partcancel_return_reasonCodes, return_request_reasonCodes } from '../../../constants/reasonCode'
 
 export const checkOnUpdate = (data: any) => {
   const onupdtObj: any = {}
@@ -268,7 +267,7 @@ export const checkOnUpdate = (data: any) => {
                     onupdtObj['invalid_initiated_by']=`initiated_by should be ${context.bap_id}`
                   }
                   if (list.code == 'initiated_by' && list.value === context.bap_id && !return_request_reasonCodes.includes(reason_id)) {
-                    onupdtObj['invalid_return_request_reason']=`initiated_by should be ${context.bap_id}`
+                    onupdtObj['invalid_return_request_reason']=`reason code allowed are ${return_request_reasonCodes}`
                   }
                 })
               }
@@ -377,11 +376,10 @@ export const checkOnUpdate = (data: any) => {
                     if (list.code == 'initiated_by' && list.value !== context.bpp_id) {
                       onupdtObj['invalid_initiated_by']=`initiated_by should be ${context.bpp_id}`
                     }
-                    if (list.code == 'initiated_by' && list.value === context.bpp_id) {
-                      mapCancellationID('SNP', reason_id, onupdtObj)
-                    }
+                    if (list.code == 'initiated_by' && list.value === context.bpp_id && !partcancel_return_reasonCodes.includes(reason_id)) {
+                      onupdtObj['invalid_return_request_reason']=`initiated_by should be ${context.bap_id}`
+                  }})
                     
-                  })
                 }
               })
             }

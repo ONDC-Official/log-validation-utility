@@ -190,9 +190,9 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
           return checkSearch(data, msgIdSet)
         case ApiSequence.ON_SEARCH:
           if (domain === 'ONDC:RET11') {
-            return checkOnsearchFullCatalogRefresh(data, msgIdSet)
+            return checkOnsearchFullCatalogRefresh(data)
           } else {
-            return checkOnsearch(data, msgIdSet)
+            return checkOnsearch(data)
           }
         case ApiSequence.INC_SEARCH:
           return checkSearchIncremental(data, msgIdSet)
@@ -202,18 +202,18 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
           if (flow === FLOW.FLOW3) {
             return checkSelect_OOS(data, msgIdSet)
           } else {
-            return checkSelect(data, msgIdSet)
+            return checkSelect(data, msgIdSet, ApiSequence.SELECT)
           }
         case ApiSequence.ON_SELECT:
           return checkOnSelect(data)
         case ApiSequence.SELECT_OUT_OF_STOCK:
-          return checkSelect(data, msgIdSet)
+          return checkSelect(data, msgIdSet, ApiSequence.SELECT_OUT_OF_STOCK)
         case ApiSequence.ON_SELECT_OUT_OF_STOCK:
           return checkOnSelect_OOS(data)
         case ApiSequence.INIT:
           return checkInit(data, msgIdSet)
         case ApiSequence.ON_INIT:
-          return checkOnInit(data, msgIdSet)
+          return checkOnInit(data)
         case ApiSequence.CONFIRM:
           return checkConfirm(data, msgIdSet)
         case ApiSequence.ON_CONFIRM:
@@ -235,21 +235,21 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         case ApiSequence.ON_STATUS_DELIVERED:
           return checkOnStatusDelivered(data, 'delivered', msgIdSet)
         case ApiSequence.UPDATE:
-          return checkUpdate(data)
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE)
         case ApiSequence.UPDATE_SETTLEMENT:
-          return checkUpdate(data)
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT)
         case ApiSequence.ON_UPDATE:
-          return checkOnUpdate(data)
+          return checkOnUpdate(data, msgIdSet,ApiSequence.ON_UPDATE)
         case ApiSequence.ON_UPDATE_INTERIM:
-          return checkOnUpdate(data)
+          return checkOnUpdate(data, msgIdSet,ApiSequence.ON_UPDATE_INTERIM)
         case ApiSequence.ON_UPDATE_APPROVAL:
-          return checkOnUpdate(data)
+          return checkOnUpdate(data, msgIdSet,ApiSequence.ON_UPDATE_APPROVAL)
         case ApiSequence.ON_UPDATE_DELIVERED:
-          return checkOnUpdate(data)
+          return checkOnUpdate(data, msgIdSet,ApiSequence.ON_UPDATE_APPROVAL)
         case ApiSequence.ON_UPDATE_LIQUIDATED:
-          return checkOnUpdate(data)
+          return checkOnUpdate(data, msgIdSet,ApiSequence.ON_UPDATE_LIQUIDATED)
         case ApiSequence.ON_UPDATE_PICKED:
-          return checkOnUpdate(data)
+          return checkOnUpdate(data, msgIdSet,ApiSequence.ON_UPDATE_PICKED)
         case ApiSequence.TRACK:
           return checkTrack(data)
         case ApiSequence.ON_TRACK:

@@ -13,7 +13,7 @@ import {
 import { getValue, setValue } from '../../../shared/dao'
 import { partcancel_return_reasonCodes, return_rejected_request_reasonCodes, return_request_reasonCodes } from '../../../constants/reasonCode'
 
-export const checkOnUpdate = (data: any) => {
+export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any) => {
   const onupdtObj: any = {}
   const flow = getValue('flow')
   const quoteItemSet: any = new Set()
@@ -38,6 +38,25 @@ export const checkOnUpdate = (data: any) => {
 
     if (schemaValidation !== 'error') {
       Object.assign(onupdtObj, schemaValidation)
+    }
+
+    try {
+      if ((flow === '6-b' || flow === '6-c') && apiSeq == ApiSequence.ON_UPDATE_INTERIM) {
+        getValue(`${ApiSequence.UPDATE}_msgId`)
+        logger.info(`Comparing Message Ids of /${constants.UPDATE} and /${constants.ON_UPDATE_INTERIM}`)
+        if (!_.isEqual(getValue(`${ApiSequence.UPDATE}_msgId`), context.message_id)) {
+          onupdtObj[`${apiSeq}_msgId`] = `Message Ids for /${constants.UPDATE} and /${constants.ON_UPDATE_INTERIM} api should be same`
+        }
+      }
+      else {
+        logger.info(`Adding Message Id /${apiSeq}`)
+        if (msgIdSet.has(context.message_id)) {
+          onupdtObj[`${apiSeq}_msgId`] = `Message id should not be same with previous calls`
+        }
+        msgIdSet.add(context.message_id)
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking message id for /${apiSeq}, ${error.stack}`)
     }
 
     // Checking bap_id and bpp_id format
@@ -234,10 +253,10 @@ export const checkOnUpdate = (data: any) => {
                     reason_id = list.value
                   }
                   if (list.code == 'initiated_by' && list.value !== context.bap_id) {
-                    onupdtObj['invalid_initiated_by']=`initiated_by should be ${context.bap_id}`
+                    onupdtObj['invalid_initiated_by'] = `initiated_by should be ${context.bap_id}`
                   }
                   if (list.code == 'initiated_by' && list.value === context.bap_id && !return_request_reasonCodes.includes(reason_id)) {
-                    onupdtObj['invalid_return_request_reason']=`reason code allowed are ${return_request_reasonCodes}`
+                    onupdtObj['invalid_return_request_reason'] = `reason code allowed are ${return_request_reasonCodes}`
                   }
                 })
               }
@@ -264,10 +283,10 @@ export const checkOnUpdate = (data: any) => {
                     reason_id = list.value
                   }
                   if (list.code == 'initiated_by' && list.value !== context.bap_id) {
-                    onupdtObj['invalid_initiated_by']=`initiated_by should be ${context.bap_id}`
+                    onupdtObj['invalid_initiated_by'] = `initiated_by should be ${context.bap_id}`
                   }
                   if (list.code == 'initiated_by' && list.value === context.bap_id && !return_rejected_request_reasonCodes.includes(reason_id)) {
-                    onupdtObj['invalid_return_request_reason']=`reason code allowed are ${return_rejected_request_reasonCodes}`
+                    onupdtObj['invalid_return_request_reason'] = `reason code allowed are ${return_rejected_request_reasonCodes}`
                   }
                 })
               }
@@ -374,12 +393,13 @@ export const checkOnUpdate = (data: any) => {
                       reason_id = list.value
                     }
                     if (list.code == 'initiated_by' && list.value !== context.bpp_id) {
-                      onupdtObj['invalid_initiated_by']=`initiated_by should be ${context.bpp_id}`
+                      onupdtObj['invalid_initiated_by'] = `initiated_by should be ${context.bpp_id}`
                     }
                     if (list.code == 'initiated_by' && list.value === context.bpp_id && !partcancel_return_reasonCodes.includes(reason_id)) {
-                      onupdtObj['invalid_partcancel_return_request_reason']=`reason code allowed are ${partcancel_return_reasonCodes}`
-                    }})
-                    
+                      onupdtObj['invalid_partcancel_return_request_reason'] = `reason code allowed are ${partcancel_return_reasonCodes}`
+                    }
+                  })
+
                 }
               })
             }

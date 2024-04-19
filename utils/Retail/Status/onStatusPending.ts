@@ -33,8 +33,14 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any) =>
       onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
-    if (!msgIdSet.add(context.message_id)) {
-      onStatusObj['messageId'] = 'message_id should be unique'
+    try {
+      logger.info(`Adding Message Id /${constants.ON_STATUS_PENDING}`)
+      if (msgIdSet.has(context.message_id)) {
+        onStatusObj[`${ApiSequence.ON_STATUS_PENDING}_msgId`] = `Message id should not be same with previous calls`
+      }
+      msgIdSet.add(context.message_id)
+    } catch (error: any) {
+      logger.error(`!!Error while checking message id for /${constants.ON_STATUS_PENDING}, ${error.stack}`)
     }
 
     setValue(`${ApiSequence.ON_STATUS_PENDING}`, data)

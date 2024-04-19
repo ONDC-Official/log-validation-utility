@@ -25,8 +25,14 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
     if (schemaValidation !== 'error') {
       Object.assign(onStatusObj, schemaValidation)
     }
-    if (!msgIdSet.add(context.message_id)) {
-      onStatusObj['messageId'] = 'message_id should be unique'
+    try {
+      logger.info(`Adding Message Id /${constants.ON_STATUS_OUT_FOR_DELIVERY}`)
+      if (msgIdSet.has(context.message_id)) {
+        onStatusObj[`${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}_msgId`] = `Message id should not be same with previous calls`
+      }
+      msgIdSet.add(context.message_id)
+    } catch (error: any) {
+      logger.error(`!!Error while checking message id for /${constants.ON_STATUS_OUT_FOR_DELIVERY}, ${error.stack}`)
     }
     if (!contextRes?.valid) {
       Object.assign(onStatusObj, contextRes.ERRORS)

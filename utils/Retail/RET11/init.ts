@@ -40,10 +40,6 @@ export const checkInit = (data: any, msgIdSet: any) => {
       Object.assign(initObj, contextRes.ERRORS)
     }
 
-    if (!msgIdSet.add(context.message_id)) {
-      initObj['messageId'] = 'message_id should be unique'
-    }
-
     setValue(`${ApiSequence.INIT}`, data)
 
     try {
@@ -91,11 +87,14 @@ export const checkInit = (data: any, msgIdSet: any) => {
     }
 
     try {
-      logger.info(`Checking Message Ids of /${constants.INIT}`)
-
-      setValue('msgId', context.message_id)
+      logger.info(`Adding Message Id /${constants.INIT}`)
+      if (msgIdSet.has(context.message_id)) {
+        initObj[`${ApiSequence.INIT}_msgId`] = `Message id should not be same with previous calls`
+      }
+      msgIdSet.add(context.message_id)
+      setValue(`${ApiSequence.INIT}_msgId`, data.context.message_id)
     } catch (error: any) {
-      logger.info(`Error while checking message id for /${constants.INIT}, ${error.stack}`)
+      logger.error(`!!Error while checking message id for /${constants.INIT}, ${error.stack}`)
     }
 
     const init = message.order

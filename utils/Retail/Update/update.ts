@@ -4,7 +4,7 @@ import constants, { ApiSequence, buyerReturnId } from '../../../constants'
 import { validateSchema, isObjectEmpty, checkBppIdOrBapId, checkContext, isValidUrl } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkUpdate = (data: any) => {
+export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any) => {
   const updtObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -22,6 +22,19 @@ export const checkUpdate = (data: any) => {
 
     const update = message.order
     const selectItemList: any = getValue('SelectItemList')
+
+    // Checking for update and update_settlement of '6-b', '6-c' and '6-a'
+    try {
+      logger.info(`Adding Message Id /${constants.UPDATE}`)
+      if (msgIdSet.has(context.message_id)) {
+        updtObj[`${apiSeq == ApiSequence.UPDATE_SETTLEMENT ? ApiSequence.UPDATE_SETTLEMENT : ApiSequence.UPDATE}_msgId`] = `Message id should not be same with previous calls`
+      }
+      msgIdSet.add(context.message_id)
+      // for update and on_update_interim
+      if ((flow === '6-b' || flow === '6-c') && apiSeq == ApiSequence.UPDATE) { setValue(`${ApiSequence.UPDATE}_msgId`, data.context.message_id) }
+    } catch (error: any) {
+      logger.error(`!!Error while checking message id for /${constants.UPDATE}, ${error.stack}`)
+    }
 
     // Validating Schema
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.UPDATE, data)

@@ -31,6 +31,15 @@ export const checkOnConfirm = (data: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
+    try {
+      logger.info(`Comparing Message Ids of /${constants.CONFIRM} and /${constants.ON_CONFIRM}`)
+      if (!_.isEqual(getValue(`${ApiSequence.CONFIRM}_msgId`), context.message_id)) {
+        onCnfrmObj[`${ApiSequence.ON_CONFIRM}_msgId`]  = `Message Ids for /${constants.CONFIRM} and /${constants.ON_CONFIRM} api should be same`
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking message id for /${constants.ON_SEARCHINC}, ${error.stack}`)
+    }
+
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const parentItemIdSet: any = getValue(`parentItemIdSet`)
     const select_customIdArray: any = getValue(`select_customIdArray`)

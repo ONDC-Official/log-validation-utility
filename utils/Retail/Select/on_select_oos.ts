@@ -33,7 +33,6 @@ export const checkOnSelect_OOS = (data: any) => {
   const contextRes: any = checkContext(context, constants.ON_SELECT)
 
   const errorObj: any = {}
-
   const checkBap = checkBppIdOrBapId(context.bap_id)
   const checkBpp = checkBppIdOrBapId(context.bpp_id)
 
@@ -53,7 +52,6 @@ export const checkOnSelect_OOS = (data: any) => {
   }
 
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-  const select: any = getValue(`${ApiSequence.SELECT}`)
   const searchMessage: any = getValue(`${ApiSequence.ON_SEARCH}_message`)
 
   try {
@@ -98,14 +96,12 @@ export const checkOnSelect_OOS = (data: any) => {
   }
 
   try {
-    logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
-    if (!_.isEqual(select.context.message_id, context.message_id)) {
-      errorObj.msgId = `Message Id for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+    logger.info(`Comparing Message Ids of /${constants.SELECT_OUT_OF_STOCK} and /${constants.ON_SELECT_OUT_OF_STOCK}`)
+    if (!_.isEqual(getValue(`${ApiSequence.SELECT_OUT_OF_STOCK}_msgId`), context.message_id)) {
+      errorObj[`${ApiSequence.ON_SELECT_OUT_OF_STOCK}_msgId`] = `Message Ids for /${constants.SELECT_OUT_OF_STOCK} and /${constants.ON_SELECT_OUT_OF_STOCK} api should be same`
     }
   } catch (error: any) {
-    logger.info(
-      `Error while comparing message ids for /${constants.SELECT} and /${constants.ON_SELECT} api, ${error.stack}`,
-    )
+    logger.error(`!!Error while checking message id for /${constants.ON_SELECT_OUT_OF_STOCK}, ${error.stack}`)
   }
 
   let ON_SELECT_OUT_OF_STOCK_error: any = {}
@@ -476,9 +472,8 @@ export const checkOnSelect_OOS = (data: any) => {
         item['@ondc/org/title_type'] !== 'item' &&
         retailPymntTtl[item.title.toLowerCase().trim()] !== item['@ondc/org/title_type']
       ) {
-        errorObj.pymntttlmap = `Quote breakup Payment title "${item.title}" comes under the title type "${
-          retailPymntTtl[item.title.toLowerCase().trim()]
-        }"`
+        errorObj.pymntttlmap = `Quote breakup Payment title "${item.title}" comes under the title type "${retailPymntTtl[item.title.toLowerCase().trim()]
+          }"`
       }
     })
   } catch (error: any) {

@@ -49,8 +49,15 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       cnfrmObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
-    if (!msgIdSet.add(context.message_id)) {
-      cnfrmObj['messageId'] = 'message_id should be unique'
+    try {
+      logger.info(`Adding Message Id /${constants.CONFIRM}`)
+      if (msgIdSet.has(context.message_id)) {
+        cnfrmObj[`${ApiSequence.CONFIRM}_msgId`] = `Message id should not be same with previous calls`
+      }
+      msgIdSet.add(context.message_id)
+      setValue(`${ApiSequence.CONFIRM}_msgId`, data.context.message_id)
+    } catch (error: any) {
+      logger.error(`!!Error while checking message id for /${constants.CONFIRM}, ${error.stack}`)
     }
 
     if (!contextRes?.valid) {
@@ -282,7 +289,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       const on_select_quote: any = getValue('quoteObj')
       const quoteErrors = compareQuoteObjects(on_select_quote, confirm.quote, constants.ON_SELECT, constants.CONFIRM)
       const hasItemWithQuantity = _.some(confirm.quote.breakup, item => _.has(item, 'item.quantity'));
-      if (hasItemWithQuantity){
+      if (hasItemWithQuantity) {
         const key = `quantErr`
         cnfrmObj[key] = `Extra attribute Quantity provided in quote object i.e not supposed to be provided after on_select so invalid quote object`
       }

@@ -50,9 +50,31 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       Object.assign(onCnclObj, contextRes.ERRORS)
     }
 
-    if (!msgIdSet.add(context.message_id)) {
-      onCnclObj['messageId'] = 'message_id should be unique'
+    if(flow === '4')
+    {
+      try {
+        logger.info(`Comparing Message Ids of /${constants.CANCEL} and /${constants.ON_CANCEL}`)
+        if (!_.isEqual(getValue(`${ApiSequence.CANCEL}_msgId`), context.message_id)) {
+          onCnclObj[`${ApiSequence.ON_CANCEL}_msgId`]  = `Message Ids for /${constants.CANCEL} and /${constants.ON_CANCEL} api should be same`
+        }
+      } catch (error: any) {
+        logger.error(`!!Error while checking message id for /${constants.ON_CANCEL}, ${error.stack}`)
+      }
     }
+
+    if(flow === '5')
+    {
+      try {
+        logger.info(`Adding Message Id /${constants.ON_CANCEL}`)
+        if (msgIdSet.has(context.message_id)) {
+          onCnclObj[`${ApiSequence.ON_CANCEL}_msgId`] = `Message id should not be same with previous calls`
+        }
+        msgIdSet.add(context.message_id)
+      } catch (error: any) {
+        logger.error(`!!Error while checking message id for /${constants.ON_CANCEL}, ${error.stack}`)
+      }
+    }
+
     if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
       onCnclObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }

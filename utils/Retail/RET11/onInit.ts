@@ -16,7 +16,7 @@ import {
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkOnInit = (data: any, msgIdSet: any) => {
+export const checkOnInit = (data: any) => {
   try {
     const onInitObj: any = {}
     if (!data || isObjectEmpty(data)) {
@@ -51,8 +51,6 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     }
 
     setValue(`${ApiSequence.ON_INIT}`, data)
-    msgIdSet.add(context.message_id)
-
     logger.info(`Checking context for /${constants.ON_INIT} API`) //checking context
     try {
       const res: any = checkContext(context, constants.ON_INIT)
@@ -105,13 +103,11 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
     try {
       logger.info(`Comparing Message Ids of /${constants.INIT} and /${constants.ON_INIT}`)
-      if (!_.isEqual(getValue('msgId'), context.message_id)) {
-        onInitObj.msgId = `Message Ids for /${constants.INIT} and /${constants.ON_INIT} api should be same`
+      if (!_.isEqual(getValue(`${ApiSequence.INIT}_msgId`), context.message_id)) {
+        onInitObj[`${ApiSequence.ON_INIT}_msgId`]  = `Message Ids for /${constants.INIT} and /${constants.ON_INIT} api should be same`
       }
-
-      msgIdSet.add(context.message_id)
     } catch (error: any) {
-      logger.error(`!!Error while checking message id for /${constants.INIT}, ${error.stack}`)
+      logger.error(`!!Error while checking message id for /${constants.ON_INIT}, ${error.stack}`)
     }
 
     const on_init = message.order

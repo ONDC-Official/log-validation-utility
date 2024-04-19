@@ -5,7 +5,7 @@ import { setValue } from '../../../shared/dao'
 import constants from '../../../constants'
 import { validateSchema, isObjectEmpty } from '../../'
 import { checkUniqueCategoryIds, validateContext, validateDescriptor } from './fisChecks'
-import { validateItemsTags } from './tags'
+import { validateItemsTags, validateOffersTags } from './tags'
 import { isEmpty } from 'lodash'
 
 export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: string) => {
@@ -401,11 +401,11 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
               }
             }
 
-            // Validate offer tags
-            // const tagsValidation = validateOffersTags(offer?.tags)
-            // if (!tagsValidation.isValid) {
-            //   Object.assign(errorObj, { tags: tagsValidation.errors })
-            // }
+            //Validate offer tags
+            const tagsValidation = validateOffersTags(offer?.tags)
+            if (!tagsValidation.isValid) {
+              Object.assign(errorObj, { [`offers[${j}].tags`]: tagsValidation.errors })
+            }
           })
         }
       } catch (error: any) {

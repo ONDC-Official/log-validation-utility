@@ -3,7 +3,7 @@ import constants, { flowsFis10 } from '../../../constants/'
 import { logger } from '../../../shared/logger'
 import { checkIdAndUri, checkFISContext, isValidEmail, isValidPhoneNumber, isValidUrl } from '../../'
 import _, { isEmpty, isEqual } from 'lodash'
-import { validateItemsTags, validatePaymentTags } from './tags'
+import { validateItemsTags, validateOffersTags, validatePaymentTags } from './tags'
 
 export const checkUniqueCategoryIds = (categoryIds: (string | number)[], availableCategoryIds: any): boolean => {
   const uniqueCategoryIds = new Set(categoryIds)
@@ -479,6 +479,14 @@ export const validateBapOffers = (offers: any, action: string) => {
         }
 
         //tags
+        if(offer?.tags){
+          const tags = offer?.tags;
+          const tagValidation = validateOffersTags(tags);
+          if (!tagValidation.isValid) {
+            Object.assign(errorObj, { [`offers${index}.tags`]: tagValidation.errors })
+          }
+        }
+
       })
 
       setValue('offerIds', offerIds)

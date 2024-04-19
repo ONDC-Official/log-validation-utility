@@ -8,7 +8,7 @@ import { validateContext, validateQuote } from './fisChecks'
 // import { validateItemsTags } from './tags'
 import { isEmpty } from 'lodash'
 import _ from 'lodash'
-import { validateItemsTags } from './tags'
+import { validateItemsTags, validateOffersTags } from './tags'
 
 export const checkOnSelect = (data: any, msgIdSet: any, flow: string) => {
   if (!data || isObjectEmpty(data)) {
@@ -165,7 +165,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: string) => {
 
         // Validate tags
 
-        if(item?.tags){
+        if (item?.tags) {
           const tagsValidation = validateItemsTags(item?.tags, constants.ON_SELECT);
           if (!tagsValidation.isValid) {
             Object.assign(errorObj, { [`item${j}.tag`]: tagsValidation.errors })
@@ -212,11 +212,17 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: string) => {
           }
         }
 
-        // Validate offer tags
-        // const tagsValidation = validateOffersTags(offer?.tags)
-        // if (!tagsValidation.isValid) {
-        //   Object.assign(errorObj, { tags: tagsValidation.errors })
-        // }
+        //Validate offer tags
+        
+        offers.forEach((offer: any, index: number) => {
+          if(offer?.tags){
+            const tagsValidation = validateOffersTags(offer?.tags)
+            if (!tagsValidation?.isValid) {
+              Object.assign(errorObj, { [`offers[${j}].tags[${index}]`]: tagsValidation?.errors })
+            }
+          }
+        })
+
       })
     }
   } catch (error: any) {

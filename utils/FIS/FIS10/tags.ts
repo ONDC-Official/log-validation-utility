@@ -23,6 +23,9 @@ interface ValidationResult {
 const itemDetails = ['USABILITY', 'EXPIRY_PERIOD', 'TERMS_CONDITION', 'REDEMPTION_INSTRUCTION', 'OCCASION'];
 const customization = ['ENABLED', 'RECEIVER_NAME', 'MESSAGE', 'PREVIEW_IMAGE'];
 const brandDetails = ['BRAND_NAME', 'BRAND_PHONE', 'BRAND_EMAIL'];
+const qualifer = ['ITEM_COUNT', 'MIN_VALUE'];
+const benefit =['VALUE', 'VALUE_TYPE', 'ITEM_ID','ITEM_COUNT'];
+const meta = ['ADDITIVE', 'AUTO'];
 
 export const validatePaymentTags = (tags: Tag[], terms: any, validDescriptorCodes: string[]): ValidationResult => {
   const errors: string[] = []
@@ -252,7 +255,7 @@ export const validateProviderTags = (tags: Tag[]): ValidationResult => {
   }
 }
 
-export const validateItemsTags = (tags: Tag[], action:string): ValidationResult => {
+export const validateItemsTags = (tags: Tag[], action: string): ValidationResult => {
   const errors: string[] = []
   console.log(action)
   tags.forEach((tag, index) => {
@@ -274,7 +277,7 @@ export const validateItemsTags = (tags: Tag[], action:string): ValidationResult 
         errors.push(`In Tag[${index}] list object is missing`);
       } else {
         tag.list.forEach((item, index) => {
-          if (customization.includes(item?.descriptor?.code)) {
+          if (!customization.includes(item?.descriptor?.code)) {
             errors.push(`In list[${index}] descriptor code is not valid it should be from ${customization}`);
           }
 
@@ -294,7 +297,57 @@ export const validateItemsTags = (tags: Tag[], action:string): ValidationResult 
       }
     }
 
-    
+
+
+  })
+
+  return {
+    isValid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  }
+}
+
+export const validateOffersTags = (tags: Tag[]): ValidationResult => {
+  const errors: string[] = []
+  tags.forEach((tag, index) => {
+
+    if (tag.descriptor.code === 'QUALIFIER') {
+      if (!tag.list) {
+        errors.push(`In Tag[${index}] list object is missing`);
+      } else {
+        tag.list.forEach((item, index) => {
+          if (!qualifer.includes(item?.descriptor?.code)) {
+            errors.push(`In list[${index}] descriptor code is not valid it should be from ${qualifer}`);
+          }
+        });
+      }
+    }
+
+    if (tag.descriptor.code === 'BENEFIT') {
+      if (!tag.list) {
+        errors.push(`In Tag[${index}] list object is missing`);
+      } else {
+        tag.list.forEach((item, index) => {
+          if (!benefit.includes(item?.descriptor?.code)) {
+            errors.push(`In list[${index}] descriptor code is not valid it should be from ${benefit}`);
+          }
+
+        });
+      }
+    }
+
+    if (tag.descriptor.code === 'META') {
+      if (!tag.list) {
+        errors.push(`In Tag[${index}] list object is missing`);
+      } else {
+        tag.list.forEach((item, index) => {
+          if (!meta.includes(item?.descriptor?.code)) {
+            errors.push(`In list[${index}] descriptor code is not valid it should be from ${meta}`);
+          }
+        });
+      }
+    }
+
 
   })
 

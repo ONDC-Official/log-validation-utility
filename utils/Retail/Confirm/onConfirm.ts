@@ -34,7 +34,7 @@ export const checkOnConfirm = (data: any) => {
     try {
       logger.info(`Comparing Message Ids of /${constants.CONFIRM} and /${constants.ON_CONFIRM}`)
       if (!_.isEqual(getValue(`${ApiSequence.CONFIRM}_msgId`), context.message_id)) {
-        onCnfrmObj[`${ApiSequence.ON_CONFIRM}_msgId`]  = `Message Ids for /${constants.CONFIRM} and /${constants.ON_CONFIRM} api should be same`
+        onCnfrmObj[`${ApiSequence.ON_CONFIRM}_msgId`] = `Message Ids for /${constants.CONFIRM} and /${constants.ON_CONFIRM} api should be same`
       }
     } catch (error: any) {
       logger.error(`!!Error while checking message id for /${constants.ON_SEARCHINC}, ${error.stack}`)
@@ -225,23 +225,23 @@ export const checkOnConfirm = (data: any) => {
 
     try {
       logger.info(`Checking for valid pan_id in provider_tax_number and tax_number in /on_confirm`)
-      const bpp_terms_obj:any = message.order.tags.filter((item: any) => {
+      const bpp_terms_obj: any = message.order.tags.filter((item: any) => {
         return item?.code == "bpp_terms"
       })[0]
       const list = bpp_terms_obj.list
-      const np_type_arr = list.filter((item: any) => item.code === "np_type" && item.value === "ISN");
+      const np_type_arr = list.filter((item: any) => item.code === "np_type");
       const np_type_on_search = getValue(`${ApiSequence.ON_SEARCH}np_type`)
-      let np_type = "no_np_type_found!"
+      let np_type = ""
 
       if (np_type_arr.length > 0) {
-        np_type = "ISN"
+        np_type = np_type_arr[0].value
       }
       else {
         const key = 'message.order.tags[0].list'
         onCnfrmObj[key] = `np_type not found in on_confirm`
       }
 
-      if (np_type != np_type_on_search) {
+      if (np_type && np_type != np_type_on_search) {
         const key = 'message.order.tags[0].list'
         onCnfrmObj[key] = `np_type of on_search is not same to np_type of on_confirm`
       }
@@ -300,12 +300,12 @@ export const checkOnConfirm = (data: any) => {
 
           const pan_id = tax_number.slice(2, 12)
           if (pan_id != provider_tax_number && np_type_on_search == "ISN") {
-            onCnfrmObj[`message.order.tags.list`] = `Pan_id is different in tax_number and provider_tax_number in message.order.tags.list`
-            logger.error("onCnfrmObj[`message.order.tags[0].list`] = `Pan_id is different in tax_number and provider_tax_number in message.order.tags.list`")
+            onCnfrmObj[`message.order.tags[0].list`] = `Pan_id is different in tax_number and provider_tax_number in message.order.tags[0].list`
+            logger.error("onCnfrmObj[`message.order.tags[0].list`] = `Pan_id is different in tax_number and provider_tax_number in message.order.tags[0].list`")
           }
           else if (pan_id == provider_tax_number && np_type_on_search == "MSN") {
-            onCnfrmObj[`message.order.tags.list`] = `Pan_id shouldn't be same in tax_number and provider_tax_number in message.order.tags.list`
-            logger.error("onCnfrmObj[`message.order.tags[0].list`] = `Pan_id shoudn't be same in tax_number and provider_tax_number in message.order.tags.list`")
+            onCnfrmObj[`message.order.tags[0].list`] = `Pan_id shouldn't be same in tax_number and provider_tax_number in message.order.tags[0].list`
+            logger.error("onCnfrmObj[`message.order.tags[0].list`] = `Pan_id shoudn't be same in tax_number and provider_tax_number in message.order.tags[0].list`")
           }
         }
       }
@@ -576,7 +576,7 @@ export const checkOnConfirm = (data: any) => {
       for (const tag of tags) {
         if (tag.code === 'bpp_terms') {
           const result = compareLists(tag.list, list_ON_INIT)
-          if (result) {
+          if (result.length > 0) {
             onCnfrmObj['message/order/tags/bpp_terms'] =
               `List of bpp_terms mismatched in message/order/tags/bpp_terms for ${constants.ON_INIT} and ${constants.ON_CONFIRM}`
           }

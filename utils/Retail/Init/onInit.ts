@@ -128,7 +128,7 @@ export const checkOnInit = (data: any) => {
     // checking for tax_number in tags
     try {
       logger.info(`Checking for tax_number for ${constants.ON_INIT}`)
-      const bpp_terms_obj:any = message.order.tags.filter((item: any) => {
+      const bpp_terms_obj: any = message.order.tags.filter((item: any) => {
         return item?.code == "bpp_terms"
       })[0]
       const tags = bpp_terms_obj.list
@@ -416,7 +416,7 @@ export const checkOnInit = (data: any) => {
         )
         onInitObj.sttlmntcntrparty = `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_details`
       } else if (data['settlement_type'] !== 'upi') {
-        let missingFields: string[] = []
+        let missingFields = []
         if (!data.bank_name) {
           missingFields.push('bank_name')
         }

@@ -163,7 +163,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any) => {
       logger.info(`Checking for settlement_details in /message/order/payment`)
       const settlement_details: any = on_update.payment['@ondc/org/settlement_details']
       settlement_details.map((data: any) => {
-        if (data.settlement_type == 'upi') {
+        if (data.settlement_type == 'upi' && data.settlement_counterparty == 'seller-app') {
           if (!data.upi_address) {
             onupdtObj[`message/order.payment`] =
               `UPI_address is missing in /message/order/payment/@ondc/org/settlement_details`

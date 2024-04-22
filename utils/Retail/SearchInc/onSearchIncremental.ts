@@ -3,7 +3,7 @@
 import { logger } from '../../../shared/logger'
 import { setValue, getValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
-import { validateSchema, isObjectEmpty, checkContext, checkGpsPrecision, emailRegex } from '../../../utils'
+import { validateSchema, isObjectEmpty, checkContext, checkGpsPrecision, emailRegex } from '../..'
 import _, { isEmpty } from 'lodash'
 
 export const checkOnsearchIncremental = (data: any, _msgIdSet: any) => {

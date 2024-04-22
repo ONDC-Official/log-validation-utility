@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, checkContext, checkItemTag, checkBppIdOrBapId } from '../../../utils'
+import { validateSchema, isObjectEmpty, checkContext, checkItemTag, checkBppIdOrBapId } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const checkInit = (data: any, msgIdSet: any) => {

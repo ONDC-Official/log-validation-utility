@@ -8,7 +8,7 @@ import {
   isObjectEmpty,
   hasProperty,
   checkContext,
-} from '../../../utils'
+} from '../..'
 import _ from 'lodash'
 
 export const checkSearchIncremental = (data: any, msgIdSet: any) => {

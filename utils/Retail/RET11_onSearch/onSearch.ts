@@ -19,7 +19,7 @@ import {
   checkDuplicateParentIdItems,
   checkForDuplicates,
   validateObjectString,
-} from '../../../utils'
+} from '../..'
 import _ from 'lodash'
 
 export const checkOnsearchFullCatalogRefresh = (data: any) => {

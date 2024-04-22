@@ -104,7 +104,7 @@ export const checkOnInit = (data: any) => {
     try {
       logger.info(`Comparing Message Ids of /${constants.INIT} and /${constants.ON_INIT}`)
       if (!_.isEqual(getValue(`${ApiSequence.INIT}_msgId`), context.message_id)) {
-        onInitObj[`${ApiSequence.ON_INIT}_msgId`]  = `Message Ids for /${constants.INIT} and /${constants.ON_INIT} api should be same`
+        onInitObj[`${ApiSequence.ON_INIT}_msgId`] = `Message Ids for /${constants.INIT} and /${constants.ON_INIT} api should be same`
       }
     } catch (error: any) {
       logger.error(`!!Error while checking message id for /${constants.ON_INIT}, ${error.stack}`)
@@ -128,7 +128,7 @@ export const checkOnInit = (data: any) => {
     // checking for tax_number in tags
     try {
       logger.info(`Checking for tax_number for ${constants.ON_INIT}`)
-      const bpp_terms_obj:any = message.order.tags.filter((item: any) =>{
+      const bpp_terms_obj:any = message.order.tags.filter((item: any) => {
         return item?.code == "bpp_terms"
       })[0]
       const tags = bpp_terms_obj.list
@@ -140,27 +140,27 @@ export const checkOnInit = (data: any) => {
           if (!e.value) {
             logger.error(`value must be present for tax_number in ${constants.ON_INIT}`);
             onInitObj.taxNumberValue = `value must be present for tax_number in ${constants.ON_INIT}`;
-        } else {
+          } else {
             const taxNumberPattern = new RegExp('^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$');
-              if (!taxNumberPattern.test(e.value)) {
-                logger.error(`Invalid format for tax_number in ${constants.ON_INIT}`);
-                onInitObj.taxNumberValue = `Invalid format for tax_number in ${constants.ON_INIT}`;
+            if (!taxNumberPattern.test(e.value)) {
+              logger.error(`Invalid format for tax_number in ${constants.ON_INIT}`);
+              onInitObj.taxNumberValue = `Invalid format for tax_number in ${constants.ON_INIT}`;
             }
-        }        
+          }
           tax_number = e
         }
         if (e.code === 'provider_tax_number') {
           if (!e.value) {
             logger.error(`value must be present for provider_tax_number in ${constants.ON_INIT}`);
             onInitObj.provider_tax_number = `value must be present for provider_tax_number in ${constants.ON_INIT}`;
-        } else {
+          } else {
             const taxNumberPattern = new RegExp('^[A-Z]{5}[0-9]{4}[A-Z]{1}$');
-                if (!taxNumberPattern.test(e.value)) {
-                logger.error(`Invalid format for provider_tax_number in ${constants.ON_INIT}`);
-                onInitObj.provider_tax_number = `Invalid format for provider_tax_number in ${constants.ON_INIT}`;
+            if (!taxNumberPattern.test(e.value)) {
+              logger.error(`Invalid format for provider_tax_number in ${constants.ON_INIT}`);
+              onInitObj.provider_tax_number = `Invalid format for provider_tax_number in ${constants.ON_INIT}`;
             }
-        }
-        
+          }
+
           provider_tax_number = e
         }
       })
@@ -172,11 +172,15 @@ export const checkOnInit = (data: any) => {
         logger.error(`tax_number must present in ${constants.ON_INIT}`)
         onInitObj.providertaxNumber = `provider_tax_number must be present for ${constants.ON_INIT}`
       }
-      if (tax_number.value?.length == 15 && provider_tax_number?.value?.length == 10 && np_type_on_search == "MSN") {
+      if (tax_number.value?.length == 15 && provider_tax_number?.value?.length == 10) {
         const pan_id = tax_number?.value.slice(2, 12)
-        if (pan_id != provider_tax_number?.value) {
+        if (pan_id != provider_tax_number?.value && np_type_on_search == "ISN") {
           logger.error(`Pan_id is different in tax_number and provider_tax_number in ${constants.ON_INIT}`)
           onInitObj[`message.order.tags[0].list`] = `Pan_id is different in tax_number and provider_tax_number in message.order.tags[0].list`
+        }
+        else if (pan_id == provider_tax_number && np_type_on_search == "MSN") {
+          onInitObj[`message.order.tags[0].list`] = `Pan_id shouldn't be same in tax_number and provider_tax_number in message.order.tags[0].list`
+          logger.error("onCnfrmObj[`message.order.tags[0].list`] = `Pan_id shoudn't be same in tax_number and provider_tax_number in message.order.tags[0].list`")
         }
       }
 
@@ -412,7 +416,7 @@ export const checkOnInit = (data: any) => {
         )
         onInitObj.sttlmntcntrparty = `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_details`
       } else if (data['settlement_type'] !== 'upi') {
-        let missingFields = []
+        let missingFields: string[] = []
         if (!data.bank_name) {
           missingFields.push('bank_name')
         }

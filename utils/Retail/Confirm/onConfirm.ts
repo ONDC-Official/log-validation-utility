@@ -225,16 +225,16 @@ export const checkOnConfirm = (data: any) => {
 
     try {
       logger.info(`Checking for valid pan_id in provider_tax_number and tax_number in /on_confirm`)
-      const bpp_terms_obj:any = message.order.tags.filter((item: any) =>{
+      const bpp_terms_obj:any = message.order.tags.filter((item: any) => {
         return item?.code == "bpp_terms"
       })[0]
       const list = bpp_terms_obj.list
-      const np_type_arr = list.filter((item: any) => item.code === "np_type" && item.value === "MSN");
+      const np_type_arr = list.filter((item: any) => item.code === "np_type" && item.value === "ISN");
       const np_type_on_search = getValue(`${ApiSequence.ON_SEARCH}np_type`)
       let np_type = "no_np_type_found!"
 
       if (np_type_arr.length > 0) {
-        np_type = "MSN"
+        np_type = "ISN"
       }
       else {
         const key = 'message.order.tags[0].list'
@@ -245,7 +245,7 @@ export const checkOnConfirm = (data: any) => {
         const key = 'message.order.tags[0].list'
         onCnfrmObj[key] = `np_type of on_search is not same to np_type of on_confirm`
       }
-      
+
       if (!_.isEmpty(bpp_terms_obj)) {
         let tax_number = ""
         let provider_tax_number = ""
@@ -277,30 +277,35 @@ export const checkOnConfirm = (data: any) => {
         if (tax_number.length == 0) {
           logger.error(`tax_number must present in ${constants.ON_CONFIRM}`)
           onCnfrmObj["tax_number"] = `tax_number must be present for ${constants.ON_CONFIRM}`
-        }else {
+        } else {
           const taxNumberPattern = new RegExp('^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$');
-              if (!taxNumberPattern.test(tax_number)) {
-              logger.error(`Invalid format for tax_number in ${constants.ON_INIT}`);
-              onCnfrmObj.tax_number = `Invalid format for tax_number in ${constants.ON_CONFIRM}`;
+          if (!taxNumberPattern.test(tax_number)) {
+            logger.error(`Invalid format for tax_number in ${constants.ON_INIT}`);
+            onCnfrmObj.tax_number = `Invalid format for tax_number in ${constants.ON_CONFIRM}`;
           }
         }
 
         if (provider_tax_number.length == 0) {
           logger.error(`tax_number must present in ${constants.ON_CONFIRM}`)
           onCnfrmObj['provider_tax_number'] = `provider_tax_number must be present for ${constants.ON_CONFIRM}`
-        }else {
+        } else {
           const taxNumberPattern = new RegExp('^[A-Z]{5}[0-9]{4}[A-Z]{1}$');
-              if (!taxNumberPattern.test(provider_tax_number)) {
-              logger.error(`Invalid format for provider_tax_number in ${constants.ON_INIT}`);
-              onCnfrmObj.provider_tax_number = `Invalid format for provider_tax_number in ${constants.ON_CONFIRM}`;
+          if (!taxNumberPattern.test(provider_tax_number)) {
+            logger.error(`Invalid format for provider_tax_number in ${constants.ON_INIT}`);
+            onCnfrmObj.provider_tax_number = `Invalid format for provider_tax_number in ${constants.ON_CONFIRM}`;
           }
         }
 
-        if (tax_number.length == 15 && provider_tax_number.length == 10 && np_type_on_search == "MSN") {
+        if (tax_number.length == 15 && provider_tax_number.length == 10) {
+
           const pan_id = tax_number.slice(2, 12)
-          if (pan_id != provider_tax_number) {
-            onCnfrmObj[`message.order.tags[0].list`] = `Pan_id is different in tax_number and provider_tax_number in message.order.tags[0].list`
-            logger.error("onCnfrmObj[`message.order.tags[0].list`] = `Pan_id is different in tax_number and provider_tax_number in message.order.tags[0].list`")
+          if (pan_id != provider_tax_number && np_type_on_search == "ISN") {
+            onCnfrmObj[`message.order.tags.list`] = `Pan_id is different in tax_number and provider_tax_number in message.order.tags.list`
+            logger.error("onCnfrmObj[`message.order.tags[0].list`] = `Pan_id is different in tax_number and provider_tax_number in message.order.tags.list`")
+          }
+          else if (pan_id == provider_tax_number && np_type_on_search == "MSN") {
+            onCnfrmObj[`message.order.tags.list`] = `Pan_id shouldn't be same in tax_number and provider_tax_number in message.order.tags.list`
+            logger.error("onCnfrmObj[`message.order.tags[0].list`] = `Pan_id shoudn't be same in tax_number and provider_tax_number in message.order.tags.list`")
           }
         }
       }

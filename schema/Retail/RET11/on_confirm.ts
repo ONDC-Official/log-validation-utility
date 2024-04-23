@@ -780,7 +780,6 @@ export const FnBonConfirmSchema = {
                               },
                             },
                             required: ['code', 'value'],
-                            additionalProperties: false,
                           },
                         },
                         {
@@ -799,7 +798,6 @@ export const FnBonConfirmSchema = {
                               },
                             },
                             required: ['code', 'value'],
-                            additionalProperties: false,
                           },
                         },
                       ],

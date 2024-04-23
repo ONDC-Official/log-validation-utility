@@ -13,10 +13,10 @@ import {
   compareObjects,
   payment_status,
   compareQuoteObjects,
-} from '../../../utils'
+} from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkOnInit = (data: any, msgIdSet: any) => {
+export const checkOnInit = (data: any) => {
   try {
     const onInitObj: any = {}
     if (!data || isObjectEmpty(data)) {
@@ -51,8 +51,6 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     }
 
     setValue(`${ApiSequence.ON_INIT}`, data)
-    msgIdSet.add(context.message_id)
-
     logger.info(`Checking context for /${constants.ON_INIT} API`) //checking context
     try {
       const res: any = checkContext(context, constants.ON_INIT)
@@ -105,13 +103,11 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
     try {
       logger.info(`Comparing Message Ids of /${constants.INIT} and /${constants.ON_INIT}`)
-      if (!_.isEqual(getValue('msgId'), context.message_id)) {
-        onInitObj.msgId = `Message Ids for /${constants.INIT} and /${constants.ON_INIT} api should be same`
+      if (!_.isEqual(getValue(`${ApiSequence.INIT}_msgId`), context.message_id)) {
+        onInitObj[`${ApiSequence.ON_INIT}_msgId`] = `Message Ids for /${constants.INIT} and /${constants.ON_INIT} api should be same`
       }
-
-      msgIdSet.add(context.message_id)
     } catch (error: any) {
-      logger.error(`!!Error while checking message id for /${constants.INIT}, ${error.stack}`)
+      logger.error(`!!Error while checking message id for /${constants.ON_INIT}, ${error.stack}`)
     }
 
     const on_init = message.order
@@ -132,25 +128,45 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     // checking for tax_number in tags
     try {
       logger.info(`Checking for tax_number for ${constants.ON_INIT}`)
-      const bpp_terms_obj:any = message.order.tags.filter((item: any) =>{
+      const bpp_terms_obj: any = message.order.tags.filter((item: any) => {
         return item?.code == "bpp_terms"
       })[0]
       const tags = bpp_terms_obj.list
+      const accept_bap_terms = tags.filter((item: any) => item.code === 'accept_bap_terms')
+      const np_type_on_search = getValue(`${ApiSequence.ON_SEARCH}np_type`)
       let tax_number: any = {}
       let provider_tax_number: any = {}
+      if(accept_bap_terms.length > 0)
+      {
+        const key = 'message.order.tags[0].list'
+        onInitObj[key] = `accept_bap_terms is not required for now!`
+      }
       tags.forEach((e: any) => {
         if (e.code === 'tax_number') {
           if (!e.value) {
-            logger.error(`value must be present for tax_number in ${constants.ON_INIT}`)
-            onInitObj.taxNumberValue = `value must be present for tax_number in ${constants.ON_INIT}`
+            logger.error(`value must be present for tax_number in ${constants.ON_INIT}`);
+            onInitObj.taxNumberValue = `value must be present for tax_number in ${constants.ON_INIT}`;
+          } else {
+            const taxNumberPattern = new RegExp('^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$');
+            if (!taxNumberPattern.test(e.value)) {
+              logger.error(`Invalid format for tax_number in ${constants.ON_INIT}`);
+              onInitObj.taxNumberValue = `Invalid format for tax_number in ${constants.ON_INIT}`;
+            }
           }
           tax_number = e
         }
         if (e.code === 'provider_tax_number') {
           if (!e.value) {
-            logger.error(`value must be present for provider_tax_number in ${constants.ON_INIT}`)
-            onInitObj.provider_tax_number = `value must be present for provider_tax_number in ${constants.ON_INIT}`
+            logger.error(`value must be present for provider_tax_number in ${constants.ON_INIT}`);
+            onInitObj.provider_tax_number = `value must be present for provider_tax_number in ${constants.ON_INIT}`;
+          } else {
+            const taxNumberPattern = new RegExp('^[A-Z]{5}[0-9]{4}[A-Z]{1}$');
+            if (!taxNumberPattern.test(e.value)) {
+              logger.error(`Invalid format for provider_tax_number in ${constants.ON_INIT}`);
+              onInitObj.provider_tax_number = `Invalid format for provider_tax_number in ${constants.ON_INIT}`;
+            }
           }
+
           provider_tax_number = e
         }
       })
@@ -164,9 +180,13 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       }
       if (tax_number.value?.length == 15 && provider_tax_number?.value?.length == 10) {
         const pan_id = tax_number?.value.slice(2, 12)
-        if (pan_id != provider_tax_number?.value) {
+        if (pan_id != provider_tax_number?.value && np_type_on_search == "ISN") {
           logger.error(`Pan_id is different in tax_number and provider_tax_number in ${constants.ON_INIT}`)
           onInitObj[`message.order.tags[0].list`] = `Pan_id is different in tax_number and provider_tax_number in message.order.tags[0].list`
+        }
+        else if (pan_id == provider_tax_number && np_type_on_search == "MSN") {
+          onInitObj[`message.order.tags[0].list`] = `Pan_id shouldn't be same in tax_number and provider_tax_number in message.order.tags[0].list`
+          logger.error("onCnfrmObj[`message.order.tags[0].list`] = `Pan_id shoudn't be same in tax_number and provider_tax_number in message.order.tags[0].list`")
         }
       }
 
@@ -461,6 +481,21 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while checking tags in /${constants.ON_INIT} ${error.stack}`)
+    }
+
+    try {
+      logger.info(`Checking bap_terms  in ${constants.ON_INIT} `)
+      const tags = on_init.tags
+
+      for (const tag of tags) {
+        if (tag.code === 'bap_terms') {
+          onInitObj['message/order/tags/bap_terms'] = `bap_terms terms is not required for now! in ${constants.ON_INIT}`
+        }
+      }
+    } catch (err: any) {
+      logger.error(
+        `Error while Checking bap_terms in ${constants.ON_INIT}, ${err.stack} `,
+      )
     }
 
     try {

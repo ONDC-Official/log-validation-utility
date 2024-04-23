@@ -16,7 +16,7 @@ import {
   payment_status,
   compareQuoteObjects,
   compareLists,
-} from '../../../utils'
+} from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const checkOnConfirm = (data: any) => {
@@ -29,6 +29,15 @@ export const checkOnConfirm = (data: any) => {
     const { message, context }: any = data
     if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
+    }
+
+    try {
+      logger.info(`Comparing Message Ids of /${constants.CONFIRM} and /${constants.ON_CONFIRM}`)
+      if (!_.isEqual(getValue(`${ApiSequence.CONFIRM}_msgId`), context.message_id)) {
+        onCnfrmObj[`${ApiSequence.ON_CONFIRM}_msgId`] = `Message Ids for /${constants.CONFIRM} and /${constants.ON_CONFIRM} api should be same`
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking message id for /${constants.ON_SEARCHINC}, ${error.stack}`)
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
@@ -216,11 +225,34 @@ export const checkOnConfirm = (data: any) => {
 
     try {
       logger.info(`Checking for valid pan_id in provider_tax_number and tax_number in /on_confirm`)
-      const bpp_terms_obj:any = message.order.tags.filter((item: any) =>{
+      const bpp_terms_obj: any = message.order.tags.filter((item: any) => {
         return item?.code == "bpp_terms"
       })[0]
       const list = bpp_terms_obj.list
-      
+      const np_type_arr = list.filter((item: any) => item.code === "np_type");
+      const accept_bap_terms = list.filter((item: any) => item.code === 'accept_bap_terms')
+      const np_type_on_search = getValue(`${ApiSequence.ON_SEARCH}np_type`)
+      let np_type = ""
+
+      if (np_type_arr.length > 0) {
+        np_type = np_type_arr[0].value
+      }
+      else {
+        const key = 'message.order.tags[0].list'
+        onCnfrmObj[key] = `np_type not found in on_confirm`
+      }
+
+      if(accept_bap_terms.length > 0)
+      {
+        const key = 'message.order.tags[0].list'
+        onCnfrmObj[key] = `accept_bap_terms is not required for now!`
+      }
+
+      if (np_type && np_type != np_type_on_search) {
+        const key = 'message.order.tags[0].list'
+        onCnfrmObj[key] = `np_type of on_search is not same to np_type of on_confirm`
+      }
+
       if (!_.isEmpty(bpp_terms_obj)) {
         let tax_number = ""
         let provider_tax_number = ""
@@ -236,7 +268,6 @@ export const checkOnConfirm = (data: any) => {
           }
 
           if (item.code == "provider_tax_number") {
-            console.log(item.value.length)
             if (item.value.length != 10) {
               const key = `message.order.tags[0].list`
               onCnfrmObj[key] = `Number of digits in provider tax number in  message.order.tags[0].list should be 10`
@@ -252,17 +283,35 @@ export const checkOnConfirm = (data: any) => {
         if (tax_number.length == 0) {
           logger.error(`tax_number must present in ${constants.ON_CONFIRM}`)
           onCnfrmObj["tax_number"] = `tax_number must be present for ${constants.ON_CONFIRM}`
+        } else {
+          const taxNumberPattern = new RegExp('^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$');
+          if (!taxNumberPattern.test(tax_number)) {
+            logger.error(`Invalid format for tax_number in ${constants.ON_INIT}`);
+            onCnfrmObj.tax_number = `Invalid format for tax_number in ${constants.ON_CONFIRM}`;
+          }
         }
+
         if (provider_tax_number.length == 0) {
           logger.error(`tax_number must present in ${constants.ON_CONFIRM}`)
           onCnfrmObj['provider_tax_number'] = `provider_tax_number must be present for ${constants.ON_CONFIRM}`
+        } else {
+          const taxNumberPattern = new RegExp('^[A-Z]{5}[0-9]{4}[A-Z]{1}$');
+          if (!taxNumberPattern.test(provider_tax_number)) {
+            logger.error(`Invalid format for provider_tax_number in ${constants.ON_INIT}`);
+            onCnfrmObj.provider_tax_number = `Invalid format for provider_tax_number in ${constants.ON_CONFIRM}`;
+          }
         }
 
         if (tax_number.length == 15 && provider_tax_number.length == 10) {
+
           const pan_id = tax_number.slice(2, 12)
-          if (pan_id != provider_tax_number) {
+          if (pan_id != provider_tax_number && np_type_on_search == "ISN") {
             onCnfrmObj[`message.order.tags[0].list`] = `Pan_id is different in tax_number and provider_tax_number in message.order.tags[0].list`
             logger.error("onCnfrmObj[`message.order.tags[0].list`] = `Pan_id is different in tax_number and provider_tax_number in message.order.tags[0].list`")
+          }
+          else if (pan_id == provider_tax_number && np_type_on_search == "MSN") {
+            onCnfrmObj[`message.order.tags[0].list`] = `Pan_id shouldn't be same in tax_number and provider_tax_number in message.order.tags[0].list`
+            logger.error("onCnfrmObj[`message.order.tags[0].list`] = `Pan_id shoudn't be same in tax_number and provider_tax_number in message.order.tags[0].list`")
           }
         }
       }
@@ -497,11 +546,11 @@ export const checkOnConfirm = (data: any) => {
       logger.info(`Comparing tags in /${constants.CONFIRM} and /${constants.ON_CONFIRM}`)
       const confirm_tags: any[] | any = getValue('confirm_tags')
       if (on_confirm.tags) {
-        const bap_terms = areGSTNumbersMatching(confirm_tags, on_confirm.tags, 'bap_terms')
+        // const bap_terms = areGSTNumbersMatching(confirm_tags, on_confirm.tags, 'bap_terms')
 
-        if (bap_terms === false) {
-          onCnfrmObj.tags_bap_terms = `Tags should have same and valid gst_number as passed in /${constants.CONFIRM}`
-        }
+        // if (bap_terms === false) {
+        //   onCnfrmObj.tags_bap_terms = `Tags should have same and valid gst_number as passed in /${constants.CONFIRM}`
+        // }
 
         const bpp_terms = areGSTNumbersMatching(confirm_tags, on_confirm.tags, 'bpp_terms')
         if (bpp_terms === false) {
@@ -533,7 +582,7 @@ export const checkOnConfirm = (data: any) => {
       for (const tag of tags) {
         if (tag.code === 'bpp_terms') {
           const result = compareLists(tag.list, list_ON_INIT)
-          if (result) {
+          if (result.length > 0) {
             onCnfrmObj['message/order/tags/bpp_terms'] =
               `List of bpp_terms mismatched in message/order/tags/bpp_terms for ${constants.ON_INIT} and ${constants.ON_CONFIRM}`
           }
@@ -542,6 +591,21 @@ export const checkOnConfirm = (data: any) => {
     } catch (err: any) {
       logger.error(
         `Error while Checking if list provided in bpp_terms is same as provided in ${constants.ON_INIT}, ${err.stack} `,
+      )
+    }
+
+    try {
+      logger.info(`Checking if bap_terms is present in ${constants.ON_CONFIRM} `)
+      const tags = on_confirm.tags
+
+      for (const tag of tags) {
+        if (tag.code === 'bap_terms') {
+          onCnfrmObj['message/order/tags/bap_terms'] = `bap_terms terms is not required for now! in ${constants.ON_CONFIRM}`
+        }
+      }
+    } catch (err: any) {
+      logger.error(
+        `Error while Checking bap_terms in ${constants.ON_CONFIRM}, ${err.stack} `,
       )
     }
 

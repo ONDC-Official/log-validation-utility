@@ -1,10 +1,10 @@
 /* eslint-disable no-prototype-builtins */
 import { getValue, setValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
-import { validateSchema, isObjectEmpty, checkContext, timeDiff, isoDurToSec, checkBppIdOrBapId } from '../../../utils'
+import { validateSchema, isObjectEmpty, checkContext, timeDiff, isoDurToSec, checkBppIdOrBapId } from '../..'
 import _ from 'lodash'
 import { logger } from '../../../shared/logger'
-import { taxNotInlcusive } from '../../../utils/enum'
+import { taxNotInlcusive } from '../../enum'
 
 interface BreakupElement {
   '@ondc/org/title_type': string
@@ -36,6 +36,15 @@ export const checkOnSelect = (data: any) => {
   const errorObj: any = {}
   const checkBap = checkBppIdOrBapId(context.bap_id)
   const checkBpp = checkBppIdOrBapId(context.bpp_id)
+
+  try {
+    logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
+    if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
+      errorObj[`${ApiSequence.ON_SELECT}_msgId`]  = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while checking message id for /${constants.ON_SELECT}, ${error.stack}`)
+  }
 
   if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
     errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
@@ -127,14 +136,11 @@ export const checkOnSelect = (data: any) => {
 
   try {
     logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
-    const msgId = getValue('msgId')
-    if (!_.isEqual(msgId, context.message_id)) {
-      errorObj.msgId = `Message Id for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+    if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
+      errorObj[`${ApiSequence.ON_SELECT}_msgId`]  = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
     }
   } catch (error: any) {
-    logger.info(
-      `Error while comparing message ids for /${constants.SELECT} and /${constants.ON_SELECT} api, ${error.stack}`,
-    )
+    logger.error(`!!Error while checking message id for /${constants.ON_SELECT}, ${error.stack}`)
   }
 
   let on_select_error: any = {}

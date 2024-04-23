@@ -654,7 +654,6 @@ export const FnBonInitSchema = {
                               },
                             },
                             required: ['code', 'value'],
-                            additionalProperties: false,
                           },
                         },
                         {
@@ -673,7 +672,6 @@ export const FnBonInitSchema = {
                               },
                             },
                             required: ['code', 'value'],
-                            additionalProperties: false,
                           },
                         },
                       ],

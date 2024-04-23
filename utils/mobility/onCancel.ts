@@ -148,7 +148,7 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string, versio
         Object.assign(errorObj, customerErrors)
 
         //agent checks
-        const agentErrors = validateEntity(fulfillment.agent, 'customer', constants.ON_CANCEL, index)
+        const agentErrors = validateEntity(fulfillment.agent, 'agent', constants.ON_CANCEL, index)
         Object.assign(errorObj, agentErrors)
 
         // Check stops for START and END, or time range with valid timestamp and GPS

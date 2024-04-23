@@ -18,6 +18,40 @@ const getFormHeading = (action: any, insuranceType: any): string[] | string | nu
   return null
 }
 
+const getQuoteCodes = (flow: string): string[] => {
+  switch (flow) {
+    case 'HEALTH':
+      return ['BASE_PRICE', 'CONVIENCE', 'TAX', 'PROCESSING_FEE']
+      break
+
+    case 'MARINE':
+      return ['BASE_PRICE', 'CONVIENCE', 'TAX', 'PROCESSING_FEE']
+      break
+
+    case 'MOTOR':
+      return ['BASE_PRICE', 'TAX', 'PROCESSING_FEE']
+      break
+
+    default:
+      return []
+      break
+  }
+}
+
+export const getCodes = (): string[] => {
+  const insurance = getValue('insurance')
+  switch (insurance) {
+    case 'HEALTH':
+      return ['INDIVIDUAL_INSURANCE', 'FAMILY_INSURANCE', 'HEALTH_INSURANCE']
+
+    case 'MARINE':
+      return ['MARINE_INSURANCE']
+
+    default:
+      return []
+  }
+}
+
 //remove
 export const validateFulfillments = (fulfillment: any, i: number, documents: any[]): any | null => {
   const errors: any = {}
@@ -362,7 +396,13 @@ export const validateCancellationTerms = (cancellationTerms: any, action: string
   return errorObj
 }
 
-export const validateDescriptor = (descriptor: any, action: string, path: string, checkCode: boolean): any => {
+export const validateDescriptor = (
+  descriptor: any,
+  action: string,
+  path: string,
+  checkCode: boolean,
+  codes: string[],
+): any => {
   try {
     const errorObj: any = {}
     if (!descriptor) {
@@ -373,7 +413,8 @@ export const validateDescriptor = (descriptor: any, action: string, path: string
           errorObj.code = `descriptor.code is missing at ${path}.`
         } else if (descriptor.code?.trim() !== descriptor.code?.trim()?.toUpperCase()) {
           errorObj.code = `descriptor.code must be in uppercase at ${path}., ${descriptor.code}`
-        }
+        } else if (codes && codes?.includes(descriptor?.code))
+          errorObj.code = `descriptor.code should be one of ${codes}`
       }
 
       if (descriptor?.images) {
@@ -530,8 +571,9 @@ export const validateQuote = (quote: any) => {
     logger.info(`Checking quote details`)
     if (isEmpty(quote)) errorObj.quote = 'quote is  missing at message.order'
     else {
-      const quoteBreakup = quote.breakup
-      const validBreakupItems = ['BASE_PRICE', 'CONVIENCE', 'TAX', 'PROCESSING_FEE']
+      const quoteBreakup = quote?.breakup
+      const insurance: any = getValue('insurance')
+      const validBreakupItems = getQuoteCodes(insurance)
 
       const requiredBreakupItems = validBreakupItems.filter((item) =>
         quoteBreakup.some((breakupItem: any) => breakupItem.title.toUpperCase() === item),
@@ -545,7 +587,7 @@ export const validateQuote = (quote: any) => {
 
       const totalBreakupValue = quoteBreakup.reduce((total: any, item: any) => {
         const itemTitle = item.title.toUpperCase()
-        if (requiredBreakupItems.includes(itemTitle) && itemTitle !== 'NET_DISBURSED_AMOUNT') {
+        if (requiredBreakupItems.includes(itemTitle)) {
           const itemValue = parseFloat(item.price.value)
           return isNaN(itemValue) ? total : total + itemValue
         }
@@ -569,6 +611,10 @@ export const validateQuote = (quote: any) => {
       if (!quote.ttl) {
         errorObj.missingTTL = 'TTL is required in the quote'
       }
+
+      if (insurance == 'HEALTH' && !quote?.id) {
+        errorObj.quoteId = 'id is missing in quote'
+      }
     }
   } catch (error: any) {
     logger.error(`!!Error while checking quote details`, error.stack)
@@ -589,14 +635,14 @@ export const validateProvider = (provider: any, action: string) => {
     else {
       logger.info(`Comparing provider id of /${action} & past call`)
       const prvrdID: any = getValue('providerId')
-      if (!_.isEqual(prvrdID, provider?.id)) {
+      if (prvrdID && !_.isEqual(prvrdID, provider?.id)) {
         providerErrors.prvdrId = `provider.id for /${action} & past call api should be same`
         setValue('providerId', provider?.id)
       }
     }
 
     // send true as last argument in case if code validation is needed
-    const descriptorError = validateDescriptor(provider?.descriptor, action, `provider.descriptor`, false)
+    const descriptorError = validateDescriptor(provider?.descriptor, action, `provider.descriptor`, false, [])
     if (descriptorError) Object.assign(providerErrors, descriptorError)
     return providerErrors
   } catch (error: any) {

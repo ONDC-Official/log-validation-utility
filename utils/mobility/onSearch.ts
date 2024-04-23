@@ -38,7 +38,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
   const storedFulfillments = new Set()
 
   // descriptor.name
-  if (!onSearchCatalog.descriptor || !onSearchCatalog.descriptor.name) {
+  if (!onSearchCatalog?.descriptor || !onSearchCatalog?.descriptor?.name) {
     errorObj['descriptor_name'] = 'message/catalog/descriptor/name is missing'
   }
 
@@ -57,8 +57,8 @@ export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
         prvdrsId.add(bppPrvdrs[i].id)
       }
 
+      //provider fulfillments checks
       const fulfillments = bppPrvdrs[i]['fulfillments']
-
       if (!fulfillments || fulfillments.length === 0) {
         errorObj[`provider_${i}_fulfillments`] = `Fulfillments is missing or empty for provider ${i}`
       } else {

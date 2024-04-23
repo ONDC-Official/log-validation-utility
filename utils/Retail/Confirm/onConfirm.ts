@@ -230,6 +230,7 @@ export const checkOnConfirm = (data: any) => {
       })[0]
       const list = bpp_terms_obj.list
       const np_type_arr = list.filter((item: any) => item.code === "np_type");
+      const accept_bap_terms = list.filter((item: any) => item.code === 'accept_bap_terms')
       const np_type_on_search = getValue(`${ApiSequence.ON_SEARCH}np_type`)
       let np_type = ""
 
@@ -239,6 +240,12 @@ export const checkOnConfirm = (data: any) => {
       else {
         const key = 'message.order.tags[0].list'
         onCnfrmObj[key] = `np_type not found in on_confirm`
+      }
+
+      if(accept_bap_terms.length > 0)
+      {
+        const key = 'message.order.tags[0].list'
+        onCnfrmObj[key] = `accept_bap_terms is not required for now!`
       }
 
       if (np_type && np_type != np_type_on_search) {
@@ -261,7 +268,6 @@ export const checkOnConfirm = (data: any) => {
           }
 
           if (item.code == "provider_tax_number") {
-            console.log(item.value.length)
             if (item.value.length != 10) {
               const key = `message.order.tags[0].list`
               onCnfrmObj[key] = `Number of digits in provider tax number in  message.order.tags[0].list should be 10`
@@ -540,11 +546,11 @@ export const checkOnConfirm = (data: any) => {
       logger.info(`Comparing tags in /${constants.CONFIRM} and /${constants.ON_CONFIRM}`)
       const confirm_tags: any[] | any = getValue('confirm_tags')
       if (on_confirm.tags) {
-        const bap_terms = areGSTNumbersMatching(confirm_tags, on_confirm.tags, 'bap_terms')
+        // const bap_terms = areGSTNumbersMatching(confirm_tags, on_confirm.tags, 'bap_terms')
 
-        if (bap_terms === false) {
-          onCnfrmObj.tags_bap_terms = `Tags should have same and valid gst_number as passed in /${constants.CONFIRM}`
-        }
+        // if (bap_terms === false) {
+        //   onCnfrmObj.tags_bap_terms = `Tags should have same and valid gst_number as passed in /${constants.CONFIRM}`
+        // }
 
         const bpp_terms = areGSTNumbersMatching(confirm_tags, on_confirm.tags, 'bpp_terms')
         if (bpp_terms === false) {
@@ -585,6 +591,21 @@ export const checkOnConfirm = (data: any) => {
     } catch (err: any) {
       logger.error(
         `Error while Checking if list provided in bpp_terms is same as provided in ${constants.ON_INIT}, ${err.stack} `,
+      )
+    }
+
+    try {
+      logger.info(`Checking if bap_terms is present in ${constants.ON_CONFIRM} `)
+      const tags = on_confirm.tags
+
+      for (const tag of tags) {
+        if (tag.code === 'bap_terms') {
+          onCnfrmObj['message/order/tags/bap_terms'] = `bap_terms terms is not required for now! in ${constants.ON_CONFIRM}`
+        }
+      }
+    } catch (err: any) {
+      logger.error(
+        `Error while Checking bap_terms in ${constants.ON_CONFIRM}, ${err.stack} `,
       )
     }
 

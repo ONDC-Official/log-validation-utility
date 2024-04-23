@@ -132,9 +132,15 @@ export const checkOnInit = (data: any) => {
         return item?.code == "bpp_terms"
       })[0]
       const tags = bpp_terms_obj.list
+      const accept_bap_terms = tags.filter((item: any) => item.code === 'accept_bap_terms')
       const np_type_on_search = getValue(`${ApiSequence.ON_SEARCH}np_type`)
       let tax_number: any = {}
       let provider_tax_number: any = {}
+      if(accept_bap_terms.length > 0)
+      {
+        const key = 'message.order.tags[0].list'
+        onInitObj[key] = `accept_bap_terms is not required for now!`
+      }
       tags.forEach((e: any) => {
         if (e.code === 'tax_number') {
           if (!e.value) {
@@ -475,6 +481,21 @@ export const checkOnInit = (data: any) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while checking tags in /${constants.ON_INIT} ${error.stack}`)
+    }
+
+    try {
+      logger.info(`Checking bap_terms  in ${constants.ON_INIT} `)
+      const tags = on_init.tags
+
+      for (const tag of tags) {
+        if (tag.code === 'bap_terms') {
+          onInitObj['message/order/tags/bap_terms'] = `bap_terms terms is not required for now! in ${constants.ON_INIT}`
+        }
+      }
+    } catch (err: any) {
+      logger.error(
+        `Error while Checking bap_terms in ${constants.ON_INIT}, ${err.stack} `,
+      )
     }
 
     try {

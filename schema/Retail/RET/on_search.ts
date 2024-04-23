@@ -58,7 +58,7 @@ export const onSearchSchema = {
         },
         timestamp: {
           type: 'string',
-          format: 'date-time',
+          format: 'rfc3339-date-time',
           errorMessage: 'Time must be RFC3339 UTC timestamp format.',
         },
         ttl: {
@@ -238,7 +238,7 @@ export const onSearchSchema = {
                       },
                       timestamp: {
                         type: 'string',
-                        format: 'date-time',
+                        format: 'rfc3339-date-time',
                       },
                     },
                     required: ['label', 'timestamp'],
@@ -317,7 +317,7 @@ export const onSearchSchema = {
                             },
                             timestamp: {
                               type: 'string',
-                              format: 'date-time',
+                              format: 'rfc3339-date-time',
                             },
                             days: {
                               type: 'string',
@@ -360,7 +360,7 @@ export const onSearchSchema = {
                               required: ['start', 'end'],
                             },
                           },
-                          required: ['label', 'timestamp'],
+                          required: ['label', 'timestamp','schedule'],
                         },
                         gps: {
                           type: 'string',
@@ -491,7 +491,7 @@ export const onSearchSchema = {
                             },
                             timestamp: {
                               type: 'string',
-                              format: 'date-time',
+                              format: 'rfc3339-date-time',
                             },
                           },
                           required: ['label', 'timestamp'],
@@ -754,9 +754,8 @@ export const onSearchSchema = {
                                         properties: {
                                           value: {
                                             type: 'string',
-                                            enum: ['Self-Pickup','Order','Delivery'],
-                                            errorMessage: "timing for fulfillment type, enum - 'Order' (online order processing timings 'Delivery' (order shipment timings, will be same as delivery timings for hyperlocal), 'Self-Pickup' (self-pickup timings)",
-                                          },
+                                            enum: ['Self-Pickup','Order','Delivery', 'All'],
+                                            errorMessage: "timing for fulfillment type, enum - 'Order' (online order processing timings 'Delivery' (order shipment timings, will be same as delivery timings for hyperlocal), 'Self-Pickup' (self-pickup timings), All",},
                                         },
                                         required: ['code', 'value'],
                                       },
@@ -1019,7 +1018,7 @@ export const onSearchSchema = {
                                         properties: {
                                           value: {
                                             description: 'RFC3339 UTC timestamp format',
-                                            format: 'date-time',
+                                            format: 'rfc3339-date-time',
                                             errorMessage: 'Time must be RFC3339 UTC timestamp format.',
                                           },
                                         },
@@ -1058,7 +1057,7 @@ export const onSearchSchema = {
                                         properties: {
                                           value: {
                                             description: 'RFC3339 UTC timestamp format',
-                                            format: 'date-time',
+                                            format: 'rfc3339-date-time',
                                             errorMessage: 'Time must be RFC3339 UTC timestamp format.',
                                           },
                                         },

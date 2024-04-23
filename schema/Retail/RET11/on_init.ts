@@ -52,7 +52,7 @@ export const FnBonInitSchema = {
         },
         timestamp: {
           type: 'string',
-          format: 'date-time',
+          format: 'rfc3339-date-time',
         },
         ttl: {
           type: 'string',
@@ -212,11 +212,11 @@ export const FnBonInitSchema = {
                 },
                 created_at: {
                   type: 'string',
-                  format: 'date-time',
+                  format: 'rfc3339-date-time',
                 },
                 updated_at: {
                   type: 'string',
-                  format: 'date-time',
+                  format: 'rfc3339-date-time',
                 },
               },
               required: ['name', 'address', 'phone', 'created_at', 'updated_at'],
@@ -641,17 +641,16 @@ export const FnBonInitSchema = {
                         {
                           if: {
                             properties: {
-                              code: {
-                                const: 'tax_number',
-                              },
+                              code: { const: 'tax_number' },
                             },
                           },
                           then: {
+                            type: 'object',
                             properties: {
                               value: {
                                 type: 'string',
-                                pattern: '^[A-Za-z0-9]+$',
-                                errorMessage: 'Value for tax_number must be alphanumeric characters only',
+                                pattern: '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$',
+                                errorMessage: 'Value for tax_number must be a valid tax number i.e alphanumeric with 15 characters ',
                               },
                             },
                             required: ['code', 'value'],
@@ -660,16 +659,15 @@ export const FnBonInitSchema = {
                         {
                           if: {
                             properties: {
-                              code: {
-                                const: 'provider_tax_number',
-                              },
+                              code: { const: 'provider_tax_number' },
                             },
                           },
                           then: {
+                            type: 'object',
                             properties: {
                               value: {
                                 type: 'string',
-                                pattern: '^[A-Za-z0-9]+$',
+                                pattern: '[A-Z]{5}[0-9]{4}[A-Z]{1}',
                                 errorMessage: 'Value for provider_tax_number must be alphanumeric characters only',
                               },
                             },

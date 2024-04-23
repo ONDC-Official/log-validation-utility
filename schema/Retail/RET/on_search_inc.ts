@@ -37,7 +37,7 @@ export const onSearchIncSchema = {
         },
         timestamp: {
           type: 'string',
-          format: 'date-time',
+          format: 'rfc3339-date-time',
         },
         ttl: {
           type: 'string',
@@ -82,7 +82,8 @@ export const onSearchIncSchema = {
                   },
                   type: {
                     type: 'string',
-                    enum: ['Delivery', 'Self-Pickup', 'Delivery and Self-Pickup'],
+                    enum: ['Self-Pickup','Order','Delivery', 'All'],
+                    errorMessage: "timing for fulfillment type, enum - 'Order' (online order processing timings 'Delivery' (order shipment timings, will be same as delivery timings for hyperlocal), 'Self-Pickup' (self-pickup timings), All",
                   },
                 },
                 required: ['id', 'type'],
@@ -129,7 +130,7 @@ export const onSearchIncSchema = {
                       },
                       timestamp: {
                         type: 'string',
-                        format: 'date-time',
+                        format: 'rfc3339-date-time',
                       },
                     },
                     required: ['label', 'timestamp'],
@@ -208,7 +209,7 @@ export const onSearchIncSchema = {
                             },
                             timestamp: {
                               type: 'string',
-                              format: 'date-time',
+                              format: 'rfc3339-date-time',
                             },
                             days: {
                               type: 'string',
@@ -252,7 +253,7 @@ export const onSearchIncSchema = {
                               required: ['start', 'end'],
                             },
                           },
-                          required: ['label', 'timestamp'],
+                          required: ['label', 'timestamp','schedule'],
                         },
                         gps: {
                           type: 'string',
@@ -389,7 +390,7 @@ export const onSearchIncSchema = {
                             },
                             timestamp: {
                               type: 'string',
-                              format: 'date-time',
+                              format: 'rfc3339-date-time',
                             },
                           },
                           required: ['label', 'timestamp'],

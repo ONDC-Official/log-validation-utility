@@ -33,8 +33,14 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any) =>
       onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
-    if (!msgIdSet.add(context.message_id)) {
-      onStatusObj['messageId'] = 'message_id should be unique'
+    try {
+      logger.info(`Adding Message Id /${constants.ON_STATUS_PENDING}`)
+      if (msgIdSet.has(context.message_id)) {
+        onStatusObj[`${ApiSequence.ON_STATUS_PENDING}_msgId`] = `Message id should not be same with previous calls`
+      }
+      msgIdSet.add(context.message_id)
+    } catch (error: any) {
+      logger.error(`!!Error while checking message id for /${constants.ON_STATUS_PENDING}, ${error.stack}`)
     }
 
     setValue(`${ApiSequence.ON_STATUS_PENDING}`, data)
@@ -85,6 +91,16 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any) =>
     }
 
     try {
+      logger.info(`Validating order state`)
+      if (on_status.state !== 'Accepted') {
+        onStatusObj[`order_state`] =
+          `Order state should be accepted whenever Status is being sent 'Accepted'. Current state: ${on_status.state}`
+      }
+    } catch (error: any) {
+      logger.error(`Error while validating order state, ${error.stack}`)
+    }
+
+    try {
       if (!_.isEqual(getValue(`cnfrmTmpstmp`), on_status.created_at)) {
         onStatusObj.tmpstmp = `Created At timestamp for /${constants.ON_STATUS}_${state} should be equal to context timestamp at ${constants.CONFIRM}`
       }
@@ -114,8 +130,6 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any) =>
         `!!Error occurred while comparing order updated at for /${constants.ON_STATUS}_${state}, ${error.stack}`,
       )
     }
-
-
 
     try {
       logger.info(`Checking if transaction_id is present in message.order.payment`)

@@ -50,7 +50,7 @@ export const initSchema = {
         },
         timestamp: {
           type: 'string',
-          format: 'date-time',
+          format: 'rfc3339-date-time',
         },
         ttl: {
           type: 'string',
@@ -212,11 +212,11 @@ export const initSchema = {
                 },
                 created_at: {
                   type: 'string',
-                  format: 'date-time',
+                  format: 'rfc3339-date-time',
                 },
                 updated_at: {
                   type: 'string',
-                  format: 'date-time',
+                  format: 'rfc3339-date-time',
                 },
               },
               required: ['name', 'address', 'phone', 'created_at', 'updated_at'],

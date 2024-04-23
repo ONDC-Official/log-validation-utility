@@ -54,7 +54,7 @@ export const trackSchema = {
         timestamp: {
           type: 'string',
           minLength: 1,
-          format: 'date-time',
+          format: 'rfc3339-date-time',
         },
         ttl: {
           type: 'string',

@@ -35,8 +35,15 @@ export const checkCancel = (data: any, msgIdSet: any) => {
       Object.assign(cnclObj, contextRes.ERRORS)
     }
 
-    if (!msgIdSet.add(context.message_id)) {
-      cnclObj['messageId'] = 'message_id should be unique'
+    try {
+      logger.info(`Adding Message Id /${constants.CANCEL}`)
+      if (msgIdSet.has(context.message_id)) {
+        cnclObj[`${ApiSequence.CANCEL}_msgId`] = `Message id should not be same with previous calls`
+      }
+      msgIdSet.add(context.message_id)
+      setValue(`${ApiSequence.CANCEL}_msgId`, data.context.message_id)
+    } catch (error: any) {
+      logger.error(`!!Error while checking message id for /${constants.CANCEL}, ${error.stack}`)
     }
 
     if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {

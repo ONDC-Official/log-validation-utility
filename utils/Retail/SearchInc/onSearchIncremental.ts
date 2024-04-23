@@ -3,10 +3,10 @@
 import { logger } from '../../../shared/logger'
 import { setValue, getValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
-import { validateSchema, isObjectEmpty, checkContext, checkGpsPrecision, emailRegex } from '../../../utils'
+import { validateSchema, isObjectEmpty, checkContext, checkGpsPrecision, emailRegex } from '../..'
 import _, { isEmpty } from 'lodash'
 
-export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
+export const checkOnsearchIncremental = (data: any, _msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.INC_ONSEARCH]: 'JSON cannot be empty' }
   }
@@ -20,9 +20,16 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
 
   const contextRes: any = checkContext(context, constants.ON_SEARCH)
   setValue(`${ApiSequence.INC_ONSEARCH}_context`, context)
-  msgIdSet.add(context.message_id)
 
   const errorObj: any = {}
+  try {
+    logger.info(`Comparing Message Ids of /${constants.INC_SEARCH} and /${constants.ON_SEARCHINC}`)
+    if (!_.isEqual(getValue(`${ApiSequence.INC_SEARCH}_msgId`), context.message_id)) {
+      errorObj[`${ApiSequence.INC_ONSEARCH}_msgId`]  = `Message Ids for /${constants.INC_SEARCH} and /${constants.ON_SEARCHINC} api should be same`
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while checking message id for /${constants.ON_SEARCHINC}, ${error.stack}`)
+  }
 
   if (schemaValidation !== 'error') {
     Object.assign(errorObj, schemaValidation)
@@ -48,6 +55,14 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
     logger.error(`!!Error while storing BAP and BPP Ids in /${constants.ON_SEARCH}, ${error.stack}`)
   }
 
+  try {
+    logger.info(`Comparing city Ids of  /${ApiSequence.INC_ONSEARCH}`)
+    if (context.city !== '*') {
+      errorObj.city = `context/city should be "*" in  /${ApiSequence.INC_ONSEARCH} `
+    }
+  } catch (error: any) {
+    logger.info(`Error while comparing transaction ids for  /${ApiSequence.INC_ONSEARCH} api, ${error.stack}`)
+  }
   try {
     logger.info(`Comparing transaction Ids of /${ApiSequence.INC_SEARCH} and /${ApiSequence.INC_ONSEARCH}`)
     if (!_.isEqual(incSearchContext.transaction_id, context.transaction_id)) {

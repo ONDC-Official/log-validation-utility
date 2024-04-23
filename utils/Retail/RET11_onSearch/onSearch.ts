@@ -18,10 +18,11 @@ import {
   areTimestampsLessThanOrEqualTo,
   checkDuplicateParentIdItems,
   checkForDuplicates,
-} from '../../../utils'
+  validateObjectString,
+} from '../..'
 import _ from 'lodash'
 
-export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
+export const checkOnsearchFullCatalogRefresh = (data: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.ON_SEARCH]: 'JSON cannot be empty' }
   }
@@ -36,21 +37,27 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
   const contextRes: any = checkContext(context, constants.ON_SEARCH)
   setValue(`${ApiSequence.ON_SEARCH}_context`, context)
   setValue(`${ApiSequence.ON_SEARCH}_message`, message)
-  msgIdSet.add(context.message_id)
-
   let errorObj: any = {}
 
   if (schemaValidation !== 'error') {
     Object.assign(errorObj, schemaValidation)
   }
+
+  try {
+    logger.info(`Comparing Message Ids of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
+    if (!_.isEqual(getValue(`${ApiSequence.SEARCH}_msgId`), context.message_id)) {
+      errorObj[`${ApiSequence.ON_SEARCH}_msgId`] = `Message Ids for /${constants.SEARCH} and /${constants.ON_SEARCH} api should be same`
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while checking message id for /${constants.ON_SEARCH}, ${error.stack}`)
+  }
+
   if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
     errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
   }
 
-  logger.info('Initializing ---->')
   const checkBap = checkBppIdOrBapId(context.bap_id)
   const checkBpp = checkBppIdOrBapId(context.bpp_id)
-  logger.info(checkBap)
 
   if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
   if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
@@ -68,6 +75,16 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     setValue('bppId', context.bpp_id)
   } catch (error: any) {
     logger.error(`!!Error while storing BAP and BPP Ids in /${constants.ON_SEARCH}, ${error.stack}`)
+  }
+
+  try {
+    logger.info(`Comparing timestamp of /${ApiSequence.SEARCH} /${constants.ON_SEARCH}`)
+
+    if (searchContext.timestamp == context.timestamp) {
+      errorObj.tmstmp = `context/timestamp of /${constants.SEARCH} and /${constants.ON_SEARCH} api cannot be same`
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while Comparing timestamp of /${ApiSequence.SEARCH} /${constants.ON_SEARCH}, ${error.stack}`)
   }
 
   try {
@@ -137,6 +154,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
   } catch (e) {
     logger.error('No Holiday', e)
   }
+
   try {
     logger.info(`Mapping items with thier respective providers`)
     const itemProviderMap: any = {}
@@ -173,29 +191,39 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
     logger.error(`Error while storing Item IDs in /${constants.ON_SEARCH}, ${error.stack}`)
   }
 
-  try{
+  try {
     logger.info(`Checking for np_type in bpp/descriptor`)
     const descriptor = onSearchCatalog['bpp/descriptor']
-    descriptor?.tags.map((tag: { code: any; list: any[] },) => {
+    descriptor?.tags.map((tag: { code: any; list: any[] }) => {
       if (tag.code === 'bpp_terms') {
         const npType = tag.list.find((item) => item.code === 'np_type')
-        if(!npType){
+        if (!npType) {
           errorObj['bpp/descriptor'] = `Missing np_type in bpp/descriptor`
+          setValue(`${ApiSequence.ON_SEARCH}np_type`, '')
+        } else {
+          setValue(`${ApiSequence.ON_SEARCH}np_type`, npType.value)
+          const npTypeValue = npType.value.toUpperCase()
+          if (npTypeValue !== 'ISN' && npTypeValue !== 'MSN') {
+            errorObj['bpp/descriptor/np_type'] =
+              `Invalid value '${npType.value}' for np_type. It should be either 'ISN' or 'MSN' in uppercase.`
+          }
         }
+
         const accept_bap_terms = tag.list.find((item) => item.code === 'accept_bap_terms')
-        if(accept_bap_terms){
-          errorObj['bpp/descriptor/accept_bap_terms'] = `accept_bap_terms is not required in bpp/descriptor/tags `
+        if (accept_bap_terms) {
+          errorObj['bpp/descriptor/accept_bap_terms'] =
+            `remove accept_bap_terms block in /bpp/descriptor/tags; should be enabled once BNP send their static terms in /search and are later accepted by SNP`
         }
+
         const collect_payment = tag.list.find((item) => item.code === 'collect_payment')
-        if(collect_payment){
-          errorObj['bpp/descriptor/collect_payment'] = `collect_payment is not required in bpp/descriptor/tags `  
+        if (collect_payment) {
+          errorObj['bpp/descriptor/collect_payment'] = `collect_payment is not required in bpp/descriptor/tags `
+        }
       }
-    }
     })
-  }catch(error:any){
+  } catch (error: any) {
     logger.error(`Error while checking np_type in bpp/descriptor for /${constants.ON_SEARCH}, ${error.stack}`)
   }
-
 
   try {
     logger.info(`Checking Providers info (bpp/providers) in /${constants.ON_SEARCH}`)
@@ -214,6 +242,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
 
       logger.info(`Validating uniqueness for provider id in bpp/providers[${i}]...`)
       const prvdr = bppPrvdrs[i]
+      const categories = prvdr?.['categories']
 
       if (prvdrsId.has(prvdr.id)) {
         const key = `prvdr${i}id`
@@ -229,6 +258,61 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
 
       if (providerTime > contextTimestamp) {
         errorObj.StoreEnableDisable = `store enable/disable timestamp (/bpp/providers/time/timestamp) should be less then or equal to context.timestamp`
+      }
+
+      try {
+        logger.info(`Checking length of strings provided in descriptor /${constants.ON_SEARCH}`)
+        const descriptor = prvdr['descriptor']
+        const result = validateObjectString(descriptor)
+        if (typeof result == 'string' && result.length) {
+          const key = `prvdr${i}descriptor`
+          errorObj[key] = result
+        }
+      } catch (error: any) {
+        logger.info(
+          `Error while Checking length of strings provided in descriptor /${constants.ON_SEARCH}, ${error.stack}`,
+        )
+      }
+
+      try {
+        logger.info(`Checking for empty list arrays in tags`)
+        const categories = prvdr['categories']
+        categories.forEach(
+          (category: { id: string; parent_category_id: string; descriptor: { name: string }; tags: any[] }) => {
+            if (category.parent_category_id !== '') {
+              errorObj[`categories[${category.id}].parent_category_id`] =
+                `/message/catalog/bpp/providers/categories/parent_category_id should be an empty string in category '${category.descriptor.name}'`
+            }
+            if (category.parent_category_id === category.id) {
+              errorObj[`categories[${category.id}].prnt_ctgry_id`] =
+                `/message/catalog/bpp/providers/categories/parent_category_id should not be the same as id in category '${category.descriptor.name}'`
+            }
+            category.tags.forEach((tag: { code: string; list: any[] }, index: number) => {
+              if (tag.list.length === 0) {
+                errorObj[`provider[${i}].categories[${category.id}].tags[${index}]`] =
+                  `Empty list array provided for tag '${tag.code}' in category '${category.descriptor.name}'`
+              }
+              if (tag.code === 'display') {
+                tag.list.forEach((item: { code: string; value: string }) => {
+                  if (item.code === 'rank' && parseInt(item.value) === 0) {
+                    errorObj[`provider[${i}].categories[${category.id}].tags[${index}].list[${item.code}]`] =
+                      `display rank provided in /message/catalog/bpp/providers/categories (category:'${category?.descriptor?.name}) should not be zero ("0"), it should start from one ('1') '`
+                  }
+                })
+              }
+              if (tag.code === 'config') {
+                tag.list.forEach((item: { code: string; value: string }) => {
+                  if (item.code === 'seq' && parseInt(item.value) === 0) {
+                    errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] =
+                      `Seq value should start from 1 and not 0 in category '${category.descriptor.name}'`
+                  }
+                })
+              }
+            })
+          },
+        )
+      } catch (error: any) {
+        logger.error(`Error while checking empty list arrays in tags for /${constants.ON_SEARCH}, ${error.stack}`)
       }
 
       try {
@@ -712,6 +796,59 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
             logger.error(`Error while checking tags for item id: ${item.id}, ${e.stack}`)
           }
 
+          try {
+            logger.info(`Validating item tags`)
+            const itemTypeTag = item.tags.find((tag: { code: string }) => tag.code === 'type')
+            const customGroupTag = item.tags.find((tag: { code: string }) => tag.code === 'custom_group')
+            if (itemTypeTag && itemTypeTag.list.length > 0 && itemTypeTag.list[0].value === 'item' && !customGroupTag) {
+              errorObj[`items[${item.id}]`] =
+                `/message/catalog/bpp/providers/items/tags/'type' is optional for non-customizable (standalone) SKUs`
+            } else if (
+              itemTypeTag &&
+              itemTypeTag.list.length > 0 &&
+              itemTypeTag.list[0].value === 'item' &&
+              customGroupTag
+            ) {
+              errorObj[`items[${item.id}]`] =
+                `/message/catalog/bpp/providers/items must have default_selection price and lower/upper range for customizable items`
+            }
+          } catch (error: any) {
+            logger.error(`Error while validating item, ${error.stack}`)
+          }
+
+          try {
+            logger.info(`Validating default customizations`)
+            const itemTypeTag = item.tags.find(
+              (tag: any) =>
+                tag.code === 'type' &&
+                tag.list.some((item: any) => item.code === 'type' && item.value === 'customization'),
+            )
+            if (itemTypeTag) {
+              const parentTag = item.tags.find((tag: any) => tag.code === 'parent')
+              if (parentTag) {
+                const categoryId = parentTag.list.find((item: any) => item.code === 'id')?.value
+                if (categoryId) {
+                  const category = categories.find((category: any) => category.id === categoryId)
+                  if (category) {
+                    const configTag = category.tags.find((tag: any) => tag.code === 'config')
+                    if (configTag) {
+                      const minSelection = configTag.list.find((item: any) => item.code === 'min')?.value
+                      if (minSelection === '0') {
+                        const defaultTag = parentTag.list.find((item: any) => item.code === 'default')
+                        if (defaultTag && defaultTag.value === 'yes') {
+                          errorObj[`items[${item.id}]category[${categoryId}]`] =
+                            `Default customization should not be set true for a custom_group where min selection is 0`
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          } catch (error: any) {
+            logger.error(`Error while validating default customizations, ${error.stack}`)
+          }
+
           j++
         }
       } catch (error: any) {
@@ -746,12 +883,14 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
         for (let i in onSearchCatalog['bpp/providers']) {
           const items = onSearchCatalog['bpp/providers'][i].items
           items.forEach((item: any, index: number) => {
-            const itemTimeStamp = item.time.timestamp
-            const op = areTimestampsLessThanOrEqualTo(itemTimeStamp, timestamp)
-            if (!op) {
-              const key = `bpp/providers/items/time/timestamp[${index}]`
-              errorObj[key] = `Timestamp for item[${index}] can't be greater than context.timestamp`
-              logger.error(`Timestamp for item[${index}] can't be greater than context.timestamp`)
+            if (item?.time) {
+              const itemTimeStamp = item.time.timestamp
+              const op = areTimestampsLessThanOrEqualTo(itemTimeStamp, timestamp)
+              if (!op) {
+                const key = `bpp/providers/items/time/timestamp[${index}]`
+                errorObj[key] = `Timestamp for item[${index}] can't be greater than context.timestamp`
+                logger.error(`Timestamp for item[${index}] can't be greater than context.timestamp`)
+              }
             }
           })
         }
@@ -1019,9 +1158,36 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
               }
             }
           }
+          if (sc.code === 'timing') {
+            const fulfillments = prvdr['fulfillments']
+            const fulfillmentTypes = fulfillments.map((fulfillment: any) => fulfillment.type)
+
+            let isOrderPresent = false
+            const typeCode = sc?.list.find((item: any) => item.code === 'type')
+            if (typeCode) {
+              const timingType = typeCode.value
+              if (
+                timingType === 'Order' ||
+                timingType === 'Delivery' ||
+                timingType === 'Self-Pickup' ||
+                timingType === 'All'
+              ) {
+                isOrderPresent = true
+              } else if (!fulfillmentTypes.includes(timingType)) {
+                errorObj[`provider[${i}].timing`] =
+                  `The type '${timingType}' in timing tags should match with types in fulfillments array, along with 'Order'`
+              }
+            }
+
+            if (!isOrderPresent) {
+              errorObj[`provider[${i}].tags.timing`] = `'Order' type must be present in timing tags`
+            }
+          }
         })
       } catch (error: any) {
-        logger.error(`!!Error while checking serviceability construct for bpp/providers[${i}], ${error.stack}`)
+        logger.error(
+          `!!Error while checking serviceability and timing construct for bpp/providers[${i}], ${error.stack}`,
+        )
       }
 
       try {

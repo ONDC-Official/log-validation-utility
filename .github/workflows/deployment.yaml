@@ -1,0 +1,38 @@
+name: ondc Deployment
+
+on:
+  push:
+    branches: ['master']
+
+jobs:
+  ssh-ec2:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: SSH Setup and Cloning Repository
+        run: |
+          echo "${{ secrets.KEY }}" > ./key.pem
+          chmod 600 ./key.pem
+          mkdir -p ~/.ssh
+          ssh-keyscan ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+          ssh -i ./key.pem ${{ secrets.USER }}@${{ secrets.HOST }} -T <<EOF
+          if [ -d "log-validation-utility" ]; then
+            echo "Repository already exists, cleaning up"
+            cd ./log-validation-utility && git pull origin master
+          else
+            echo "Cloning repository"
+            git clone https://github.com/ONDC-Official/log-validation-utility.git
+          fi
+          EOF
+
+      - name: Ondc Deployment
+        run: |
+          ssh -o ServerAliveInterval=30 -o TCPKeepAlive=yes -T -i ./key.pem ${{ secrets.USER }}@${{ secrets.HOST }} <<EOF
+          ssh-keyscan ${{ secrets.HOST }} >> ~/.ssh/known_hosts
+          cd ./log-validation-utility
+          cp ~/.env ~/log-validation-utility/
+          sudo docker-compose up -d --build
+          EOF

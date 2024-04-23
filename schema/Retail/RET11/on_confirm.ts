@@ -52,7 +52,7 @@ export const FnBonConfirmSchema = {
         },
         timestamp: {
           type: 'string',
-          format: 'date-time',
+          format: 'rfc3339-date-time',
         },
         ttl: {
           type: 'string',
@@ -82,7 +82,8 @@ export const FnBonConfirmSchema = {
           properties: {
             id: {
               type: 'string',
-              pattern: '^[a-zA-Z0-9-]{1,32}$|^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+              pattern:
+                '^[a-zA-Z0-9-]{1,32}$|^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
               errorMessage: 'Order ID should be alphanumeric upto 32 letters max or UUID',
             },
             state: {
@@ -216,11 +217,11 @@ export const FnBonConfirmSchema = {
                 },
                 created_at: {
                   type: 'string',
-                  format: 'date-time',
+                  format: 'rfc3339-date-time',
                 },
                 updated_at: {
                   type: 'string',
-                  format: 'date-time',
+                  format: 'rfc3339-date-time',
                 },
               },
               required: ['name', 'address', 'phone', 'created_at', 'updated_at'],
@@ -481,7 +482,8 @@ export const FnBonConfirmSchema = {
                     value: {
                       type: 'string',
                       minLength: 1,
-                      pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                      pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                      errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                     },
                   },
                   required: ['currency', 'value'],
@@ -521,7 +523,8 @@ export const FnBonConfirmSchema = {
                           value: {
                             type: 'string',
                             minLength: 1,
-                            pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                            pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                            errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                           },
                         },
                         required: ['currency', 'value'],
@@ -542,7 +545,8 @@ export const FnBonConfirmSchema = {
                               value: {
                                 type: 'string',
                                 minLength: 1,
-                                pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                                pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                                errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                               },
                             },
                             required: ['currency', 'value'],
@@ -723,6 +727,7 @@ export const FnBonConfirmSchema = {
                 '@ondc/org/buyer_app_finder_fee_type',
                 '@ondc/org/buyer_app_finder_fee_amount',
               ],
+              additionalProperties: false,
             },
             tags: {
               type: 'array',
@@ -768,15 +773,13 @@ export const FnBonConfirmSchema = {
                           then: {
                             type: 'object',
                             properties: {
-                              code: {
-                                type: 'string',
-                              },
                               value: {
                                 type: 'string',
+                                pattern: '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$',
+                                errorMessage: 'Value for tax_number must be a valid tax number i.e alphanumeric with 15 characters ',
                               },
                             },
                             required: ['code', 'value'],
-                            additionalProperties: false,
                           },
                         },
                         {
@@ -788,15 +791,13 @@ export const FnBonConfirmSchema = {
                           then: {
                             type: 'object',
                             properties: {
-                              code: {
-                                type: 'string',
-                              },
                               value: {
                                 type: 'string',
+                                pattern: '[A-Z]{5}[0-9]{4}[A-Z]{1}',
+                                errorMessage: 'Value for provider_tax_number must be alphanumeric characters only',
                               },
                             },
                             required: ['code', 'value'],
-                            additionalProperties: false,
                           },
                         },
                       ],
@@ -810,11 +811,11 @@ export const FnBonConfirmSchema = {
             },
             created_at: {
               type: 'string',
-              format: 'date-time',
+              format: 'rfc3339-date-time',
             },
             updated_at: {
               type: 'string',
-              format: 'date-time',
+              format: 'rfc3339-date-time',
             },
           },
           required: [

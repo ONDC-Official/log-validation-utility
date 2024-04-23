@@ -8,7 +8,7 @@ import {
   isObjectEmpty,
   hasProperty,
   checkContext,
-} from '../../../utils'
+} from '../..'
 import _ from 'lodash'
 
 export const checkSearchIncremental = (data: any, msgIdSet: any) => {
@@ -26,7 +26,17 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
     const schemaValidation = validateSchema(context.domain.split(':')[1] || 'RET11', constants.INC_SEARCH, data)
     const contextRes: any = checkContext(context, constants.SEARCH)
     setValue(`${ApiSequence.INC_SEARCH}_context`, context)
-    msgIdSet.add(context.message_id)
+
+    try {
+      logger.info(`Adding Message Id /${constants.INC_SEARCH}`)
+      if (msgIdSet.has(context.message_id)) {
+        errorObj[`${ApiSequence.INC_SEARCH}_msgId`] = `Message id should not be same with previous calls`
+      }
+      msgIdSet.add(context.message_id)
+      setValue(`${ApiSequence.INC_SEARCH}_msgId`, data.context.message_id)
+    } catch (error: any) {
+      logger.error(`!!Error while checking message id for /${constants.INC_SEARCH}, ${error.stack}`)
+    }
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)

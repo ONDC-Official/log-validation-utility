@@ -7,7 +7,7 @@ import {
   checkBppIdOrBapId,
   findItemByItemType,
   isoDurToSec,
-} from '../../../utils'
+} from '../..'
 import _ from 'lodash'
 import { logger } from '../../../shared/logger'
 
@@ -24,7 +24,7 @@ const tagFinder = (item: { tags: any[] }, value: string): any => {
   return res
 }
 
-export const checkSelect = (data: any, msgIdSet: any) => {
+export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.SELECT]: 'JSON cannot be empty' }
   }
@@ -38,17 +38,41 @@ export const checkSelect = (data: any, msgIdSet: any) => {
 
   const contextRes: any = checkContext(context, constants.SELECT)
   const onSearch: any = getValue(`${ApiSequence.ON_SEARCH}`)
-  msgIdSet.add(context.message_id)
+  const flow = getValue('flow')
 
   const errorObj: any = {}
+
+  try {
+    if (flow === '3' && apiSeq == ApiSequence.SELECT_OUT_OF_STOCK) {
+      logger.info(`Adding Message Id /${constants.SELECT_OUT_OF_STOCK}`)
+      if (msgIdSet.has(context.message_id)){
+        errorObj[`${ApiSequence.SELECT_OUT_OF_STOCK}_msgId`] = `Message id should not be same with previous calls`
+      }
+      msgIdSet.add(context.message_id)
+      setValue(`${ApiSequence.SELECT_OUT_OF_STOCK}_msgId`, data.context.message_id)
+    }
+    else {
+      logger.info(`Adding Message Id /${constants.SELECT}`)
+      if (msgIdSet.has(context.message_id)){
+        errorObj[`${ApiSequence.SELECT}_msgId`] = `Message id should not be same with previous calls`
+      }
+      msgIdSet.add(context.message_id)
+      setValue(`${ApiSequence.SELECT}_msgId`, data.context.message_id)
+    }
+  } catch (error: any) {
+    if (flow === '3' && apiSeq == ApiSequence.SELECT_OUT_OF_STOCK) {
+      logger.error(`!!Error while checking message id for /${constants.SELECT_OUT_OF_STOCK}, ${error.stack}`)
+    }
+    else {
+      logger.error(`!!Error while checking message id for /${constants.SELECT}, ${error.stack}`)
+    }
+  }
+
   let selectedPrice = 0
   const itemsIdList: any = {}
   const itemsCtgrs: any = {}
   const itemsTat: any[] = []
 
-  if (!msgIdSet.add(context.message_id)) {
-    errorObj['messageId'] = 'message_id should be unique'
-  }
   if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
     errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
   }
@@ -100,7 +124,6 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     }
 
     setValue('tmpstmp', context.timestamp)
-    setValue('msgId', context.message_id)
   } catch (error: any) {
     logger.info(
       `Error while comparing timestamp for /${constants.ON_SEARCH} and /${constants.SELECT} api, ${error.stack}`,
@@ -119,7 +142,6 @@ export const checkSelect = (data: any, msgIdSet: any) => {
       errorObj[key] = `Message Id for /${ApiSequence.SEARCH} and /${ApiSequence.SELECT} api cannot be same`
     }
 
-    setValue('msgId', context.message_id)
     setValue('txnId', context.transaction_id)
   } catch (error: any) {
     logger.info(

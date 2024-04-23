@@ -45,7 +45,7 @@ export const FnBonSelectSchema = {
         },
         timestamp: {
           type: 'string',
-          format: 'date-time',
+          format: 'rfc3339-date-time',
         },
         ttl: {
           type: 'string',
@@ -185,7 +185,8 @@ export const FnBonSelectSchema = {
                     },
                     value: {
                       type: 'string',
-                      pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                      pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                      errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                     },
                   },
                   required: ['currency', 'value'],
@@ -221,7 +222,8 @@ export const FnBonSelectSchema = {
                           },
                           value: {
                             type: 'string',
-                            pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                            pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                            errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                           },
                         },
                         required: ['currency', 'value'],
@@ -264,7 +266,8 @@ export const FnBonSelectSchema = {
                               },
                               value: {
                                 type: 'string',
-                                pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                                pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                                errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                               },
                             },
                             required: ['currency', 'value'],

@@ -1081,3 +1081,60 @@ export function compareQuoteObjects(obj1: InputObject, obj2: InputObject, api1: 
 
   return errors
 }
+
+type ObjectType = {
+  [key: string]: string | string[]
+}
+
+export function validateObjectString(obj: ObjectType): string | null {
+  const errors: string[] = []
+
+  Object.entries(obj).forEach(([key, value]) => {
+    if (typeof value === 'string' && value.trim() === '') {
+      errors.push(`'${key}'`)
+    } else if (Array.isArray(value) && value.some((v) => typeof v === 'string' && v.trim() === '')) {
+      errors.push(`'${key}'`)
+    }
+  })
+
+  if (errors.length > 0) {
+    return `${errors.join(', ')} cannot be empty`
+  }
+
+  return null
+}
+
+export function compareLists(list1: any[], list2: any[]): string[] {
+  const errors: string[] = []
+
+  for (const obj1 of list1) {
+    const matchingObj = list2.find((obj2) => obj2.code === obj1.code)
+
+    if (!matchingObj) {
+      errors.push(`Code '${obj1.code}' present in first list but not in second list.`)
+    } else {
+      if (obj1.value !== matchingObj.value) {
+        errors.push(`Code '${obj1.code}' value not matching.`)
+      }
+    }
+  }
+
+  return errors
+}
+
+export const findProviderLocation = (obj: any): boolean => {
+  for (const key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      if (key === 'provider_location') {
+        return true
+      }
+      if (typeof obj[key] === 'object') {
+        const found = findProviderLocation(obj[key])
+        if (found) {
+          return true
+        }
+      }
+    }
+  }
+  return false
+}

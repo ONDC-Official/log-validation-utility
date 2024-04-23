@@ -1,3 +1,5 @@
+import { invoiceRules, timeRules } from './onStatusValidations'
+
 export const onStatusSchema = {
   type: 'object',
   properties: {
@@ -53,7 +55,7 @@ export const onStatusSchema = {
         },
         timestamp: {
           type: 'string',
-          format: 'date-time',
+          format: 'rfc3339-date-time',
         },
         ttl: {
           type: 'string',
@@ -73,6 +75,7 @@ export const onStatusSchema = {
         'city',
         'country',
         'ttl',
+        'timestamp'
       ],
     },
     message: {
@@ -84,7 +87,8 @@ export const onStatusSchema = {
             id: {
               type: 'string',
               minLength: 1,
-              pattern: '^[a-zA-Z0-9-]{1,32}$|^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+              pattern:
+                '^[a-zA-Z0-9-]{1,32}$|^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
               errorMessage: 'Order ID should be alphanumeric upto 32 letters max or UUID',
             },
             state: {
@@ -247,11 +251,11 @@ export const onStatusSchema = {
                 },
                 created_at: {
                   type: 'string',
-                  format: 'date-time',
+                  format: 'rfc3339-date-time',
                 },
                 updated_at: {
                   type: 'string',
-                  format: 'date-time',
+                  format: 'rfc3339-date-time',
                 },
               },
               required: ['name', 'address', 'phone', 'created_at', 'updated_at'],
@@ -343,11 +347,11 @@ export const onStatusSchema = {
                             properties: {
                               start: {
                                 type: 'string',
-                                format: 'date-time',
+                                format: 'rfc3339-date-time',
                               },
                               end: {
                                 type: 'string',
-                                format: 'date-time',
+                                format: 'rfc3339-date-time',
                               },
                             },
                             required: ['start', 'end'],
@@ -449,11 +453,11 @@ export const onStatusSchema = {
                             properties: {
                               start: {
                                 type: 'string',
-                                format: 'date-time',
+                                format: 'rfc3339-date-time',
                               },
                               end: {
                                 type: 'string',
-                                format: 'date-time',
+                                format: 'rfc3339-date-time',
                               },
                             },
                             required: ['start', 'end'],
@@ -536,6 +540,17 @@ export const onStatusSchema = {
                   'start',
                   'end',
                 ],
+                if: {
+                  properties: {
+                    type: {
+                      type: 'string',
+                      const: 'Delivery',
+                    },
+                  },
+                },
+                then: {
+                  allOf: timeRules,
+                },
               },
             },
             quote: {
@@ -549,7 +564,8 @@ export const onStatusSchema = {
                     },
                     value: {
                       type: 'string',
-                      pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                      pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                      errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                     },
                   },
                   required: ['currency', 'value'],
@@ -585,7 +601,8 @@ export const onStatusSchema = {
                           },
                           value: {
                             type: 'string',
-                            pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                            pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                            errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                           },
                         },
                         required: ['currency', 'value'],
@@ -604,7 +621,8 @@ export const onStatusSchema = {
                               },
                               value: {
                                 type: 'string',
-                                pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                                pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                                errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                               },
                             },
                             required: ['currency', 'value'],
@@ -674,15 +692,15 @@ export const onStatusSchema = {
                 },
                 status: {
                   type: 'string',
-                  enum:["PAID","NOT-PAID"]
+                  enum: ['PAID', 'NOT-PAID'],
                 },
                 type: {
                   type: 'string',
-                  enum:["ON-ORDER","ON-FULFILLMENT"]
+                  enum: ['ON-ORDER', 'ON-FULFILLMENT'],
                 },
                 collected_by: {
                   type: 'string',
-                  enum:["BAP","BPP"]
+                  enum: ['BAP', 'BPP'],
                 },
                 '@ondc/org/buyer_app_finder_fee_type': {
                   type: 'string',
@@ -692,7 +710,7 @@ export const onStatusSchema = {
                 },
                 '@ondc/org/settlement_basis': {
                   type: 'string',
-                  enum:['shipment','delivery','return_window_expiry']
+                  enum: ['shipment', 'delivery', 'return_window_expiry'],
                 },
                 '@ondc/org/settlement_window': {
                   type: 'string',
@@ -772,13 +790,14 @@ export const onStatusSchema = {
             },
             created_at: {
               type: 'string',
-              format: 'date-time',
+              format: 'rfc3339-date-time',
             },
             updated_at: {
               type: 'string',
-              format: 'date-time',
+              format: 'rfc3339-date-time',
             },
           },
+          allOf: invoiceRules,
           required: [
             'id',
             'state',

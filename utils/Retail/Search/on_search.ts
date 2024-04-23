@@ -774,7 +774,6 @@ export const checkOnsearch = (data: any) => {
                 'additives_info',
                 'brand_owner_FSSAI_license_no',
                 'other_FSSAI_license_no',
-                'brand_owner_FSSAI_license_no',
                 'importer_FSSAI_license_no',
               ]
               mandatoryFields.forEach((field) => {

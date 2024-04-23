@@ -253,7 +253,7 @@ export const onSearchIncSchema = {
                               required: ['start', 'end'],
                             },
                           },
-                          required: ['label', 'timestamp'],
+                          required: ['label', 'timestamp','schedule'],
                         },
                         gps: {
                           type: 'string',

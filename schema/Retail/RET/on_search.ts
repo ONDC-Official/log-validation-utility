@@ -360,7 +360,7 @@ export const onSearchSchema = {
                               required: ['start', 'end'],
                             },
                           },
-                          required: ['label', 'timestamp'],
+                          required: ['label', 'timestamp','schedule'],
                         },
                         gps: {
                           type: 'string',

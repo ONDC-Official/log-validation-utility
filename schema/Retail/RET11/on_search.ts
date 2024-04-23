@@ -354,7 +354,7 @@ export const FnBonSearchSchema = {
                               required: ['start', 'end'],
                             },
                           },
-                          required: ['label', 'timestamp', 'days'],
+                          required: ['label', 'timestamp', 'days','schedule'],
                         },
                         gps: {
                           type: 'string',

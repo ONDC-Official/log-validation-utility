@@ -472,7 +472,7 @@ export const FnBonSearchSchema = {
                           },
                         },
                       },
-                      required: ['id', 'parent_category_id', 'tags'],
+                      required: ['id', 'tags'],
                     },
                   },
                   items: {
@@ -652,7 +652,6 @@ export const FnBonSearchSchema = {
                         },
                         '@ondc/org/return_window': {
                           type: 'string',
-                          format: 'duration',
                         },
                         '@ondc/org/seller_pickup_return': {
                           type: 'boolean',
@@ -818,7 +817,7 @@ export const FnBonSearchSchema = {
                                         properties: {
                                           value: {
                                             type: 'string',
-                                            enum: ['Self-Pickup', 'Order', 'Delivery'],
+                                            enum: ['Self-Pickup', 'Order', 'Delivery', 'All'],
                                             errorMessage:
                                               "timing for fulfillment type, enum - 'Order' (online order processing timings 'Delivery' (order shipment timings, will be same as delivery timings for hyperlocal), 'Self-Pickup' (self-pickup timings)",
                                           },

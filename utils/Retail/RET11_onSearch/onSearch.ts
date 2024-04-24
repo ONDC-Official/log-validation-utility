@@ -46,7 +46,8 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
   try {
     logger.info(`Comparing Message Ids of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
     if (!_.isEqual(getValue(`${ApiSequence.SEARCH}_msgId`), context.message_id)) {
-      errorObj[`${ApiSequence.ON_SEARCH}_msgId`] = `Message Ids for /${constants.SEARCH} and /${constants.ON_SEARCH} api should be same`
+      errorObj[`${ApiSequence.ON_SEARCH}_msgId`] =
+        `Message Ids for /${constants.SEARCH} and /${constants.ON_SEARCH} api should be same`
     }
   } catch (error: any) {
     logger.error(`!!Error while checking message id for /${constants.ON_SEARCH}, ${error.stack}`)
@@ -232,7 +233,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
     const len = bppPrvdrs.length
     const tmpstmp = context.timestamp
     let itemIdList: any = []
-    let itemsArray = []
+    let itemsArray: any = []
     while (i < len) {
       const categoriesId = new Set()
       const customGrpId = new Set()
@@ -279,10 +280,6 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
         const categories = prvdr['categories']
         categories.forEach(
           (category: { id: string; parent_category_id: string; descriptor: { name: string }; tags: any[] }) => {
-            if (category.parent_category_id !== '') {
-              errorObj[`categories[${category.id}].parent_category_id`] =
-                `/message/catalog/bpp/providers/categories/parent_category_id should be an empty string in category '${category.descriptor.name}'`
-            }
             if (category.parent_category_id === category.id) {
               errorObj[`categories[${category.id}].prnt_ctgry_id`] =
                 `/message/catalog/bpp/providers/categories/parent_category_id should not be the same as id in category '${category.descriptor.name}'`
@@ -305,6 +302,41 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
                   if (item.code === 'seq' && parseInt(item.value) === 0) {
                     errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] =
                       `Seq value should start from 1 and not 0 in category '${category.descriptor.name}'`
+                  }
+                })
+              }
+              if (tag.code === 'type') {
+                tag.list.forEach((item: { code: string; value: string }) => {
+                  if (item.code === 'type') {
+                    if (
+                      (category.parent_category_id == '' || category.parent_category_id) &&
+                      item.value == 'custom_group'
+                    ) {
+                      if (category.parent_category_id) {
+                        errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] =
+                          `parent_category_id should not value any value while type is ${item.value}`
+                      }
+                      errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] =
+                        `parent_category_id should not be present while type is ${item.value}`
+                    } else if (
+                      category.parent_category_id != '' &&
+                      (item.value == 'custom_menu' || item.value == 'variant_group')
+                    ) {
+                      if (category.parent_category_id) {
+                        errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] =
+                          `parent_category_id should be empty string while type is ${item.value}`
+                      }
+                      errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] =
+                        `parent_category_id should be present while type is ${item.value}`
+                    } else if (
+                      category.parent_category_id &&
+                      (item.value == 'custom_menu' || item.value == 'variant_group')
+                    ) {
+                      if (category.parent_category_id) {
+                        errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] =
+                          `parent_category_id should be empty string while type is ${item.value}`
+                      }
+                    }
                   }
                 })
               }
@@ -569,7 +601,10 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
               const categoryId = category.split(':')[0]
               const seq = category.split(':')[1]
 
-              if (seqSet.has(seq)) {
+              // Check if seq exists in category_ids
+              const seqExists = item[`category_ids`].some((cat: any) => cat.seq === seq)
+
+              if (seqExists) {
                 const key = `prvdr${i}item${j}ctgryseq${index}`
                 errorObj[key] = `duplicate seq : ${seq} in category_ids in prvdr${i}item${j}`
               } else {

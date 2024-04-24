@@ -7,7 +7,7 @@ import {
   isoDurToSec,
   checkBppIdOrBapId,
   findItemByItemType,
-} from '../../../utils'
+} from '../..'
 import _ from 'lodash'
 import { logger } from '../../../shared/logger'
 
@@ -38,9 +38,20 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
 
   const contextRes: any = checkContext(context, constants.SELECT)
   const onSearch: any = getValue(`${ApiSequence.ON_SEARCH}`)
-  msgIdSet.add(context.message_id)
-
+  
   const errorObj: any = {}
+  
+  try {
+    logger.info(`Adding Message Id /${constants.SELECT}`)
+    if (msgIdSet.has(context.message_id)){
+      errorObj[`${ApiSequence.SELECT}_msgId`] = `Message id should not be same with previous calls`
+    }
+    msgIdSet.add(context.message_id)
+    setValue(`${ApiSequence.SELECT}_msgId`, data.context.message_id)
+  } catch (error: any) {
+    logger.error(`!!Error while checking message id for /${constants.SELECT}, ${error.stack}`)
+  }
+
   let SELECT_OUT_OF_STOCKedPrice = 0
   const itemsIdList: any = {}
   const itemsCtgrs: any = {}
@@ -96,7 +107,6 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
     }
 
     setValue('tmpstmp', context.timestamp)
-    setValue('msgId', context.message_id)
   } catch (error: any) {
     logger.info(
       `Error while comparing timestamp for /${constants.ON_SEARCH} and /${constants.SELECT} api, ${error.stack}`,
@@ -108,15 +118,14 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
     if (_.isEqual(onSearchContext.message_id, context.message_id)) {
       const key = `${ApiSequence.ON_SEARCH}_msgId`
       errorObj[key] =
-        `Message Id for /${ApiSequence.ON_SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK} api cannot be same`
+        `Message Id for /${ApiSequence.ON_SEARCH} and /${ApiSequence.SELECT} api cannot be same`
     }
 
     if (_.isEqual(searchContext.message_id, context.message_id)) {
       const key = `${ApiSequence.SEARCH}_msgId`
-      errorObj[key] = `Message Id for /${ApiSequence.SEARCH} and /${ApiSequence.SELECT_OUT_OF_STOCK} api cannot be same`
+      errorObj[key] = `Message Id for /${ApiSequence.SEARCH} and /${ApiSequence.SELECT} api cannot be same`
     }
 
-    setValue('msgId', context.message_id)
     setValue('txnId', context.transaction_id)
   } catch (error: any) {
     logger.info(

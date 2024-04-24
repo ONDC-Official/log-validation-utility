@@ -754,7 +754,6 @@ export const onConfirmSchema = {
                               },
                             },
                             required: ['code', 'value'],
-                            additionalProperties: false,
                           },
                         },
                         {
@@ -773,7 +772,6 @@ export const onConfirmSchema = {
                               },
                             },
                             required: ['code', 'value'],
-                            additionalProperties: false,
                           },
                         },
                         {
@@ -792,7 +790,6 @@ export const onConfirmSchema = {
                               },
                             },
                             required: ['code', 'value'],
-                            additionalProperties: false,
                           },
                         },
                       ],

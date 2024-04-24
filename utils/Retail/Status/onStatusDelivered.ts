@@ -25,8 +25,14 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any) 
       Object.assign(onStatusObj, schemaValidation)
     }
 
-    if (!msgIdSet.add(context.message_id)) {
-      onStatusObj['messageId'] = 'message_id should be unique'
+    try {
+      logger.info(`Adding Message Id /${constants.ON_STATUS_DELIVERED}`)
+      if (msgIdSet.has(context.message_id)) {
+        onStatusObj[`${ApiSequence.ON_STATUS_DELIVERED}_msgId`] = `Message id should not be same with previous calls`
+      }
+      msgIdSet.add(context.message_id)
+    } catch (error: any) {
+      logger.error(`!!Error while checking message id for /${constants.ON_STATUS_DELIVERED}, ${error.stack}`)
     }
 
     if (!contextRes?.valid) {

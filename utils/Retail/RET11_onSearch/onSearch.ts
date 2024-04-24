@@ -19,10 +19,10 @@ import {
   checkDuplicateParentIdItems,
   checkForDuplicates,
   validateObjectString,
-} from '../../../utils'
+} from '../..'
 import _ from 'lodash'
 
-export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
+export const checkOnsearchFullCatalogRefresh = (data: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.ON_SEARCH]: 'JSON cannot be empty' }
   }
@@ -37,13 +37,21 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
   const contextRes: any = checkContext(context, constants.ON_SEARCH)
   setValue(`${ApiSequence.ON_SEARCH}_context`, context)
   setValue(`${ApiSequence.ON_SEARCH}_message`, message)
-  msgIdSet.add(context.message_id)
-
   let errorObj: any = {}
 
   if (schemaValidation !== 'error') {
     Object.assign(errorObj, schemaValidation)
   }
+
+  try {
+    logger.info(`Comparing Message Ids of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
+    if (!_.isEqual(getValue(`${ApiSequence.SEARCH}_msgId`), context.message_id)) {
+      errorObj[`${ApiSequence.ON_SEARCH}_msgId`] = `Message Ids for /${constants.SEARCH} and /${constants.ON_SEARCH} api should be same`
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while checking message id for /${constants.ON_SEARCH}, ${error.stack}`)
+  }
+
   if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
     errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
   }
@@ -191,7 +199,9 @@ export const checkOnsearchFullCatalogRefresh = (data: any, msgIdSet: any) => {
         const npType = tag.list.find((item) => item.code === 'np_type')
         if (!npType) {
           errorObj['bpp/descriptor'] = `Missing np_type in bpp/descriptor`
+          setValue(`${ApiSequence.ON_SEARCH}np_type`, '')
         } else {
+          setValue(`${ApiSequence.ON_SEARCH}np_type`, npType.value)
           const npTypeValue = npType.value.toUpperCase()
           if (npTypeValue !== 'ISN' && npTypeValue !== 'MSN') {
             errorObj['bpp/descriptor/np_type'] =

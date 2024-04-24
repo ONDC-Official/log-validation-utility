@@ -28,7 +28,7 @@ import electronicsData from '../../../constants/electronics.json'
 import applianceData from '../../../constants/appliance.json'
 import { fashion } from '../../../constants/fashion'
 import { DOMAIN } from '../../../utils/enum'
-export const checkOnsearch = (data: any, msgIdSet: any) => {
+export const checkOnsearch = (data: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.ON_SEARCH]: 'JSON cannot be empty' }
   }
@@ -42,13 +42,22 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
 
   setValue(`${ApiSequence.ON_SEARCH}_context`, context)
   setValue(`${ApiSequence.ON_SEARCH}_message`, message)
-  msgIdSet.add(context.message_id)
   let errorObj: any = {}
+
 
   if (schemaValidation !== 'error') {
     Object.assign(errorObj, schemaValidation)
   }
 
+  try {
+    logger.info(`Comparing Message Ids of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
+    if (!_.isEqual(getValue(`${ApiSequence.SEARCH}_msgId`), context.message_id)) {
+      errorObj[`${ApiSequence.ON_SEARCH}_msgId`] = `Message Ids for /${constants.SEARCH} and /${constants.ON_SEARCH} api should be same`
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while checking message id for /${constants.ON_SEARCH}, ${error.stack}`)
+  }
+  
   if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
     errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
   }
@@ -406,26 +415,30 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
   } catch (error: any) {
     logger.error(`!!Errors while checking parent_item_id in bpp/providers/[]/items/[]/parent_item_id/, ${error.stack}`)
   }
-  try{
+  try {
     logger.info(`Checking for np_type in bpp/descriptor`)
     const descriptor = onSearchCatalog['bpp/descriptor']
     descriptor?.tags.map((tag: { code: any; list: any[] },) => {
       if (tag.code === 'bpp_terms') {
         const npType = tag.list.find((item) => item.code === 'np_type')
-        if(!npType){
+        if (!npType) {
           errorObj['bpp/descriptor'] = `Missing np_type in bpp/descriptor`
+          setValue(`${ApiSequence.ON_SEARCH}np_type`, "")
+        }
+        else {
+          setValue(`${ApiSequence.ON_SEARCH}np_type`, npType.value)
         }
         const accept_bap_terms = tag.list.find((item) => item.code === 'accept_bap_terms')
-        if(accept_bap_terms){
+        if (accept_bap_terms) {
           errorObj['bpp/descriptor/accept_bap_terms'] = `accept_bap_terms is not required in bpp/descriptor/tags for now `
         }
         const collect_payment = tag.list.find((item) => item.code === 'collect_payment')
-        if(collect_payment){
-          errorObj['bpp/descriptor/collect_payment'] = `collect_payment is not required in bpp/descriptor/tags for now `  
+        if (collect_payment) {
+          errorObj['bpp/descriptor/collect_payment'] = `collect_payment is not required in bpp/descriptor/tags for now `
+        }
       }
-    }
     })
-  }catch(error:any){
+  } catch (error: any) {
     logger.error(`Error while checking np_type in bpp/descriptor for /${constants.ON_SEARCH}, ${error.stack}`)
   }
 
@@ -761,7 +774,6 @@ export const checkOnsearch = (data: any, msgIdSet: any) => {
                 'additives_info',
                 'brand_owner_FSSAI_license_no',
                 'other_FSSAI_license_no',
-                'brand_owner_FSSAI_license_no',
                 'importer_FSSAI_license_no',
               ]
               mandatoryFields.forEach((field) => {

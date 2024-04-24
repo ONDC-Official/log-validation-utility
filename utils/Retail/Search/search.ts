@@ -32,7 +32,6 @@ export const checkSearch = (data: any, msgIdSet: any) => {
       return Object.keys(errorObj).length > 0 && errorObj
     }
 
-    msgIdSet.add(data.context.message_id)
 
     const schemaValidation = validateSchema(data.context.domain.split(':')[1], constants.SEARCH, data)
 
@@ -40,6 +39,14 @@ export const checkSearch = (data: any, msgIdSet: any) => {
       Object.assign(errorObj, schemaValidation)
     }
 
+    try {
+      logger.info(`Adding Message Id /${constants.SEARCH}`)
+      msgIdSet.add(data.context.message_id)
+      setValue(`${ApiSequence.SEARCH}_msgId`, data.context.message_id)
+    } catch (error: any) {
+      logger.error(`!!Error while checking message id for /${constants.SEARCH}, ${error.stack}`)
+    }
+    
     if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
       errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }

@@ -252,7 +252,7 @@ export const FnBonSearchIncSchema = {
                               required: ['start', 'end'],
                             },
                           },
-                          required: ['label', 'timestamp'],
+                          required: ['label', 'timestamp','schedule'],
                         },
                         gps: {
                           type: 'string',

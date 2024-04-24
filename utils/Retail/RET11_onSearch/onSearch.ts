@@ -279,10 +279,6 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
         const categories = prvdr['categories']
         categories.forEach(
           (category: { id: string; parent_category_id: string; descriptor: { name: string }; tags: any[] }) => {
-            if (category.parent_category_id !== '') {
-              errorObj[`categories[${category.id}].parent_category_id`] =
-                `/message/catalog/bpp/providers/categories/parent_category_id should be an empty string in category '${category.descriptor.name}'`
-            }
             if (category.parent_category_id === category.id) {
               errorObj[`categories[${category.id}].prnt_ctgry_id`] =
                 `/message/catalog/bpp/providers/categories/parent_category_id should not be the same as id in category '${category.descriptor.name}'`

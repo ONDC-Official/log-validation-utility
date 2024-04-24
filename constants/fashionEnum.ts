@@ -1258,7 +1258,5 @@ const fashion_enum = {
   // ... add the rest of the constants
 }
 
-
-
 // Export the Enums object
 export default fashion_enum

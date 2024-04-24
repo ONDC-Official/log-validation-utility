@@ -447,8 +447,7 @@ export const FnBonSearchIncSchema = {
                                 count: {
                                   type: 'string',
                                   pattern: '^[0-9]+$',
-                                  errorMessage:
-                                    'available count must be numbers only',
+                                  errorMessage: 'available count must be numbers only',
                                 },
                               },
                               required: ['count'],
@@ -459,8 +458,7 @@ export const FnBonSearchIncSchema = {
                                 count: {
                                   type: 'string',
                                   pattern: '^[0-9]+$',
-                                  errorMessage:
-                                    'maximum count must be numbers only ',
+                                  errorMessage: 'maximum count must be numbers only ',
                                 },
                               },
                               required: ['count'],
@@ -477,11 +475,13 @@ export const FnBonSearchIncSchema = {
                             },
                             value: {
                               type: 'string',
-                              pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                              pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                              errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                             },
                             maximum_value: {
                               type: 'string',
-                              pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                              pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                              errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                             },
                           },
                           required: ['currency', 'value', 'maximum_value'],
@@ -516,6 +516,7 @@ export const FnBonSearchIncSchema = {
                         },
                         '@ondc/org/return_window': {
                           type: 'string',
+                          format: 'duration',
                         },
                         '@ondc/org/seller_pickup_return': {
                           type: 'boolean',

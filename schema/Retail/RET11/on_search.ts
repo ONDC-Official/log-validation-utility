@@ -44,7 +44,7 @@ export const FnBonSearchSchema = {
           type: 'string',
         },
         timestamp: {
-          format: 'rfc3339-date-time'
+          format: 'rfc3339-date-time',
         },
         ttl: {
           type: 'string',
@@ -579,7 +579,7 @@ export const FnBonSearchSchema = {
                             },
                             value: {
                               type: 'string',
-                              pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                              pattern: '^[0-9]+(.[0-9]{1,2})?$',
                               errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                             },
                             maximum_value: {
@@ -652,6 +652,7 @@ export const FnBonSearchSchema = {
                         },
                         '@ondc/org/return_window': {
                           type: 'string',
+                          format: 'duration',
                         },
                         '@ondc/org/seller_pickup_return': {
                           type: 'boolean',

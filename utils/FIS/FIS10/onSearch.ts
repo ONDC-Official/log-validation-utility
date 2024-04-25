@@ -307,7 +307,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
             }
 
             // Validate Item tags
-            const tagsValidation = validateItemsTags(item?.tags, constants.ON_SELECT)
+            const tagsValidation = validateItemsTags(item?.tags, constants.ON_SEARCH)
             if (!tagsValidation.isValid) {
               Object.assign(errorObj, { tags: tagsValidation.errors })
             }

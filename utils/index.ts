@@ -1105,22 +1105,25 @@ export function validateObjectString(obj: ObjectType): string | null {
 }
 
 export function compareLists(list1: any[], list2: any[]): string[] {
-  const errors: string[] = []
-
+  const errors: string[] = [];
+ 
   for (const obj1 of list1) {
-    const matchingObj = list2.find((obj2) => obj2.code === obj1.code)
-
-    if (!matchingObj) {
-      errors.push(`Code '${obj1.code}' present in first list but not in second list.`)
-    } else {
-      if (obj1.value !== matchingObj.value) {
-        errors.push(`Code '${obj1.code}' value not matching.`)
-      }
-    }
+     const matchingObj = list2.find((obj2) => obj2.code === obj1.code);
+ 
+     if (!matchingObj) {
+       if (obj1.code !== "np_type") {
+         errors.push(`Code '${obj1.code}' present in first list but not in second list.`);
+       }
+     } else {
+       if (obj1.value !== matchingObj.value) {
+         errors.push(`Code '${obj1.code}' value not matching.`);
+       }
+     }
   }
-
-  return errors
-}
+ 
+  return errors;
+ }
+ 
 
 export const findProviderLocation = (obj: any): boolean => {
   for (const key in obj) {

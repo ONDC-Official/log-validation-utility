@@ -584,7 +584,7 @@ export const checkOnConfirm = (data: any) => {
           const result = compareLists(tag.list, list_ON_INIT)
           if (result.length > 0) {
             onCnfrmObj['message/order/tags/bpp_terms'] =
-              `List of bpp_terms mismatched in message/order/tags/bpp_terms for ${constants.ON_INIT} and ${constants.ON_CONFIRM}`
+              `List of bpp_terms mismatched in message/order/tags/bpp_terms for ${constants.ON_INIT} and ${constants.ON_CONFIRM} here ${result}`
           }
         }
       }

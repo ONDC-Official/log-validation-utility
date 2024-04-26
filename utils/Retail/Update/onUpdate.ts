@@ -11,7 +11,11 @@ import {
   checkQuoteTrailSum,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
-import { partcancel_return_reasonCodes, return_rejected_request_reasonCodes, return_request_reasonCodes } from '../../../constants/reasonCode'
+import {
+  partcancel_return_reasonCodes,
+  return_rejected_request_reasonCodes,
+  return_request_reasonCodes,
+} from '../../../constants/reasonCode'
 
 export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any) => {
   const onupdtObj: any = {}
@@ -45,10 +49,10 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any) => {
         getValue(`${ApiSequence.UPDATE}_msgId`)
         logger.info(`Comparing Message Ids of /${constants.UPDATE} and /${constants.ON_UPDATE_INTERIM}`)
         if (!_.isEqual(getValue(`${ApiSequence.UPDATE}_msgId`), context.message_id)) {
-          onupdtObj[`${apiSeq}_msgId`] = `Message Ids for /${constants.UPDATE} and /${constants.ON_UPDATE_INTERIM} api should be same`
+          onupdtObj[`${apiSeq}_msgId`] =
+            `Message Ids for /${constants.UPDATE} and /${constants.ON_UPDATE_INTERIM} api should be same`
         }
-      }
-      else {
+      } else {
         logger.info(`Adding Message Id /${apiSeq}`)
         if (msgIdSet.has(context.message_id)) {
           onupdtObj[`${apiSeq}_msgId`] = `Message id should not be same with previous calls`
@@ -242,26 +246,35 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any) => {
         logger.info(`Reason_id mapping for cancel_request`)
         const fulfillments = on_update.fulfillments
         fulfillments.map((fulfillment: any) => {
-          if (fulfillment.type == 'Return') {
-            const tags = fulfillment.tags
-            tags.map((tag: any) => {
-              if (tag.code == 'return_request') {
-                const lists = tag.list
-                let reason_id = ''
-                lists.map((list: any) => {
-                  if (list.code == 'reason_id') {
-                    reason_id = list.value
-                  }
-                  if (list.code == 'initiated_by' && list.value !== context.bap_id) {
-                    onupdtObj['invalid_initiated_by'] = `initiated_by should be ${context.bap_id}`
-                  }
-                  if (list.code == 'initiated_by' && list.value === context.bap_id && !return_request_reasonCodes.includes(reason_id)) {
-                    onupdtObj['invalid_return_request_reason'] = `reason code allowed are ${return_request_reasonCodes}`
-                  }
-                })
+          if (fulfillment.type !== 'Return') return
+
+          const tags = fulfillment.tags
+          tags.forEach((tag: any) => {
+            if (tag.code !== 'return_request') return
+
+            const lists = tag.list
+            let reason_id = 'not_found'
+
+            lists.forEach((list: any) => {
+              if (list.code === 'reason_id') {
+                reason_id = list.value
+              }
+              if (list.code === 'initiated_by') {
+                if (list.value !== context.bap_id) {
+                  onupdtObj['invalid_initiated_by'] = `initiated_by should be ${context.bap_id}`
+                }
+
+                if (
+                  reason_id !== 'not_found' &&
+                  list.value === context.bap_id &&
+                  !return_request_reasonCodes.includes(reason_id)
+                ) {
+                  console.log('yahaaaaaaa', list.value, context.bap_id, reason_id)
+                  onupdtObj['invalid_return_request_reason'] = `reason code allowed are ${return_request_reasonCodes}`
+                }
               }
             })
-          }
+          })
         })
       } catch (error: any) {
         logger.error(`!!Error while mapping cancellation_reason_id in ${constants.ON_UPDATE}`)
@@ -272,26 +285,34 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any) => {
         logger.info(`Reason_id mapping for cancel_request`)
         const fulfillments = on_update.fulfillments
         fulfillments.map((fulfillment: any) => {
-          if (fulfillment.type == 'Return') {
-            const tags = fulfillment.tags
-            tags.map((tag: any) => {
-              if (tag.code == 'return_request') {
-                const lists = tag.list
-                let reason_id = ''
-                lists.map((list: any) => {
-                  if (list.code == 'reason_id') {
-                    reason_id = list.value
-                  }
-                  if (list.code == 'initiated_by' && list.value !== context.bap_id) {
-                    onupdtObj['invalid_initiated_by'] = `initiated_by should be ${context.bap_id}`
-                  }
-                  if (list.code == 'initiated_by' && list.value === context.bap_id && !return_rejected_request_reasonCodes.includes(reason_id)) {
-                    onupdtObj['invalid_return_request_reason'] = `reason code allowed are ${return_rejected_request_reasonCodes}`
-                  }
-                })
+          if (fulfillment.type !== 'Return') return
+
+          const tags = fulfillment.tags
+          tags.forEach((tag: any) => {
+            if (tag.code !== 'return_request') return
+
+            const lists = tag.list
+            let reason_id = ''
+
+            lists.forEach((list: any) => {
+              if (list.code === 'reason_id') {
+                reason_id = list.value
+              }
+              if (list.code === 'initiated_by') {
+                if (list.value !== context.bap_id) {
+                  onupdtObj['invalid_initiated_by'] = `initiated_by should be ${context.bap_id}`
+                }
+                if (
+                  reason_id &&
+                  list.value === context.bap_id &&
+                  !return_rejected_request_reasonCodes.includes(reason_id)
+                ) {
+                  onupdtObj['invalid_return_rejected_request_reasonCodes'] =
+                    `reason code allowed are ${return_rejected_request_reasonCodes}`
+                }
               }
             })
-          }
+          })
         })
       } catch (error: any) {
         logger.error(`!!Error while mapping cancellation_reason_id in ${constants.ON_UPDATE}`)
@@ -395,11 +416,15 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any) => {
                     if (list.code == 'initiated_by' && list.value !== context.bpp_id) {
                       onupdtObj['invalid_initiated_by'] = `initiated_by should be ${context.bpp_id}`
                     }
-                    if (list.code == 'initiated_by' && list.value === context.bpp_id && !partcancel_return_reasonCodes.includes(reason_id)) {
-                      onupdtObj['invalid_partcancel_return_request_reason'] = `reason code allowed are ${partcancel_return_reasonCodes}`
+                    if (
+                      list.code == 'initiated_by' &&
+                      list.value === context.bpp_id &&
+                      !partcancel_return_reasonCodes.includes(reason_id)
+                    ) {
+                      onupdtObj['invalid_partcancel_return_request_reason'] =
+                        `reason code allowed are ${partcancel_return_reasonCodes}`
                     }
                   })
-
                 }
               })
             }

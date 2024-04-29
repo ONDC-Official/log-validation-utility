@@ -780,7 +780,7 @@ export const checkOnsearch = (data: any) => {
                 if (statutory_reqs_prepackaged_food && !statutory_reqs_prepackaged_food[field]) {
                   const key = `prvdr${i}items${j}@ondc/org/statutory_reqs_prepackaged_food`
                   errorObj[key] =
-                    `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food following fields are valid 'nutritional_info', 'additives_info', 'brand_owner_FSSAI_license_no','other_FSSAI_license_no',
+                    `In ONDC:RET10 @ondc/org/statutory_reqs_prepackaged_food following fields are valid and required 'nutritional_info', 'additives_info','other_FSSAI_license_no',
                     'brand_owner_FSSAI_license_no','importer_FSSAI_license_no'`
                 }
               })

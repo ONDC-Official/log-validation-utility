@@ -489,9 +489,13 @@ export const checkOnInit = (data: any) => {
 
       for (const tag of tags) {
         if (tag.code === 'bap_terms') {
-          onInitObj['message/order/tags/bap_terms'] = `bap_terms terms is not required for now! in ${constants.ON_INIT}`
+          const hasStaticTerms = tag.list.some((item: { code: string }) => item.code === 'static_terms');            
+          if (hasStaticTerms) {
+                onInitObj['message/order/tags/bap_terms/static_terms'] = `static_terms is not required for now! in ${constants.ON_INIT}`;
+            } 
         }
-      }
+    }
+    
     } catch (err: any) {
       logger.error(
         `Error while Checking bap_terms in ${constants.ON_INIT}, ${err.stack} `,

@@ -600,9 +600,12 @@ export const checkOnConfirm = (data: any) => {
 
       for (const tag of tags) {
         if (tag.code === 'bap_terms') {
-          onCnfrmObj['message/order/tags/bap_terms'] = `bap_terms terms is not required for now! in ${constants.ON_CONFIRM}`
+          const hasStaticTerms = tag.list.some((item: { code: string }) => item.code === 'static_terms');            
+          if (hasStaticTerms) {
+                onCnfrmObj['message/order/tags/bap_terms/static_terms'] = `static_terms is not required for now! in ${constants.ON_INIT}`;
+            } 
         }
-      }
+    }
     } catch (err: any) {
       logger.error(
         `Error while Checking bap_terms in ${constants.ON_CONFIRM}, ${err.stack} `,

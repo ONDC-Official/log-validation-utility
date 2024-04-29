@@ -142,7 +142,9 @@ export const validateDescriptor = (
     const errorObj: any = {}
     if (!descriptor) {
       errorObj.descriptor = `descriptor is missing at ${path}.`
-    } else {
+    }else if(_.isEmpty(descriptor)) {
+      errorObj[`${path}`] = `descriptor is cannot be empty.`
+    }else {
       if (checkCode) {
         if (!descriptor?.code.trim()) {
           errorObj.code = `descriptor.code is missing at ${path}.`

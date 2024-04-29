@@ -1,6 +1,6 @@
 
 import { isValidEmail, isValidPhoneNumber, isValidUrl } from '../../index'
-import constants from '../../../constants'
+//import constants from '../../../constants'
 
 interface Tag {
   display: any
@@ -257,21 +257,25 @@ export const validateProviderTags = (tags: Tag[]): ValidationResult => {
 
 export const validateItemsTags = (tags: Tag[], action: string): ValidationResult => {
   const errors: string[] = []
-
-
+  console.log(action)
   tags.forEach((tag, index) => {
-
-    if(action === constants.ON_SEARCH && tag.descriptor.code === 'VARIANT_FIELDS'){
-      if (!tag.list) {
+  
+    
+    if(tag.descriptor.code === 'VARIANT_FIELDS'){
+      if (!tag?.list) {
         errors.push(`In Tag[${index}] list object is missing`);
       } else {
-        tag.list.forEach((item, index) => {
-          let length = item?.descriptor?.code.split(".").length;
-          console.log( "==================", item?.descriptor?.code.split(".")[length-1])
-          if(!(item?.descriptor?.code.split(".")[length-1] === "OCCASION")){
-            errors.push(`In list[${index}] descriptor code should be items.tags.ITEM_DETAILS.OCCASION`)
-          }
+        tag?.list?.forEach((item, index) => {
 
+          if(index === 0){
+            if(!(item?.descriptor?.code === "items.tags.ITEM_DETAILS.OCCASION")){
+              errors.push(`In list[${index}] descriptor code should be items.tags.ITEM_DETAILS.OCCASION`)
+            }
+          }else if(index === 1){
+            if(!(item?.descriptor?.code === "items.price.value")){
+              errors.push(`In list[${index}] descriptor code should be items.price.value`)
+            }
+          }
         });
       }
     }

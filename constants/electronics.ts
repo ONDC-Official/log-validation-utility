@@ -1,4 +1,6 @@
-{
+import { COLOUR } from "./fashionEnum";
+
+export const electronicsData= {
     "Mobile Phone": {
         "brand": {
             "mandatory": true,
@@ -13,9 +15,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -155,9 +157,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -439,9 +441,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -865,9 +867,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -1149,9 +1151,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -1433,9 +1435,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -1575,9 +1577,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -2285,9 +2287,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -2569,9 +2571,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -3137,9 +3139,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -5693,9 +5695,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -5835,9 +5837,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -5977,9 +5979,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -6119,9 +6121,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -6687,9 +6689,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -7681,9 +7683,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -7823,9 +7825,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -8249,9 +8251,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -12083,9 +12085,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -12509,9 +12511,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -12651,9 +12653,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -12793,9 +12795,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []
@@ -12935,9 +12937,9 @@
             "value": []
         },
         "colour": {
-            "mandatory": true,
-            "value": []
-        },
+      "mandatory": true,
+      "value": COLOUR
+    },
         "colour_name": {
             "mandatory": false,
             "value": []

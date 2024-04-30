@@ -24,8 +24,8 @@ import {
 import _ from 'lodash'
 import { compareSTDwithArea } from '../../index'
 import { BPCJSON, groceryJSON, healthJSON, homeJSON } from '../../../constants/category'
-import electronicsData from '../../../constants/electronics.json'
-import applianceData from '../../../constants/appliance.json'
+import {electronicsData} from '../../../constants/electronics'
+import {applianceData} from '../../../constants/appliance'
 import { fashion } from '../../../constants/fashion'
 import { DOMAIN } from '../../../utils/enum'
 export const checkOnsearch = (data: any) => {

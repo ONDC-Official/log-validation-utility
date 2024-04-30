@@ -360,7 +360,7 @@ export const onSearchSchema = {
                               required: ['start', 'end'],
                             },
                           },
-                          required: ['label', 'timestamp','schedule'],
+                          required: ['label', 'timestamp', 'schedule'],
                         },
                         gps: {
                           type: 'string',
@@ -544,7 +544,7 @@ export const onSearchSchema = {
                                     },
                                     value: {
                                       type: 'string',
-                                      pattern: '^[0-9]+(\.[0-9]+)?$',
+                                      pattern: '^[0-9]+(.[0-9]+)?$',
                                       errorMessage: 'enter a valid number',
                                     },
                                   },
@@ -558,9 +558,8 @@ export const onSearchSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
-                                  pattern: '^[0-9]+$',
-                                  errorMessage:
-                                    'available count must be numbers only',
+                                  enum: ['99', '0'],
+                                  errorMessage: 'available count must be either 99 or 0 only',
                                 },
                               },
                               required: ['count'],
@@ -571,8 +570,7 @@ export const onSearchSchema = {
                                 count: {
                                   type: 'string',
                                   pattern: '^[0-9]+$',
-                                  errorMessage:
-                                    'maximum count must be numbers only ',
+                                  errorMessage: 'maximum count must be numbers only ',
                                 },
                               },
                               required: ['count'],
@@ -588,7 +586,8 @@ export const onSearchSchema = {
                             },
                             value: {
                               type: 'string',
-                              pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                              pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                              errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                             },
                             maximum_value: {
                               type: 'string',
@@ -755,8 +754,10 @@ export const onSearchSchema = {
                                         properties: {
                                           value: {
                                             type: 'string',
-                                            enum: ['Self-Pickup','Order','Delivery', 'All'],
-                                            errorMessage: "timing for fulfillment type, enum - 'Order' (online order processing timings 'Delivery' (order shipment timings, will be same as delivery timings for hyperlocal), 'Self-Pickup' (self-pickup timings), All",},
+                                            enum: ['Self-Pickup', 'Order', 'Delivery', 'All'],
+                                            errorMessage:
+                                              "timing for fulfillment type, enum - 'Order' (online order processing timings 'Delivery' (order shipment timings, will be same as delivery timings for hyperlocal), 'Self-Pickup' (self-pickup timings), All",
+                                          },
                                         },
                                         required: ['code', 'value'],
                                       },
@@ -791,7 +792,8 @@ export const onSearchSchema = {
                                           value: {
                                             type: 'string',
                                             pattern: '^[0-7]+$',
-                                            errorMessage: "Value for 'day_from' must be numeric characters only from 1 to 7",
+                                            errorMessage:
+                                              "Value for 'day_from' must be numeric characters only from 1 to 7",
                                           },
                                         },
                                         required: ['code', 'value'],
@@ -810,7 +812,8 @@ export const onSearchSchema = {
                                           value: {
                                             type: 'string',
                                             pattern: '^[1-7]$',
-                                            errorMessage: "Value for 'day_to' must be numeric characters only from 1 to 7",
+                                            errorMessage:
+                                              "Value for 'day_to' must be numeric characters only from 1 to 7",
                                           },
                                         },
                                         required: ['code', 'value'],
@@ -829,7 +832,8 @@ export const onSearchSchema = {
                                           value: {
                                             type: 'string',
                                             pattern: '^(2[0-3]|[01]?[0-9]|24)[0-5]?[0-9]$',
-                                            errorMessage: "Value for 'time_from' must be a 4-digit numeric value in HHMM format",
+                                            errorMessage:
+                                              "Value for 'time_from' must be a 4-digit numeric value in HHMM format",
                                           },
                                         },
                                         required: ['code', 'value'],
@@ -848,7 +852,8 @@ export const onSearchSchema = {
                                           value: {
                                             type: 'string',
                                             pattern: '^(2[0-3]|[01]?[0-9]|24)[0-5]?[0-9]$',
-                                            errorMessage: "Value for 'time_to' must be a 4-digit numeric value in HHMM format",
+                                            errorMessage:
+                                              "Value for 'time_to' must be a 4-digit numeric value in HHMM format",
                                           },
                                         },
                                         required: ['code', 'value'],
@@ -1117,7 +1122,7 @@ export const onSearchSchema = {
                                       then: {
                                         properties: {
                                           value: {
-                                            pattern: '^[0-9]+(\.[0-9]{2})?$',
+                                            pattern: '^[0-9]+(.[0-9]{2})?$',
                                             errorMessage: 'min_value must be number with exactly two decimal places',
                                           },
                                         },

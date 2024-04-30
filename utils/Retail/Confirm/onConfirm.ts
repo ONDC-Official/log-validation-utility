@@ -148,7 +148,10 @@ export const checkOnConfirm = (data: any) => {
         if (cnfrmOrdrCrtd && (!on_confirm.created_at || on_confirm.created_at != cnfrmOrdrCrtd)) {
           onCnfrmObj.crtdtmstmp = `order.created_at timestamp mismatches in /${constants.CONFIRM} and /${constants.ON_CONFIRM}`
         }
-
+        
+        if (on_confirm.updated_at) {
+          setValue('PreviousUpdatedTimestamp', on_confirm.updated_at)
+        }
         if (
           cnfrmOrdrUpdtd &&
           (!on_confirm.updated_at ||
@@ -242,8 +245,7 @@ export const checkOnConfirm = (data: any) => {
         onCnfrmObj[key] = `np_type not found in on_confirm`
       }
 
-      if(accept_bap_terms.length > 0)
-      {
+      if (accept_bap_terms.length > 0) {
         const key = 'message.order.tags[0].list'
         onCnfrmObj[key] = `accept_bap_terms is not required for now!`
       }

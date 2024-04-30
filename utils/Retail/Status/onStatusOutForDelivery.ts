@@ -141,6 +141,15 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
         `!!Error occurred while comparing order updated at for /${constants.ON_STATUS}_${state}, ${error.stack}`,
       )
     }
+
+    try {
+      if (on_status.updated_at) {
+        setValue('PreviousUpdatedTimestamp', on_status.updated_at)
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking order updated timestamp in /${constants.ON_STATUS}_${state}, ${error.stack}`)
+    }
+
     try {
       if (!_.isEqual(getValue(`cnfrmTmpstmp`), on_status.created_at)) {
         onStatusObj.tmpstmp = `Created At timestamp for /${constants.ON_STATUS}_${state} should be equal to context timestamp at ${constants.CONFIRM}`

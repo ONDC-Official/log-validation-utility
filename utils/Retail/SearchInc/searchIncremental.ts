@@ -33,7 +33,6 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
         errorObj[`${ApiSequence.INC_SEARCH}_msgId`] = `Message id should not be same with previous calls`
       }
       msgIdSet.add(context.message_id)
-      setValue(`${ApiSequence.INC_SEARCH}_msgId`, data.context.message_id)
     } catch (error: any) {
       logger.error(`!!Error while checking message id for /${constants.INC_SEARCH}, ${error.stack}`)
     }

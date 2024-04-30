@@ -6,7 +6,7 @@ import constants, { ApiSequence } from '../../../constants'
 import { validateSchema, isObjectEmpty, checkContext, checkGpsPrecision, emailRegex } from '../..'
 import _, { isEmpty } from 'lodash'
 
-export const checkOnsearchIncremental = (data: any, _msgIdSet: any) => {
+export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.INC_ONSEARCH]: 'JSON cannot be empty' }
   }
@@ -23,10 +23,8 @@ export const checkOnsearchIncremental = (data: any, _msgIdSet: any) => {
 
   const errorObj: any = {}
   try {
-    logger.info(`Comparing Message Ids of /${constants.INC_SEARCH} and /${constants.ON_SEARCHINC}`)
-    if (!_.isEqual(getValue(`${ApiSequence.INC_SEARCH}_msgId`), context.message_id)) {
-      errorObj[`${ApiSequence.INC_ONSEARCH}_msgId`]  = `Message Ids for /${constants.INC_SEARCH} and /${constants.ON_SEARCHINC} api should be same`
-    }
+    logger.info(`Adding Message Id of /${constants.ON_SEARCHINC}`)
+    msgIdSet.add(context.message_id)
   } catch (error: any) {
     logger.error(`!!Error while checking message id for /${constants.ON_SEARCHINC}, ${error.stack}`)
   }

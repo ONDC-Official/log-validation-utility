@@ -469,51 +469,50 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
                   }
 
                   break
-                case 'timing':
-                  for (const item of tag.list) {
-                    switch (item.code) {
-                      case 'day_from':
-                      case 'day_to':
-                        const dayValue = parseInt(item.value)
-                        if (isNaN(dayValue) || dayValue < 1 || dayValue > 7 || !/^-?\d+(\.\d+)?$/.test(item.value)) {
-                          errorObj.custom_menu_timing_tag = `Invalid value for '${item.code}': ${item.value}`
-                        }
-
-                        break
-                      case 'time_from':
-                      case 'time_to':
-                        if (!/^([01]\d|2[0-3])[0-5]\d$/.test(item.value)) {
-                          errorObj.time_to = `Invalid time format for '${item.code}': ${item.value}`
-                        }
-
-                        break
-                      default:
-                        errorObj.Tagtiming = `Invalid list.code for 'timing': ${item.code}`
+                  case 'timing':
+                    for (const item of tag.list) {
+                      const trimmedValue = item.value.trim(); // Trim the value
+                  
+                      switch (item.code) {
+                        case 'day_from':
+                        case 'day_to':
+                          const dayValue = parseInt(trimmedValue, 10);
+                          if (isNaN(dayValue) || dayValue < 1 || dayValue > 7 || !/^-?\d+(\.\d+)?$/.test(trimmedValue)) {
+                            errorObj.custom_menu_timing_tag = `Invalid value for '${item.code}': ${trimmedValue}`;
+                          }
+                          break;
+                        case 'time_from':
+                        case 'time_to':
+                          if (!/^([01]\d|2[0-3])[0-5]\d$/.test(trimmedValue)) {
+                            errorObj.time_to = `Invalid time format for '${item.code}': ${trimmedValue}`;
+                          }
+                          break;
+                        default:
+                          errorObj.Tagtiming = `Invalid list.code for 'timing': ${item.code}`;
+                      }
                     }
-                  }
-
-                  const dayFromItem = tag.list.find((item: any) => item.code === 'day_from')
-                  const dayToItem = tag.list.find((item: any) => item.code === 'day_to')
-                  const timeFromItem = tag.list.find((item: any) => item.code === 'time_from')
-                  const timeToItem = tag.list.find((item: any) => item.code === 'time_to')
-
-                  if (dayFromItem && dayToItem && timeFromItem && timeToItem) {
-                    const dayFrom = parseInt(dayFromItem.value, 10)
-                    const dayTo = parseInt(dayToItem.value, 10)
-                    const timeFrom = parseInt(timeFromItem.value, 10)
-                    const timeTo = parseInt(timeToItem.value, 10)
-
-                    if (dayTo < dayFrom) {
-                      errorObj.day_from = "'day_to' must be greater than or equal to 'day_from'"
+                  
+                    const dayFromItem = tag.list.find((item:any) => item.code === 'day_from');
+                    const dayToItem = tag.list.find((item:any) => item.code === 'day_to');
+                    const timeFromItem = tag.list.find((item:any) => item.code === 'time_from');
+                    const timeToItem = tag.list.find((item:any) => item.code === 'time_to');
+                  
+                    if (dayFromItem && dayToItem && timeFromItem && timeToItem) {
+                      const dayFrom = parseInt(dayFromItem.value.trim(), 10);
+                      const dayTo = parseInt(dayToItem.value.trim(), 10);
+                      const timeFrom = parseInt(timeFromItem.value.trim(), 10);
+                      const timeTo = parseInt(timeToItem.value.trim(), 10);
+                  
+                      if (dayTo < dayFrom) {
+                        errorObj.day_from = "'day_to' must be greater than or equal to 'day_from'";
+                      }
+                  
+                      if (timeTo <= timeFrom) {
+                        errorObj.time_from = "'time_to' must be greater than 'time_from'";
+                      }
                     }
-
-                    if (timeTo <= timeFrom) {
-                      errorObj.time_from = "'time_to' must be greater than 'time_from'"
-                    }
-                  }
-
-                  break
-                case 'display':
+                    break;
+                  case 'display':
                   for (const item of tag.list) {
                     if (item.code !== 'rank' || !/^-?\d+(\.\d+)?$/.test(item.value)) {
                       errorObj.rank = `Invalid value for 'display': ${item.value}`

@@ -1,5 +1,3 @@
-import { format } from "path/posix";
-
 export const onSearchIncSchema = {
   type: 'object',
   properties: {

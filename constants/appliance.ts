@@ -32,19 +32,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -114,19 +114,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -196,19 +196,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -278,19 +278,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -360,19 +360,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -442,19 +442,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -524,19 +524,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -606,19 +606,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -688,19 +688,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -770,19 +770,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -852,19 +852,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -934,19 +934,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -1016,19 +1016,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -1098,19 +1098,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -1180,19 +1180,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -1262,19 +1262,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -1344,19 +1344,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -1426,19 +1426,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -1508,19 +1508,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -1590,19 +1590,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -1672,19 +1672,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -1754,19 +1754,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -1836,19 +1836,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -1918,19 +1918,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -2000,19 +2000,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -2082,19 +2082,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -2164,19 +2164,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -2246,19 +2246,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -2328,19 +2328,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -2410,19 +2410,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -2492,19 +2492,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -2574,19 +2574,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -2656,19 +2656,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -2738,19 +2738,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -2820,19 +2820,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -2902,19 +2902,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -2984,19 +2984,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -3066,19 +3066,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -3148,19 +3148,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -3230,19 +3230,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -3312,19 +3312,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -3394,19 +3394,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -3476,19 +3476,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -3558,19 +3558,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -3640,19 +3640,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -3722,19 +3722,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -3804,19 +3804,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -3886,19 +3886,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -3968,19 +3968,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -4050,19 +4050,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -4132,19 +4132,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -4214,19 +4214,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -4296,19 +4296,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -4378,19 +4378,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -4460,19 +4460,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -4542,19 +4542,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -4624,19 +4624,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -4706,19 +4706,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -4788,19 +4788,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -4870,19 +4870,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -4952,19 +4952,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -5034,19 +5034,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -5116,19 +5116,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -5198,19 +5198,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -5280,19 +5280,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -5362,19 +5362,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -5444,19 +5444,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -5526,19 +5526,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -5608,19 +5608,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -5690,19 +5690,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -5772,19 +5772,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -5854,19 +5854,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -5936,19 +5936,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -6018,19 +6018,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -6100,19 +6100,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -6182,19 +6182,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -6264,19 +6264,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -6346,19 +6346,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -6428,19 +6428,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -6510,19 +6510,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -6592,19 +6592,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -6674,19 +6674,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -6756,19 +6756,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -6838,19 +6838,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -6920,19 +6920,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -7002,19 +7002,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -7084,19 +7084,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -7166,19 +7166,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -7248,19 +7248,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -7330,19 +7330,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -7412,19 +7412,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,
@@ -7494,19 +7494,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     length: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: false,
-      value: [],
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,

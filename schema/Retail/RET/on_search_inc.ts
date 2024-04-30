@@ -1,3 +1,5 @@
+import { format } from "path/posix";
+
 export const onSearchIncSchema = {
   type: 'object',
   properties: {
@@ -518,6 +520,8 @@ export const onSearchIncSchema = {
                         },
                         '@ondc/org/return_window': {
                           type: 'string',
+                          format: 'duration',
+                          
                         },
                         '@ondc/org/seller_pickup_return': {
                           type: 'boolean',

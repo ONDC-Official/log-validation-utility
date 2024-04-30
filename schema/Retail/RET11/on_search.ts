@@ -652,6 +652,7 @@ export const FnBonSearchSchema = {
                         },
                         '@ondc/org/return_window': {
                           type: 'string',
+                          format: 'duration'
                         },
                         '@ondc/org/seller_pickup_return': {
                           type: 'boolean',

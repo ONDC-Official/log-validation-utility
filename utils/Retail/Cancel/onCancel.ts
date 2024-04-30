@@ -655,31 +655,6 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
           const key = `missingPreCancel`
           onCnclObj[key] = `Pre Cancel is mandatory for ${constants.ON_CANCEL}`
         }
-        else
-        {
-          try {
-            logger.info(`Comparing timestamp of ${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} and /${constants.ON_CANCEL} pre_cancel state updated_at timestamp`)
-            const timeStampObj = _.filter(preCancelObj[0]?.list, { code: 'updated_at' })
-            if (!timeStampObj.length) {
-              logger.error(`Pre Cancel timestamp is mandatory for ${constants.ON_CANCEL}`)
-              const key = `missingPrecancelUpdatedAttimeStamp`
-              onCnclObj[key] = `Pre Cancel Updated at timeStamp is mandatory for ${constants.ON_CANCEL}`
-            }
-            else
-            {
-              if(!_.isEqual(getValue('PreviousUpdatedTimestamp'),timeStampObj[0].value))
-              {
-                logger.error(`precancel_state.updated_at of ${constants.ON_CANCEL} is not equal with the ${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} order.updated_at`)
-                const key = `precancelState.updatedAt`
-                onCnclObj[key] = `precancel_state.updated_at of ${constants.ON_CANCEL} is not equal with the ${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} order.updated_at`
-              }
-            }
-          } catch (error: any) {
-            logger.error(
-              `!!Error while comparing timestamp for /${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} and /${constants.ON_CANCEL} api, ${error.stack}`,
-            )
-          }
-        }
       }
       if (!reasonID_flag) {
         logger.error(`Reason ID is mandatory field for ${constants.ON_CANCEL}`)

@@ -446,10 +446,10 @@ export const onSearchIncSchema = {
                               type: 'object',
                               properties: {
                                 count: {
-                                  type: 'string',
-                                  pattern: '^[0-9]+$',
+                                  type:'string',
+                                  enum: ['99','0'],
                                   errorMessage:
-                                    'available count must be numbers only',
+                                    'available count must be either 99 or 0 only',
                                 },
                               },
                               required: ['count'],
@@ -518,6 +518,8 @@ export const onSearchIncSchema = {
                         },
                         '@ondc/org/return_window': {
                           type: 'string',
+                          format: 'duration',
+                          
                         },
                         '@ondc/org/seller_pickup_return': {
                           type: 'boolean',

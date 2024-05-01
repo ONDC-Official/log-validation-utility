@@ -327,7 +327,6 @@ export const FnBonSearchSchema = {
                                 },
                                 frequency: {
                                   type: 'string',
-                                  format: 'duration',
                                 },
                                 times: {
                                   type: 'array',
@@ -339,6 +338,14 @@ export const FnBonSearchSchema = {
                                   },
                                 },
                               },
+                              allOf: [
+                                {
+                                  if: { properties: { holidays: { minItems: 1 } } },
+                                  then: {
+                                    oneOf: [{ required: ['frequency'] }, { required: ['times'] }],
+                                  },
+                                },
+                              ],
                               required: ['holidays'],
                             },
                             range: {

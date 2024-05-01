@@ -345,6 +345,14 @@ export const onSearchSchema = {
                                   },
                                 },
                               },
+                              allOf: [
+                                {
+                                  if: { properties: { holidays: { minItems: 1 } } },
+                                  then: {
+                                    oneOf: [{ required: ['frequency'] }, { required: ['times'] }],
+                                  },
+                                },
+                              ],
                               required: ['holidays'],
                             },
                             range: {
@@ -586,7 +594,7 @@ export const onSearchSchema = {
                             },
                             value: {
                               type: 'string',
-                              pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                              pattern: '^[0-9]+(.[0-9]{1,2})?$',
                               errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                             },
                             maximum_value: {

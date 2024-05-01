@@ -275,6 +275,36 @@ export const checkOnInit = (data: any) => {
     }
 
     try {
+      // Checking fulfillment.id, fulfillment.type and tracking
+      logger.info('Checking fulfillment.id, fulfillment.type and tracking')
+      on_init.fulfillments.forEach((ff: any) => {
+        let ffId = ""
+
+        if (!ff.id) {
+          logger.info(`Fulfillment Id must be present `)
+          onInitObj["ffId"] = `Fulfillment Id must be present`
+        }
+
+        ffId = ff.id
+
+        if  (getValue(`${ffId}_tracking`)) {
+        if (ff.tracking === false || ff.tracking === true) {
+            if (getValue(`${ffId}_tracking`) != ff.tracking) {
+              logger.info(`Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`)
+              onInitObj["ffTracking"] = `Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`
+            }
+          }
+          else {
+            logger.info(`Tracking must be present for fulfillment ID: ${ff.id} in boolean form`)
+            onInitObj["ffTracking"] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
+          }
+        }
+      })
+    } catch (error: any) {
+      logger.info(`Error while checking fulfillments id, type and tracking in /${constants.ON_INIT}`)
+    }
+
+    try {
       logger.info(`Comparing billing object in /${constants.INIT} and /${constants.ON_INIT}`)
       const billing = getValue('billing')
 

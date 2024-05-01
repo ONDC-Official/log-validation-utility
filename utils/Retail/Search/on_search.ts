@@ -57,7 +57,7 @@ export const checkOnsearch = (data: any) => {
   } catch (error: any) {
     logger.error(`!!Error while checking message id for /${constants.ON_SEARCH}, ${error.stack}`)
   }
-  
+
   if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
     errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
   }
@@ -267,6 +267,84 @@ export const checkOnsearch = (data: any) => {
           const key = `bpp/providers[${i}]/items[${index}]/descriptor`
           errorObj[key] =
             `short_desc and long_desc should not be provided as empty string "" in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor`
+        }
+      })
+    }
+  } catch (error: any) {
+    logger.error(
+      `!!Errors while checking timestamp in context.timestamp and bpp/providers/items/time/timestamp, ${error.stack}`,
+    )
+  }
+  // Checking for code in bpp/providers/items/descriptor/
+  try {
+    logger.info(`Checking for code in bpp/providers/items/descriptor/`)
+    for (let i in onSearchCatalog['bpp/providers']) {
+      const items = onSearchCatalog['bpp/providers'][i].items
+      items.forEach((item: any, index: number) => {
+        if (!item.descriptor.code) {
+          logger.error(
+            `code should be provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor`,
+          )
+          const key = `bpp/providers[${i}]/items[${index}]/descriptor`
+          errorObj[key] =
+            `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor`
+        }
+        else {
+          const itemCodeArr = item.descriptor.code.split(":")
+          const itemDescType = itemCodeArr[0]
+          const itemDescCode = itemCodeArr[1]
+          const domain = getValue('domain')?.substring(3)
+
+          if (domain == "10" || domain == "13") {
+            if (itemDescType != "1") {
+              const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
+              errorObj[key] =
+                `code should have 1:EAN as a value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
+            }
+            else {
+              const regex = /^\d{8,13}$/
+              if (!regex.test(itemDescCode)) {
+                const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
+                errorObj[key] =
+                  `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code should be number and have a between length 8 to 13`
+              }
+            }
+          }
+          else if (domain == "12") {
+            if (itemDescType == "4") {
+              const regex = /^\d{4}$|^\d{6}$|^\d{8}$|^\d{10}$/
+              if (!regex.test(itemDescCode)) {
+                const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
+                errorObj[key] =
+                  `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code should be number and have a length 4, 6, 8 or 10.`
+              }
+            }
+            else {
+              const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
+              errorObj[key] =
+                `code should have 4:HSN as a value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
+            }
+          }
+          else if (domain != "17") {
+            if (itemDescType == "4") {
+              const regex = /^\d{8}$|^\d{12}$|^\d{13}$|^\d{14}$/
+              if (!regex.test(itemDescCode)) {
+                const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
+                errorObj[key] =
+                  `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code should be number and have a length 8, 12, 13 or 14}.`
+              }
+            }
+            else {
+              const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
+              errorObj[key] =
+                `code should have 4:HSN as a value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
+            }
+          }
+          else {
+            const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
+            errorObj[key] =
+              `code should have a valid value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
+          }
         }
       })
     }

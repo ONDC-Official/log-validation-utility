@@ -1234,7 +1234,7 @@ export const FnBonSearchSchema = {
               },
             },
           },
-          required: ['bpp/providers', 'bpp/fulfillments', 'bpp/descriptor'],
+          required: ['bpp/providers', 'bpp/descriptor'],
         },
       },
       required: ['catalog'],

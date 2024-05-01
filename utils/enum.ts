@@ -596,7 +596,5 @@ export enum FLOW {
   FLOW3 = '3',
   FLOW4 = '4',
   FLOW5 = '5',
-  FLOW6A = '6-a',
-  FLOW6B = '6-b',
-  FLOW6C = '6-c',
+  FLOW6 = '6',
 }

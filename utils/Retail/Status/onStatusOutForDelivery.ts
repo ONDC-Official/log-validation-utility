@@ -141,6 +141,15 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
         `!!Error occurred while comparing order updated at for /${constants.ON_STATUS}_${state}, ${error.stack}`,
       )
     }
+
+    try {
+      if (on_status.updated_at) {
+        setValue('PreviousUpdatedTimestamp', on_status.updated_at)
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking order updated timestamp in /${constants.ON_STATUS}_${state}, ${error.stack}`)
+    }
+
     try {
       if (!_.isEqual(getValue(`cnfrmTmpstmp`), on_status.created_at)) {
         onStatusObj.tmpstmp = `Created At timestamp for /${constants.ON_STATUS}_${state} should be equal to context timestamp at ${constants.CONFIRM}`
@@ -215,6 +224,35 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
         }
 
         i++
+      }
+
+      try {
+        // Checking fulfillment.id, fulfillment.type and tracking
+        logger.info('Checking fulfillment.id, fulfillment.type and tracking')
+        on_status.fulfillments.forEach((ff: any) => {
+          let ffId = ""
+
+          if (!ff.id) {
+            logger.info(`Fulfillment Id must be present `)
+            onStatusObj["ffId"] = `Fulfillment Id must be present`
+          }
+
+          ffId = ff.id
+          if (getValue(`${ffId}_tracking`)) {
+            if (ff.tracking === false || ff.tracking === true) {
+              if (getValue(`${ffId}_tracking`) != ff.tracking) {
+                logger.info(`Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`)
+                onStatusObj["ffTracking"] = `Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`
+              }
+            }
+            else {
+              logger.info(`Tracking must be present for fulfillment ID: ${ff.id} in boolean form`)
+              onStatusObj["ffTracking"] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
+            }
+          }
+        })
+      } catch (error: any) {
+        logger.info(`Error while checking fulfillments id, type and tracking in /${constants.ON_STATUS}`)
       }
 
       setValue('outforDeliveryTimestamps', outforDeliveryTimestamps)

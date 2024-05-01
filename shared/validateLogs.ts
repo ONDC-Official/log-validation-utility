@@ -45,6 +45,7 @@ import checkRsfOnReceiverRecon from '../utils/RSF/rsfOnReciverRecon'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
+  const settlementDetatilSet = new Set()
   let logReport: any = {}
   setValue('flow', flow)
   setValue('domain', domain.split(':')[1])
@@ -55,7 +56,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
   }
 
   try {
-    const validFlows = ['1', '2', '3', '4', '5', '6-a', '6-b', '6-c']
+    const validFlows = ['1', '2', '3', '4', '5', '6']
     if (!retailDomains.includes(domain)) {
       return 'Domain should be one of the 1.2.0 retail domains'
     }
@@ -124,7 +125,8 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
       ApiSequence.ON_CANCEL,
     ]
-    const flowSixASequence = [
+
+    const flowSixSequence = [
       ApiSequence.SEARCH,
       ApiSequence.ON_SEARCH,
       ApiSequence.SELECT,
@@ -133,39 +135,25 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       ApiSequence.ON_INIT,
       ApiSequence.CONFIRM,
       ApiSequence.ON_CONFIRM,
-      ApiSequence.ON_UPDATE,
-      ApiSequence.UPDATE,
-    ]
-    const flowSixBSequence = [
-      ApiSequence.SEARCH,
-      ApiSequence.ON_SEARCH,
-      ApiSequence.SELECT,
-      ApiSequence.ON_SELECT,
-      ApiSequence.INIT,
-      ApiSequence.ON_INIT,
-      ApiSequence.CONFIRM,
-      ApiSequence.ON_CONFIRM,
-      ApiSequence.UPDATE,
-      ApiSequence.ON_UPDATE_INTERIM,
+      ApiSequence.ON_UPDATE_PART_CANCEL,
+      ApiSequence.UPDATE_SETTLEMENT_PART_CANCEL,
+      ApiSequence.ON_STATUS_PENDING,
+      ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
+      ApiSequence.ON_STATUS_DELIVERED,
+      ApiSequence.UPDATE_REVERSE_QC,
+      ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC,
       ApiSequence.ON_UPDATE_APPROVAL,
       ApiSequence.ON_UPDATE_PICKED,
-      ApiSequence.UPDATE_SETTLEMENT,
+      ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC,
       ApiSequence.ON_UPDATE_DELIVERED,
-    ]
-    const flowSixCSequence = [
-      ApiSequence.SEARCH,
-      ApiSequence.ON_SEARCH,
-      ApiSequence.SELECT,
-      ApiSequence.ON_SELECT,
-      ApiSequence.INIT,
-      ApiSequence.ON_INIT,
-      ApiSequence.CONFIRM,
-      ApiSequence.ON_CONFIRM,
-      ApiSequence.UPDATE,
-      ApiSequence.ON_UPDATE_INTERIM,
+      ApiSequence.UPDATE_LIQUIDATED,
+      ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED,
       ApiSequence.ON_UPDATE_LIQUIDATED,
-      ApiSequence.UPDATE_SETTLEMENT,
+      ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED,
     ]
+
     const processApiSequence = (apiSequence: any, data: any, logReport: any, msgIdSet: any, flow: string) => {
       if (validFlows.includes(flow)) {
         apiSequence.forEach((apiSeq: any) => {
@@ -191,7 +179,9 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         case ApiSequence.ON_SEARCH:
           if (domain === 'ONDC:RET11') {
             return checkOnsearchFullCatalogRefresh(data)
+            return checkOnsearchFullCatalogRefresh(data)
           } else {
+            return checkOnsearch(data)
             return checkOnsearch(data)
           }
         case ApiSequence.INC_SEARCH:
@@ -203,16 +193,19 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
             return checkSelect_OOS(data, msgIdSet)
           } else {
             return checkSelect(data, msgIdSet, ApiSequence.SELECT)
+            return checkSelect(data, msgIdSet, ApiSequence.SELECT)
           }
         case ApiSequence.ON_SELECT:
           return checkOnSelect(data)
         case ApiSequence.SELECT_OUT_OF_STOCK:
+          return checkSelect(data, msgIdSet, ApiSequence.SELECT_OUT_OF_STOCK)
           return checkSelect(data, msgIdSet, ApiSequence.SELECT_OUT_OF_STOCK)
         case ApiSequence.ON_SELECT_OUT_OF_STOCK:
           return checkOnSelect_OOS(data)
         case ApiSequence.INIT:
           return checkInit(data, msgIdSet)
         case ApiSequence.ON_INIT:
+          return checkOnInit(data)
           return checkOnInit(data)
         case ApiSequence.CONFIRM:
           return checkConfirm(data, msgIdSet)
@@ -234,22 +227,30 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
           return checkOnStatusOutForDelivery(data, 'out-for-delivery', msgIdSet)
         case ApiSequence.ON_STATUS_DELIVERED:
           return checkOnStatusDelivered(data, 'delivered', msgIdSet)
-        case ApiSequence.UPDATE:
-          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE)
-        case ApiSequence.UPDATE_SETTLEMENT:
-          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT)
-        case ApiSequence.ON_UPDATE:
-          return checkOnUpdate(data, msgIdSet,ApiSequence.ON_UPDATE)
-        case ApiSequence.ON_UPDATE_INTERIM:
-          return checkOnUpdate(data, msgIdSet,ApiSequence.ON_UPDATE_INTERIM)
+        case ApiSequence.ON_UPDATE_PART_CANCEL:
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_PART_CANCEL,settlementDetatilSet, "6-a")
+        case ApiSequence.UPDATE_SETTLEMENT_PART_CANCEL:
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_PART_CANCEL,settlementDetatilSet, '6-a')
+        case ApiSequence.UPDATE_REVERSE_QC:
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_REVERSE_QC,settlementDetatilSet, '6-b')
+        case ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC:
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC,settlementDetatilSet, '6-b')
         case ApiSequence.ON_UPDATE_APPROVAL:
-          return checkOnUpdate(data, msgIdSet,ApiSequence.ON_UPDATE_APPROVAL)
-        case ApiSequence.ON_UPDATE_DELIVERED:
-          return checkOnUpdate(data, msgIdSet,ApiSequence.ON_UPDATE_APPROVAL)
-        case ApiSequence.ON_UPDATE_LIQUIDATED:
-          return checkOnUpdate(data, msgIdSet,ApiSequence.ON_UPDATE_LIQUIDATED)
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_APPROVAL,settlementDetatilSet, "6-b")
         case ApiSequence.ON_UPDATE_PICKED:
-          return checkOnUpdate(data, msgIdSet,ApiSequence.ON_UPDATE_PICKED)
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_PICKED,settlementDetatilSet, "6-b")
+        case ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC:
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC,settlementDetatilSet, '6-b')
+        case ApiSequence.ON_UPDATE_DELIVERED:
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_APPROVAL,settlementDetatilSet, "6-b")
+        case ApiSequence.UPDATE_LIQUIDATED:
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_LIQUIDATED,settlementDetatilSet, '6-c')
+        case ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED:
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED,settlementDetatilSet, "6-c")
+        case ApiSequence.ON_UPDATE_LIQUIDATED:
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_LIQUIDATED,settlementDetatilSet, "6-c")
+        case ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED:
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED,settlementDetatilSet, '6-c')
         case ApiSequence.TRACK:
           return checkTrack(data)
         case ApiSequence.ON_TRACK:
@@ -274,14 +275,8 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       case FLOW.FLOW5:
         logReport = processApiSequence(flowFiveSeqeence, data, logReport, msgIdSet, flow)
         break
-      case FLOW.FLOW6A:
-        logReport = processApiSequence(flowSixASequence, data, logReport, msgIdSet, flow)
-        break
-      case FLOW.FLOW6B:
-        logReport = processApiSequence(flowSixBSequence, data, logReport, msgIdSet, flow)
-        break
-      case FLOW.FLOW6C:
-        logReport = processApiSequence(flowSixCSequence, data, logReport, msgIdSet, flow)
+      case FLOW.FLOW6:
+        logReport = processApiSequence(flowSixSequence, data, logReport, msgIdSet, flow)
         break
     }
   } catch (error: any) {

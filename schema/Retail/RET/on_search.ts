@@ -1143,7 +1143,7 @@ export const onSearchSchema = {
               },
             },
           },
-          required: ['bpp/fulfillments', 'bpp/descriptor', 'bpp/providers'],
+          required: ['bpp/descriptor', 'bpp/providers'],
         },
       },
       required: ['catalog'],

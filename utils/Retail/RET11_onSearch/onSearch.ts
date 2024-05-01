@@ -310,7 +310,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
                     if ((category.parent_category_id == "" || category.parent_category_id) && item.value == 'custom_group') {
                       if(category.parent_category_id)
                         {
-                          errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] = `parent_category_id should not value any value while type is ${item.value}`
+                          errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] = `parent_category_id should not have any value while type is ${item.value}`
                         }
                       errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] = `parent_category_id should not be present while type is ${item.value}`
                     }

@@ -345,14 +345,6 @@ export const onSearchSchema = {
                                   },
                                 },
                               },
-                              allOf: [
-                                {
-                                  if: { properties: { holidays: { minItems: 1 } } },
-                                  then: {
-                                    oneOf: [{ required: ['frequency'] }, { required: ['times'] }],
-                                  },
-                                },
-                              ],
                               required: ['holidays'],
                             },
                             range: {

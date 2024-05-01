@@ -410,7 +410,7 @@ export const onSearchSchema = {
                           required: ['gps', 'radius'],
                         },
                       },
-                      required: ['id', 'time', 'gps', 'address'],
+                      required: ['id', 'time', 'gps', 'address','time'],
                     },
                   },
                   categories: {

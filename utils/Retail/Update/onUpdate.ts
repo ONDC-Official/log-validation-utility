@@ -293,7 +293,6 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                   list.value === context.bap_id &&
                   !return_request_reasonCodes.includes(reason_id)
                 ) {
-                  console.log('yahaaaaaaa', list.value, context.bap_id, reason_id)
                   onupdtObj['invalid_return_request_reason'] = `reason code allowed are ${return_request_reasonCodes}`
                 }
               }

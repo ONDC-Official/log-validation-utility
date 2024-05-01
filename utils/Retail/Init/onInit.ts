@@ -84,6 +84,8 @@ export const checkOnInit = (data: any) => {
       }
 
       setValue('tmpstmp', context.timestamp)
+      setValue('onInitTmpstmp', context.timestamp)
+      
     } catch (error: any) {
       logger.error(
         `!!Error while comparing timestamp for /${constants.INIT} and /${constants.ON_INIT} api, ${error.stack}`,

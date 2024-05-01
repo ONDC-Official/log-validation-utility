@@ -17,13 +17,6 @@ import {
   return_request_reasonCodes,
 } from '../../../constants/reasonCode'
 export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDetatilSet: any, flow: any) => {
-import {
-  partcancel_return_reasonCodes,
-  return_rejected_request_reasonCodes,
-  return_request_reasonCodes,
-} from '../../../constants/reasonCode'
-
-export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any) => {
   const onupdtObj: any = {}
   const quoteItemSet: any = new Set()
   try {

@@ -209,6 +209,36 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any) => 
         i++
       }
 
+      try {
+        // Checking fulfillment.id, fulfillment.type and tracking
+        logger.info('Checking fulfillment.id, fulfillment.type and tracking')
+        on_status.fulfillments.forEach((ff: any) => {
+          let ffId = ""
+
+          if (!ff.id) {
+            logger.info(`Fulfillment Id must be present `)
+            onStatusObj["ffId"] = `Fulfillment Id must be present`
+          }
+
+          ffId = ff.id
+
+          if (getValue(`${ffId}_tracking`)) {
+            if (ff.tracking === false || ff.tracking === true) {
+              if (getValue(`${ffId}_tracking`) != ff.tracking) {
+                logger.info(`Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`)
+                onStatusObj["ffTracking"] = `Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`
+              }
+            }
+            else {
+              logger.info(`Tracking must be present for fulfillment ID: ${ff.id} in boolean form`)
+              onStatusObj["ffTracking"] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
+            }
+          }
+        })
+      } catch (error: any) {
+        logger.info(`Error while checking fulfillments id, type and tracking in /${constants.ON_STATUS}`)
+      }
+
       setValue('pickupTimestamps', pickupTimestamps)
 
       if (!orderPicked) {

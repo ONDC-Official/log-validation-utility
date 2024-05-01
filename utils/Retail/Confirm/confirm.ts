@@ -233,6 +233,19 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
           cnfrmObj.ffId = `fulfillments[${i}].id is missing in /${constants.CONFIRM}`
         }
 
+        const ffId = confirm.fulfillments[i].id || ""
+        if (getValue(`${ffId}_tracking`)) {
+          if ((confirm.fulfillments[i].tracking === false || confirm.fulfillments[i].tracking === true)) {
+            if (getValue(`${ffId}_tracking`) != confirm.fulfillments[i].tracking) {
+              logger.info(`Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`)
+              cnfrmObj["ffTracking"] = `Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`
+            }
+          }
+          else {
+            logger.info(`Tracking must be present for fulfillment ID: ${ffId}`)
+            cnfrmObj["ffTracking"] = `Tracking must be present for fulfillment ID: ${ffId} in boolean form`
+          }
+        }
         if (!confirm.fulfillments[i].end || !confirm.fulfillments[i].end.person) {
           cnfrmObj.ffprsn = `fulfillments[${i}].end.person object is missing`
         }

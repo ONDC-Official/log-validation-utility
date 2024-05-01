@@ -46,8 +46,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
   try {
     logger.info(`Comparing Message Ids of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
     if (!_.isEqual(getValue(`${ApiSequence.SEARCH}_msgId`), context.message_id)) {
-      errorObj[`${ApiSequence.ON_SEARCH}_msgId`] =
-        `Message Ids for /${constants.SEARCH} and /${constants.ON_SEARCH} api should be same`
+      errorObj[`${ApiSequence.ON_SEARCH}_msgId`] = `Message Ids for /${constants.SEARCH} and /${constants.ON_SEARCH} api should be same`
     }
   } catch (error: any) {
     logger.error(`!!Error while checking message id for /${constants.ON_SEARCH}, ${error.stack}`)
@@ -233,7 +232,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
     const len = bppPrvdrs.length
     const tmpstmp = context.timestamp
     let itemIdList: any = []
-    let itemsArray: any = []
+    let itemsArray = []
     while (i < len) {
       const categoriesId = new Set()
       const customGrpId = new Set()

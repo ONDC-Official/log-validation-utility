@@ -863,17 +863,23 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
                 const key = `missingTagsItem[${i}][${index}] : ${tagName}`
                 errorObj[key] = `Mandatory tag field [${tagName}] missing for ${categoryName} item[${index}]`
               } else {
-                if (
-                  tagInfo.value.length > 0 &&
-                  !tagInfo.value.includes(originalTag) &&
-                  !tagInfo.value.includes(tagValue)
-                ) {
-                  logger.error(`The item value can only be of possible values.`)
-                  const key = `InvldValueforItem[${i}][${index}] : ${tagName}`
-                  errorObj[
-                    key
-                  ] = `Invalid item value: [${originalTag}]. It can only be of possible values as provided in https://github.com/ONDC-Official/protocol-network-extension/tree/main/enums/retail.`
-                }
+                if (tagInfo.value.length > 0) {
+                  let isValidValue = false;
+              
+                  if (Array.isArray(tagInfo.value)) {
+                      isValidValue = tagInfo.value.includes(originalTag) || tagInfo.value.includes(tagValue);
+                  } else if (typeof tagInfo.value === 'string' && tagInfo.value.startsWith('/') && tagInfo.value.endsWith('/')) {
+                      const regexPattern = tagInfo.value.slice(1, -1);
+                      const regex = new RegExp(regexPattern);
+                      isValidValue = regex.test(originalTag) || regex.test(tagValue);
+                  }
+              
+                  if (!isValidValue) {
+                      logger.error(`The item value can only be one of the possible values or match the regex pattern.`);
+                      const key = `InvldValueforItem[${i}][${index}] : ${tagName}`;
+                      errorObj[key] = `Invalid item value: [${originalTag}]. It must be one of the allowed values or match the regex pattern.`;
+                  }
+              }             
               }
             }
           }
@@ -1105,22 +1111,25 @@ export function validateObjectString(obj: ObjectType): string | null {
 }
 
 export function compareLists(list1: any[], list2: any[]): string[] {
-  const errors: string[] = []
-
+  const errors: string[] = [];
+ 
   for (const obj1 of list1) {
-    const matchingObj = list2.find((obj2) => obj2.code === obj1.code)
-
-    if (!matchingObj) {
-      errors.push(`Code '${obj1.code}' present in first list but not in second list.`)
-    } else {
-      if (obj1.value !== matchingObj.value) {
-        errors.push(`Code '${obj1.code}' value not matching.`)
-      }
-    }
+     const matchingObj = list2.find((obj2) => obj2.code === obj1.code);
+ 
+     if (!matchingObj) {
+       if (obj1.code !== "np_type") {
+         errors.push(`Code '${obj1.code}' present in first list but not in second list.`);
+       }
+     } else {
+       if (obj1.value !== matchingObj.value) {
+         errors.push(`Code '${obj1.code}' value not matching.`);
+       }
+     }
   }
-
-  return errors
-}
+ 
+  return errors;
+ }
+ 
 
 export const findProviderLocation = (obj: any): boolean => {
   for (const key in obj) {

@@ -40,7 +40,16 @@ export const checkOnSelect = (data: any) => {
   try {
     logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
     if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
-      errorObj[`${ApiSequence.ON_SELECT}_msgId`]  = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+      errorObj[`${ApiSequence.ON_SELECT}_msgId`] = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while checking message id for /${constants.ON_SELECT}, ${error.stack}`)
+  }
+
+  try {
+    logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
+    if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
+      errorObj[`${ApiSequence.ON_SELECT}_msgId`] = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
     }
   } catch (error: any) {
     logger.error(`!!Error while checking message id for /${constants.ON_SELECT}, ${error.stack}`)
@@ -137,9 +146,13 @@ export const checkOnSelect = (data: any) => {
   try {
     logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
     if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
-      errorObj[`${ApiSequence.ON_SELECT}_msgId`]  = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+      errorObj[`${ApiSequence.ON_SELECT}_msgId`] = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+      if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
+        errorObj[`${ApiSequence.ON_SELECT}_msgId`] = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+      }
     }
   } catch (error: any) {
+    logger.error(`!!Error while checking message id for /${constants.ON_SELECT}, ${error.stack}`)
     logger.error(`!!Error while checking message id for /${constants.ON_SELECT}, ${error.stack}`)
   }
 
@@ -340,7 +353,7 @@ export const checkOnSelect = (data: any) => {
       ) {
         const availCount = parseInt(element.item.quantity.available.count, 10)
         const maxCount = parseInt(element.item.quantity.maximum.count, 10)
-        if (isNaN(availCount) || isNaN(maxCount) || availCount <= 0 ) {
+        if (isNaN(availCount) || isNaN(maxCount) || availCount <= 0) {
           errorObj[`qntcnt${i}`] =
             `Available and Maximum count should be greater than 0 for item id: ${itemId} in quote.breakup[${i}]`
         } else if (
@@ -491,9 +504,8 @@ export const checkOnSelect = (data: any) => {
           item['@ondc/org/title_type'] !== 'item' &&
           retailPymntTtl[item.title.toLowerCase().trim()] !== item['@ondc/org/title_type']
         ) {
-          errorObj.pymntttlmap = `Quote breakup Payment title "${item.title}" comes under the title type "${
-            retailPymntTtl[item.title.toLowerCase().trim()]
-          }"`
+          errorObj.pymntttlmap = `Quote breakup Payment title "${item.title}" comes under the title type "${retailPymntTtl[item.title.toLowerCase().trim()]
+            }"`
         }
       })
     } else {
@@ -514,6 +526,33 @@ export const checkOnSelect = (data: any) => {
     })
   } catch (error: any) {
     logger.info(`Error while checking fulfillments TAT in /${constants.ON_SELECT}`)
+  }
+
+
+  try {
+    // Checking fulfillment.id, fulfillment.type and tracking
+    logger.info('Checking fulfillment.id, fulfillment.type and tracking')
+    on_select.fulfillments.forEach((ff: any) => {
+      let ffId = ""
+      if (!ff.id) {
+        logger.info(`Fulfillment Id must be present `)
+        errorObj["ffId"] = `Fulfillment Id must be present`
+      }
+
+      ffId = ff.id
+
+      if (ffId) {
+        if (ff.tracking === false || ff.tracking === true) {
+          setValue(`${ffId}_tracking`, ff.tracking)
+        }
+        else {
+          logger.info(`Tracking must be present for fulfillment ID: ${ff.id} in boolean form`)
+          errorObj["ffTracking"] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
+        }
+      }
+    })
+  } catch (error: any) {
+    logger.info(`Error while checking fulfillments id, type and tracking in /${constants.ON_SELECT}`)
   }
 
   try {

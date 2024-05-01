@@ -89,7 +89,7 @@ export const FnBonSearchSchema = {
                   },
                   type: {
                     type: 'string',
-                    enum: ['Delivery', 'Self-Pickup', 'Delivery and Self-Pickup'],
+                    enum: ['Delivery', 'Self-Pickup'],
                   },
                 },
                 required: ['id', 'type'],
@@ -238,7 +238,7 @@ export const FnBonSearchSchema = {
                         },
                         type: {
                           type: 'string',
-                          enum: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
+                          enum: ['Delivery', 'Self-Pickup'],
                         },
                         contact: {
                           type: 'object',
@@ -828,7 +828,7 @@ export const FnBonSearchSchema = {
                                             enum: ['Self-Pickup', 'Order', 'Delivery', 'All'],
                                             errorMessage:
                                               "timing for fulfillment type, enum - 'Order' (online order processing timings 'Delivery' (order shipment timings, will be same as delivery timings for hyperlocal), 'Self-Pickup' (self-pickup timings)",
-                                          },
+                                                                                      },
                                         },
                                         required: ['code', 'value'],
                                       },

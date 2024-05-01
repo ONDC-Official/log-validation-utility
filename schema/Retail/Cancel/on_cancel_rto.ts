@@ -340,6 +340,7 @@ export const cancel_RTO_Schema = {
                         required: ['phone'],
                       },
                     },
+                    required:['location','time']
                   },
                   end: {
                     type: 'object',
@@ -406,7 +407,6 @@ export const cancel_RTO_Schema = {
                             required: ['start', 'end'],
                           },
                         },
-                        required: ['range'],
                       },
                       person: {
                         type: 'object',
@@ -434,7 +434,7 @@ export const cancel_RTO_Schema = {
                         required: ['phone'],
                       },
                     },
-                    required: ['location', 'time', 'person', 'contact'],
+                    required: ['location', 'time'],
                   },
                   tags: {
                     type: 'array',

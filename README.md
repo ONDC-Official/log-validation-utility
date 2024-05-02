@@ -659,7 +659,7 @@ curl --location 'https://log-validation.ondc.org/api/validate/fis/fis12' \
 ### For TRV10 Sample Curl Request (Local)
 
 ```shell
-curl --location 'https://localhost:3006/api/validate/trv/trv10' \
+curl --location 'https://localhost:3006/api/validate/trv' \
 --header 'Content-Type: application/json' \
 --data '{
     "domain": "ONDC:TRV10",

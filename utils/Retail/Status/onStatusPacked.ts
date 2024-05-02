@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo } from '../..'
+import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any) => {
@@ -135,14 +135,32 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any) => 
     }
 
     try {
+      logger.info(`comparing fulfillment ranges `)
+      const storedFulfillment = getValue(`deliveryFulfillment`)
+      const deliveryFulfillment = on_status.fulfillments.filter((fulfillment: any) => fulfillment.type === 'Delivery')
+      const fulfillmentRangeerrors = compareTimeRanges(storedFulfillment, deliveryFulfillment[0])
+      if (fulfillmentRangeerrors) {
+        let i = 0
+        const len = fulfillmentRangeerrors.length
+        while (i < len) {
+          const key = `fulfilmntRngErr${i}`
+          onStatusObj[key] = `${fulfillmentRangeerrors[i]}`
+          i++
+        }
+      }
+    } catch (error: any) {
+      logger.error(`Error while comparing fulfillment ranges , ${error.stack}`)
+    }
+
+    try {
       // Checking fulfillment.id, fulfillment.type and tracking
       logger.info('Checking fulfillment.id, fulfillment.type and tracking')
       on_status.fulfillments.forEach((ff: any) => {
-        let ffId = ""
+        let ffId = ''
 
         if (!ff.id) {
           logger.info(`Fulfillment Id must be present `)
-          onStatusObj["ffId"] = `Fulfillment Id must be present`
+          onStatusObj['ffId'] = `Fulfillment Id must be present`
         }
 
         ffId = ff.id
@@ -151,12 +169,11 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any) => 
           if (ff.tracking === false || ff.tracking === true) {
             if (getValue(`${ffId}_tracking`) != ff.tracking) {
               logger.info(`Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`)
-              onStatusObj["ffTracking"] = `Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`
+              onStatusObj['ffTracking'] = `Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`
             }
-          }
-          else {
+          } else {
             logger.info(`Tracking must be present for fulfillment ID: ${ff.id} in boolean form`)
-            onStatusObj["ffTracking"] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
+            onStatusObj['ffTracking'] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
           }
         }
       })

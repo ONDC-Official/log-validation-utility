@@ -864,22 +864,27 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
                 errorObj[key] = `Mandatory tag field [${tagName}] missing for ${categoryName} item[${index}]`
               } else {
                 if (tagInfo.value.length > 0) {
-                  let isValidValue = false;
-              
+                  let isValidValue = false
+
                   if (Array.isArray(tagInfo.value)) {
-                      isValidValue = tagInfo.value.includes(originalTag) || tagInfo.value.includes(tagValue);
-                  } else if (typeof tagInfo.value === 'string' && tagInfo.value.startsWith('/') && tagInfo.value.endsWith('/')) {
-                      const regexPattern = tagInfo.value.slice(1, -1);
-                      const regex = new RegExp(regexPattern);
-                      isValidValue = regex.test(originalTag) || regex.test(tagValue);
+                    isValidValue = tagInfo.value.includes(originalTag) || tagInfo.value.includes(tagValue)
+                  } else if (
+                    typeof tagInfo.value === 'string' &&
+                    tagInfo.value.startsWith('/') &&
+                    tagInfo.value.endsWith('/')
+                  ) {
+                    const regexPattern = tagInfo.value.slice(1, -1)
+                    const regex = new RegExp(regexPattern)
+                    isValidValue = regex.test(originalTag) || regex.test(tagValue)
                   }
-              
+
                   if (!isValidValue) {
-                      logger.error(`The item value can only be one of the possible values or match the regex pattern.`);
-                      const key = `InvldValueforItem[${i}][${index}] : ${tagName}`;
-                      errorObj[key] = `Invalid item value: [${originalTag}]. It must be one of the allowed values or match the regex pattern.`;
+                    logger.error(`The item value can only be one of the possible values or match the regex pattern.`)
+                    const key = `InvldValueforItem[${i}][${index}] : ${tagName}`
+                    errorObj[key] =
+                      `Invalid item value: [${originalTag}]. It must be one of the allowed values or match the regex pattern.`
                   }
-              }             
+                }
               }
             }
           }
@@ -992,9 +997,8 @@ export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAt
 
     if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
       const key = `invldQuoteTrailPrices`
-      errorObj[
-        key
-      ] = `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM}`
+      errorObj[key] =
+        `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM}`
       logger.error(
         `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM} `,
       )
@@ -1022,9 +1026,8 @@ export const checkQuoteTrail = (quoteTrailItems: any[], errorObj: any, selectPri
 
       if (value && itemValue && value !== itemValue && type === 'item') {
         const key = `invalidPrice[${itemID}]`
-        errorObj[
-          key
-        ] = `Price mismatch for  [${itemID}] provided in quote object '[${value}]'. Should be same as in quote of ${constants.ON_SELECT}`
+        errorObj[key] =
+          `Price mismatch for  [${itemID}] provided in quote object '[${value}]'. Should be same as in quote of ${constants.ON_SELECT}`
       }
 
       if (!itemSet.has(itemID) && type === 'item') {
@@ -1111,25 +1114,24 @@ export function validateObjectString(obj: ObjectType): string | null {
 }
 
 export function compareLists(list1: any[], list2: any[]): string[] {
-  const errors: string[] = [];
- 
+  const errors: string[] = []
+
   for (const obj1 of list1) {
-     const matchingObj = list2.find((obj2) => obj2.code === obj1.code);
- 
-     if (!matchingObj) {
-       if (obj1.code !== "np_type") {
-         errors.push(`Code '${obj1.code}' present in first list but not in second list.`);
-       }
-     } else {
-       if (obj1.value !== matchingObj.value) {
-         errors.push(`Code '${obj1.code}' value not matching.`);
-       }
-     }
+    const matchingObj = list2.find((obj2) => obj2.code === obj1.code)
+
+    if (!matchingObj) {
+      if (obj1.code !== 'np_type') {
+        errors.push(`Code '${obj1.code}' present in first list but not in second list.`)
+      }
+    } else {
+      if (obj1.value !== matchingObj.value) {
+        errors.push(`Code '${obj1.code}' value not matching.`)
+      }
+    }
   }
- 
-  return errors;
- }
- 
+
+  return errors
+}
 
 export const findProviderLocation = (obj: any): boolean => {
   for (const key in obj) {
@@ -1146,4 +1148,45 @@ export const findProviderLocation = (obj: any): boolean => {
     }
   }
   return false
+}
+
+export function compareTimeRanges(data1: any, data2: any): string[] | null {
+  const keys = ['start', 'end']
+  const errors: string[] = []
+
+  keys.forEach((key) => {
+    if (!data1[key]?.time?.range || !data2[key]?.time?.range) {
+      errors.push(`/${key}/range is not provided in one or both objects`)
+      return // Skip comparison if range is not provided
+    }
+
+    const range1 = data1[key].time.range
+    const range2 = data2[key].time.range
+
+    if (
+      !isValidTimestamp(range1.start) ||
+      !isValidTimestamp(range1.end) ||
+      !isValidTimestamp(range2.start) ||
+      !isValidTimestamp(range2.end)
+    ) {
+      errors.push(`/${key}/range has invalid timestamp format`)
+      return // Skip comparison if timestamp format is invalid
+    }
+
+    if (range1.start !== range2.start) {
+      errors.push(
+        `/${key}/range/start_time "${range1.start}" mismatched with /${key}/range/start_time "${range2.start}"`,
+      )
+    }
+
+    if (range1.end !== range2.end) {
+      errors.push(`/${key}/range/end_time "${range1.end}" mismatched with /${key}/range/end_time "${range2.end}"`)
+    }
+  })
+
+  return errors.length === 0 ? null : errors
+}
+
+function isValidTimestamp(timestamp: string): boolean {
+  return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(timestamp)
 }

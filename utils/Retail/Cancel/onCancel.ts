@@ -163,6 +163,99 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
     } catch (error: any) {
       logger.error(`Error while checking for fulfillment IDs for /${constants.ON_CANCEL}`, error.stack)
     }
+
+    if (flow == '5') {
+      try {
+        const deliveryFFObj = _.filter(on_cancel.fulfillments, { type: 'Delivery' })
+        if (deliveryFFObj.length == 0) {
+          onCnclObj[`deliveryFFObj`] = `fulfillment type delivery is missing in /${constants.ON_CANCEL}`
+        }
+        else {
+          const deliveryFF = deliveryFFObj[0]
+          const deliveryFFStart = deliveryFF.start
+          const deliveryFFEnd = deliveryFF.end
+
+          function checkFFStartOrEnd(ffStartOrEnd: any, startOrEnd: string) {
+            if (!ffStartOrEnd) {
+              onCnclObj[`deliveryFFObj${startOrEnd}`] = `fulfillment type delivery ${startOrEnd.toLowerCase()} is missing in /${constants.ON_CANCEL}`
+            }
+            else {
+              if (_.isEmpty(ffStartOrEnd.location)) {
+                onCnclObj[`deliveryFFObj/${startOrEnd}/Location`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/location is missing in /${constants.ON_CANCEL}`
+              }
+              if (_.isEmpty(ffStartOrEnd.time)) {
+                onCnclObj[`deliveryFFObj/${startOrEnd}/time`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time is missing in /${constants.ON_CANCEL}`
+              }
+              else {
+                if (_.isEmpty(ffStartOrEnd.time.range)) {
+                  onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range is missing in /${constants.ON_CANCEL}`
+                }
+                else {
+                  if (!ffStartOrEnd.time.range.start) {
+                    onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/Start`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/start is missing in /${constants.ON_CANCEL}`
+                  }
+                  else {
+                    const date = new Date(ffStartOrEnd.time.range.start);
+                    if (String(date) == "Invalid Date") {
+                      onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/Start`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/start is not of a valid date format in /${constants.ON_CANCEL}`
+                    }
+                  }
+                  if (!ffStartOrEnd.time.range.end) {
+                    onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/End`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/end is missing in /${constants.ON_CANCEL}`
+                  }
+                  else {
+                    const date = new Date(ffStartOrEnd.time.range.end);
+                    if (String(date) == "Invalid Date") {
+                      onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/End`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/end is not of a valid date format in /${constants.ON_CANCEL}`
+                    }
+                  }
+                }
+              }
+              if (_.isEmpty(ffStartOrEnd.contact)) {
+                onCnclObj[`deliveryFFObj/${startOrEnd}/Contact`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/contact is missing in /${constants.ON_CANCEL}`
+              }
+              else {
+                if (!ffStartOrEnd.contact.phone) {
+                  onCnclObj[`deliveryFFObj/${startOrEnd}/Contact/Phone`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/contact/phone is missing in /${constants.ON_CANCEL}`
+
+                }
+                else if (isNaN(Number(ffStartOrEnd.contact.phone))) {
+                  onCnclObj[`deliveryFFObj/${startOrEnd}/Contact/Phone`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/contact/phone is not a valid phone_number in /${constants.ON_CANCEL}`
+
+                }
+                if (!ffStartOrEnd.contact.email) {
+                  onCnclObj[`deliveryFFObj/${startOrEnd}/Contact/Email`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/contact/email is missing in /${constants.ON_CANCEL}`
+                }
+                else if (typeof ffStartOrEnd.contact.email != "string") {
+                  onCnclObj[`deliveryFFObj/${startOrEnd}/Contact/Email`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/contact/email is not a type of string in /${constants.ON_CANCEL}`
+
+                }
+              }
+              if (startOrEnd == "End") {
+                if (_.isEmpty(ffStartOrEnd.person)) {
+                  onCnclObj[`deliveryFFObj/${startOrEnd}/Person`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/person is missing in /${constants.ON_CANCEL}`
+                }
+                else {
+                  if (!ffStartOrEnd.person.name) {
+                    onCnclObj[`deliveryFFObj/${startOrEnd}/Person/Name`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/person/name is missing in /${constants.ON_CANCEL}`
+                  }
+                  else if (typeof ffStartOrEnd.person.name != "string") {
+                    onCnclObj[`deliveryFFObj/${startOrEnd}/Person`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/person/name is not a type of string in /${constants.ON_CANCEL}`
+                  }
+                }
+              }
+            }
+          }
+          checkFFStartOrEnd(deliveryFFStart, "Start")
+          checkFFStartOrEnd(deliveryFFEnd, "End")
+        }
+      }
+      catch (error: any) {
+        logger.error(`!!Error while checking fulfillment type delivery in  /${constants.ON_CANCEL}, ${error.stack}`)
+      }
+    }
+
+
     //Comparing item count in /on_cancel and /select
     const select_items: any = getValue('items')
     try {

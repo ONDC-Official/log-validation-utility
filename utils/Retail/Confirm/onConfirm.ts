@@ -234,11 +234,7 @@ export const checkOnConfirm = (data: any) => {
       const startRange = start.time.range
       const endRange = end.time.range
 
-      if (!startRange || !endRange) {
-        onCnfrmObj[
-          `fulfillment.${[deliveryFulfillment.id]}.range`
-        ]`Delivery fulfillment (${deliveryFulfillment.id}) has incomplete time range.`
-      } else {
+      if (startRange && endRange) {
         setValue('deliveryFulfillment', deliveryFulfillment[0])
       }
     } catch (error: any) {

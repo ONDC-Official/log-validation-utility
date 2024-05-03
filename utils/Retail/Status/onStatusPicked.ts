@@ -193,6 +193,15 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any) => 
         logger.info(`Storing delivery fulfillment if not present in ${constants.ON_CONFIRM} and comparing if present`)
         const storedFulfillment = getValue(`deliveryFulfillment`)
         const deliveryFulfillment = on_status.fulfillments.filter((fulfillment: any) => fulfillment.type === 'Delivery')
+        const { start, end } = deliveryFulfillment[0]
+        const startRange = start.time.range
+        const endRange = end.time.range
+
+        if (!startRange || !endRange) {
+          onStatusObj[
+            `fulfillment.${[deliveryFulfillment.id]}.range`
+          ]`Delivery fulfillment (${deliveryFulfillment.id}) has incomplete time range.`
+        }
         if (storedFulfillment == 'undefined') {
           setValue('deliveryFulfillment', deliveryFulfillment)
         } else {

@@ -24,8 +24,8 @@ import {
 import _ from 'lodash'
 import { compareSTDwithArea } from '../../index'
 import { BPCJSON, groceryJSON, healthJSON, homeJSON } from '../../../constants/category'
-import {electronicsData} from '../../../constants/electronics'
-import {applianceData} from '../../../constants/appliance'
+import { electronicsData } from '../../../constants/electronics'
+import { applianceData } from '../../../constants/appliance'
 import { fashion } from '../../../constants/fashion'
 import { DOMAIN } from '../../../utils/enum'
 export const checkOnsearch = (data: any) => {
@@ -136,7 +136,7 @@ export const checkOnsearch = (data: any) => {
   }
 
   const onSearchCatalog: any = message.catalog
-  const onSearchFFIds = new Set()
+  const onSearchFFIdsArray: any = []
   const prvdrsId = new Set()
   const prvdrLocId = new Set()
   const itemsId = new Set()
@@ -145,17 +145,24 @@ export const checkOnsearch = (data: any) => {
   let itemIdList: any = []
   setValue('tmpstmp', context.timestamp)
 
-  // Storing static fulfillment ids in onSearchFFIds
+  // Storing static fulfillment ids in onSearchFFIdsArray
   try {
     logger.info(`Saving static fulfillment ids in /${constants.ON_SEARCH}`)
-    let i = 0
-    const bppFF = onSearchCatalog['bpp/fulfillments']
-    const len = bppFF.length
-    while (i < len) {
-      onSearchFFIds.add(bppFF[i].id)
-      i++
-    }
-    setValue('onSearchFFIds', onSearchFFIds)
+
+    onSearchCatalog['bpp/providers'].forEach((provider: any) => {
+      const onSearchFFIds = new Set()
+      const bppFF = provider.fulfillments
+      const len = bppFF.length
+
+      let i = 0
+      while (i < len) {
+        onSearchFFIds.add(bppFF[i].id)
+        i++
+      }
+      onSearchFFIdsArray.push(onSearchFFIds)
+    })
+
+    setValue('onSearchFFIdsArray', onSearchFFIdsArray)
   } catch (error: any) {
     logger.info(`Error while saving static fulfillment ids in /${constants.ON_SEARCH}, ${error.stack}`)
   }
@@ -927,7 +934,7 @@ export const checkOnsearch = (data: any) => {
           }
 
           try {
-            if (item.fulfillment_id && !onSearchFFIds.has(item.fulfillment_id)) {
+            if (item.fulfillment_id && !onSearchFFIdsArray[i].has(item.fulfillment_id)) {
               const key = `prvdr${i}item${j}ff`
               errorObj[key] =
                 `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/fulfillments`

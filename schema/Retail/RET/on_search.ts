@@ -98,7 +98,7 @@ export const onSearchSchema = {
                   },
                   type: {
                     type: 'string',
-                    enum: ['Delivery', 'Self-Pickup', 'Delivery and Self-Pickup'],
+                    enum: ['Delivery', 'Self-Pickup'],
                   },
                 },
                 required: ['id', 'type'],
@@ -410,7 +410,7 @@ export const onSearchSchema = {
                           required: ['gps', 'radius'],
                         },
                       },
-                      required: ['id', 'time', 'gps', 'address'],
+                      required: ['id', 'time', 'gps', 'address','time'],
                     },
                   },
                   categories: {
@@ -586,7 +586,7 @@ export const onSearchSchema = {
                             },
                             value: {
                               type: 'string',
-                              pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                              pattern: '^[0-9]+(.[0-9]{1,2})?$',
                               errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                             },
                             maximum_value: {

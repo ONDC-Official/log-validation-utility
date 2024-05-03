@@ -98,7 +98,7 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
   }
 
   const onSearchCatalog: any = message.catalog
-  const onSearchFFIds: any = getValue('onSearchFFIds')
+  const onSearchFFIdsArray: any = getValue('onSearchFFIdsArray')
 
   const prvdrsId = new Set()
 
@@ -292,7 +292,7 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
 
                 logger.info(`Checking fulfillment_id for item id: ${item.id}`)
 
-                if (item.fulfillment_id && !onSearchFFIds.includes(item.fulfillment_id)) {
+                if (item.fulfillment_id && !onSearchFFIdsArray[i].includes(item.fulfillment_id)) {
                   const key = `prvdr${i}item${j}ff`
                   errorObj[key] =
                     `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/fulfillments`

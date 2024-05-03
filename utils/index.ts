@@ -864,25 +864,21 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
                 errorObj[key] = `Mandatory tag field [${tagName}] missing for ${categoryName} item[${index}]`
               } else {
                 if (tagInfo.value.length > 0) {
-                  let isValidValue = false
-
+                  let isValidValue = false;
+                  let regexPattern = ""
+              
                   if (Array.isArray(tagInfo.value)) {
-                    isValidValue = tagInfo.value.includes(originalTag) || tagInfo.value.includes(tagValue)
-                  } else if (
-                    typeof tagInfo.value === 'string' &&
-                    tagInfo.value.startsWith('/') &&
-                    tagInfo.value.endsWith('/')
-                  ) {
-                    const regexPattern = tagInfo.value.slice(1, -1)
-                    const regex = new RegExp(regexPattern)
-                    isValidValue = regex.test(originalTag) || regex.test(tagValue)
+                      isValidValue = tagInfo.value.includes(originalTag) || tagInfo.value.includes(tagValue);
+                  } else if (typeof tagInfo.value === 'string' && tagInfo.value.startsWith('/') && tagInfo.value.endsWith('/')) {
+                      regexPattern = tagInfo.value.slice(1, -1);
+                      const regex = new RegExp(regexPattern);
+                      isValidValue = regex.test(originalTag) || regex.test(tagValue);
                   }
 
                   if (!isValidValue) {
-                    logger.error(`The item value can only be one of the possible values or match the regex pattern.`)
-                    const key = `InvldValueforItem[${i}][${index}] : ${tagName}`
-                    errorObj[key] =
-                      `Invalid item value: [${originalTag}]. It must be one of the allowed values or match the regex pattern.`
+                      logger.error(`The item value can only be one of the possible values or match the regex pattern.`);
+                      const key = `InvldValueforItem[${i}][${index}] : ${tagName}`;
+                      errorObj[key] = `Invalid item value: [${originalTag}]. It must be one of the allowed values or match the regex pattern [${regexPattern}].`;
                   }
                 }
               }

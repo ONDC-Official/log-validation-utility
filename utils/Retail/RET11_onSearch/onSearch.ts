@@ -110,7 +110,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
   }
 
   const onSearchCatalog: any = message.catalog
-  const onSearchFFIds = new Set()
+  const onSearchFFIdsArray: any = []
   const prvdrsId = new Set()
   const prvdrLocId = new Set()
   const itemsId = new Set()
@@ -118,16 +118,20 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
   try {
     logger.info(`Saving static fulfillment ids in /${constants.ON_SEARCH}`)
 
-    let i = 0
-    const bppFF = onSearchCatalog['bpp/fulfillments']
-    const len = bppFF.length
+    onSearchCatalog['bpp/providers'].forEach((provider: any) => {
+      const onSearchFFIds = new Set()
+      const bppFF = provider.fulfillments
+      const len = bppFF.length
 
-    while (i < len) {
-      onSearchFFIds.add(bppFF[i].id)
-      i++
-    }
+      let i = 0
+      while (i < len) {
+        onSearchFFIds.add(bppFF[i].id)
+        i++
+      }
+      onSearchFFIdsArray.push(onSearchFFIds)
+    })
 
-    setValue('onSearchFFIds', onSearchFFIds)
+    setValue('onSearchFFIdsArray', onSearchFFIdsArray)
   } catch (error: any) {
     logger.info(`Error while saving static fulfillment ids in /${constants.ON_SEARCH}, ${error.stack}`)
   }
@@ -307,33 +311,24 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
               if (tag.code === 'type') {
                 tag.list.forEach((item: { code: string; value: string }) => {
                   if (item.code === 'type') {
-                    if (
-                      (category.parent_category_id == '' || category.parent_category_id) &&
-                      item.value == 'custom_group'
-                    ) {
-                      if (category.parent_category_id) {
-                        errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] =
-                          `parent_category_id should not value any value while type is ${item.value}`
+                    if ((category.parent_category_id == "" || category.parent_category_id) && item.value == 'custom_group') {
+                      if(category.parent_category_id)
+                        {
+                        errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] = `parent_category_id should not have any value while type is ${item.value}`
                       }
-                      errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] =
-                        `parent_category_id should not be present while type is ${item.value}`
-                    } else if (
-                      category.parent_category_id != '' &&
-                      (item.value == 'custom_menu' || item.value == 'variant_group')
-                    ) {
-                      if (category.parent_category_id) {
-                        errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] =
-                          `parent_category_id should be empty string while type is ${item.value}`
+                      errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] = `parent_category_id should not be present while type is ${item.value}`
+                    }
+                    else if ((category.parent_category_id != "") && (item.value == 'custom_menu' || item.value == 'variant_group')){
+                      if(category.parent_category_id)
+                      {
+                        errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] = `parent_category_id should be empty string while type is ${item.value}`
                       }
-                      errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] =
-                        `parent_category_id should be present while type is ${item.value}`
-                    } else if (
-                      category.parent_category_id &&
-                      (item.value == 'custom_menu' || item.value == 'variant_group')
-                    ) {
-                      if (category.parent_category_id) {
-                        errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] =
-                          `parent_category_id should be empty string while type is ${item.value}`
+                      errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] = `parent_category_id should be present while type is ${item.value}`
+                    }
+                    else if ((category.parent_category_id) && (item.value == 'custom_menu' || item.value == 'variant_group')){
+                      if(category.parent_category_id)
+                      {
+                        errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] = `parent_category_id should be empty string while type is ${item.value}`
                       }
                     }
                   }
@@ -597,24 +592,24 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
 
           if ('category_ids' in item) {
             item[`category_ids`].map((category: string, index: number) => {
-              const categoryId = category.split(':')[0]
-              const seq = category.split(':')[1]
+              const categoryId = category.split(':')[0];
+              const seq = category.split(':')[1];
 
               // Check if seq exists in category_ids
-              const seqExists = item[`category_ids`].some((cat: any) => cat.seq === seq)
+              const seqExists = item[`category_ids`].some((cat: any) => cat.seq === seq);
 
               if (seqExists) {
-                const key = `prvdr${i}item${j}ctgryseq${index}`
-                errorObj[key] = `duplicate seq : ${seq} in category_ids in prvdr${i}item${j}`
+                const key = `prvdr${i}item${j}ctgryseq${index}`;
+                errorObj[key] = `duplicate seq : ${seq} in category_ids in prvdr${i}item${j}`;
               } else {
-                seqSet.add(seq)
+                seqSet.add(seq);
               }
 
               if (!categoriesId.has(categoryId)) {
-                const key = `prvdr${i}item${j}ctgryId${index}`
-                errorObj[key] = `item${j} should have category_ids one of the Catalog/categories/id`
+                const key = `prvdr${i}item${j}ctgryId${index}`;
+                errorObj[key] = `item${j} should have category_ids one of the Catalog/categories/id`;
               }
-            })
+            });
           }
 
           try {
@@ -655,7 +650,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
           try {
             logger.info(`Checking fulfillment_id for item id: ${item.id}`)
 
-            if (item.fulfillment_id && !onSearchFFIds.has(item.fulfillment_id)) {
+            if (item.fulfillment_id && !onSearchFFIdsArray[i].has(item.fulfillment_id)) {
               const key = `prvdr${i}item${j}ff`
               errorObj[key] =
                 `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/fulfillments`

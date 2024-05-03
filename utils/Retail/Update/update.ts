@@ -73,10 +73,10 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
       logger.error(`!!Error while comparing city in /${constants.SEARCH} and /${apiSeq}, ${error.stack}`)
     }
 
-    // Comaring Timestamp of /update with /init API
+    // Comaring Timestamp of /update with /on_init API
     try {
       logger.info(`Comparing timestamp of /${constants.ON_INIT} and /${apiSeq}`)
-      if (_.gte(getValue('tmpstmp'), context.timestamp)) {
+      if (_.gte(getValue('onInitTmpstmp'), context.timestamp)) {
         updtObj.tmpstmp = `Timestamp for /${constants.ON_INIT} api cannot be greater than or equal to /${apiSeq} api`
       }
 

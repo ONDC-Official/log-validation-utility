@@ -194,7 +194,7 @@ export const onUpdateSchema = {
                             required: ['locality', 'city', 'area_code', 'state'],
                           },
                         },
-                        required: ['id', 'gps', 'address'],
+                        required: ['gps', 'address'],
                       },
                       time: {
                         type: 'object',

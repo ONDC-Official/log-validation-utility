@@ -46,6 +46,7 @@ import checkRsfOnReceiverRecon from '../utils/RSF/rsfOnReciverRecon'
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
   const settlementDetatilSet = new Set()
+  const quoteTrailItemsSet = new Set()
   let logReport: any = {}
   setValue('flow', flow)
   setValue('domain', domain.split(':')[1])
@@ -228,29 +229,29 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         case ApiSequence.ON_STATUS_DELIVERED:
           return checkOnStatusDelivered(data, 'delivered', msgIdSet)
         case ApiSequence.ON_UPDATE_PART_CANCEL:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_PART_CANCEL,settlementDetatilSet, "6-a")
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_PART_CANCEL, settlementDetatilSet, quoteTrailItemsSet, "6-a")
         case ApiSequence.UPDATE_SETTLEMENT_PART_CANCEL:
-          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_PART_CANCEL,settlementDetatilSet, '6-a')
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_PART_CANCEL, settlementDetatilSet, '6-a')
         case ApiSequence.UPDATE_REVERSE_QC:
-          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_REVERSE_QC,settlementDetatilSet, '6-b')
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_REVERSE_QC, settlementDetatilSet, '6-b')
         case ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC,settlementDetatilSet, '6-b')
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC, settlementDetatilSet, quoteTrailItemsSet, '6-b')
         case ApiSequence.ON_UPDATE_APPROVAL:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_APPROVAL,settlementDetatilSet, "6-b")
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_APPROVAL, settlementDetatilSet, quoteTrailItemsSet, "6-b")
         case ApiSequence.ON_UPDATE_PICKED:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_PICKED,settlementDetatilSet, "6-b")
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_PICKED, settlementDetatilSet, quoteTrailItemsSet, "6-b")
         case ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC:
-          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC,settlementDetatilSet, '6-b')
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC, settlementDetatilSet, '6-b')
         case ApiSequence.ON_UPDATE_DELIVERED:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_APPROVAL,settlementDetatilSet, "6-b")
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_APPROVAL, settlementDetatilSet, quoteTrailItemsSet, "6-b")
         case ApiSequence.UPDATE_LIQUIDATED:
-          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_LIQUIDATED,settlementDetatilSet, '6-c')
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_LIQUIDATED, settlementDetatilSet, '6-c')
         case ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED,settlementDetatilSet, "6-c")
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED, settlementDetatilSet, quoteTrailItemsSet, "6-c")
         case ApiSequence.ON_UPDATE_LIQUIDATED:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_LIQUIDATED,settlementDetatilSet, "6-c")
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_LIQUIDATED, settlementDetatilSet, quoteTrailItemsSet, "6-c")
         case ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED:
-          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED,settlementDetatilSet, '6-c')
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED, settlementDetatilSet, '6-c')
         case ApiSequence.TRACK:
           return checkTrack(data)
         case ApiSequence.ON_TRACK:

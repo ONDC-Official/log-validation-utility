@@ -82,8 +82,7 @@ export const onSearchIncSchema = {
                   },
                   type: {
                     type: 'string',
-                    enum: ['Self-Pickup','Order','Delivery', 'All'],
-                    errorMessage: "timing for fulfillment type, enum - 'Order' (online order processing timings 'Delivery' (order shipment timings, will be same as delivery timings for hyperlocal), 'Self-Pickup' (self-pickup timings), All",
+                    enum: ['Self-Pickup','Delivery'],
                   },
                 },
                 required: ['id', 'type'],

@@ -16,7 +16,7 @@ import {
   return_rejected_request_reasonCodes,
   return_request_reasonCodes,
 } from '../../../constants/reasonCode'
-export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDetatilSet: any, flow: any) => {
+export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDetatilSet: any, quoteTrailItemsSet: any, flow: any) => {
   const onupdtObj: any = {}
   const quoteItemSet: any = new Set()
   try {
@@ -240,8 +240,38 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
       logger.error(`Error while checking for item IDs for /${apiSeq}, ${error.stack}`)
     }
 
-    // Compare return_request object
+    try {
+      // For Delivery Object
+      const DELobj = _.filter(on_update.fulfillments, { type: 'Delivery' })
+      let del_start_location: any = {}
+      if (!DELobj.length) {
+        logger.error(`Delivery object is mandatory for ${apiSeq}`)
+        const key = `missingDelivery`
+        onupdtObj[key] = `Delivery object is mandatory for ${apiSeq}`
+      } else {
+        // Checking for start object inside Delivery
+        if (!_.isEmpty(DELobj[0]?.start)) {
+          const del_obj_start = DELobj[0]?.start
+          if (!_.isEmpty(del_obj_start?.location)) {
+            del_start_location = del_obj_start.location
+            if (!del_start_location.id) {
+              onupdtObj['Delivery.start.location.id'] = `Delivery fulfillment start location id is missing in ${apiSeq}`
+            }
+          }
+          else {
+            onupdtObj['Delivery.start.location'] = `Delivery fulfillment start location object is missing in ${apiSeq}`
+            logger.error(`Delivery fulfillment start location is missing in ${apiSeq}`)
+          }
+        } else {
+          onupdtObj['DeliveryFulfillment.start'] = `Delivery fulfillment start object is missing in ${apiSeq}`
+        }
+      }
+    } catch (error: any) {
+      logger.error(`Error while checking Fulfillments Delivery Obj in /${apiSeq}, ${error.stack}`)
+    }
 
+
+    // Compare return_request object
     if (flow === '6-b') {
       // Checking for quote_trail price and item quote price
       try {
@@ -262,6 +292,43 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
       } catch (error: any) {
         logger.error(
           `Error occuerred while checking for quote_trail price and quote breakup price on /${apiSeq}`,
+        )
+      }
+
+      // Checking for quoteTrailItems and adding to quoteTrailItemsSet and comparing with the previous calls
+      try {
+        let cancelFulfillmentsArray = _.filter(on_update.fulfillments, { type: 'Cancel' })
+        if (cancelFulfillmentsArray.length != 0) {
+          const cancelFulfillments = cancelFulfillmentsArray[0]
+          const quoteTrailItems = cancelFulfillments.tags.filter(
+            (tag: any) => tag.code == 'quote_trail')
+          if (quoteTrailItems.length != 0) {
+            if (apiSeq == ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC) {
+              quoteTrailItems.forEach((item: any) => {
+                quoteTrailItemsSet.add(item)
+              });
+            }
+
+            quoteTrailItemsSet.forEach((obj1: any) => {
+              const exist = quoteTrailItems.some((obj2: any) => {
+                return _.isEqual(obj1, obj2)
+              });
+              if (!exist) {
+                onupdtObj[`message/order.fulfillments/Cancel/tags/quote_trail`] = "Missing fulfillments/Cancel/tags/quote_trail as compare to the previous calls"
+              }
+            });
+
+          }
+          else {
+            onupdtObj[`message/order.fulfillments/Cancel/tags/quote_trail`] = `Fulfillments/Cancel/tags/quote_trail is missing in ${apiSeq}`
+          }
+        }
+        else {
+          onupdtObj[`message/order.fulfillments/Cancel`] = `Fulfillments/Cancel is missing in ${apiSeq}`
+        }
+      } catch (error: any) {
+        logger.error(
+          `Error occurred while checking for quote_trail in /${apiSeq}`,
         )
       }
 
@@ -293,7 +360,6 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                   list.value === context.bap_id &&
                   !return_request_reasonCodes.includes(reason_id)
                 ) {
-                  console.log('yahaaaaaaa', list.value, context.bap_id, reason_id)
                   onupdtObj['invalid_return_request_reason'] = `reason code allowed are ${return_request_reasonCodes}`
                 }
               }
@@ -360,7 +426,45 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
           `Error occuerred while checking for quote_trail price and quote breakup price on /${apiSeq}`,
         )
       }
+
+      // Checking for quoteTrailItems and adding to quoteTrailItemsSet and comparing with the previous calls
+      try {
+        let cancelFulfillmentsArray = _.filter(on_update.fulfillments, { type: 'Cancel' })
+        if (cancelFulfillmentsArray.length != 0) {
+          const cancelFulfillments = cancelFulfillmentsArray[0]
+          const quoteTrailItems = cancelFulfillments.tags.filter(
+            (tag: any) => tag.code == 'quote_trail')
+          if (quoteTrailItems.length != 0) {
+            if (apiSeq == ApiSequence.ON_UPDATE_LIQUIDATED) {
+              quoteTrailItems.forEach((item: any) => {
+                quoteTrailItemsSet.add(item)
+              });
+            }
+
+            quoteTrailItemsSet.forEach((obj1: any) => {
+              const exist = quoteTrailItems.some((obj2: any) => {
+                return _.isEqual(obj1, obj2)
+              });
+              if (!exist) {
+                onupdtObj[`message/order.fulfillments/Cancel/tags/quote_trail`] = "Missing fulfillments/Cancel/tags/quote_trail as compare to the previous calls"
+              }
+            });
+          }
+          else {
+            onupdtObj[`message/order.fulfillments/Cancel/tags/quote_trail`] = `Fulfillments/Cancel/tags/quote_trail is missing in ${apiSeq}`
+          }
+        }
+        else {
+          onupdtObj[`message/order.fulfillments/Cancel`] = `Fulfillments/Cancel is missing in ${apiSeq}`
+        }
+
+      } catch (error: any) {
+        logger.error(
+          `Error occurred while checking for quote_trail in /${apiSeq}`,
+        )
+      }
     }
+
     try {
       logger.info(`Checking for the availability of initiated_by code in ${apiSeq}`)
       const fulfillments = on_update.fulfillments
@@ -403,7 +507,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
           logger.error(`Error while setting cancelFulfillmentID in /${apiSeq}`)
         }
 
-        // Checking for quote_trail price and item quote price
+        // Checking for quote_trail price and item quote price and adding 
         try {
           if (sumQuoteBreakUp(on_update.quote)) {
             const price = Number(on_update.quote.price.value)
@@ -418,7 +522,32 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
           }
         } catch (error: any) {
           logger.error(
-            `Error occuerred while checking for quote_trail price and quote breakup price on /${apiSeq}`,
+            `Error occurred while checking for quote_trail price and quote breakup price on /${apiSeq}`,
+          )
+        }
+
+        // Checking for quoteTrailItems and adding to quoteTrailItemsSet
+        try {
+          let cancelFulfillmentsArray = _.filter(on_update.fulfillments, { type: 'Cancel' })
+          if (cancelFulfillmentsArray.length != 0) {
+            const cancelFulfillments = cancelFulfillmentsArray[0]
+            const quoteTrailItems = cancelFulfillments.tags.filter(
+              (tag: any) => tag.code == 'quote_trail')
+            if (quoteTrailItems.length != 0) {
+              quoteTrailItems.forEach((item: any) => {
+                quoteTrailItemsSet.add(item)
+              });
+            }
+            else {
+              onupdtObj[`message/order.fulfillments/Cancel/tags/quote_trail`] = `Fulfillments/Cancel/tags/quote_trail is missing in ${apiSeq}`
+            }
+          }
+          else {
+            onupdtObj[`message/order.fulfillments/Cancel`] = `Fulfillments/Cancel is missing in ${apiSeq}`
+          }
+        } catch (error: any) {
+          logger.error(
+            `Error occurred while checking for quote_trail in /${apiSeq}`,
           )
         }
 

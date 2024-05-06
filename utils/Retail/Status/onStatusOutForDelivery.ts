@@ -2,9 +2,8 @@
 import _ from 'lodash'
 import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo } from '../..'
+import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
-
 
 export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: any) => {
   const onStatusObj: any = {}
@@ -28,7 +27,8 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
     try {
       logger.info(`Adding Message Id /${constants.ON_STATUS_OUT_FOR_DELIVERY}`)
       if (msgIdSet.has(context.message_id)) {
-        onStatusObj[`${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}_msgId`] = `Message id should not be same with previous calls`
+        onStatusObj[`${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}_msgId`] =
+          `Message id should not be same with previous calls`
       }
       msgIdSet.add(context.message_id)
     } catch (error: any) {
@@ -143,6 +143,23 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
     }
 
     try {
+      logger.info(`comparing fulfillment ranges `)
+      const storedFulfillment = getValue(`deliveryFulfillment`)
+      const deliveryFulfillment = on_status.fulfillments.filter((fulfillment: any) => fulfillment.type === 'Delivery')
+      const fulfillmentRangeerrors = compareTimeRanges(storedFulfillment, deliveryFulfillment[0])
+      if (fulfillmentRangeerrors) {
+        let i = 0
+        const len = fulfillmentRangeerrors.length
+        while (i < len) {
+          const key = `fulfilmntRngErr${i}`
+          onStatusObj[key] = `${fulfillmentRangeerrors[i]}`
+          i++
+        }
+      }
+    } catch (error: any) {
+      logger.error(`Error while comparing fulfillment ranges , ${error.stack}`)
+    }
+    try {
       if (on_status.updated_at) {
         setValue('PreviousUpdatedTimestamp', on_status.updated_at)
       }
@@ -230,11 +247,11 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
         // Checking fulfillment.id, fulfillment.type and tracking
         logger.info('Checking fulfillment.id, fulfillment.type and tracking')
         on_status.fulfillments.forEach((ff: any) => {
-          let ffId = ""
+          let ffId = ''
 
           if (!ff.id) {
             logger.info(`Fulfillment Id must be present `)
-            onStatusObj["ffId"] = `Fulfillment Id must be present`
+            onStatusObj['ffId'] = `Fulfillment Id must be present`
           }
 
           ffId = ff.id
@@ -242,12 +259,11 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
             if (ff.tracking === false || ff.tracking === true) {
               if (getValue(`${ffId}_tracking`) != ff.tracking) {
                 logger.info(`Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`)
-                onStatusObj["ffTracking"] = `Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`
+                onStatusObj['ffTracking'] = `Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`
               }
-            }
-            else {
+            } else {
               logger.info(`Tracking must be present for fulfillment ID: ${ff.id} in boolean form`)
-              onStatusObj["ffTracking"] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
+              onStatusObj['ffTracking'] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
             }
           }
         })

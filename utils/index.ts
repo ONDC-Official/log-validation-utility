@@ -540,7 +540,7 @@ export function validateLocations(locations: any[], tags: any[]) {
         for (let j = 0; j < tags[i].list.length; j++) {
           if (tags[i].list[j].code === 'val' && tags[i].list[j].value !== radius.value) {
             Object.assign(errorObj, {
-              srvcabilityValErr: `value passed in serviceability tags should be same as passed in location/circle`,
+              srvcabilityValErr: `value passed in serviceability tags[${i}] should be same as passed in location/circle`,
             })
           }
         }

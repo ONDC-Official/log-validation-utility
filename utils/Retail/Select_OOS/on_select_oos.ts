@@ -415,7 +415,7 @@ export const checkOnSelect_OOS = (data: any) => {
         if (!Object.values(itemFlfllmnts).includes(element['@ondc/org/item_id'])) {
           const brkupffid = `brkupfftitles${i}`
           errorObj[brkupffid] =
-            `invalid  id: ${element['@ondc/org/item_id']} in ${titleType} line item (should be a valid fulfillment_id)`
+            `invalid  id: ${element['@ondc/org/item_id']} in ${titleType} line item (should be a valid fulfillment_id as provided in message.items for the items)`
         }
       }
     })

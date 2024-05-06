@@ -169,6 +169,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
     } catch (error: any) {
       logger.error(`Error while checking for item IDs for /${apiSeq}, ${error.stack}`)
     }
+
     //checking for settlement details in payment
     try {
       logger.info(`Checking for settlement_details in /message/order/payment`)
@@ -468,15 +469,15 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
     try {
       logger.info(`Checking for the availability of initiated_by code in ${apiSeq}`)
       const fulfillments = on_update.fulfillments
-      fulfillments.map((fulfillment: any) => {
+      fulfillments.map((fulfillment: any, iF: number) => {
         if (fulfillment.tags) {
           const tags = fulfillment.tags
-          tags.map((tag: any) => {
+          tags.map((tag: any, iT:any) => {
             if (tag.code === 'cancel_request') {
               const list = tag.list
               const tags_initiated = list.find((data: any) => data.code === 'initiated_by')
               if (!tags_initiated) {
-                onupdtObj[`message/order/fulfillments/tags`] =
+                onupdtObj[`message/order/fulfillments${iF}/tags${iT}`] =
                   `${apiSeq} must have initiated_by code in fulfillments/tags/list`
               }
             }
@@ -484,7 +485,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
               const list = tag.list
               const tags_initiated = list.find((data: any) => data.code === 'initiated_by')
               if (!tags_initiated) {
-                onupdtObj[`message/order/fulfillments/tags`] =
+                onupdtObj[`message/order/fulfillments${iF}/tags${iT}`] =
                   `${apiSeq} must have initiated_by code in fulfillments/tags/list`
               }
             }

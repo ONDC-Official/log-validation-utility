@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import { getValue, setValue } from '../../../shared/dao'
-import constants from '../../../constants'
+import constants, { insuranceFlows } from '../../../constants'
 import { validateSchema, isObjectEmpty, isValidEmail, isValidPhoneNumber } from '../../'
 import _, { isEmpty } from 'lodash'
 import { logger } from '../../../shared/logger'
@@ -32,6 +32,8 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
   const onSearch: any = getValue(`${constants.ON_SEARCH}`)
   const selectedAddOn = new Set()
   const selectedItemId = new Set()
+  const selectedParentId = new Set()
+  const insurance = getValue(`insuranceType`)
 
   try {
     // const storedItemIDS: any = getValue(`${constants.ON_SEARCH}_itemsId`)
@@ -60,7 +62,7 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
     try {
       logger.info(`checking fulfillments object for /${constants.ON_SEARCH} and /${constants.SELECT}`)
 
-      select.fulfillments.forEach((fulfillment: any, index: number) => {
+      select?.fulfillments?.forEach((fulfillment: any, index: number) => {
         if (!fulfillment.id) {
           errorObj[`fulfillment${index}_id`] = `Fulfillment ID is missing for fulfillment at index ${index}`
         }
@@ -93,10 +95,6 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
         errorObj.items = `items must be present & should be non empty in /${constants.SELECT}`
       } else {
         const itemId = getValue(`${constants.ON_SEARCH}_itemsId`)
-        const parentItemId: any = getValue('parentItemId')
-
-        console.log('itemId', itemId)
-        console.log('parentItemId', parentItemId)
         select?.items?.forEach((item: any, index: number) => {
           // Validate item id
           if (!item?.id) {
@@ -105,22 +103,26 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
             selectedItemId?.add(item?.id)
             if (itemId && !itemId.includes(item.id)) {
               const key = `item[${index}].item_id`
-              errorObj[
-                key
-              ] = `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
+              errorObj[key] =
+                `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
             }
           }
 
           // Validate parent_item_id
-          if (!item?.parent_item_id) errorObj.parent_item_id = `sub-parent_item_id not found in providers[${index}]`
-          else if (!_.isEqual(item.parent_item_id, parentItemId)) {
-            setValue('parentItemId', item.parent_item_id)
-            errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id from past call in providers[${index}]`
+          if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in providers[${index}]`
+          else {
+            selectedParentId?.add(item.parent_item_id)
+            if (itemId && !itemId.includes(item.parent_item_id)) {
+              setValue('parentItemId', item.parent_item_id)
+              errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id from past call in providers[${index}]`
+            }
           }
 
           //validate xInput form
-          const xinputErrors = validateXInputSubmission(item?.xinput, index, sequence)
-          Object.assign(errorObj, xinputErrors)
+          if (insurance != insuranceFlows.HEALTH) {
+            const xinputErrors = validateXInputSubmission(item?.xinput, index, sequence)
+            Object.assign(errorObj, xinputErrors)
+          }
 
           // Validate add_ons
           try {
@@ -165,6 +167,7 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
     }
 
     setValue('selectedItemId', selectedItemId)
+    setValue('parentItemId', selectedParentId)
     setValue(`selectedAddOnIds`, selectedAddOn)
   } catch (error: any) {
     logger.error(`!!Error occcurred while checking message in /${constants.SELECT},  ${error.message}`)

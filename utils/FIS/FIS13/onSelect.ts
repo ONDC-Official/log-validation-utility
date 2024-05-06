@@ -62,16 +62,15 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
         onSelect.items.forEach((item: any, index: number) => {
           if (selectedItemId && !selectedItemId.includes(item.id)) {
             const key = `item[${index}].item_id`
-            errorObj[
-              key
-            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+            errorObj[key] =
+              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
           }
 
           // Validate parent_item_id
           if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in providers[${index}]`
           else {
             const parentItemId = getValue('parentItemId')
-            if (!_.isEqual(item.parent_item_id, parentItemId)) {
+            if (parentItemId && !parentItemId.includes(item.parent_item_id)) {
               errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id from past call in providers[${index}]`
             }
           }

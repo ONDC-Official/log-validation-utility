@@ -1285,6 +1285,7 @@ properties:
                                         - text/html
                                         - application/html
                                         - application/xml
+                                        - text/html-multi
                                     resubmit:
                                       type: boolean
                                     multiple_sumbissions:

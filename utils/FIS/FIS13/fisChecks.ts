@@ -133,9 +133,8 @@ export const validateXInput = (xinput: any, j: number, action: string, currIndex
       const id = form.id
 
       if (!url || typeof url !== 'string' || !isValidUrl(url)) {
-        errors[
-          `item${j}_xinput_form_url`
-        ] = `url is missing, not a string, or not a valid URL in items[${j}].xinput.form`
+        errors[`item${j}_xinput_form_url`] =
+          `url is missing, not a string, or not a valid URL in items[${j}].xinput.form`
       }
 
       if (!id || typeof id !== 'string') {
@@ -434,23 +433,20 @@ export const validateXInputSubmission = (xinput: any, index: number, sequence: s
     }
 
     if (!Object.prototype.hasOwnProperty.call(xinput?.form_response, 'status')) {
-      errorObj[
-        `item${index}_xinput`
-      ] = `/message/order/items/xinput in item[${index}] must have status in form_response`
+      errorObj[`item${index}_xinput`] =
+        `/message/order/items/xinput in item[${index}] must have status in form_response`
     } else {
       const status = xinput?.form_response?.status
       const code = 'SUCCESS'
       if (status !== code) {
-        errorObj[
-          `item${index}_status`
-        ] = `/message/order/items/xinput/form_response/status in item[${index}] should be '${code}'`
+        errorObj[`item${index}_status`] =
+          `/message/order/items/xinput/form_response/status in item[${index}] should be '${code}'`
       }
     }
 
     if (!Object.prototype.hasOwnProperty.call(xinput?.form_response, 'submission_id')) {
-      errorObj[
-        `item${index}_xinput`
-      ] = `/message/order/items/xinput in item[${index}] must have submission_id in form_response`
+      errorObj[`item${index}_xinput`] =
+        `/message/order/items/xinput in item[${index}] must have submission_id in form_response`
     } else {
       setValue(`${sequence}_submission_id`, xinput?.form_response?.submission_id)
     }
@@ -531,7 +527,7 @@ export const validateQuote = (quote: any) => {
     if (isEmpty(quote)) errorObj.quote = 'quote is  missing at message.order'
     else {
       const quoteBreakup = quote.breakup
-      const validBreakupItems = ['BASE_PRICE', 'CONVIENCE', 'TAX', 'PROCESSING_FEE']
+      const validBreakupItems = ['BASE_PRICE', 'CONVIENCE_FEE', 'TAX', 'PROCESSING_FEE']
 
       const requiredBreakupItems = validBreakupItems.filter((item) =>
         quoteBreakup.some((breakupItem: any) => breakupItem.title.toUpperCase() === item),
@@ -545,7 +541,7 @@ export const validateQuote = (quote: any) => {
 
       const totalBreakupValue = quoteBreakup.reduce((total: any, item: any) => {
         const itemTitle = item.title.toUpperCase()
-        if (requiredBreakupItems.includes(itemTitle) && itemTitle !== 'NET_DISBURSED_AMOUNT') {
+        if (requiredBreakupItems.includes(itemTitle)) {
           const itemValue = parseFloat(item.price.value)
           return isNaN(itemValue) ? total : total + itemValue
         }

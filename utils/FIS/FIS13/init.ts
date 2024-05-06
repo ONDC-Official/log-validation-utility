@@ -85,15 +85,14 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
             errorObj[`item[${index}].id`] = `item.id is missing at item[${index}], /${constants.INIT}`
           } else {
             if (itemIDS && !itemIDS.includes(item.id)) {
-              errorObj[
-                key
-              ] = `/message/order/items/id in item: ${item.id} should be one of the item.id mapped from previous call`
+              errorObj[key] =
+                `/message/order/items/id in item: ${item.id} should be one of the item.id mapped from previous call`
             }
           }
 
           // Validate parent_item_id
-          if (!item?.parent_item_id) errorObj.parent_item_id = `sub-parent_item_id not found in providers[${index}]`
-          else if (!_.isEqual(item.parent_item_id, parentItemId)) {
+          if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in providers[${index}]`
+          else if (parentItemId && !parentItemId.includes(item.parent_item_id)) {
             setValue('parentItemId', item.parent_item_id)
             errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id from past call in providers[${index}]`
           }
@@ -128,6 +127,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
             { code: 'STATIC_TERMS', type: 'url' },
             { code: 'COURT_JURISDICTION', type: 'string' },
             { code: 'DELAY_INTEREST', type: 'amount' },
+            { code: 'OFFLINE_CONTRACT', type: 'boolean' },
           ]
 
           if (!arr?.collected_by) {
@@ -135,9 +135,8 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
           } else {
             const collectedBy = getValue(`collected_by`)
             if (collectedBy && collectedBy != arr?.collected_by)
-              errorObj[
-                `payemnts[${i}]_collected_by`
-              ] = `payments.collected_by value sent in ${constants.INIT} should be same as sent in past call: ${collectedBy}`
+              errorObj[`payemnts[${i}]_collected_by`] =
+                `payments.collected_by value sent in ${constants.INIT} should be same as sent in past call: ${collectedBy}`
 
             if (arr?.collected_by === 'BPP') {
               terms.push({ code: 'SETTLEMENT_AMOUNT', type: 'amount' })

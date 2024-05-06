@@ -54,19 +54,11 @@ export const validatePaymentTags = (tags: Tag[], terms: any): ValidationResult =
               (code) => !expectedDescriptorCodes.includes(code),
             )
 
-            console.log(
-              'actualDescriptorCodes-------------------',
-              actualDescriptorCodes,
-              actualDescriptorCodes.includes('BUYER_FINDER_FEES_PERCENTAGE'),
-            )
-
             if (!actualDescriptorCodes.includes('BUYER_FINDER_FEES_PERCENTAGE')) {
               console.log('wejhfiuwerhfervjernvjernv')
 
               errors.push(`BUYER_FINDER_FEES_PERCENTAGE is missing `)
             }
-
-            console.log('errors------------------------', errors)
 
             if (!actualDescriptorCodes.includes('BUYER_FINDER_FEES_TYPE')) {
               errors.push(`BUYER_FINDER_FEES_TYPE is missing `)
@@ -84,7 +76,7 @@ export const validatePaymentTags = (tags: Tag[], terms: any): ValidationResult =
             )
 
             if (buyerFinderFeesType && buyerFinderFeesType.value !== 'percent-annualized') {
-              errors.push(`BUYER_FINDER_FEES_[${index}], BUYER_FINDER_FEES_PERCENTAGE must be 'percent-annualized'`)
+              errors.push(`BUYER_FINDER_FEES_[${index}], BUYER_FINDER_FEES_TYPE must be 'percent-annualized'`)
             }
 
             if (buyerFinderFeesPercentage && !/^[+-]?\d+(\.\d+)?$/.test(buyerFinderFeesPercentage.value)) {

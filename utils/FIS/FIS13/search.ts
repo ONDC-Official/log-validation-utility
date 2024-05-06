@@ -37,10 +37,10 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
     let contextRes: any
     if (action?.includes('_offer')) {
       // if action is search_offer, validate context with bpp & bap details
-      contextRes = validateContext(context, msgIdSet, action, constants.SEARCH)
+      contextRes = validateContext(context, msgIdSet, constants.SEARCH, constants.SEARCH)
     } else {
       // if action is search, validate context with only bap details
-      contextRes = checkFISContext(data.context, action)
+      contextRes = checkFISContext(data.context, constants.SEARCH)
       setValue(`${action}_context`, data.context)
     }
 
@@ -83,6 +83,7 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
         errorObj['collected_by'] = `Invalid value for collected_by, should be either of ${allowedCollectedByValues}`
       } else {
         terms?.push({ code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' })
+        terms?.push({ code: 'OFFLINE_CONTRACT', type: 'boolean' })
         terms?.push({
           code: 'SETTLEMENT_BASIS',
           type: 'enum',
@@ -140,9 +141,8 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
                 } else {
                   if (itemId && !itemId.includes(item.id)) {
                     const key = `item[${index}].item_id`
-                    errorObj[
-                      key
-                    ] = `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
+                    errorObj[key] =
+                      `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
                   }
                 }
 

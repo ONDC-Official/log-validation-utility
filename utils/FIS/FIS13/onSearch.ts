@@ -2,7 +2,7 @@
 /* eslint-disable no-prototype-builtins */
 import { logger } from '../../../shared/logger'
 import { setValue, getValue } from '../../../shared/dao'
-import constants from '../../../constants'
+import constants, { FIS13HealthSequence } from '../../../constants'
 import { validateSchema, isObjectEmpty } from '../../'
 import { checkUniqueCategoryIds, validateContext, validateDescriptor, validateXInput } from './fisChecks'
 import { validatePaymentTags, validateItemsTags } from './tags'
@@ -135,18 +135,17 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
               { code: 'STATIC_TERMS', type: 'url' },
               { code: 'COURT_JURISDICTION', type: 'string' },
               { code: 'DELAY_INTEREST', type: 'amount' },
+              { code: 'OFFLINE_CONTRACT', type: 'boolean' },
             ]
 
             if (!arr?.collected_by) {
-              errorObj[
-                `payemnts[${i}]_collected_by`
-              ] = `payments.collected_by must be present in ${constants.ON_SEARCH}`
+              errorObj[`payemnts[${i}]_collected_by`] =
+                `payments.collected_by must be present in ${constants.ON_SEARCH}`
             } else {
               const srchCollectBy = getValue(`collected_by`)
               if (srchCollectBy != arr?.collected_by)
-                errorObj[
-                  `payemnts[${i}]_collected_by`
-                ] = `payments.collected_by value sent in ${constants.ON_SEARCH} should be same as sent in ${constants.SEARCH}: ${srchCollectBy}`
+                errorObj[`payemnts[${i}]_collected_by`] =
+                  `payments.collected_by value sent in ${constants.ON_SEARCH} should be same as sent in ${constants.SEARCH}: ${srchCollectBy}`
             }
 
             // Validate payment tags
@@ -186,9 +185,8 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
               const areCategoryIdsUnique = checkUniqueCategoryIds(item.category_ids, categoriesId)
               if (!areCategoryIdsUnique) {
                 const key = `prvdr${i}item${j}_category_ids`
-                errorObj[
-                  key
-                ] = `category_ids value in /providers[${i}]/items[${j}] should match with id provided in categories`
+                errorObj[key] =
+                  `category_ids value in /providers[${i}]/items[${j}] should match with id provided in categories`
               }
             }
 
@@ -209,10 +207,10 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
               if (time?.label && time?.label !== 'TENURE')
                 errorObj['time.label'] = `label is missing or should be equal to TENURE at providers[${i}].items[${j}]`
 
-              if (time?.duration && !/^PT\d+([YMH])$/.test(time?.duration)) {
+              if (!time?.duration) {
                 errorObj['time.duration'] = `duration is missing at providers[${i}].items[${j}]`
               } else if (!/^PT\d+[MH]$/.test(time?.duration)) {
-                errorObj['time.duration'] = `incorrect format or type for duration at providers[${i}].items[${j}]`
+                errorObj['time.duration'] = `incorrect value for duration at providers[${i}].items[${j}]`
               }
             }
 
@@ -227,7 +225,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
 
             // Validate xinput
             // either call shouldn't be of multi-offer, or parent_item_id should be present to validate xinput
-            if (!action?.includes('_offer') || item?.parent_item_id) {
+            if (action != FIS13HealthSequence.ON_SEARCH_2) {
               const xinput = item?.xinput
               const xinputValidationErrors = validateXInput(xinput, j, constants.ON_SEARCH, 0)
               if (xinputValidationErrors) {
@@ -244,9 +242,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
             // Validate add_ons
             try {
               logger.info(`Checking add_ons`)
-              if (isEmpty(item?.add_ons))
-                errorObj[`item[${j}]_add_ons`] = `add_ons array is missing or empty in ${action}`
-              else {
+              if (!isEmpty(item?.add_ons)) {
                 item?.add_ons?.forEach((addOn: any, index: number) => {
                   const key = `item[${j}]_add_ons[${index}]`
 

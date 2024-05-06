@@ -613,7 +613,7 @@ export const onSearchSchema = {
                           type: 'boolean',
                         },
                         '@ondc/org/return_window': {
-                          type: 'string',
+                          type: ['string', 'null'],
                           format: 'duration',
                         },
                         '@ondc/org/seller_pickup_return': {

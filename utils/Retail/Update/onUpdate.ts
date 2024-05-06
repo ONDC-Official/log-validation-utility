@@ -452,7 +452,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
             });
           }
           else {
-            onupdtObj[`message/order.fulfillments/Cancel/tags/quote_trail`] = `Fulfillments/Cancel/tags/quote_trail is missing in ${apiSeq}`
+            onupdtObj[`message/order.fulfillments/Cancel/tags/quote_trail`] = `Cancel fulfillment in quote_trail is missing in ${apiSeq}`
           }
         }
         else {

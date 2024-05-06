@@ -303,7 +303,7 @@ export const cancel_RTO_Schema = {
                             required: ['locality', 'city', 'area_code', 'state'],
                           },
                         },
-                        required: ['id', 'descriptor', 'gps', 'address'],
+                        required: ['gps', 'address'],
                       },
                       time: {
                         type: 'object',

@@ -901,7 +901,7 @@ export const FnBonSearchSchema = {
                                         properties: {
                                           value: {
                                             type: 'string',
-                                            pattern: '^(2[0-3]|[01]?[0-9]|24)[0-5]?[0-9]$',
+                                            pattern: '^([01][0-9]|2[0-3])[0-5][0-9]$',
                                             errorMessage:
                                               "Value for 'time_from' must be a 4-digit numeric value in HHMM format",
                                           },

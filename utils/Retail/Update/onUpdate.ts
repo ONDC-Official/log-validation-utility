@@ -399,8 +399,6 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                     let fulfillmentsArray = JSON.parse(JSON.stringify(on_update.fulfillments))
                     if (fulfillmentsArray.length != 0) {
                         fulfillmentsArray.forEach((ff: any) => {
-
-                            delete ff?.state
                             if (ff.type == "Cancel") {
                                 fulfillmentsItemsSet.add((ff))
                             }

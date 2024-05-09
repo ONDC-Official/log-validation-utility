@@ -109,7 +109,7 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
         }
 
         ffId = ff.id
-
+        if( ff.type != "Cancel") {
         if (getValue(`${ffId}_tracking`)) {
           if (ff.tracking === false || ff.tracking === true) {
             if (getValue(`${ffId}_tracking`) != ff.tracking) {
@@ -121,6 +121,7 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
             onStatusObj['ffTracking'] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
           }
         }
+      }
       })
     } catch (error: any) {
       logger.info(`Error while checking fulfillments id, type and tracking in /${constants.ON_STATUS}`)

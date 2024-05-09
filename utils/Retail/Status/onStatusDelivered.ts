@@ -1,17 +1,17 @@
 /* eslint-disable no-prototype-builtins */
 import _ from 'lodash'
-import constants, { ApiSequence } from '../../../constants'
+import constants, { ApiSequence, ROUTING_ENUMS } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any) => {
+export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any, fulfillmentsItemsSet: any) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
       return { [ApiSequence.ON_STATUS_DELIVERED]: 'JSON cannot be empty' }
     }
-
+    const flow = getValue('flow')
     const { message, context }: any = data
 
     if (!message || !context || isObjectEmpty(message)) {
@@ -108,6 +108,56 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any) 
       }
     } catch (error: any) {
       logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
+    }
+
+    if (flow == '6') {
+      try {
+        // For Delivery Object
+        const DELobj = _.filter(on_status.fulfillments, { type: 'Delivery' })
+        if (!DELobj.length) {
+          logger.error(`Delivery object is mandatory for ${ApiSequence.ON_STATUS_DELIVERED}`)
+          const key = `missingDelivery`
+          onStatusObj[key] = `Delivery object is mandatory for ${ApiSequence.ON_STATUS_DELIVERED}`
+        } else {
+          const deliveryObj = DELobj[0]
+          if (!deliveryObj.tags) {
+            const key = `missingTags`
+            onStatusObj[key] = `Tags are mandatory in Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED}`
+          }
+          else {
+            const tags = deliveryObj.tags
+            const routingTagArr = _.filter(tags, { code: 'routing' })
+            if (!routingTagArr.length) {
+              const key = `missingRouting/Tag`
+              onStatusObj[key] = `RoutingTag object is mandatory in Tags of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED}`
+            }
+            else {
+              const routingTag = routingTagArr[0]
+              const routingTagList = routingTag.list
+              if (!routingTagList) {
+                const key = `missingRouting/Tag/List`
+                onStatusObj[key] = `RoutingTagList is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED}`
+              }
+              else {
+                const routingTagTypeArr = _.filter(routingTagList, { code: 'type' })
+                if (!routingTagTypeArr.length) {
+                  const key = `missingRouting/Tag/List/Type`
+                  onStatusObj[key] = `RoutingTagListType object is mandatory in RoutingTag/List of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED}`
+                }
+                else {
+                  const routingTagType = routingTagTypeArr[0]
+                  if (!ROUTING_ENUMS.includes(routingTagType.value)) {
+                    const key = `missingRouting/Tag/List/Type/Value`;
+                    onStatusObj[key] = `RoutingTagListType Value is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED} and should be equal to 'P2P' or 'P2H2P'`;
+                  }
+                }
+              }
+            }
+          }
+        }
+      } catch (error: any) {
+        logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_PICKED}, ${error.stack}`)
+      }
     }
 
     const contextTime = context.timestamp
@@ -266,6 +316,55 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any) 
     } catch (error) {
       logger.info(`Error while checking delivery timestamp in /${constants.ON_STATUS}_${state}.json`)
     }
+
+    if (flow == '6') {
+      try {
+        // For Delivery Object
+        const fulfillments = on_status.fulfillments
+        if (!fulfillments.length) {
+          const key = `missingFulfillments`
+          onStatusObj[key] = `missingFulfillments is mandatory for ${ApiSequence.ON_STATUS_PACKED}`
+        }
+        else {
+          const fulfillmentsItemsStatusSet = new Set()
+          fulfillments.forEach((ff: any, i: number) => {
+            if (ff.type == "Delivery" && !_.isEqual(ff?.start?.time?.timestamp, getValue("deliveryTmpStmp"))) {
+              onStatusObj[`message/order.fulfillments/${i}`] = `Mismatch occur while comparing ${ff.type} fulfillment start timestamp with the ${ApiSequence.ON_STATUS_PICKED}`
+            }
+            fulfillmentsItemsStatusSet.add(JSON.stringify(ff))
+          });
+          let i: number = 0
+          fulfillmentsItemsSet.forEach((obj1: any) => {
+            const exist = fulfillments.some((obj2: any) => {
+              if (obj2.type == "Delivery") {
+                delete obj2?.tags
+                delete obj2?.instructions
+                delete obj2?.start?.time?.timestamp
+                delete obj2?.end?.time?.timestamp
+              }
+              delete obj2?.state
+              return _.isEqual(obj1, obj2)
+            });
+            if (!exist) {
+              onStatusObj[`message/order.fulfillments/${i}`] = `Mismatch occur while comparing '${obj1.type}' fulfillment (without state, tags, instructions)  with the previous calls`
+            }
+            i++;
+          });
+          fulfillmentsItemsSet.clear();
+          fulfillmentsItemsStatusSet.forEach((ff: any) => {
+            const obj: any = JSON.parse(ff)
+            delete obj?.state
+            delete obj?.start?.time
+            delete obj?.end?.time
+            fulfillmentsItemsSet.add(obj)
+          })
+        }
+
+      } catch (error: any) {
+        logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_PACKED}, ${error.stack}`)
+      }
+    }
+
     return onStatusObj
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)

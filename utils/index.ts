@@ -866,19 +866,19 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
                 if (tagInfo.value.length > 0) {
                   let isValidValue = false;
                   let regexPattern = ""
-              
+
                   if (Array.isArray(tagInfo.value)) {
-                      isValidValue = tagInfo.value.includes(originalTag) || tagInfo.value.includes(tagValue);
+                    isValidValue = tagInfo.value.includes(originalTag) || tagInfo.value.includes(tagValue);
                   } else if (typeof tagInfo.value === 'string' && tagInfo.value.startsWith('/') && tagInfo.value.endsWith('/')) {
-                      regexPattern = tagInfo.value.slice(1, -1);
-                      const regex = new RegExp(regexPattern);
-                      isValidValue = regex.test(originalTag) || regex.test(tagValue);
+                    regexPattern = tagInfo.value.slice(1, -1);
+                    const regex = new RegExp(regexPattern);
+                    isValidValue = regex.test(originalTag) || regex.test(tagValue);
                   }
 
                   if (!isValidValue) {
-                      logger.error(`The item value can only be one of the possible values or match the regex pattern.`);
-                      const key = `InvldValueforItem[${i}][${index}] : ${tagName}`;
-                      errorObj[key] = `Invalid item value: [${originalTag}]. It must be one of the allowed values or match the regex pattern [${regexPattern}].`;
+                    logger.error(`The item value can only be one of the possible values or match the regex pattern.`);
+                    const key = `InvldValueforItem[${i}][${index}] : ${tagName}`;
+                    errorObj[key] = `Invalid item value: [${originalTag}]. It must be one of the allowed values or match the regex pattern [${regexPattern}].`;
                   }
                 }
               }
@@ -985,8 +985,8 @@ export const payment_status = (payment: any) => {
 }
 
 export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAtConfirm: number, errorObj: any) => {
+  let quoteTrailSum = 0
   for (const obj of fulfillmentArr) {
-    let quoteTrailSum = 0
     const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
     for (const item of quoteTrailItems) {
       for (const val of item.list) {
@@ -995,15 +995,15 @@ export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAt
         }
       }
     }
-
-    if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
-      const key = `invldQuoteTrailPrices`
-      errorObj[key] =
-        `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM}`
-      logger.error(
-        `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM} `,
-      )
-    }
+  }
+  if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
+    const key = `invldQuoteTrailPrices`
+    errorObj[
+      key
+    ] = `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM}`
+    logger.error(
+      `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM} `,
+    )
   }
 }
 

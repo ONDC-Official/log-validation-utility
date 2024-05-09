@@ -937,7 +937,7 @@ export const checkOnsearch = (data: any) => {
             if (item.fulfillment_id && !onSearchFFIdsArray[i].has(item.fulfillment_id)) {
               const key = `prvdr${i}item${j}ff`
               errorObj[key] =
-                `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/fulfillments`
+                `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/prvdr${i}/fulfillments`
             }
           } catch (error: any) {
             logger.error(`Error while checking fulfillment_id for item id: ${item.id}, error: ${error.stack}`)

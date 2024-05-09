@@ -886,6 +886,11 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
           }
         }
       }
+      else
+      {
+        const key = `invalidCategoryId${ctgrID}`
+       errorObj[key] = `Invalid category_id for domain ${categoryName}`
+      }
     }
   })
   return errorObj

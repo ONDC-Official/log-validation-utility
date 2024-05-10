@@ -549,7 +549,6 @@ export const onCancelSchema = {
                             required: ['currency', 'value'],
                           },
                         },
-                        required: ['price'],
                       },
                     },
                     required: ['@ondc/org/item_id', '@ondc/org/title_type', 'price'],

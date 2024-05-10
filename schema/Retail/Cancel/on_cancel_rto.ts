@@ -465,7 +465,8 @@ export const cancel_RTO_Schema = {
                                   'type',
                                   'gps_enabled',
                                   'url_enabled',
-                                  'url'
+                                  'url',
+                                  'subtype'
                                 ],
                               },
                               value: {

@@ -331,6 +331,7 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
 
               if (obj2.type == "Delivery") {
                 delete obj2?.instructions
+                delete obj2?.agent
                 delete obj2?.start?.time?.timestamp
                 delete obj2?.tags
                 delete obj2?.state

@@ -212,7 +212,6 @@ export const checkOnSelect = (data: any) => {
       itemFlfllmnts[id] = on_select.items[i].fulfillment_id
       i++
     }
-    console.log(itemFlfllmnts,'lol')
     setValue('itemFlfllmnts', itemFlfllmnts)
   } catch (error: any) {
     logger.error(`!!Error occurred while mapping and storing item Id and fulfillment Id, ${error.stack}`)

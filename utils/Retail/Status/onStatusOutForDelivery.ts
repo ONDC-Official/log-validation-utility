@@ -354,6 +354,7 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
             const exist = fulfillments.some((obj2: any) => {
               if (obj2.type == "Delivery") {
                 delete obj2?.tags
+                delete obj2?.agent
                 delete obj2?.instructions
                 delete obj2?.start?.time?.timestamp
                 delete obj2?.state

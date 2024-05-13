@@ -339,11 +339,12 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any, 
             const exist = fulfillments.some((obj2: any) => {
               if (obj2.type == "Delivery") {
                 delete obj2?.tags
+                delete obj2?.agent
                 delete obj2?.instructions
                 delete obj2?.start?.time?.timestamp
                 delete obj2?.end?.time?.timestamp
+                delete obj2?.state
               }
-              delete obj2?.state
               return _.isEqual(obj1, obj2)
             });
             if (!exist) {

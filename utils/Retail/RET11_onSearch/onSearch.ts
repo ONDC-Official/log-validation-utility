@@ -20,7 +20,7 @@ import {
   checkForDuplicates,
   validateObjectString,
 } from '../..'
-import _ from 'lodash'
+import _, { isEmpty } from 'lodash'
 
 export const checkOnsearchFullCatalogRefresh = (data: any) => {
   if (!data || isObjectEmpty(data)) {
@@ -312,22 +312,19 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
                 tag.list.forEach((item: { code: string; value: string }) => {
                   if (item.code === 'type') {
                     if ((category.parent_category_id == "" || category.parent_category_id) && item.value == 'custom_group') {
-                      if(category.parent_category_id)
-                        {
+                      if (category.parent_category_id) {
                         errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] = `parent_category_id should not have any value while type is ${item.value}`
                       }
                       errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] = `parent_category_id should not be present while type is ${item.value}`
                     }
-                    else if ((category.parent_category_id != "") && (item.value == 'custom_menu' || item.value == 'variant_group')){
-                      if(category.parent_category_id)
-                      {
+                    else if ((category.parent_category_id != "") && (item.value == 'custom_menu' || item.value == 'variant_group')) {
+                      if (category.parent_category_id) {
                         errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] = `parent_category_id should be empty string while type is ${item.value}`
                       }
                       errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] = `parent_category_id should be present while type is ${item.value}`
                     }
-                    else if ((category.parent_category_id) && (item.value == 'custom_menu' || item.value == 'variant_group')){
-                      if(category.parent_category_id)
-                      {
+                    else if ((category.parent_category_id) && (item.value == 'custom_menu' || item.value == 'variant_group')) {
+                      if (category.parent_category_id) {
                         errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] = `parent_category_id should be empty string while type is ${item.value}`
                       }
                     }
@@ -649,11 +646,10 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
 
           try {
             logger.info(`Checking fulfillment_id for item id: ${item.id}`)
-
             if (item.fulfillment_id && !onSearchFFIdsArray[i].has(item.fulfillment_id)) {
               const key = `prvdr${i}item${j}ff`
               errorObj[key] =
-                `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/fulfillments`
+                `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/prvdr${i}/fulfillments `
             }
           } catch (e: any) {
             logger.error(`Error while checking fulfillment_id for item id: ${item.id}, ${e.stack}`)
@@ -1009,9 +1005,18 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
           }
         }
 
-        //checking for each serviceability construct
+        //checking for each serviceability construct and matching serviceability constructs with the previous ones
+        const serviceabilitySet = new Set()
+        const timingSet = new Set()
         tags.forEach((sc: any, t: any) => {
           if (sc.code === 'serviceability') {
+            if (serviceabilitySet.has(JSON.stringify(sc))) {
+              const key = `prvdr${i}tags${t}`
+              errorObj[key] =
+                `serviceability construct /bpp/providers[${i}]/tags[${t}] should not be same with the previous serviceability constructs`
+            }
+
+            serviceabilitySet.add(JSON.stringify(sc))
             if ('list' in sc) {
               if (sc.list.length != 5) {
                 const key = `prvdr${i}tags${t}`
@@ -1188,6 +1193,13 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
             }
           }
           if (sc.code === 'timing') {
+            if (timingSet.has(JSON.stringify(sc))) {
+              const key = `prvdr${i}tags${t}`
+              errorObj[key] =
+                `timing construct /bpp/providers[${i}]/tags[${t}] should not be same with the previous timing constructs`
+            }
+
+            timingSet.add(JSON.stringify(sc))
             const fulfillments = prvdr['fulfillments']
             const fulfillmentTypes = fulfillments.map((fulfillment: any) => fulfillment.type)
 
@@ -1213,6 +1225,16 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
             }
           }
         })
+        if (isEmpty(serviceabilitySet)) {
+          const key = `prvdr${i}tags/serviceability`
+          errorObj[key] =
+            `serviceability construct is mandatory in /bpp/providers[${i}]/tags`
+        }
+        if (isEmpty(timingSet)) {
+          const key = `prvdr${i}tags/timing`
+          errorObj[key] =
+            `timing construct is mandatory in /bpp/providers[${i}]/tags`
+        }
       } catch (error: any) {
         logger.error(
           `!!Error while checking serviceability and timing construct for bpp/providers[${i}], ${error.stack}`,

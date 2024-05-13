@@ -5,13 +5,14 @@ import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any) => {
+export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, fulfillmentsItemsSet: any) => {
   const onStatusObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
       return { [ApiSequence.ON_STATUS_PACKED]: 'JSON cannot be empty' }
     }
 
+    const flow = getValue('flow')
     const { message, context }: any = data
     if (!message || !context || isObjectEmpty(message)) {
       return { missingFields: '/context, /message, is missing or empty' }
@@ -164,16 +165,17 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any) => 
         }
 
         ffId = ff.id
-
-        if (`${ffId}_tracking`) {
-          if (ff.tracking === false || ff.tracking === true) {
-            if (getValue(`${ffId}_tracking`) != ff.tracking) {
-              logger.info(`Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`)
-              onStatusObj['ffTracking'] = `Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`
+        if (ff.type != "Cancel") {
+          if (`${ffId}_tracking`) {
+            if (ff.tracking === false || ff.tracking === true) {
+              if (getValue(`${ffId}_tracking`) != ff.tracking) {
+                logger.info(`Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`)
+                onStatusObj['ffTracking'] = `Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`
+              }
+            } else {
+              logger.info(`Tracking must be present for fulfillment ID: ${ff.id} in boolean form`)
+              onStatusObj['ffTracking'] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
             }
-          } else {
-            logger.info(`Tracking must be present for fulfillment ID: ${ff.id} in boolean form`)
-            onStatusObj['ffTracking'] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
           }
         }
       })
@@ -201,6 +203,42 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any) => 
       }
     } catch (error: any) {
       logger.error(`!!Error while checking order state in /${constants.ON_STATUS}_${state} Error: ${error.stack}`)
+    }
+
+    if (flow == '6') {
+      try {
+        // For Delivery Object
+        const fulfillments = on_status.fulfillments
+        if (!fulfillments.length) {
+          const key = `missingFulfillments`
+          onStatusObj[key] = `missingFulfillments is mandatory for ${ApiSequence.ON_STATUS_PACKED}`
+        }
+        else {
+          let i: number = 0
+          fulfillmentsItemsSet.forEach((obj1: any) => {
+            const exist = fulfillments.some((obj2: any) => {
+              if (obj2.type == "Delivery") {
+                delete obj2?.instructions
+                delete obj2?.tags
+                delete obj2?.state
+              }
+              return _.isEqual(obj1, obj2)
+            });
+            if (!exist) {
+              if (obj1.type === 'Delivery') {
+                onStatusObj[`message/order.fulfillments/${i}`] = `Mismatch occured while comparing '${obj1.type}' fulfillment object(without state, tags, instructions) with ${ApiSequence.ON_STATUS_PENDING}`
+              }
+              if (obj1.type === 'Cancel') {
+                onStatusObj[`message/order.fulfillments/${i}`] = `Mismatch occured while comparing '${obj1.type}' fulfillment object with ${ApiSequence.ON_UPDATE_PART_CANCEL}`
+              }
+            }
+            i++
+          });
+        }
+
+      } catch (error: any) {
+        logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_PACKED}, ${error.stack}`)
+      }
     }
 
     return onStatusObj

@@ -374,11 +374,6 @@ export const checkOnSelect_OOS = (data: any) => {
           const maxCount = parseInt(element.item.quantity.maximum.count, 10)
           const availCount = parseInt(element.item.quantity.available.count, 10)
 
-          if (availCount == 0 && maxCount > 0) {
-            const key = `qntcnt${i}`
-            errorObj[key] =
-              `item.quantity.maximum.count can not be greater than 0 if item.quantity.available.count is 0 `
-          }
           if (availCount < element['@ondc/org/item_quantity'].count) {
             const key = `brkcnt${i}`
             errorObj[key] = `Available count can't be less than @ondc/org/item_quantity.count `
@@ -415,7 +410,7 @@ export const checkOnSelect_OOS = (data: any) => {
         if (!Object.values(itemFlfllmnts).includes(element['@ondc/org/item_id'])) {
           const brkupffid = `brkupfftitles${i}`
           errorObj[brkupffid] =
-            `invalid  id: ${element['@ondc/org/item_id']} in ${titleType} line item (should be a valid fulfillment_id)`
+            `invalid  id: ${element['@ondc/org/item_id']} in ${titleType} line item (should be a valid fulfillment_id as provided in message.items for the items)`
         }
       }
     })

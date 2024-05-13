@@ -421,7 +421,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       if (cancellationFulfillmentCount != forwardFulfillmentCount) {
         const key = `Fulfillment_mismatch`
         onCnclObj[key] =
-          `The count of cancellation fulfillmentsn is not equal to the count of forward fulfillments or invalid fulfillment id.`
+          `The count of cancellation fulfillmentns is not equal to the count of forward fulfillments or invalid fulfillment id.`
       } else {
         logger.info(`The count of cancellation fulfillments is equal to the count of forward fulfillments.`)
       }
@@ -694,7 +694,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
         if (!Cancelobj.length) {
           logger.error(`Cancel object is mandatory for ${constants.ON_CANCEL}`)
           const key = `missingCancel`
-          onCnclObj[key] = `Cancel object is mandatory for ${constants.ON_CANCEL}`
+          onCnclObj[key] = `Cancel fulfillment object is mandatory for ${constants.ON_CANCEL}`
         }
       }
 

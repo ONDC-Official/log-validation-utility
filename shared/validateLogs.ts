@@ -45,8 +45,9 @@ import checkRsfOnReceiverRecon from '../utils/RSF/rsfOnReciverRecon'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
-  const settlementDetatilSet = new Set()
   const quoteTrailItemsSet = new Set()
+  const settlementDetatilSet = new Set()
+  const fulfillmentsItemsSet = new Set()
   let logReport: any = {}
   setValue('flow', flow)
   setValue('domain', domain.split(':')[1])
@@ -180,9 +181,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         case ApiSequence.ON_SEARCH:
           if (domain === 'ONDC:RET11') {
             return checkOnsearchFullCatalogRefresh(data)
-            return checkOnsearchFullCatalogRefresh(data)
           } else {
-            return checkOnsearch(data)
             return checkOnsearch(data)
           }
         case ApiSequence.INC_SEARCH:
@@ -200,13 +199,11 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
           return checkOnSelect(data)
         case ApiSequence.SELECT_OUT_OF_STOCK:
           return checkSelect(data, msgIdSet, ApiSequence.SELECT_OUT_OF_STOCK)
-          return checkSelect(data, msgIdSet, ApiSequence.SELECT_OUT_OF_STOCK)
         case ApiSequence.ON_SELECT_OUT_OF_STOCK:
           return checkOnSelect_OOS(data)
         case ApiSequence.INIT:
           return checkInit(data, msgIdSet)
         case ApiSequence.ON_INIT:
-          return checkOnInit(data)
           return checkOnInit(data)
         case ApiSequence.CONFIRM:
           return checkConfirm(data, msgIdSet)
@@ -219,37 +216,37 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         case ApiSequence.STATUS:
           return checkStatus(data)
         case ApiSequence.ON_STATUS_PENDING:
-          return checkOnStatusPending(data, 'pending', msgIdSet)
+          return checkOnStatusPending(data, 'pending', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.ON_STATUS_PACKED:
-          return checkOnStatusPacked(data, 'packed', msgIdSet)
+          return checkOnStatusPacked(data, 'packed', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.ON_STATUS_PICKED:
-          return checkOnStatusPicked(data, 'picked', msgIdSet)
+          return checkOnStatusPicked(data, 'picked', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.ON_STATUS_OUT_FOR_DELIVERY:
-          return checkOnStatusOutForDelivery(data, 'out-for-delivery', msgIdSet)
+          return checkOnStatusOutForDelivery(data, 'out-for-delivery', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.ON_STATUS_DELIVERED:
-          return checkOnStatusDelivered(data, 'delivered', msgIdSet)
+          return checkOnStatusDelivered(data, 'delivered', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.ON_UPDATE_PART_CANCEL:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_PART_CANCEL, settlementDetatilSet, quoteTrailItemsSet, "6-a")
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_PART_CANCEL, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-a")
         case ApiSequence.UPDATE_SETTLEMENT_PART_CANCEL:
           return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_PART_CANCEL, settlementDetatilSet, '6-a')
         case ApiSequence.UPDATE_REVERSE_QC:
           return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_REVERSE_QC, settlementDetatilSet, '6-b')
         case ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC, settlementDetatilSet, quoteTrailItemsSet, '6-b')
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, '6-b')
         case ApiSequence.ON_UPDATE_APPROVAL:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_APPROVAL, settlementDetatilSet, quoteTrailItemsSet, "6-b")
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_APPROVAL, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-b")
         case ApiSequence.ON_UPDATE_PICKED:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_PICKED, settlementDetatilSet, quoteTrailItemsSet, "6-b")
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_PICKED, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-b")
         case ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC:
           return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC, settlementDetatilSet, '6-b')
         case ApiSequence.ON_UPDATE_DELIVERED:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_APPROVAL, settlementDetatilSet, quoteTrailItemsSet, "6-b")
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_APPROVAL, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-b")
         case ApiSequence.UPDATE_LIQUIDATED:
           return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_LIQUIDATED, settlementDetatilSet, '6-c')
         case ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED, settlementDetatilSet, quoteTrailItemsSet, "6-c")
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-c")
         case ApiSequence.ON_UPDATE_LIQUIDATED:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_LIQUIDATED, settlementDetatilSet, quoteTrailItemsSet, "6-c")
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_LIQUIDATED, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-c")
         case ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED:
           return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED, settlementDetatilSet, '6-c')
         case ApiSequence.TRACK:

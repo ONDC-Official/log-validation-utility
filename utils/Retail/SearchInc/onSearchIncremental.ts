@@ -295,7 +295,7 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
                 if (item.fulfillment_id && !onSearchFFIdsArray[i].includes(item.fulfillment_id)) {
                   const key = `prvdr${i}item${j}ff`
                   errorObj[key] =
-                    `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/fulfillments`
+                    `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/prvdr${i}/fulfillments`
                 }
 
                 logger.info(`Comparing fulfillment_id of /${constants.SEARCH} and /${constants.ON_SEARCH} api`)

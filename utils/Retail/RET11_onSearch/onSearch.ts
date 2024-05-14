@@ -628,13 +628,13 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
                   `selling price of item /price/value with id: (${item.id}) can't be greater than the maximum price /price/maximum_value in /bpp/providers[${i}]/items[${j}]/`
               }
 
-              if (upper <= lower) {
+              if (upper < lower) {
                 const key = `prvdr${i}item${j}price/tags/`
                 errorObj[key] =
                   `selling lower range: ${lower} of code: range with id: (${item.id}) can't be greater than the upper range : ${upper} `
               }
 
-              if (default_selection_max_value <= default_selection_value) {
+              if (default_selection_max_value < default_selection_value) {
                 const key = `prvdr${i}item${j}Price/tags`
                 errorObj[key] =
                   `value : ${default_selection_value} of code: default_selection with id: (${item.id}) can't be greater than the maximum_value : ${default_selection_max_value} `

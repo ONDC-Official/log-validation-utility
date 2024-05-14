@@ -148,6 +148,7 @@ export const onUpdateSchema = {
                           code: {
                             type: 'string',
                             enum: [
+                              'Accepted',
                               'Cancelled',
                               'Pending',
                               'Order-delivered',

@@ -606,7 +606,7 @@ export const FnBonSearchSchema = {
                                         },
                                         value: {
                                           type: 'string',
-                                          pattern: '^\\d+(\\.\\d{2})?$',
+                                          pattern: '^[0-9]+(\.[0-9]{1,2})?$',
                                           errorMessage: 'enter a valid number with exactly two decimal places.',
                                         },
                                       },

@@ -219,3 +219,28 @@ export function checkDomainInAll({
     logger.error(`Error occurred while checking domain for /${endpoint}_close api, ${error.stack}`)
   }
 }
+
+export function compareUpdatedAtForRespondantActions({
+  endpoint,
+  updated_at,
+  respondent_actions,
+  issueReportObj,
+}: {
+  endpoint: string
+  updated_at: string
+  respondent_actions: any
+  issueReportObj: any
+}) {
+  try {
+    const index = respondent_actions.length - 1
+    const lastElem = respondent_actions[respondent_actions.length - 1]
+    logger.info(`Checking 'comparing 'respondant_actions.updated_at' and updated_at' for /${endpoint}`)
+    if (updated_at != lastElem.updated_at) {
+      issueReportObj.updated_at = `respondant_actions[${index}].updated_at should match issue's 'updated_at'`
+    }
+  } catch (error: any) {
+    logger.error(
+      `Error occurred while comparing 'respondant_actions.updated_at' and updated_at for /${endpoint} api, ${error.stack}`,
+    )
+  }
+}

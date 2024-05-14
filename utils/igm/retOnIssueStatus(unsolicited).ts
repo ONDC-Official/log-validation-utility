@@ -10,6 +10,7 @@ import {
   checkOrganizationNameandDomain,
   compareContextTimeStampAndUpdatedAt,
   compareUpdatedAtAndContextTimeStamp,
+  compareUpdatedAtForRespondantActions,
 } from './igmHelpers'
 
 const checkOnIssueStatusUnsolicited = (data: any) => {
@@ -150,6 +151,13 @@ const checkOnIssueStatusUnsolicited = (data: any) => {
       endpoint: constants.RET_ONISSUE_STATUS,
       contextTimeStamp: onIssueStatus.context.timestamp,
       issue_updated_at: onIssueStatus.message.issue.updated_at,
+      issueReportObj: onIssueStatusObj,
+    })
+
+    compareUpdatedAtForRespondantActions({
+      endpoint: constants.RET_ONISSUE,
+      updated_at: onIssueStatus.message.issue.updated_at,
+      respondent_actions: respondent_actions,
       issueReportObj: onIssueStatusObj,
     })
 

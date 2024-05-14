@@ -10,6 +10,7 @@ import {
   checkOrganizationNameandDomain,
   compareContextTimeStampAndUpdatedAt,
   compareUpdatedAtAndContextTimeStamp,
+  compareUpdatedAtForRespondantActions,
 } from './igmHelpers'
 
 const checkOnIssueStatus = (data: any) => {
@@ -143,6 +144,13 @@ const checkOnIssueStatus = (data: any) => {
     checkDomainInAll({
       endpoint: constants.RET_ONISSUE_STATUS,
       domain: onIssueStatus.context.domain,
+      issueReportObj: onIssueStatusObj,
+    })
+
+    compareUpdatedAtForRespondantActions({
+      endpoint: constants.RET_ONISSUE,
+      updated_at: onIssueStatus.message.issue.updated_at,
+      respondent_actions: respondent_actions,
       issueReportObj: onIssueStatusObj,
     })
 

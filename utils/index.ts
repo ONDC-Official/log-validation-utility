@@ -46,6 +46,12 @@ export const checkContext = (
     errObj.action_err = `context.action should be ${path}`
   }
 
+  if ((path === constants.RET_ONISSUE || path === constants.RET_ONISSUE_STATUS) && data.hasOwnProperty('ttl')) {
+    {
+      errObj.ttl_err = `Extraneous key ttl at context.ttl as per the API Contract`
+    }
+  }
+
   if (data.ttl && data.ttl != constants.RET_CONTEXT_TTL) {
     {
       errObj.ttl_err = `ttl = ${constants.RET_CONTEXT_TTL} as per the API Contract`
@@ -864,32 +870,35 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
                 errorObj[key] = `Mandatory tag field [${tagName}] missing for ${categoryName} item[${index}]`
               } else {
                 if (tagInfo.value.length > 0) {
-                  let isValidValue = false;
-                  let regexPattern = ""
+                  let isValidValue = false
+                  let regexPattern = ''
 
                   if (Array.isArray(tagInfo.value)) {
-                    isValidValue = tagInfo.value.includes(originalTag) || tagInfo.value.includes(tagValue);
-                  } else if (typeof tagInfo.value === 'string' && tagInfo.value.startsWith('/') && tagInfo.value.endsWith('/')) {
-                    regexPattern = tagInfo.value.slice(1, -1);
-                    const regex = new RegExp(regexPattern);
-                    isValidValue = regex.test(originalTag) || regex.test(tagValue);
+                    isValidValue = tagInfo.value.includes(originalTag) || tagInfo.value.includes(tagValue)
+                  } else if (
+                    typeof tagInfo.value === 'string' &&
+                    tagInfo.value.startsWith('/') &&
+                    tagInfo.value.endsWith('/')
+                  ) {
+                    regexPattern = tagInfo.value.slice(1, -1)
+                    const regex = new RegExp(regexPattern)
+                    isValidValue = regex.test(originalTag) || regex.test(tagValue)
                   }
 
                   if (!isValidValue) {
-                    logger.error(`The item value can only be one of the possible values or match the regex pattern.`);
-                    const key = `InvldValueforItem[${i}][${index}] : ${tagName}`;
-                    errorObj[key] = `Invalid item value: [${originalTag}]. It must be one of the allowed values or match the regex pattern [${regexPattern}].`;
+                    logger.error(`The item value can only be one of the possible values or match the regex pattern.`)
+                    const key = `InvldValueforItem[${i}][${index}] : ${tagName}`
+                    errorObj[key] =
+                      `Invalid item value: [${originalTag}]. It must be one of the allowed values or match the regex pattern [${regexPattern}].`
                   }
                 }
               }
             }
           }
         }
-      }
-      else
-      {
+      } else {
         const key = `invalidCategoryId${ctgrID}`
-       errorObj[key] = `Invalid category_id (${ctgrID}) for ${categoryName}`
+        errorObj[key] = `Invalid category_id (${ctgrID}) for ${categoryName}`
       }
     }
   })
@@ -998,9 +1007,8 @@ export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAt
   }
   if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
     const key = `invldQuoteTrailPrices`
-    errorObj[
-      key
-    ] = `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM}`
+    errorObj[key] =
+      `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM}`
     logger.error(
       `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM} `,
     )

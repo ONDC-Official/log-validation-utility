@@ -10,6 +10,7 @@ import {
   checkOrganizationNameandDomain,
   compareContextTimeStampAndUpdatedAt,
   compareUpdatedAtAndContextTimeStamp,
+  compareUpdatedAtForRespondantActions,
 } from './igmHelpers'
 
 const checkOnIssue = (data: any) => {
@@ -135,6 +136,13 @@ const checkOnIssue = (data: any) => {
     checkCreatedAtInAll({
       endpoint: constants.RET_ONISSUE,
       created_at: on_issue.message.issue.created_at,
+      issueReportObj: onissueObj,
+    })
+    
+    compareUpdatedAtForRespondantActions({
+      endpoint: constants.RET_ONISSUE,
+      updated_at: on_issue.message.issue.updated_at,
+      respondent_actions: respondent_actions,
       issueReportObj: onissueObj,
     })
 

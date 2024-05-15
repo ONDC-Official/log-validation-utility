@@ -253,7 +253,7 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
           ]`Delivery fulfillment (${deliveryFulfillment.id}) has incomplete time range.`
         }
         if (storedFulfillment == 'undefined') {
-          setValue('deliveryFulfillment', deliveryFulfillment)
+          setValue('deliveryFulfillment', deliveryFulfillment[0])
         } else {
           const fulfillmentRangeerrors = compareTimeRanges(storedFulfillment, deliveryFulfillment[0])
 
@@ -327,8 +327,11 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
           });
           let i: number = 0
           fulfillmentsItemsSet.forEach((obj1: any) => {
-            const exist = fulfillments.some((obj2: any) => {
+            const keys = Object.keys(obj1)
 
+            let obj2: any = _.filter(fulfillments, { type: `${obj1.type}` })
+            if (obj2.length > 0) {
+              obj2 = obj2[0]
               if (obj2.type == "Delivery") {
                 delete obj2?.instructions
                 delete obj2?.agent
@@ -336,18 +339,16 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
                 delete obj2?.tags
                 delete obj2?.state
               }
-
-              return _.isEqual(obj1, obj2)
-            });
-            if (!exist) {
-              if (obj1.type === 'Delivery') {
-                onStatusObj[`message/order.fulfillments/${i}`] = `Mismatch occured while comparing '${obj1.type}' fulfillment object(without state, tags, instructions) with ${ApiSequence.ON_STATUS_PENDING}`
-              }
-              if (obj1.type === 'Cancel') {
-                onStatusObj[`message/order.fulfillments/${i}`] = `Mismatch occured while comparing '${obj1.type}' fulfillment object with ${ApiSequence.ON_UPDATE_PART_CANCEL}`
-              }
+              keys.forEach((key: string) => {
+                if (!_.isEqual(obj1[`${key}`], obj2[`${key}`])) {
+                  onStatusObj[`message/order.fulfillments/${i}/${key}`] = `Mismatch occured while comparing '${obj1.type}' fulfillment object with ${ApiSequence.ON_STATUS_PENDING} on key '${key}'`
+                }
+              })
             }
-            i++;
+            else {
+              onStatusObj[`message/order.fulfillments/${i}`] = `Missing fulfillment type '${obj1.type}' in ${ApiSequence.ON_STATUS_PICKED} as compared to ${ApiSequence.ON_STATUS_PENDING}`
+            }
+            i++
           });
         }
 

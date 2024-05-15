@@ -183,6 +183,25 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
               if (_.isEmpty(ffStartOrEnd.location)) {
                 onCnclObj[`deliveryFFObj/${startOrEnd}/Location`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/location is missing in /${constants.ON_CANCEL}`
               }
+              else {
+                if (startOrEnd == "End") {
+                  if (_.isEmpty(ffStartOrEnd.location?.address)) {
+                    onCnclObj[`deliveryFFObj/${startOrEnd}/Location/Address`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/location/address is missing in /${constants.ON_CANCEL}`
+
+                  }
+                  else {
+                    if (_.isEmpty(ffStartOrEnd.location.address.name)) {
+                      onCnclObj[`deliveryFFObj/${startOrEnd}/Location/Address/Name`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/location/address/name is missing in /${constants.ON_CANCEL}`
+                    }
+                    if (_.isEmpty(ffStartOrEnd.location.address.building)) {
+                      onCnclObj[`deliveryFFObj/${startOrEnd}/Location/Address/Building`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/location/address/building is missing in /${constants.ON_CANCEL}`
+                    }
+                    if (_.isEmpty(ffStartOrEnd.location.address.country)) {
+                      onCnclObj[`deliveryFFObj/${startOrEnd}/Location/Address/Country`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/location/address/country is missing in /${constants.ON_CANCEL}`
+                    }
+                  }
+                }
+              }
               if (_.isEmpty(ffStartOrEnd.time)) {
                 onCnclObj[`deliveryFFObj/${startOrEnd}/time`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time is missing in /${constants.ON_CANCEL}`
               }
@@ -560,7 +579,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
         let rto_end_location: any = {}
         let del_start_location: any = {}
         let del_end_location: any = {}
-
+        let rto_delivered_or_disposed: boolean = false
         // For RTO Object
         if (!RTOobj.length) {
           logger.error(`RTO object is mandatory for ${constants.ON_CANCEL}`)
@@ -576,6 +595,11 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
               const key = `invalidState`
               onCnclObj[key] =
                 `Delivery state should be one of ['RTO-Initiated','RTO-Approved','RTO-Completed'] for ${constants.ON_CANCEL}`
+            }
+            else {
+              if (item.state.descriptor.code == validVal[1] || item.state.descriptor.code == validVal[2]) {
+                rto_delivered_or_disposed = true
+              }
             }
           }
 
@@ -595,6 +619,37 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
           // Checking for end object inside RTO
           if (!_.isEmpty(RTOobj[0]?.end)) {
             const rto_obj_end = RTOobj[0]?.end
+            // Checking for time in end Object if the descriptor code is 'RTO-Delivered' or 'RTO-Disposed'
+            if (rto_delivered_or_disposed) {
+              if (_.isEmpty(rto_obj_end.time)) {
+                onCnclObj[`rtoFFObj/end/time`] = `fulfillment type rto end/time is missing in /${constants.ON_CANCEL}`
+              }
+              else {
+                if (_.isEmpty(rto_obj_end.time.range)) {
+                  onCnclObj[`rtoFFObj/end/Time/Range`] = `fulfillment type rto end/time/range is missing in /${constants.ON_CANCEL}`
+                }
+                else {
+                  if (!rto_obj_end.time.range.start) {
+                    onCnclObj[`rtoFFObj/end/Time/Range/Start`] = `fulfillment type rto end/time/range/start is missing in /${constants.ON_CANCEL}`
+                  }
+                  else {
+                    const date = new Date(rto_obj_end.time.range.start);
+                    if (String(date) == "Invalid Date") {
+                      onCnclObj[`rtoFFObj/end/Time/Range/Start`] = `fulfillment type rto end/time/range/start is not of a valid date format in /${constants.ON_CANCEL}`
+                    }
+                  }
+                  if (!rto_obj_end.time.range.end) {
+                    onCnclObj[`rtoFFObj/end/Time/Range/End`] = `fulfillment type rto end/time/range/end is missing in /${constants.ON_CANCEL}`
+                  }
+                  else {
+                    const date = new Date(rto_obj_end.time.range.end);
+                    if (String(date) == "Invalid Date") {
+                      onCnclObj[`rtoFFObj/end/Time/Range/End`] = `fulfillment type rto end/time/range/end is not of a valid date format in /${constants.ON_CANCEL}`
+                    }
+                  }
+                }
+              }
+            }
             if (!_.isEmpty(rto_obj_end?.location)) {
               rto_end_location = rto_obj_end.location
             }
@@ -690,11 +745,68 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
         logger.error(`!!Error while checking payment object in /${constants.CONFIRM}, ${error.stack}`)
       }
       if (flow === '4') {
-        const Cancelobj = _.filter(on_cancel.fulfillments, { type: 'Cancel' })
-        if (!Cancelobj.length) {
-          logger.error(`Cancel object is mandatory for ${constants.ON_CANCEL}`)
-          const key = `missingCancel`
-          onCnclObj[key] = `Cancel fulfillment object is mandatory for ${constants.ON_CANCEL}`
+        try {
+
+          const Cancelobj = _.filter(on_cancel.fulfillments, { type: 'Cancel' })
+          if (!Cancelobj.length) {
+            logger.error(`Cancel object is mandatory for ${constants.ON_CANCEL}`)
+            const key = `missingCancel`
+            onCnclObj[key] = `Cancel fulfillment object is mandatory for ${constants.ON_CANCEL}`
+          }
+          const DELobj = _.filter(on_cancel.fulfillments, { type: 'Delivery' })
+          // For Delivery Object
+          if (!DELobj.length) {
+            logger.error(`Delivery object is mandatory for ${constants.ON_CANCEL}`)
+            const key = `missingDelivery`
+            onCnclObj[key] = `Delivery object is mandatory for ${constants.ON_CANCEL}`
+          } else {
+
+            function checkFFStartEndTime(ffStartOrEnd: any, startOrEnd: string) {
+              if (!ffStartOrEnd) {
+                onCnclObj[`deliveryFFObj${startOrEnd}`] = `fulfillment type delivery ${startOrEnd.toLowerCase()} is missing in /${constants.ON_CANCEL}`
+              }
+              else {
+                if (_.isEmpty(ffStartOrEnd.time)) {
+                  onCnclObj[`deliveryFFObj/${startOrEnd}/time`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time is missing in /${constants.ON_CANCEL}`
+                }
+                else {
+                  if (_.isEmpty(ffStartOrEnd.time.range)) {
+                    onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range is missing in /${constants.ON_CANCEL}`
+                  }
+                  else {
+                    if (!ffStartOrEnd.time.range.start) {
+                      onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/Start`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/start is missing in /${constants.ON_CANCEL}`
+                    }
+                    else {
+                      const date = new Date(ffStartOrEnd.time.range.start);
+                      if (String(date) == "Invalid Date") {
+                        onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/Start`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/start is not of a valid date format in /${constants.ON_CANCEL}`
+                      }
+                    }
+                    if (!ffStartOrEnd.time.range.end) {
+                      onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/End`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/end is missing in /${constants.ON_CANCEL}`
+                    }
+                    else {
+                      const date = new Date(ffStartOrEnd.time.range.end);
+                      if (String(date) == "Invalid Date") {
+                        onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/End`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/end is not of a valid date format in /${constants.ON_CANCEL}`
+                      }
+                    }
+                  }
+                }
+              }
+            }
+
+            if (getValue('onCnfrmState') == "Accepted") {
+              checkFFStartEndTime(DELobj[0]?.start, "start")
+              checkFFStartEndTime(DELobj[0]?.end, "end")
+            }
+
+          }
+        }
+        catch (error: any) {
+          logger.error(
+            `!!Error while checking Cancel and Delivery Fulfillment in /${constants.ON_CANCEL} api, ${error.stack}`)
         }
       }
 

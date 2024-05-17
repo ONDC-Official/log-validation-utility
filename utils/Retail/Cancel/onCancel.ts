@@ -337,6 +337,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
               }
             }
           }
+          quoteTrailSum = Number(quoteTrailSum.toFixed(2))
           if (priceAtConfirm != price + quoteTrailSum) {
             const key = `invldQuoteTrailPrices`
             onCnclObj[key] =
@@ -625,27 +626,13 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
                 onCnclObj[`rtoFFObj/end/time`] = `fulfillment type rto end/time is missing in /${constants.ON_CANCEL}`
               }
               else {
-                if (_.isEmpty(rto_obj_end.time.range)) {
-                  onCnclObj[`rtoFFObj/end/Time/Range`] = `fulfillment type rto end/time/range is missing in /${constants.ON_CANCEL}`
+                if (_.isEmpty(rto_obj_end.time.timestamp)) {
+                  onCnclObj[`rtoFFObj/end/Time/timestamp`] = `fulfillment type rto end/time/timestamp is missing in /${constants.ON_CANCEL}`
                 }
                 else {
-                  if (!rto_obj_end.time.range.start) {
-                    onCnclObj[`rtoFFObj/end/Time/Range/Start`] = `fulfillment type rto end/time/range/start is missing in /${constants.ON_CANCEL}`
-                  }
-                  else {
-                    const date = new Date(rto_obj_end.time.range.start);
-                    if (String(date) == "Invalid Date") {
-                      onCnclObj[`rtoFFObj/end/Time/Range/Start`] = `fulfillment type rto end/time/range/start is not of a valid date format in /${constants.ON_CANCEL}`
-                    }
-                  }
-                  if (!rto_obj_end.time.range.end) {
-                    onCnclObj[`rtoFFObj/end/Time/Range/End`] = `fulfillment type rto end/time/range/end is missing in /${constants.ON_CANCEL}`
-                  }
-                  else {
-                    const date = new Date(rto_obj_end.time.range.end);
-                    if (String(date) == "Invalid Date") {
-                      onCnclObj[`rtoFFObj/end/Time/Range/End`] = `fulfillment type rto end/time/range/end is not of a valid date format in /${constants.ON_CANCEL}`
-                    }
+                  const date = new Date(rto_obj_end.time.timestamp);
+                  if (String(date) == "Invalid Date") {
+                    onCnclObj[`rtoFFObj/end/Time/timestamp`] = `fulfillment type rto end/time/timestamp is not of a valid date format in /${constants.ON_CANCEL}`
                   }
                 }
               }

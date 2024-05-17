@@ -301,7 +301,6 @@ export const checkOnsearch = (data: any) => {
           const itemDescType = itemCodeArr[0]
           const itemDescCode = itemCodeArr[1]
           const domain = getValue('domain')?.substring(3)
-
           if (domain == "10" || domain == "13") {
             if (itemDescType != "1") {
               const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
@@ -650,10 +649,9 @@ export const checkOnsearch = (data: any) => {
         logger.info(`Checking categories for provider (${prvdr.id}) in bpp/providers[${i}]`)
         let j = 0
         const categories = onSearchCatalog['bpp/providers'][i]['categories']
-        if(!categories || !categories.length)
-        {
+        if (!categories || !categories.length) {
           const key = `prvdr${i}categories`
-            errorObj[key] = `categories must be present in bpp/providers[${i}]`
+          errorObj[key] = `categories must be present in bpp/providers[${i}]`
         }
         const iLen = categories?.length
         while (j < iLen) {
@@ -1143,11 +1141,11 @@ export const checkOnsearch = (data: any) => {
       try {
         logger.info(`Checking serviceability construct for bpp/providers[${i}]`)
         const tags = onSearchCatalog['bpp/providers'][i]['tags']
-        if(!tags || !tags.length){
+        if (!tags || !tags.length) {
           const key = `prvdr${i}tags`
           errorObj[key] = `tags must be present in bpp/providers[${i}]`
         }
-        
+
         if (tags) {
           const circleRequired = checkServiceabilityType(tags)
           if (circleRequired) {

@@ -236,6 +236,7 @@ export const checkOnConfirm = (data: any) => {
       const endRange = end.time.range
       if (startRange && endRange) {
         setValue('deliveryFulfillment', deliveryFulfillment[0])
+        setValue('deliveryFulfillmentAction', ApiSequence.ON_CONFIRM)
       }
     } catch (error: any) {
       logger.error(`Error while Storing delivery fulfillment, ${error.stack}`)

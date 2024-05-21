@@ -84,7 +84,8 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
     }
 
     if (message.intent?.tags) {
-      let tags = checkTagConditions(message, context)
+      setValue(`${ApiSequence.INC_SEARCH}_push`, false)
+      let tags = checkTagConditions(message, context, ApiSequence.INC_SEARCH)
       if (tags) {
         errorObj.intent = { ...errorObj.intent, tags }
       }

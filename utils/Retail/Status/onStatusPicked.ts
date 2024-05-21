@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import constants, { ApiSequence, ROUTING_ENUMS } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges } from '../..'
+import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges, compareFulfillmentObject } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, fulfillmentsItemsSet: any) => {
@@ -254,8 +254,10 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
         }
         if (storedFulfillment == 'undefined') {
           setValue('deliveryFulfillment', deliveryFulfillment[0])
+          setValue('deliveryFulfillmentAction', ApiSequence.ON_STATUS_PICKED)
         } else {
-          const fulfillmentRangeerrors = compareTimeRanges(storedFulfillment, deliveryFulfillment[0])
+          const storedFulfillmentAction = getValue('deliveryFulfillmentAction')
+          const fulfillmentRangeerrors = compareTimeRanges(storedFulfillment, storedFulfillmentAction, deliveryFulfillment[0], ApiSequence.ON_STATUS_PICKED)
 
           if (fulfillmentRangeerrors) {
             let i = 0
@@ -282,19 +284,19 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
           }
 
           ffId = ff.id
-          if( ff.type != "Cancel") {
-          if (getValue(`${ffId}_tracking`)) {
-            if (ff.tracking === false || ff.tracking === true) {
-              if (getValue(`${ffId}_tracking`) != ff.tracking) {
-                logger.info(`Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`)
-                onStatusObj['ffTracking'] = `Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`
+          if (ff.type != "Cancel") {
+            if (getValue(`${ffId}_tracking`)) {
+              if (ff.tracking === false || ff.tracking === true) {
+                if (getValue(`${ffId}_tracking`) != ff.tracking) {
+                  logger.info(`Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`)
+                  onStatusObj['ffTracking'] = `Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`
+                }
+              } else {
+                logger.info(`Tracking must be present for fulfillment ID: ${ff.id} in boolean form`)
+                onStatusObj['ffTracking'] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
               }
-            } else {
-              logger.info(`Tracking must be present for fulfillment ID: ${ff.id} in boolean form`)
-              onStatusObj['ffTracking'] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
             }
           }
-        }
         })
       } catch (error: any) {
         logger.info(`Error while checking fulfillments id, type and tracking in /${constants.ON_STATUS}`)
@@ -333,17 +335,19 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
             if (obj2.length > 0) {
               obj2 = obj2[0]
               if (obj2.type == "Delivery") {
-                delete obj2?.instructions
+                delete obj2?.start?.instructions
+                delete obj2?.end?.instructions
                 delete obj2?.agent
                 delete obj2?.start?.time?.timestamp
                 delete obj2?.tags
                 delete obj2?.state
               }
-              keys.forEach((key: string) => {
-                if (!_.isEqual(obj1[`${key}`], obj2[`${key}`])) {
-                  onStatusObj[`message/order.fulfillments/${i}/${key}`] = `Mismatch occured while comparing '${obj1.type}' fulfillment object with ${ApiSequence.ON_STATUS_PENDING} on key '${key}'`
-                }
-              })
+              const errors = compareFulfillmentObject(obj1, obj2, keys, i)
+              if (errors.length > 0) {
+                errors.forEach((item: any) => {
+                  onStatusObj[item.errKey] = item.errMsg
+                })
+              }
             }
             else {
               onStatusObj[`message/order.fulfillments/${i}`] = `Missing fulfillment type '${obj1.type}' in ${ApiSequence.ON_STATUS_PICKED} as compared to ${ApiSequence.ON_STATUS_PENDING}`

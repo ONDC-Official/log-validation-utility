@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import constants, { ApiSequence, ROUTING_ENUMS } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges } from '../..'
+import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges, compareFulfillmentObject } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any, fulfillmentsItemsSet: any) => {
@@ -193,7 +193,8 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any, 
       logger.info(`comparing fulfillment ranges `)
       const storedFulfillment = getValue(`deliveryFulfillment`)
       const deliveryFulfillment = on_status.fulfillments.filter((fulfillment: any) => fulfillment.type === 'Delivery')
-      const fulfillmentRangeerrors = compareTimeRanges(storedFulfillment, deliveryFulfillment[0])
+      const storedFulfillmentAction = getValue('deliveryFulfillmentAction')
+      const fulfillmentRangeerrors = compareTimeRanges(storedFulfillment, storedFulfillmentAction, deliveryFulfillment[0], ApiSequence.ON_STATUS_DELIVERED)
       if (fulfillmentRangeerrors) {
         let i = 0
         const len = fulfillmentRangeerrors.length
@@ -344,16 +345,18 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any, 
               if (obj2.type == "Delivery") {
                 delete obj2?.tags
                 delete obj2?.agent
-                delete obj2?.instructions
+                delete obj2?.start?.instructions
+                delete obj2?.end?.instructions
                 delete obj2?.start?.time?.timestamp
                 delete obj2?.end?.time?.timestamp
                 delete obj2?.state
               }
-              keys.forEach((key: string) => {
-                if (!_.isEqual(obj1[`${key}`], obj2[`${key}`])) {
-                  onStatusObj[`message/order.fulfillments/${i}/${key}`] = `Mismatch occured while comparing '${obj1.type}' fulfillment object with ${ApiSequence.ON_STATUS_PENDING} on key '${key}'`
-                }
-              })
+              const errors = compareFulfillmentObject(obj1, obj2, keys, i)
+              if (errors.length > 0) {
+                errors.forEach((item: any) => {
+                  onStatusObj[item.errKey] = item.errMsg
+                })
+              }
             }
             else {
               onStatusObj[`message/order.fulfillments/${i}`] = `Missing fulfillment type '${obj1.type}' in ${ApiSequence.ON_STATUS_DELIVERED} as compared to ${ApiSequence.ON_STATUS_PENDING}`

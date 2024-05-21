@@ -1005,10 +1005,6 @@ export const checkOnsearch = (data: any) => {
                       errorObj[key] = `item_id: ${item.id} should contain time object in bpp/providers[${i}]`
                     }
 
-                    if (!item.category_ids) {
-                      const key = `prvdr${i}item${j}ctgry_ids`
-                      errorObj[key] = `item_id: ${item.id} should contain category_ids in bpp/providers[${i}]`
-                    }
                   }
 
                   break
@@ -1103,7 +1099,7 @@ export const checkOnsearch = (data: any) => {
                   break
 
                 case 'veg_nonveg':
-                  const allowedCodes = ['veg', 'non_veg']
+                  const allowedCodes = ['veg', 'non_veg', 'egg']
 
                   for (const it of tag.list) {
                     if (it.code && !allowedCodes.includes(it.code)) {

@@ -446,13 +446,10 @@ export const checkOnInit = (data: any) => {
       if (
         data['settlement_type'] !== 'neft' &&
         data['settlement_type'] !== 'rtgs' &&
-        data['settlement_type'] !== 'upi' &&
-        data['settlement_type'] !== 'wallet' &&
-        data['settlement_type'] !== 'netbanking' &&
-        data['settlement_type'] !== 'paylater'
+        data['settlement_type'] !== 'upi'
       ) {
         logger.error(
-          `settlement_type is expected to be 'neft/rtgs/upi/wallet/netbanking/paylater' in @ondc/org/settlement_detailsin /${constants.ON_INIT}`,
+          `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_detailsin /${constants.ON_INIT}`,
         )
         onInitObj.sttlmntcntrparty = `settlement_type is expected to be 'neft/rtgs/upi/wallet/netbanking/paylater' in @ondc/org/settlement_details`
       } else if (data['settlement_type'] !== 'upi') {

@@ -85,7 +85,7 @@ export const checkOnInit = (data: any) => {
 
       setValue('tmpstmp', context.timestamp)
       setValue('onInitTmpstmp', context.timestamp)
-      
+
     } catch (error: any) {
       logger.error(
         `!!Error while comparing timestamp for /${constants.INIT} and /${constants.ON_INIT} api, ${error.stack}`,
@@ -138,8 +138,7 @@ export const checkOnInit = (data: any) => {
       const np_type_on_search = getValue(`${ApiSequence.ON_SEARCH}np_type`)
       let tax_number: any = {}
       let provider_tax_number: any = {}
-      if(accept_bap_terms.length > 0)
-      {
+      if (accept_bap_terms.length > 0) {
         const key = 'message.order.tags[0].list'
         onInitObj[key] = `accept_bap_terms is not required for now!`
       }
@@ -289,8 +288,8 @@ export const checkOnInit = (data: any) => {
 
         ffId = ff.id
 
-        if  (getValue(`${ffId}_tracking`)) {
-        if (ff.tracking === false || ff.tracking === true) {
+        if (getValue(`${ffId}_tracking`)) {
+          if (ff.tracking === false || ff.tracking === true) {
             if (getValue(`${ffId}_tracking`) != ff.tracking) {
               logger.info(`Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`)
               onInitObj["ffTracking"] = `Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`
@@ -447,12 +446,15 @@ export const checkOnInit = (data: any) => {
       if (
         data['settlement_type'] !== 'neft' &&
         data['settlement_type'] !== 'rtgs' &&
-        data['settlement_type'] !== 'upi'
+        data['settlement_type'] !== 'upi' &&
+        data['settlement_type'] !== 'wallet' &&
+        data['settlement_type'] !== 'netbanking' &&
+        data['settlement_type'] !== 'paylater'
       ) {
         logger.error(
-          `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_detailsin /${constants.ON_INIT}`,
+          `settlement_type is expected to be 'neft/rtgs/upi/wallet/netbanking/paylater' in @ondc/org/settlement_detailsin /${constants.ON_INIT}`,
         )
-        onInitObj.sttlmntcntrparty = `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_details`
+        onInitObj.sttlmntcntrparty = `settlement_type is expected to be 'neft/rtgs/upi/wallet/netbanking/paylater' in @ondc/org/settlement_details`
       } else if (data['settlement_type'] !== 'upi') {
         let missingFields = []
         if (!data.bank_name) {
@@ -521,13 +523,13 @@ export const checkOnInit = (data: any) => {
 
       for (const tag of tags) {
         if (tag.code === 'bap_terms') {
-          const hasStaticTerms = tag.list.some((item: { code: string }) => item.code === 'static_terms');            
+          const hasStaticTerms = tag.list.some((item: { code: string }) => item.code === 'static_terms');
           if (hasStaticTerms) {
-                onInitObj['message/order/tags/bap_terms/static_terms'] = `static_terms is not required for now! in ${constants.ON_INIT}`;
-            } 
+            onInitObj['message/order/tags/bap_terms/static_terms'] = `static_terms is not required for now! in ${constants.ON_INIT}`;
+          }
         }
-    }
-    
+      }
+
     } catch (err: any) {
       logger.error(
         `Error while Checking bap_terms in ${constants.ON_INIT}, ${err.stack} `,

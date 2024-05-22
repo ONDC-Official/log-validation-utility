@@ -109,7 +109,6 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
       )
     }
 
-    if (flow == '6') {
       try {
         // For Delivery Object
         const DELobj = _.filter(on_status.fulfillments, { type: 'Delivery' })
@@ -157,7 +156,6 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
       } catch (error: any) {
         logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}, ${error.stack}`)
       }
-    }
 
     try {
       logger.info(`Comparing timestamp of /${constants.ON_CONFIRM} and /${constants.ON_STATUS}_${state} API`)

@@ -107,54 +107,52 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
       logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
     }
 
-    if (flow == '6') {
-      try {
-        // For Delivery Object
-        const DELobj = _.filter(on_status.fulfillments, { type: 'Delivery' })
-        if (!DELobj.length) {
-          logger.error(`Delivery object is mandatory for ${ApiSequence.ON_STATUS_PICKED}`)
-          const key = `missingDelivery`
-          onStatusObj[key] = `Delivery object is mandatory for ${ApiSequence.ON_STATUS_PICKED}`
-        } else {
-          const deliveryObj = DELobj[0]
-          if (!deliveryObj.tags) {
-            const key = `missingTags`
-            onStatusObj[key] = `Tags are mandatory in Delivery Object for ${ApiSequence.ON_STATUS_PICKED}`
+    try {
+      // For Delivery Object
+      const DELobj = _.filter(on_status.fulfillments, { type: 'Delivery' })
+      if (!DELobj.length) {
+        logger.error(`Delivery object is mandatory for ${ApiSequence.ON_STATUS_PICKED}`)
+        const key = `missingDelivery`
+        onStatusObj[key] = `Delivery object is mandatory for ${ApiSequence.ON_STATUS_PICKED}`
+      } else {
+        const deliveryObj = DELobj[0]
+        if (!deliveryObj.tags) {
+          const key = `missingTags`
+          onStatusObj[key] = `Tags are mandatory in Delivery Object for ${ApiSequence.ON_STATUS_PICKED}`
+        }
+        else {
+          const tags = deliveryObj.tags
+          const routingTagArr = _.filter(tags, { code: 'routing' })
+          if (!routingTagArr.length) {
+            const key = `missingRouting/Tag`
+            onStatusObj[key] = `RoutingTag object is mandatory in Tags of Delivery Object for ${ApiSequence.ON_STATUS_PICKED}`
           }
           else {
-            const tags = deliveryObj.tags
-            const routingTagArr = _.filter(tags, { code: 'routing' })
-            if (!routingTagArr.length) {
-              const key = `missingRouting/Tag`
-              onStatusObj[key] = `RoutingTag object is mandatory in Tags of Delivery Object for ${ApiSequence.ON_STATUS_PICKED}`
+            const routingTag = routingTagArr[0]
+            const routingTagList = routingTag.list
+            if (!routingTagList) {
+              const key = `missingRouting/Tag/List`
+              onStatusObj[key] = `RoutingTagList is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_PICKED}`
             }
             else {
-              const routingTag = routingTagArr[0]
-              const routingTagList = routingTag.list
-              if (!routingTagList) {
-                const key = `missingRouting/Tag/List`
-                onStatusObj[key] = `RoutingTagList is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_PICKED}`
+              const routingTagTypeArr = _.filter(routingTagList, { code: 'type' })
+              if (!routingTagTypeArr.length) {
+                const key = `missingRouting/Tag/List/Type`
+                onStatusObj[key] = `RoutingTagListType object is mandatory in RoutingTag/List of Delivery Object for ${ApiSequence.ON_STATUS_PICKED}`
               }
               else {
-                const routingTagTypeArr = _.filter(routingTagList, { code: 'type' })
-                if (!routingTagTypeArr.length) {
-                  const key = `missingRouting/Tag/List/Type`
-                  onStatusObj[key] = `RoutingTagListType object is mandatory in RoutingTag/List of Delivery Object for ${ApiSequence.ON_STATUS_PICKED}`
-                }
-                else {
-                  const routingTagType = routingTagTypeArr[0]
-                  if (!ROUTING_ENUMS.includes(routingTagType.value)) {
-                    const key = `missingRouting/Tag/List/Type/Value`;
-                    onStatusObj[key] = `RoutingTagListType Value is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_PICKED} and should be equal to 'P2P' or 'P2H2P'`;
-                  }
+                const routingTagType = routingTagTypeArr[0]
+                if (!ROUTING_ENUMS.includes(routingTagType.value)) {
+                  const key = `missingRouting/Tag/List/Type/Value`;
+                  onStatusObj[key] = `RoutingTagListType Value is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_PICKED} and should be equal to 'P2P' or 'P2H2P'`;
                 }
               }
             }
           }
         }
-      } catch (error: any) {
-        logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_PICKED}, ${error.stack}`)
       }
+    } catch (error: any) {
+      logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_PICKED}, ${error.stack}`)
     }
 
     const contextTime = context.timestamp

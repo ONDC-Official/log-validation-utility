@@ -470,7 +470,7 @@ export const onInitSchema = {
                       },
                       settlement_type: {
                         type: 'string',
-                        enum: ['upi', 'neft', 'rtgs'],
+                        enum: ['upi', 'neft', 'rtgs', 'wallet', 'netbanking', 'paylater'],
                       },
                       upi_address: { type: 'string' },
                       settlement_bank_account_no: {

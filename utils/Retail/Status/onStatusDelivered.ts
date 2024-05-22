@@ -110,7 +110,6 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any, 
       logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
     }
 
-    if (flow == '6') {
       try {
         // For Delivery Object
         const DELobj = _.filter(on_status.fulfillments, { type: 'Delivery' })
@@ -158,7 +157,6 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any, 
       } catch (error: any) {
         logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_PICKED}, ${error.stack}`)
       }
-    }
 
     const contextTime = context.timestamp
     try {

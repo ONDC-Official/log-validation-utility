@@ -120,7 +120,7 @@ export const updateSchema = {
                     properties: {
                       settlement_counterparty: { type: 'string' },
                       settlement_phase: { type: 'string' },
-                      settlement_type: { type: 'string', enum: ['upi', 'neft', 'rtgs'] },
+                      settlement_type: { type: 'string', enum: ['upi', 'neft', 'rtgs', 'wallet', 'netbanking', 'paylater'] },
                       settlement_amount: { type: 'string' },
                       settlement_timestamp: { type: 'string', format: 'rfc3339-date-time' },
                     },

@@ -224,7 +224,7 @@ export const checkInit = (data: any, msgIdSet: any) => {
           }
 
           if (!_.isEqual(init.fulfillments[i].end.location.gps, getValue('buyerGps'))) {
-            const gpskey = `gpsKey${i}`
+            const gpskey = `ff/end/location/gpsKey${i}`
             initObj[gpskey] =
               `gps coordinates in fulfillments[${i}].end.location mismatch in /${constants.SELECT} & /${constants.INIT}`
           }

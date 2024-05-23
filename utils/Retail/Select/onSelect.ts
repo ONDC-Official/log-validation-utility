@@ -212,7 +212,6 @@ export const checkOnSelect = (data: any) => {
       itemFlfllmnts[id] = on_select.items[i].fulfillment_id
       i++
     }
-
     setValue('itemFlfllmnts', itemFlfllmnts)
   } catch (error: any) {
     logger.error(`!!Error occurred while mapping and storing item Id and fulfillment Id, ${error.stack}`)
@@ -428,7 +427,7 @@ export const checkOnSelect = (data: any) => {
           if (!Object.values(itemFlfllmnts).includes(element['@ondc/org/item_id'])) {
             const brkupffid = `brkupfftitles${i}`
             errorObj[brkupffid] =
-              `invalid  id: ${element['@ondc/org/item_id']} in ${titleType} line item (should be a valid fulfillment_id)`
+              `invalid  id: ${element['@ondc/org/item_id']} in ${titleType} line item (should be a valid fulfillment_id as provided in message.items for the items)`
           }
         }
       })

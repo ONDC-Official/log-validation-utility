@@ -75,7 +75,7 @@ export const onStatusSchema = {
         'city',
         'country',
         'ttl',
-        'timestamp'
+        'timestamp',
       ],
     },
     message: {
@@ -263,294 +263,342 @@ export const onStatusSchema = {
             fulfillments: {
               type: 'array',
               items: {
-                type: 'object',
-                properties: {
-                  id: {
-                    type: 'string',
-                    minLength: 1,
+                allOf: [
+                  {
+                    if: {
+                      properties: {
+                        type: {
+                          type: 'string',
+                          const: 'Delivery',
+                        },
+                      },
+                    },
+                    then: {
+                      allOf: timeRules,
+                    },
                   },
-                  '@ondc/org/provider_name': {
-                    type: 'string',
-                    minLength: 1,
-                  },
-                  type: {
-                    type: 'string',
-                    minLength: 1,
-                  },
-                  tracking: {
-                    type: 'boolean',
-                  },
-                  '@ondc/org/TAT': {
-                    type: 'string',
-                    format: 'duration',
-                  },
-                  state: {
-                    type: 'object',
-                    properties: {
-                      descriptor: {
+                  {
+                    if: {
+                      properties: {
+                        type: {
+                          type: 'string',
+                          const: 'Cancel',
+                        },
+                      },
+                    },
+                    then: {
+                      properties: {
                         type: 'object',
                         properties: {
-                          code: {
+                          id: {
                             type: 'string',
                             minLength: 1,
                           },
-                        },
-                        required: ['code'],
-                      },
-                    },
-                    required: ['descriptor'],
-                  },
-                  start: {
-                    type: 'object',
-                    properties: {
-                      location: {
-                        type: 'object',
-                        properties: {
-                          descriptor: {
+                          type: {
+                            type: 'string',
+                            minLength: 1,
+                          },
+                          state: {
                             type: 'object',
                             properties: {
-                              name: {
-                                type: 'string',
+                              descriptor: {
+                                type: 'object',
+                                properties: {
+                                  code: {
+                                    type: 'string',
+                                    minLength: 1,
+                                  },
+                                },
+                                required: ['code'],
                               },
                             },
-                            required: ['name'],
-                          },
-                          gps: {
-                            type: 'string',
-                          },
-                          address: {
-                            type: 'object',
-                            properties: {
-                              locality: {
-                                type: 'string',
-                              },
-                              city: {
-                                type: 'string',
-                              },
-                              area_code: {
-                                type: 'string',
-                              },
-                              state: {
-                                type: 'string',
-                              },
-                            },
-                            required: ['locality', 'city', 'area_code', 'state'],
+                            required: ['descriptor'],
                           },
                         },
-                        required: ['descriptor', 'gps', 'address'],
-                      },
-                      time: {
-                        type: 'object',
-                        properties: {
-                          range: {
-                            type: 'object',
-                            properties: {
-                              start: {
-                                type: 'string',
-                                format: 'rfc3339-date-time',
-                              },
-                              end: {
-                                type: 'string',
-                                format: 'rfc3339-date-time',
-                              },
-                            },
-                            required: ['start', 'end'],
-                          },
-                          timestamp: {
-                            type: 'string',
-                          },
-                        },
-                        required: ['range'],
-                      },
-                      instructions: {
-                        type: 'object',
-                        properties: {
-                          code: {
-                            type: 'string',
-                          },
-                          name: {
-                            type: 'string',
-                          },
-                          short_desc: {
-                            type: 'string',
-                          },
-                          long_desc: {
-                            type: 'string',
-                          },
-                        },
-                        required: ['code', 'name', 'short_desc', 'long_desc'],
-                      },
-                      contact: {
-                        type: 'object',
-                        properties: {
-                          phone: {
-                            type: 'string',
-                            minLength: 10,
-                            maxLength: 11,
-                          },
-                          email: {
-                            type: 'string',
-                            format: 'email',
-                          },
-                        },
-                        required: ['phone'],
+                        required: ['id', 'type', 'state'],
                       },
                     },
-                    required: ['location', 'time', 'contact'],
-                  },
-                  end: {
-                    type: 'object',
-                    properties: {
-                      location: {
-                        type: 'object',
-                        properties: {
-                          gps: {
-                            type: 'string',
-                          },
-                          address: {
-                            type: 'object',
-                            properties: {
-                              name: {
-                                type: 'string',
-                                minLength: 1,
+                    else: {
+                      type: 'object',
+                      properties: {
+                        id: {
+                          type: 'string',
+                          minLength: 1,
+                        },
+                        '@ondc/org/provider_name': {
+                          type: 'string',
+                          minLength: 1,
+                        },
+                        type: {
+                          type: 'string',
+                          minLength: 1,
+                        },
+                        tracking: {
+                          type: 'boolean',
+                        },
+                        '@ondc/org/TAT': {
+                          type: 'string',
+                          format: 'duration',
+                        },
+                        state: {
+                          type: 'object',
+                          properties: {
+                            descriptor: {
+                              type: 'object',
+                              properties: {
+                                code: {
+                                  type: 'string',
+                                  minLength: 1,
+                                },
                               },
-                              building: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              locality: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              city: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              state: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              country: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              area_code: {
-                                type: 'string',
-                                minLength: 1,
-                                maxLength: 6,
-                              },
+                              required: ['code'],
                             },
-                            required: ['name', 'building', 'locality', 'city', 'state', 'country', 'area_code'],
                           },
+                          required: ['descriptor'],
                         },
-                        required: ['gps', 'address'],
-                      },
-                      time: {
-                        type: 'object',
-                        properties: {
-                          range: {
-                            type: 'object',
-                            properties: {
-                              start: {
-                                type: 'string',
-                                format: 'rfc3339-date-time',
+                        start: {
+                          type: 'object',
+                          properties: {
+                            location: {
+                              type: 'object',
+                              properties: {
+                                descriptor: {
+                                  type: 'object',
+                                  properties: {
+                                    name: {
+                                      type: 'string',
+                                    },
+                                  },
+                                  required: ['name'],
+                                },
+                                gps: {
+                                  type: 'string',
+                                },
+                                address: {
+                                  type: 'object',
+                                  properties: {
+                                    locality: {
+                                      type: 'string',
+                                    },
+                                    city: {
+                                      type: 'string',
+                                    },
+                                    area_code: {
+                                      type: 'string',
+                                    },
+                                    state: {
+                                      type: 'string',
+                                    },
+                                  },
+                                  required: ['locality', 'city', 'area_code', 'state'],
+                                },
                               },
-                              end: {
-                                type: 'string',
-                                format: 'rfc3339-date-time',
-                              },
+                              required: ['descriptor', 'gps', 'address'],
                             },
-                            required: ['start', 'end'],
+                            time: {
+                              type: 'object',
+                              properties: {
+                                range: {
+                                  type: 'object',
+                                  properties: {
+                                    start: {
+                                      type: 'string',
+                                      format: 'rfc3339-date-time',
+                                    },
+                                    end: {
+                                      type: 'string',
+                                      format: 'rfc3339-date-time',
+                                    },
+                                  },
+                                  required: ['start', 'end'],
+                                },
+                                timestamp: {
+                                  type: 'string',
+                                },
+                              },
+                              required: ['range'],
+                            },
+                            instructions: {
+                              type: 'object',
+                              properties: {
+                                code: {
+                                  type: 'string',
+                                },
+                                name: {
+                                  type: 'string',
+                                },
+                                short_desc: {
+                                  type: 'string',
+                                },
+                                long_desc: {
+                                  type: 'string',
+                                },
+                              },
+                              required: ['code', 'name', 'short_desc', 'long_desc'],
+                            },
+                            contact: {
+                              type: 'object',
+                              properties: {
+                                phone: {
+                                  type: 'string',
+                                  minLength: 10,
+                                  maxLength: 11,
+                                },
+                                email: {
+                                  type: 'string',
+                                  format: 'email',
+                                },
+                              },
+                              required: ['phone'],
+                            },
                           },
-                          timestamp: {
-                            type: 'string',
-                          },
+                          required: ['location', 'time', 'contact'],
                         },
-                        required: ['range'],
-                      },
-                      instructions: {
-                        type: 'object',
-                        properties: {
-                          code: {
-                            type: 'string',
+                        end: {
+                          type: 'object',
+                          properties: {
+                            location: {
+                              type: 'object',
+                              properties: {
+                                gps: {
+                                  type: 'string',
+                                },
+                                address: {
+                                  type: 'object',
+                                  properties: {
+                                    name: {
+                                      type: 'string',
+                                      minLength: 1,
+                                    },
+                                    building: {
+                                      type: 'string',
+                                      minLength: 1,
+                                    },
+                                    locality: {
+                                      type: 'string',
+                                      minLength: 1,
+                                    },
+                                    city: {
+                                      type: 'string',
+                                      minLength: 1,
+                                    },
+                                    state: {
+                                      type: 'string',
+                                      minLength: 1,
+                                    },
+                                    country: {
+                                      type: 'string',
+                                      minLength: 1,
+                                    },
+                                    area_code: {
+                                      type: 'string',
+                                      minLength: 1,
+                                      maxLength: 6,
+                                    },
+                                  },
+                                  required: ['name', 'building', 'locality', 'city', 'state', 'country', 'area_code'],
+                                },
+                              },
+                              required: ['gps', 'address'],
+                            },
+                            time: {
+                              type: 'object',
+                              properties: {
+                                range: {
+                                  type: 'object',
+                                  properties: {
+                                    start: {
+                                      type: 'string',
+                                      format: 'rfc3339-date-time',
+                                    },
+                                    end: {
+                                      type: 'string',
+                                      format: 'rfc3339-date-time',
+                                    },
+                                  },
+                                  required: ['start', 'end'],
+                                },
+                                timestamp: {
+                                  type: 'string',
+                                },
+                              },
+                              required: ['range'],
+                            },
+                            instructions: {
+                              type: 'object',
+                              properties: {
+                                code: {
+                                  type: 'string',
+                                },
+                                name: {
+                                  type: 'string',
+                                },
+                                short_desc: {
+                                  type: 'string',
+                                },
+                                long_desc: {
+                                  type: 'string',
+                                },
+                              },
+                              required: ['code', 'name', 'short_desc', 'long_desc'],
+                            },
+                            contact: {
+                              type: 'object',
+                              properties: {
+                                phone: {
+                                  type: 'string',
+                                  minLength: 10,
+                                  maxLength: 11,
+                                },
+                              },
+                              required: ['phone'],
+                            },
                           },
-                          name: {
-                            type: 'string',
-                          },
-                          short_desc: {
-                            type: 'string',
-                          },
-                          long_desc: {
-                            type: 'string',
-                          },
+                          required: ['location', 'time', 'contact'],
                         },
-                        required: ['code', 'name', 'short_desc', 'long_desc'],
-                      },
-                      contact: {
-                        type: 'object',
-                        properties: {
-                          phone: {
-                            type: 'string',
-                            minLength: 10,
-                            maxLength: 11,
+                        agent: {
+                          type: 'object',
+                          properties: {
+                            name: {
+                              type: 'string',
+                            },
+                            phone: {
+                              type: 'string',
+                              minLength: 10,
+                              maxLength: 11,
+                            },
                           },
+                          required: ['name', 'phone'],
                         },
-                        required: ['phone'],
+                        vehicle: {
+                          type: 'object',
+                          properties: {
+                            category: {
+                              type: 'string',
+                            },
+                            size: {
+                              type: 'string',
+                            },
+                            registration: {
+                              type: 'string',
+                            },
+                          },
+                          required: ['category', 'size', 'registration'],
+                        },
                       },
+                      required: [
+                        'id',
+                        '@ondc/org/provider_name',
+                        'type',
+                        'tracking',
+                        '@ondc/org/TAT',
+                        'state',
+                        'start',
+                        'end',
+                      ],
                     },
-                    required: ['location', 'time', 'contact'],
                   },
-                  agent: {
-                    type: 'object',
-                    properties: {
-                      name: {
-                        type: 'string',
-                      },
-                      phone: {
-                        type: 'string',
-                        minLength: 10,
-                        maxLength: 11,
-                      },
-                    },
-                    required: ['name', 'phone'],
-                  },
-                  vehicle: {
-                    type: 'object',
-                    properties: {
-                      category: {
-                        type: 'string',
-                      },
-                      size: {
-                        type: 'string',
-                      },
-                      registration: {
-                        type: 'string',
-                      },
-                    },
-                    required: ['category', 'size', 'registration'],
-                  },
-                },
-                required: [
-                  'id',
-                  '@ondc/org/provider_name',
-                  'type',
-                  'tracking',
-                  '@ondc/org/TAT',
-                  'state',
-                  'start',
-                  'end',
                 ],
-                if: {
-                  properties: {
-                    type: {
-                      type: 'string',
-                      const: 'Delivery',
-                    },
-                  },
-                },
-                then: {
-                  allOf: timeRules,
-                },
               },
             },
             quote: {
@@ -564,7 +612,7 @@ export const onStatusSchema = {
                     },
                     value: {
                       type: 'string',
-                      pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                      pattern: '^[0-9]+(.[0-9]{1,2})?$',
                       errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                     },
                   },
@@ -601,7 +649,7 @@ export const onStatusSchema = {
                           },
                           value: {
                             type: 'string',
-                            pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                            pattern: '^[0-9]+(.[0-9]{1,2})?$',
                             errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                           },
                         },
@@ -621,7 +669,7 @@ export const onStatusSchema = {
                               },
                               value: {
                                 type: 'string',
-                                pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                                pattern: '^[0-9]+(.[0-9]{1,2})?$',
                                 errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                               },
                             },

@@ -303,7 +303,7 @@ export const cancel_RTO_Schema = {
                             required: ['locality', 'city', 'area_code', 'state'],
                           },
                         },
-                        required: ['id', 'descriptor', 'gps', 'address'],
+                        required: ['gps', 'address'],
                       },
                       time: {
                         type: 'object',
@@ -443,7 +443,7 @@ export const cancel_RTO_Schema = {
                       properties: {
                         code: {
                           type: 'string',
-                          enum: ['cancel_request', 'igm_request', 'precancel_state', 'quote_trail'],
+                          enum: ['cancel_request', 'igm_request', 'precancel_state', 'quote_trail','routing','tracking'],
                         },
                         list: {
                           type: 'array',
@@ -463,6 +463,10 @@ export const cancel_RTO_Schema = {
                                   'currency',
                                   'value',
                                   'type',
+                                  'gps_enabled',
+                                  'url_enabled',
+                                  'url',
+                                  'subtype'
                                 ],
                               },
                               value: {

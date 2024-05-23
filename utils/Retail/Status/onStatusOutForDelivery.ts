@@ -120,7 +120,7 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
           const deliveryObj = DELobj[0]
           if (!deliveryObj.tags) {
             const key = `missingTags`
-            onStatusObj[key] = `Tags are mandatory in Delivery Object for ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}`
+            onStatusObj[key] = `Tags are mandatory in Delivery Fulfillment for ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}`
           }
           else {
             const tags = deliveryObj.tags

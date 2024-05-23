@@ -109,7 +109,7 @@ export const checkSearch = (data: any, msgIdSet: any) => {
     try {
       logger.info(`Checking for tags in /message/intent for ${constants.SEARCH} API`)
       if (data.message.intent?.tags) {
-        const tagErrors = checkTagConditions(data.message, data.context)
+        const tagErrors = checkTagConditions(data.message, data.context, ApiSequence.SEARCH)
         tagErrors?.length ? (errorObj.intent = { ...errorObj.intent, tags: tagErrors }) : null
       }
     } catch (error: any) {

@@ -523,7 +523,7 @@ export const FnBonConfirmSchema = {
                           value: {
                             type: 'string',
                             minLength: 1,
-                            pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                            pattern: '^[-+]?[0-9]+(\.[0-9]{1,2})?$',
                             errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                           },
                         },
@@ -545,7 +545,7 @@ export const FnBonConfirmSchema = {
                               value: {
                                 type: 'string',
                                 minLength: 1,
-                                pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                                pattern: '^[-+]?[0-9]+(\.[0-9]{1,2})?$',
                                 errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                               },
                             },

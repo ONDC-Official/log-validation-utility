@@ -162,6 +162,7 @@ export const checkOnConfirm = (data: any) => {
           onCnfrmObj.updtdtmstmp = `order.updated_at timestamp should be updated as per the context.timestamp (since default fulfillment state is added)`
         }
       }
+      setValue('onCnfrmState', on_confirm.state)
     } catch (error: any) {
       logger.error(`!!Error while checking order timestamps in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
@@ -233,9 +234,9 @@ export const checkOnConfirm = (data: any) => {
       const { start, end } = deliveryFulfillment[0]
       const startRange = start.time.range
       const endRange = end.time.range
-
       if (startRange && endRange) {
         setValue('deliveryFulfillment', deliveryFulfillment[0])
+        setValue('deliveryFulfillmentAction', ApiSequence.ON_CONFIRM)
       }
     } catch (error: any) {
       logger.error(`Error while Storing delivery fulfillment, ${error.stack}`)

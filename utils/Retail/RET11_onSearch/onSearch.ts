@@ -7,6 +7,7 @@ import {
   validateSchema,
   isObjectEmpty,
   checkContext,
+  timeDiff as timeDifference,
   checkGpsPrecision,
   emailRegex,
   checkBppIdOrBapId,
@@ -95,6 +96,24 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
   } catch (error: any) {
     logger.info(
       `Error while comparing transaction ids for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
+    )
+  }
+
+  try {
+    logger.info(`Comparing timestamp of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
+    const tmpstmp = searchContext?.timestamp
+    if (_.gte(tmpstmp, context.timestamp)) {
+      errorObj.tmpstmp = `Timestamp for /${constants.SEARCH} api cannot be greater than or equal to /${constants.ON_SEARCH} api`
+    } else {
+      const timeDiff = timeDifference(context.timestamp, tmpstmp)
+      logger.info(timeDiff)
+      if (timeDiff > 5000) {
+        errorObj.tmpstmp = `context/timestamp difference between /${constants.ON_SEARCH} and /${constants.SEARCH} should be less than 5 sec`
+      }
+    }
+  } catch (error: any) {
+    logger.info(
+      `Error while comparing timestamp for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
     )
   }
 
@@ -427,6 +446,10 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
         logger.info(`Checking categories for provider (${prvdr.id}) in bpp/providers[${i}]`)
         let j = 0
         const categories = onSearchCatalog['bpp/providers'][i]['categories']
+        if (!categories || !categories.length) {
+          const key = `prvdr${i}categories`
+          errorObj[key] = `categories must be present in bpp/providers[${i}]`
+        }
         const iLen = categories.length
         while (j < iLen) {
           logger.info(`Validating uniqueness for categories id in bpp/providers[${i}].items[${j}]...`)
@@ -609,6 +632,8 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
             });
           }
 
+          let lower_and_upper_not_present: boolean = true
+          let default_selection_not_present: boolean = true
           try {
             logger.info(`Checking selling price and maximum price for item id: ${item.id}`)
 
@@ -619,8 +644,16 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
               const lower = parseFloat(item.price?.tags?.[0].list[0]?.value)
               const upper = parseFloat(item.price?.tags?.[0].list[1]?.value)
 
+              if (lower >= 0 && upper >= 0) {
+                lower_and_upper_not_present = false
+              }
+
               const default_selection_value = parseFloat(item.price?.tags?.[1].list[0]?.value)
               const default_selection_max_value = parseFloat(item.price?.tags?.[1].list[1]?.value)
+
+              if (default_selection_value >= 0 && default_selection_max_value >= 0) {
+                default_selection_not_present = false
+              }
 
               if (sPrice > maxPrice) {
                 const key = `prvdr${i}item${j}Price`
@@ -628,13 +661,13 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
                   `selling price of item /price/value with id: (${item.id}) can't be greater than the maximum price /price/maximum_value in /bpp/providers[${i}]/items[${j}]/`
               }
 
-              if (upper <= lower) {
+              if (upper < lower) {
                 const key = `prvdr${i}item${j}price/tags/`
                 errorObj[key] =
                   `selling lower range: ${lower} of code: range with id: (${item.id}) can't be greater than the upper range : ${upper} `
               }
 
-              if (default_selection_max_value <= default_selection_value) {
+              if (default_selection_max_value < default_selection_value) {
                 const key = `prvdr${i}item${j}Price/tags`
                 errorObj[key] =
                   `value : ${default_selection_value} of code: default_selection with id: (${item.id}) can't be greater than the maximum_value : ${default_selection_max_value} `
@@ -821,6 +854,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
             logger.error(`Error while checking tags for item id: ${item.id}, ${e.stack}`)
           }
 
+          // false error coming from here
           try {
             logger.info(`Validating item tags`)
             const itemTypeTag = item.tags.find((tag: { code: string }) => tag.code === 'type')
@@ -834,8 +868,14 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
               itemTypeTag.list[0].value === 'item' &&
               customGroupTag
             ) {
-              errorObj[`items[${item.id}]`] =
-                `/message/catalog/bpp/providers/items must have default_selection price and lower/upper range for customizable items`
+              if (default_selection_not_present) {
+                errorObj[`items[${item.id}]/price/tags/default_selection`] =
+                  `/message/catalog/bpp/providers/items must have default_selection price for customizable items`
+              }
+              if (lower_and_upper_not_present) {
+                errorObj[`items[${item.id}]/price/tags/lower_and_upper_range`] =
+                  `/message/catalog/bpp/providers/items must have lower/upper range for customizable items`
+              }
             }
           } catch (error: any) {
             logger.error(`Error while validating item, ${error.stack}`)
@@ -997,6 +1037,10 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
         logger.info(`Checking serviceability construct for bpp/providers[${i}]`)
 
         const tags = onSearchCatalog['bpp/providers'][i]['tags']
+        if (!tags || !tags.length) {
+          const key = `prvdr${i}tags`
+          errorObj[key] = `tags must be present in bpp/providers[${i}]`
+        }
         if (tags) {
           const circleRequired = checkServiceabilityType(tags)
           if (circleRequired) {

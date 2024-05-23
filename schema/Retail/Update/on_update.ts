@@ -74,10 +74,11 @@ export const onUpdateSchema = {
         order: {
           type: 'object',
           properties: {
-            id: { type: 'string',
-            pattern: '^[a-zA-Z0-9-]{1,32}$|^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
-            errorMessage: 'Order ID should be alphanumeric upto 32 letters max or UUID',
-           },
+            id: {
+              type: 'string',
+              pattern: '^[a-zA-Z0-9-]{1,32}$|^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$',
+              errorMessage: 'Order ID should be alphanumeric upto 32 letters max or UUID',
+            },
             state: { type: 'string', enum: ['Created', 'Accepted', 'Cancelled', 'Completed', 'Delivered'] },
             provider: {
               type: 'object',
@@ -148,6 +149,7 @@ export const onUpdateSchema = {
                           code: {
                             type: 'string',
                             enum: [
+                              'Accepted',
                               'Cancelled',
                               'Pending',
                               'Order-delivered',
@@ -231,9 +233,11 @@ export const onUpdateSchema = {
                       contact: {
                         type: 'object',
                         properties: {
-                          phone: { type: 'string' ,                 
-                          minLength: 10,
-                          maxLength: 11,},
+                          phone: {
+                            type: 'string',
+                            minLength: 10,
+                            maxLength: 11,
+                          },
                           email: { type: 'string', format: 'email' },
                         },
                         required: ['phone', 'email'],
@@ -293,9 +297,11 @@ export const onUpdateSchema = {
                       contact: {
                         type: 'object',
                         properties: {
-                          phone: { type: 'string' ,                  
-                          minLength: 10,
-                          maxLength: 11,},
+                          phone: {
+                            type: 'string',
+                            minLength: 10,
+                            maxLength: 11,
+                          },
                           email: { type: 'string', format: 'email' },
                         },
                       },
@@ -387,7 +393,7 @@ export const onUpdateSchema = {
                     ],
                   },
                 },
-                ttl: { type: 'string',format: 'duration' },
+                ttl: { type: 'string', format: 'duration' },
               },
               required: ['price', 'breakup', 'ttl'],
             },
@@ -418,15 +424,15 @@ export const onUpdateSchema = {
                 },
                 status: {
                   type: 'string',
-                  enum:["PAID","NOT-PAID"]
+                  enum: ["PAID", "NOT-PAID"]
                 },
                 type: {
                   type: 'string',
-                  enum:["ON-ORDER","ON-FULFILLMENT"]
+                  enum: ["ON-ORDER", "ON-FULFILLMENT"]
                 },
                 collected_by: {
                   type: 'string',
-                  enum:["BAP","BPP"]
+                  enum: ["BAP", "BPP"]
                 },
                 '@ondc/org/buyer_app_finder_fee_type': {
                   type: 'string',
@@ -436,7 +442,7 @@ export const onUpdateSchema = {
                 },
                 '@ondc/org/settlement_basis': {
                   type: 'string',
-                  enum:['shipment','delivery','return_window_expiry']
+                  enum: ['shipment', 'delivery', 'return_window_expiry']
                 },
                 '@ondc/org/settlement_window': {
                   type: 'string',
@@ -457,7 +463,7 @@ export const onUpdateSchema = {
                       },
                       settlement_type: {
                         type: 'string',
-                        enum: ['upi', 'neft', 'rtgs'],
+                        enum: ['upi', 'neft', 'rtgs', 'wallet', 'netbanking', 'paylater'],
                       },
                       upi_address: { type: 'string' },
                       settlement_bank_account_no: {
@@ -523,6 +529,7 @@ export const onUpdateSchema = {
                 'collected_by',
                 '@ondc/org/buyer_app_finder_fee_type',
                 '@ondc/org/buyer_app_finder_fee_amount',
+                '@ondc/org/settlement_details'
               ],
             },
             documents: {

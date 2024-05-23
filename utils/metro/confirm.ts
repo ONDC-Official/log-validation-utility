@@ -2,10 +2,9 @@ import constants, { metroSequence } from '../../constants'
 import { logger } from '../../shared/logger'
 import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
-import { validateContext, validateStops } from './metroChecks'
+import { validateContext } from './metroChecks'
 import { validatePaymentTags } from './tags'
 
-const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 export const checkConfirm = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
   try {
@@ -19,7 +18,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     }
 
     const onInit: any = getValue(`${metroSequence.ON_INIT}_message`)
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.CONFIRM, data)
+    const schemaValidation = validateSchema('TRV', constants.CONFIRM, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.ON_INIT, constants.CONFIRM)
     setValue(`${metroSequence.CONFIRM}_message`, message)
 
@@ -34,7 +33,6 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     const confirm = message.order
     const itemIDS: any = getValue('itemIds')
     const itemIdArray: any[] = []
-    const storedFull: any = getValue(`${metroSequence.ON_SELECT}_storedFulfillments`)
     let newItemIDSValue: any[]
 
     if (itemIDS && itemIDS.length > 0) {
@@ -102,26 +100,6 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
           } & its value must be one of: ${validStatus.join(', ')}`
         }
 
-        const params = arr.params
-        if (!params?.bank_code) {
-          errorObj[`payments[${i}]_bank_code`] = `payments.params.bank_code must be present in ${constants.CONFIRM}`
-        } else {
-          setValue('bank_code', params?.bank_code)
-        }
-
-        if (!params?.bank_account_number) {
-          errorObj[`payments[${i}]_bank_account_number`] =
-            `payments.params.bank_account_number must be present in ${constants.CONFIRM}`
-        } else {
-          setValue('bank_account_number', params?.bank_account_number)
-        }
-
-        if (!params?.virtual_payment_address) {
-          errorObj[`payments[${i}]_virtual_payment_address`] =
-            `payments.params.virtual_payment_address must be present in ${constants.CONFIRM}`
-        } else {
-          setValue('virtual_payment_address', params?.virtual_payment_address)
-        }
 
         // Validate payment tags
         const tagsValidation = validatePaymentTags(arr.tags)
@@ -131,59 +109,6 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       })
     } catch (error: any) {
       logger.error(`!!Errors while checking payments in /${constants.CONFIRM}, ${error.stack}`)
-    }
-
-    try {
-      logger.info(`Validating fulfillments object for /${constants.CONFIRM}`)
-      confirm.fulfillments.forEach((full: any, index: number) => {
-        const fulfillmentKey = `fulfillments[${index}]`
-        if (!storedFull.includes(full.id)) {
-          const key = `fulfillments[${index}].id`
-          errorObj[key] =
-            `/message/order/fulfillments/id in fulfillments: ${full.id} should be one of the /fulfillments/id mapped in previous call`
-        }
-
-        if (!VALID_VEHICLE_CATEGORIES.includes(full.vehicle.category)) {
-          errorObj[`fulfillment_${index}_vehicleCategory`] =
-            `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
-        }
-
-        if (!Object.prototype.hasOwnProperty.call(full.customer?.person, 'name')) {
-          errorObj[`fulfillments${index}_customer`] = `/message/order/fulfillments/customer in customer: must have name`
-        } else {
-          if (full.customer.person.name.trim() === '') {
-            errorObj[`fulfillments${index}_customer_name`] = `Empty name is not allowed for fulfillment ${index}`
-          } else {
-            setValue(`customer_name`, full.customer.person.name)
-          }
-        }
-
-        if (!Object.prototype.hasOwnProperty.call(full.customer?.contact, 'phone')) {
-          errorObj[`fulfillments${index}_customer`] = `/message/order/fulfillments/customer in customer: must have name`
-        } else {
-          const phoneRegex = /^[0-9]{10}$/
-          const isValidPhone = phoneRegex.test(full.customer.contact.phone)
-          if (!isValidPhone) {
-            errorObj[`fulfillments${index}_customer_phone`] = `Invalid phone format for fulfillment ${index}`
-          } else {
-            setValue(`customer_phone`, full.customer.contact.phone)
-          }
-        }
-
-        //if type is sent then it should be DELIVERY else, no mandatory to check for the BAP's call
-        if (full.type && full.type !== 'DELIVERY') {
-          errorObj[`${fulfillmentKey}.type`] =
-            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_SELECT}`
-        }
-
-        // Check stops for START and END, or time range with valid timestamp and GPS
-        const otp = false
-        const cancel = false
-        validateStops(full?.stops, index, otp, cancel)
-      })
-    } catch (error: any) {
-      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.CONFIRM},  ${error.message}`)
-      return { error: error.message }
     }
 
     if ('billing' in confirm && confirm?.billing?.name) {

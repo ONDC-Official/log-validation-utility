@@ -1,23 +1,27 @@
 import { logger } from '../../shared/logger'
 import { setValue } from '../../shared/dao'
+import { validateTags } from './tags'
 import constants, { metroSequence } from '../../constants'
+import { validateDescriptor } from './metroChecks'
 import {
   validateSchema,
   isObjectEmpty,
   // checkMetroContext,
   // checkBppIdOrBapId,
   checkGpsPrecision,
-  timestampCheck,
   // timeDiff,
 } from '..'
 import { validateContext } from './metroChecks'
-import { validatePaymentTags } from './tags'
+import { isNil } from 'lodash'
+import { checkItemQuantity, checkItemTime, checkPayment } from './validate/helper'
 
 const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
-const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
-export const checkOnSearch = (data: any, msgIdSet: any) => {
+const VALID_DESCRIPTOR_CODES = ['SJT', 'RJT', 'PASS', 'SFSJT']
+export const checkOnSearch = (data: any, msgIdSet: any, secondOnSearch: boolean) => {
   if (!data || isObjectEmpty(data)) {
-    return { [metroSequence.ON_SEARCH]: 'Json cannot be empty' }
+    return secondOnSearch
+      ? { [metroSequence.ON_SEARCH2]: 'Json cannot be empty' }
+      : { [metroSequence.ON_SEARCH1]: 'Json cannot be empty' }
   }
 
   const { message, context } = data
@@ -26,8 +30,8 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
   }
 
   const contextRes: any = validateContext(context, msgIdSet, constants.SEARCH, constants.ON_SEARCH)
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SEARCH, data)
-  setValue(`${metroSequence.ON_SEARCH}_message`, message)
+  const schemaValidation = validateSchema('TRV', constants.ON_SEARCH, data)
+  setValue(`${metroSequence.ON_SEARCH1}_message`, message)
   const errorObj: any = {}
 
   if (schemaValidation !== 'error') {
@@ -54,6 +58,35 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
     const bppPrvdrs = onSearchCatalog['providers']
     const len = bppPrvdrs.length
     while (i < len) {
+      if (onSearchCatalog['providers'][i]?.categories) {
+        const categoriesIds: string[] = []
+        let descriptorError
+        onSearchCatalog['providers'][i]?.categories?.map(
+          (item: { id: string; descriptor: { code: string } }, index: number) => {
+            if (item?.id) {
+              if (categoriesIds?.includes(item?.id)) {
+                errorObj[`provider_${i}_categoriesId`] =
+                  `ID should be unique, it shouldn't match with other categories ID.`
+              } else categoriesIds.push(item?.id)
+            } else {
+              errorObj[`provider_${i}_categoriesId`] = `Category id should be present in categories of ${index} index.`
+            }
+
+            descriptorError = validateDescriptor(
+              onSearchCatalog['providers'][i]?.categories[index]?.descriptor,
+              constants.ON_SEARCH,
+              `providers${[i]}.categories${[i]}.desscriptor`,
+              true,
+              ['TICKET', 'PASS'],
+            )
+          },
+        )
+
+        if (descriptorError) Object.assign(errorObj, descriptorError)
+      } else {
+        errorObj[`provider_${i}_categories`] = `Categories are missing for provider ${i}`
+      }
+
       const fulfillments = onSearchCatalog['providers'][i]['fulfillments']
 
       if (!fulfillments || fulfillments.length === 0) {
@@ -68,184 +101,158 @@ export const checkOnSearch = (data: any, msgIdSet: any) => {
           }
 
           if (fulfillment.type == undefined) {
-            errorObj[
-              `provider_${i}_fulfillment_${k}type`
-            ] = `Fulfillment type 'DELIVERY' should be present in provoider`
+            errorObj[`provider_${i}_fulfillment_${k}type`] = `Fulfillment type should be present in provider.`
           } else {
-            if (fulfillment.type !== 'DELIVERY') {
-              errorObj[`provider_${i}_fulfillment_${k}type`] = `Fulfillment type should be 'DELIVERY' in provoider}`
+            if (secondOnSearch) {
+              if (fulfillment.type !== 'TRIP') {
+                errorObj[`provider_${i}_fulfillment_${k}type`] = `Fulfillment type should be 'TRIP' in provider.`
+              }
+            } else {
+              if (fulfillment.type !== 'ROUTE') {
+                errorObj[`provider_${i}_fulfillment_${k}type`] = `Fulfillment type should be 'ROUTE' in provider.`
+              }
             }
           }
 
           // Check if the vehicle category is valid
-          if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
-            errorObj[
-              `provider_${i}_fulfillment_${k}_vehicleCategory`
-            ] = `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
+          if (!fulfillment?.vehicle?.category) {
+            errorObj[`provider_${i}_fulfillment_${k}_vehicleCategory`] = `Vehicle category object is missing.`
+          } else {
+            if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
+              errorObj[`provider_${i}_fulfillment_${k}_vehicleCategory`] =
+                `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
+            }
           }
 
           // Check stops for START and END, or time range with valid timestamp and GPS
           const stops = fulfillment.stops
-          const hasStartStop = stops.some((stop: any) => stop.type === 'START')
-          const hasEndStop = stops.some((stop: any) => stop.type === 'END')
+          if (!stops) errorObj['Stops'] = 'Stops are missing in fulfillment'
+          else {
+            const hasStartStop = stops.some((stop: any) => stop.type === 'START')
+            const hasEndStop = stops.some((stop: any) => stop.type === 'END')
 
-          if (!(hasStartStop && hasEndStop)) {
-            errorObj[
-              `provider_${i}_fulfillment_${k}_stops`
-            ] = `Fulfillment ${k} in provider ${i} must contain both START and END stops or a valid time range start`
-          }
-
-          stops.forEach((stop: any, l: number) => {
-            // Check if timestamp in the time range is valid only if time.range.start is present
-            const hasTimeRangeStart = stop.time?.range?.start
-            if (hasTimeRangeStart) {
-              const timestampCheckResult = timestampCheck(stop.time?.range?.start || '')
-              if (timestampCheckResult.err) {
-                errorObj[
-                  `provider_${i}_fulfillment_${k}_stop_${l}_timestamp`
-                ] = `Invalid timestamp for stop ${l} in fulfillment ${k} in provider ${i}: ${timestampCheckResult.err}`
+            if (!(hasStartStop && hasEndStop)) {
+              errorObj[`provider_${i}_fulfillment_${k}_stops`] =
+                `Fulfillment ${k} in provider ${i} must contain both START and END stops or a valid time range start`
+            }
+            stops.forEach((stop: { [key: string]: any }, l: number) => {
+              // Check if GPS coordinates are valid
+              if (stop.location?.gps && !checkGpsPrecision(stop.location.gps)) {
+                errorObj[`provider_${i}_fulfillment_${k}_stop_${l}_gpsPrecision`] =
+                  'GPS coordinates must be specified with at least six decimal places of precision'
               }
-            }
-
-            // Check if GPS coordinates are valid
-            if (stop.location?.gps && !checkGpsPrecision(stop.location.gps)) {
-              errorObj[`provider_${i}_fulfillment_${k}_stop_${l}_gpsPrecision`] =
-                'GPS coordinates must be specified with at least six decimal places of precision'
-            }
-          })
-        })
-      }
-
-      const locations = onSearchCatalog['providers'][i]['locations']
-
-      if (locations && locations.length > 0) {
-        locations.forEach((location: any, j: number) => {
-          storedLocations.add(location.id)
-
-          if (checkGpsPrecision(location.gps)) {
-            errorObj[`provider_${i}_location_${j}_gpsPrecision`] =
-              'GPS coordinates must be specified with at least six decimal places of precision'
+            })
           }
         })
       }
 
       try {
-        let j = 0
-        const items = onSearchCatalog['providers'][i]['items']
-        const iLen = items.length
-        if (iLen === 0) {
-          errorObj[`provider_${i}_items`] = `Items are missing for provider ${i}`
-        } else {
-          while (j < iLen) {
-            const item = items[j]
-            if (!item.id) {
-              const key = `prvdr${i}item${j}_id`
-              errorObj[key] = `Item ID is missing in /providers[${i}]/items[${j}]`
-            } else if (itemsId.has(item.id)) {
-              const key = `prvdr${i}item${j}_id`
-              errorObj[key] = `Duplicate item ID: ${item.id} in providers[${i}]`
+        if (secondOnSearch) {
+          if (onSearchCatalog['providers'][i]['items'] && onSearchCatalog['providers'][i]['items']?.length) {
+            let j = 0
+            const items = onSearchCatalog['providers'][i]['items']
+            const iLen = items.length
+            if (iLen === 0) {
+              errorObj[`provider_${i}_items`] = `Items are missing for provider ${i}`
             } else {
-              itemsId.add(item.id)
-            }
-
-            if (!item.descriptor || !item.descriptor.code) {
-              const key = `prvdr${i}item${j}_descriptor`
-              errorObj[key] = `Descriptor is missing in /providers[${i}]/items[${j}]`
-            } else {
-              if (!VALID_DESCRIPTOR_CODES.includes(item.descriptor.code)) {
-                const key = `prvdr${i}item${j}_descriptor`
-                errorObj[
-                  key
-                ] = `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
-              }
-            }
-
-            const price = item.price
-            if (!price || !price.currency || !price.value) {
-              const key = `prvdr${i}item${j}_price`
-              errorObj[key] = `Price is incomplete in /providers[${i}]/items[${j}]`
-            }
-
-            if (storedLocations && storedLocations.size > 0) {
-              const locationIds = item.location_ids
-              if (!locationIds || locationIds.length === 0) {
-                const key = `prvdr${i}item${j}_location_ids`
-                errorObj[key] = `Location IDs are missing or empty in /providers[${i}]/items[${j}]`
-              } else {
-                locationIds.forEach((locationId: string) => {
-                  if (!storedLocations.has(locationId)) {
-                    const key = `prvdr${i}item${j}_location_ids_not_found`
-                    errorObj[
-                      key
-                    ] = `Location ID ${locationId} in /providers[${i}]/items[${j}] not found in stored locations`
-                  }
-                })
-              }
-            }
-
-            const fulfillmentIds = item.fulfillment_ids
-            if (!fulfillmentIds || fulfillmentIds.length === 0) {
-              const key = `prvdr${i}item${j}_fulfillment_ids`
-              errorObj[key] = `Fulfillment IDs are missing or empty in /providers[${i}]/items[${j}]`
-            } else {
-              fulfillmentIds.forEach((fulfillmentId: string) => {
-                if (!storedFulfillments.has(fulfillmentId)) {
-                  const key = `prvdr${i}item${j}_fulfillment_ids_not_found`
-                  errorObj[
-                    key
-                  ] = `Fulfillment ID ${fulfillmentId} in /providers[${i}]/items[${j}] not found in stored fulfillments`
+              while (j < iLen) {
+                const item = items[j]
+                if (!item?.id) {
+                  const key = `prvdr${i}item${j}_id`
+                  errorObj[key] = `Item ID is missing in /providers[${i}]/items[${j}]`
+                } else if (itemsId.has(item.id)) {
+                  const key = `prvdr${i}item${j}_id`
+                  errorObj[key] = `Duplicate item ID: ${item.id} in providers[${i}]`
+                } else {
+                  itemsId.add(item.id)
                 }
-              })
-            }
 
-            j++
+                const itemQuantityError = checkItemQuantity(item, i, j)
+                if (!isNil(itemQuantityError)) Object.assign(errorObj, itemQuantityError)
+
+                if (!item.descriptor || !item.descriptor.code) {
+                  const key = `prvdr${i}item${j}_descriptor`
+                  errorObj[key] = `Descriptor is missing in /providers[${i}]/items[${j}]`
+                } else {
+                  if (!VALID_DESCRIPTOR_CODES.includes(item.descriptor.code)) {
+                    const key = `prvdr${i}item${j}_descriptor`
+                    errorObj[key] =
+                      `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
+                  }
+                }
+
+                const itemTimeError = checkItemTime(item, i, j)
+                if (!isNil(itemTimeError)) Object.assign(errorObj, itemTimeError)
+
+                const price = item?.price
+                if (!price || !price.currency || !price.value) {
+                  const key = `prvdr${i}item${j}_price`
+                  errorObj[key] = `Price is incomplete in /providers[${i}]/items[${j}]`
+                }
+
+                if (storedLocations && storedLocations.size > 0) {
+                  const locationIds = item.location_ids
+                  if (!locationIds || locationIds.length === 0) {
+                    const key = `prvdr${i}item${j}_location_ids`
+                    errorObj[key] = `Location IDs are missing or empty in /providers[${i}]/items[${j}]`
+                  } else {
+                    locationIds.forEach((locationId: string) => {
+                      if (!storedLocations.has(locationId)) {
+                        const key = `prvdr${i}item${j}_location_ids_not_found`
+                        errorObj[key] =
+                          `Location ID ${locationId} in /providers[${i}]/items[${j}] not found in stored locations`
+                      }
+                    })
+                  }
+                }
+
+                const fulfillmentIds = item.fulfillment_ids
+                if (!fulfillmentIds || fulfillmentIds.length === 0) {
+                  const key = `prvdr${i}item${j}_fulfillment_ids`
+                  errorObj[key] = `Fulfillment IDs are missing or empty in /providers[${i}]/items[${j}]`
+                } else {
+                  fulfillmentIds.forEach((fulfillmentId: string) => {
+                    if (!storedFulfillments.has(fulfillmentId)) {
+                      const key = `prvdr${i}item${j}_fulfillment_ids_not_found`
+                      errorObj[key] =
+                        `Fulfillment ID ${fulfillmentId} in /providers[${i}]/items[${j}] not found in stored fulfillments`
+                    }
+                  })
+                }
+
+                j++
+              }
+            }
+          } else {
+            errorObj[`items`] = `Items array is missing or not have the required key inside items.`
           }
         }
       } catch (error: any) {
         logger.error(`!!Errors while checking items in providers[${i}], ${error.stack}`)
       }
 
-      const payments = onSearchCatalog['providers'][i]['payments']
-
-      if (!payments || payments.length === 0) {
-        errorObj[`provider_${i}_payments`] = `Payments are missing for provider ${i}`
-      } else {
-        try {
-          logger.info(`Validating payments object for /${constants.ON_SEARCH}`)
-          payments?.map((payment: any, i: number) => {
-            const collectedBy = payment?.collected_by
-
-            if (!collectedBy) {
-              errorObj[`collected_by`] = `payment.collected_by must be present in ${metroSequence.ON_SEARCH}`
-            } else {
-              setValue(`collected_by`, collectedBy)
-              if (collectedBy !== 'BPP' && collectedBy !== 'BAP') {
-                errorObj[
-                  'collected_by'
-                ] = `payment.collected_by can only be either 'BPP' or 'BAP' in ${metroSequence.ON_SEARCH}`
-              }
-            }
-
-            // Validate payment tags
-            const tagsValidation = validatePaymentTags(payment.tags)
-            if (!tagsValidation.isValid) {
-              const dynamicKey = `${i}_tags`
-              Object.assign(errorObj, { [dynamicKey]: tagsValidation.errors })
-            }
-          })
-        } catch (error: any) {
-          logger.error(`!!Error occcurred while validating payments in /${constants.ON_SEARCH},  ${error.message}`)
-        }
-      }
+      const paymentError = checkPayment(onSearchCatalog['providers'][i]['payments'], i)
+      if(!isNil(paymentError))
+        Object.assign(errorObj, paymentError)       
 
       i++
     }
 
-    setValue(`${metroSequence.ON_SEARCH}prvdrsId`, prvdrsId)
-    setValue(`${metroSequence.ON_SEARCH}prvdrLocId`, prvdrLocId)
-    setValue(`${metroSequence.ON_SEARCH}_itemsId`, Array.from(itemsId))
-    setValue(`${metroSequence.ON_SEARCH}_storedLocations`, Array.from(storedLocations))
-    setValue(`${metroSequence.ON_SEARCH}_storedFulfillments`, Array.from(storedFulfillments))
+    const tagsValidation: { [key: string]: any } | null = validateTags(onSearchCatalog?.providers)
+    if (!isNil(tagsValidation)) Object.assign(errorObj, tagsValidation)
+
+    setValue(`${metroSequence.ON_SEARCH1}prvdrsId`, prvdrsId)
+    setValue(`${metroSequence.ON_SEARCH1}prvdrLocId`, prvdrLocId)
+    setValue(`${metroSequence.ON_SEARCH1}_itemsId`, Array.from(itemsId))
+    setValue(`${metroSequence.ON_SEARCH1}_storedLocations`, Array.from(storedLocations))
+    setValue(`${metroSequence.ON_SEARCH1}_storedFulfillments`, Array.from(storedFulfillments))
+
+    if (secondOnSearch) {
+      setValue('providerId', message?.catalog?.providers[0]?.id ?? null)
+      setValue(`${metroSequence.ON_SEARCH1}_message`, message)
+      setValue(`itemIds`, Array.from(itemsId))
+      setValue(`${metroSequence.ON_SEARCH1}_storedFulfillments`, Array.from(storedFulfillments))
+    }
   } catch (error: any) {
     logger.error(`!!Error while checking Providers info in /${constants.ON_SEARCH}, ${error.stack}`)
     return { error: error.message }

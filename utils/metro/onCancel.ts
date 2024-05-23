@@ -20,7 +20,7 @@ export const checkOnCancel = (data: any, msgIdSet: any, sequence: string) => {
       return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_CANCEL, data)
+    const schemaValidation = validateSchema('TRV', constants.ON_CANCEL, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.CANCEL, constants.ON_CANCEL)
     setValue(`${mobilitySequence.ON_CANCEL}_message`, message)
 

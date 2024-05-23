@@ -14,7 +14,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.SELECT, data)
+  const schemaValidation = validateSchema('TRV', constants.SELECT, data)
   const contextRes: any = validateContext(context, msgIdSet, constants.ON_SEARCH, constants.SELECT)
   setValue(`${metroSequence.SELECT}_message`, message)
   const errorObj: any = {}
@@ -28,9 +28,9 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   }
 
   try {
-    const storedItemIDS: any = getValue(`${metroSequence.ON_SEARCH}_itemsId`)
+    const storedItemIDS: any = getValue(`${metroSequence.ON_SEARCH1}_itemsId`)
     const select = message.order
-    const onSearch: any = getValue(`${metroSequence.ON_SEARCH}_message`)
+    const onSearch: any = getValue(`${metroSequence.ON_SEARCH1}_message`)
 
     try {
       logger.info(`Comparing Provider object for /${constants.ON_SEARCH} and /${constants.SELECT}`)

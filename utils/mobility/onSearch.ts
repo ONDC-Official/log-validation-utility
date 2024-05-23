@@ -18,7 +18,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
   }
 
   const contextRes: any = validateContext(context, msgIdSet, constants.SEARCH, constants.ON_SEARCH)
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SEARCH, data)
+  const schemaValidation = validateSchema('TRV', constants.ON_SEARCH, data)
   setValue(`${mobilitySequence.ON_SEARCH}_message`, message)
   const errorObj: any = {}
 

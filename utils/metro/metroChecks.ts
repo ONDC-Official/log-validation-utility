@@ -1,7 +1,23 @@
 import { logger } from '../../shared/logger'
 import { getValue, setValue } from '../../shared/dao'
-import { checkGpsPrecision, checkIdAndUri, checkMetroContext, timeDiff, timestampCheck } from '..'
-import _ from 'lodash'
+import { checkGpsPrecision, checkIdAndUri, checkMetroContext, timeDiff } from '..'
+import _, { isNil } from 'lodash'
+
+interface Stop {
+  type: string;
+  instructions: {
+      name: string;
+  };
+  location: {
+      descriptor: {
+          name: string;
+          code: string;
+      };
+      gps: string;
+  };
+  id: string;
+  parent_stop_id: string;
+}
 
 export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any) => {
   const errorObj: any = {}
@@ -41,7 +57,7 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
         }
 
         if (!_.isEqual(prevContext.bpp_uri, context.bpp_uri)) {
-          errorObj.bppUriContextMismatch = `BPP URL mismatch in /${pastCall} and /${curentCall}`
+          errorObj.bppUriContextMismatch = `BPP URI mismatch in /${pastCall} and /${curentCall}`
         }
       }
 
@@ -110,8 +126,8 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
       } else {
         const timeDifference = timeDiff(context.timestamp, tmpstmp)
         logger.info(timeDifference)
-        if (timeDifference > 5000) {
-          errorObj.tmpstmp = `context/timestamp difference between /${curentCall} and /${pastCall} should be smaller than 5 sec`
+        if (tmpstmp > context.timestamp) {
+          errorObj.tmpstmp = `context/timestamp Of ${context?.action} should be greater than ${prevContext?.action}`
         }
       }
 
@@ -133,39 +149,48 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
 export const validateStops = (stops: any, index: number, otp: boolean, cancel: boolean) => {
   const errorObj: any = {}
 
-  const hasStartStop = stops.some((stop: any) => stop.type === 'START')
-  const hasEndStop = stops.some((stop: any) => stop.type === 'END')
+  if (!stops) {
+    errorObj[`Stops`] = `Fulfillment ${index} must contain Stops`
+    return errorObj
+  }
 
+  const hasStartStop = stops.some((stop: Stop) => stop?.type === 'START')
+  const hasEndStop = stops.some((stop: Stop) => stop?.type === 'END')
+  //INTERMEDITAE & TRANSIT stips existence check
+  // END, INTERMEDITAE & TRANSIT parent_stop_id
   if (!hasStartStop) {
-    errorObj[
-      `fulfillment_${index}_stops`
-    ] = `Fulfillment ${index} in  must contain both START stops or a valid time range start`
+    errorObj[`fulfillment_${index}_stops`] =
+      `Fulfillment ${index} in  must contain both START stops or a valid time range start`
   }
 
   if (!cancel && !hasEndStop) {
-    errorObj[
-      `fulfillment_${index}_stops`
-    ] = `Fulfillment ${index} in  must contain both END stops or a valid time range start`
+    errorObj[`fulfillment_${index}_stops`] =
+      `Fulfillment ${index} in  must contain both END stops or a valid time range start`
   }
 
-  stops.forEach((stop: any, l: number) => {
-    // Check if timestamp in the time range is valid only if time.range.start is present
-    const hasTimeRangeStart = stop.time?.range?.start
-    if (hasTimeRangeStart) {
-      const timestampCheckResult = timestampCheck(stop.time?.range?.start || '')
-      if (timestampCheckResult.err) {
-        errorObj[
-          `fulfillment_${index}_stop_${l}_timestamp`
-        ] = `Invalid timestamp for stop ${l} in fulfillment ${index} in : ${timestampCheckResult.err}`
-      }
-    }
+  const checkIntermediateStopExistense = stops && stops?.find((stop: Stop) => stop?.type === 'INTERMEDIATE_STOP')
+  const checkTransitStopExistense = stops && stops?.find((stop: Stop) => stop?.type === 'TRANSIT_STOP')
 
-    // Check if GPS coordinates are valid
-    if (stop.location?.gps && checkGpsPrecision(stop.location.gps)) {
-      errorObj[`fulfillment_${index}_stop_${l}_gpsPrecision`] =
-        'GPS coordinates must be specified with at least six decimal places of precision'
-    }
-  })
+  if (isNil(checkIntermediateStopExistense))
+    errorObj[`fulfillment_INTERMEDIATE_STOP`] = 'INTERMEDIATE_STOP is Missing in Stops Array'
+
+  if (isNil(checkTransitStopExistense)) errorObj[`fulfillment_TRANSIT_STOP`] = 'TRANSIT_STOP is Missing in Stops Array'
+
+  stops &&
+    stops.forEach((stop: Stop, l: number) => {
+      if (!stop.hasOwnProperty('parent_stop_id')) {
+        errorObj[`Fullfillment_ParentStops_${l}`] = `${stop?.type} has missing Parent stop id in ${l} index.`
+      }
+      // Check if timestamp in the time range is valid only if time.range.start is present
+
+      //instructuions
+
+      // Check if GPS coordinates are valid
+      if (stop?.location?.gps && checkGpsPrecision(stop?.location?.gps)) {
+        errorObj[`fulfillment_${index}_stop_${l}_gpsPrecision`] =
+          'GPS coordinates must be specified with at least six decimal places of precision'
+      }
+    })
 
   if (otp) {
     stops.forEach((stop: any, l: number) => {
@@ -205,9 +230,8 @@ export const validatePaymentParams = (
     errorObj[`payments[${i}]_${storedKey}`] = `payments.params.${storedKey} must be present in ${action}`
   } else {
     if (storedValue && !_.isEqual(storedValue, params[storedKey])) {
-      errorObj[
-        `payments[${i}]_${storedKey}`
-      ] = `payments.params.${storedKey} must match with the value sent in past calls, ${action}`
+      errorObj[`payments[${i}]_${storedKey}`] =
+        `payments.params.${storedKey} must match with the value sent in past calls, ${action}`
     } else {
       setValue(storedKey, params[storedKey])
     }
@@ -219,7 +243,7 @@ export const validateQuote = (quote: any, action: string) => {
   try {
     logger.info(`Checking quote details in /${action}`)
     const quoteBreakup = quote.breakup
-    const validBreakupItems = ['BASE_FARE', 'DISTANCE_FARE', 'CURRENT_FARE_CHARGE']
+    const validBreakupItems = ['BASE_FARE']
 
     const requiredBreakupItems = validBreakupItems.filter((item) =>
       quoteBreakup.some((breakupItem: any) => breakupItem.title.toUpperCase() === item),
@@ -287,4 +311,76 @@ export const validateCancellationTerms = (cancellationTerms: any, action: string
   }
 
   return errorObj
+}
+
+export const validateDescriptor = (
+  descriptor: any,
+  action: string,
+  path: string,
+  checkCode: boolean,
+  codes: string[],
+): any => {
+  try {
+    const errorObj: any = {}
+    if (!descriptor) {
+      errorObj.descriptor = `descriptor is missing at ${path}.`
+    } else {
+      if (checkCode) {
+        if (!descriptor?.code.trim()) {
+          errorObj.code = `descriptor.code is missing at ${path}.`
+        } else if (descriptor.code?.trim() !== descriptor.code?.trim()?.toUpperCase()) {
+          errorObj.code = `descriptor.code must be in uppercase at ${path}., ${descriptor.code}`
+        } else if (codes && !codes?.includes(descriptor?.code))
+          errorObj.code = `descriptor.code should be one of ${codes}`
+      }
+
+      if (descriptor?.images) {
+        descriptor.images.forEach((image: any, index: number) => {
+          const { url, size_type } = image
+          if (!isValidUrl(url)) {
+            errorObj[`image_url_[${index}]`] = `Invalid URL for image in descriptor at ${path}.`
+          }
+
+          const validSizes = ['xs', 'md', 'sm', 'lg']
+          if (!validSizes.includes(size_type)) {
+            errorObj[`image_size_[${index}]`] = `Invalid image size in descriptor, should be one of: ${validSizes.join(
+              ', ',
+            )} at ${path}.`
+          }
+        })
+      }
+
+      //validate name only if checkCode is false or name is present
+      if (!checkCode || descriptor?.name) {
+        if (!descriptor?.name?.trim()) {
+          errorObj.name = `descriptor.name is missing or empty ${path}.`
+        }
+      }
+
+      if (descriptor?.short_desc) {
+        if (!descriptor.short_desc.trim()) {
+          errorObj.short_desc = `descriptor.short_desc is empty at ${path}.`
+        }
+      }
+
+      if (descriptor?.long_desc) {
+        if (!descriptor.long_desc.trim()) {
+          errorObj.long_desc = `descriptor.long_desc is empty at ${path}.`
+        }
+      }
+    }
+
+    return errorObj
+  } catch (error: any) {
+    logger.info(`Error while validating descriptor for /${action} at ${path}, ${error.stack}`)
+  }
+}
+
+export const isValidUrl = (url: string) => {
+  try {
+    new URL(url)
+    return true
+  } catch (error) {
+    return false
+  }
 }

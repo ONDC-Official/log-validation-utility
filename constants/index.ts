@@ -44,6 +44,7 @@ export default Object.freeze({
   ON_RECEIVER_RECON: 'on_receiver_recon',
 })
 
+
 export const ApiSequence = {
   SEARCH: 'search_full_catalog_refresh',
   ON_SEARCH: 'on_search_full_catalog_refresh',
@@ -173,8 +174,10 @@ export const mobilitySequence = {
 }
 
 export const metroSequence = {
-  SEARCH: 'search',
-  ON_SEARCH: 'on_search',
+  SEARCH1: 'search1',
+  ON_SEARCH1: 'on_search1',
+  SEARCH2: 'search2',
+  ON_SEARCH2: 'on_search2',
   SELECT: 'select',
   ON_SELECT: 'on_select',
   INIT: 'init',

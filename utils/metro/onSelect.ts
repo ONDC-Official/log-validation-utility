@@ -18,7 +18,7 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SELECT, data)
+  const schemaValidation = validateSchema('TRV', constants.ON_SELECT, data)
   const contextRes: any = validateContext(context, msgIdSet, constants.SELECT, constants.ON_SELECT)
   setValue(`${metroSequence.ON_SELECT}_message`, message)
   const errorObj: any = {}
@@ -36,9 +36,9 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
 
   try {
     const onSelect = message.order
-    const itemIDS: any = getValue(`${metroSequence.ON_SEARCH}_itemsId`)
+    const itemIDS: any = getValue(`${metroSequence.ON_SEARCH1}_itemsId`)
     const itemIdArray: any[] = []
-    const storedFull: any = getValue(`${metroSequence.ON_SEARCH}_storedFulfillments`)
+    const storedFull: any = getValue(`${metroSequence.ON_SEARCH1}_storedFulfillments`)
     const fulfillmentIdsSet = new Set()
     const itemIdsSet = new Set()
 

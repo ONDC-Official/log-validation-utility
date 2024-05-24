@@ -156,6 +156,8 @@ export const validateStops = (stops: any, index: number, otp: boolean, cancel: b
 
   const hasStartStop = stops.some((stop: Stop) => stop?.type === 'START')
   const hasEndStop = stops.some((stop: Stop) => stop?.type === 'END')
+  const checkIntermediateStopExistense = stops && stops?.find((stop: Stop) => stop?.type === 'INTERMEDIATE_STOP')
+  const checkTransitStopExistense = stops && stops?.find((stop: Stop) => stop?.type === 'TRANSIT_STOP')
   //INTERMEDITAE & TRANSIT stips existence check
   // END, INTERMEDITAE & TRANSIT parent_stop_id
   if (!hasStartStop) {
@@ -167,9 +169,6 @@ export const validateStops = (stops: any, index: number, otp: boolean, cancel: b
     errorObj[`fulfillment_${index}_stops`] =
       `Fulfillment ${index} in  must contain both END stops or a valid time range start`
   }
-
-  const checkIntermediateStopExistense = stops && stops?.find((stop: Stop) => stop?.type === 'INTERMEDIATE_STOP')
-  const checkTransitStopExistense = stops && stops?.find((stop: Stop) => stop?.type === 'TRANSIT_STOP')
 
   if (isNil(checkIntermediateStopExistense))
     errorObj[`fulfillment_INTERMEDIATE_STOP`] = 'INTERMEDIATE_STOP is Missing in Stops Array'

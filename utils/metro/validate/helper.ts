@@ -169,19 +169,19 @@ function isValidPhoneNumber(phoneNumber: string) {
   return phoneRegex.test(phoneNumber)
 }
 
-export function checkProviderTime(on_init: any) {
+export function checkProviderTime(provider: any) {
   const errorObj: any = {}
   try {
-    if (!on_init?.provider?.time) errorObj.prvdrIdTime = `Provider Time is Missing in /${constants.ON_INIT}`
-    else if (on_init?.provider?.time && !on_init.provider?.time?.range)
+    if (!provider?.time) errorObj.prvdrIdTime = `Provider Time is Missing in /${constants.ON_INIT}`
+    else if (provider?.time && !provider?.time?.range)
       errorObj.prvdrTimeRange = `Provider Time Range is Missing in /${constants.ON_INIT}`
-    else if (on_init?.provider?.time?.range && !on_init.provider?.time?.range?.start)
+    else if (provider?.time?.range && !provider?.time?.range?.start)
       errorObj.prvdrTimeRangeStart = `Provider Time Range Start is Missing in /${constants.ON_INIT}`
-    else if (on_init?.provider?.time?.range && !on_init.provider?.time?.range?.end)
+    else if (provider?.time?.range && !provider?.time?.range?.end)
       errorObj.prvdrTimeRangeEnd = `Provider Time Range End is Missing in /${constants.ON_INIT}`
-    else if (on_init.provider?.time?.range?.start && !isValidDateTime(on_init.provider?.time?.range?.start))
+    else if (provider?.time?.range?.start && !isValidDateTime(provider?.time?.range?.start))
       errorObj.prvdrStartFormat = `Range.start Time Format is Invalid in /${constants.ON_INIT}`
-    else if (on_init.provider?.time?.range?.end && !isValidDateTime(on_init?.provider?.time?.range?.end))
+    else if (provider?.time?.range?.end && !isValidDateTime(provider?.time?.range?.end))
       errorObj.prvdrEndFormat = `Range.end Time Format is Invalid in /${constants.ON_INIT}`
 
   } catch (error: any) {

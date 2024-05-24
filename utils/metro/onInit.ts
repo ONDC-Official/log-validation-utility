@@ -74,7 +74,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       }
 
       //check time validation
-      const checkTimeError = checkProviderTime(on_init)
+      const checkTimeError = checkProviderTime(on_init?.provider)
       if (Object.keys(checkTimeError).length > 0) Object.assign(errorObj, checkTimeError)
 
       //time missing
@@ -95,13 +95,14 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
           const fulfillmentKey = `fulfillments[${index}]`
           //fulfillment.id missing
 
-          fulfillment?.id
-            ? fulfillmentIdsSet.add(fulfillment?.id)
-            : (errorObj[`Fulfillment[${index}].id`] = `Fulfillment Id missing in /${constants.ON_INIT}`)
-
-          if (!storedFull.includes(fulfillment?.id)) {
-            errorObj[`${fulfillmentKey}.id`] =
-              `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+          if(fulfillment?.id){
+            fulfillmentIdsSet.add(fulfillment?.id)
+            if (!storedFull.includes(fulfillment?.id)) {
+              errorObj[`${fulfillmentKey}.id`] =
+                `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+            }
+          } else{
+            (errorObj[`Fulfillment[${index}].id`] = `Fulfillment Id missing in /${constants.ON_INIT}`)
           }
 
           //cross check enumf from contract

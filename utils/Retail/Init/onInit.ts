@@ -451,7 +451,7 @@ export const checkOnInit = (data: any) => {
         logger.error(
           `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_detailsin /${constants.ON_INIT}`,
         )
-        onInitObj.sttlmntcntrparty = `settlement_type is expected to be 'neft/rtgs/upi/wallet/netbanking/paylater' in @ondc/org/settlement_details`
+        onInitObj.sttlmntcntrparty = `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_details`
       } else if (data['settlement_type'] !== 'upi') {
         let missingFields = []
         if (!data.bank_name) {

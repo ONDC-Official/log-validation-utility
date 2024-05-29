@@ -989,25 +989,26 @@ export const payment_status = (payment: any) => {
   return true
 }
 
-export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAtConfirm: number, errorObj: any) => {
+export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAtConfirm: number, errorObj: any, apiSeq: string) => {
   let quoteTrailSum = 0
   for (const obj of fulfillmentArr) {
     const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
     for (const item of quoteTrailItems) {
       for (const val of item.list) {
         if (val.code === 'value') {
-          quoteTrailSum += Math.abs(val.value)
+          quoteTrailSum -= val.value
         }
       }
     }
   }
+  quoteTrailSum = Number(quoteTrailSum.toFixed(2))
   if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
     const key = `invldQuoteTrailPrices`
     errorObj[
       key
-    ] = `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM}`
+    ] = `quote_trail price and item quote price sum for ${apiSeq} should be equal to the price as in ${constants.ON_CONFIRM}`
     logger.error(
-      `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM} `,
+      `quote_trail price and item quote price sum for ${apiSeq} should be equal to the price as in ${constants.ON_CONFIRM} `,
     )
   }
 }

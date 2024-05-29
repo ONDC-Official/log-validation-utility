@@ -9,6 +9,7 @@ import {
     sumQuoteBreakUp,
     payment_status,
     checkQuoteTrailSum,
+    timeDiff,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import {
@@ -174,6 +175,10 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
         try {
             logger.info(`Checking for settlement_details in /message/order/payment`)
             const settlement_details: any = on_update.payment['@ondc/org/settlement_details']
+            if (!settlement_details || settlement_details.length == 0) {
+                const key = "payment/settlement_details"
+                onupdtObj[key] = "The settlement_details are missing or empty in the payment object"
+            }
             settlement_details.map((data: any) => {
                 if (data.settlement_type == 'upi' && data.settlement_counterparty == 'seller-app') {
                     if (data.settlement_type == 'upi' && data.settlement_counterparty == 'seller-app') {
@@ -314,6 +319,13 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
 
         const flowSixAChecks = (data: any) => {
             try {
+
+                try {
+                    setValue(`${ApiSequence.ON_UPDATE_PART_CANCEL}_tmpstmp`, context.timestamp)
+                } catch (e: any) {
+                    logger.error(`Error while context/timestamp for the /${apiSeq}`)
+                }
+
                 try {
                     data.fulfillments.forEach((fulfillment: any) => {
                         if (fulfillment.type === 'Cancel') {
@@ -331,7 +343,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                         const priceAtConfirm = Number(getValue('quotePrice'))
                         const cancelFulfillments = _.filter(on_update.fulfillments, { type: 'Cancel' })
                         logger.info(`Checking for quote_trail price and item quote price sum for ${apiSeq}`)
-                        checkQuoteTrailSum(cancelFulfillments, price, priceAtConfirm, onupdtObj)
+                        checkQuoteTrailSum(cancelFulfillments, price, priceAtConfirm, onupdtObj, ApiSequence.ON_UPDATE)
                     } else {
                         logger.error(
                             `The price breakdown in brakup does not match with the total_price for ${apiSeq} `,
@@ -463,6 +475,34 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
             logger.info(`Error while checking fulfillments id, type and tracking in /${constants.ON_STATUS}`)
         }
 
+        if (flow === '6-b' || flow === '6-c') {
+            try {
+                const timestampOnUpdatePartCancel = getValue(`${ApiSequence.ON_UPDATE_PART_CANCEL}_tmpstmp`)
+                const timeDif = timeDiff(context.timestamp, timestampOnUpdatePartCancel)
+                if (timeDif <= 0) {
+                    const key = 'context/timestamp'
+                    onupdtObj[key] = `context/timestamp of /${apiSeq} should be greater than /${ApiSequence.ON_UPDATE_PART_CANCEL} context/timestamp`
+                }
+
+                const timestamp = getValue('timestamp_')
+                if (timestamp && timestamp.length != 0) {
+                    const timeDif2 = timeDiff(context.timestamp, timestamp[0])
+                    if (timeDif2 <= 0) {
+                        const key = 'context/timestamp/'
+                        onupdtObj[key] = `context/timestamp of /${apiSeq} should be greater than context/timestamp of /${timestamp[1]}`
+                    }
+                }
+                else {
+                    const key = 'context/timestamp/'
+                    onupdtObj[key] = `context/timestamp of the previous call is missing or the previous action call itself is missing`
+                }
+                setValue('timestamp_', [context.timestamp, apiSeq])
+
+            } catch (e: any) {
+                logger.error(`Error while context/timestamp for the /${apiSeq}`)
+            }
+        }
+
         if (flow === '6-a') {
             flowSixAChecks(message.order)
         }
@@ -479,7 +519,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                         apiSeq == ApiSequence.ON_UPDATE_PICKED || apiSeq == ApiSequence.ON_UPDATE_DELIVERED
                     ) {
                         logger.info(`Checking for quote_trail price and item quote price sum for ${apiSeq}`)
-                        checkQuoteTrailSum(returnCancelFulfillments, price, priceAtConfirm, onupdtObj)
+                        checkQuoteTrailSum(returnCancelFulfillments, price, priceAtConfirm, onupdtObj, ApiSequence.ON_UPDATE)
                     }
                 } else {
                     logger.error(`The price breakdown in brakup does not match with the total_price for ${apiSeq} `)
@@ -564,6 +604,8 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
             } catch (error: any) {
                 logger.error(`!!Error while mapping cancellation_reason_id in ${apiSeq}`)
             }
+
+
         }
         if (flow === '6-c') {
             try {
@@ -612,7 +654,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                         item.type === 'Return' || item.type === 'Cancel')
                     if (apiSeq == ApiSequence.ON_UPDATE_LIQUIDATED) {
                         logger.info(`Checking for quote_trail price and item quote price sum for ${apiSeq}`)
-                        checkQuoteTrailSum(returnCancelFulfillments, price, priceAtConfirm, onupdtObj)
+                        checkQuoteTrailSum(returnCancelFulfillments, price, priceAtConfirm, onupdtObj, ApiSequence.ON_UPDATE)
                     }
                 } else {
                     logger.error(`The price breakdown in brakup does not match with the total_price for ${apiSeq} `)

@@ -528,8 +528,7 @@ export const onUpdateSchema = {
                 'type',
                 'collected_by',
                 '@ondc/org/buyer_app_finder_fee_type',
-                '@ondc/org/buyer_app_finder_fee_amount',
-                '@ondc/org/settlement_details'
+                '@ondc/org/buyer_app_finder_fee_amount'
               ],
             },
             documents: {

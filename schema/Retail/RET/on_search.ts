@@ -299,6 +299,8 @@ export const onSearchSchema = {
                   },
                   ttl: {
                     type: 'string',
+                    format: 'duration',
+                    errorMessage: 'Duration must be RFC3339 duration.',
                   },
                   locations: {
                     type: 'array',

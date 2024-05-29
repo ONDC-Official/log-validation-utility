@@ -579,11 +579,11 @@ export const checkOnConfirm = (data: any) => {
       logger.info(`Comparing tags in /${constants.CONFIRM} and /${constants.ON_CONFIRM}`)
       const confirm_tags: any[] | any = getValue('confirm_tags')
       if (on_confirm.tags) {
-        // const bap_terms = areGSTNumbersMatching(confirm_tags, on_confirm.tags, 'bap_terms')
+        const bap_terms = areGSTNumbersMatching(confirm_tags, on_confirm.tags, 'bap_terms')
 
-        // if (bap_terms === false) {
-        //   onCnfrmObj.tags_bap_terms = `Tags should have same and valid gst_number as passed in /${constants.CONFIRM}`
-        // }
+        if (bap_terms === false) {
+          onCnfrmObj.tags_bap_terms = `Tags should have same and valid gst_number as passed in /${constants.CONFIRM}`
+        }
 
         const bpp_terms = areGSTNumbersMatching(confirm_tags, on_confirm.tags, 'bpp_terms')
         if (bpp_terms === false) {
@@ -636,7 +636,7 @@ export const checkOnConfirm = (data: any) => {
           const hasStaticTerms = tag.list.some((item: { code: string }) => item.code === 'static_terms')
           if (hasStaticTerms) {
             onCnfrmObj['message/order/tags/bap_terms/static_terms'] =
-              `static_terms is not required for now! in ${constants.ON_INIT}`
+              `static_terms is not required for now! in ${constants.ON_CONFIRM}`
           }
         }
       }

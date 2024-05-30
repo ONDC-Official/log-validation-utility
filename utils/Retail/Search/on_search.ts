@@ -484,42 +484,44 @@ export const checkOnsearch = (data: any) => {
 
   // Checking for duplicate varient in bpp/providers/items for on_search
   try {
-    logger.info(`Checking for duplicate varient in bpp/providers/items for on_search`)
+    logger.info(`Checking for duplicate variant in bpp/providers/items for on_search`);
     for (let i in onSearchCatalog['bpp/providers']) {
-      const varientPath: any = findVariantPath(onSearchCatalog['bpp/providers'][i].categories)
-      const items = onSearchCatalog['bpp/providers'][i].items
-      const map = checkDuplicateParentIdItems(items)
+      const varientPath: any = findVariantPath(onSearchCatalog['bpp/providers'][i].categories);
+      const items = onSearchCatalog['bpp/providers'][i].items;
+      const map = checkDuplicateParentIdItems(items);
       for (let key in map) {
         if (map[key].length > 1) {
           const item = varientPath.find((item: any) => {
-            return item.item_id === key
-          })
-          const pathForVarient = item.paths
-          let valueArray = []
-          if (pathForVarient.length) {
+            return item.item_id === key;
+          });
+          const pathForVariant = item.paths;
+          let valueArray = [];
+          if (pathForVariant.length) {
             for (let j = 0; j < map[key].length; j++) {
-              let itemValues: any = {}
-              for (let path of pathForVarient) {
+              let itemValues: any = {};
+              for (let path of pathForVariant) {
                 if (path === 'item.quantity.unitized.measure') {
-                  const unit = map[key][j].quantity.unitized.measure.unit
-                  const value = map[key][j].quantity.unitized.measure.value
-                  itemValues['unit'] = unit
-                  itemValues['value'] = value
+                  const unit = map[key][j].quantity.unitized.measure.unit;
+                  const value = map[key][j].quantity.unitized.measure.value;
+                  itemValues['unit'] = unit;
+                  itemValues['value'] = value;
                 } else {
-                  const val = findValueAtPath(path, map[key][j])
-                  itemValues[path.split('.').pop()] = val
+                  const val = findValueAtPath(path, map[key][j]);
+                  itemValues[path.split('.').pop()] = val;
                 }
               }
-              valueArray.push(itemValues)
+              valueArray.push(itemValues);
             }
-            checkForDuplicates(valueArray, errorObj)
+            const duplicateItemIds = map[key].map((item: any) => item.id);
+            checkForDuplicates(valueArray, errorObj, duplicateItemIds,key); // Pass array of item IDs as the third argument
           }
         }
       }
     }
   } catch (error: any) {
-    logger.error(`!!Errors while checking parent_item_id in bpp/providers/[]/items/[]/parent_item_id/, ${error.stack}`)
+    logger.error(`!!Errors while checking parent_item_id in bpp/providers/[]/items/[]/parent_item_id/, ${error.stack}`);
   }
+  
   try {
     logger.info(`Checking for np_type in bpp/descriptor`)
     const descriptor = onSearchCatalog['bpp/descriptor']

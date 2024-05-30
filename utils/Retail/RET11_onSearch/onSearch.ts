@@ -1026,7 +1026,8 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
                 const value = parseInt(item.quantity.unitized.measure.value)
                 return { unit, value }
               })
-              checkForDuplicates(measures, errorObj)
+              const duplicateItemIds = map[key].map((item: any) => item.id);
+              checkForDuplicates(measures, errorObj,duplicateItemIds,key)
             }
           }
         }

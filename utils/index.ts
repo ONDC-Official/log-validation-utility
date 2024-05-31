@@ -900,6 +900,7 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
   })
   return errorObj
 }
+
 export const checkDuplicateParentIdItems = (items: any) => {
   const map: any = {}
 
@@ -916,26 +917,21 @@ export const checkDuplicateParentIdItems = (items: any) => {
   return map
 }
 
-export const checkForDuplicates = (arr: any, errorObj: any, itemIds: any, parent_item_id: any) => {
-  let index = 0;
-  const seen = new Set();
-  const key = `DuplicateVariant[${index}]`;
-  const errorMessage = `Duplicate variant ${parent_item_id} found for items with IDs: ${itemIds.join(', ')}`;
-  if (!errorObj[key]) {
-    errorObj[key] = {
-      message: errorMessage,
-    };
-    logger.error(errorMessage);
-    index++;
-  }
+export const checkForDuplicates = (arr: any, errorObj: any) => {
+  let index = 0
+  const seen = new Set()
   for (const value of arr) {
-    const stringValue = JSON.stringify(value);
+    const stringValue = JSON.stringify(value)
     if (seen.has(stringValue)) {
-      continue;
+      const key = `DuplicateVarient[${index}]`
+      errorObj[key] = `Duplicate varient found for item in bpp/providers/items`
+      logger.error(`Error: Duplicate varient of item found in bpp/providers/items`)
+      index++
     }
-    seen.add(stringValue);
+
+    seen.add(stringValue)
   }
-};
+}
 
 export const sumQuoteBreakUp = (quote: any) => {
   logger.info(`Checking for quote breakup price sum and total Price`)

@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _, { isEmpty } from 'lodash'
 import { logger } from '../../../shared/logger'
 import constants, { ApiSequence, buyerReturnId } from '../../../constants'
 import { validateSchema, isObjectEmpty, checkBppIdOrBapId, checkContext, isValidUrl, timeDiff } from '../../../utils'
@@ -46,6 +46,55 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
       if (flow === '6-b' || flow === '6-c') {
         if (apiSeq === ApiSequence.UPDATE_LIQUIDATED || apiSeq === ApiSequence.UPDATE_REVERSE_QC) {
           setValue('timestamp_', [context.timestamp, apiSeq])
+          const returnFulfillmentArr = _.filter(update?.fulfillments, { type: "Return" })
+          function getReturnFfIdAndQuantity(returnFulfillment: any): any {
+            if (!isEmpty(returnFulfillment?.tags)) {
+              const returnFulifllmentTags = returnFulfillment?.tags[0]
+              if (!isEmpty(returnFulifllmentTags?.list)) {
+                const returnFulifillmentTagsList = returnFulifllmentTags.list
+
+                const ffIdArr = _.filter(returnFulifillmentTagsList, { code: "id" })
+                const itemQuantityArr = _.filter(returnFulifillmentTagsList, { code: "item_quantity" })
+                let ffId = "";
+                let itemQuantity = ""
+                if (ffIdArr.length > 0 && ffIdArr[0]?.value) {
+                  ffId = ffIdArr[0]?.value
+                }
+                else {
+                  updtObj['returnFulfillment/code/id'] = `Return fulfillment/tags/list/code/id is missing in ${apiSeq}`
+                }
+
+                if (itemQuantityArr.length > 0 && itemQuantityArr[0]?.value) {
+                  itemQuantity = itemQuantityArr[0]?.value
+                }
+                else {
+                  updtObj['returnFulfillment/code/item_quantity'] = `Return fulfillment/tags/list/code/item_quantity is missing in ${apiSeq}`
+                }
+                return { ffId: ffId, itemQuantity: itemQuantity }
+              }
+              else {
+                updtObj[`returnFulfillment`] = `Return fulfillment/tags/list is missing in ${apiSeq}`
+              }
+            }
+            else {
+              updtObj[`returnFulfillment`] = `Return fulfillment/tags is missing in ${apiSeq}`
+            }
+          }
+          if (returnFulfillmentArr.length > 0) {
+            let obj = getReturnFfIdAndQuantity(returnFulfillmentArr[0])
+            if (returnFulfillmentArr.length > 1) {
+              const obj2 = getReturnFfIdAndQuantity(returnFulfillmentArr[1])
+              const returnFfReverseQc: any = getValue(`${ApiSequence.UPDATE_REVERSE_QC}_ffId_itemQuantiy`)
+              if (obj2?.ffId == returnFfReverseQc?.ffId) {
+                obj.ffId = obj2?.ffId
+                obj.itemQuantity = obj2?.itemQuantity
+              }
+            }
+            setValue(`${apiSeq}_ffId_itemQuantiy`, { ffId: obj?.ffId, itemQuantity: obj?.itemQuantity, apiSeq: apiSeq })
+          }
+          else {
+            updtObj[`returnFulfillment`] = `Return fulfillment is missing in ${apiSeq}`
+          }
         }
         else {
           const timestamp = getValue('timestamp_')

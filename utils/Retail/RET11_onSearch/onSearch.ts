@@ -1026,8 +1026,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
                 const value = parseInt(item.quantity.unitized.measure.value)
                 return { unit, value }
               })
-              const duplicateItemIds = map[key].map((item: any) => item.id);
-              checkForDuplicates(measures, errorObj,duplicateItemIds,key)
+              checkForDuplicates(measures, errorObj)
             }
           }
         }
@@ -1370,6 +1369,14 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
             onSearchFFTypeSet.forEach((type: any) => {
               if (!arrTimingTypes.has(type)) {
                 errorObj[`prvdr${i}/tags/timing/${type}`] = `The timings object must be present for ${type} in the tags`
+              }
+              arrTimingTypes.forEach((type: any) => {
+                if (!onSearchFFTypeSet.has(type)) {
+                  errorObj[`prvdr${i}/tags/timing/${type}`] = `The timings object ${type} is not present in the onSearch fulfillments`
+                }
+              })
+              if (!arrTimingTypes.has('Order')) {
+                errorObj[`prvdr${i}/tags/timing/order`] = `The timings object must be present for Order in the tags`
               }
             })
           }

@@ -3,7 +3,11 @@
 import { logger } from '../../../shared/logger'
 import { setValue, getValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
-import { validateSchema, isObjectEmpty, checkContext, timeDiff as timeDifference, checkGpsPrecision, emailRegex } from '../..'
+import { electronicsData } from '../../../constants/electronics'
+import { applianceData } from '../../../constants/appliance'
+import { fashion } from '../../../constants/fashion'
+import { DOMAIN } from '../../../utils/enum'
+import { validateSchema, isObjectEmpty, checkContext, timeDiff as timeDifference, checkGpsPrecision, emailRegex, checkMandatoryTags } from '../..'
 import _, { isEmpty } from 'lodash'
 
 export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
@@ -58,6 +62,8 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
     logger.error(`!!Error while storing BAP and BPP Ids in /${constants.ON_SEARCH}, ${error.stack}`)
   }
 
+  const onSearchContext: any = getValue(`${ApiSequence.ON_SEARCH}_context`)
+
   try {
     logger.info(`Comparing city Ids of  /${ApiSequence.INC_ONSEARCH}`)
     if (context.city !== '*') {
@@ -93,6 +99,42 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
     logger.info(
       `Error while comparing timestamp for /${constants.INC_SEARCH} and /${constants.ON_SEARCHINC} api, ${error.stack}`,
     )
+  }
+
+  try {
+    logger.info(`Comparing timestamp of /${constants.ON_SEARCHINC} and /${constants.ON_SEARCH}`)
+    const tmpstmp = onSearchContext?.timestamp
+    if (_.gte(tmpstmp, context.timestamp)) {
+      errorObj['tmpstmp/'] = `Timestamp for /${constants.ON_SEARCH} api cannot be greater than or equal to /${constants.ON_SEARCHINC} api`
+    }
+  } catch (error: any) {
+    logger.info(
+      `Error while comparing timestamp for /${constants.ON_SEARCH} and /${constants.ON_SEARCHINC} api, ${error.stack}`,
+    )
+  }
+
+  // Checking for mandatory Items in provider IDs
+  try {
+    const domain = context.domain.split(':')[1]
+    logger.info(`Checking for item tags in bpp/providers[0].items.tags in ${domain}`)
+    for (let i in message.catalog['bpp/providers']) {
+      const items = message.catalog['bpp/providers'][i].items
+      let errors: any
+      switch (domain) {
+        case DOMAIN.RET12:
+          errors = checkMandatoryTags(i, items, errorObj, fashion, 'Fashion')
+          break
+        case DOMAIN.RET14:
+          errors = checkMandatoryTags(i, items, errorObj, electronicsData, 'Electronics')
+          break
+        case DOMAIN.RET15:
+          errors = checkMandatoryTags(i, items, errorObj, applianceData, 'Appliances')
+          break
+      }
+      Object.assign(errorObj, errors)
+    }
+  } catch (error: any) {
+    logger.error(`!!Errors while checking for items in bpp/providers/items, ${error.stack}`)
   }
 
   try {

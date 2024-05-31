@@ -340,7 +340,29 @@ export const onUpdateSchema = {
                     },
                   },
                 },
-              },
+                required: ['state', 'id', 'type'],
+                dependencies: {
+                  type: {
+                    allOf: [
+                      {
+                        if: {
+                          properties: {
+                            type: {
+                              enum: ["Cancel", "Return"]
+                            }
+                          }
+                        },
+                        then: {
+                          properties: {
+                            tags: { type: "array" }
+                          },
+                          required: ["tags"]
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
             },
             quote: {
               type: 'object',

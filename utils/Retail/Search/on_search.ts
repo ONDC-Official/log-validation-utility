@@ -322,55 +322,61 @@ export const checkOnsearch = (data: any) => {
           const itemDescType = itemCodeArr[0]
           const itemDescCode = itemCodeArr[1]
           const domain = getValue('domain')?.substring(3)
-          if (domain == "10" || domain == "13") {
-            if (itemDescType != "1") {
-              const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
-              errorObj[key] =
-                `code should have 1:EAN as a value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
-            }
-            else {
-              const regex = /^\d{8,13}$/
-              if (!regex.test(itemDescCode)) {
+          switch (domain) {
+            case "10":
+            case "13":
+            case "16":
+              if (itemDescType != "1") {
                 const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
                 errorObj[key] =
-                  `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code should be number and have a between length 8 to 13`
+                  `code should have 1:EAN as a value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
               }
-            }
-          }
-          else if (domain == "12") {
-            if (itemDescType == "4") {
-              const regex = /^\d{4}$|^\d{6}$|^\d{8}$|^\d{10}$/
-              if (!regex.test(itemDescCode)) {
+              else {
+                const regex = /^\d{8,13}$/
+                if (!regex.test(itemDescCode)) {
+                  const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
+                  errorObj[key] =
+                    `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code should be number and have a between length 8 to 13`
+                }
+              }
+              break;
+            case "12":
+              if (itemDescType == "4") {
+                const regex = /^\d{4}$|^\d{6}$|^\d{8}$|^\d{10}$/
+                if (!regex.test(itemDescCode)) {
+                  const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
+                  errorObj[key] =
+                    `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code should be number and have a length 4, 6, 8 or 10.`
+                }
+              }
+              else {
                 const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
                 errorObj[key] =
-                  `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code should be number and have a length 4, 6, 8 or 10.`
+                  `code should have 4:HSN as a value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
               }
-            }
-            else {
-              const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
-              errorObj[key] =
-                `code should have 4:HSN as a value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
-            }
-          }
-          else if (domain != "17") {
-            if (itemDescType == "3") {
-              const regex = /^\d{8}$|^\d{12}$|^\d{13}$|^\d{14}$/
-              if (!regex.test(itemDescCode)) {
+              break;
+            case "14":
+            case "15":
+            case "18":
+              if (itemDescType == "3") {
+                const regex = /^\d{8}$|^\d{12}$|^\d{13}$|^\d{14}$/
+                if (!regex.test(itemDescCode)) {
+                  const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
+                  errorObj[key] =
+                    `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code should be number and have a length 8, 12, 13 or 14}.`
+                }
+              }
+              else {
                 const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
                 errorObj[key] =
-                  `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code should be number and have a length 8, 12, 13 or 14}.`
+                  `code should have 3:GTIN as a value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
               }
-            }
-            else {
+              break;
+            default:
               const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
               errorObj[key] =
-                `code should have 3:GTIN as a value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
-            }
-          }
-          else {
-            const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
-            errorObj[key] =
-              `code should have a valid value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
+                `code should have a valid value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
+              break;
           }
         }
       })
@@ -672,7 +678,7 @@ export const checkOnsearch = (data: any) => {
         const categories = onSearchCatalog['bpp/providers'][i]['categories']
         if (!categories || !categories.length) {
           const key = `prvdr${i}categories`
-          errorObj[key] = `categories must be present in bpp/providers[${i}]`
+          errorObj[key] = `Support for variants is mandatory, categories must be present in bpp/providers[${i}]`
         }
         const iLen = categories?.length
         while (j < iLen) {
@@ -1490,7 +1496,7 @@ export const checkOnsearch = (data: any) => {
               }
             })
             arrTimingTypes.forEach((type: any) => {
-              if (!onSearchFFTypeSet.has(type)) {
+              if (type != 'Order' && type != 'All' && !onSearchFFTypeSet.has(type)) {
                 errorObj[`prvdr${i}/tags/timing/${type}`] = `The timings object ${type} is not present in the onSearch fulfillments`
               }
             })

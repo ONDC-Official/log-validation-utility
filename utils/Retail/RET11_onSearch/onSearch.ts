@@ -452,7 +452,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
         const categories = onSearchCatalog['bpp/providers'][i]['categories']
         if (!categories || !categories.length) {
           const key = `prvdr${i}categories`
-          errorObj[key] = `categories must be present in bpp/providers[${i}]`
+          errorObj[key] = `Support for variants is mandatory, categories must be present in bpp/providers[${i}]`
         }
         const iLen = categories.length
         while (j < iLen) {
@@ -1371,7 +1371,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
                 errorObj[`prvdr${i}/tags/timing/${type}`] = `The timings object must be present for ${type} in the tags`
               }
               arrTimingTypes.forEach((type: any) => {
-                if (!onSearchFFTypeSet.has(type)) {
+                if (type != 'Order' && type != 'All' && !onSearchFFTypeSet.has(type)) {
                   errorObj[`prvdr${i}/tags/timing/${type}`] = `The timings object ${type} is not present in the onSearch fulfillments`
                 }
               })

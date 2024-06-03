@@ -148,8 +148,8 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC,
       ApiSequence.ON_UPDATE_APPROVAL,
       ApiSequence.ON_UPDATE_PICKED,
-      ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC,
       ApiSequence.ON_UPDATE_DELIVERED,
+      ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC,
       ApiSequence.UPDATE_LIQUIDATED,
       ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED,
       ApiSequence.ON_UPDATE_LIQUIDATED,
@@ -239,7 +239,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         case ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC:
           return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC, settlementDetatilSet, '6-b')
         case ApiSequence.ON_UPDATE_DELIVERED:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_APPROVAL, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-b")
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_DELIVERED, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-b")
         case ApiSequence.UPDATE_LIQUIDATED:
           return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_LIQUIDATED, settlementDetatilSet, '6-c')
         case ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED:

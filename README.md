@@ -60,8 +60,8 @@ The table below outlines the payload structure for various transaction flows in 
 |               |                            |                            |            |                            | on_update_interim_reverse_qc  |
 |               |                            |                            |            |                            | on_update_approval            |
 |               |                            |                            |            |                            | on_update_picked              |
-|               |                            |                            |            |                            | update_settlement_reverse_qc  |
 |               |                            |                            |            |                            | on_update_delivered           |
+|               |                            |                            |            |                            | update_settlement_reverse_qc  |
 |               |                            |                            |            |                            | update_liquidated           |
 |               |                            |                            |            |                            | on_update_interim_liquidated|
 |               |                            |                            |            |                            | on_update_liquidated          |

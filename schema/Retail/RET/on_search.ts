@@ -726,6 +726,7 @@ export const onSearchSchema = {
                   },
                   tags: {
                     type: 'array',
+                    minItems:1,
                     items: {
                       allOf: [
                         {

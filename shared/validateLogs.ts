@@ -193,7 +193,6 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
             return checkSelect_OOS(data, msgIdSet)
           } else {
             return checkSelect(data, msgIdSet, ApiSequence.SELECT)
-            return checkSelect(data, msgIdSet, ApiSequence.SELECT)
           }
         case ApiSequence.ON_SELECT:
           return checkOnSelect(data)

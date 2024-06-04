@@ -7,6 +7,7 @@ import {
   validateSchema,
   isObjectEmpty,
   checkContext,
+  timeDiff as timeDifference,
   checkGpsPrecision,
   emailRegex,
   checkBppIdOrBapId,
@@ -22,7 +23,7 @@ import {
   checkForDuplicates,
 } from '../../../utils'
 import _, { isEmpty } from 'lodash'
-import { compareSTDwithArea } from '../../index'
+import { compareSTDwithArea } from '../../index';
 import { BPCJSON, groceryJSON, healthJSON, homeJSON } from '../../../constants/category'
 import { electronicsData } from '../../../constants/electronics'
 import { applianceData } from '../../../constants/appliance'
@@ -98,6 +99,24 @@ export const checkOnsearch = (data: any) => {
   } catch (error: any) {
     logger.info(
       `Error while comparing transaction ids for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
+    )
+  }
+
+  try {
+    logger.info(`Comparing timestamp of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
+    const tmpstmp = searchContext?.timestamp
+    if (_.gte(tmpstmp, context.timestamp)) {
+      errorObj.tmpstmp = `Timestamp for /${constants.SEARCH} api cannot be greater than or equal to /${constants.ON_SEARCH} api`
+    } else {
+      const timeDiff = timeDifference(context.timestamp, tmpstmp)
+      logger.info(timeDiff)
+      if (timeDiff > 5000) {
+        errorObj.tmpstmp = `context/timestamp difference between /${constants.ON_SEARCH} and /${constants.SEARCH} should be less than 5 sec`
+      }
+    }
+  } catch (error: any) {
+    logger.info(
+      `Error while comparing timestamp for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
     )
   }
 
@@ -222,9 +241,9 @@ export const checkOnsearch = (data: any) => {
     logger.error(`!!Errors while checking for items in bpp/providers/items, ${error.stack}`)
   }
 
-  // Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp
+  // Comparing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp
   try {
-    logger.info(`Compairing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp`)
+    logger.info(`Comparing valid timestamp in context.timestamp and bpp/providers/items/time/timestamp`)
     const timestamp = context.timestamp
     for (let i in onSearchCatalog['bpp/providers']) {
       const items = onSearchCatalog['bpp/providers'][i].items
@@ -301,7 +320,6 @@ export const checkOnsearch = (data: any) => {
           const itemDescType = itemCodeArr[0]
           const itemDescCode = itemCodeArr[1]
           const domain = getValue('domain')?.substring(3)
-
           if (domain == "10" || domain == "13") {
             if (itemDescType != "1") {
               const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
@@ -357,7 +375,7 @@ export const checkOnsearch = (data: any) => {
     }
   } catch (error: any) {
     logger.error(
-      `!!Errors while checking timestamp in context.timestamp and bpp/providers/items/time/timestamp, ${error.stack}`,
+      `!!Errors while checking timestamp in context.timestamp and bpp/providers/items/descriptor/code, ${error.stack}`,
     )
   }
 
@@ -650,6 +668,10 @@ export const checkOnsearch = (data: any) => {
         logger.info(`Checking categories for provider (${prvdr.id}) in bpp/providers[${i}]`)
         let j = 0
         const categories = onSearchCatalog['bpp/providers'][i]['categories']
+        if (!categories || !categories.length) {
+          const key = `prvdr${i}categories`
+          errorObj[key] = `categories must be present in bpp/providers[${i}]`
+        }
         const iLen = categories?.length
         while (j < iLen) {
           logger.info(`Validating uniqueness for categories id in bpp/providers[${i}].items[${j}]...`)
@@ -1002,10 +1024,6 @@ export const checkOnsearch = (data: any) => {
                       errorObj[key] = `item_id: ${item.id} should contain time object in bpp/providers[${i}]`
                     }
 
-                    if (!item.category_ids) {
-                      const key = `prvdr${i}item${j}ctgry_ids`
-                      errorObj[key] = `item_id: ${item.id} should contain category_ids in bpp/providers[${i}]`
-                    }
                   }
 
                   break
@@ -1100,7 +1118,7 @@ export const checkOnsearch = (data: any) => {
                   break
 
                 case 'veg_nonveg':
-                  const allowedCodes = ['veg', 'non_veg']
+                  const allowedCodes = ['veg', 'non_veg', 'egg']
 
                   for (const it of tag.list) {
                     if (it.code && !allowedCodes.includes(it.code)) {
@@ -1138,6 +1156,11 @@ export const checkOnsearch = (data: any) => {
       try {
         logger.info(`Checking serviceability construct for bpp/providers[${i}]`)
         const tags = onSearchCatalog['bpp/providers'][i]['tags']
+        if (!tags || !tags.length) {
+          const key = `prvdr${i}tags`
+          errorObj[key] = `tags must be present in bpp/providers[${i}]`
+        }
+
         if (tags) {
           const circleRequired = checkServiceabilityType(tags)
           if (circleRequired) {

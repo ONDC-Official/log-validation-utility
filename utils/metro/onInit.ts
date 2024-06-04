@@ -9,11 +9,12 @@ import {
   validateQuote,
   validateStops,
   validateCancellationTerms,
+  validateItemDescriptor,
 } from './metroChecks'
 import { validatePaymentTags, validateRouteInfoTags } from './tags'
 import { checkProviderTime } from './validate/helper'
 
-const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
+const VALID_DESCRIPTOR_CODES = ['SJT', 'SFSJT', 'RJT', 'PASS']
 const VALID_VEHICLE_CATEGORIES = ['METRO']
 export const checkOnInit = (data: any, msgIdSet: any) => {
   try {
@@ -95,14 +96,14 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
           const fulfillmentKey = `fulfillments[${index}]`
           //fulfillment.id missing
 
-          if(fulfillment?.id){
+          if (fulfillment?.id) {
             fulfillmentIdsSet.add(fulfillment?.id)
             if (!storedFull.includes(fulfillment?.id)) {
               errorObj[`${fulfillmentKey}.id`] =
                 `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
             }
-          } else{
-            (errorObj[`Fulfillment[${index}].id`] = `Fulfillment Id missing in /${constants.ON_INIT}`)
+          } else {
+            errorObj[`Fulfillment[${index}].id`] = `Fulfillment Id missing in /${constants.ON_INIT}`
           }
 
           //cross check enumf from contract
@@ -144,16 +145,8 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
             `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_INIT}`
         }
 
-        if (!item.descriptor || !item.descriptor.code) {
-          const key = `item${index}_descriptor`
-          errorObj[key] = `Descriptor is missing in items[${index}]`
-        } else {
-          if (!VALID_DESCRIPTOR_CODES.includes(item.descriptor.code)) {
-            const key = `item${index}_descriptor`
-            errorObj[key] =
-              `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
-          }
-        }
+        const getDescriptorError = validateItemDescriptor(item, index, VALID_DESCRIPTOR_CODES)
+        if (Object.keys(getDescriptorError)?.length) Object.assign(errorObj, getDescriptorError)
 
         const price = item.price
         if (!price || !price.currency || !price.value) {
@@ -161,7 +154,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
           errorObj[key] = `Price is incomplete in /items[${index}]`
         }
 
-        item.fulfillmentIds.forEach((fulfillmentId: string) => {
+        item.fulfillment_ids.forEach((fulfillmentId: string) => {
           if (!fulfillmentIdsSet.has(fulfillmentId)) {
             errorObj[`invalidFulfillmentId_${index}`] =
               `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_INIT} is not valid`

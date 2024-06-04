@@ -1,22 +1,22 @@
 import { logger } from '../../shared/logger'
 import { getValue, setValue } from '../../shared/dao'
 import { checkGpsPrecision, checkIdAndUri, checkMetroContext, timeDiff } from '..'
-import _, { isNil } from 'lodash'
+import _ from 'lodash'
 
 interface Stop {
-  type: string;
+  type: string
   instructions: {
-      name: string;
-  };
+    name: string
+  }
   location: {
-      descriptor: {
-          name: string;
-          code: string;
-      };
-      gps: string;
-  };
-  id: string;
-  parent_stop_id: string;
+    descriptor: {
+      name: string
+      code: string
+    }
+    gps: string
+  }
+  id: string
+  parent_stop_id: string
 }
 
 export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any) => {
@@ -148,16 +148,15 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
 
 export const validateStops = (stops: any, index: number, otp: boolean, cancel: boolean) => {
   const errorObj: any = {}
+  const errors: { [key: string]: any } = {}
 
-  if (!stops) {
-    errorObj[`Stops`] = `Fulfillment ${index} must contain Stops`
+  if (!stops || !stops.length) {
+    errorObj[`Fulfimment ${index} Stops`] = `Fulfillment ${index} must contain Stops`
     return errorObj
   }
 
   const hasStartStop = stops.some((stop: Stop) => stop?.type === 'START')
   const hasEndStop = stops.some((stop: Stop) => stop?.type === 'END')
-  const checkIntermediateStopExistense = stops && stops?.find((stop: Stop) => stop?.type === 'INTERMEDIATE_STOP')
-  const checkTransitStopExistense = stops && stops?.find((stop: Stop) => stop?.type === 'TRANSIT_STOP')
   //INTERMEDITAE & TRANSIT stips existence check
   // END, INTERMEDITAE & TRANSIT parent_stop_id
   if (!hasStartStop) {
@@ -170,16 +169,29 @@ export const validateStops = (stops: any, index: number, otp: boolean, cancel: b
       `Fulfillment ${index} in  must contain both END stops or a valid time range start`
   }
 
-  if (isNil(checkIntermediateStopExistense))
-    errorObj[`fulfillment_INTERMEDIATE_STOP`] = 'INTERMEDIATE_STOP is Missing in Stops Array'
-
-  if (isNil(checkTransitStopExistense)) errorObj[`fulfillment_TRANSIT_STOP`] = 'TRANSIT_STOP is Missing in Stops Array'
-
   stops &&
     stops.forEach((stop: Stop, l: number) => {
-      if (!stop.hasOwnProperty('parent_stop_id')) {
-        errorObj[`Fullfillment_ParentStops_${l}`] = `${stop?.type} has missing Parent stop id in ${l} index.`
+      const { location } = stop
+
+      if (stop?.type !== 'START') {
+        if (!stop.hasOwnProperty('parent_stop_id'))
+          errorObj[`Fullfillment_ParentStops_${l}`] = `${stop?.type} has missing Parent stop id in ${l} index.`
       }
+
+      if (!location || !location?.descriptor)
+        errorObj[`fulfillment_${index}_stop_${l}_location`] = `Location or descriptor is missing in ${l} index.`
+
+      const { name, code } = location?.descriptor
+
+      if (!location?.gps)
+        errorObj[`fulfillment_${index}_stop_${l}_location_gps`] = `Location gps is missing in ${l} index.`
+
+      if (location && location?.descriptor && !code && !name)
+        errorObj[`fulfillment_${index}_stop_${l}_location_descriptor`] = 'Location descriptor code and name is missing'
+
+      if (!code)
+        errorObj[`fulfillment_${index}_stop_${l}_location_descriptor_code`] = 'Location descriptor code is missing'
+
       // Check if timestamp in the time range is valid only if time.range.start is present
 
       //instructuions
@@ -193,14 +205,14 @@ export const validateStops = (stops: any, index: number, otp: boolean, cancel: b
 
   if (otp) {
     stops.forEach((stop: any, l: number) => {
-      if (stop.authorization) {
+      if (stop?.authorization) {
         const authorization = stop.authorization
-        if (authorization.type !== 'OTP') {
+        if (authorization?.type !== 'OTP') {
           errorObj[`fulfillment_${index}_stop_${l}_authorization_type`] =
             'Authorization type must be OTP when otp is true'
         }
 
-        if (typeof authorization.token !== 'number') {
+        if (typeof authorization?.token !== 'number') {
           errorObj[`fulfillment_${index}_stop_${l}_authorization_token`] =
             'Authorization token must be a number when otp is true'
         }
@@ -208,13 +220,8 @@ export const validateStops = (stops: any, index: number, otp: boolean, cancel: b
     })
   }
 
-  if (_.isEmpty(errorObj)) {
-    const result = { valid: true, SUCCESS: 'Context Valid' }
-    return result
-  } else {
-    const result = { valid: false, ERRORS: errorObj }
-    return result
-  }
+  errors[`Fulfillment ${index}`] = errorObj
+  return errors
 }
 
 export const validatePaymentParams = (
@@ -382,4 +389,29 @@ export const isValidUrl = (url: string) => {
   } catch (error) {
     return false
   }
+}
+
+export function validateItemDescriptor(item: any, index: number, VALID_DESCRIPTOR_CODES: string[]) {
+  const errorObj: any = {}
+  try {
+    if (item?.descriptor) {
+      const { name, code } = item?.descriptor
+
+      if (!code && !name) {
+        errorObj[`item${index}descriptor`] = `descriptor.code and descriptor.name are missing in item[${index}]`
+      } else if (!code) {
+        errorObj[`item${index}descriptor_code`] = `descriptor.code is missing in item[${index}]`
+      } else {
+        if (!VALID_DESCRIPTOR_CODES.includes(code)) {
+          const key = `item_${index}_descriptor`
+          errorObj[key] =
+            `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${code}`
+        }
+      }
+    } else errorObj[`item_${index}_descriptor`] = `Descriptor is missing in items[${index}]`
+  } catch (error: any) {
+    logger.info(`Error while validating item descriptor, ${error.stack}`)
+  }
+
+  return errorObj
 }

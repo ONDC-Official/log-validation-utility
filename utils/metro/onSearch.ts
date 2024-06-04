@@ -2,13 +2,12 @@ import { logger } from '../../shared/logger'
 import { setValue } from '../../shared/dao'
 import { validateTags } from './tags'
 import constants, { metroSequence } from '../../constants'
-import { validateDescriptor } from './metroChecks'
+import { validateDescriptor, validateStops } from './metroChecks'
 import {
   validateSchema,
   isObjectEmpty,
   // checkMetroContext,
   // checkBppIdOrBapId,
-  checkGpsPrecision,
   // timeDiff,
 } from '..'
 import { validateContext } from './metroChecks'
@@ -124,25 +123,29 @@ export const checkOnSearch = (data: any, msgIdSet: any, secondOnSearch: boolean)
             }
           }
 
+          const otp = false
+          const cancel = false
+          const getStopsError = validateStops(fulfillment?.stops, k, otp, cancel)
+          if (getStopsError) Object.assign(errorObj, getStopsError)
           // Check stops for START and END, or time range with valid timestamp and GPS
-          const stops = fulfillment.stops
-          if (!stops) errorObj['Stops'] = 'Stops are missing in fulfillment'
-          else {
-            const hasStartStop = stops.some((stop: any) => stop.type === 'START')
-            const hasEndStop = stops.some((stop: any) => stop.type === 'END')
+          // const stops = fulfillment.stops
+          // if (!stops) errorObj['Stops'] = 'Stops are missing in fulfillment'
+          // else {
+          //   const hasStartStop = stops.some((stop: any) => stop.type === 'START')
+          //   const hasEndStop = stops.some((stop: any) => stop.type === 'END')
 
-            if (!(hasStartStop && hasEndStop)) {
-              errorObj[`provider_${i}_fulfillment_${k}_stops`] =
-                `Fulfillment ${k} in provider ${i} must contain both START and END stops or a valid time range start`
-            }
-            stops.forEach((stop: { [key: string]: any }, l: number) => {
-              // Check if GPS coordinates are valid
-              if (stop.location?.gps && !checkGpsPrecision(stop.location.gps)) {
-                errorObj[`provider_${i}_fulfillment_${k}_stop_${l}_gpsPrecision`] =
-                  'GPS coordinates must be specified with at least six decimal places of precision'
-              }
-            })
-          }
+          //   if (!(hasStartStop && hasEndStop)) {
+          //     errorObj[`provider_${i}_fulfillment_${k}_stops`] =
+          //       `Fulfillment ${k} in provider ${i} must contain both START and END stops or a valid time range start`
+          //   }
+          //   stops.forEach((stop: { [key: string]: any }, l: number) => {
+          //     // Check if GPS coordinates are valid
+          //     if (stop.location?.gps && !checkGpsPrecision(stop.location.gps)) {
+          //       errorObj[`provider_${i}_fulfillment_${k}_stop_${l}_gpsPrecision`] =
+          //         'GPS coordinates must be specified with at least six decimal places of precision'
+          //     }
+          //   })
+          // }
         })
       }
 
@@ -232,8 +235,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, secondOnSearch: boolean)
       }
 
       const paymentError = checkPayment(onSearchCatalog['providers'][i]['payments'], i)
-      if(!isNil(paymentError))
-        Object.assign(errorObj, paymentError)       
+      if (!isNil(paymentError)) Object.assign(errorObj, paymentError)
 
       i++
     }

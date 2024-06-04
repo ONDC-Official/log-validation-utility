@@ -1,7 +1,7 @@
 /* eslint-disable no-prototype-builtins */
 import { isValidUrl } from '../../index'
 import { logger } from '../../../shared/logger'
-
+import { FinderFeeType } from './enum'
 interface Tag {
   display: any
   descriptor: {
@@ -66,8 +66,10 @@ export const validatePaymentTags = (tags: Tag[], terms: any): ValidationResult =
                 (item: any) => item.descriptor.code === 'BUYER_FINDER_FEES_TYPE',
               )
 
-              if (!buyerFinderFeesType || buyerFinderFeesType.value !== 'percent-annualized') {
-                errors.push(`BUYER_FINDER_FEES_[${index}], BUYER_FINDER_FEES_PERCENTAGE must be 'percent-annualized'`)
+              if (!buyerFinderFeesType?.value || !FinderFeeType.includes(buyerFinderFeesType?.value)) {
+                errors.push(
+                  `BUYER_FINDER_FEES_[${index}], BUYER_FINDER_FEES_PERCENTAGE value should be one of ${FinderFeeType}`,
+                )
               }
 
               if (invalidDescriptorCodes.length > 0) {

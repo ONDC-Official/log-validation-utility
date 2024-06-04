@@ -48,7 +48,7 @@ export const checkUpdate = (data: any, msgIdSet: any, flow: string) => {
       errorObj.id = `order.id must be present in message object at /${constants.UPDATE}`
     } else {
       const orderId = getValue('orderId')
-      if (!_.isEqual(message?.order?.id, orderId)) {
+      if (orderId && !_.isEqual(message?.order?.id, orderId)) {
         errorObj.id = `order.id: ${message?.order?.id} mismatches with id:${orderId} provided is past call /${constants.UPDATE}`
       }
     }

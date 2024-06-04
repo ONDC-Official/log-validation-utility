@@ -83,9 +83,8 @@ export const checkOnSearch = (data: any, msgIdSet: any, sequence: string, flow: 
 
             const validSizes = ['md', 'sm', 'lg']
             if (!validSizes.includes(size_type)) {
-              errorObj[
-                `image_size_[${index}]`
-              ] = `Invalid image size in descriptor. It should be one of: ${validSizes.join(', ')}`
+              errorObj[`image_size_[${index}]`] =
+                `Invalid image size in descriptor. It should be one of: ${validSizes.join(', ')}`
             }
           })
         }
@@ -159,23 +158,24 @@ export const checkOnSearch = (data: any, msgIdSet: any, sequence: string, flow: 
               { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
               { code: 'STATIC_TERMS', type: 'url' },
               { code: 'COURT_JURISDICTION', type: 'string' },
-              { code: 'DELAY_INTEREST', type: 'amount' },
               {
                 code: 'OFFLINE_CONTRACT',
                 type: 'boolean',
               },
             ]
 
-            if (!arr?.collected_by) {
-              errorObj[
-                `payemnts[${i}]_collected_by`
-              ] = `payments.collected_by must be present in ${constants.ON_SEARCH}`
+            const collectedBy = arr?.collected_by
+            if (!collectedBy) {
+              errorObj[`payemnts[${i}]_collected_by`] =
+                `payments.collected_by must be present in ${constants.ON_SEARCH}`
             } else {
               const srchCollectBy = getValue(`collected_by`)
-              if (srchCollectBy != arr?.collected_by)
-                errorObj[
-                  `payemnts[${i}]_collected_by`
-                ] = `payments.collected_by value sent in ${constants.ON_SEARCH} should be same as sent in ${constants.SEARCH}: ${srchCollectBy}`
+              if (srchCollectBy && srchCollectBy != collectedBy)
+                errorObj[`payemnts[${i}]_collected_by`] =
+                  `payments.collected_by value sent in ${constants.ON_SEARCH} should be same as sent in ${constants.SEARCH}: ${srchCollectBy}`
+              else setValue(`collected_by`, collectedBy)
+
+              if (collectedBy == 'BAP') terms.push({ code: 'DELAY_INTEREST', type: 'amount' })
             }
 
             // Validate payment tags
@@ -215,9 +215,8 @@ export const checkOnSearch = (data: any, msgIdSet: any, sequence: string, flow: 
 
             if (!areCategoryIdsUnique) {
               const key = `prvdr${i}item${j}uniqueCategoryIds`
-              errorObj[
-                key
-              ] = `category_ids value in /providers[${i}]/items[${j}] should match with id provided in categories`
+              errorObj[key] =
+                `category_ids value in /providers[${i}]/items[${j}] should match with id provided in categories`
             }
           }
 

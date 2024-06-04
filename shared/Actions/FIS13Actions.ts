@@ -13,7 +13,7 @@ import { checkOnConfirm } from '../../utils/FIS/FIS13/onConfirm'
 import { checkStatus } from '../../utils/FIS/FIS13/status'
 import { checkOnStatus } from '../../utils/FIS/FIS13/onStatus'
 import { checkCancel } from '../../utils/mobility/cancel'
-import { checkOnCancel } from '../../utils/mobility/onCancel'
+// import { checkOnCancel } from '../../utils/mobility/onCancel'
 
 export function validateLogsForFIS13(data: any, flow: string, version: string) {
   const msgIdSet = new Set()

@@ -585,7 +585,6 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                 try {
                     // For Return Object
                     const RETobj = _.filter(on_update.fulfillments, { type: 'Return' })
-                    let ret_end_location: any = {}
                     let ret_start_location: any = {}
                     if (!RETobj.length) {
                         logger.error(`Return object is mandatory for ${apiSeq}`)
@@ -595,13 +594,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                         // Checking for end object inside Return
                         if (!_.isEmpty(RETobj[0]?.end)) {
                             const ret_obj_end = RETobj[0]?.end
-                            if (!_.isEmpty(ret_obj_end?.location)) {
-                                ret_end_location = ret_obj_end.location
-                                if (!ret_end_location.id) {
-                                    onupdtObj['Return.end.location.id'] = `Return fulfillment end location id is missing in ${apiSeq}`
-                                }
-                            }
-                            else {
+                            if (_.isEmpty(ret_obj_end?.location)) {
                                 onupdtObj['Return.end.location'] = `Return fulfillment end location object is missing in ${apiSeq}`
                                 logger.error(`Return fulfillment end location is missing in ${apiSeq}`)
                             }

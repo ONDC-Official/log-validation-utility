@@ -21,6 +21,8 @@ import {
   findVariantPath,
   findValueAtPath,
   checkForDuplicates,
+  getStatutoryRequirement,
+  checkForStatutory,
 } from '../../../utils'
 import _, { isEmpty } from 'lodash'
 import { compareSTDwithArea } from '../../index';
@@ -28,7 +30,7 @@ import { BPCJSON, groceryJSON, healthJSON, homeJSON } from '../../../constants/c
 import { electronicsData } from '../../../constants/electronics'
 import { applianceData } from '../../../constants/appliance'
 import { fashion } from '../../../constants/fashion'
-import { DOMAIN } from '../../../utils/enum'
+import { DOMAIN, statutory_reqs } from '../../../utils/enum'
 export const checkOnsearch = (data: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.ON_SEARCH]: 'JSON cannot be empty' }
@@ -486,6 +488,41 @@ export const checkOnsearch = (data: any) => {
     })
   } catch (error: any) {
     logger.error(`Error while checking quantity of items in bpp/providers for /${constants.ON_SEARCH}, ${error.stack}`)
+  }
+
+  // Checking for items categoryId and it's mapping with statutory_reqs
+  if (getValue('domain') === "RET10") {
+
+    try {
+      logger.info(`Checking for items categoryId and it's mapping with statutory_reqs in bpp/providers for /${constants.ON_SEARCH}`)
+      const providers = onSearchCatalog['bpp/providers']
+      providers.forEach((provider: any, i: number) => {
+        const items = provider.items
+        items.forEach((item: any, j: number) => {
+          if (!_.isEmpty(item?.category_id)) {
+            const statutoryRequirement: any = getStatutoryRequirement(item.category_id)
+            let errors: any
+            switch (statutoryRequirement) {
+              case statutory_reqs.PrepackagedFood:
+                errors = checkForStatutory(item, i, j, errorObj, statutory_reqs.PrepackagedFood)
+                break;
+              case statutory_reqs.PackagedCommodities:
+                errors = checkForStatutory(item, i, j, errorObj, statutory_reqs.PackagedCommodities)
+                break;
+              case statutory_reqs.None:
+                break;
+              default:
+                const key = `prvdr${i}item${j}statutoryReq`
+                errorObj[key] = `The following item/category_id is not a valid one in bpp/providers for /${constants.ON_SEARCH}`
+                break;
+            }
+            Object.assign(errorObj, errors)
+          }
+        })
+      })
+    } catch (error: any) {
+      logger.error(`Error while checking for items categoryId and it's mapping with statutory_reqs in bpp/providers for /${constants.ON_SEARCH}, ${error.stack}`)
+    }
   }
 
   // Checking for duplicate varient in bpp/providers/items for on_search

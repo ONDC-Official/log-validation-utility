@@ -1,3 +1,5 @@
+import { statutory_reqs } from "../utils/enum"
+
 interface ICategoryJSON {
   [key: string]: {
     [key: string]: boolean | String[]
@@ -245,3 +247,36 @@ export const BPCJSON: { [key: string]: ICategoryJSON } = {
   'Skin Care - Lotions, Moisturisers, and Creams': BPCObj,
   'Skin Care - Oils and Serums': BPCObj,
 }
+
+export const groceryCategoryMappingWithStatutory: { [key: string]: statutory_reqs } = {
+  "Bakery, Cakes & Dairy": statutory_reqs.PrepackagedFood,
+  "Dairy and Cheese": statutory_reqs.PrepackagedFood,
+  "Snacks, Dry Fruits, Nuts": statutory_reqs.PrepackagedFood,
+  "Cereals and Breakfast": statutory_reqs.PrepackagedFood,
+  "Sauces, Spreads and Dips": statutory_reqs.PrepackagedFood,
+  "Chocolates and Biscuits": statutory_reqs.PrepackagedFood,
+  "Tinned and Processed Food": statutory_reqs.PrepackagedFood,
+  "Energy and Soft Drinks": statutory_reqs.PrepackagedFood,
+  "Fruit Juices and Fruit Drinks": statutory_reqs.PrepackagedFood,
+  "Snacks and Namkeen": statutory_reqs.PrepackagedFood,
+  "Ready to Cook and Eat": statutory_reqs.PrepackagedFood,
+  "Pickles and Chutney": statutory_reqs.PrepackagedFood,
+  "Indian Sweets": statutory_reqs.PrepackagedFood,
+  "Frozen Snacks": statutory_reqs.PrepackagedFood,
+  "Masala & Seasoning": statutory_reqs.PackagedCommodities,
+  "Oil & Ghee": statutory_reqs.PackagedCommodities,
+  "Eggs, Meat & Fish": statutory_reqs.PackagedCommodities,
+  "Cleaning & Household": statutory_reqs.PackagedCommodities,
+  "Pet Care": statutory_reqs.PackagedCommodities,
+  "Pasta, Soup and Noodles": statutory_reqs.PackagedCommodities,
+  "Cooking and Baking Needs": statutory_reqs.PackagedCommodities,
+  "Atta, Flours and Sooji": statutory_reqs.PackagedCommodities,
+  "Rice and Rice Products": statutory_reqs.PackagedCommodities,
+  "Dals and Pulses": statutory_reqs.PackagedCommodities,
+  "Salt, Sugar and Jaggery": statutory_reqs.PackagedCommodities,
+  "Tea and Coffee": statutory_reqs.PackagedCommodities,
+  "Fruits and Vegetables": statutory_reqs.None,
+  "Water": statutory_reqs.None,
+  "Frozen Vegetables": statutory_reqs.None,
+  "Gift Voucher": statutory_reqs.None
+};

@@ -340,7 +340,8 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
                 delete obj2?.tags
                 delete obj2?.state
               }
-              const errors = compareFulfillmentObject(obj1, obj2, keys, i)
+              const apiSeq = obj2.type === "Cancel" ? ApiSequence.ON_UPDATE_PART_CANCEL : (getValue('onCnfrmState') === "Accepted" ? (ApiSequence.ON_CONFIRM) : (ApiSequence.ON_STATUS_PENDING))
+              const errors = compareFulfillmentObject(obj1, obj2, keys, i, apiSeq)
               if (errors.length > 0) {
                 errors.forEach((item: any) => {
                   onStatusObj[item.errKey] = item.errMsg

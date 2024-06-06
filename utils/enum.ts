@@ -598,3 +598,9 @@ export enum FLOW {
   FLOW5 = '5',
   FLOW6 = '6',
 }
+
+export enum statutory_reqs {
+  PrepackagedFood = '@ondc/org/statutory_reqs_prepackaged_food',
+  PackagedCommodities = '@ondc/org/statutory_reqs_packaged_commodities',
+  None = 'None'
+}

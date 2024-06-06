@@ -602,8 +602,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                                 if (!_.isEmpty(ret_obj_end?.time)) {
                                     const ret_obj_end_time = ret_obj_end.time
                                     if (!_.isEmpty(ret_obj_end_time?.timestamp)) {
-                                        const ret_obj_end_time_timestamp = ret_obj_end_time.timestamp
-
+                                        const ret_obj_end_time_timestamp = new Date(ret_obj_end_time.timestamp)
                                         if (!(ret_obj_end_time_timestamp instanceof Date) || ret_obj_end_time_timestamp > new Date(context.timestamp)) {
                                             const key = 'returnFF/end/time/timestamp'
                                             onupdtObj[key] = `end/time/timestamp of return fulfillment should be less than or equal to context/timestamp of ${apiSeq}`
@@ -661,7 +660,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                                         }
                                         else {
                                             const timeDifStart = timeDiff(ret_obj_start_time_range?.start, context.timestamp)
-                                            if (timeDifStart <= 0) {
+                                            if (timeDifStart < 0) {
                                                 const key = 'returnFF/start/time/range/start'
                                                 onupdtObj[key] = `start/time/range/start time of return fulfillment should be greater than context/timestamp of ${apiSeq}`
                                             }

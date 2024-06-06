@@ -827,7 +827,7 @@ export const FnBonSearchSchema = {
                                             enum: ['Self-Pickup', 'Order', 'Delivery', 'All'],
                                             errorMessage:
                                               "timing for fulfillment type, enum - 'Order' (online order processing timings 'Delivery' (order shipment timings, will be same as delivery timings for hyperlocal), 'Self-Pickup' (self-pickup timings)",
-                                                                                      },
+                                          },
                                         },
                                         required: ['code', 'value'],
                                       },
@@ -939,116 +939,41 @@ export const FnBonSearchSchema = {
                           if: {
                             properties: {
                               code: {
-                                const: 'serviceability',
-                              },
-                            },
+                                const: "serviceability"
+                              }
+                            }
                           },
                           then: {
                             properties: {
                               list: {
-                                type: 'array',
+                                type: "array",
                                 items: {
-                                  allOf: [
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'location',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
+                                  type: "object",
+                                  properties: {
+                                    code: {
+                                      type: "string",
+                                      enum: ["location", "category", "type", "val", "unit"],
+                                      errorMessage: "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit'"
                                     },
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'category',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'type',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            enum: ['10', '13'],
-                                            errorMessage:
-                                              "Value for 'type' must be enum for FnB - '10' (hyperlocal),'13' (polygon) only",
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'val',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            pattern: '^[0-9]+$',
-                                            errorMessage: "Value for 'val' must be numeric characters only",
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'unit',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                  ],
+                                    value: {
+                                      type: "string"
+                                    }
+                                  },
+                                  required: ["code", "value"],
+                                  additionalProperties: false
                                 },
-                              },
-                            },
-                          },
+                                minItems: 5,
+                                maxItems: 5,
+                                uniqueItems: true,
+                                errorMessage: {
+                                  minItems: "Serviceability must have minimum 5 values",
+                                  maxItems: "Serviceability must have maximum 5 values",
+                                  uniqueItems: "Serviceability must have unique items",
+                                  _: "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit' and no duplicacy or other elements allowed"
+                                }
+                              }
+                            }
+                          }
                         },
                         {
                           if: {

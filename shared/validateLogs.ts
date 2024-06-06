@@ -207,7 +207,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         case ApiSequence.CONFIRM:
           return checkConfirm(data, msgIdSet)
         case ApiSequence.ON_CONFIRM:
-          return checkOnConfirm(data)
+          return checkOnConfirm(data, fulfillmentsItemsSet)
         case ApiSequence.CANCEL:
           return checkCancel(data, msgIdSet)
         case ApiSequence.ON_CANCEL:

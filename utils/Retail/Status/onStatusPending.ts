@@ -15,14 +15,22 @@ import { getValue, setValue } from '../../../shared/dao'
 export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fulfillmentsItemsSet: any) => {
   const onStatusObj: any = {}
   try {
+    const onConfirmOrderState = getValue('onCnfrmState')
     if (!data || isObjectEmpty(data)) {
+      if (onConfirmOrderState === "Accepted")
+        return
       return { [ApiSequence.ON_STATUS_PENDING]: 'JSON cannot be empty' }
     }
     const flow = getValue('flow')
     const { message, context }: any = data
     if (!message || !context || isObjectEmpty(message)) {
+      if (onConfirmOrderState === "Accepted")
+        return
       return { missingFields: '/context, /message, is missing or empty' }
     }
+
+    if (onConfirmOrderState === "Accepted")
+      return { errmsg: "When the onConfirm Order State is 'Accepted', the on_status_pending is not required!" }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_STATUS, data)

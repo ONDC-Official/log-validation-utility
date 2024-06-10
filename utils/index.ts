@@ -8,6 +8,8 @@ import { reasonCodes } from '../constants/reasonCode'
 import { InputObject } from '../shared/interface'
 import { setValue } from '../shared/dao'
 export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
+import { groceryCategoryMappingWithStatutory } from '../constants/category'
+import { statutory_reqs } from './enum'
 
 export const getObjValues = (obj: any) => {
   let values = ''
@@ -989,25 +991,26 @@ export const payment_status = (payment: any) => {
   return true
 }
 
-export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAtConfirm: number, errorObj: any) => {
+export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAtConfirm: number, errorObj: any, apiSeq: string) => {
   let quoteTrailSum = 0
   for (const obj of fulfillmentArr) {
     const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
     for (const item of quoteTrailItems) {
       for (const val of item.list) {
         if (val.code === 'value') {
-          quoteTrailSum += Math.abs(val.value)
+          quoteTrailSum -= val.value
         }
       }
     }
   }
+  quoteTrailSum = Number(quoteTrailSum.toFixed(2))
   if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
     const key = `invldQuoteTrailPrices`
     errorObj[
       key
-    ] = `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM}`
+    ] = `quote_trail price and item quote price sum for ${apiSeq} should be equal to the price as in ${constants.ON_CONFIRM}`
     logger.error(
-      `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM} `,
+      `quote_trail price and item quote price sum for ${apiSeq} should be equal to the price as in ${constants.ON_CONFIRM} `,
     )
   }
 }
@@ -1193,42 +1196,77 @@ export function compareTimeRanges(data1: any, action1: any, data2: any, action2:
   return errors.length === 0 ? null : errors
 }
 
-export function compareFulfillmentObject(obj1: any, obj2: any, keys: any, i: number) {
-  const errors: any = []
+export function compareFulfillmentObject(obj1: any, obj2: any, keys: string[], i: number, apiSeq: string) {
+  const errors: any[] = [];
+
   keys.forEach((key: string) => {
-    if (!_.isEqual(obj1[`${key}`], obj2[`${key}`])) {
-      if ((typeof obj1[`${key}`] == "object" && typeof obj2[`${key}`] == "object") && (Object.keys(obj1[`${key}`]).length > 0 && Object.keys(obj2[`${key}`]).length > 0)) {
-        const obj1_nested = obj1[`${key}`]
-        const obj2_nested = obj2[`${key}`]
-        const obj1_nested_keys = Object.keys(obj1_nested)
-        const obj2_nested_keys = Object.keys(obj2_nested)
-        if (obj1_nested_keys.length > obj2_nested_keys.length) {
-          obj1_nested_keys.forEach((key_nested) => {
-            if (!_.isEqual(obj1_nested[key_nested], obj2_nested[key_nested])) {
-              const errKey = `message/order.fulfillments/${i}/${key}/${key_nested}`
-              const errMsg = `Mismatch occured while comparing '${obj1.type}' fulfillment object with ${ApiSequence.ON_STATUS_PENDING} on key '${key}/${key_nested}'`
-              errors.push({ errKey, errMsg })
-            }
-          })
-        }
-        else {
-          obj2_nested_keys.forEach((key_nested) => {
-            if (!_.isEqual(obj2_nested[key_nested], obj1_nested[key_nested])) {
-              const errKey = `message/order.fulfillments/${i}/${key}/${key_nested}`
-              const errMsg = `Mismatch occured while comparing '${obj1.type}' fulfillment object with ${ApiSequence.ON_STATUS_PENDING} on key '${key}/${key_nested}'`
-              errors.push({ errKey, errMsg })
-            }
-          })
-        }
-      }
-      else {
-        const errKey = `message/order.fulfillments/${i}/${key}`
-        const errMsg = `Mismatch occured while comparing '${obj1.type}' fulfillment object with ${ApiSequence.ON_STATUS_PENDING} on key '${key}'`
-        errors.push({ errKey, errMsg })
+    if (_.isArray(obj1[key])) {
+      obj1[key] = _.sortBy(obj1[key], ['code']);
+    }
+    if (_.isArray(obj2[key])) {
+      obj2[key] = _.sortBy(obj2[key], ['code']);
+    }
+
+    if (!_.isEqual(obj1[key], obj2[key])) {
+      if (typeof obj1[key] === "object" && typeof obj2[key] === "object" && Object.keys(obj1[key]).length > 0 && Object.keys(obj2[key]).length > 0) {
+        const obj1_nested = obj1[key];
+        const obj2_nested = obj2[key];
+
+        const obj1_nested_keys = Object.keys(obj1_nested);
+        const obj2_nested_keys = Object.keys(obj2_nested);
+
+        const nestedKeys = obj1_nested_keys.length > obj2_nested_keys.length ? obj1_nested_keys : obj2_nested_keys;
+
+        nestedKeys.forEach((key_nested: string) => {
+          if (!_.isEqual(obj1_nested[key_nested], obj2_nested[key_nested])) {
+            const errKey = `message/order.fulfillments/${i}/${key}/${key_nested}`;
+            const errMsg = `Mismatch occurred while comparing '${obj1.type}' fulfillment object with ${apiSeq} on key '${key}/${key_nested}'`;
+            errors.push({ errKey, errMsg });
+          }
+        });
+      } else {
+        const errKey = `message/order.fulfillments/${i}/${key}`;
+        const errMsg = `Mismatch occurred while comparing '${obj1.type}' fulfillment object with ${apiSeq} on key '${key}'`;
+        errors.push({ errKey, errMsg });
       }
     }
-  })
-  return errors
+  });
+
+  return errors;
+}
+
+export function checkForStatutory(item: any, i: number, j: number, errorObj: any, statutory_req: string) {
+  const requiredFields: Record<string, string[]> = {
+    '@ondc/org/statutory_reqs_prepackaged_food': [
+      "nutritional_info",
+      "additives_info",
+      "brand_owner_FSSAI_license_no",
+      "other_FSSAI_license_no",
+      "importer_FSSAI_license_no"
+    ],
+    '@ondc/org/statutory_reqs_packaged_commodities': ["manufacturer_or_packer_name",
+      "manufacturer_or_packer_address",
+      "common_or_generic_name_of_commodity",
+      "month_year_of_manufacture_packing_import"]
+  }
+
+  if (!_.isEmpty(item[statutory_req] || typeof item[statutory_req] !== "object" || item[statutory_req] === null)) {
+    const data = item[statutory_req]
+    requiredFields[statutory_req].forEach((field: any, k: number) => {
+      if (typeof data[field] !== "string" || data[field].trim() === "") {
+        Object.assign(errorObj, { [`prvdr${i}item${j}${field}${k}statutoryReq`]: `The item${j}/'${statutory_req}'/${field}${k} is missing or not a string in bpp/providers/items for /${constants.ON_SEARCH}` })
+      }
+    })
+  }
+  else {
+    Object.assign(errorObj, { [`prvdr${i}item${j}statutoryReq`]: `The following item/category_id is not having item${j}/'${statutory_req}' in bpp/providers for /${constants.ON_SEARCH}` })
+  }
+
+  return errorObj
+}
+
+export function getStatutoryRequirement(category: string): statutory_reqs | undefined {
+  return groceryCategoryMappingWithStatutory[category];
 }
 
 function isValidTimestamp(timestamp: string): boolean {

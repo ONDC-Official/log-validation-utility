@@ -19,7 +19,7 @@ import {
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkOnConfirm = (data: any) => {
+export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any) => {
   const onCnfrmObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -145,6 +145,8 @@ export const checkOnConfirm = (data: any) => {
       logger.info(`checking created_at and updated_at timestamp in /${constants.ON_CONFIRM}`)
       const cnfrmOrdrCrtd = getValue('ordrCrtd')
       const cnfrmOrdrUpdtd = getValue('ordrUpdtd')
+      if (!_.isEmpty(on_confirm?.state))
+        setValue('onCnfrmState', on_confirm.state)
       if (on_confirm.state === 'Created' || on_confirm.state === 'Accepted') {
         if (cnfrmOrdrCrtd && (!on_confirm.created_at || on_confirm.created_at != cnfrmOrdrCrtd)) {
           onCnfrmObj.crtdtmstmp = `order.created_at timestamp mismatches in /${constants.CONFIRM} and /${constants.ON_CONFIRM}`
@@ -162,7 +164,6 @@ export const checkOnConfirm = (data: any) => {
           onCnfrmObj.updtdtmstmp = `order.updated_at timestamp should be updated as per the context.timestamp (since default fulfillment state is added)`
         }
       }
-      setValue('onCnfrmState', on_confirm.state)
     } catch (error: any) {
       logger.error(`!!Error while checking order timestamps in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
@@ -231,6 +232,7 @@ export const checkOnConfirm = (data: any) => {
     try {
       logger.info(`Storing delivery fulfillment if provided in ${constants.ON_CONFIRM}`)
       const deliveryFulfillment = on_confirm.fulfillments.filter((fulfillment: any) => fulfillment.type === 'Delivery')
+
       const { start, end } = deliveryFulfillment[0]
       const startRange = start.time.range
       const endRange = end.time.range
@@ -240,6 +242,35 @@ export const checkOnConfirm = (data: any) => {
       }
     } catch (error: any) {
       logger.error(`Error while Storing delivery fulfillment, ${error.stack}`)
+    }
+
+    if (on_confirm.state === "Accepted") {
+
+      try {
+        // For Delivery Object
+        const fulfillments = on_confirm.fulfillments
+        if (!fulfillments.length) {
+          const key = `missingFulfillments`
+          onCnfrmObj[key] = `missingFulfillments is mandatory for ${ApiSequence.ON_CONFIRM}`
+        }
+        else {
+          const deliveryObjArr = _.filter(fulfillments, { type: "Delivery" })
+          if (!deliveryObjArr.length) {
+            onCnfrmObj[`message/order.fulfillments/`] = `Delivery fullfillment must be present in ${ApiSequence.ON_CONFIRM} if the Order.state is 'Accepted'`
+          }
+          else {
+            const deliverObj = deliveryObjArr[0]
+            delete deliverObj?.state
+            delete deliverObj?.tags
+            delete deliverObj?.start?.instructions
+            delete deliverObj?.end?.instructions
+            fulfillmentsItemsSet.add(deliverObj)
+          }
+        }
+
+      } catch (error: any) {
+        logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_CONFIRM}, ${error.stack}`)
+      }
     }
 
     try {
@@ -579,11 +610,11 @@ export const checkOnConfirm = (data: any) => {
       logger.info(`Comparing tags in /${constants.CONFIRM} and /${constants.ON_CONFIRM}`)
       const confirm_tags: any[] | any = getValue('confirm_tags')
       if (on_confirm.tags) {
-        // const bap_terms = areGSTNumbersMatching(confirm_tags, on_confirm.tags, 'bap_terms')
+        const bap_terms = areGSTNumbersMatching(confirm_tags, on_confirm.tags, 'bap_terms')
 
-        // if (bap_terms === false) {
-        //   onCnfrmObj.tags_bap_terms = `Tags should have same and valid gst_number as passed in /${constants.CONFIRM}`
-        // }
+        if (bap_terms === false) {
+          onCnfrmObj.tags_bap_terms = `Tags should have same and valid gst_number as passed in /${constants.CONFIRM}`
+        }
 
         const bpp_terms = areGSTNumbersMatching(confirm_tags, on_confirm.tags, 'bpp_terms')
         if (bpp_terms === false) {
@@ -636,7 +667,7 @@ export const checkOnConfirm = (data: any) => {
           const hasStaticTerms = tag.list.some((item: { code: string }) => item.code === 'static_terms')
           if (hasStaticTerms) {
             onCnfrmObj['message/order/tags/bap_terms/static_terms'] =
-              `static_terms is not required for now! in ${constants.ON_INIT}`
+              `static_terms is not required for now! in ${constants.ON_CONFIRM}`
           }
         }
       }

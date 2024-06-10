@@ -12,6 +12,7 @@ import {
   payment_status,
   mapCancellationID,
   checkQuoteTrail,
+  checkQuoteTrailSum,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -327,26 +328,8 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
           const key = `CancelFulfillmentMissing`
           onCnclObj[key] = `fulfillment type cancel is missing in /${constants.ON_CANCEL}`
         }
-        for (let obj of cancelFulfillments) {
-          let quoteTrailSum = 0
-          const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
-          for (let item of quoteTrailItems) {
-            for (let val of item.list) {
-              if (val.code === 'value') {
-                quoteTrailSum += Math.abs(val.value)
-              }
-            }
-          }
-          quoteTrailSum = Number(quoteTrailSum.toFixed(2))
-          if (priceAtConfirm != price + quoteTrailSum) {
-            const key = `invldQuoteTrailPrices`
-            onCnclObj[key] =
-              `quote_trail price and item quote price sum for ${constants.ON_CANCEL} should be equal to the price as in ${constants.ON_CONFIRM}`
-            logger.error(
-              `quote_trail price and item quote price sum for ${constants.ON_CANCEL} should be equal to the price as in ${constants.ON_CONFIRM} `,
-            )
-          }
-        }
+        checkQuoteTrailSum(cancelFulfillments, price, priceAtConfirm, onCnclObj, ApiSequence.ON_CANCEL)
+
       } else {
         logger.error(`The price breakdown in brakup does not match with the total_price for ${constants.ON_CANCEL}`)
       }
@@ -637,6 +620,11 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
                 }
               }
             }
+            else {
+              if (!_.isEmpty(rto_obj_end.time)) {
+                onCnclObj[`rtoFFObj/end/time`] = `fulfillment type rto end/time should not be present in /${constants.ON_CANCEL} when state/desc/code is RTO-Initiated`
+              }
+            }
             if (!_.isEmpty(rto_obj_end?.location)) {
               rto_end_location = rto_obj_end.location
             }
@@ -702,6 +690,15 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
         if (!_.isEmpty(rto_end_location) && !_.isEmpty(del_start_location)) {
           if (!_.isEqual(rto_end_location?.address, del_start_location?.address)) {
             onCnclObj['RTO.end.location/DeliveryFulfillment.start.location'] = `RTO fulfillment end and Delivery fulfillment start location mismatch in ${constants.ON_CANCEL}`
+          }
+          if (_.isEmpty(rto_end_location?.id)) {
+            onCnclObj['RTO.end.location/id'] = `RTO fulfillment end location id missing in ${constants.ON_CANCEL}`
+          }
+          if (_.isEmpty(del_start_location?.id)) {
+            onCnclObj['DeliveryFulfillment.start.location/id'] = `Delivery fulfillment start location id missing in ${constants.ON_CANCEL}`
+          }
+          if (!_.isEqual(rto_end_location?.id, del_start_location?.id)) {
+            onCnclObj['RTO.end.location/DeliveryFulfillment.start.location/id'] = `RTO fulfillment end and Delivery fulfillment start location id mismatch in ${constants.ON_CANCEL}`
           }
         } else {
           onCnclObj['RTO.end.location/DeliveryFulfillment.start.location'] = `RTO fulfillment end or Delivery fulfillment start location is missing in ${constants.ON_CANCEL}`

@@ -330,11 +330,15 @@ export const checkOnSelect_OOS = (data: any) => {
 
     if (msg_err_code === "40002") {
       // Only checking for the item_ids which are not having customization :
-      const errorArray = JSON.parse(msg_err)
-
+      let errorArray: any = ""
+      try {
+        errorArray = JSON.parse(msg_err);
+      } catch (error: any) {
+        logger.error(`!!Error while Checking for Valid error.message and paring it ${error.message} ${error.stack}`)
+      }
       if (!Array.isArray(errorArray)) {
         const key = `error.message`
-        errorObj[key] = `The error.message provided in the ${ApiSequence.ON_SELECT_OUT_OF_STOCK} should be in the form of an array`;
+        errorObj[key] = `The error.message provided in the ${ApiSequence.ON_SELECT_OUT_OF_STOCK} should be in the form of an array with proper error_code and item_id. For Example: [{\"item_id\":\"I1\",\"error\":\"40002\"},{\"item_id\":\"I2\",\"error\":\"40002\"},{\"item_id\":\"I3\",\"error\":\"40002\"}]`;
       }
       else {
         function isValidErrorItem(obj: any): boolean {
@@ -387,7 +391,7 @@ export const checkOnSelect_OOS = (data: any) => {
       }
     }
   } catch (error: any) {
-    logger.error(`!!Error while Checking for Valid error.message and Item Id and error.message.item_id Mapping in ${error.message}`)
+    logger.error(`!!Error while Checking for Valid error.message and Item Id and error.message.item_id Mapping in ${error.message} ${error.stack}`)
   }
 
   try {

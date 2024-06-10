@@ -299,6 +299,8 @@ export const onSearchSchema = {
                   },
                   ttl: {
                     type: 'string',
+                    format: 'duration',
+                    errorMessage: 'Duration must be RFC3339 duration.',
                   },
                   locations: {
                     type: 'array',
@@ -410,7 +412,7 @@ export const onSearchSchema = {
                           required: ['gps', 'radius'],
                         },
                       },
-                      required: ['id', 'time', 'gps', 'address','time'],
+                      required: ['id', 'time', 'gps', 'address', 'time'],
                     },
                   },
                   categories: {
@@ -726,7 +728,7 @@ export const onSearchSchema = {
                   },
                   tags: {
                     type: 'array',
-                    minItems:1,
+                    minItems: 1,
                     items: {
                       allOf: [
                         {
@@ -835,7 +837,7 @@ export const onSearchSchema = {
                                             pattern: '^([01][0-9]|2[0-3])[0-5][0-9]$',
                                             errorMessage:
                                               "Value for 'time_from' must be a 4-digit numeric value in HHMM format",
-                                              minLength: 4,
+                                            minLength: 4,
                                           },
                                         },
                                         required: ['code', 'value'],
@@ -871,114 +873,41 @@ export const onSearchSchema = {
                           if: {
                             properties: {
                               code: {
-                                const: 'serviceability',
-                              },
-                            },
+                                const: "serviceability"
+                              }
+                            }
                           },
                           then: {
                             properties: {
                               list: {
-                                type: 'array',
+                                type: "array",
                                 items: {
-                                  allOf: [
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'location',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
+                                  type: "object",
+                                  properties: {
+                                    code: {
+                                      type: "string",
+                                      enum: ["location", "category", "type", "val", "unit"],
+                                      errorMessage: "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit'"
                                     },
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'category',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'type',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            enum: ['10', '11', '12', '13'],
-                                            errorMessage:
-                                              "Value for 'type' must be enum - '10' (hyperlocal), '11' (intercity), '12' (pan-India), '13' (polygon) only",
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'val',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'unit',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                  ],
+                                    value: {
+                                      type: "string"
+                                    }
+                                  },
+                                  required: ["code", "value"],
+                                  additionalProperties: false
                                 },
-                              },
-                            },
-                          },
+                                minItems: 5,
+                                maxItems: 5,
+                                uniqueItems: true,
+                                errorMessage: {
+                                  minItems: "Serviceability must have minimum 5 values",
+                                  maxItems: "Serviceability must have maximum 5 values",
+                                  uniqueItems: "Serviceability must have unique items",
+                                  _: "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit' and no duplicacy or other elements allowed"
+                                }
+                              }
+                            }
+                          }
                         },
                         {
                           if: {

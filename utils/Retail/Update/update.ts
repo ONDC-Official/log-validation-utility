@@ -1,7 +1,7 @@
-import _ from 'lodash'
+import _, { isEmpty } from 'lodash'
 import { logger } from '../../../shared/logger'
 import constants, { ApiSequence, buyerReturnId } from '../../../constants'
-import { validateSchema, isObjectEmpty, checkBppIdOrBapId, checkContext, isValidUrl } from '../../../utils'
+import { validateSchema, isObjectEmpty, checkBppIdOrBapId, checkContext, isValidUrl, timeDiff } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDetatilSet: any, flow: any) => {
@@ -33,6 +33,92 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
     } catch (error: any) {
       logger.error(`!!Error while checking message id for /${apiSeq}, ${error.stack}`)
     }
+
+
+    try {
+      const timestampOnUpdatePartCancel = getValue(`${ApiSequence.ON_UPDATE_PART_CANCEL}_tmpstmp`)
+      const timeDif = timeDiff(context.timestamp, timestampOnUpdatePartCancel)
+      if (timeDif <= 0) {
+        const key = 'context/timestamp'
+        updtObj[key] = `context/timestamp of /${apiSeq} should be greater than /${ApiSequence.ON_UPDATE_PART_CANCEL} context/timestamp`
+      }
+
+      if (flow === '6-b' || flow === '6-c') {
+        if (apiSeq === ApiSequence.UPDATE_LIQUIDATED || apiSeq === ApiSequence.UPDATE_REVERSE_QC) {
+          setValue('timestamp_', [context.timestamp, apiSeq])
+          const returnFulfillmentArr = _.filter(update?.fulfillments, { type: "Return" })
+          function getReturnFfIdAndQuantity(returnFulfillment: any): any {
+            if (!isEmpty(returnFulfillment?.tags)) {
+              const returnFulifllmentTags = returnFulfillment?.tags[0]
+              if (!isEmpty(returnFulifllmentTags?.list)) {
+                const returnFulifillmentTagsList = returnFulifllmentTags.list
+
+                const ffIdArr = _.filter(returnFulifillmentTagsList, { code: "id" })
+                const itemQuantityArr = _.filter(returnFulifillmentTagsList, { code: "item_quantity" })
+                let ffId = "";
+                let itemQuantity = ""
+                if (ffIdArr.length > 0 && ffIdArr[0]?.value) {
+                  ffId = ffIdArr[0]?.value
+                }
+                else {
+                  updtObj['returnFulfillment/code/id'] = `Return fulfillment/tags/list/code/id is missing in ${apiSeq}`
+                }
+
+                if (itemQuantityArr.length > 0 && itemQuantityArr[0]?.value) {
+                  itemQuantity = itemQuantityArr[0]?.value
+                }
+                else {
+                  updtObj['returnFulfillment/code/item_quantity'] = `Return fulfillment/tags/list/code/item_quantity is missing in ${apiSeq}`
+                }
+                return { ffId: ffId, itemQuantity: itemQuantity }
+              }
+              else {
+                updtObj[`returnFulfillment`] = `Return fulfillment/tags/list is missing in ${apiSeq}`
+              }
+            }
+            else {
+              updtObj[`returnFulfillment`] = `Return fulfillment/tags is missing in ${apiSeq}`
+            }
+          }
+          if (returnFulfillmentArr.length > 0) {
+            let obj = getReturnFfIdAndQuantity(returnFulfillmentArr[0])
+            if (returnFulfillmentArr.length > 1) {
+              const obj2 = getReturnFfIdAndQuantity(returnFulfillmentArr[1])
+              const returnFfReverseQc: any = getValue(`${ApiSequence.UPDATE_REVERSE_QC}_ffId_itemQuantiy`)
+              if (obj2?.ffId == returnFfReverseQc?.ffId) {
+                obj.ffId = obj2?.ffId
+                obj.itemQuantity = obj2?.itemQuantity
+              }
+            }
+            setValue(`${apiSeq}_ffId_itemQuantiy`, { ffId: obj?.ffId, itemQuantity: obj?.itemQuantity, apiSeq: apiSeq })
+          }
+          else {
+            updtObj[`returnFulfillment`] = `Return fulfillment is missing in ${apiSeq}`
+          }
+        }
+        else {
+          const timestamp = getValue('timestamp_')
+          if (timestamp && timestamp.length != 0) {
+            const timeDif2 = timeDiff(context.timestamp, timestamp[0])
+            if (timeDif2 <= 0) {
+              const key = 'context/timestamp/'
+              updtObj[key] = `context/timestamp of /${apiSeq} should be greater than context/timestamp of /${timestamp[1]}`
+            }
+          }
+          else {
+            const key = 'context/timestamp/'
+            updtObj[key] = `context/timestamp of the previous call is missing or the previous action call itself is missing`
+          }
+          setValue('timestamp_', [context.timestamp, apiSeq])
+          if (apiSeq === ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED || apiSeq === ApiSequence.ON_UPDATE_DELIVERED) {
+            setValue('timestamp_', [])
+          }
+        }
+      }
+    } catch (e: any) {
+      logger.error(`Error while context/timestamp for the /${apiSeq}`)
+    }
+
 
     // Validating Schema
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.UPDATE, data)

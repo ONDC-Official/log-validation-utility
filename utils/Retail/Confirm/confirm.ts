@@ -398,6 +398,23 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     }
 
     try {
+      logger.info(`Checking if bap_terms is present in ${constants.CONFIRM}`)
+      const tags = confirm.tags
+
+      for (const tag of tags) {
+        if (tag.code === 'bap_terms') {
+          const hasStaticTerms = tag.list.some((item: { code: string }) => item.code === 'static_terms')
+          if (hasStaticTerms) {
+            cnfrmObj['message/order/tags/bap_terms/static_terms'] =
+              `static_terms is not required for now! in ${constants.CONFIRM}`
+          }
+        }
+      }
+    } catch (err: any) {
+      logger.error(`Error while Checking bap_terms in ${constants.CONFIRM}, ${err.stack} `)
+    }
+
+    try {
       logger.info(`Checking if transaction_id is present in message.order.payment`)
       const payment = confirm.payment
       const status = payment_status(payment)

@@ -115,6 +115,16 @@ export const checkOnInit = (data: any) => {
     const on_init = message.order
 
     try {
+      logger.info(`Checking Cancellation terms for /${constants.ON_INIT}`)
+      if (message.order.cancellation_terms && message.order.cancellation_terms.length > 0) {
+        onInitObj[`message.order`] =
+          `'cancellation_terms' in /message/order should not be provided as those are not enabled yet`
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking Cancellation terms for /${constants.ON_INIT}, ${error.stack}`)
+    }
+
+    try {
       logger.info(`Checking provider id and location in /${constants.CONFIRM}`)
       if (on_init.provider.id != getValue('providerId')) {
         onInitObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.CONFIRM}`
@@ -451,7 +461,7 @@ export const checkOnInit = (data: any) => {
         logger.error(
           `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_detailsin /${constants.ON_INIT}`,
         )
-        onInitObj.sttlmntcntrparty = `settlement_type is expected to be 'neft/rtgs/upi/wallet/netbanking/paylater' in @ondc/org/settlement_details`
+        onInitObj.sttlmntcntrparty = `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_details`
       } else if (data['settlement_type'] !== 'upi') {
         let missingFields = []
         if (!data.bank_name) {

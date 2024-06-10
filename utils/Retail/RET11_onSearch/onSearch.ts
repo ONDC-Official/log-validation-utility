@@ -132,8 +132,10 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
   const onSearchFFIdsArray: any = []
   const prvdrsId = new Set()
   const prvdrLocId = new Set()
+  const onSearchFFTypeSet = new Set()
   const itemsId = new Set()
 
+  // Storing static fulfillment ids in onSearchFFIdsArray, OnSearchFFTypeSet
   try {
     logger.info(`Saving static fulfillment ids in /${constants.ON_SEARCH}`)
 
@@ -144,6 +146,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
 
       let i = 0
       while (i < len) {
+        onSearchFFTypeSet.add(bppFF[i].type)
         onSearchFFIds.add(bppFF[i].id)
         i++
       }
@@ -262,6 +265,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
       const seqSet = new Set()
       const itemCategory_id = new Set()
       const categoryRankSet = new Set()
+      const prvdrLocationIds = new Set()
 
       logger.info(`Validating uniqueness for provider id in bpp/providers[${i}]...`)
       const prvdr = bppPrvdrs[i]
@@ -393,7 +397,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
         } else {
           prvdrLocId.add(loc.id)
         }
-
+        prvdrLocationIds.add(loc?.id)
         logger.info('Checking store days...')
         const days = loc.time.days.split(',')
         days.forEach((day: any) => {
@@ -448,7 +452,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
         const categories = onSearchCatalog['bpp/providers'][i]['categories']
         if (!categories || !categories.length) {
           const key = `prvdr${i}categories`
-          errorObj[key] = `categories must be present in bpp/providers[${i}]`
+          errorObj[key] = `Support for variants is mandatory, categories must be present in bpp/providers[${i}]`
         }
         const iLen = categories.length
         while (j < iLen) {
@@ -1278,6 +1282,105 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
           const key = `prvdr${i}tags/timing`
           errorObj[key] =
             `timing construct is mandatory in /bpp/providers[${i}]/tags`
+        }
+        else {
+          const timingsPayloadArr = new Array(...timingSet).map((item: any) => JSON.parse(item))
+          const timingsAll = _.chain(timingsPayloadArr)
+            .filter(payload => _.some(payload.list, { code: 'type', value: 'All' }))
+            .value()
+
+          // Getting timings object for 'Delivery', 'Self-Pickup' and 'Order'
+          const timingsOther = _.chain(timingsPayloadArr)
+            .filter(payload => _.some(payload.list, { code: 'type', value: 'Order' }) ||
+              _.some(payload.list, { code: 'type', value: 'Delivery' }) ||
+              _.some(payload.list, { code: 'type', value: 'Self-Pickup' }))
+            .value();
+
+          if (timingsAll.length > 0 && timingsOther.length > 0) {
+            errorObj[`prvdr${i}tags/timing`] = `If the timings of type 'All' is provided then timings construct for 'Order'/'Delivery'/'Self-Pickup' is not required`
+          }
+
+          const arrTimingTypes = new Set()
+
+          function checkTimingTag(tag: any) {
+            const typeObject = tag.list.find((item: { code: string }) => item.code === 'type');
+            const typeValue = typeObject ? typeObject.value : null;
+            arrTimingTypes.add(typeValue)
+            for (const item of tag.list) {
+              switch (item.code) {
+                case 'day_from':
+                case 'day_to':
+                  const dayValue = parseInt(item.value)
+                  if (isNaN(dayValue) || dayValue < 1 || dayValue > 7 || !/^-?\d+(\.\d+)?$/.test(item.value)) {
+                    errorObj[`prvdr${i}/day_to$/${typeValue}`] = `Invalid value for '${item.code}': ${item.value}`
+                  }
+
+                  break
+                case 'time_from':
+                case 'time_to':
+                  if (!/^([01]\d|2[0-3])[0-5]\d$/.test(item.value)) {
+                    errorObj[`prvdr${i}/tags/time_to/${typeValue}`] = `Invalid time format for '${item.code}': ${item.value}`
+                  }
+                  break
+                case 'location':
+                  if (!prvdrLocationIds.has(item.value)) {
+                    errorObj[`prvdr${i}/tags/location/${typeValue}`] = `Invalid location value as it's unavailable in location/ids`
+                  }
+                  break
+                case 'type':
+                  break
+                default:
+                  errorObj[`prvdr${i}/tags/tag_timings/${typeValue}`] = `Invalid list.code for 'timing': ${item.code}`
+              }
+            }
+
+            const dayFromItem = tag.list.find((item: any) => item.code === 'day_from')
+            const dayToItem = tag.list.find((item: any) => item.code === 'day_to')
+            const timeFromItem = tag.list.find((item: any) => item.code === 'time_from')
+            const timeToItem = tag.list.find((item: any) => item.code === 'time_to')
+
+            if (dayFromItem && dayToItem && timeFromItem && timeToItem) {
+              const dayFrom = parseInt(dayFromItem.value, 10)
+              const dayTo = parseInt(dayToItem.value, 10)
+              const timeFrom = parseInt(timeFromItem.value, 10)
+              const timeTo = parseInt(timeToItem.value, 10)
+
+              if (dayTo < dayFrom) {
+                errorObj[`prvdr${i}/tags/day_from/${typeValue}`] = "'day_to' must be greater than or equal to 'day_from'"
+              }
+
+              if (timeTo <= timeFrom) {
+                errorObj[`prvdr${i}/tags/time_from/${typeValue}`] = "'time_to' must be greater than 'time_from'"
+              }
+            }
+          }
+
+          if (timingsAll.length > 0) {
+            if (timingsAll.length > 1) {
+              errorObj[`prvdr${i}tags/timing/All`] = `The timings object for 'All' should be provided once!`
+            }
+            checkTimingTag(timingsAll[0])
+          }
+
+          if (timingsOther.length > 0) {
+            timingsOther.forEach((tagTimings: any) => {
+              checkTimingTag(tagTimings)
+            })
+            onSearchFFTypeSet.forEach((type: any) => {
+              if (!arrTimingTypes.has(type)) {
+                errorObj[`prvdr${i}/tags/timing/${type}`] = `The timings object must be present for ${type} in the tags`
+              }
+              arrTimingTypes.forEach((type: any) => {
+                if (type != 'Order' && type != 'All' && !onSearchFFTypeSet.has(type)) {
+                  errorObj[`prvdr${i}/tags/timing/${type}`] = `The timings object ${type} is not present in the onSearch fulfillments`
+                }
+              })
+              if (!arrTimingTypes.has('Order')) {
+                errorObj[`prvdr${i}/tags/timing/order`] = `The timings object must be present for Order in the tags`
+              }
+            })
+          }
+
         }
       } catch (error: any) {
         logger.error(

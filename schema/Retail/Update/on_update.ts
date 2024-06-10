@@ -340,7 +340,29 @@ export const onUpdateSchema = {
                     },
                   },
                 },
-              },
+                required: ['state', 'id', 'type'],
+                dependencies: {
+                  type: {
+                    allOf: [
+                      {
+                        if: {
+                          properties: {
+                            type: {
+                              enum: ["Cancel", "Return"]
+                            }
+                          }
+                        },
+                        then: {
+                          properties: {
+                            tags: { type: "array" }
+                          },
+                          required: ["tags"]
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
             },
             quote: {
               type: 'object',
@@ -528,8 +550,7 @@ export const onUpdateSchema = {
                 'type',
                 'collected_by',
                 '@ondc/org/buyer_app_finder_fee_type',
-                '@ondc/org/buyer_app_finder_fee_amount',
-                '@ondc/org/settlement_details'
+                '@ondc/org/buyer_app_finder_fee_amount'
               ],
             },
             documents: {

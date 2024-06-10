@@ -21,6 +21,8 @@ import {
   findVariantPath,
   findValueAtPath,
   checkForDuplicates,
+  getStatutoryRequirement,
+  checkForStatutory,
 } from '../../../utils'
 import _, { isEmpty } from 'lodash'
 import { compareSTDwithArea } from '../../index';
@@ -28,7 +30,7 @@ import { BPCJSON, groceryJSON, healthJSON, homeJSON } from '../../../constants/c
 import { electronicsData } from '../../../constants/electronics'
 import { applianceData } from '../../../constants/appliance'
 import { fashion } from '../../../constants/fashion'
-import { DOMAIN } from '../../../utils/enum'
+import { DOMAIN, statutory_reqs } from '../../../utils/enum'
 export const checkOnsearch = (data: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.ON_SEARCH]: 'JSON cannot be empty' }
@@ -160,11 +162,12 @@ export const checkOnsearch = (data: any) => {
   const prvdrLocId = new Set()
   const itemsId = new Set()
   const parentItemIdSet = new Set()
+  const onSearchFFTypeSet = new Set()
   const itemsArray: any = []
   let itemIdList: any = []
   setValue('tmpstmp', context.timestamp)
 
-  // Storing static fulfillment ids in onSearchFFIdsArray
+  // Storing static fulfillment ids in onSearchFFIdsArray, OnSearchFFTypeSet
   try {
     logger.info(`Saving static fulfillment ids in /${constants.ON_SEARCH}`)
 
@@ -175,6 +178,7 @@ export const checkOnsearch = (data: any) => {
 
       let i = 0
       while (i < len) {
+        onSearchFFTypeSet.add(bppFF[i].type)
         onSearchFFIds.add(bppFF[i].id)
         i++
       }
@@ -320,55 +324,61 @@ export const checkOnsearch = (data: any) => {
           const itemDescType = itemCodeArr[0]
           const itemDescCode = itemCodeArr[1]
           const domain = getValue('domain')?.substring(3)
-          if (domain == "10" || domain == "13") {
-            if (itemDescType != "1") {
-              const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
-              errorObj[key] =
-                `code should have 1:EAN as a value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
-            }
-            else {
-              const regex = /^\d{8,13}$/
-              if (!regex.test(itemDescCode)) {
+          switch (domain) {
+            case "10":
+            case "13":
+            case "16":
+              if (itemDescType != "1") {
                 const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
                 errorObj[key] =
-                  `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code should be number and have a between length 8 to 13`
+                  `code should have 1:EAN as a value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
               }
-            }
-          }
-          else if (domain == "12") {
-            if (itemDescType == "4") {
-              const regex = /^\d{4}$|^\d{6}$|^\d{8}$|^\d{10}$/
-              if (!regex.test(itemDescCode)) {
+              else {
+                const regex = /^\d{8,13}$/
+                if (!regex.test(itemDescCode)) {
+                  const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
+                  errorObj[key] =
+                    `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code should be number and have a between length 8 to 13`
+                }
+              }
+              break;
+            case "12":
+              if (itemDescType == "4") {
+                const regex = /^\d{4}$|^\d{6}$|^\d{8}$|^\d{10}$/
+                if (!regex.test(itemDescCode)) {
+                  const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
+                  errorObj[key] =
+                    `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code should be number and have a length 4, 6, 8 or 10.`
+                }
+              }
+              else {
                 const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
                 errorObj[key] =
-                  `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code should be number and have a length 4, 6, 8 or 10.`
+                  `code should have 4:HSN as a value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
               }
-            }
-            else {
-              const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
-              errorObj[key] =
-                `code should have 4:HSN as a value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
-            }
-          }
-          else if (domain != "17") {
-            if (itemDescType == "3") {
-              const regex = /^\d{8}$|^\d{12}$|^\d{13}$|^\d{14}$/
-              if (!regex.test(itemDescCode)) {
+              break;
+            case "14":
+            case "15":
+            case "18":
+              if (itemDescType == "3") {
+                const regex = /^\d{8}$|^\d{12}$|^\d{13}$|^\d{14}$/
+                if (!regex.test(itemDescCode)) {
+                  const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
+                  errorObj[key] =
+                    `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code should be number and have a length 8, 12, 13 or 14}.`
+                }
+              }
+              else {
                 const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
                 errorObj[key] =
-                  `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code should be number and have a length 8, 12, 13 or 14}.`
+                  `code should have 3:GTIN as a value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
               }
-            }
-            else {
+              break;
+            default:
               const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
               errorObj[key] =
-                `code should have 3:GTIN as a value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
-            }
-          }
-          else {
-            const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
-            errorObj[key] =
-              `code should have a valid value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
+                `code should have a valid value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
+              break;
           }
         }
       })
@@ -480,6 +490,41 @@ export const checkOnsearch = (data: any) => {
     logger.error(`Error while checking quantity of items in bpp/providers for /${constants.ON_SEARCH}, ${error.stack}`)
   }
 
+  // Checking for items categoryId and it's mapping with statutory_reqs
+  if (getValue('domain') === "RET10") {
+
+    try {
+      logger.info(`Checking for items categoryId and it's mapping with statutory_reqs in bpp/providers for /${constants.ON_SEARCH}`)
+      const providers = onSearchCatalog['bpp/providers']
+      providers.forEach((provider: any, i: number) => {
+        const items = provider.items
+        items.forEach((item: any, j: number) => {
+          if (!_.isEmpty(item?.category_id)) {
+            const statutoryRequirement: any = getStatutoryRequirement(item.category_id)
+            let errors: any
+            switch (statutoryRequirement) {
+              case statutory_reqs.PrepackagedFood:
+                errors = checkForStatutory(item, i, j, errorObj, statutory_reqs.PrepackagedFood)
+                break;
+              case statutory_reqs.PackagedCommodities:
+                errors = checkForStatutory(item, i, j, errorObj, statutory_reqs.PackagedCommodities)
+                break;
+              case statutory_reqs.None:
+                break;
+              default:
+                const key = `prvdr${i}item${j}statutoryReq`
+                errorObj[key] = `The following item/category_id is not a valid one in bpp/providers for /${constants.ON_SEARCH}`
+                break;
+            }
+            Object.assign(errorObj, errors)
+          }
+        })
+      })
+    } catch (error: any) {
+      logger.error(`Error while checking for items categoryId and it's mapping with statutory_reqs in bpp/providers for /${constants.ON_SEARCH}, ${error.stack}`)
+    }
+  }
+
   // Checking for duplicate varient in bpp/providers/items for on_search
   try {
     logger.info(`Checking for duplicate varient in bpp/providers/items for on_search`)
@@ -558,7 +603,7 @@ export const checkOnsearch = (data: any) => {
       const seqSet = new Set()
       const itemCategory_id = new Set()
       const categoryRankSet = new Set()
-
+      const prvdrLocationIds = new Set()
       const prvdr = bppPrvdrs[i]
 
       logger.info(`Checking store enable/disable timestamp in bpp/providers[${i}]`)
@@ -599,7 +644,7 @@ export const checkOnsearch = (data: any) => {
           } else {
             prvdrLocId.add(loc.id)
           }
-
+          prvdrLocationIds.add(loc?.id)
           logger.info('Checking store days...')
           const days = loc?.time?.days?.split(',')
           days.forEach((day: any) => {
@@ -670,7 +715,7 @@ export const checkOnsearch = (data: any) => {
         const categories = onSearchCatalog['bpp/providers'][i]['categories']
         if (!categories || !categories.length) {
           const key = `prvdr${i}categories`
-          errorObj[key] = `categories must be present in bpp/providers[${i}]`
+          errorObj[key] = `Support for variants is mandatory, categories must be present in bpp/providers[${i}]`
         }
         const iLen = categories?.length
         while (j < iLen) {
@@ -1399,13 +1444,112 @@ export const checkOnsearch = (data: any) => {
           errorObj[key] =
             `timing construct is mandatory in /bpp/providers[${i}]/tags`
         }
+        else {
+          const timingsPayloadArr = new Array(...timingSet).map((item: any) => JSON.parse(item))
+          const timingsAll = _.chain(timingsPayloadArr)
+            .filter(payload => _.some(payload.list, { code: 'type', value: 'All' }))
+            .value()
+
+          // Getting timings object for 'Delivery', 'Self-Pickup' and 'Order'
+          const timingsOther = _.chain(timingsPayloadArr)
+            .filter(payload => _.some(payload.list, { code: 'type', value: 'Order' }) ||
+              _.some(payload.list, { code: 'type', value: 'Delivery' }) ||
+              _.some(payload.list, { code: 'type', value: 'Self-Pickup' }))
+            .value();
+
+          if (timingsAll.length > 0 && timingsOther.length > 0) {
+            errorObj[`prvdr${i}tags/timing`] = `If the timings of type 'All' is provided then timings construct for 'Order'/'Delivery'/'Self-Pickup' is not required`
+          }
+
+          const arrTimingTypes = new Set()
+
+          function checkTimingTag(tag: any) {
+            const typeObject = tag.list.find((item: { code: string }) => item.code === 'type');
+            const typeValue = typeObject ? typeObject.value : null;
+            arrTimingTypes.add(typeValue)
+            for (const item of tag.list) {
+              switch (item.code) {
+                case 'day_from':
+                case 'day_to':
+                  const dayValue = parseInt(item.value)
+                  if (isNaN(dayValue) || dayValue < 1 || dayValue > 7 || !/^-?\d+(\.\d+)?$/.test(item.value)) {
+                    errorObj[`prvdr${i}/day_to$/${typeValue}`] = `Invalid value for '${item.code}': ${item.value}`
+                  }
+
+                  break
+                case 'time_from':
+                case 'time_to':
+                  if (!/^([01]\d|2[0-3])[0-5]\d$/.test(item.value)) {
+                    errorObj[`prvdr${i}/tags/time_to/${typeValue}`] = `Invalid time format for '${item.code}': ${item.value}`
+                  }
+                  break
+                case 'location':
+                  if (!prvdrLocationIds.has(item.value)) {
+                    errorObj[`prvdr${i}/tags/location/${typeValue}`] = `Invalid location value as it's unavailable in location/ids`
+                  }
+                  break
+                case 'type':
+                  break
+                default:
+                  errorObj[`prvdr${i}/tags/tag_timings/${typeValue}`] = `Invalid list.code for 'timing': ${item.code}`
+              }
+            }
+
+            const dayFromItem = tag.list.find((item: any) => item.code === 'day_from')
+            const dayToItem = tag.list.find((item: any) => item.code === 'day_to')
+            const timeFromItem = tag.list.find((item: any) => item.code === 'time_from')
+            const timeToItem = tag.list.find((item: any) => item.code === 'time_to')
+
+            if (dayFromItem && dayToItem && timeFromItem && timeToItem) {
+              const dayFrom = parseInt(dayFromItem.value, 10)
+              const dayTo = parseInt(dayToItem.value, 10)
+              const timeFrom = parseInt(timeFromItem.value, 10)
+              const timeTo = parseInt(timeToItem.value, 10)
+
+              if (dayTo < dayFrom) {
+                errorObj[`prvdr${i}/tags/day_from/${typeValue}`] = "'day_to' must be greater than or equal to 'day_from'"
+              }
+
+              if (timeTo <= timeFrom) {
+                errorObj[`prvdr${i}/tags/time_from/${typeValue}`] = "'time_to' must be greater than 'time_from'"
+              }
+            }
+          }
+
+          if (timingsAll.length > 0) {
+            if (timingsAll.length > 1) {
+              errorObj[`prvdr${i}tags/timing/All`] = `The timings object for 'All' should be provided once!`
+            }
+            checkTimingTag(timingsAll[0])
+          }
+
+          if (timingsOther.length > 0) {
+            timingsOther.forEach((tagTimings: any) => {
+              checkTimingTag(tagTimings)
+            })
+            onSearchFFTypeSet.forEach((type: any) => {
+              if (!arrTimingTypes.has(type)) {
+                errorObj[`prvdr${i}/tags/timing/${type}`] = `The timings object must be present for ${type} in the tags`
+              }
+            })
+            arrTimingTypes.forEach((type: any) => {
+              if (type != 'Order' && type != 'All' && !onSearchFFTypeSet.has(type)) {
+                errorObj[`prvdr${i}/tags/timing/${type}`] = `The timings object ${type} is not present in the onSearch fulfillments`
+              }
+            })
+            if (!arrTimingTypes.has('Order')) {
+              errorObj[`prvdr${i}/tags/timing/order`] = `The timings object must be present for Order in the tags`
+            }
+          }
+
+        }
       } catch (error: any) {
-        logger.error(`!!Error while checking serviceability construct for bpp/providers[${i}], ${error.stack}`)
+        logger.error(`!!Error while checking serviceability construct for bpp / providers[${i}], ${error.stack} `)
       }
 
       try {
         logger.info(
-          `Checking if catalog_link type in message/catalog/bpp/providers[${i}]/tags[1]/list[0] is link or inline`,
+          `Checking if catalog_link type in message / catalog / bpp / providers[${i}]/tags[1]/list[0] is link or inline`,
         )
         const tags = bppPrvdrs[i].tags
 
@@ -1420,8 +1564,8 @@ export const checkOnsearch = (data: any) => {
           if (data.code === 'type') {
             if (data.value === 'link') {
               if (bppPrvdrs[0].items) {
-                errorObj[`message/catalog/bpp/providers[0]`] =
-                  `Items arrays should not be present in message/catalog/bpp/providers[${i}]`
+                errorObj[`message / catalog / bpp / providers[0]`] =
+                  `Items arrays should not be present in message / catalog / bpp / providers[${i}]`
               }
             }
           }

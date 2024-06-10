@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _, { isEmpty } from 'lodash'
 import { logger } from '../../../shared/logger'
 import constants, { ApiSequence } from '../../../constants'
 import {
@@ -11,6 +11,7 @@ import {
     checkQuoteTrailSum,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
+import { timeDiff } from '../../index';
 import {
     partcancel_return_reasonCodes,
     return_rejected_request_reasonCodes,
@@ -174,6 +175,10 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
         try {
             logger.info(`Checking for settlement_details in /message/order/payment`)
             const settlement_details: any = on_update.payment['@ondc/org/settlement_details']
+            if (!settlement_details || settlement_details.length == 0) {
+                const key = "payment/settlement_details"
+                onupdtObj[key] = "The settlement_details are missing or empty in the payment object"
+            }
             settlement_details.map((data: any) => {
                 if (data.settlement_type == 'upi' && data.settlement_counterparty == 'seller-app') {
                     if (data.settlement_type == 'upi' && data.settlement_counterparty == 'seller-app') {
@@ -314,6 +319,13 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
 
         const flowSixAChecks = (data: any) => {
             try {
+
+                try {
+                    setValue(`${ApiSequence.ON_UPDATE_PART_CANCEL}_tmpstmp`, context.timestamp)
+                } catch (e: any) {
+                    logger.error(`Error while context/timestamp for the /${apiSeq}`)
+                }
+
                 try {
                     data.fulfillments.forEach((fulfillment: any) => {
                         if (fulfillment.type === 'Cancel') {
@@ -331,7 +343,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                         const priceAtConfirm = Number(getValue('quotePrice'))
                         const cancelFulfillments = _.filter(on_update.fulfillments, { type: 'Cancel' })
                         logger.info(`Checking for quote_trail price and item quote price sum for ${apiSeq}`)
-                        checkQuoteTrailSum(cancelFulfillments, price, priceAtConfirm, onupdtObj)
+                        checkQuoteTrailSum(cancelFulfillments, price, priceAtConfirm, onupdtObj, ApiSequence.ON_UPDATE)
                     } else {
                         logger.error(
                             `The price breakdown in brakup does not match with the total_price for ${apiSeq} `,
@@ -372,11 +384,13 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                 try {
                     logger.info(`Reason_id mapping for cancel_request`)
                     const fulfillments = on_update.fulfillments
+                    let cancelRequestPresent = false
                     fulfillments.map((fulfillment: any) => {
                         if (fulfillment.type == 'Cancel') {
                             const tags = fulfillment.tags
                             tags.map((tag: any) => {
                                 if (tag.code == 'cancel_request') {
+                                    cancelRequestPresent = true
                                     const lists = tag.list
                                     let reason_id = ''
                                     lists.map((list: any) => {
@@ -399,6 +413,9 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                             })
                         }
                     })
+                    if (!cancelRequestPresent) {
+                        onupdtObj['cancelRequest'] = `Cancel request is not present in the 'Cancel' fulfillment`
+                    }
                 } catch (error: any) {
                     logger.error(`!!Error while mapping cancellation_reason_id in ${apiSeq}`)
                 }
@@ -463,10 +480,251 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
             logger.info(`Error while checking fulfillments id, type and tracking in /${constants.ON_STATUS}`)
         }
 
+        if (flow === '6-b' || flow === '6-c') {
+            try {
+                const timestampOnUpdatePartCancel = getValue(`${ApiSequence.ON_UPDATE_PART_CANCEL}_tmpstmp`)
+                const timeDif = timeDiff(context.timestamp, timestampOnUpdatePartCancel)
+                if (timeDif <= 0) {
+                    const key = 'context/timestamp'
+                    onupdtObj[key] = `context/timestamp of /${apiSeq} should be greater than /${ApiSequence.ON_UPDATE_PART_CANCEL} context/timestamp`
+                }
+
+                const timestamp = getValue('timestamp_')
+                if (timestamp && timestamp.length != 0) {
+                    const timeDif2 = timeDiff(context.timestamp, timestamp[0])
+                    if (timeDif2 <= 0) {
+                        const key = 'context/timestamp/'
+                        onupdtObj[key] = `context/timestamp of /${apiSeq} should be greater than context/timestamp of /${timestamp[1]}`
+                    }
+                }
+                else {
+                    const key = 'context/timestamp/'
+                    onupdtObj[key] = `context/timestamp of the previous call is missing or the previous action call itself is missing`
+                }
+                setValue('timestamp_', [context.timestamp, apiSeq])
+
+            } catch (e: any) {
+                logger.error(`Error while context/timestamp for the /${apiSeq}`)
+            }
+
+            try {
+                const returnFulfillmentArr = _.filter(on_update?.fulfillments, { type: "Return" })
+                function getReturnFfIdAndQuantity(returnFulfillment: any): any {
+                    const ffId = returnFulfillment?.id
+                    if (!ffId) {
+                        onupdtObj["returnFulfillmentId"] = `Fulfillment ID is missing for return fulfillment in ${apiSeq}`
+                    }
+                    let itemQuantity = ""
+                    if (!_.isEmpty(returnFulfillment?.tags)) {
+                        const returnFulifllmentTags = returnFulfillment?.tags[0]
+                        if (!_.isEmpty(returnFulifllmentTags?.list)) {
+                            const returnFulifillmentTagsList = returnFulifllmentTags.list
+
+                            const itemQuantityArr = _.filter(returnFulifillmentTagsList, { code: "item_quantity" })
+
+                            if (itemQuantityArr.length > 0 && itemQuantityArr[0]?.value) {
+                                itemQuantity = itemQuantityArr[0]?.value
+                            }
+                            else {
+                                onupdtObj['returnFulfillment/code/item_quantity'] = `Return fulfillment/tags/list/code/item_quantity is missing in ${apiSeq}`
+                            }
+
+                        }
+                        else {
+                            onupdtObj[`returnFulfillment`] = `Return fulfillment/tags/list is missing in ${apiSeq}`
+                        }
+                    }
+                    else {
+                        onupdtObj[`returnFulfillment`] = `Return fulfillment/tags is missing in ${apiSeq}`
+                    }
+                    return { ffId: ffId, itemQuantity: itemQuantity }
+                }
+                if (returnFulfillmentArr.length > 0) {
+                    let obj = getReturnFfIdAndQuantity(returnFulfillmentArr[0])
+                    if (returnFulfillmentArr.length > 1) {
+                        const obj2 = getReturnFfIdAndQuantity(returnFulfillmentArr[1])
+                        const returnFfIdAndQuantiy: any = getValue(`${ApiSequence.UPDATE_REVERSE_QC}_ffId_itemQuantiy`)
+                        if (obj?.ffId == returnFfIdAndQuantiy?.ffId) {
+                            obj.ffId = obj2?.ffId
+                            obj.itemQuantity = obj2?.itemQuantity
+                        }
+                    }
+
+                    let updateReturnFfIdAndQuantiy: any = "";
+                    if (flow === '6-b') {
+                        updateReturnFfIdAndQuantiy = getValue(`${ApiSequence.UPDATE_REVERSE_QC}_ffId_itemQuantiy`)
+                    }
+                    else {
+                        updateReturnFfIdAndQuantiy = getValue(`${ApiSequence.UPDATE_LIQUIDATED}_ffId_itemQuantiy`)
+                    }
+
+                    if (!_.isEmpty(updateReturnFfIdAndQuantiy)) {
+                        if (obj?.ffId && updateReturnFfIdAndQuantiy?.ffId && obj?.ffId != updateReturnFfIdAndQuantiy?.ffId) {
+                            onupdtObj['returnFulfillment/id'] = `Mismatch occur between the fulfillment Id of ${apiSeq} ${obj?.ffId} and fulfillment Id of ${updateReturnFfIdAndQuantiy?.apiSeq} ${updateReturnFfIdAndQuantiy?.ffId}`
+                        }
+                        if (obj?.itemQuantity && updateReturnFfIdAndQuantiy?.itemQuantity && obj?.itemQuantity != updateReturnFfIdAndQuantiy?.itemQuantity) {
+                            onupdtObj['returnFulfillment/itemQuantity'] = `itemQuantity mismatch between the ${apiSeq} and ${updateReturnFfIdAndQuantiy?.apiSeq}`
+                        }
+                    }
+                }
+                else {
+                    onupdtObj[`returnFulfillment`] = `Return fulfillment is missing in ${apiSeq}`
+                }
+            } catch (e: any) {
+                logger.error(`Error while returnFulfillment for the /${apiSeq}`)
+            }
+        }
+
         if (flow === '6-a') {
             flowSixAChecks(message.order)
         }
         if (flow === '6-b') {
+
+            // Checking for location and time id is there or not in start/end object of return fulfillment
+            if (apiSeq == ApiSequence.ON_UPDATE_APPROVAL || apiSeq == ApiSequence.ON_UPDATE_PICKED || apiSeq == ApiSequence.ON_UPDATE_DELIVERED) {
+                try {
+                    // For Return Object
+                    const RETobj = _.filter(on_update.fulfillments, { type: 'Return' })
+                    let ret_start_location: any = {}
+                    if (!RETobj.length) {
+                        logger.error(`Return object is mandatory for ${apiSeq}`)
+                        const key = `missingReturn`
+                        onupdtObj[key] = `Return object is mandatory for ${apiSeq}`
+                    } else {
+                        // Checking for end object inside Return
+                        if (!_.isEmpty(RETobj[0]?.end)) {
+                            const ret_obj_end = RETobj[0]?.end
+                            if (_.isEmpty(ret_obj_end?.location)) {
+                                onupdtObj['Return.end.location'] = `Return fulfillment end location object is missing in ${apiSeq}`
+                                logger.error(`Return fulfillment end location is missing in ${apiSeq}`)
+                            }
+                            if (apiSeq == ApiSequence.ON_UPDATE_DELIVERED) {
+                                if (!_.isEmpty(ret_obj_end?.time)) {
+                                    const ret_obj_end_time = ret_obj_end.time
+                                    if (!_.isEmpty(ret_obj_end_time?.timestamp)) {
+                                        const ret_obj_end_time_timestamp = new Date(ret_obj_end_time.timestamp)
+                                        if (!(ret_obj_end_time_timestamp instanceof Date) || ret_obj_end_time_timestamp > new Date(context.timestamp)) {
+                                            const key = 'returnFF/end/time/timestamp'
+                                            onupdtObj[key] = `end/time/timestamp of return fulfillment should be less than or equal to context/timestamp of ${apiSeq}`
+                                        }
+                                    }
+                                    else {
+                                        const key = 'returnFF/end/time/timestamp'
+                                        onupdtObj[key] = `end/time/timestamp of return fulfillment is missing`
+                                    }
+
+                                }
+                                else {
+                                    const key = 'returnFF/end/time/timestamp'
+                                    onupdtObj[key] = `returnFF/end/time/timestamp of return fulfillment is missing`
+                                }
+                            }
+                        }
+                        else {
+                            onupdtObj['ReturnFulfillment.end'] = `Return fulfillment end object is missing in ${apiSeq}`
+                        }
+
+                        // Checking for start object inside Return
+                        if (!_.isEmpty(RETobj[0]?.start)) {
+                            const ret_obj_start = RETobj[0]?.start
+                            if (!_.isEmpty(ret_obj_start?.location)) {
+                                ret_start_location = ret_obj_start.location
+                                if (ret_start_location.id) {
+                                    onupdtObj['Return.start.location.id'] = `Return fulfillment start location id is not required in ${apiSeq}`
+                                }
+                            }
+                            else {
+                                onupdtObj['Return.start.location'] = `Return fulfillment start location object is missing in ${apiSeq}`
+                                logger.error(`Return fulfillment start location is missing in ${apiSeq}`)
+                            }
+                            if (!_.isEmpty(ret_obj_start?.time)) {
+                                const ret_obj_start_time = ret_obj_start.time
+                                if (apiSeq == ApiSequence.ON_UPDATE_APPROVAL) {
+                                    if (!_.isEmpty(ret_obj_start_time?.range)) {
+                                        const ret_obj_start_time_range = ret_obj_start_time?.range
+                                        const startTime: any = new Date(ret_obj_start_time_range?.start)
+                                        const endTime: any = new Date(ret_obj_start_time_range?.end)
+
+                                        if (!(startTime instanceof Date) || !(endTime instanceof Date)) {
+
+                                            if (!(startTime instanceof Date)) {
+                                                const key = 'returnFF/start/time/range/start'
+                                                onupdtObj[key] = `start/time/range/start of /${apiSeq} should have valid time format for return fulfillment`
+
+                                            }
+                                            if (!(endTime instanceof Date)) {
+                                                const key = 'returnFF/start/time/range/end'
+                                                onupdtObj[key] = `end/time/range/end of /${apiSeq} should have valid time format for return fulfillment`
+
+                                            }
+                                        }
+                                        else {
+                                            const timeDifStart = timeDiff(ret_obj_start_time_range?.start, context.timestamp)
+                                            if (timeDifStart < 0) {
+                                                const key = 'returnFF/start/time/range/start'
+                                                onupdtObj[key] = `start/time/range/start time of return fulfillment should be greater than context/timestamp of ${apiSeq}`
+                                            }
+
+                                            const timeDifEnd = timeDiff(ret_obj_start_time_range?.end, context.timestamp)
+                                            if (timeDifEnd <= 0) {
+                                                const key = 'returnFF/start/time/range/end'
+                                                onupdtObj[key] = `start/time/range/end time of return fulfillment should be greater than context/timestamp of ${apiSeq}`
+                                            }
+                                            setValue(`${ApiSequence.ON_UPDATE_APPROVAL}`, { start: startTime, end: endTime })
+                                            if (startTime >= endTime) {
+                                                const key = 'returnFF/start/time/range/'
+                                                onupdtObj[key] = `start/time/range/start should not be greater than or equal to start/time/range/end in return fulfillment`
+                                            }
+                                        }
+                                    }
+                                    else {
+                                        onupdtObj['Return.start.time.range'] = `Return fulfillment start time range object is missing in ${apiSeq}`
+                                    }
+                                }
+                                else {
+                                    if (!_.isEmpty(ret_obj_start_time?.timestamp)) {
+                                        const ret_obj_start_time_timestamp: any = new Date(ret_obj_start_time.timestamp)
+                                        const onUpdateApprovalTimeRanges = getValue(`${ApiSequence.ON_UPDATE_APPROVAL}`)
+                                        let startTime: any = ""
+                                        let endTime: any = ""
+                                        if (!isEmpty(onUpdateApprovalTimeRanges)) {
+                                            const { start, end }: any = onUpdateApprovalTimeRanges
+                                            startTime = start
+                                            endTime = end
+                                        }
+                                        if (!(ret_obj_start_time_timestamp instanceof Date)) {
+                                            const key = 'returnFF/start/time/timestamp'
+                                            onupdtObj[key] = `start/time/timestamp of return fulfillment should have valid time format`
+                                        }
+                                        else {
+                                            if ((startTime instanceof Date) && (endTime instanceof Date) && (ret_obj_start_time_timestamp < startTime || ret_obj_start_time_timestamp > endTime)) {
+                                                const key = 'returnFF/start/time/timestamp'
+                                                onupdtObj[key] = `start/time/timestamp of return fulfillment should be in the valid time/range as in ${ApiSequence.ON_UPDATE_APPROVAL}`
+                                            }
+                                            if (ret_obj_start_time_timestamp > context.timestamp) {
+                                                const key = 'returnFF/start/time/timestamp/'
+                                                onupdtObj[key] = `start/time/timestamp of return fulfillment should be less than context/timestamp of ${apiSeq}`
+                                            }
+                                        }
+                                    }
+                                    else {
+                                        const key = 'returnFF/start/time/timestamp'
+                                        onupdtObj[key] = `start/time/timestamp of return fulfillment is missing`
+                                    }
+                                }
+                            }
+                            else {
+                                onupdtObj['Return.start.time'] = `Return fulfillment start time object is missing in ${apiSeq}`
+                            }
+                        } else {
+                            onupdtObj['ReturnFulfillment.start'] = `Return fulfillment start object is missing in ${apiSeq}`
+                        }
+                    }
+                } catch (error: any) {
+                    logger.error(`Error while checking Fulfillments Return Obj in /${apiSeq}, ${error.stack}`)
+                }
+            }
+
             // Checking for quote_trail price and item quote price
             try {
                 if (sumQuoteBreakUp(on_update.quote)) {
@@ -479,7 +737,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                         apiSeq == ApiSequence.ON_UPDATE_PICKED || apiSeq == ApiSequence.ON_UPDATE_DELIVERED
                     ) {
                         logger.info(`Checking for quote_trail price and item quote price sum for ${apiSeq}`)
-                        checkQuoteTrailSum(returnCancelFulfillments, price, priceAtConfirm, onupdtObj)
+                        checkQuoteTrailSum(returnCancelFulfillments, price, priceAtConfirm, onupdtObj, ApiSequence.ON_UPDATE)
                     }
                 } else {
                     logger.error(`The price breakdown in brakup does not match with the total_price for ${apiSeq} `)
@@ -535,9 +793,10 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                     if (fulfillment.type !== 'Return') return
 
                     const tags = fulfillment.tags
+                    let returnRequestPresent = false
                     tags.forEach((tag: any) => {
                         if (tag.code !== 'return_request') return
-
+                        returnRequestPresent = true
                         const lists = tag.list
                         let reason_id = 'not_found'
 
@@ -560,6 +819,9 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                             }
                         })
                     })
+                    if (!returnRequestPresent) {
+                        onupdtObj['returnRequest'] = `return request is not present in the 'Return' fulfillment`
+                    }
                 })
             } catch (error: any) {
                 logger.error(`!!Error while mapping cancellation_reason_id in ${apiSeq}`)
@@ -573,9 +835,10 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                     if (fulfillment.type !== 'Return') return
 
                     const tags = fulfillment.tags
+                    let returnRejectedRequestPresent = false
                     tags.forEach((tag: any) => {
                         if (tag.code !== 'return_request') return
-
+                        returnRejectedRequestPresent = true
                         const lists = tag.list
                         let reason_id = ''
 
@@ -598,6 +861,9 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                             }
                         })
                     })
+                    if (!returnRejectedRequestPresent) {
+                        onupdtObj['returnRejectedRequest'] = `return rejected request is not present in the 'Return' fulfillment`
+                    }
                 })
             } catch (error: any) {
                 logger.error(`!!Error while mapping cancellation_reason_id in ${apiSeq}`)
@@ -612,7 +878,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                         item.type === 'Return' || item.type === 'Cancel')
                     if (apiSeq == ApiSequence.ON_UPDATE_LIQUIDATED) {
                         logger.info(`Checking for quote_trail price and item quote price sum for ${apiSeq}`)
-                        checkQuoteTrailSum(returnCancelFulfillments, price, priceAtConfirm, onupdtObj)
+                        checkQuoteTrailSum(returnCancelFulfillments, price, priceAtConfirm, onupdtObj, ApiSequence.ON_UPDATE)
                     }
                 } else {
                     logger.error(`The price breakdown in brakup does not match with the total_price for ${apiSeq} `)

@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges } from '../..'
+import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges, compareFulfillmentObject } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, fulfillmentsItemsSet: any) => {
@@ -139,7 +139,8 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
       logger.info(`comparing fulfillment ranges `)
       const storedFulfillment = getValue(`deliveryFulfillment`)
       const deliveryFulfillment = on_status.fulfillments.filter((fulfillment: any) => fulfillment.type === 'Delivery')
-      const fulfillmentRangeerrors = compareTimeRanges(storedFulfillment, deliveryFulfillment[0])
+      const storedFulfillmentAction = getValue('deliveryFulfillmentAction')
+      const fulfillmentRangeerrors = compareTimeRanges(storedFulfillment, storedFulfillmentAction, deliveryFulfillment[0], ApiSequence.ON_STATUS_PACKED)
       if (fulfillmentRangeerrors) {
         let i = 0
         const len = fulfillmentRangeerrors.length
@@ -216,21 +217,26 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
         else {
           let i: number = 0
           fulfillmentsItemsSet.forEach((obj1: any) => {
-            const exist = fulfillments.some((obj2: any) => {
+            const keys = Object.keys(obj1)
+
+            let obj2: any = _.filter(fulfillments, { type: `${obj1.type}` })
+            if (obj2.length > 0) {
+              obj2 = obj2[0]
               if (obj2.type == "Delivery") {
-                delete obj2?.instructions
+                delete obj2?.start?.instructions
+                delete obj2?.end?.instructions
                 delete obj2?.tags
                 delete obj2?.state
               }
-              return _.isEqual(obj1, obj2)
-            });
-            if (!exist) {
-              if (obj1.type === 'Delivery') {
-                onStatusObj[`message/order.fulfillments/${i}`] = `Mismatch occured while comparing '${obj1.type}' fulfillment object(without state, tags, instructions) with ${ApiSequence.ON_STATUS_PENDING}`
+              const errors = compareFulfillmentObject(obj1, obj2, keys, i)
+              if (errors.length > 0) {
+                errors.forEach((item: any) => {
+                  onStatusObj[item.errKey] = item.errMsg
+                })
               }
-              if (obj1.type === 'Cancel') {
-                onStatusObj[`message/order.fulfillments/${i}`] = `Mismatch occured while comparing '${obj1.type}' fulfillment object with ${ApiSequence.ON_UPDATE_PART_CANCEL}`
-              }
+            }
+            else {
+              onStatusObj[`message/order.fulfillments/${i}`] = `Missing fulfillment type '${obj1.type}' in ${ApiSequence.ON_STATUS_PACKED} as compared to ${ApiSequence.ON_STATUS_PENDING}`
             }
             i++
           });

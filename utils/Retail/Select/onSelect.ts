@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import { getValue, setValue } from '../../../shared/dao'
-import constants, { ApiSequence } from '../../../constants'
+import constants, { ApiSequence, ffCategory } from '../../../constants'
 import { validateSchema, isObjectEmpty, checkContext, timeDiff, isoDurToSec, checkBppIdOrBapId } from '../..'
 import _ from 'lodash'
 import { logger } from '../../../shared/logger'
@@ -294,6 +294,37 @@ export const checkOnSelect = (data: any) => {
   } catch (error: any) {
     logger.error(`!!Error while checking fulfillments' state in /${constants.ON_SELECT}, ${error.stack}`)
   }
+
+  try {
+    logger.info(`Checking fulfillments' state in ${constants.ON_SELECT}`)
+    on_select.fulfillments.forEach((ff: any, idx: number) => {
+      if (ff.state) {
+        const ffDesc = ff.state.descriptor
+
+        function checkFFOrgCategory(selfPickupOrDelivery: number) {
+          if (!ff["@ondc/org/category"] || !ffCategory[selfPickupOrDelivery].includes(ff["@ondc/org/category"])) {
+            const key = `fulfillment${idx}/@ondc/org/category`
+            errorObj[key] =
+              `In Fulfillment${idx}, @ondc/org/category is not a valid value in ${constants.ON_SELECT} and should have one of these values ${[ffCategory[selfPickupOrDelivery]]}`
+          }
+        }
+        if (ffDesc.code === 'Serviceable' && ff.type == "Delivery") {
+          checkFFOrgCategory(0)
+        }
+        else if (ff.type == "Self-Pickup") {
+          checkFFOrgCategory(1)
+        }
+      }
+      else {
+        const key = `fulfillment${idx}/descCode`
+        errorObj[key] =
+          `In Fulfillment${idx}, descriptor code is mandatory in ${constants.ON_SELECT}`
+      }
+    });
+  } catch (error: any) {
+    logger.error(`!!Error while checking fulfillments @ondc/org/category in /${constants.ON_SELECT}, ${error.stack}`)
+  }
+
 
   let onSelectPrice: any = 0 //Net price after discounts and tax in /on_select
   let onSelectItemsPrice = 0 //Price of only items in /on_select

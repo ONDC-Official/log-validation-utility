@@ -65,18 +65,18 @@ export const ApiSequence = {
   ON_STATUS_PICKED: 'on_status_picked',
   ON_STATUS_OUT_FOR_DELIVERY: 'on_status_out_for_delivery',
   ON_STATUS_DELIVERED: 'on_status_delivered',
-  ON_UPDATE_PART_CANCEL : 'on_update_part_cancel',
+  ON_UPDATE_PART_CANCEL: 'on_update_part_cancel',
   UPDATE: 'update',
   UPDATE_REVERSE_QC: 'update_reverse_qc',
   UPDATE_LIQUIDATED: 'update_liquidated',
   UPDATE_SETTLEMENT: 'update_settlement',
-  UPDATE_SETTLEMENT_PART_CANCEL : 'update_settlement_part_cancel',
-  UPDATE_SETTLEMENT_REVERSE_QC : 'update_settlement_reverse_qc',
-  UPDATE_SETTLEMENT_LIQUIDATED : 'update_settlement_liquidated',
+  UPDATE_SETTLEMENT_PART_CANCEL: 'update_settlement_part_cancel',
+  UPDATE_SETTLEMENT_REVERSE_QC: 'update_settlement_reverse_qc',
+  UPDATE_SETTLEMENT_LIQUIDATED: 'update_settlement_liquidated',
   ON_UPDATE: 'on_update',
   ON_UPDATE_INTERIM: 'on_update_interim',
-  ON_UPDATE_INTERIM_REVERSE_QC:'on_update_interim_reverse_qc',
-  ON_UPDATE_INTERIM_LIQUIDATED:'on_update_interim_liquidated',
+  ON_UPDATE_INTERIM_REVERSE_QC: 'on_update_interim_reverse_qc',
+  ON_UPDATE_INTERIM_LIQUIDATED: 'on_update_interim_liquidated',
   ON_UPDATE_PICKED: 'on_update_picked',
   ON_UPDATE_DELIVERED: 'on_update_delivered',
   ON_UPDATE_APPROVAL: 'on_update_approval',
@@ -346,7 +346,7 @@ export const retailDomains = [
   'ONDC:RET19',
   'ONDC:RET20',
 ]
-export const ROUTING_ENUMS =['P2P', 'P2H2P']
+export const ROUTING_ENUMS = ['P2P', 'P2H2P']
 export const MOB_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 export const ON_DEMAND_VEHICLE = ['AUTO_RICKSHAW', 'CAB']
 export const MOB__DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
@@ -358,3 +358,5 @@ export const MOB_FULL_STATE = [
   'RIDE_ENROUTE_PICKUP',
   'RIDE_ARRIVED_PICKUP',
 ]
+
+export const ffCategory = [["Immediate Delivery", "Standard Delivery", "Express Delivery"], ["Takeaway", "Kerbside"]]

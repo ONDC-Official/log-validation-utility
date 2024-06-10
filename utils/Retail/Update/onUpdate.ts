@@ -182,26 +182,34 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                                 `UPI_address is missing in /message/order/payment/@ondc/org/settlement_details`
                         }
                     }
-                    if (flow === '6-a') {
-                        settlementDetatilSet.add(settlement_details[0])
-                    }
-                    else {
-                        settlementDetatilSet.forEach((obj1: any) => {
-                            const exist = settlement_details.some((obj2: any) => {
-                                return _.isEqual(obj1, obj2)
 
-                            });
-                            if (!exist) {
-                                onupdtObj[`message/order.payment/@ondc/org/settlement_details`] = "Missing payment/@ondc/org/settlement_details as compare to the previous calls"
-                            }
-                        });
-                    }
                 }
             })
         } catch (error: any) {
             logger.error(`Error while checking the settlement details in /message/order/payment`)
         }
+        //checking for settlement details in payment and comparing previous settlement_details
+        try {
+            logger.info(`Checking for settlement_details in /message/order/payment and comparing previous settlement_details`)
+            const settlement_details: any = on_update.payment['@ondc/org/settlement_details']
+            if (flow === '6-a') {
+                settlementDetatilSet.add(settlement_details[0])
+            }
+            else {
+                let i = 0;
+                settlementDetatilSet.forEach((obj1: any) => {
+                    const exist = settlement_details.some((obj2: any) => {
+                        return _.isEqual(obj1, obj2)
 
+                    });
+                    if (!exist) {
+                        onupdtObj[`message/order.payment/@ondc/org/settlement_details/${i++}`] = `Missing payment/@ondc/org/settlement_details as compare to the previous calls or not captured correctly i.e. ${JSON.stringify(obj1)}`
+                    }
+                });
+            }
+        } catch (error: any) {
+            logger.error(`Error while checking the settlement details in /message/order/payment and comparing previous settlement_details`)
+        }
 
         try {
             // Checking for valid item ids inside on_update

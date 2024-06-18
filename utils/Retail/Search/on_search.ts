@@ -103,24 +103,25 @@ export const checkOnsearch = (data: any) => {
       `Error while comparing transaction ids for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
     )
   }
-
-  try {
-    logger.info(`Comparing timestamp of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
-    const tmpstmp = searchContext?.timestamp
-    if (_.gte(tmpstmp, context.timestamp)) {
-      errorObj.tmpstmp = `Timestamp for /${constants.SEARCH} api cannot be greater than or equal to /${constants.ON_SEARCH} api`
-    } else {
-      const timeDiff = timeDifference(context.timestamp, tmpstmp)
-      logger.info(timeDiff)
-      if (timeDiff > 5000) {
-        errorObj.tmpstmp = `context/timestamp difference between /${constants.ON_SEARCH} and /${constants.SEARCH} should be less than 5 sec`
-      }
-    }
-  } catch (error: any) {
-    logger.info(
-      `Error while comparing timestamp for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
-    )
-  }
+  
+  // removed timestamp difference check
+  // try {
+  //   logger.info(`Comparing timestamp of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
+  //   const tmpstmp = searchContext?.timestamp
+  //   if (_.gte(tmpstmp, context.timestamp)) {
+  //     errorObj.tmpstmp = `Timestamp for /${constants.SEARCH} api cannot be greater than or equal to /${constants.ON_SEARCH} api`
+  //   } else {
+  //     const timeDiff = timeDifference(context.timestamp, tmpstmp)
+  //     logger.info(timeDiff)
+  //     if (timeDiff > 5000) {
+  //       errorObj.tmpstmp = `context/timestamp difference between /${constants.ON_SEARCH} and /${constants.SEARCH} should be less than 5 sec`
+  //     }
+  //   }
+  // } catch (error: any) {
+  //   logger.info(
+  //     `Error while comparing timestamp for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
+  //   )
+  // }
 
   try {
     logger.info(`Comparing Message Ids of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
@@ -334,11 +335,11 @@ export const checkOnsearch = (data: any) => {
                   `code should have 1:EAN as a value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
               }
               else {
-                const regex = /^\d{8}$|^d{13}$/
+                const regex = /^\d{8}$|^\d{13}$/
                 if (!regex.test(itemDescCode)) {
                   const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
                   errorObj[key] =
-                    `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code(${itemDescCode}) should be number and with either length 8 to 13`
+                    `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code(${itemDescCode}) should be number and with either length 8 or 13`
                 }
               }
               break;
@@ -884,7 +885,6 @@ export const checkOnsearch = (data: any) => {
           if ('category_id' in item) {
             itemCategory_id.add(item.category_id)
           }
-
           try {
             if ('category_ids' in item) {
               item[`category_ids`].map((category: string, index: number) => {

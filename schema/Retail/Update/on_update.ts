@@ -485,7 +485,7 @@ export const onUpdateSchema = {
                       },
                       settlement_type: {
                         type: 'string',
-                        enum: ['upi', 'neft', 'rtgs', 'wallet', 'netbanking', 'paylater'],
+                        enum: ['upi', 'neft', 'rtgs', 'wallet', 'netbanking', 'paylater', 'card'],
                       },
                       upi_address: { type: 'string' },
                       settlement_bank_account_no: {

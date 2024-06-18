@@ -547,7 +547,7 @@ export const onSearchSchema = {
                                     value: {
                                       type: 'string',
                                       pattern: '^[0-9]+(.[0-9]+)?$',
-                                      errorMessage: 'enter a valid number',
+                                      errorMessage: 'value should be stringified number',
                                     },
                                   },
                                   required: ['unit', 'value'],

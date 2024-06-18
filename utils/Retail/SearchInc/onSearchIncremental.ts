@@ -82,24 +82,24 @@ export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
       `Error while comparing transaction ids for /${ApiSequence.INC_SEARCH} and /${ApiSequence.INC_ONSEARCH} api, ${error.stack}`,
     )
   }
-
-  try {
-    logger.info(`Comparing timestamp of /${constants.INC_SEARCH} and /${constants.ON_SEARCHINC}`)
-    const tmpstmp = incSearchContext?.timestamp
-    if (_.gte(tmpstmp, context.timestamp)) {
-      errorObj.tmpstmp = `Timestamp for /${constants.INC_SEARCH} api cannot be greater than or equal to /${constants.ON_SEARCHINC} api`
-    } else {
-      const timeDiff = timeDifference(context.timestamp, tmpstmp)
-      logger.info(timeDiff)
-      if (timeDiff > 5000) {
-        errorObj.tmpstmp = `context/timestamp difference between /${constants.ON_SEARCHINC} and /${constants.INC_SEARCH} should be less than 5 sec`
-      }
-    }
-  } catch (error: any) {
-    logger.info(
-      `Error while comparing timestamp for /${constants.INC_SEARCH} and /${constants.ON_SEARCHINC} api, ${error.stack}`,
-    )
-  }
+  // removed timestamp difference check
+  // try {
+  //   logger.info(`Comparing timestamp of /${constants.INC_SEARCH} and /${constants.ON_SEARCHINC}`)
+  //   const tmpstmp = incSearchContext?.timestamp
+  //   if (_.gte(tmpstmp, context.timestamp)) {
+  //     errorObj.tmpstmp = `Timestamp for /${constants.INC_SEARCH} api cannot be greater than or equal to /${constants.ON_SEARCHINC} api`
+  //   } else {
+  //     const timeDiff = timeDifference(context.timestamp, tmpstmp)
+  //     logger.info(timeDiff)
+  //     if (timeDiff > 5000) {
+  //       errorObj.tmpstmp = `context/timestamp difference between /${constants.ON_SEARCHINC} and /${constants.INC_SEARCH} should be less than 5 sec`
+  //     }
+  //   }
+  // } catch (error: any) {
+  //   logger.info(
+  //     `Error while comparing timestamp for /${constants.INC_SEARCH} and /${constants.ON_SEARCHINC} api, ${error.stack}`,
+  //   )
+  // }
 
   try {
     logger.info(`Comparing timestamp of /${constants.ON_SEARCHINC} and /${constants.ON_SEARCH}`)

@@ -286,6 +286,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
 
 export const IGMvalidateLogs = (data: any) => {
   let logReport: any = {}
+  let retIsResolved = false
 
   try {
     dropDB()
@@ -327,18 +328,25 @@ export const IGMvalidateLogs = (data: any) => {
     }
 
     if (data[IGMApiSequence.RET_ON_ISSUE_STATUS]) {
-      const ret_onissue_status = checkOnIssueStatus(data[IGMApiSequence.RET_ON_ISSUE_STATUS])
-
-      if (!_.isEmpty(ret_onissue_status)) {
-        logReport = { ...logReport, [IGMApiSequence.RET_ON_ISSUE_STATUS]: ret_onissue_status }
+      const { onIssueStatusObj, isResolved } = checkOnIssueStatus(data[IGMApiSequence.RET_ON_ISSUE_STATUS])      
+      retIsResolved = isResolved
+      if (!_.isEmpty(onIssueStatusObj)) {
+        logReport = { ...logReport, [IGMApiSequence.RET_ON_ISSUE_STATUS]: onIssueStatusObj }
       }
     }
 
     if (data[IGMApiSequence.RET_ON_ISSUE_STATUS_UNSOLICITED]) {
-      const ret_onissue_status_un = checkOnIssueStatusUnsolicited(data[IGMApiSequence.RET_ON_ISSUE_STATUS_UNSOLICITED])
+      const { onIssueStatusObj, isResolved } = checkOnIssueStatusUnsolicited(
+        data[IGMApiSequence.RET_ON_ISSUE_STATUS_UNSOLICITED],
+        retIsResolved,
+      )
+      retIsResolved = isResolved
 
-      if (!_.isEmpty(ret_onissue_status_un)) {
-        logReport = { ...logReport, [IGMApiSequence.RET_ON_ISSUE_STATUS_UNSOLICITED]: ret_onissue_status_un }
+      if (!retIsResolved) {
+        onIssueStatusObj.respondentActions = `At least one action with respondent_action 'Resolved' exists in /on_issue_status(unsolicited) or /on_issue_status.`
+      }
+      if (!_.isEmpty(onIssueStatusObj)) {
+        logReport = { ...logReport, [IGMApiSequence.RET_ON_ISSUE_STATUS_UNSOLICITED]: onIssueStatusObj }
       }
     }
 

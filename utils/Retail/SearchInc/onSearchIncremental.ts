@@ -7,7 +7,7 @@ import { electronicsData } from '../../../constants/electronics'
 import { applianceData } from '../../../constants/appliance'
 import { fashion } from '../../../constants/fashion'
 import { DOMAIN } from '../../../utils/enum'
-import { validateSchema, isObjectEmpty, checkContext, timeDiff as timeDifference, checkGpsPrecision, emailRegex, checkMandatoryTags } from '../..'
+import { validateSchema, isObjectEmpty, checkContext, checkGpsPrecision, emailRegex, checkMandatoryTags } from '../..'
 import _, { isEmpty } from 'lodash'
 
 export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {

@@ -7,7 +7,7 @@ import {
   validateSchema,
   isObjectEmpty,
   checkContext,
-  timeDiff as timeDifference,
+  // timeDiff as timeDifference,
   checkGpsPrecision,
   emailRegex,
   checkBppIdOrBapId,
@@ -23,6 +23,8 @@ import {
   checkForDuplicates,
   getStatutoryRequirement,
   checkForStatutory,
+  validateBppUri,
+  validateBapUri,
 } from '../../../utils'
 import _, { isEmpty } from 'lodash'
 import { compareSTDwithArea } from '../../index';
@@ -52,6 +54,11 @@ export const checkOnsearch = (data: any) => {
     Object.assign(errorObj, schemaValidation)
   }
 
+  validateBapUri(context.bap_uri, context.bap_id, errorObj);
+  validateBppUri(context.bpp_uri, context.bpp_id, errorObj);
+  if (context.transaction_id == context.message_id) {
+    errorObj['on_search_full_catalog_refresh'] = `Context transaction_id (${context.transaction_id}) and message_id (${context.message_id}) can't be the same.`;
+  }
   try {
     logger.info(`Comparing Message Ids of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
     if (!_.isEqual(getValue(`${ApiSequence.SEARCH}_msgId`), context.message_id)) {
@@ -103,7 +110,7 @@ export const checkOnsearch = (data: any) => {
       `Error while comparing transaction ids for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
     )
   }
-  
+
   // removed timestamp difference check
   // try {
   //   logger.info(`Comparing timestamp of /${constants.SEARCH} and /${constants.ON_SEARCH}`)

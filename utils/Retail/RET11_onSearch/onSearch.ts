@@ -7,7 +7,7 @@ import {
   validateSchema,
   isObjectEmpty,
   checkContext,
-  timeDiff as timeDifference,
+  // timeDiff as timeDifference,
   checkGpsPrecision,
   emailRegex,
   checkBppIdOrBapId,
@@ -20,6 +20,8 @@ import {
   checkDuplicateParentIdItems,
   checkForDuplicates,
   validateObjectString,
+  validateBapUri,
+  validateBppUri,
 } from '../..'
 import _, { isEmpty } from 'lodash'
 
@@ -66,6 +68,13 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
     Object.assign(errorObj, contextRes.ERRORS)
   }
 
+  validateBapUri(context.bap_uri, context.bap_id, errorObj);
+  validateBppUri(context.bpp_uri, context.bpp_id, errorObj);
+
+  if (context.transaction_id == context.message_id) {
+    errorObj['on_search_full_catalog_refresh'] = `Context transaction_id (${context.transaction_id}) and message_id (${context.message_id}) can't be the same.`;
+  }
+  
   setValue(`${ApiSequence.ON_SEARCH}`, data)
 
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)

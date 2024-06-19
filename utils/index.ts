@@ -1272,3 +1272,20 @@ export function getStatutoryRequirement(category: string): statutory_reqs | unde
 function isValidTimestamp(timestamp: string): boolean {
   return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(timestamp)
 }
+
+export function checkIdInUri(Uri: string, id: string): boolean {
+  return Uri.includes(id);
+}
+
+export function validateBapUri(bapUri: string, bap_id: string, errorObj: any): any {
+  if (!checkIdInUri(bapUri, bap_id)) {
+    errorObj['bap_id_in_uri'] = `Bap_id ${bap_id} is not found in BapUri ${bapUri}`;
+  }
+}
+
+export function validateBppUri(bppUri: string, bpp_id: string, errorObj: any): any {
+  if (!checkIdInUri(bppUri, bpp_id)) {
+    errorObj['bpp_id_in_uri'] = `Bpp_id ${bpp_id} is not found in BppUri ${bppUri}`;
+  }
+}
+

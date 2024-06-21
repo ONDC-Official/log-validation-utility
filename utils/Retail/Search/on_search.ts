@@ -336,6 +336,7 @@ export const checkOnsearch = (data: any) => {
             case "10":
             case "13":
             case "16":
+            case "18":
               if (itemDescType != "1") {
                 const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
                 errorObj[key] =
@@ -367,7 +368,6 @@ export const checkOnsearch = (data: any) => {
               break;
             case "14":
             case "15":
-            case "18":
               if (itemDescType == "3") {
                 const regex = /^\d{8}$|^\d{12}$|^\d{13}$|^\d{14}$/
                 if (!regex.test(itemDescCode)) {

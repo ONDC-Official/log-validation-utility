@@ -1,5 +1,3 @@
-import { COLOUR } from './fashionEnum'
-
 export const applianceData = {
   'Air Purifier': {
     brand: {
@@ -12,7 +10,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -94,7 +92,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -176,7 +174,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -258,7 +256,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -340,7 +338,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -422,7 +420,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -504,7 +502,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -586,7 +584,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -668,7 +666,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -750,7 +748,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -832,7 +830,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -914,7 +912,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -996,7 +994,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -1078,7 +1076,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -1160,7 +1158,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -1242,7 +1240,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -1324,7 +1322,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -1406,7 +1404,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -1488,7 +1486,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -1570,7 +1568,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -1652,7 +1650,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -1734,7 +1732,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -1816,7 +1814,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -1898,7 +1896,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -1980,7 +1978,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -2062,7 +2060,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -2144,7 +2142,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -2226,7 +2224,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -2308,7 +2306,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -2390,7 +2388,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -2472,7 +2470,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -2554,7 +2552,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -2636,7 +2634,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -2718,7 +2716,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -2800,7 +2798,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -2882,7 +2880,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -2964,7 +2962,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -3046,7 +3044,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -3128,7 +3126,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -3210,7 +3208,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -3292,7 +3290,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -3374,7 +3372,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -3456,7 +3454,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -3538,7 +3536,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -3620,7 +3618,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -3702,7 +3700,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -3784,7 +3782,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -3866,7 +3864,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -3948,7 +3946,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -4030,7 +4028,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -4112,7 +4110,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -4194,7 +4192,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -4276,7 +4274,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -4358,7 +4356,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -4440,7 +4438,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -4522,7 +4520,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -4604,7 +4602,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -4686,7 +4684,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -4768,7 +4766,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -4850,7 +4848,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -4932,7 +4930,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -5014,7 +5012,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -5096,7 +5094,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -5178,7 +5176,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -5260,7 +5258,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -5342,7 +5340,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -5424,7 +5422,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -5506,7 +5504,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -5588,7 +5586,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -5670,7 +5668,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -5752,7 +5750,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -5834,7 +5832,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -5916,7 +5914,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -5998,7 +5996,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -6080,7 +6078,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -6162,7 +6160,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -6244,7 +6242,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -6326,7 +6324,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -6408,7 +6406,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -6490,7 +6488,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -6572,7 +6570,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -6654,7 +6652,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -6736,7 +6734,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -6818,7 +6816,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -6900,7 +6898,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -6982,7 +6980,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: true,
@@ -7064,7 +7062,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -7146,7 +7144,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: false,
@@ -7228,7 +7226,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: true,
@@ -7310,7 +7308,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: true,
@@ -7392,7 +7390,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: true,
@@ -7474,7 +7472,7 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6}/",
     },
     colour_name: {
       mandatory: true,

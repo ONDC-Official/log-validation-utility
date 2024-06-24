@@ -860,7 +860,7 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
               const tagFound = tags.some((tag: any) => {
                 const res = tag.code.toLowerCase() === tagName.toLowerCase()
                 if (res) {
-                  tagValue = tag.value.toLowerCase()
+                  tagValue = tag.value
                   originalTag = tag.value
                 }
 

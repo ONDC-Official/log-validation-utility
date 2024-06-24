@@ -342,21 +342,35 @@ export const checkOnSelect_OOS = (data: any) => {
       }
       else {
         function isValidErrorItem(obj: any): boolean {
-          return typeof obj.item_id === 'string' && typeof obj.error === 'string' && obj.error === "40002" && Object.keys(obj).length == 2
+          return typeof obj.item_id === 'string' && typeof obj.error === 'string' && obj.error === "40002"
         }
 
-        function validateErrorArray(items: any[]): boolean {
+        function validateErrorArray(items: any[]): boolean {          
           return items.every(isValidErrorItem);
         }
 
         if (validateErrorArray(errorArray)) {
-
           let i = 0
+
+          const parent_item_ids = _.map(breakup_msg,'item.parent_item_id')
+          const dynamic_item_ids = _.map(errorArray, 'dynamic_item_id')
+
+
+
+          _.difference(dynamic_item_ids,parent_item_ids).forEach((diff)=>{
+            errorObj.parent_item_ids_mismatch = `Dynamic_item_id: ${diff} doesn't exists in any quote.breakup.item.parent_item_ids`
+          })
+
           const itemsReduced = breakup_msg.filter(
-            (item: any) =>
-              item['@ondc/org/item_quantity'] &&
-              item['@ondc/org/item_quantity'].count < itemsIdList[item['@ondc/org/item_id']],
-          )
+            (item: any) => {
+             return item['@ondc/org/item_quantity'] &&
+              item['@ondc/org/item_quantity'].count < itemsIdList[item['@ondc/org/item_id']]
+            })
+
+            _.difference(_.map(itemsReduced,'item.parent_item_id'),dynamic_item_ids).forEach((diff)=>{
+              errorObj.dynamic_item_id_mismatch = `Dynamic_item_id: ${diff} is missing from error payload and should be provided in the correct form with proper error_code and item_id,dynamic_item_id,etc. For Example: if base item "I1" for dynamic item "DI1" and customization "C15" for dynamic item "DI2" are both out of stock, error.message would be encoded as: "[{\"dynamic_item_id\":\"DI1\",\"item_id\":\"I1\",\"error\":\"40002\"}, {\"dynamic_item_id\":\"DI2\",\"customization_id\":\"C15\",\"customization_group_id\":\"CG3\",\"error\":\"40002\"}]"`
+            })
+
           errorArray.forEach((errorItem: any) => {
             const isPresent = itemsReduced.some((item: any) => item['@ondc/org/item_id'] === errorItem.item_id)
             if (!isPresent) {

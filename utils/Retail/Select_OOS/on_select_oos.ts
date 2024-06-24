@@ -357,7 +357,6 @@ export const checkOnSelect_OOS = (data: any) => {
               item['@ondc/org/item_quantity'] &&
               item['@ondc/org/item_quantity'].count < itemsIdList[item['@ondc/org/item_id']],
           )
-
           errorArray.forEach((errorItem: any) => {
             const isPresent = itemsReduced.some((item: any) => item['@ondc/org/item_id'] === errorItem.item_id)
             if (!isPresent) {

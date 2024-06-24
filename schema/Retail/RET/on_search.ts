@@ -15,10 +15,10 @@ export const onSearchSchema = {
           const: 'on_search',
         },
         country: {
+          country: {
           type: 'string',
-          pattern: '^[A-Z]{3}$',
-          errorMessage: 'Country must be in ISO 3166-1 format (three-letter country code)',
-          minLength: 1,
+          const: 'IND',
+          }
         },
         city: {
           type: 'string',
@@ -686,23 +686,41 @@ export const onSearchSchema = {
                               },
                               list: {
                                 type: 'array',
-                                items: [
-                                  {
-                                    type: 'object',
-                                    properties: {
-                                      code: {
-                                        type: 'string',
-                                      },
-                                      value: {
-                                        type: 'string',
-                                      },
+                                items: {
+                                  type: 'object',
+                                  properties: {
+                                    code: {
+                                      type: 'string',
                                     },
-                                    required: ['code', 'value'],
+                                    value: {
+                                      type: 'string',
+                                    },
                                   },
-                                ],
+                                  required: ['code', 'value'],
+                                },
                               },
                             },
                             required: ['code', 'list'],
+                            if: {
+                              properties: { code: { const: 'origin' } },
+                            },
+                            then: {
+                              properties: {
+                                list: {
+                                  items: {
+                                    properties: {
+                                      value: {
+                                        type: 'string',
+                                        pattern:
+                                          '/^A(BW|FG|GO|IA|L[AB]|ND|R[EGM]|SM|T[AFG]|U[ST]|ZE)|B(DI|E[LNS]|FA|G[DR]|H[RS]|IH|L[MRZ]|MU|OL|R[ABN]|TN|VT|WA)|C(A[FN]|CK|H[ELN]|IV|MR|O[DGKLM]|PV|RI|U[BW]|XR|Y[MP]|ZE)|D(EU|JI|MA|NK|OM|ZA)|E(CU|GY|RI|S[HPT]|TH)|F(IN|JI|LK|R[AO]|SM)|G(AB|BR|EO|GY|HA|I[BN]|LP|MB|N[BQ]|R[CDL]|TM|U[FMY])|H(KG|MD|ND|RV|TI|UN)|I(DN|MN|ND|OT|R[LNQ]|S[LR]|TA)|J(AM|EY|OR|PN)|K(AZ|EN|GZ|HM|IR|NA|OR|WT)|L(AO|B[NRY]|CA|IE|KA|SO|TU|UX|VA)|M(A[CFR]|CO|D[AGV]|EX|HL|KD|L[IT]|MR|N[EGP]|OZ|RT|SR|TQ|US|WI|Y[ST])|N(AM|CL|ER|FK|GA|I[CU]|LD|OR|PL|RU|ZL)|OMN|P(A[KN]|CN|ER|HL|LW|NG|OL|R[IKTY]|SE|YF)|QAT|R(EU|OU|US|WA)|S(AU|DN|EN|G[PS]|HN|JM|L[BEV]|MR|OM|PM|RB|SD|TP|UR|V[KN]|W[EZ]|XM|Y[CR])|T(C[AD]|GO|HA|JK|K[LM]|LS|ON|TO|U[NRV]|WN|ZA)|U(GA|KR|MI|RY|SA|ZB)|V(AT|CT|EN|GB|IR|NM|UT)|W(LF|SM)|YEM|Z(AF|MB|WE)$/ix',
+                                        errorMessage:
+                                          'Country must be in ISO 3166-1 format (three-letter country code)',
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
                           },
                         },
                       },
@@ -873,41 +891,42 @@ export const onSearchSchema = {
                           if: {
                             properties: {
                               code: {
-                                const: "serviceability"
-                              }
-                            }
+                                const: 'serviceability',
+                              },
+                            },
                           },
                           then: {
                             properties: {
                               list: {
-                                type: "array",
+                                type: 'array',
                                 items: {
-                                  type: "object",
+                                  type: 'object',
                                   properties: {
                                     code: {
-                                      type: "string",
-                                      enum: ["location", "category", "type", "val", "unit"],
-                                      errorMessage: "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit'"
+                                      type: 'string',
+                                      enum: ['location', 'category', 'type', 'val', 'unit'],
+                                      errorMessage:
+                                        "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit'",
                                     },
                                     value: {
-                                      type: "string"
-                                    }
+                                      type: 'string',
+                                    },
                                   },
-                                  required: ["code", "value"],
-                                  additionalProperties: false
+                                  required: ['code', 'value'],
+                                  additionalProperties: false,
                                 },
                                 minItems: 5,
                                 maxItems: 5,
                                 uniqueItems: true,
                                 errorMessage: {
-                                  minItems: "Serviceability must have minimum 5 values",
-                                  maxItems: "Serviceability must have maximum 5 values",
-                                  uniqueItems: "Serviceability must have unique items",
-                                  _: "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit' and no duplicacy or other elements allowed"
-                                }
-                              }
-                            }
-                          }
+                                  minItems: 'Serviceability must have minimum 5 values',
+                                  maxItems: 'Serviceability must have maximum 5 values',
+                                  uniqueItems: 'Serviceability must have unique items',
+                                  _: "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit' and no duplicacy or other elements allowed",
+                                },
+                              },
+                            },
+                          },
                         },
                         {
                           if: {

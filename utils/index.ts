@@ -858,18 +858,17 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
               let tagValue: any = null
               let originalTag: any = null
               const tagFound = tags.some((tag: any) => {
-                const res = tag.code.toLowerCase() === tagName.toLowerCase()
+                const res = tag.code === tagName.toLowerCase()
                 if (res) {
                   tagValue = tag.value
                   originalTag = tag.value
                 }
-
                 return res
               })
               if (!tagFound) {
-                logger.error(`Mandatory tag field [${tagName}] missing for ${categoryName} item[${index}]`)
-                const key = `missingTagsItem[${i}][${index}] : ${tagName}`
-                errorObj[key] = `Mandatory tag field [${tagName}] missing for ${categoryName} item[${index}]`
+                logger.error(`Mandatory tag field [${tagName.toLowerCase()}] missing for ${categoryName} item[${index}]`)
+                const key = `missingTagsItem[${i}][${index}] : ${tagName.toLowerCase()}`
+                errorObj[key] = `Mandatory tag field [${tagName.toLowerCase()}] missing for ${categoryName} item[${index}]`
               } else {
                 if (tagInfo.value.length > 0) {
                   let isValidValue = false;

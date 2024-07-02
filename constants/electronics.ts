@@ -100,6 +100,10 @@ export const electronicsData = {
       mandatory: false,
       value: [],
     },
+    screen_size: {
+      mandatory: true,
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+    },
     weight: {
       mandatory: true,
       value: "/^[0-9]+(\.[0-9]{1,2})?$/",

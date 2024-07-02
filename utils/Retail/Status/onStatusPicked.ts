@@ -203,7 +203,10 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
           pickupTimestamps[fulfillment.id] = pickUpTime
           if (!pickUpTime) {
             onStatusObj.pickUpTime = `picked timestamp is missing`
-          } else {
+          } else if(fulfillment.start.time){
+            console.log(fulfillment.start.time,"lololololol")
+          }
+          else {
             try {
               //checking pickup time matching with context timestamp
               if (!_.lte(pickUpTime, contextTime)) {

@@ -1072,7 +1072,7 @@ export const onSearchSchema = {
                                       then: {
                                         properties: {
                                           value: {
-                                            pattern: '^[0-9]+(.[0-9]{2})?$',
+                                            pattern: '^[0-9]+(?:\.[0-9]{1,2})?$',
                                             errorMessage: 'min_value must be number with exactly two decimal places',
                                           },
                                         },

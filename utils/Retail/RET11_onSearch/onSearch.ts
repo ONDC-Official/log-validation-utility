@@ -17,7 +17,6 @@ import {
   isValidPhoneNumber,
   compareSTDwithArea,
   areTimestampsLessThanOrEqualTo,
-  checkDuplicateParentIdItems,
   validateObjectString,
   validateBapUri,
   validateBppUri,

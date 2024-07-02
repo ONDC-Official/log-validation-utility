@@ -7,7 +7,7 @@ import {
   validateSchema,
   isObjectEmpty,
   checkContext,
-  timeDiff as timeDifference,
+  // timeDiff as timeDifference,
   checkGpsPrecision,
   emailRegex,
   checkBppIdOrBapId,
@@ -17,12 +17,10 @@ import {
   isValidPhoneNumber,
   checkMandatoryTags,
   areTimestampsLessThanOrEqualTo,
-  checkDuplicateParentIdItems,
-  findVariantPath,
-  findValueAtPath,
-  checkForDuplicates,
   getStatutoryRequirement,
   checkForStatutory,
+  validateBppUri,
+  validateBapUri,
 } from '../../../utils'
 import _, { isEmpty } from 'lodash'
 import { compareSTDwithArea } from '../../index';
@@ -52,6 +50,11 @@ export const checkOnsearch = (data: any) => {
     Object.assign(errorObj, schemaValidation)
   }
 
+  validateBapUri(context.bap_uri, context.bap_id, errorObj);
+  validateBppUri(context.bpp_uri, context.bpp_id, errorObj);
+  if (context.transaction_id == context.message_id) {
+    errorObj['on_search_full_catalog_refresh'] = `Context transaction_id (${context.transaction_id}) and message_id (${context.message_id}) can't be the same.`;
+  }
   try {
     logger.info(`Comparing Message Ids of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
     if (!_.isEqual(getValue(`${ApiSequence.SEARCH}_msgId`), context.message_id)) {
@@ -104,23 +107,24 @@ export const checkOnsearch = (data: any) => {
     )
   }
 
-  try {
-    logger.info(`Comparing timestamp of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
-    const tmpstmp = searchContext?.timestamp
-    if (_.gte(tmpstmp, context.timestamp)) {
-      errorObj.tmpstmp = `Timestamp for /${constants.SEARCH} api cannot be greater than or equal to /${constants.ON_SEARCH} api`
-    } else {
-      const timeDiff = timeDifference(context.timestamp, tmpstmp)
-      logger.info(timeDiff)
-      if (timeDiff > 5000) {
-        errorObj.tmpstmp = `context/timestamp difference between /${constants.ON_SEARCH} and /${constants.SEARCH} should be less than 5 sec`
-      }
-    }
-  } catch (error: any) {
-    logger.info(
-      `Error while comparing timestamp for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
-    )
-  }
+  // removed timestamp difference check
+  // try {
+  //   logger.info(`Comparing timestamp of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
+  //   const tmpstmp = searchContext?.timestamp
+  //   if (_.gte(tmpstmp, context.timestamp)) {
+  //     errorObj.tmpstmp = `Timestamp for /${constants.SEARCH} api cannot be greater than or equal to /${constants.ON_SEARCH} api`
+  //   } else {
+  //     const timeDiff = timeDifference(context.timestamp, tmpstmp)
+  //     logger.info(timeDiff)
+  //     if (timeDiff > 5000) {
+  //       errorObj.tmpstmp = `context/timestamp difference between /${constants.ON_SEARCH} and /${constants.SEARCH} should be less than 5 sec`
+  //     }
+  //   }
+  // } catch (error: any) {
+  //   logger.info(
+  //     `Error while comparing timestamp for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
+  //   )
+  // }
 
   try {
     logger.info(`Comparing Message Ids of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
@@ -328,17 +332,18 @@ export const checkOnsearch = (data: any) => {
             case "10":
             case "13":
             case "16":
+            case "18":
               if (itemDescType != "1") {
                 const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
                 errorObj[key] =
                   `code should have 1:EAN as a value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
               }
               else {
-                const regex = /^\d{8,13}$/
+                const regex = /^\d{8}$|^\d{13}$/
                 if (!regex.test(itemDescCode)) {
                   const key = `bpp/providers[${i}]/items[${index}]/descriptor/code`
                   errorObj[key] =
-                    `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code should be number and have a between length 8 to 13`
+                    `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code(${itemDescCode}) should be number and with either length 8 or 13`
                 }
               }
               break;
@@ -359,7 +364,6 @@ export const checkOnsearch = (data: any) => {
               break;
             case "14":
             case "15":
-            case "18":
               if (itemDescType == "3") {
                 const regex = /^\d{8}$|^\d{12}$|^\d{13}$|^\d{14}$/
                 if (!regex.test(itemDescCode)) {
@@ -526,43 +530,43 @@ export const checkOnsearch = (data: any) => {
   }
 
   // Checking for duplicate varient in bpp/providers/items for on_search
-  try {
-    logger.info(`Checking for duplicate varient in bpp/providers/items for on_search`)
-    for (let i in onSearchCatalog['bpp/providers']) {
-      const varientPath: any = findVariantPath(onSearchCatalog['bpp/providers'][i].categories)
-      const items = onSearchCatalog['bpp/providers'][i].items
-      const map = checkDuplicateParentIdItems(items)
-      for (let key in map) {
-        if (map[key].length > 1) {
-          const item = varientPath.find((item: any) => {
-            return item.item_id === key
-          })
-          const pathForVarient = item.paths
-          let valueArray = []
-          if (pathForVarient.length) {
-            for (let j = 0; j < map[key].length; j++) {
-              let itemValues: any = {}
-              for (let path of pathForVarient) {
-                if (path === 'item.quantity.unitized.measure') {
-                  const unit = map[key][j].quantity.unitized.measure.unit
-                  const value = map[key][j].quantity.unitized.measure.value
-                  itemValues['unit'] = unit
-                  itemValues['value'] = value
-                } else {
-                  const val = findValueAtPath(path, map[key][j])
-                  itemValues[path.split('.').pop()] = val
-                }
-              }
-              valueArray.push(itemValues)
-            }
-            checkForDuplicates(valueArray, errorObj)
-          }
-        }
-      }
-    }
-  } catch (error: any) {
-    logger.error(`!!Errors while checking parent_item_id in bpp/providers/[]/items/[]/parent_item_id/, ${error.stack}`)
-  }
+  // try {
+  //   logger.info(`Checking for duplicate varient in bpp/providers/items for on_search`)
+  //   for (let i in onSearchCatalog['bpp/providers']) {
+  //     const varientPath: any = findVariantPath(onSearchCatalog['bpp/providers'][i].categories)
+  //     const items = onSearchCatalog['bpp/providers'][i].items
+  //     const map = checkDuplicateParentIdItems(items)
+  //     for (let key in map) {
+  //       if (map[key].length > 1) {
+  //         const item = varientPath.find((item: any) => {
+  //           return item.item_id === key
+  //         })
+  //         const pathForVarient = item.paths
+  //         let valueArray = []
+  //         if (pathForVarient.length) {
+  //           for (let j = 0; j < map[key].length; j++) {
+  //             let itemValues: any = {}
+  //             for (let path of pathForVarient) {
+  //               if (path === 'item.quantity.unitized.measure') {
+  //                 const unit = map[key][j].quantity.unitized.measure.unit
+  //                 const value = map[key][j].quantity.unitized.measure.value
+  //                 itemValues['unit'] = unit
+  //                 itemValues['value'] = value
+  //               } else {
+  //                 const val = findValueAtPath(path, map[key][j])
+  //                 itemValues[path.split('.').pop()] = val
+  //               }
+  //             }
+  //             valueArray.push(itemValues)
+  //           }
+  //           checkForDuplicates(valueArray, errorObj)
+  //         }
+  //       }
+  //     }
+  //   }
+  // } catch (error: any) {
+  //   logger.error(`!!Errors while checking parent_item_id in bpp/providers/[]/items/[]/parent_item_id/, ${error.stack}`)
+  // }
   try {
     logger.info(`Checking for np_type in bpp/descriptor`)
     const descriptor = onSearchCatalog['bpp/descriptor']
@@ -884,7 +888,6 @@ export const checkOnsearch = (data: any) => {
           if ('category_id' in item) {
             itemCategory_id.add(item.category_id)
           }
-
           try {
             if ('category_ids' in item) {
               item[`category_ids`].map((category: string, index: number) => {

@@ -156,6 +156,53 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
     } catch (error: any) {
       logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}, ${error.stack}`)
     }
+    try {
+      // For Delivery Object
+      const DELobj = _.filter(on_status.fulfillments, { type: 'Delivery' })
+      if (!DELobj.length) {
+        logger.error(`Delivery object is mandatory for ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}`)
+        const key = `missingDelivery`
+        onStatusObj[key] = `Delivery object is mandatory for ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}`
+      } else {
+        const deliveryObj = DELobj[0]
+        if (!deliveryObj.tags) {
+          const key = `missingTags`
+          onStatusObj[key] = `Tags are mandatory in Delivery Fulfillment for ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}`
+        }
+        else {
+          const tags = deliveryObj.tags
+          const routingTagArr = _.filter(tags, { code: 'routing' })
+          if (!routingTagArr.length) {
+            const key = `missingRouting/Tag`
+            onStatusObj[key] = `RoutingTag object is mandatory in Tags of Delivery Object for ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}`
+          }
+          else {
+            const routingTag = routingTagArr[0]
+            const routingTagList = routingTag.list
+            if (!routingTagList) {
+              const key = `missingRouting/Tag/List`
+              onStatusObj[key] = `RoutingTagList is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}`
+            }
+            else {
+              const routingTagTypeArr = _.filter(routingTagList, { code: 'type' })
+              if (!routingTagTypeArr.length) {
+                const key = `missingRouting/Tag/List/Type`
+                onStatusObj[key] = `RoutingTagListType object is mandatory in RoutingTag/List of Delivery Object for ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}`
+              }
+              else {
+                const routingTagType = routingTagTypeArr[0]
+                if (!ROUTING_ENUMS.includes(routingTagType.value)) {
+                  const key = `missingRouting/Tag/List/Type/Value`;
+                  onStatusObj[key] = `RoutingTagListType Value is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY} and should be equal to 'P2P' or 'P2H2P'`;
+                }
+              }
+            }
+          }
+        }
+      }
+    } catch (error: any) {
+      logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}, ${error.stack}`)
+    }
 
     try {
       logger.info(`Comparing timestamp of /${constants.ON_CONFIRM} and /${constants.ON_STATUS}_${state} API`)
@@ -353,6 +400,7 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
             const keys = Object.keys(obj1)
 
             let obj2: any = _.filter(fulfillments, { type: `${obj1.type}` })
+            let apiSeq = obj1.type === "Cancel" ? ApiSequence.ON_UPDATE_PART_CANCEL : (getValue('onCnfrmState') === "Accepted" ? (ApiSequence.ON_CONFIRM) : (ApiSequence.ON_STATUS_PENDING))
             if (obj2.length > 0) {
               obj2 = obj2[0]
               if (obj2.type == "Delivery") {
@@ -363,7 +411,7 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
                 delete obj2?.start?.time?.timestamp
                 delete obj2?.state
               }
-              const apiSeq = obj2.type === "Cancel" ? ApiSequence.ON_UPDATE_PART_CANCEL : (getValue('onCnfrmState') === "Accepted" ? (ApiSequence.ON_CONFIRM) : (ApiSequence.ON_STATUS_PENDING))
+              apiSeq = obj2.type === "Cancel" ? ApiSequence.ON_UPDATE_PART_CANCEL : (getValue('onCnfrmState') === "Accepted" ? (ApiSequence.ON_CONFIRM) : (ApiSequence.ON_STATUS_PENDING))
               const errors = compareFulfillmentObject(obj1, obj2, keys, i, apiSeq)
               if (errors.length > 0) {
                 errors.forEach((item: any) => {
@@ -372,7 +420,7 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
               }
             }
             else {
-              onStatusObj[`message/order.fulfillments/${i}`] = `Missing fulfillment type '${obj1.type}' in ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY} as compared to ${ApiSequence.ON_STATUS_PENDING}`
+              onStatusObj[`message/order.fulfillments/${i}`] = `Missing fulfillment type '${obj1.type}' in ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY} as compared to ${apiSeq}`
             }
             i++
           });

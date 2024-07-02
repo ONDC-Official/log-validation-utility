@@ -1,5 +1,3 @@
-import { COLOUR } from './fashionEnum'
-
 export const electronicsData = {
   'Mobile Phone': {
     brand: {
@@ -16,7 +14,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -102,6 +100,10 @@ export const electronicsData = {
       mandatory: false,
       value: [],
     },
+    screen_size: {
+      mandatory: true,
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+    },
     weight: {
       mandatory: true,
       value: "/^[0-9]+(\.[0-9]{1,2})?$/",
@@ -158,7 +160,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -442,7 +444,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -868,7 +870,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -1152,7 +1154,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -1436,7 +1438,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -1578,7 +1580,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -2288,7 +2290,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -2572,7 +2574,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -3140,7 +3142,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -5696,7 +5698,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -5838,7 +5840,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -5980,7 +5982,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -6122,7 +6124,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -6690,7 +6692,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -7684,7 +7686,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -7826,7 +7828,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -8252,7 +8254,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -12086,7 +12088,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -12512,7 +12514,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -12654,7 +12656,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -12796,7 +12798,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,
@@ -12938,7 +12940,7 @@ export const electronicsData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     colour_name: {
       mandatory: false,

@@ -203,7 +203,10 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
           pickupTimestamps[fulfillment.id] = pickUpTime
           if (!pickUpTime) {
             onStatusObj.pickUpTime = `picked timestamp is missing`
-          } else {
+          } else if(fulfillment.start.time){
+            console.log(fulfillment.start.time,"lololololol")
+          }
+          else {
             try {
               //checking pickup time matching with context timestamp
               if (!_.lte(pickUpTime, contextTime)) {
@@ -330,6 +333,7 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
             const keys = Object.keys(obj1)
 
             let obj2: any = _.filter(fulfillments, { type: `${obj1.type}` })
+            let apiSeq = obj1.type === "Cancel" ? ApiSequence.ON_UPDATE_PART_CANCEL : (getValue('onCnfrmState') === "Accepted" ? (ApiSequence.ON_CONFIRM) : (ApiSequence.ON_STATUS_PENDING))
             if (obj2.length > 0) {
               obj2 = obj2[0]
               if (obj2.type == "Delivery") {
@@ -340,7 +344,7 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
                 delete obj2?.tags
                 delete obj2?.state
               }
-              const apiSeq = obj2.type === "Cancel" ? ApiSequence.ON_UPDATE_PART_CANCEL : (getValue('onCnfrmState') === "Accepted" ? (ApiSequence.ON_CONFIRM) : (ApiSequence.ON_STATUS_PENDING))
+              apiSeq = obj2.type === "Cancel" ? ApiSequence.ON_UPDATE_PART_CANCEL : (getValue('onCnfrmState') === "Accepted" ? (ApiSequence.ON_CONFIRM) : (ApiSequence.ON_STATUS_PENDING))
               const errors = compareFulfillmentObject(obj1, obj2, keys, i, apiSeq)
               if (errors.length > 0) {
                 errors.forEach((item: any) => {
@@ -349,7 +353,7 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
               }
             }
             else {
-              onStatusObj[`message/order.fulfillments/${i}`] = `Missing fulfillment type '${obj1.type}' in ${ApiSequence.ON_STATUS_PICKED} as compared to ${ApiSequence.ON_STATUS_PENDING}`
+              onStatusObj[`message/order.fulfillments/${i}`] = `Missing fulfillment type '${obj1.type}' in ${ApiSequence.ON_STATUS_PICKED} as compared to ${apiSeq}`
             }
             i++
           });

@@ -34,15 +34,15 @@ export const applianceData = {
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
     },
     refurbished: {
       mandatory: false,

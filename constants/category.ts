@@ -48,15 +48,15 @@ export const groceryJSON: { [key: string]: ICategoryJSON } = {
 }
 
 const healthObj: ICategoryJSON = {
-  Brand: {
+  brand: {
     mandatory: true,
     value: [],
   },
-  Prescription_Required: {
+  prescription_required: {
     mandatory: true,
     value: [],
   },
-  Usage_Instruction: {
+  usage_instruction: {
     mandatory: false,
     value: [],
   },
@@ -103,62 +103,62 @@ export const healthJSON: { [key: string]: ICategoryJSON } = {
   'Gift Voucher': healthObj,
 }
 
-const homeObj: ICategoryJSON = {
-  Brand: {
+const homeObj = {
+  brand: {
     mandatory: true,
     value: [],
   },
-  Colour: {
+  colour: {
     mandatory: true,
     value: [],
   },
-  Colour_Name: {
-    mandatory: false,
-    value: [],
+  colour_name: {
+    mandatory: true,
+    value: "/^#([a-fA-F0-9]{6})/",
   },
-  Material: {
+  material: {
     mandatory: true,
     value: [],
   },
-  Size: {
+  size: {
     mandatory: false,
     value: [],
   },
-  Weight: {
+  weight: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+  },
+  length: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+  },
+  breadth: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+  },
+  height: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+  },
+  model: {
     mandatory: false,
     value: [],
   },
-  Length: {
+  assembly_required: {
     mandatory: false,
     value: [],
   },
-  Breadth: {
+  care_instructions: {
     mandatory: false,
     value: [],
   },
-  Height: {
-    mandatory: false,
-    value: [],
-  },
-  Model: {
-    mandatory: false,
-    value: [],
-  },
-  Assembly_Required: {
-    mandatory: false,
-    value: [],
-  },
-  Care_Instructions: {
-    mandatory: false,
-    value: [],
-  },
-  Special_Features: {
+  special_features: {
     mandatory: false,
     value: [],
   },
 }
 
-export const homeJSON: { [key: string]: ICategoryJSON } = {
+export const homeJSON = {
   'Home Decor': homeObj,
   Furniture: homeObj,
   'Home Furnishing - Bedding and Linen': homeObj,
@@ -178,43 +178,43 @@ export const homeJSON: { [key: string]: ICategoryJSON } = {
 }
 
 const BPCObj: ICategoryJSON = {
-  Brand: {
+  brand: {
     mandatory: true,
     value: [],
   },
-  Colour: {
+  colour: {
     mandatory: false,
     value: [],
   },
-  Colour_Name: {
+  colour_Name: {
     mandatory: false,
     value: [],
   },
-  Gender: {
+  gender: {
     mandatory: false,
     value: [],
   },
-  Concern: {
+  concern: {
     mandatory: false,
     value: [],
   },
-  Ingredient: {
+  ingredient: {
     mandatory: false,
     value: [],
   },
-  Conscious: {
+  conscious: {
     mandatory: false,
     value: [],
   },
-  Preference: {
+  preference: {
     mandatory: false,
     value: [],
   },
-  Formulation: {
+  formulation: {
     mandatory: false,
     value: [],
   },
-  Skin_Type: {
+  skin_type: {
     mandatory: false,
     value: [],
   },

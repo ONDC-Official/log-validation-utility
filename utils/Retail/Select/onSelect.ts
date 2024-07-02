@@ -123,10 +123,13 @@ export const checkOnSelect = (data: any) => {
   try {
     const fulfillments = message.order.fulfillments
     const selectFlflmntSet: any = []
+    const fulfillment_tat_obj:any={}
     fulfillments.forEach((flflmnt: any) => {
+      fulfillment_tat_obj[flflmnt.id] = isoDurToSec(flflmnt["@ondc/org/TAT"])
       selectFlflmntSet.push(flflmnt.id)
-    })
+    })        
     setValue('selectFlflmntSet', selectFlflmntSet)
+    setValue('fulfillment_tat_obj', fulfillment_tat_obj)
   } catch (error: any) {
     logger.error(`Error while checking for fulfillment IDs for /${constants.ON_SELECT}`, error.stack)
   }

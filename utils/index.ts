@@ -822,7 +822,6 @@ export const compareSTDwithArea = (pincode: number, std: string): boolean => {
 }
 
 export const checkMandatoryTags = (i: string, items: any, errorObj: any, categoryJSON: any, categoryName: string) => {
-  console.log(items,items.length,'lol');
   
   items.forEach((item: any, index: number) => {
     let attributeTag = null
@@ -867,8 +866,6 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
           console.log(`All tag codes have corresponding valid attributes.`)
         }
         for (const tagName in mandatoryTags) {
-          console.log(tagName, 'loltagName')
-
           if (mandatoryTags.hasOwnProperty(tagName)) {
             const tagInfo = mandatoryTags[tagName]
             const isTagMandatory = tagInfo.mandatory

@@ -65,7 +65,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -431,7 +431,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -797,7 +797,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -1163,7 +1163,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -1529,7 +1529,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -1921,7 +1921,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -2313,7 +2313,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -2679,7 +2679,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -3045,7 +3045,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -3411,7 +3411,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -3803,7 +3803,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -4195,7 +4195,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -4561,7 +4561,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -4927,7 +4927,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -5316,7 +5316,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -5705,7 +5705,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -6071,7 +6071,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -6437,7 +6437,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -6803,7 +6803,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -7169,7 +7169,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -7535,7 +7535,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -7927,7 +7927,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -8316,7 +8316,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -8705,7 +8705,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -9094,7 +9094,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -9486,7 +9486,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -9878,7 +9878,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -10267,7 +10267,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -10633,7 +10633,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -11025,7 +11025,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -11414,7 +11414,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -11806,7 +11806,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -12195,7 +12195,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -12561,7 +12561,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -12927,7 +12927,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -13293,7 +13293,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -13700,7 +13700,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -14089,7 +14089,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -14455,7 +14455,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -14821,7 +14821,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -15187,7 +15187,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -15553,7 +15553,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -15956,7 +15956,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -16336,7 +16336,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -16749,7 +16749,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -17138,7 +17138,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -17551,7 +17551,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -17917,7 +17917,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -18283,7 +18283,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -18649,7 +18649,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -19038,7 +19038,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -19404,7 +19404,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -19951,7 +19951,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -20317,7 +20317,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -20706,7 +20706,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -21072,7 +21072,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -21620,7 +21620,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -21986,7 +21986,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -22352,7 +22352,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -22718,7 +22718,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -23084,7 +23084,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -23476,7 +23476,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -23842,7 +23842,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -24208,7 +24208,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -24574,7 +24574,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -24940,7 +24940,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -25306,7 +25306,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -25668,7 +25668,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -26034,7 +26034,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -26400,7 +26400,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -26766,7 +26766,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -27132,7 +27132,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -27498,7 +27498,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -27864,7 +27864,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -28230,7 +28230,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -28596,7 +28596,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -28962,7 +28962,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -29328,7 +29328,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -29694,7 +29694,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -30060,7 +30060,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -30426,7 +30426,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -30792,7 +30792,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -31158,7 +31158,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -31524,7 +31524,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -31890,7 +31890,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -32256,7 +32256,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -32622,7 +32622,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -32988,7 +32988,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -33354,7 +33354,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -33720,7 +33720,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -34086,7 +34086,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -34452,7 +34452,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -34818,7 +34818,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -35184,7 +35184,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -35550,7 +35550,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -35916,7 +35916,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -36282,7 +36282,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -36648,7 +36648,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -37014,7 +37014,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -37380,7 +37380,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -37746,7 +37746,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -38112,7 +38112,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -38478,7 +38478,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -38844,7 +38844,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -39231,7 +39231,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -39597,7 +39597,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,
@@ -39963,7 +39963,7 @@ export const fashion = {
     },
     Colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6}/",
+      value: "/^#([a-fA-F0-9]{6})/"
     },
     Size: {
       mandatory: true,

@@ -822,13 +822,11 @@ export const compareSTDwithArea = (pincode: number, std: string): boolean => {
 }
 
 export const checkMandatoryTags = (i: string, items: any, errorObj: any, categoryJSON: any, categoryName: string) => {
-  console.log(items,items.length,'lolitems');
+  console.log(items,items.length,'lol');
   
   items.forEach((item: any, index: number) => {
     let attributeTag = null
     let originTag = null
-    console.log(item,'itemslol');
-    
     for (const tag of item.tags) {
       originTag = tag.code === 'origin' ? tag : originTag
       attributeTag = tag.code === 'attribute' ? tag : attributeTag
@@ -844,6 +842,7 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
       logger.error(`Attribute tag fields are missing for ${categoryName} item[${index}]`)
       const key = `missingAttributeTag[${i}][${index}]`
       errorObj[key] = `Attribute tag fields are missing for ${categoryName} item[${index}]`
+      return
     }
 
     if (attributeTag) {
@@ -852,11 +851,11 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
 
       if (categoryJSON.hasOwnProperty(ctgrID)) {
         logger.info(`Checking for item tags for ${categoryName} item[${index}]`)
-        const mandatoryTags = categoryJSON[ctgrID]
-        const mandatoryTagKeys = new Set(Object.keys(mandatoryTags))
+        const mandatoryTags = categoryJSON[ctgrID] 
         const missingMandatoryTags: any[] = []
         tags.forEach((tag: { code: string }) => {
-          if (!mandatoryTagKeys.has(tag.code.toLowerCase())) {
+          const tagCode = tag.code
+          if (!mandatoryTags[tagCode]) {
             missingMandatoryTags.push(tag.code)
           }
         })
@@ -876,12 +875,14 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
             if (isTagMandatory) {
               let tagValue: any = null
               let originalTag: any = null
-              const tagFound = tags.some((tag: any) => {
+              const tagFound = tags.some((tag: any) :any=> {
                 const res = tag.code === tagName.toLowerCase()
                 if (res) {
                   tagValue = tag.value
                   originalTag = tag.value
+                  
                 }
+                return res
               })
               if (!tagFound) {
                 logger.error(

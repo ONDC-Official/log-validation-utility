@@ -110,11 +110,11 @@ const homeObj = {
   },
   colour: {
     mandatory: true,
-    value: [],
+    value: "/^#([a-fA-F0-9]{6})/",
   },
   colour_name: {
     mandatory: true,
-    value: "/^#([a-fA-F0-9]{6})/",
+    value: [],
   },
   material: {
     mandatory: true,

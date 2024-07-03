@@ -1,6 +1,7 @@
 import dotenv from 'dotenv'
 import { logger } from './shared/logger'
 import createServer from './app'
+import './sw'
 
 dotenv.config()
 const port = process.env.PORT || 3008

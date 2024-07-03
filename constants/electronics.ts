@@ -10,19 +10,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: true,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: true,
@@ -30,7 +30,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -38,7 +38,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: true,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: true,
@@ -54,11 +54,11 @@ export const electronicsData = {
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -70,7 +70,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: true,
@@ -102,11 +102,11 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -114,11 +114,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -138,7 +138,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -156,19 +156,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -176,7 +176,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -184,7 +184,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -196,15 +196,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -216,7 +216,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -248,7 +248,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -256,11 +256,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -280,7 +280,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -298,7 +298,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -310,7 +310,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -318,7 +318,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -326,7 +326,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -338,15 +338,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -358,7 +358,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -390,7 +390,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -398,11 +398,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -422,7 +422,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -440,19 +440,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: true,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: true,
@@ -460,7 +460,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -468,7 +468,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: true,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: true,
@@ -480,15 +480,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: true,
@@ -500,7 +500,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: true,
@@ -532,7 +532,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -540,11 +540,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -564,7 +564,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -582,7 +582,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -594,7 +594,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: true,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: true,
@@ -602,7 +602,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -610,7 +610,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: true,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: true,
@@ -622,15 +622,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: true,
@@ -642,7 +642,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: true,
@@ -674,7 +674,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -682,11 +682,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -706,7 +706,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -724,7 +724,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -736,7 +736,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: true,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: true,
@@ -744,7 +744,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -752,7 +752,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: true,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: true,
@@ -764,15 +764,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: true,
@@ -784,7 +784,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: true,
@@ -816,7 +816,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -824,11 +824,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -848,7 +848,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -866,19 +866,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -886,7 +886,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -894,7 +894,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -906,15 +906,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -926,7 +926,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -958,7 +958,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -966,11 +966,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -990,7 +990,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -1008,7 +1008,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -1020,7 +1020,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -1028,7 +1028,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -1036,7 +1036,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -1048,15 +1048,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -1068,7 +1068,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -1100,7 +1100,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -1108,11 +1108,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -1132,7 +1132,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -1150,19 +1150,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -1170,7 +1170,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -1178,7 +1178,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -1190,15 +1190,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -1210,7 +1210,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -1242,7 +1242,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -1250,11 +1250,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -1274,7 +1274,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -1292,7 +1292,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -1304,7 +1304,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -1312,7 +1312,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -1320,7 +1320,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -1332,15 +1332,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -1352,7 +1352,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -1384,7 +1384,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -1392,11 +1392,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -1416,7 +1416,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -1434,19 +1434,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -1454,7 +1454,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -1462,7 +1462,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -1474,15 +1474,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -1494,7 +1494,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -1526,19 +1526,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -1558,7 +1558,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: true,
@@ -1576,19 +1576,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -1596,7 +1596,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -1604,7 +1604,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -1616,15 +1616,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -1636,7 +1636,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: true,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -1668,19 +1668,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -1700,7 +1700,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: true,
@@ -1718,7 +1718,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -1730,7 +1730,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -1738,7 +1738,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -1746,7 +1746,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -1758,15 +1758,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -1778,7 +1778,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -1810,19 +1810,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -1842,7 +1842,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -1860,7 +1860,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -1872,7 +1872,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -1880,7 +1880,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -1888,7 +1888,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -1900,15 +1900,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -1920,7 +1920,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -1952,19 +1952,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -1984,7 +1984,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -2002,7 +2002,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -2014,7 +2014,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -2022,7 +2022,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -2030,7 +2030,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -2042,15 +2042,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -2062,7 +2062,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -2094,19 +2094,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -2126,7 +2126,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -2144,7 +2144,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -2156,7 +2156,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -2164,7 +2164,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -2172,7 +2172,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -2184,15 +2184,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -2204,7 +2204,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -2236,19 +2236,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -2268,7 +2268,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -2286,19 +2286,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -2306,7 +2306,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -2314,7 +2314,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -2326,15 +2326,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -2346,7 +2346,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -2378,7 +2378,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -2386,11 +2386,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -2410,7 +2410,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: true,
@@ -2428,7 +2428,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -2440,7 +2440,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -2448,7 +2448,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -2456,7 +2456,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -2468,15 +2468,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -2488,7 +2488,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -2520,19 +2520,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -2552,7 +2552,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -2570,19 +2570,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -2590,7 +2590,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -2598,7 +2598,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -2610,15 +2610,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -2630,7 +2630,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -2662,7 +2662,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -2670,11 +2670,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -2694,7 +2694,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: true,
@@ -2712,7 +2712,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -2724,7 +2724,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -2732,7 +2732,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -2740,7 +2740,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -2752,15 +2752,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -2772,7 +2772,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -2804,19 +2804,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -2836,7 +2836,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -2854,7 +2854,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -2866,7 +2866,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -2874,7 +2874,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -2882,7 +2882,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -2894,15 +2894,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: true,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -2914,7 +2914,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -2946,7 +2946,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -2954,11 +2954,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -2978,7 +2978,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: true,
@@ -2996,7 +2996,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -3008,7 +3008,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -3016,7 +3016,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -3024,7 +3024,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -3036,15 +3036,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: true,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -3056,7 +3056,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: true,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -3088,7 +3088,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -3096,11 +3096,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -3120,7 +3120,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: true,
@@ -3138,19 +3138,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -3158,7 +3158,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -3166,7 +3166,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -3178,15 +3178,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -3198,7 +3198,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -3230,19 +3230,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -3262,7 +3262,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -3280,7 +3280,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -3292,7 +3292,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -3300,7 +3300,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -3308,7 +3308,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -3320,15 +3320,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -3340,7 +3340,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: true,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -3372,19 +3372,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -3404,7 +3404,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -3422,7 +3422,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -3434,7 +3434,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -3442,7 +3442,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -3450,7 +3450,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -3462,15 +3462,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -3482,7 +3482,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -3514,19 +3514,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -3546,7 +3546,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -3564,7 +3564,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -3576,7 +3576,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -3584,7 +3584,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -3592,7 +3592,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -3604,15 +3604,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: true,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -3624,7 +3624,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -3656,19 +3656,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -3688,7 +3688,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -3706,7 +3706,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -3718,7 +3718,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -3726,7 +3726,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -3734,7 +3734,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -3746,15 +3746,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -3766,7 +3766,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -3798,19 +3798,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -3830,7 +3830,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -3848,7 +3848,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -3860,7 +3860,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -3868,7 +3868,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -3876,7 +3876,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -3888,15 +3888,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -3908,7 +3908,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -3940,19 +3940,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -3972,7 +3972,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -3990,7 +3990,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -4002,7 +4002,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -4010,7 +4010,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -4018,7 +4018,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -4030,15 +4030,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -4050,7 +4050,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -4082,19 +4082,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -4114,7 +4114,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -4132,7 +4132,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -4144,7 +4144,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -4152,7 +4152,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -4160,7 +4160,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -4172,15 +4172,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -4192,7 +4192,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -4224,19 +4224,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -4256,7 +4256,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -4274,7 +4274,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -4286,7 +4286,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -4294,7 +4294,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -4302,7 +4302,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -4314,15 +4314,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -4334,7 +4334,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -4366,19 +4366,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -4398,7 +4398,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -4416,7 +4416,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -4428,7 +4428,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -4436,7 +4436,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -4444,7 +4444,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -4456,15 +4456,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -4476,7 +4476,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -4508,7 +4508,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -4516,11 +4516,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -4540,7 +4540,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: true,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: true,
@@ -4558,7 +4558,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -4570,7 +4570,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -4578,7 +4578,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -4586,7 +4586,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -4598,15 +4598,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -4618,7 +4618,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -4650,19 +4650,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -4682,7 +4682,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -4700,7 +4700,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -4712,7 +4712,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -4720,7 +4720,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -4728,7 +4728,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: true,
@@ -4744,11 +4744,11 @@ export const electronicsData = {
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -4760,7 +4760,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -4792,19 +4792,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -4824,7 +4824,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -4842,7 +4842,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -4854,7 +4854,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -4862,7 +4862,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -4870,7 +4870,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: true,
@@ -4886,11 +4886,11 @@ export const electronicsData = {
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -4902,7 +4902,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -4934,19 +4934,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -4966,7 +4966,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -4984,7 +4984,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -4996,7 +4996,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -5004,7 +5004,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -5012,7 +5012,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: true,
@@ -5028,11 +5028,11 @@ export const electronicsData = {
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -5044,7 +5044,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -5076,19 +5076,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5108,7 +5108,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -5126,7 +5126,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -5138,7 +5138,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -5146,7 +5146,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -5154,7 +5154,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -5166,15 +5166,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -5186,7 +5186,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -5218,19 +5218,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5250,7 +5250,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -5268,7 +5268,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -5280,7 +5280,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -5288,7 +5288,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -5296,7 +5296,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -5308,15 +5308,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -5328,7 +5328,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -5360,19 +5360,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5392,7 +5392,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -5410,7 +5410,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -5422,7 +5422,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -5430,7 +5430,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -5438,7 +5438,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -5450,15 +5450,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -5470,7 +5470,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -5502,19 +5502,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5534,7 +5534,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -5552,7 +5552,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -5564,7 +5564,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -5572,7 +5572,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -5580,7 +5580,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -5592,15 +5592,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -5612,7 +5612,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -5644,19 +5644,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5676,7 +5676,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -5694,19 +5694,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -5714,7 +5714,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -5722,7 +5722,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -5734,15 +5734,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -5754,7 +5754,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -5786,19 +5786,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5818,7 +5818,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -5836,19 +5836,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -5856,7 +5856,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -5864,7 +5864,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -5876,15 +5876,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -5896,7 +5896,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -5928,19 +5928,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5960,7 +5960,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -5978,19 +5978,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -5998,7 +5998,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -6006,7 +6006,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -6018,15 +6018,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -6038,7 +6038,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -6070,19 +6070,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -6102,7 +6102,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -6120,19 +6120,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -6140,7 +6140,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -6148,7 +6148,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -6160,15 +6160,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -6180,7 +6180,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -6212,19 +6212,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -6244,7 +6244,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -6262,7 +6262,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -6274,7 +6274,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -6282,7 +6282,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -6290,7 +6290,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -6302,15 +6302,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -6322,7 +6322,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -6354,7 +6354,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -6362,11 +6362,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -6386,7 +6386,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -6404,7 +6404,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -6416,7 +6416,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -6424,7 +6424,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -6432,7 +6432,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -6444,15 +6444,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -6464,7 +6464,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -6496,19 +6496,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -6528,7 +6528,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -6546,7 +6546,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: true,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -6558,7 +6558,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: true,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: true,
@@ -6566,7 +6566,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -6574,7 +6574,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -6586,15 +6586,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -6606,7 +6606,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -6638,19 +6638,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -6670,7 +6670,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: true,
@@ -6688,19 +6688,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: true,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -6708,7 +6708,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -6716,7 +6716,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -6728,15 +6728,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: true,
@@ -6748,7 +6748,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -6780,7 +6780,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -6788,11 +6788,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -6812,7 +6812,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: true,
@@ -6830,7 +6830,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -6842,7 +6842,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -6850,7 +6850,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -6858,7 +6858,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -6870,15 +6870,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -6890,7 +6890,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -6922,19 +6922,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -6954,7 +6954,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -6972,7 +6972,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -6984,7 +6984,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -6992,7 +6992,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -7000,7 +7000,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -7012,15 +7012,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -7032,7 +7032,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -7064,19 +7064,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -7096,7 +7096,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -7114,7 +7114,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -7126,7 +7126,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -7134,7 +7134,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -7142,7 +7142,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -7154,15 +7154,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -7174,7 +7174,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -7206,19 +7206,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -7238,7 +7238,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -7256,7 +7256,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -7268,7 +7268,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -7276,7 +7276,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -7284,7 +7284,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -7296,15 +7296,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -7316,7 +7316,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -7348,19 +7348,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -7380,7 +7380,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -7398,7 +7398,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -7410,7 +7410,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: true,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -7418,7 +7418,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -7426,7 +7426,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -7438,15 +7438,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -7458,7 +7458,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -7490,7 +7490,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -7498,11 +7498,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -7522,7 +7522,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: true,
@@ -7540,7 +7540,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: true,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -7552,7 +7552,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -7560,7 +7560,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -7568,7 +7568,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -7580,15 +7580,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -7600,7 +7600,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -7632,7 +7632,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -7640,11 +7640,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -7664,7 +7664,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -7682,19 +7682,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -7702,7 +7702,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -7710,7 +7710,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -7722,15 +7722,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -7742,7 +7742,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -7774,7 +7774,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -7782,11 +7782,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -7806,7 +7806,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -7824,19 +7824,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -7844,7 +7844,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -7852,7 +7852,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -7864,15 +7864,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -7884,7 +7884,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -7916,19 +7916,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -7948,7 +7948,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -7966,7 +7966,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -7978,7 +7978,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -7986,7 +7986,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -7994,7 +7994,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -8006,15 +8006,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -8026,7 +8026,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -8058,19 +8058,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -8090,7 +8090,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -8108,7 +8108,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -8120,7 +8120,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -8128,7 +8128,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -8136,7 +8136,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -8148,15 +8148,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -8168,7 +8168,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -8200,19 +8200,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -8232,7 +8232,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -8250,19 +8250,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -8270,7 +8270,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -8278,7 +8278,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -8290,15 +8290,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -8310,7 +8310,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -8342,19 +8342,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -8374,7 +8374,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -8392,7 +8392,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -8404,7 +8404,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -8412,7 +8412,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -8420,7 +8420,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -8432,15 +8432,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -8452,7 +8452,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -8484,19 +8484,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -8516,7 +8516,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -8534,7 +8534,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -8546,7 +8546,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -8554,7 +8554,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -8562,7 +8562,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -8574,15 +8574,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -8594,7 +8594,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -8626,19 +8626,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -8658,7 +8658,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -8676,7 +8676,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -8688,7 +8688,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -8696,7 +8696,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -8704,7 +8704,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -8716,15 +8716,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -8736,7 +8736,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -8768,19 +8768,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -8800,7 +8800,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: true,
@@ -8818,7 +8818,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -8830,7 +8830,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -8838,7 +8838,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -8846,7 +8846,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -8858,15 +8858,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -8878,7 +8878,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -8910,19 +8910,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -8942,7 +8942,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -8960,7 +8960,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -8972,7 +8972,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -8980,7 +8980,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -8988,7 +8988,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -9000,15 +9000,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -9020,7 +9020,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -9052,19 +9052,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -9084,7 +9084,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -9102,7 +9102,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -9114,7 +9114,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -9122,7 +9122,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -9130,7 +9130,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -9142,15 +9142,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -9162,7 +9162,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -9194,7 +9194,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -9202,11 +9202,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -9226,7 +9226,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -9244,7 +9244,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -9256,7 +9256,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -9264,7 +9264,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -9272,7 +9272,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -9284,15 +9284,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -9304,7 +9304,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -9336,19 +9336,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -9368,7 +9368,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -9386,7 +9386,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -9398,7 +9398,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -9406,7 +9406,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -9414,7 +9414,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -9426,15 +9426,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -9446,7 +9446,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -9478,19 +9478,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -9510,7 +9510,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -9528,7 +9528,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -9540,7 +9540,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -9548,7 +9548,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -9556,7 +9556,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -9568,15 +9568,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -9588,7 +9588,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: true,
@@ -9620,7 +9620,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -9628,11 +9628,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -9652,7 +9652,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: true,
@@ -9670,7 +9670,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -9682,7 +9682,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -9690,7 +9690,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -9698,7 +9698,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -9710,15 +9710,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -9730,7 +9730,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -9762,7 +9762,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -9770,11 +9770,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -9794,7 +9794,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: true,
@@ -9812,7 +9812,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -9824,7 +9824,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -9832,7 +9832,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -9840,7 +9840,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -9852,15 +9852,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -9872,7 +9872,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -9904,19 +9904,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -9936,7 +9936,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -9954,7 +9954,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -9966,7 +9966,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -9974,7 +9974,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -9982,7 +9982,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -9994,15 +9994,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -10014,7 +10014,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -10046,19 +10046,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -10078,7 +10078,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -10096,7 +10096,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -10108,7 +10108,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -10116,7 +10116,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -10124,7 +10124,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -10136,15 +10136,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -10156,7 +10156,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -10188,19 +10188,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -10220,7 +10220,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -10238,7 +10238,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -10250,7 +10250,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -10258,7 +10258,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -10266,7 +10266,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -10278,15 +10278,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -10298,7 +10298,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -10330,19 +10330,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -10362,7 +10362,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -10380,7 +10380,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -10392,7 +10392,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -10400,7 +10400,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -10408,7 +10408,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -10420,15 +10420,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -10440,7 +10440,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -10472,19 +10472,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -10504,7 +10504,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -10522,7 +10522,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -10534,7 +10534,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -10542,7 +10542,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -10550,7 +10550,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -10562,15 +10562,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -10582,7 +10582,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -10614,19 +10614,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -10646,7 +10646,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -10664,7 +10664,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -10676,7 +10676,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -10684,7 +10684,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -10692,7 +10692,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -10704,15 +10704,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -10724,7 +10724,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -10756,19 +10756,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -10788,7 +10788,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -10806,7 +10806,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -10818,7 +10818,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -10826,7 +10826,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -10834,7 +10834,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -10846,15 +10846,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -10866,7 +10866,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -10898,19 +10898,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -10930,7 +10930,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -10948,7 +10948,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -10960,7 +10960,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -10968,7 +10968,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -10976,7 +10976,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -10988,15 +10988,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -11008,7 +11008,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -11040,7 +11040,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -11048,11 +11048,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -11072,7 +11072,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -11090,7 +11090,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -11102,7 +11102,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -11110,7 +11110,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -11118,7 +11118,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -11130,15 +11130,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -11150,7 +11150,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -11182,19 +11182,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -11214,7 +11214,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -11232,7 +11232,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -11244,7 +11244,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -11252,7 +11252,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -11260,7 +11260,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -11272,15 +11272,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -11292,7 +11292,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -11324,19 +11324,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -11356,7 +11356,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -11374,7 +11374,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -11386,7 +11386,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -11394,7 +11394,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -11402,7 +11402,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -11414,15 +11414,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -11434,7 +11434,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -11466,19 +11466,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -11498,7 +11498,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -11516,7 +11516,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -11528,7 +11528,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -11536,7 +11536,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -11544,7 +11544,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -11556,15 +11556,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -11576,7 +11576,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -11608,19 +11608,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -11640,7 +11640,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -11658,7 +11658,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -11670,7 +11670,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -11678,7 +11678,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -11686,7 +11686,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -11698,15 +11698,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -11718,7 +11718,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -11750,19 +11750,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -11782,7 +11782,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: true,
@@ -11800,7 +11800,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -11812,7 +11812,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -11820,7 +11820,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -11828,7 +11828,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -11840,15 +11840,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -11860,7 +11860,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -11892,19 +11892,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -11924,7 +11924,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -11942,7 +11942,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -11954,7 +11954,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -11962,7 +11962,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -11970,7 +11970,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -11982,15 +11982,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -12002,7 +12002,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -12034,7 +12034,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -12042,11 +12042,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -12066,7 +12066,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -12084,19 +12084,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -12104,7 +12104,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -12112,7 +12112,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -12124,15 +12124,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -12144,7 +12144,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -12176,7 +12176,7 @@ export const electronicsData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: true,
@@ -12184,11 +12184,11 @@ export const electronicsData = {
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -12208,7 +12208,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: true,
@@ -12226,7 +12226,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -12238,7 +12238,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -12246,7 +12246,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -12254,7 +12254,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -12266,15 +12266,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -12286,7 +12286,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -12318,19 +12318,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -12350,7 +12350,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: true,
@@ -12368,7 +12368,7 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: false,
@@ -12380,7 +12380,7 @@ export const electronicsData = {
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -12388,7 +12388,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -12396,7 +12396,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -12408,15 +12408,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -12428,7 +12428,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -12460,19 +12460,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -12492,7 +12492,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -12510,19 +12510,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -12530,7 +12530,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -12538,7 +12538,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -12550,15 +12550,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -12570,7 +12570,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -12602,19 +12602,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -12634,7 +12634,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -12652,19 +12652,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -12672,7 +12672,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -12680,7 +12680,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -12692,15 +12692,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -12712,7 +12712,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -12744,19 +12744,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -12776,7 +12776,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -12794,19 +12794,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -12814,7 +12814,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -12822,7 +12822,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -12834,15 +12834,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -12854,7 +12854,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -12886,19 +12886,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -12918,7 +12918,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,
@@ -12936,19 +12936,19 @@ export const electronicsData = {
     },
     model_year: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     colour: {
       mandatory: true,
-      value: "/^#([a-fA-F0-9]{6})/"
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     ram: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     ram_unit: {
       mandatory: false,
@@ -12956,7 +12956,7 @@ export const electronicsData = {
     },
     rom: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     rom_unit: {
       mandatory: false,
@@ -12964,7 +12964,7 @@ export const electronicsData = {
     },
     storage: {
       mandatory: false,
-      value: "/^[0-9]{1,4}$/",
+      value: '/^[0-9]{1,4}$/',
     },
     storage_unit: {
       mandatory: false,
@@ -12976,15 +12976,15 @@ export const electronicsData = {
     },
     screen_size: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     primary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     secondary_camera: {
       mandatory: false,
-      value: "/^[0-9]{1,3}$/",
+      value: '/^[0-9]{1,3}$/',
     },
     cpu: {
       mandatory: false,
@@ -12996,7 +12996,7 @@ export const electronicsData = {
     },
     battery_capacity: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     os_type: {
       mandatory: false,
@@ -13028,19 +13028,19 @@ export const electronicsData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -13060,7 +13060,7 @@ export const electronicsData = {
     },
     printer_speed: {
       mandatory: false,
-      value: "/^[0-9]{1,5}$/",
+      value: '/^[0-9]{1,5}$/',
     },
     warranty: {
       mandatory: false,

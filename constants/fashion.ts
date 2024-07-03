@@ -59,19 +59,19 @@ import {
 
 export const fashion = {
   Shirts: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -79,365 +79,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'T Shirts': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -445,365 +445,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Sweatshirts: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -811,365 +811,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Kurtas & Kurta Sets': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -1177,391 +1177,391 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Jackets & Coats': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '0-3 Months',
-        '0-6 Months',
-        '3-6 Months',
-        '6-9 Months',
-        '6-12 Months',
-        '9-12 Months',
-        '12-18 Months',
-        '18-24 Months',
-        '0-1 Years',
-        '1-2 Years',
-        '2-3 Years',
-        '3-4 Years',
-        '4-5 Years',
-        '5-6 Years',
-        '6-7 Years',
-        '7-8 Years',
-        '8-9 Years',
-        '9-10 Years',
-        '10-11 Years',
-        '11-12 Years',
-        '12-13 Years',
-        '13-14 Years',
-        '14-15 Years',
-        '15-16 Years',
-        'Free Size',
-      ],
+      value: {
+        '0': '0-3 Months',
+        '1': '0-6 Months',
+        '2': '3-6 Months',
+        '3': '6-9 Months',
+        '4': '6-12 Months',
+        '5': '9-12 Months',
+        '6': '12-18 Months',
+        '7': '18-24 Months',
+        '8': '0-1 Years',
+        '9': '1-2 Years',
+        '10': '2-3 Years',
+        '11': '3-4 Years',
+        '12': '4-5 Years',
+        '13': '5-6 Years',
+        '14': '6-7 Years',
+        '15': '7-8 Years',
+        '16': '8-9 Years',
+        '17': '9-10 Years',
+        '18': '10-11 Years',
+        '19': '11-12 Years',
+        '20': '12-13 Years',
+        '21': '13-14 Years',
+        '22': '14-15 Years',
+        '23': '15-16 Years',
+        '24': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -1569,391 +1569,391 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Sweaters: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '0-3 Months',
-        '0-6 Months',
-        '3-6 Months',
-        '6-9 Months',
-        '6-12 Months',
-        '9-12 Months',
-        '12-18 Months',
-        '18-24 Months',
-        '0-1 Years',
-        '1-2 Years',
-        '2-3 Years',
-        '3-4 Years',
-        '4-5 Years',
-        '5-6 Years',
-        '6-7 Years',
-        '7-8 Years',
-        '8-9 Years',
-        '9-10 Years',
-        '10-11 Years',
-        '11-12 Years',
-        '12-13 Years',
-        '13-14 Years',
-        '14-15 Years',
-        '15-16 Years',
-        'Free Size',
-      ],
+      value: {
+        '0': '0-3 Months',
+        '1': '0-6 Months',
+        '2': '3-6 Months',
+        '3': '6-9 Months',
+        '4': '6-12 Months',
+        '5': '9-12 Months',
+        '6': '12-18 Months',
+        '7': '18-24 Months',
+        '8': '0-1 Years',
+        '9': '1-2 Years',
+        '10': '2-3 Years',
+        '11': '3-4 Years',
+        '12': '4-5 Years',
+        '13': '5-6 Years',
+        '14': '6-7 Years',
+        '15': '7-8 Years',
+        '16': '8-9 Years',
+        '17': '9-10 Years',
+        '18': '10-11 Years',
+        '19': '11-12 Years',
+        '20': '12-13 Years',
+        '21': '13-14 Years',
+        '22': '14-15 Years',
+        '23': '15-16 Years',
+        '24': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -1961,365 +1961,1131 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
+      mandatory: false,
+      value: [],
+    },
+  },
+  'Stoles and Scarves': {
+    gender: {
+      mandatory: true,
+      value: GENDER,
+    },
+    colour: {
+      mandatory: true,
+      value: '/^#([a-fA-F0-9]{6})/',
+    },
+    size: {
+      mandatory: true,
+      value: {
+        '0': '0-3 Months',
+        '1': '0-6 Months',
+        '2': '3-6 Months',
+        '3': '6-9 Months',
+        '4': '6-12 Months',
+        '5': '9-12 Months',
+        '6': '12-18 Months',
+        '7': '18-24 Months',
+        '8': '0-1 Years',
+        '9': '1-2 Years',
+        '10': '2-3 Years',
+        '11': '3-4 Years',
+        '12': '4-5 Years',
+        '13': '5-6 Years',
+        '14': '6-7 Years',
+        '15': '7-8 Years',
+        '16': '8-9 Years',
+        '17': '9-10 Years',
+        '18': '10-11 Years',
+        '19': '11-12 Years',
+        '20': '12-13 Years',
+        '21': '13-14 Years',
+        '22': '14-15 Years',
+        '23': '15-16 Years',
+        '24': 'Free Size',
+      },
+    },
+    brand: {
+      mandatory: true,
+      value: [],
+    },
+    size_chart: {
+      mandatory: true,
+      value: [],
+    },
+    fabric: {
+      mandatory: true,
+      value: FABRIC,
+    },
+    strap_material: {
+      mandatory: false,
+      value: STRAP_MATERIAL,
+    },
+    water_resistant: {
+      mandatory: false,
+      value: [],
+    },
+    display: {
+      mandatory: false,
+      value: DISPLAY,
+    },
+    glass_material: {
+      mandatory: false,
+      value: [],
+    },
+    colour_name: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
+      mandatory: false,
+      value: SPORT_TYPE,
+    },
+    base_metal: {
+      mandatory: false,
+      value: BASE_METAL,
+    },
+    plating: {
+      mandatory: false,
+      value: PLATING,
+    },
+    care_instructions: {
+      mandatory: false,
+      value: [],
+    },
+    wash_type: {
+      mandatory: false,
+      value: WASH_TYPE,
+    },
+    weight: {
+      mandatory: false,
+      value: [],
+    },
+    length: {
+      mandatory: false,
+      value: [],
+    },
+    breadth: {
+      mandatory: false,
+      value: [],
+    },
+    height: {
+      mandatory: false,
+      value: [],
+    },
+    features: {
+      mandatory: false,
+      value: FEATURES,
+    },
+    fabric_finish: {
+      mandatory: false,
+      value: FABRIC_FINISH,
+    },
+    material: {
+      mandatory: false,
+      value: MATERIAL,
+    },
+    material_finish: {
+      mandatory: false,
+      value: MATERIAL_FINISH,
+    },
+    pattern: {
+      mandatory: false,
+      value: PATTERN,
+    },
+    occasion: {
+      mandatory: false,
+      value: OCCASION,
+    },
+    season: {
+      mandatory: false,
+      value: SEASON,
+    },
+    trend: {
+      mandatory: false,
+      value: TREND,
+    },
+    fit: {
+      mandatory: false,
+      value: FIT,
+    },
+    collar: {
+      mandatory: false,
+      value: COLLAR,
+    },
+    neck: {
+      mandatory: false,
+      value: NECK,
+    },
+    bundles: {
+      mandatory: false,
+      value: [],
+    },
+    max_sale_quantity: {
+      mandatory: false,
+      value: [],
+    },
+    hemline: {
+      mandatory: false,
+      value: HEMLINE,
+    },
+    lining: {
+      mandatory: false,
+      value: [],
+    },
+    num_pockets: {
+      mandatory: false,
+      value: [],
+    },
+    reversible: {
+      mandatory: false,
+      value: [],
+    },
+    bottom_type: {
+      mandatory: false,
+      value: BOTTOM_TYPE,
+    },
+    top_type: {
+      mandatory: false,
+      value: TOP_TYPE,
+    },
+    front_styling: {
+      mandatory: false,
+      value: FRONT_STYLING,
+    },
+    sleeve_length: {
+      mandatory: false,
+      value: SLEEVE_LENGTH,
+    },
+    sweatshirt_type: {
+      mandatory: false,
+      value: SWEATSHIRT_TYPE,
+    },
+    fragile: {
+      mandatory: false,
+      value: [],
+    },
+    liquid: {
+      mandatory: false,
+      value: [],
+    },
+    hazardous: {
+      mandatory: false,
+      value: [],
+    },
+    power_type: {
+      mandatory: false,
+      value: POWER_TYPE,
+    },
+    battery_life: {
+      mandatory: false,
+      value: [],
+    },
+    bluetooth: {
+      mandatory: false,
+      value: [],
+    },
+    call_function: {
+      mandatory: false,
+      value: [],
+    },
+    heart_rate_monitor: {
+      mandatory: false,
+      value: [],
+    },
+    pedometer: {
+      mandatory: false,
+      value: [],
+    },
+    sleep_monitor: {
+      mandatory: false,
+      value: [],
+    },
+    spo2_monitor: {
+      mandatory: false,
+      value: [],
+    },
+    warranty: {
+      mandatory: false,
+      value: [],
+    },
+    buckle_material: {
+      mandatory: false,
+      value: BUCKLE_MATERIAL,
+    },
+    buckle_type: {
+      mandatory: false,
+      value: BUCKLE_TYPE,
+    },
+    waist_rise: {
+      mandatory: false,
+      value: WAIST_RISE,
+    },
+    socks_length: {
+      mandatory: false,
+      value: SOCKS_LENGTH,
+    },
+    footwear_type: {
+      mandatory: false,
+      value: FOOTWEAR_TYPE,
+    },
+    insole: {
+      mandatory: false,
+      value: INSOLE,
+    },
+    sole_material: {
+      mandatory: false,
+      value: SOLE_MATERIAL,
+    },
+    toe_shape: {
+      mandatory: false,
+      value: TOE_SHAPE,
+    },
+    outsole: {
+      mandatory: false,
+      value: OUTSOLE,
+    },
+    fasten_type: {
+      mandatory: false,
+      value: FASTEN_TYPE,
+    },
+    midsole: {
+      mandatory: false,
+      value: MIDSOLE,
+    },
+    backpack_style: {
+      mandatory: false,
+      value: BACKPACK_STYLE,
+    },
+    closure_type: {
+      mandatory: false,
+      value: CLOSURE_TYPE,
+    },
+    stone_type: {
+      mandatory: false,
+      value: STONE_TYPE,
+    },
+    gem_type: {
+      mandatory: false,
+      value: GEM_TYPE,
+    },
+    dial_shape: {
+      mandatory: false,
+      value: DIAL_SHAPE,
+    },
+    frame_type: {
+      mandatory: false,
+      value: FRAME_TYPE,
+    },
+    frame_shape: {
+      mandatory: false,
+      value: FRAME_SHAPE,
+    },
+    frame_colour: {
+      mandatory: false,
+      value: [],
+    },
+    frame_size: {
+      mandatory: false,
+      value: FRAME_SIZE,
+    },
+    frame_material: {
+      mandatory: false,
+      value: FRAME_MATERIAL,
+    },
+    frame_style: {
+      mandatory: false,
+      value: FRAME_STYLE,
+    },
+    face_shape: {
+      mandatory: false,
+      value: FACE_SHAPE,
+    },
+    lens_material: {
+      mandatory: false,
+      value: LENS_MATERIAL,
+    },
+    lens_colour: {
+      mandatory: false,
+      value: [],
+    },
+    laptop_compartment: {
+      mandatory: false,
+      value: [],
+    },
+    strap_type: {
+      mandatory: false,
+      value: [],
+    },
+    volume: {
+      mandatory: false,
+      value: [],
+    },
+    lock_type: {
+      mandatory: false,
+      value: LOCK_TYPE,
+    },
+    ornamentation: {
+      mandatory: false,
+      value: ORNAMENTATION,
+    },
+    coverage: {
+      mandatory: false,
+      value: COVERAGE,
+    },
+    padding: {
+      mandatory: false,
+      value: PADDING,
+    },
+    seam: {
+      mandatory: false,
+      value: SEAM,
+    },
+    waist_band: {
+      mandatory: false,
+      value: WAIST_BAND,
+    },
+    sustainability: {
+      mandatory: false,
+      value: [],
+    },
+    handcrafted: {
+      mandatory: false,
+      value: [],
+    },
+    craftmark: {
+      mandatory: false,
+      value: [],
+    },
+  },
+  Mufflers: {
+    gender: {
+      mandatory: true,
+      value: GENDER,
+    },
+    colour: {
+      mandatory: true,
+      value: '/^#([a-fA-F0-9]{6})/',
+    },
+    size: {
+      mandatory: true,
+      value: {
+        '0': 'Semi Stitched',
+        '1': 'Un Stitched',
+        '2': 'Free Size',
+      },
+    },
+    brand: {
+      mandatory: true,
+      value: [],
+    },
+    size_chart: {
+      mandatory: true,
+      value: [],
+    },
+    fabric: {
+      mandatory: true,
+      value: FABRIC,
+    },
+    strap_material: {
+      mandatory: false,
+      value: STRAP_MATERIAL,
+    },
+    water_resistant: {
+      mandatory: false,
+      value: [],
+    },
+    display: {
+      mandatory: false,
+      value: DISPLAY,
+    },
+    glass_material: {
+      mandatory: false,
+      value: [],
+    },
+    colour_name: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
+      mandatory: false,
+      value: SPORT_TYPE,
+    },
+    base_metal: {
+      mandatory: false,
+      value: BASE_METAL,
+    },
+    plating: {
+      mandatory: false,
+      value: PLATING,
+    },
+    care_instructions: {
+      mandatory: false,
+      value: [],
+    },
+    wash_type: {
+      mandatory: false,
+      value: WASH_TYPE,
+    },
+    weight: {
+      mandatory: false,
+      value: [],
+    },
+    length: {
+      mandatory: false,
+      value: [],
+    },
+    breadth: {
+      mandatory: false,
+      value: [],
+    },
+    height: {
+      mandatory: false,
+      value: [],
+    },
+    features: {
+      mandatory: false,
+      value: FEATURES,
+    },
+    fabric_finish: {
+      mandatory: false,
+      value: FABRIC_FINISH,
+    },
+    material: {
+      mandatory: false,
+      value: MATERIAL,
+    },
+    material_finish: {
+      mandatory: false,
+      value: MATERIAL_FINISH,
+    },
+    pattern: {
+      mandatory: false,
+      value: PATTERN,
+    },
+    occasion: {
+      mandatory: false,
+      value: OCCASION,
+    },
+    season: {
+      mandatory: false,
+      value: SEASON,
+    },
+    trend: {
+      mandatory: false,
+      value: TREND,
+    },
+    fit: {
+      mandatory: false,
+      value: FIT,
+    },
+    collar: {
+      mandatory: false,
+      value: COLLAR,
+    },
+    neck: {
+      mandatory: false,
+      value: NECK,
+    },
+    bundles: {
+      mandatory: false,
+      value: [],
+    },
+    max_sale_quantity: {
+      mandatory: false,
+      value: [],
+    },
+    hemline: {
+      mandatory: false,
+      value: HEMLINE,
+    },
+    lining: {
+      mandatory: false,
+      value: [],
+    },
+    num_pockets: {
+      mandatory: false,
+      value: [],
+    },
+    reversible: {
+      mandatory: false,
+      value: [],
+    },
+    bottom_type: {
+      mandatory: false,
+      value: BOTTOM_TYPE,
+    },
+    top_type: {
+      mandatory: false,
+      value: TOP_TYPE,
+    },
+    front_styling: {
+      mandatory: false,
+      value: FRONT_STYLING,
+    },
+    sleeve_length: {
+      mandatory: false,
+      value: SLEEVE_LENGTH,
+    },
+    sweatshirt_type: {
+      mandatory: false,
+      value: SWEATSHIRT_TYPE,
+    },
+    fragile: {
+      mandatory: false,
+      value: [],
+    },
+    liquid: {
+      mandatory: false,
+      value: [],
+    },
+    hazardous: {
+      mandatory: false,
+      value: [],
+    },
+    power_type: {
+      mandatory: false,
+      value: POWER_TYPE,
+    },
+    battery_life: {
+      mandatory: false,
+      value: [],
+    },
+    bluetooth: {
+      mandatory: false,
+      value: [],
+    },
+    call_function: {
+      mandatory: false,
+      value: [],
+    },
+    heart_rate_monitor: {
+      mandatory: false,
+      value: [],
+    },
+    pedometer: {
+      mandatory: false,
+      value: [],
+    },
+    sleep_monitor: {
+      mandatory: false,
+      value: [],
+    },
+    spo2_monitor: {
+      mandatory: false,
+      value: [],
+    },
+    warranty: {
+      mandatory: false,
+      value: [],
+    },
+    buckle_material: {
+      mandatory: false,
+      value: BUCKLE_MATERIAL,
+    },
+    buckle_type: {
+      mandatory: false,
+      value: BUCKLE_TYPE,
+    },
+    waist_rise: {
+      mandatory: false,
+      value: WAIST_RISE,
+    },
+    socks_length: {
+      mandatory: false,
+      value: SOCKS_LENGTH,
+    },
+    footwear_type: {
+      mandatory: false,
+      value: FOOTWEAR_TYPE,
+    },
+    insole: {
+      mandatory: false,
+      value: INSOLE,
+    },
+    sole_material: {
+      mandatory: false,
+      value: SOLE_MATERIAL,
+    },
+    toe_shape: {
+      mandatory: false,
+      value: TOE_SHAPE,
+    },
+    outsole: {
+      mandatory: false,
+      value: OUTSOLE,
+    },
+    fasten_type: {
+      mandatory: false,
+      value: FASTEN_TYPE,
+    },
+    midsole: {
+      mandatory: false,
+      value: MIDSOLE,
+    },
+    backpack_style: {
+      mandatory: false,
+      value: BACKPACK_STYLE,
+    },
+    closure_type: {
+      mandatory: false,
+      value: CLOSURE_TYPE,
+    },
+    stone_type: {
+      mandatory: false,
+      value: STONE_TYPE,
+    },
+    gem_type: {
+      mandatory: false,
+      value: GEM_TYPE,
+    },
+    dial_shape: {
+      mandatory: false,
+      value: DIAL_SHAPE,
+    },
+    frame_type: {
+      mandatory: false,
+      value: FRAME_TYPE,
+    },
+    frame_shape: {
+      mandatory: false,
+      value: FRAME_SHAPE,
+    },
+    frame_colour: {
+      mandatory: false,
+      value: [],
+    },
+    frame_size: {
+      mandatory: false,
+      value: FRAME_SIZE,
+    },
+    frame_material: {
+      mandatory: false,
+      value: FRAME_MATERIAL,
+    },
+    frame_style: {
+      mandatory: false,
+      value: FRAME_STYLE,
+    },
+    face_shape: {
+      mandatory: false,
+      value: FACE_SHAPE,
+    },
+    lens_material: {
+      mandatory: false,
+      value: LENS_MATERIAL,
+    },
+    lens_colour: {
+      mandatory: false,
+      value: [],
+    },
+    laptop_compartment: {
+      mandatory: false,
+      value: [],
+    },
+    strap_type: {
+      mandatory: false,
+      value: [],
+    },
+    volume: {
+      mandatory: false,
+      value: [],
+    },
+    lock_type: {
+      mandatory: false,
+      value: LOCK_TYPE,
+    },
+    ornamentation: {
+      mandatory: false,
+      value: ORNAMENTATION,
+    },
+    coverage: {
+      mandatory: false,
+      value: COVERAGE,
+    },
+    padding: {
+      mandatory: false,
+      value: PADDING,
+    },
+    seam: {
+      mandatory: false,
+      value: SEAM,
+    },
+    waist_band: {
+      mandatory: false,
+      value: WAIST_BAND,
+    },
+    sustainability: {
+      mandatory: false,
+      value: [],
+    },
+    handcrafted: {
+      mandatory: false,
+      value: [],
+    },
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Suits: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Semi Stitched', 'Un Stitched', 'Free Size'],
+      value: {
+        '0': 'Semi Stitched',
+        '1': 'Un Stitched',
+        '2': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -2327,365 +3093,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Sherwanis: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -2693,365 +3459,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Track Shirts': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -3059,391 +3825,391 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Track Suits': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '0-3 Months',
-        '0-6 Months',
-        '3-6 Months',
-        '6-9 Months',
-        '6-12 Months',
-        '9-12 Months',
-        '12-18 Months',
-        '18-24 Months',
-        '0-1 Years',
-        '1-2 Years',
-        '2-3 Years',
-        '3-4 Years',
-        '4-5 Years',
-        '5-6 Years',
-        '6-7 Years',
-        '7-8 Years',
-        '8-9 Years',
-        '9-10 Years',
-        '10-11 Years',
-        '11-12 Years',
-        '12-13 Years',
-        '13-14 Years',
-        '14-15 Years',
-        '15-16 Years',
-        'Free Size',
-      ],
+      value: {
+        '0': '0-3 Months',
+        '1': '0-6 Months',
+        '2': '3-6 Months',
+        '3': '6-9 Months',
+        '4': '6-12 Months',
+        '5': '9-12 Months',
+        '6': '12-18 Months',
+        '7': '18-24 Months',
+        '8': '0-1 Years',
+        '9': '1-2 Years',
+        '10': '2-3 Years',
+        '11': '3-4 Years',
+        '12': '4-5 Years',
+        '13': '5-6 Years',
+        '14': '6-7 Years',
+        '15': '7-8 Years',
+        '16': '8-9 Years',
+        '17': '9-10 Years',
+        '18': '10-11 Years',
+        '19': '11-12 Years',
+        '20': '12-13 Years',
+        '21': '13-14 Years',
+        '22': '14-15 Years',
+        '23': '15-16 Years',
+        '24': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -3451,391 +4217,391 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Unstitched Fabrics': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '0-3 Months',
-        '0-6 Months',
-        '3-6 Months',
-        '6-9 Months',
-        '6-12 Months',
-        '9-12 Months',
-        '12-18 Months',
-        '18-24 Months',
-        '0-1 Years',
-        '1-2 Years',
-        '2-3 Years',
-        '3-4 Years',
-        '4-5 Years',
-        '5-6 Years',
-        '6-7 Years',
-        '7-8 Years',
-        '8-9 Years',
-        '9-10 Years',
-        '10-11 Years',
-        '11-12 Years',
-        '12-13 Years',
-        '13-14 Years',
-        '14-15 Years',
-        '15-16 Years',
-        'Free Size',
-      ],
+      value: {
+        '0': '0-3 Months',
+        '1': '0-6 Months',
+        '2': '3-6 Months',
+        '3': '6-9 Months',
+        '4': '6-12 Months',
+        '5': '9-12 Months',
+        '6': '12-18 Months',
+        '7': '18-24 Months',
+        '8': '0-1 Years',
+        '9': '1-2 Years',
+        '10': '2-3 Years',
+        '11': '3-4 Years',
+        '12': '4-5 Years',
+        '13': '5-6 Years',
+        '14': '6-7 Years',
+        '15': '7-8 Years',
+        '16': '8-9 Years',
+        '17': '9-10 Years',
+        '18': '10-11 Years',
+        '19': '11-12 Years',
+        '20': '12-13 Years',
+        '21': '13-14 Years',
+        '22': '14-15 Years',
+        '23': '15-16 Years',
+        '24': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -3843,365 +4609,365 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Dresses: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -4209,365 +4975,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Tops: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -4575,388 +5341,388 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Trousers: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '24',
-        '26',
-        '28',
-        '30',
-        '32',
-        '34',
-        '36',
-        '38',
-        '40',
-        '42',
-        '44',
-        '46',
-        '48',
-        '50',
-        '52',
-        'Free Size',
-        'XS',
-        'S',
-        'M',
-        'L',
-        'XL',
-        'XXL',
-      ],
+      value: {
+        '0': '24',
+        '1': '26',
+        '2': '28',
+        '3': '30',
+        '4': '32',
+        '5': '34',
+        '6': '36',
+        '7': '38',
+        '8': '40',
+        '9': '42',
+        '10': '44',
+        '11': '46',
+        '12': '48',
+        '13': '50',
+        '14': '52',
+        '15': 'Free Size',
+        '16': 'XS',
+        '17': 'S',
+        '18': 'M',
+        '19': 'L',
+        '20': 'XL',
+        '21': 'XXL',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -4964,388 +5730,388 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Capris: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '24',
-        '26',
-        '28',
-        '30',
-        '32',
-        '34',
-        '36',
-        '38',
-        '40',
-        '42',
-        '44',
-        '46',
-        '48',
-        '50',
-        '52',
-        'Free Size',
-        'XS',
-        'S',
-        'M',
-        'L',
-        'XL',
-        'XXL',
-      ],
+      value: {
+        '0': '24',
+        '1': '26',
+        '2': '28',
+        '3': '30',
+        '4': '32',
+        '5': '34',
+        '6': '36',
+        '7': '38',
+        '8': '40',
+        '9': '42',
+        '10': '44',
+        '11': '46',
+        '12': '48',
+        '13': '50',
+        '14': '52',
+        '15': 'Free Size',
+        '16': 'XS',
+        '17': 'S',
+        '18': 'M',
+        '19': 'L',
+        '20': 'XL',
+        '21': 'XXL',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -5353,365 +6119,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Coordinates: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -5719,365 +6485,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Playsuits: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -6085,365 +6851,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Jumpsuits: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -6451,365 +7217,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Shrugs & Blouses': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -6817,365 +7583,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Blazers & Waistcoats': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -7183,391 +7949,391 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Tights, Leggings & Jeggings': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '0-3 Months',
-        '0-6 Months',
-        '3-6 Months',
-        '6-9 Months',
-        '6-12 Months',
-        '9-12 Months',
-        '12-18 Months',
-        '18-24 Months',
-        '0-1 Years',
-        '1-2 Years',
-        '2-3 Years',
-        '3-4 Years',
-        '4-5 Years',
-        '5-6 Years',
-        '6-7 Years',
-        '7-8 Years',
-        '8-9 Years',
-        '9-10 Years',
-        '10-11 Years',
-        '11-12 Years',
-        '12-13 Years',
-        '13-14 Years',
-        '14-15 Years',
-        '15-16 Years',
-        'Free Size',
-      ],
+      value: {
+        '0': '0-3 Months',
+        '1': '0-6 Months',
+        '2': '3-6 Months',
+        '3': '6-9 Months',
+        '4': '6-12 Months',
+        '5': '9-12 Months',
+        '6': '12-18 Months',
+        '7': '18-24 Months',
+        '8': '0-1 Years',
+        '9': '1-2 Years',
+        '10': '2-3 Years',
+        '11': '3-4 Years',
+        '12': '4-5 Years',
+        '13': '5-6 Years',
+        '14': '6-7 Years',
+        '15': '7-8 Years',
+        '16': '8-9 Years',
+        '17': '9-10 Years',
+        '18': '10-11 Years',
+        '19': '11-12 Years',
+        '20': '12-13 Years',
+        '21': '13-14 Years',
+        '22': '14-15 Years',
+        '23': '15-16 Years',
+        '24': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -7575,388 +8341,388 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Track Pants': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '24',
-        '26',
-        '28',
-        '30',
-        '32',
-        '34',
-        '36',
-        '38',
-        '40',
-        '42',
-        '44',
-        '46',
-        '48',
-        '50',
-        '52',
-        'Free Size',
-        'XS',
-        'S',
-        'M',
-        'L',
-        'XL',
-        'XXL',
-      ],
+      value: {
+        '0': '24',
+        '1': '26',
+        '2': '28',
+        '3': '30',
+        '4': '32',
+        '5': '34',
+        '6': '36',
+        '7': '38',
+        '8': '40',
+        '9': '42',
+        '10': '44',
+        '11': '46',
+        '12': '48',
+        '13': '50',
+        '14': '52',
+        '15': 'Free Size',
+        '16': 'XS',
+        '17': 'S',
+        '18': 'M',
+        '19': 'L',
+        '20': 'XL',
+        '21': 'XXL',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -7964,388 +8730,388 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Jeans: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '24',
-        '26',
-        '28',
-        '30',
-        '32',
-        '34',
-        '36',
-        '38',
-        '40',
-        '42',
-        '44',
-        '46',
-        '48',
-        '50',
-        '52',
-        'Free Size',
-        'XS',
-        'S',
-        'M',
-        'L',
-        'XL',
-        'XXL',
-      ],
+      value: {
+        '0': '24',
+        '1': '26',
+        '2': '28',
+        '3': '30',
+        '4': '32',
+        '5': '34',
+        '6': '36',
+        '7': '38',
+        '8': '40',
+        '9': '42',
+        '10': '44',
+        '11': '46',
+        '12': '48',
+        '13': '50',
+        '14': '52',
+        '15': 'Free Size',
+        '16': 'XS',
+        '17': 'S',
+        '18': 'M',
+        '19': 'L',
+        '20': 'XL',
+        '21': 'XXL',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -8353,388 +9119,388 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Shorts: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '24',
-        '26',
-        '28',
-        '30',
-        '32',
-        '34',
-        '36',
-        '38',
-        '40',
-        '42',
-        '44',
-        '46',
-        '48',
-        '50',
-        '52',
-        'Free Size',
-        'XS',
-        'S',
-        'M',
-        'L',
-        'XL',
-        'XXL',
-      ],
+      value: {
+        '0': '24',
+        '1': '26',
+        '2': '28',
+        '3': '30',
+        '4': '32',
+        '5': '34',
+        '6': '36',
+        '7': '38',
+        '8': '40',
+        '9': '42',
+        '10': '44',
+        '11': '46',
+        '12': '48',
+        '13': '50',
+        '14': '52',
+        '15': 'Free Size',
+        '16': 'XS',
+        '17': 'S',
+        '18': 'M',
+        '19': 'L',
+        '20': 'XL',
+        '21': 'XXL',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -8742,391 +9508,391 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Joggers: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '0-3 Months',
-        '0-6 Months',
-        '3-6 Months',
-        '6-9 Months',
-        '6-12 Months',
-        '9-12 Months',
-        '12-18 Months',
-        '18-24 Months',
-        '0-1 Years',
-        '1-2 Years',
-        '2-3 Years',
-        '3-4 Years',
-        '4-5 Years',
-        '5-6 Years',
-        '6-7 Years',
-        '7-8 Years',
-        '8-9 Years',
-        '9-10 Years',
-        '10-11 Years',
-        '11-12 Years',
-        '12-13 Years',
-        '13-14 Years',
-        '14-15 Years',
-        '15-16 Years',
-        'Free Size',
-      ],
+      value: {
+        '0': '0-3 Months',
+        '1': '0-6 Months',
+        '2': '3-6 Months',
+        '3': '6-9 Months',
+        '4': '6-12 Months',
+        '5': '9-12 Months',
+        '6': '12-18 Months',
+        '7': '18-24 Months',
+        '8': '0-1 Years',
+        '9': '1-2 Years',
+        '10': '2-3 Years',
+        '11': '3-4 Years',
+        '12': '4-5 Years',
+        '13': '5-6 Years',
+        '14': '6-7 Years',
+        '15': '7-8 Years',
+        '16': '8-9 Years',
+        '17': '9-10 Years',
+        '18': '10-11 Years',
+        '19': '11-12 Years',
+        '20': '12-13 Years',
+        '21': '13-14 Years',
+        '22': '14-15 Years',
+        '23': '15-16 Years',
+        '24': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -9134,391 +9900,391 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Dhotis & Dhoti Pants': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '0-3 Months',
-        '0-6 Months',
-        '3-6 Months',
-        '6-9 Months',
-        '6-12 Months',
-        '9-12 Months',
-        '12-18 Months',
-        '18-24 Months',
-        '0-1 Years',
-        '1-2 Years',
-        '2-3 Years',
-        '3-4 Years',
-        '4-5 Years',
-        '5-6 Years',
-        '6-7 Years',
-        '7-8 Years',
-        '8-9 Years',
-        '9-10 Years',
-        '10-11 Years',
-        '11-12 Years',
-        '12-13 Years',
-        '13-14 Years',
-        '14-15 Years',
-        '15-16 Years',
-        'Free Size',
-      ],
+      value: {
+        '0': '0-3 Months',
+        '1': '0-6 Months',
+        '2': '3-6 Months',
+        '3': '6-9 Months',
+        '4': '6-12 Months',
+        '5': '9-12 Months',
+        '6': '12-18 Months',
+        '7': '18-24 Months',
+        '8': '0-1 Years',
+        '9': '1-2 Years',
+        '10': '2-3 Years',
+        '11': '3-4 Years',
+        '12': '4-5 Years',
+        '13': '5-6 Years',
+        '14': '6-7 Years',
+        '15': '7-8 Years',
+        '16': '8-9 Years',
+        '17': '9-10 Years',
+        '18': '10-11 Years',
+        '19': '11-12 Years',
+        '20': '12-13 Years',
+        '21': '13-14 Years',
+        '22': '14-15 Years',
+        '23': '15-16 Years',
+        '24': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -9526,388 +10292,388 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Churidars: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '24',
-        '26',
-        '28',
-        '30',
-        '32',
-        '34',
-        '36',
-        '38',
-        '40',
-        '42',
-        '44',
-        '46',
-        '48',
-        '50',
-        '52',
-        'Free Size',
-        'XS',
-        'S',
-        'M',
-        'L',
-        'XL',
-        'XXL',
-      ],
+      value: {
+        '0': '24',
+        '1': '26',
+        '2': '28',
+        '3': '30',
+        '4': '32',
+        '5': '34',
+        '6': '36',
+        '7': '38',
+        '8': '40',
+        '9': '42',
+        '10': '44',
+        '11': '46',
+        '12': '48',
+        '13': '50',
+        '14': '52',
+        '15': 'Free Size',
+        '16': 'XS',
+        '17': 'S',
+        '18': 'M',
+        '19': 'L',
+        '20': 'XL',
+        '21': 'XXL',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -9915,365 +10681,367 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Salwars: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -10281,391 +11049,391 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Dungarees & Jumpsuits': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '0-3 Months',
-        '0-6 Months',
-        '3-6 Months',
-        '6-9 Months',
-        '6-12 Months',
-        '9-12 Months',
-        '12-18 Months',
-        '18-24 Months',
-        '0-1 Years',
-        '1-2 Years',
-        '2-3 Years',
-        '3-4 Years',
-        '4-5 Years',
-        '5-6 Years',
-        '6-7 Years',
-        '7-8 Years',
-        '8-9 Years',
-        '9-10 Years',
-        '10-11 Years',
-        '11-12 Years',
-        '12-13 Years',
-        '13-14 Years',
-        '14-15 Years',
-        '15-16 Years',
-        'Free Size',
-      ],
+      value: {
+        '0': '0-3 Months',
+        '1': '0-6 Months',
+        '2': '3-6 Months',
+        '3': '6-9 Months',
+        '4': '6-12 Months',
+        '5': '9-12 Months',
+        '6': '12-18 Months',
+        '7': '18-24 Months',
+        '8': '0-1 Years',
+        '9': '1-2 Years',
+        '10': '2-3 Years',
+        '11': '3-4 Years',
+        '12': '4-5 Years',
+        '13': '5-6 Years',
+        '14': '6-7 Years',
+        '15': '7-8 Years',
+        '16': '8-9 Years',
+        '17': '9-10 Years',
+        '18': '10-11 Years',
+        '19': '11-12 Years',
+        '20': '12-13 Years',
+        '21': '13-14 Years',
+        '22': '14-15 Years',
+        '23': '15-16 Years',
+        '24': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -10673,388 +11441,388 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Skirts: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '24',
-        '26',
-        '28',
-        '30',
-        '32',
-        '34',
-        '36',
-        '38',
-        '40',
-        '42',
-        '44',
-        '46',
-        '48',
-        '50',
-        '52',
-        'Free Size',
-        'XS',
-        'S',
-        'M',
-        'L',
-        'XL',
-        'XXL',
-      ],
+      value: {
+        '0': '24',
+        '1': '26',
+        '2': '28',
+        '3': '30',
+        '4': '32',
+        '5': '34',
+        '6': '36',
+        '7': '38',
+        '8': '40',
+        '9': '42',
+        '10': '44',
+        '11': '46',
+        '12': '48',
+        '13': '50',
+        '14': '52',
+        '15': 'Free Size',
+        '16': 'XS',
+        '17': 'S',
+        '18': 'M',
+        '19': 'L',
+        '20': 'XL',
+        '21': 'XXL',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -11062,391 +11830,391 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Clothing Sets': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '0-3 Months',
-        '0-6 Months',
-        '3-6 Months',
-        '6-9 Months',
-        '6-12 Months',
-        '9-12 Months',
-        '12-18 Months',
-        '18-24 Months',
-        '0-1 Years',
-        '1-2 Years',
-        '2-3 Years',
-        '3-4 Years',
-        '4-5 Years',
-        '5-6 Years',
-        '6-7 Years',
-        '7-8 Years',
-        '8-9 Years',
-        '9-10 Years',
-        '10-11 Years',
-        '11-12 Years',
-        '12-13 Years',
-        '13-14 Years',
-        '14-15 Years',
-        '15-16 Years',
-        'Free Size',
-      ],
+      value: {
+        '0': '0-3 Months',
+        '1': '0-6 Months',
+        '2': '3-6 Months',
+        '3': '6-9 Months',
+        '4': '6-12 Months',
+        '5': '9-12 Months',
+        '6': '12-18 Months',
+        '7': '18-24 Months',
+        '8': '0-1 Years',
+        '9': '1-2 Years',
+        '10': '2-3 Years',
+        '11': '3-4 Years',
+        '12': '4-5 Years',
+        '13': '5-6 Years',
+        '14': '6-7 Years',
+        '15': '7-8 Years',
+        '16': '8-9 Years',
+        '17': '9-10 Years',
+        '18': '10-11 Years',
+        '19': '11-12 Years',
+        '20': '12-13 Years',
+        '21': '13-14 Years',
+        '22': '14-15 Years',
+        '23': '15-16 Years',
+        '24': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -11454,388 +12222,388 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Belts: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '24',
-        '26',
-        '28',
-        '30',
-        '32',
-        '34',
-        '36',
-        '38',
-        '40',
-        '42',
-        '44',
-        '46',
-        '48',
-        '50',
-        '52',
-        'Free Size',
-        'XS',
-        'S',
-        'M',
-        'L',
-        'XL',
-        'XXL',
-      ],
+      value: {
+        '0': '24',
+        '1': '26',
+        '2': '28',
+        '3': '30',
+        '4': '32',
+        '5': '34',
+        '6': '36',
+        '7': '38',
+        '8': '40',
+        '9': '42',
+        '10': '44',
+        '11': '46',
+        '12': '48',
+        '13': '50',
+        '14': '52',
+        '15': 'Free Size',
+        '16': 'XS',
+        '17': 'S',
+        '18': 'M',
+        '19': 'L',
+        '20': 'XL',
+        '21': 'XXL',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -11843,365 +12611,367 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: true,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: true,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Caps & Hats': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -12209,365 +12979,365 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: true,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Kurtis, Tunics': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -12575,365 +13345,367 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Sarees: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -12941,406 +13713,406 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Ethnic Wear': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        'XXS',
-        'XS',
-        'S',
-        'M',
-        'L',
-        'XL',
-        'XXL',
-        'XXXL',
-        '4XL',
-        '5XL',
-        '6XL',
-        '7XL',
-        '8XL',
-        '9XL',
-        '10XL',
-        '0-3 Months',
-        '0-6 Months',
-        '3-6 Months',
-        '6-9 Months',
-        '6-12 Months',
-        '9-12 Months',
-        '12-18 Months',
-        '18-24 Months',
-        '0-1 Years',
-        '1-2 Years',
-        '2-3 Years',
-        '3-4 Years',
-        '4-5 Years',
-        '5-6 Years',
-        '6-7 Years',
-        '7-8 Years',
-        '8-9 Years',
-        '9-10 Years',
-        '10-11 Years',
-        '11-12 Years',
-        '12-13 Years',
-        '13-14 Years',
-        '14-15 Years',
-        '15-16 Years',
-        'Free Size',
-      ],
+      value: {
+        '0': 'XXS',
+        '1': 'XS',
+        '2': 'S',
+        '3': 'M',
+        '4': 'L',
+        '5': 'XL',
+        '6': 'XXL',
+        '7': 'XXXL',
+        '8': '4XL',
+        '9': '5XL',
+        '10': '6XL',
+        '11': '7XL',
+        '12': '8XL',
+        '13': '9XL',
+        '14': '10XL',
+        '15': '0-3 Months',
+        '16': '0-6 Months',
+        '17': '3-6 Months',
+        '18': '6-9 Months',
+        '19': '6-12 Months',
+        '20': '9-12 Months',
+        '21': '12-18 Months',
+        '22': '18-24 Months',
+        '23': '0-1 Years',
+        '24': '1-2 Years',
+        '25': '2-3 Years',
+        '26': '3-4 Years',
+        '27': '4-5 Years',
+        '28': '5-6 Years',
+        '29': '6-7 Years',
+        '30': '7-8 Years',
+        '31': '8-9 Years',
+        '32': '9-10 Years',
+        '33': '10-11 Years',
+        '34': '11-12 Years',
+        '35': '12-13 Years',
+        '36': '13-14 Years',
+        '37': '14-15 Years',
+        '38': '15-16 Years',
+        '39': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -13348,388 +14120,388 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Palazzos: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '24',
-        '26',
-        '28',
-        '30',
-        '32',
-        '34',
-        '36',
-        '38',
-        '40',
-        '42',
-        '44',
-        '46',
-        '48',
-        '50',
-        '52',
-        'Free Size',
-        'XS',
-        'S',
-        'M',
-        'L',
-        'XL',
-        'XXL',
-      ],
+      value: {
+        '0': '24',
+        '1': '26',
+        '2': '28',
+        '3': '30',
+        '4': '32',
+        '5': '34',
+        '6': '36',
+        '7': '38',
+        '8': '40',
+        '9': '42',
+        '10': '44',
+        '11': '46',
+        '12': '48',
+        '13': '50',
+        '14': '52',
+        '15': 'Free Size',
+        '16': 'XS',
+        '17': 'S',
+        '18': 'M',
+        '19': 'L',
+        '20': 'XL',
+        '21': 'XXL',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -13737,365 +14509,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Dress Materials': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -14103,365 +14875,369 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Lehenga Cholis': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Semi Stitched', 'Un Stitched', 'Free Size'],
+      value: {
+        '0': 'Semi Stitched',
+        '1': 'Un Stitched',
+        '2': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -14469,365 +15245,367 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Dupattas & Shawls': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -14835,365 +15613,367 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Burqas & Hijabs': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -15201,402 +15981,402 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Blouses: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '26',
-        '26 Alterable',
-        '28',
-        '28 Alterable',
-        '30',
-        '30 Alterable',
-        '32',
-        '32 Alterable',
-        '34',
-        '34 Alterable',
-        '36',
-        '36 Alterable',
-        '38',
-        '38 Alterable',
-        '40',
-        '40 Alterable',
-        '42',
-        '42 Alterable',
-        '44',
-        '44 Alterable',
-        '46',
-        '46 Alterable',
-        '48',
-        '48 Alterable',
-        '50',
-        '50 Alterable',
-        '52',
-        '52 Alterable',
-        '54',
-        '54 Alterable',
-        '56',
-        '56 Alterable',
-        '58',
-        '58 Alterable',
-        '60',
-        '60 Alterable',
-      ],
+      value: {
+        '0': '26',
+        '1': '26 Alterable',
+        '2': '28',
+        '3': '28 Alterable',
+        '4': '30',
+        '5': '30 Alterable',
+        '6': '32',
+        '7': '32 Alterable',
+        '8': '34',
+        '9': '34 Alterable',
+        '10': '36',
+        '11': '36 Alterable',
+        '12': '38',
+        '13': '38 Alterable',
+        '14': '40',
+        '15': '40 Alterable',
+        '16': '42',
+        '17': '42 Alterable',
+        '18': '44',
+        '19': '44 Alterable',
+        '20': '46',
+        '21': '46 Alterable',
+        '22': '48',
+        '23': '48 Alterable',
+        '24': '50',
+        '25': '50 Alterable',
+        '26': '52',
+        '27': '52 Alterable',
+        '28': '54',
+        '29': '54 Alterable',
+        '30': '56',
+        '31': '56 Alterable',
+        '32': '58',
+        '33': '58 Alterable',
+        '34': '60',
+        '35': '60 Alterable',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -15604,379 +16384,379 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Blouse Pieces': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '1 Mtr',
-        '1.75 Mtr',
-        '2.5 Mtr',
-        '2 Mtr',
-        '3 Mtr',
-        '4 Mtr',
-        '5 Mtr',
-        '6 Mtr',
-        '7 Mtr',
-        '8 Mtr',
-        '9 Mtr',
-        '10 Mtr',
-        '0.8 Mtr',
-      ],
+      value: {
+        '0': '1 Mtr',
+        '1': '1.75 Mtr',
+        '2': '2.5 Mtr',
+        '3': '2 Mtr',
+        '4': '3 Mtr',
+        '5': '4 Mtr',
+        '6': '5 Mtr',
+        '7': '6 Mtr',
+        '8': '7 Mtr',
+        '9': '8 Mtr',
+        '10': '9 Mtr',
+        '11': '10 Mtr',
+        '12': '0.8 Mtr',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -15984,412 +16764,412 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Briefs: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '70cm',
-        '75cm',
-        '80cm',
-        '85cm',
-        '90cm',
-        '95cm',
-        '100cm',
-        '105cm',
-        '110cm',
-        '115cm',
-        '120cm',
-        'XXS',
-        'XS',
-        'S',
-        'M',
-        'L',
-        'XL',
-        '2XL',
-        '3XL',
-        '4XL',
-        '28in',
-        '30in',
-        '32in',
-        '34in',
-        '36in',
-        '38in',
-        '40in',
-        '42in',
-        '44in',
-        '46in',
-        '5XL',
-        '6XL',
-        '7XL',
-        '8XL',
-        '9XL',
-        '10XL',
-        '28',
-        '30',
-        '32',
-        '34',
-        '36',
-        '38',
-        '40',
-        '42',
-        '44',
-        '46',
-      ],
+      value: {
+        '0': '70cm',
+        '1': '75cm',
+        '2': '80cm',
+        '3': '85cm',
+        '4': '90cm',
+        '5': '95cm',
+        '6': '100cm',
+        '7': '105cm',
+        '8': '110cm',
+        '9': '115cm',
+        '10': '120cm',
+        '11': 'XXS',
+        '12': 'XS',
+        '13': 'S',
+        '14': 'M',
+        '15': 'L',
+        '16': 'XL',
+        '17': '2XL',
+        '18': '3XL',
+        '19': '4XL',
+        '20': '28in',
+        '21': '30in',
+        '22': '32in',
+        '23': '34in',
+        '24': '36in',
+        '25': '38in',
+        '26': '40in',
+        '27': '42in',
+        '28': '44in',
+        '29': '46in',
+        '30': '5XL',
+        '31': '6XL',
+        '32': '7XL',
+        '33': '8XL',
+        '34': '9XL',
+        '35': '10XL',
+        '36': '28',
+        '37': '30',
+        '38': '32',
+        '39': '34',
+        '40': '36',
+        '41': '38',
+        '42': '40',
+        '43': '42',
+        '44': '44',
+        '45': '46',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -16397,388 +17177,388 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Boxers: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '24',
-        '26',
-        '28',
-        '30',
-        '32',
-        '34',
-        '36',
-        '38',
-        '40',
-        '42',
-        '44',
-        '46',
-        '48',
-        '50',
-        '52',
-        'Free Size',
-        'XS',
-        'S',
-        'M',
-        'L',
-        'XL',
-        'XXL',
-      ],
+      value: {
+        '0': '24',
+        '1': '26',
+        '2': '28',
+        '3': '30',
+        '4': '32',
+        '5': '34',
+        '6': '36',
+        '7': '38',
+        '8': '40',
+        '9': '42',
+        '10': '44',
+        '11': '46',
+        '12': '48',
+        '13': '50',
+        '14': '52',
+        '15': 'Free Size',
+        '16': 'XS',
+        '17': 'S',
+        '18': 'M',
+        '19': 'L',
+        '20': 'XL',
+        '21': 'XXL',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -16786,412 +17566,412 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Vests: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '70cm',
-        '75cm',
-        '80cm',
-        '85cm',
-        '90cm',
-        '95cm',
-        '100cm',
-        '105cm',
-        '110cm',
-        '115cm',
-        '120cm',
-        'XXS',
-        'XS',
-        'S',
-        'M',
-        'L',
-        'XL',
-        '2XL',
-        '3XL',
-        '4XL',
-        '28in',
-        '30in',
-        '32in',
-        '34in',
-        '36in',
-        '38in',
-        '40in',
-        '42in',
-        '44in',
-        '46in',
-        '5XL',
-        '6XL',
-        '7XL',
-        '8XL',
-        '9XL',
-        '10XL',
-        '28',
-        '30',
-        '32',
-        '34',
-        '36',
-        '38',
-        '40',
-        '42',
-        '44',
-        '46',
-      ],
+      value: {
+        '0': '70cm',
+        '1': '75cm',
+        '2': '80cm',
+        '3': '85cm',
+        '4': '90cm',
+        '5': '95cm',
+        '6': '100cm',
+        '7': '105cm',
+        '8': '110cm',
+        '9': '115cm',
+        '10': '120cm',
+        '11': 'XXS',
+        '12': 'XS',
+        '13': 'S',
+        '14': 'M',
+        '15': 'L',
+        '16': 'XL',
+        '17': '2XL',
+        '18': '3XL',
+        '19': '4XL',
+        '20': '28in',
+        '21': '30in',
+        '22': '32in',
+        '23': '34in',
+        '24': '36in',
+        '25': '38in',
+        '26': '40in',
+        '27': '42in',
+        '28': '44in',
+        '29': '46in',
+        '30': '5XL',
+        '31': '6XL',
+        '32': '7XL',
+        '33': '8XL',
+        '34': '9XL',
+        '35': '10XL',
+        '36': '28',
+        '37': '30',
+        '38': '32',
+        '39': '34',
+        '40': '36',
+        '41': '38',
+        '42': '40',
+        '43': '42',
+        '44': '44',
+        '45': '46',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -17199,365 +17979,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Robes: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -17565,365 +18345,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Night Suits': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -17931,365 +18711,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Thermal Wear': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -18297,388 +19077,388 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Swim Bottoms': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '24',
-        '26',
-        '28',
-        '30',
-        '32',
-        '34',
-        '36',
-        '38',
-        '40',
-        '42',
-        '44',
-        '46',
-        '48',
-        '50',
-        '52',
-        'Free Size',
-        'XS',
-        'S',
-        'M',
-        'L',
-        'XL',
-        'XXL',
-      ],
+      value: {
+        '0': '24',
+        '1': '26',
+        '2': '28',
+        '3': '30',
+        '4': '32',
+        '5': '34',
+        '6': '36',
+        '7': '38',
+        '8': '40',
+        '9': '42',
+        '10': '44',
+        '11': '46',
+        '12': '48',
+        '13': '50',
+        '14': '52',
+        '15': 'Free Size',
+        '16': 'XS',
+        '17': 'S',
+        '18': 'M',
+        '19': 'L',
+        '20': 'XL',
+        '21': 'XXL',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -18686,365 +19466,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Swimwear: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -19052,546 +19832,546 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Bra: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '28A',
-        '30A',
-        '32A',
-        '34A',
-        '36A',
-        '38A',
-        '40A',
-        '28B',
-        '30B',
-        '32B',
-        '34B',
-        '36B',
-        '38B',
-        '40B',
-        '42B',
-        '28C',
-        '30C',
-        '32C',
-        '34C',
-        '36C',
-        '38C',
-        '40C',
-        '28D',
-        '30D',
-        '32D',
-        '34D',
-        '36D',
-        '38D',
-        '40D',
-        '28E',
-        '30E',
-        '32E',
-        '34E',
-        '36E',
-        '38E',
-        '40E',
-        'S',
-        'M',
-        'L',
-        'XL',
-        'XXL',
-        'XXXL',
-        'Free Size',
-        '42A',
-        '42C',
-        '42D',
-        '42E',
-        '44A',
-        '44B',
-        '44C',
-        '44D',
-        '44E',
-        '46A',
-        '46B',
-        '46C',
-        '46D',
-        '46E',
-        '48A',
-        '48B',
-        '48C',
-        '48D',
-        '48E',
-        '30DD',
-        '30F',
-        '30FF',
-        '32DD',
-        '32F',
-        '32FF',
-        '34DD',
-        '34F',
-        '34FF',
-        '40AA',
-        '40DD',
-        '40DDD',
-        '40EE',
-        '40F',
-        '40FF',
-        '40G',
-        '40GG',
-        '40H',
-        '40I',
-        '40J',
-        '40K',
-        '42EE',
-        '42F',
-        '42FF',
-        '42G',
-        '42GG',
-        '42H',
-        '42I',
-        '42J',
-        '42K',
-        '44AA',
-        '44DD',
-        '44DDD',
-        '44EE',
-        '44F',
-        '44FF',
-        '44G',
-        '44GG',
-        '44H',
-        '44I',
-        '44J',
-        '44K',
-        '46AA',
-        '46DD',
-        '46DDD',
-        '46EE',
-        '46F',
-        '46FF',
-        '46G',
-        '46GG',
-        '46H',
-        '46I',
-        '46J',
-        '46K',
-        '48AA',
-        '48DD',
-        '48DDD',
-        '48EE',
-        '48F',
-        '48FF',
-        '48G',
-        '48GG',
-        '48H',
-        '48I',
-        '48J',
-        '48K',
-        '50A',
-        '50AA',
-        '50B',
-        '50C',
-        '50D',
-        '50DD',
-        '50DDD',
-        '50E',
-        '50EE',
-        '50F',
-        '50FF',
-        '50G',
-        '50GG',
-        '50H',
-        '50I',
-        '50J',
-        '50K',
-        '52A',
-        '52AA',
-        '52B',
-        '52C',
-        '52D',
-        '52DD',
-        '52DDD',
-        '52E',
-        '52EE',
-        '52F',
-        '52FF',
-        '52G',
-        '52GG',
-        '52H',
-        '52I',
-        '52J',
-        '52K',
-        '54A',
-        '54AA',
-        '54B',
-        '54C',
-        '54D',
-        '54DD',
-        '54DDD',
-        '54E',
-        '54EE',
-        '54F',
-        '54FF',
-        '54G',
-        '54GG',
-        '54H',
-        '54I',
-        '54J',
-        '54K',
-        'XS',
-      ],
+      value: {
+        '0': '28A',
+        '1': '30A',
+        '2': '32A',
+        '3': '34A',
+        '4': '36A',
+        '5': '38A',
+        '6': '40A',
+        '7': '28B',
+        '8': '30B',
+        '9': '32B',
+        '10': '34B',
+        '11': '36B',
+        '12': '38B',
+        '13': '40B',
+        '14': '42B',
+        '15': '28C',
+        '16': '30C',
+        '17': '32C',
+        '18': '34C',
+        '19': '36C',
+        '20': '38C',
+        '21': '40C',
+        '22': '28D',
+        '23': '30D',
+        '24': '32D',
+        '25': '34D',
+        '26': '36D',
+        '27': '38D',
+        '28': '40D',
+        '29': '28E',
+        '30': '30E',
+        '31': '32E',
+        '32': '34E',
+        '33': '36E',
+        '34': '38E',
+        '35': '40E',
+        '36': 'S',
+        '37': 'M',
+        '38': 'L',
+        '39': 'XL',
+        '40': 'XXL',
+        '41': 'XXXL',
+        '42': 'Free Size',
+        '43': '42A',
+        '44': '42C',
+        '45': '42D',
+        '46': '42E',
+        '47': '44A',
+        '48': '44B',
+        '49': '44C',
+        '50': '44D',
+        '51': '44E',
+        '52': '46A',
+        '53': '46B',
+        '54': '46C',
+        '55': '46D',
+        '56': '46E',
+        '57': '48A',
+        '58': '48B',
+        '59': '48C',
+        '60': '48D',
+        '61': '48E',
+        '62': '30DD',
+        '63': '30F',
+        '64': '30FF',
+        '65': '32DD',
+        '66': '32F',
+        '67': '32FF',
+        '68': '34DD',
+        '69': '34F',
+        '70': '34FF',
+        '71': '40AA',
+        '72': '40DD',
+        '73': '40DDD',
+        '74': '40EE',
+        '75': '40F',
+        '76': '40FF',
+        '77': '40G',
+        '78': '40GG',
+        '79': '40H',
+        '80': '40I',
+        '81': '40J',
+        '82': '40K',
+        '83': '42EE',
+        '84': '42F',
+        '85': '42FF',
+        '86': '42G',
+        '87': '42GG',
+        '88': '42H',
+        '89': '42I',
+        '90': '42J',
+        '91': '42K',
+        '92': '44AA',
+        '93': '44DD',
+        '94': '44DDD',
+        '95': '44EE',
+        '96': '44F',
+        '97': '44FF',
+        '98': '44G',
+        '99': '44GG',
+        '100': '44H',
+        '101': '44I',
+        '102': '44J',
+        '103': '44K',
+        '104': '46AA',
+        '105': '46DD',
+        '106': '46DDD',
+        '107': '46EE',
+        '108': '46F',
+        '109': '46FF',
+        '110': '46G',
+        '111': '46GG',
+        '112': '46H',
+        '113': '46I',
+        '114': '46J',
+        '115': '46K',
+        '116': '48AA',
+        '117': '48DD',
+        '118': '48DDD',
+        '119': '48EE',
+        '120': '48F',
+        '121': '48FF',
+        '122': '48G',
+        '123': '48GG',
+        '124': '48H',
+        '125': '48I',
+        '126': '48J',
+        '127': '48K',
+        '128': '50A',
+        '129': '50AA',
+        '130': '50B',
+        '131': '50C',
+        '132': '50D',
+        '133': '50DD',
+        '134': '50DDD',
+        '135': '50E',
+        '136': '50EE',
+        '137': '50F',
+        '138': '50FF',
+        '139': '50G',
+        '140': '50GG',
+        '141': '50H',
+        '142': '50I',
+        '143': '50J',
+        '144': '50K',
+        '145': '52A',
+        '146': '52AA',
+        '147': '52B',
+        '148': '52C',
+        '149': '52D',
+        '150': '52DD',
+        '151': '52DDD',
+        '152': '52E',
+        '153': '52EE',
+        '154': '52F',
+        '155': '52FF',
+        '156': '52G',
+        '157': '52GG',
+        '158': '52H',
+        '159': '52I',
+        '160': '52J',
+        '161': '52K',
+        '162': '54A',
+        '163': '54AA',
+        '164': '54B',
+        '165': '54C',
+        '166': '54D',
+        '167': '54DD',
+        '168': '54DDD',
+        '169': '54E',
+        '170': '54EE',
+        '171': '54F',
+        '172': '54FF',
+        '173': '54G',
+        '174': '54GG',
+        '175': '54H',
+        '176': '54I',
+        '177': '54J',
+        '178': '54K',
+        '179': 'XS',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -19599,365 +20379,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Shapewear: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -19965,388 +20745,388 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Sleepwear & Loungewear': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '24',
-        '26',
-        '28',
-        '30',
-        '32',
-        '34',
-        '36',
-        '38',
-        '40',
-        '42',
-        '44',
-        '46',
-        '48',
-        '50',
-        '52',
-        'Free Size',
-        'XS',
-        'S',
-        'M',
-        'L',
-        'XL',
-        'XXL',
-      ],
+      value: {
+        '0': '24',
+        '1': '26',
+        '2': '28',
+        '3': '30',
+        '4': '32',
+        '5': '34',
+        '6': '36',
+        '7': '38',
+        '8': '40',
+        '9': '42',
+        '10': '44',
+        '11': '46',
+        '12': '48',
+        '13': '50',
+        '14': '52',
+        '15': 'Free Size',
+        '16': 'XS',
+        '17': 'S',
+        '18': 'M',
+        '19': 'L',
+        '20': 'XL',
+        '21': 'XXL',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -20354,365 +21134,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Camisoles: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -20720,547 +21500,547 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Lingerie Sets & Accessories': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '28A',
-        '30A',
-        '32A',
-        '34A',
-        '36A',
-        '38A',
-        '40A',
-        '28B',
-        '30B',
-        '32B',
-        '34B',
-        '36B',
-        '38B',
-        '40B',
-        '42B',
-        '28C',
-        '30C',
-        '32C',
-        '34C',
-        '36C',
-        '38C',
-        '40C',
-        '28D',
-        '30D',
-        '32D',
-        '34D',
-        '36D',
-        '38D',
-        '40D',
-        '28E',
-        '30E',
-        '32E',
-        '34E',
-        '36E',
-        '38E',
-        '40E',
-        'S',
-        'M',
-        'L',
-        'XL',
-        'XXL',
-        'XXXL',
-        'Free Size',
-        '42A',
-        '42C',
-        '42D',
-        '42E',
-        '44A',
-        '44B',
-        '44C',
-        '44D',
-        '44E',
-        '46A',
-        '46B',
-        '46C',
-        '46D',
-        '46E',
-        '48A',
-        '48B',
-        '48C',
-        '48D',
-        '48E',
-        '30DD',
-        '30F',
-        '30FF',
-        '32DD',
-        '32F',
-        '32FF',
-        '34DD',
-        '34F',
-        '34FF',
-        '40AA',
-        '40DD',
-        '40DDD',
-        '40EE',
-        '40F',
-        '40FF',
-        '40G',
-        '40GG',
-        '40H',
-        '40I',
-        '40J',
-        '40K',
-        '42EE',
-        '42F',
-        '42FF',
-        '42G',
-        '42GG',
-        '42H',
-        '42I',
-        '42J',
-        '42K',
-        '44AA',
-        '44DD',
-        '44DDD',
-        '44EE',
-        '44F',
-        '44FF',
-        '44G',
-        '44GG',
-        '44H',
-        '44I',
-        '44J',
-        '44K',
-        '46AA',
-        '46DD',
-        '46DDD',
-        '46EE',
-        '46F',
-        '46FF',
-        '46G',
-        '46GG',
-        '46H',
-        '46I',
-        '46J',
-        '46K',
-        '48AA',
-        '48DD',
-        '48DDD',
-        '48EE',
-        '48F',
-        '48FF',
-        '48G',
-        '48GG',
-        '48H',
-        '48I',
-        '48J',
-        '48K',
-        '50A',
-        '50AA',
-        '50B',
-        '50C',
-        '50D',
-        '50DD',
-        '50DDD',
-        '50E',
-        '50EE',
-        '50F',
-        '50FF',
-        '50G',
-        '50GG',
-        '50H',
-        '50I',
-        '50J',
-        '50K',
-        '52A',
-        '52AA',
-        '52B',
-        '52C',
-        '52D',
-        '52DD',
-        '52DDD',
-        '52E',
-        '52EE',
-        '52F',
-        '52FF',
-        '52G',
-        '52GG',
-        '52H',
-        '52I',
-        '52J',
-        '52K',
-        '54A',
-        '54AA',
-        '54B',
-        '54C',
-        '54D',
-        '54DD',
-        '54DDD',
-        '54E',
-        '54EE',
-        '54F',
-        '54FF',
-        '54G',
-        '54GG',
-        '54H',
-        '54I',
-        '54J',
-        '54K',
-        'XS',
-        'Free Size',
-      ],
+      value: {
+        '0': '28A',
+        '1': '30A',
+        '2': '32A',
+        '3': '34A',
+        '4': '36A',
+        '5': '38A',
+        '6': '40A',
+        '7': '28B',
+        '8': '30B',
+        '9': '32B',
+        '10': '34B',
+        '11': '36B',
+        '12': '38B',
+        '13': '40B',
+        '14': '42B',
+        '15': '28C',
+        '16': '30C',
+        '17': '32C',
+        '18': '34C',
+        '19': '36C',
+        '20': '38C',
+        '21': '40C',
+        '22': '28D',
+        '23': '30D',
+        '24': '32D',
+        '25': '34D',
+        '26': '36D',
+        '27': '38D',
+        '28': '40D',
+        '29': '28E',
+        '30': '30E',
+        '31': '32E',
+        '32': '34E',
+        '33': '36E',
+        '34': '38E',
+        '35': '40E',
+        '36': 'S',
+        '37': 'M',
+        '38': 'L',
+        '39': 'XL',
+        '40': 'XXL',
+        '41': 'XXXL',
+        '42': 'Free Size',
+        '43': '42A',
+        '44': '42C',
+        '45': '42D',
+        '46': '42E',
+        '47': '44A',
+        '48': '44B',
+        '49': '44C',
+        '50': '44D',
+        '51': '44E',
+        '52': '46A',
+        '53': '46B',
+        '54': '46C',
+        '55': '46D',
+        '56': '46E',
+        '57': '48A',
+        '58': '48B',
+        '59': '48C',
+        '60': '48D',
+        '61': '48E',
+        '62': '30DD',
+        '63': '30F',
+        '64': '30FF',
+        '65': '32DD',
+        '66': '32F',
+        '67': '32FF',
+        '68': '34DD',
+        '69': '34F',
+        '70': '34FF',
+        '71': '40AA',
+        '72': '40DD',
+        '73': '40DDD',
+        '74': '40EE',
+        '75': '40F',
+        '76': '40FF',
+        '77': '40G',
+        '78': '40GG',
+        '79': '40H',
+        '80': '40I',
+        '81': '40J',
+        '82': '40K',
+        '83': '42EE',
+        '84': '42F',
+        '85': '42FF',
+        '86': '42G',
+        '87': '42GG',
+        '88': '42H',
+        '89': '42I',
+        '90': '42J',
+        '91': '42K',
+        '92': '44AA',
+        '93': '44DD',
+        '94': '44DDD',
+        '95': '44EE',
+        '96': '44F',
+        '97': '44FF',
+        '98': '44G',
+        '99': '44GG',
+        '100': '44H',
+        '101': '44I',
+        '102': '44J',
+        '103': '44K',
+        '104': '46AA',
+        '105': '46DD',
+        '106': '46DDD',
+        '107': '46EE',
+        '108': '46F',
+        '109': '46FF',
+        '110': '46G',
+        '111': '46GG',
+        '112': '46H',
+        '113': '46I',
+        '114': '46J',
+        '115': '46K',
+        '116': '48AA',
+        '117': '48DD',
+        '118': '48DDD',
+        '119': '48EE',
+        '120': '48F',
+        '121': '48FF',
+        '122': '48G',
+        '123': '48GG',
+        '124': '48H',
+        '125': '48I',
+        '126': '48J',
+        '127': '48K',
+        '128': '50A',
+        '129': '50AA',
+        '130': '50B',
+        '131': '50C',
+        '132': '50D',
+        '133': '50DD',
+        '134': '50DDD',
+        '135': '50E',
+        '136': '50EE',
+        '137': '50F',
+        '138': '50FF',
+        '139': '50G',
+        '140': '50GG',
+        '141': '50H',
+        '142': '50I',
+        '143': '50J',
+        '144': '50K',
+        '145': '52A',
+        '146': '52AA',
+        '147': '52B',
+        '148': '52C',
+        '149': '52D',
+        '150': '52DD',
+        '151': '52DDD',
+        '152': '52E',
+        '153': '52EE',
+        '154': '52F',
+        '155': '52FF',
+        '156': '52G',
+        '157': '52GG',
+        '158': '52H',
+        '159': '52I',
+        '160': '52J',
+        '161': '52K',
+        '162': '54A',
+        '163': '54AA',
+        '164': '54B',
+        '165': '54C',
+        '166': '54D',
+        '167': '54DD',
+        '168': '54DDD',
+        '169': '54E',
+        '170': '54EE',
+        '171': '54F',
+        '172': '54FF',
+        '173': '54G',
+        '174': '54GG',
+        '175': '54H',
+        '176': '54I',
+        '177': '54J',
+        '178': '54K',
+        '179': 'XS',
+        '180': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -21268,365 +22048,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Bath Robes': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -21634,365 +22414,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Towels: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -22000,365 +22780,365 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Pyjamas: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -22366,365 +23146,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Party Wear': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -22732,391 +23512,391 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Innerwear & Sleepwear': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '0-3 Months',
-        '0-6 Months',
-        '3-6 Months',
-        '6-9 Months',
-        '6-12 Months',
-        '9-12 Months',
-        '12-18 Months',
-        '18-24 Months',
-        '0-1 Years',
-        '1-2 Years',
-        '2-3 Years',
-        '3-4 Years',
-        '4-5 Years',
-        '5-6 Years',
-        '6-7 Years',
-        '7-8 Years',
-        '8-9 Years',
-        '9-10 Years',
-        '10-11 Years',
-        '11-12 Years',
-        '12-13 Years',
-        '13-14 Years',
-        '14-15 Years',
-        '15-16 Years',
-        'Free Size',
-      ],
+      value: {
+        '0': '0-3 Months',
+        '1': '0-6 Months',
+        '2': '3-6 Months',
+        '3': '6-9 Months',
+        '4': '6-12 Months',
+        '5': '9-12 Months',
+        '6': '12-18 Months',
+        '7': '18-24 Months',
+        '8': '0-1 Years',
+        '9': '1-2 Years',
+        '10': '2-3 Years',
+        '11': '3-4 Years',
+        '12': '4-5 Years',
+        '13': '5-6 Years',
+        '14': '6-7 Years',
+        '15': '7-8 Years',
+        '16': '8-9 Years',
+        '17': '9-10 Years',
+        '18': '10-11 Years',
+        '19': '11-12 Years',
+        '20': '12-13 Years',
+        '21': '13-14 Years',
+        '22': '14-15 Years',
+        '23': '15-16 Years',
+        '24': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -23124,365 +23904,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Nightwear & Loungewear': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -23490,365 +24270,367 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Watches: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -23856,365 +24638,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: true,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: true,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: true,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: true,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Gloves: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -24222,365 +25006,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Socks: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -24588,365 +25374,367 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Stockings: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -24954,727 +25742,731 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Laces: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
     size_chart: {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Soles & Charms': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -25682,365 +26474,365 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Shoe Racks & Organisers': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -26048,365 +26840,365 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Shoe Care - Accessories': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -26414,365 +27206,375 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Flip-Flops & Flats': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['IND-2', 'IND-3', 'IND-4', 'IND-5', 'IND-6', 'IND-7', 'IND-8', 'IND-9', 'IND-10'],
+      value: {
+        '0': 'IND-2',
+        '1': 'IND-3',
+        '2': 'IND-4',
+        '3': 'IND-5',
+        '4': 'IND-6',
+        '5': 'IND-7',
+        '6': 'IND-8',
+        '7': 'IND-9',
+        '8': 'IND-10',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -26780,365 +27582,375 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Sandals & Floaters': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['IND-2', 'IND-3', 'IND-4', 'IND-5', 'IND-6', 'IND-7', 'IND-8', 'IND-9', 'IND-10'],
+      value: {
+        '0': 'IND-2',
+        '1': 'IND-3',
+        '2': 'IND-4',
+        '3': 'IND-5',
+        '4': 'IND-6',
+        '5': 'IND-7',
+        '6': 'IND-8',
+        '7': 'IND-9',
+        '8': 'IND-10',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -27146,365 +27958,365 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Backpacks: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -27512,365 +28324,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Handbags: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -27878,365 +28692,365 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Trolley, Luggage & Suitcases': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -28244,365 +29058,375 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Formal Shoes': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['IND-5', 'IND-6', 'IND-7', 'IND-8', 'IND-9', 'IND-10', 'IND-11', 'IND-12', 'IND-13'],
+      value: {
+        '0': 'IND-5',
+        '1': 'IND-6',
+        '2': 'IND-7',
+        '3': 'IND-8',
+        '4': 'IND-9',
+        '5': 'IND-10',
+        '6': 'IND-11',
+        '7': 'IND-12',
+        '8': 'IND-13',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -28610,365 +29434,375 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Casual Shoes': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['IND-5', 'IND-6', 'IND-7', 'IND-8', 'IND-9', 'IND-10', 'IND-11', 'IND-12', 'IND-13'],
+      value: {
+        '0': 'IND-5',
+        '1': 'IND-6',
+        '2': 'IND-7',
+        '3': 'IND-8',
+        '4': 'IND-9',
+        '5': 'IND-10',
+        '6': 'IND-11',
+        '7': 'IND-12',
+        '8': 'IND-13',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -28976,365 +29810,375 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Sports Shoes': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['IND-5', 'IND-6', 'IND-7', 'IND-8', 'IND-9', 'IND-10', 'IND-11', 'IND-12', 'IND-13'],
+      value: {
+        '0': 'IND-5',
+        '1': 'IND-6',
+        '2': 'IND-7',
+        '3': 'IND-8',
+        '4': 'IND-9',
+        '5': 'IND-10',
+        '6': 'IND-11',
+        '7': 'IND-12',
+        '8': 'IND-13',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -29342,365 +30186,375 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: true,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Outdoor Shoes': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['IND-5', 'IND-6', 'IND-7', 'IND-8', 'IND-9', 'IND-10', 'IND-11', 'IND-12', 'IND-13'],
+      value: {
+        '0': 'IND-5',
+        '1': 'IND-6',
+        '2': 'IND-7',
+        '3': 'IND-8',
+        '4': 'IND-9',
+        '5': 'IND-10',
+        '6': 'IND-11',
+        '7': 'IND-12',
+        '8': 'IND-13',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -29708,365 +30562,375 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Work & Safety Shoes': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['IND-5', 'IND-6', 'IND-7', 'IND-8', 'IND-9', 'IND-10', 'IND-11', 'IND-12', 'IND-13'],
+      value: {
+        '0': 'IND-5',
+        '1': 'IND-6',
+        '2': 'IND-7',
+        '3': 'IND-8',
+        '4': 'IND-9',
+        '5': 'IND-10',
+        '6': 'IND-11',
+        '7': 'IND-12',
+        '8': 'IND-13',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -30074,365 +30938,375 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Ethnic Shoes': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['IND-5', 'IND-6', 'IND-7', 'IND-8', 'IND-9', 'IND-10', 'IND-11', 'IND-12', 'IND-13'],
+      value: {
+        '0': 'IND-5',
+        '1': 'IND-6',
+        '2': 'IND-7',
+        '3': 'IND-8',
+        '4': 'IND-9',
+        '5': 'IND-10',
+        '6': 'IND-11',
+        '7': 'IND-12',
+        '8': 'IND-13',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -30440,365 +31314,375 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Boots: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['IND-5', 'IND-6', 'IND-7', 'IND-8', 'IND-9', 'IND-10', 'IND-11', 'IND-12', 'IND-13'],
+      value: {
+        '0': 'IND-5',
+        '1': 'IND-6',
+        '2': 'IND-7',
+        '3': 'IND-8',
+        '4': 'IND-9',
+        '5': 'IND-10',
+        '6': 'IND-11',
+        '7': 'IND-12',
+        '8': 'IND-13',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -30806,365 +31690,375 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Heels: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['IND-2', 'IND-3', 'IND-4', 'IND-5', 'IND-6', 'IND-7', 'IND-8', 'IND-9', 'IND-10'],
+      value: {
+        '0': 'IND-2',
+        '1': 'IND-3',
+        '2': 'IND-4',
+        '3': 'IND-5',
+        '4': 'IND-6',
+        '5': 'IND-7',
+        '6': 'IND-8',
+        '7': 'IND-9',
+        '8': 'IND-10',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -31172,365 +32066,367 @@ export const fashion = {
       mandatory: true,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: true,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Contact Lenses': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -31538,365 +32434,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Eye Glasses': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -31904,365 +32802,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Eye Glass Frames': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -32270,365 +33170,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Sunglasses: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -32636,365 +33538,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Contact Lens Cases': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -33002,365 +33906,365 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Contact Lens Solutions': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -33368,365 +34272,365 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Contact Lens Tweezers': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -33734,365 +34638,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Eyeglasses Pouches & Cases': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -34100,365 +35006,365 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Microfiber Wipes': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -34466,365 +35372,365 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Eyewear Slings': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
       value: SIZE,
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -34832,365 +35738,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Bracelets: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -35198,365 +36106,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: true,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: true,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Chains: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -35564,365 +36474,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: true,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: true,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Mangalsutra: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -35930,365 +36842,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: true,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: true,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Anklets: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -36296,365 +37210,377 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: true,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: true,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Bangles & Bracelets': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['2.2', '2.3', '2.4', '2.5', '2.6', '2.8', '2.10', 'Free Size', '2.12', '2.14', '3'],
+      value: {
+        '0': '2.2',
+        '1': '2.3',
+        '2': '2.4',
+        '3': '2.5',
+        '4': '2.6',
+        '5': '2.8',
+        '6': '2.10',
+        '7': 'Free Size',
+        '8': '2.12',
+        '9': '2.14',
+        '10': '3',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -36662,365 +37588,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: false,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: false,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Necklaces: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -37028,365 +37956,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: true,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: true,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Earrings: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -37394,365 +38324,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: true,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: true,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Jewellery Sets': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -37760,365 +38692,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: true,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: true,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Nosepins & Noserings': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -38126,365 +39060,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: true,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: true,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Pendants: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -38492,386 +39428,386 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: true,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: true,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Rings: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: [
-        '16',
-        '17',
-        '18',
-        '19',
-        '20',
-        '21',
-        '22',
-        '23',
-        '24',
-        '25',
-        '7',
-        '8',
-        '9',
-        '10',
-        '11',
-        '12',
-        '13',
-        '14',
-        '15',
-        'Free Size',
-      ],
+      value: {
+        '0': '16',
+        '1': '17',
+        '2': '18',
+        '3': '19',
+        '4': '20',
+        '5': '21',
+        '6': '22',
+        '7': '23',
+        '8': '24',
+        '9': '25',
+        '10': '7',
+        '11': '8',
+        '12': '9',
+        '13': '10',
+        '14': '11',
+        '15': '12',
+        '16': '13',
+        '17': '14',
+        '18': '15',
+        '19': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -38879,365 +39815,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: true,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: true,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Toe Rings': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -39245,365 +40183,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: true,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: true,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   'Gold Coins': {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -39611,365 +40551,367 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: true,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: true,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },
   },
   Brooch: {
-    Gender: {
+    gender: {
       mandatory: true,
       value: GENDER,
     },
-    Colour: {
+    colour: {
       mandatory: true,
       value: '/^#([a-fA-F0-9]{6})/',
     },
-    Size: {
+    size: {
       mandatory: true,
-      value: ['Free Size'],
+      value: {
+        '0': 'Free Size',
+      },
     },
-    Brand: {
+    brand: {
       mandatory: true,
       value: [],
     },
@@ -39977,347 +40919,347 @@ export const fashion = {
       mandatory: false,
       value: [],
     },
-    Fabric: {
+    fabric: {
       mandatory: false,
       value: FABRIC,
     },
-    Strap_Material: {
+    strap_material: {
       mandatory: false,
       value: STRAP_MATERIAL,
     },
-    Water_Resistant: {
+    water_resistant: {
       mandatory: false,
       value: [],
     },
-    Display: {
+    display: {
       mandatory: false,
       value: DISPLAY,
     },
-    Glass_Material: {
+    glass_material: {
       mandatory: false,
       value: [],
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    Sport_Type: {
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
+    sport_type: {
       mandatory: false,
       value: SPORT_TYPE,
     },
-    Base_Metal: {
+    base_metal: {
       mandatory: true,
       value: BASE_METAL,
     },
-    Plating: {
+    plating: {
       mandatory: true,
       value: PLATING,
     },
-    Care_Instructions: {
+    care_instructions: {
       mandatory: false,
       value: [],
     },
-    Wash_Type: {
+    wash_type: {
       mandatory: false,
       value: WASH_TYPE,
     },
-    Weight: {
+    weight: {
       mandatory: false,
       value: [],
     },
-    Length: {
+    length: {
       mandatory: false,
       value: [],
     },
-    Breadth: {
+    breadth: {
       mandatory: false,
       value: [],
     },
-    Height: {
+    height: {
       mandatory: false,
       value: [],
     },
-    Features: {
+    features: {
       mandatory: false,
       value: FEATURES,
     },
-    Fabric_Finish: {
+    fabric_finish: {
       mandatory: false,
       value: FABRIC_FINISH,
     },
-    Material: {
+    material: {
       mandatory: false,
       value: MATERIAL,
     },
-    Material_Finish: {
+    material_finish: {
       mandatory: false,
       value: MATERIAL_FINISH,
     },
-    Pattern: {
+    pattern: {
       mandatory: false,
       value: PATTERN,
     },
-    Occasion: {
+    occasion: {
       mandatory: false,
       value: OCCASION,
     },
-    Season: {
+    season: {
       mandatory: false,
       value: SEASON,
     },
-    Trend: {
+    trend: {
       mandatory: false,
       value: TREND,
     },
-    Fit: {
+    fit: {
       mandatory: false,
       value: FIT,
     },
-    Collar: {
+    collar: {
       mandatory: false,
       value: COLLAR,
     },
-    Neck: {
+    neck: {
       mandatory: false,
       value: NECK,
     },
-    Bundles: {
+    bundles: {
       mandatory: false,
       value: [],
     },
-    Max_Sale_Quantity: {
+    max_sale_quantity: {
       mandatory: false,
       value: [],
     },
-    Hemline: {
+    hemline: {
       mandatory: false,
       value: HEMLINE,
     },
-    Lining: {
+    lining: {
       mandatory: false,
       value: [],
     },
-    Num_Pockets: {
+    num_pockets: {
       mandatory: false,
       value: [],
     },
-    Reversible: {
+    reversible: {
       mandatory: false,
       value: [],
     },
-    Bottom_Type: {
+    bottom_type: {
       mandatory: false,
       value: BOTTOM_TYPE,
     },
-    Top_Type: {
+    top_type: {
       mandatory: false,
       value: TOP_TYPE,
     },
-    Front_Styling: {
+    front_styling: {
       mandatory: false,
       value: FRONT_STYLING,
     },
-    Sleeve_Length: {
+    sleeve_length: {
       mandatory: false,
       value: SLEEVE_LENGTH,
     },
-    Sweatshirt_Type: {
+    sweatshirt_type: {
       mandatory: false,
       value: SWEATSHIRT_TYPE,
     },
-    Fragile: {
+    fragile: {
       mandatory: false,
       value: [],
     },
-    Liquid: {
+    liquid: {
       mandatory: false,
       value: [],
     },
-    Hazardous: {
+    hazardous: {
       mandatory: false,
       value: [],
     },
-    Power_Type: {
+    power_type: {
       mandatory: false,
       value: POWER_TYPE,
     },
-    Battery_Life: {
+    battery_life: {
       mandatory: false,
       value: [],
     },
-    Bluetooth: {
+    bluetooth: {
       mandatory: false,
       value: [],
     },
-    Call_Function: {
+    call_function: {
       mandatory: false,
       value: [],
     },
-    Heart_Rate_Monitor: {
+    heart_rate_monitor: {
       mandatory: false,
       value: [],
     },
-    Pedometer: {
+    pedometer: {
       mandatory: false,
       value: [],
     },
-    Sleep_Monitor: {
+    sleep_monitor: {
       mandatory: false,
       value: [],
     },
-    SPO2_Monitor: {
+    spo2_monitor: {
       mandatory: false,
       value: [],
     },
-    Warranty: {
+    warranty: {
       mandatory: false,
       value: [],
     },
-    Buckle_Material: {
+    buckle_material: {
       mandatory: false,
       value: BUCKLE_MATERIAL,
     },
-    Buckle_Type: {
+    buckle_type: {
       mandatory: false,
       value: BUCKLE_TYPE,
     },
-    Waist_Rise: {
+    waist_rise: {
       mandatory: false,
       value: WAIST_RISE,
     },
-    Socks_Length: {
+    socks_length: {
       mandatory: false,
       value: SOCKS_LENGTH,
     },
-    Footwear_Type: {
+    footwear_type: {
       mandatory: false,
       value: FOOTWEAR_TYPE,
     },
-    Insole: {
+    insole: {
       mandatory: false,
       value: INSOLE,
     },
-    Sole_Material: {
+    sole_material: {
       mandatory: false,
       value: SOLE_MATERIAL,
     },
-    Toe_Shape: {
+    toe_shape: {
       mandatory: false,
       value: TOE_SHAPE,
     },
-    Outsole: {
+    outsole: {
       mandatory: false,
       value: OUTSOLE,
     },
-    Fasten_Type: {
+    fasten_type: {
       mandatory: false,
       value: FASTEN_TYPE,
     },
-    Midsole: {
+    midsole: {
       mandatory: false,
       value: MIDSOLE,
     },
-    Backpack_Style: {
+    backpack_style: {
       mandatory: false,
       value: BACKPACK_STYLE,
     },
-    Closure_Type: {
+    closure_type: {
       mandatory: false,
       value: CLOSURE_TYPE,
     },
-    Stone_Type: {
+    stone_type: {
       mandatory: false,
       value: STONE_TYPE,
     },
-    Gem_Type: {
+    gem_type: {
       mandatory: false,
       value: GEM_TYPE,
     },
-    Dial_Shape: {
+    dial_shape: {
       mandatory: false,
       value: DIAL_SHAPE,
     },
-    Frame_Type: {
+    frame_type: {
       mandatory: false,
       value: FRAME_TYPE,
     },
-    Frame_Shape: {
+    frame_shape: {
       mandatory: false,
       value: FRAME_SHAPE,
     },
-    Frame_Colour: {
+    frame_colour: {
       mandatory: false,
       value: [],
     },
-    Frame_Size: {
+    frame_size: {
       mandatory: false,
       value: FRAME_SIZE,
     },
-    Frame_Material: {
+    frame_material: {
       mandatory: false,
       value: FRAME_MATERIAL,
     },
-    Frame_Style: {
+    frame_style: {
       mandatory: false,
       value: FRAME_STYLE,
     },
-    Face_Shape: {
+    face_shape: {
       mandatory: false,
       value: FACE_SHAPE,
     },
-    Lens_Material: {
+    lens_material: {
       mandatory: false,
       value: LENS_MATERIAL,
     },
-    Lens_Colour: {
+    lens_colour: {
       mandatory: false,
       value: [],
     },
-    Laptop_Compartment: {
+    laptop_compartment: {
       mandatory: false,
       value: [],
     },
-    Strap_Type: {
+    strap_type: {
       mandatory: false,
       value: [],
     },
-    Volume: {
+    volume: {
       mandatory: false,
       value: [],
     },
-    Lock_Type: {
+    lock_type: {
       mandatory: false,
       value: LOCK_TYPE,
     },
-    Ornamentation: {
+    ornamentation: {
       mandatory: false,
       value: ORNAMENTATION,
     },
-    Coverage: {
+    coverage: {
       mandatory: false,
       value: COVERAGE,
     },
-    Padding: {
+    padding: {
       mandatory: false,
       value: PADDING,
     },
-    Seam: {
+    seam: {
       mandatory: false,
       value: SEAM,
     },
-    Waist_Band: {
+    waist_band: {
       mandatory: false,
       value: WAIST_BAND,
     },
-    Sustainability: {
+    sustainability: {
       mandatory: false,
       value: [],
     },
-    Handcrafted: {
+    handcrafted: {
       mandatory: false,
       value: [],
     },
-    Craftmark: {
+    craftmark: {
       mandatory: false,
       value: [],
     },

@@ -18,7 +18,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: true,
@@ -164,7 +164,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -306,7 +306,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -448,7 +448,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: true,
@@ -590,7 +590,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: true,
@@ -732,7 +732,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: true,
@@ -874,7 +874,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -1016,7 +1016,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -1158,7 +1158,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -1300,7 +1300,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -1442,7 +1442,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -1584,7 +1584,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -1726,7 +1726,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -1868,7 +1868,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -2010,7 +2010,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -2152,7 +2152,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -2294,7 +2294,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -2436,7 +2436,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -2578,7 +2578,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -2720,7 +2720,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -2862,7 +2862,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -3004,7 +3004,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -3146,7 +3146,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -3288,7 +3288,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -3430,7 +3430,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -3572,7 +3572,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -3714,7 +3714,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -3856,7 +3856,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -3998,7 +3998,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -4140,7 +4140,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -4282,7 +4282,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -4424,7 +4424,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -4566,7 +4566,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -4708,7 +4708,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -4850,7 +4850,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -4992,7 +4992,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -5134,7 +5134,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -5276,7 +5276,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -5418,7 +5418,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -5560,7 +5560,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -5702,7 +5702,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -5844,7 +5844,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -5986,7 +5986,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -6128,7 +6128,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -6270,7 +6270,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -6412,7 +6412,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -6554,7 +6554,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: true,
@@ -6696,7 +6696,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: true,
@@ -6838,7 +6838,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -6980,7 +6980,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -7122,7 +7122,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -7264,7 +7264,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -7406,7 +7406,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: true,
@@ -7548,7 +7548,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -7690,7 +7690,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -7832,7 +7832,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -7974,7 +7974,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -8116,7 +8116,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -8258,7 +8258,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -8400,7 +8400,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -8542,7 +8542,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -8684,7 +8684,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -8826,7 +8826,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -8968,7 +8968,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -9110,7 +9110,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -9252,7 +9252,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -9394,7 +9394,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -9536,7 +9536,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -9678,7 +9678,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -9820,7 +9820,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -9962,7 +9962,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -10104,7 +10104,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -10246,7 +10246,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -10388,7 +10388,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -10530,7 +10530,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -10672,7 +10672,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -10814,7 +10814,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -10956,7 +10956,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -11098,7 +11098,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -11240,7 +11240,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -11382,7 +11382,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -11524,7 +11524,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -11666,7 +11666,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -11808,7 +11808,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -11950,7 +11950,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -12092,7 +12092,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -12234,7 +12234,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -12376,7 +12376,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: false,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -12518,7 +12518,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -12660,7 +12660,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -12802,7 +12802,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,
@@ -12944,7 +12944,7 @@ export const electronicsData = {
     },
     colour_name: {
       mandatory: true,
-      value: [],
+      value: '/^[a-z ]+$/',
     },
     ram: {
       mandatory: false,

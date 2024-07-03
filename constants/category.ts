@@ -18,10 +18,9 @@ export const groceryJSON: { [key: string]: ICategoryJSON } = {
   'Masala & Seasoning': groceryObj,
   'Falseil & Ghee': groceryObj,
   'Eggs, Meat & Fish': groceryObj,
-  'Cleaning & Household': groceryObj,
+  'Detergents and Dishwash': groceryObj,
   'Bakery, Cakes & Dairy': groceryObj,
   'Pet Care': groceryObj,
-  Stationery: groceryObj,
   'Dairy and Cheese': groceryObj,
   'Snacks, Dry Fruits, Nuts': groceryObj,
   'Pasta, Soup and Noodles': groceryObj,
@@ -246,6 +245,13 @@ export const BPCJSON: { [key: string]: ICategoryJSON } = {
   'Hair Care - Shampoo, Oils, Conditioners': BPCObj,
   'Skin Care - Lotions, Moisturisers, and Creams': BPCObj,
   'Skin Care - Oils and Serums': BPCObj,
+  'Trimmer':BPCObj,
+  'Shaver':BPCObj,
+  'Epilator':BPCObj,
+  'Hair Straightener':BPCObj,
+  'Hair Dryer':BPCObj,
+  'Hair Curler':BPCObj,
+  'Hair Crimper':BPCObj
 }
 
 export const groceryCategoryMappingWithStatutory: { [key: string]: statutory_reqs } = {
@@ -266,7 +272,6 @@ export const groceryCategoryMappingWithStatutory: { [key: string]: statutory_req
   "Masala & Seasoning": statutory_reqs.PackagedCommodities,
   "Oil & Ghee": statutory_reqs.PackagedCommodities,
   "Eggs, Meat & Fish": statutory_reqs.PackagedCommodities,
-  "Cleaning & Household": statutory_reqs.PackagedCommodities,
   "Pet Care": statutory_reqs.PackagedCommodities,
   "Pasta, Soup and Noodles": statutory_reqs.PackagedCommodities,
   "Cooking and Baking Needs": statutory_reqs.PackagedCommodities,

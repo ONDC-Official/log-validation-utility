@@ -138,6 +138,10 @@ export const Fis10ApiSequence = {
 export const FIS13HealthSequence = {
   SEARCH: 'search',
   ON_SEARCH: 'on_search',
+  SEARCH_1: 'search_1',
+  ON_SEARCH_1: 'on_search_1',
+  SEARCH_2: 'search_2',
+  ON_SEARCH_2: 'on_search_2',
   SEARCH_OFFER: 'search_offer',
   ON_SEARCH_OFFER: 'on_search_offer',
   SELECT: 'select',

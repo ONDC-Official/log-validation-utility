@@ -16,9 +16,9 @@ import {
   payment_status,
   compareQuoteObjects,
   compareLists,
+  isoDurToSec,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
-
 export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any) => {
   const onCnfrmObj: any = {}
   try {
@@ -119,13 +119,20 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any) => {
     } catch (error: any) {
       logger.error(`!!Error while checking Cancellation terms for /${constants.ON_CONFIRM}, ${error.stack}`)
     }
-
+    
     try {
       logger.info(`Checking fulfillment ids for  /${constants.ON_CONFIRM}`)
       message.order.fulfillments.forEach((fulfillment: any) => {
         if (!fulfillment['@ondc/org/TAT']) {
           onCnfrmObj[`message.order.fulfillments[${fulfillment.id}]`] =
             `'TAT' must be provided in message/order/fulfillments`
+        }
+        const on_select_fulfillment_tat_obj:any= getValue('fulfillment_tat_obj');  
+        const fulfillment_id = fulfillment.id
+        
+        logger.info(`Checking TAT Mistatch between  /${constants.ON_CONFIRM} & /${constants.ON_SELECT}`)     
+        if (on_select_fulfillment_tat_obj !== null && on_select_fulfillment_tat_obj[fulfillment_id]!==isoDurToSec(fulfillment['@ondc/org/TAT'])){
+          onCnfrmObj[`TAT_Mismatch`]= `TAT Mistatch between  /${constants.ON_CONFIRM} i.e ${isoDurToSec(fulfillment['@ondc/org/TAT'])} seconds & /${constants.ON_SELECT} i.e ${on_select_fulfillment_tat_obj[fulfillment_id]} seconds`
         }
       })
     } catch (error: any) {

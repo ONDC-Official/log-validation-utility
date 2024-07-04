@@ -301,7 +301,7 @@ export const checkTagConditions = (message: any, context: any, apiSeq: string) =
       }
 
       if (modeTag && apiSeq == ApiSequence.INC_SEARCH) {
-        if (modeTag.value === 'start' || modeTag.value === "stop") {
+        if (modeTag.value === 'start' || modeTag.value === 'stop') {
           setValue(`${ApiSequence.INC_SEARCH}_push`, true)
         }
       }
@@ -822,6 +822,7 @@ export const compareSTDwithArea = (pincode: number, std: string): boolean => {
 }
 
 export const checkMandatoryTags = (i: string, items: any, errorObj: any, categoryJSON: any, categoryName: string) => {
+  
   items.forEach((item: any, index: number) => {
     let attributeTag = null
     let originTag = null
@@ -849,7 +850,21 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
 
       if (categoryJSON.hasOwnProperty(ctgrID)) {
         logger.info(`Checking for item tags for ${categoryName} item[${index}]`)
-        const mandatoryTags = categoryJSON[ctgrID]
+        const mandatoryTags = categoryJSON[ctgrID] 
+        const missingMandatoryTags: any[] = []
+        tags.forEach((tag: { code: string }) => {
+          const tagCode = tag.code
+          if (!mandatoryTags[tagCode]) {
+            missingMandatoryTags.push(tag.code)
+          }
+        })
+
+        if (missingMandatoryTags.length > 0) {
+          const key = `invalid_attribute[${i}][${index}]`
+          errorObj[key] =`Invalid attribute for item with category id: ${missingMandatoryTags.join(', ')}`
+        } else {
+          console.log(`All tag codes have corresponding valid attributes.`)
+        }
         for (const tagName in mandatoryTags) {
           if (mandatoryTags.hasOwnProperty(tagName)) {
             const tagInfo = mandatoryTags[tagName]
@@ -857,44 +872,51 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
             if (isTagMandatory) {
               let tagValue: any = null
               let originalTag: any = null
-              const tagFound = tags.some((tag: any) => {
-                const res = tag.code.toLowerCase() === tagName.toLowerCase()
+              const tagFound = tags.some((tag: any) :any=> {
+                const res = tag.code === tagName.toLowerCase()
                 if (res) {
-                  tagValue = tag.value.toLowerCase()
+                  tagValue = tag.value
                   originalTag = tag.value
+                  
                 }
-
                 return res
               })
               if (!tagFound) {
-                logger.error(`Mandatory tag field [${tagName}] missing for ${categoryName} item[${index}]`)
-                const key = `missingTagsItem[${i}][${index}] : ${tagName}`
-                errorObj[key] = `Mandatory tag field [${tagName}] missing for ${categoryName} item[${index}]`
+                logger.error(
+                  `Mandatory tag field [${tagName.toLowerCase()}] missing for ${categoryName} item[${index}]`,
+                )
+                const key = `missingTagsItem[${i}][${index}] : ${tagName.toLowerCase()}`
+                errorObj[key] =
+                  `Mandatory tag field [${tagName.toLowerCase()}] missing for ${categoryName} item[${index}]`
               } else {
                 if (tagInfo.value.length > 0) {
-                  let isValidValue = false;
-                  let regexPattern = ""
+                  let isValidValue = false
+                  let regexPattern = ''
 
                   if (Array.isArray(tagInfo.value)) {
-                    isValidValue = tagInfo.value.includes(originalTag) || tagInfo.value.includes(tagValue);
-                  } else if (typeof tagInfo.value === 'string' && tagInfo.value.startsWith('/') && tagInfo.value.endsWith('/')) {
-                    regexPattern = tagInfo.value.slice(1, -1);
-                    const regex = new RegExp(regexPattern);
-                    isValidValue = regex.test(originalTag) || regex.test(tagValue);
+                    isValidValue = tagInfo.value.includes(originalTag) || tagInfo.value.includes(tagValue)
+                  } else if (
+                    typeof tagInfo.value === 'string' &&
+                    tagInfo.value.startsWith('/') &&
+                    tagInfo.value.endsWith('/')
+                  ) {
+                    regexPattern = tagInfo.value.slice(1, -1)
+                    const regex = new RegExp(regexPattern)
+                    isValidValue = regex.test(originalTag) || regex.test(tagValue)
                   }
 
                   if (!isValidValue) {
-                    logger.error(`The item value can only be one of the possible values or match the regex pattern.`);
-                    const key = `InvldValueforItem[${i}][${index}] : ${tagName}`;
-                    errorObj[key] = `Invalid item value: [${originalTag}]. It must be one of the allowed values or match the regex pattern [${regexPattern}].`;
+                    logger.error(`The item value can only be one of the possible values or match the regex pattern.`)
+                    const key = `InvldValueforItem[${i}][${index}] : ${tagName}`
+                    errorObj[key] =
+                      `Invalid item value: [${originalTag}]. It must be one of the allowed values or match the regex pattern [${regexPattern}].`
                   }
                 }
               }
             }
           }
         }
-      }
-      else {
+      } else {
         const key = `invalidCategoryId${ctgrID}`
         errorObj[key] = `Invalid category_id (${ctgrID}) for ${categoryName}`
       }
@@ -991,7 +1013,13 @@ export const payment_status = (payment: any) => {
   return true
 }
 
-export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAtConfirm: number, errorObj: any, apiSeq: string) => {
+export const checkQuoteTrailSum = (
+  fulfillmentArr: any[],
+  price: number,
+  priceAtConfirm: number,
+  errorObj: any,
+  apiSeq: string,
+) => {
   let quoteTrailSum = 0
   for (const obj of fulfillmentArr) {
     const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
@@ -1006,9 +1034,8 @@ export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAt
   quoteTrailSum = Number(quoteTrailSum.toFixed(2))
   if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
     const key = `invldQuoteTrailPrices`
-    errorObj[
-      key
-    ] = `quote_trail price and item quote price sum for ${apiSeq} should be equal to the price as in ${constants.ON_CONFIRM}`
+    errorObj[key] =
+      `quote_trail price and item quote price sum for ${apiSeq} should be equal to the price as in ${constants.ON_CONFIRM}`
     logger.error(
       `quote_trail price and item quote price sum for ${apiSeq} should be equal to the price as in ${constants.ON_CONFIRM} `,
     )
@@ -1189,7 +1216,9 @@ export function compareTimeRanges(data1: any, action1: any, data2: any, action2:
     }
 
     if (range1.end !== range2.end) {
-      errors.push(`/${key}/range/end_time "${range1.end}" of ${action1} mismatched with /${key}/range/end_time "${range2.end}" of ${action2}`)
+      errors.push(
+        `/${key}/range/end_time "${range1.end}" of ${action1} mismatched with /${key}/range/end_time "${range2.end}" of ${action2}`,
+      )
     }
   })
 
@@ -1197,78 +1226,104 @@ export function compareTimeRanges(data1: any, action1: any, data2: any, action2:
 }
 
 export function compareFulfillmentObject(obj1: any, obj2: any, keys: string[], i: number, apiSeq: string) {
-  const errors: any[] = [];
+  const errors: any[] = []
 
   keys.forEach((key: string) => {
     if (_.isArray(obj1[key])) {
-      obj1[key] = _.sortBy(obj1[key], ['code']);
+      obj1[key] = _.sortBy(obj1[key], ['code'])
     }
     if (_.isArray(obj2[key])) {
-      obj2[key] = _.sortBy(obj2[key], ['code']);
+      obj2[key] = _.sortBy(obj2[key], ['code'])
     }
 
     if (!_.isEqual(obj1[key], obj2[key])) {
-      if (typeof obj1[key] === "object" && typeof obj2[key] === "object" && Object.keys(obj1[key]).length > 0 && Object.keys(obj2[key]).length > 0) {
-        const obj1_nested = obj1[key];
-        const obj2_nested = obj2[key];
+      if (
+        typeof obj1[key] === 'object' &&
+        typeof obj2[key] === 'object' &&
+        Object.keys(obj1[key]).length > 0 &&
+        Object.keys(obj2[key]).length > 0
+      ) {
+        const obj1_nested = obj1[key]
+        const obj2_nested = obj2[key]
 
-        const obj1_nested_keys = Object.keys(obj1_nested);
-        const obj2_nested_keys = Object.keys(obj2_nested);
+        const obj1_nested_keys = Object.keys(obj1_nested)
+        const obj2_nested_keys = Object.keys(obj2_nested)
 
-        const nestedKeys = obj1_nested_keys.length > obj2_nested_keys.length ? obj1_nested_keys : obj2_nested_keys;
+        const nestedKeys = obj1_nested_keys.length > obj2_nested_keys.length ? obj1_nested_keys : obj2_nested_keys
 
         nestedKeys.forEach((key_nested: string) => {
           if (!_.isEqual(obj1_nested[key_nested], obj2_nested[key_nested])) {
-            const errKey = `message/order.fulfillments/${i}/${key}/${key_nested}`;
-            const errMsg = `Mismatch occurred while comparing '${obj1.type}' fulfillment object with ${apiSeq} on key '${key}/${key_nested}'`;
-            errors.push({ errKey, errMsg });
+            const errKey = `message/order.fulfillments/${i}/${key}/${key_nested}`
+            const errMsg = `Mismatch occurred while comparing '${obj1.type}' fulfillment object with ${apiSeq} on key '${key}/${key_nested}'`
+            errors.push({ errKey, errMsg })
           }
-        });
+        })
       } else {
-        const errKey = `message/order.fulfillments/${i}/${key}`;
-        const errMsg = `Mismatch occurred while comparing '${obj1.type}' fulfillment object with ${apiSeq} on key '${key}'`;
-        errors.push({ errKey, errMsg });
+        const errKey = `message/order.fulfillments/${i}/${key}`
+        const errMsg = `Mismatch occurred while comparing '${obj1.type}' fulfillment object with ${apiSeq} on key '${key}'`
+        errors.push({ errKey, errMsg })
       }
     }
-  });
+  })
 
-  return errors;
+  return errors
 }
 
 export function checkForStatutory(item: any, i: number, j: number, errorObj: any, statutory_req: string) {
   const requiredFields: Record<string, string[]> = {
     '@ondc/org/statutory_reqs_prepackaged_food': [
-      "nutritional_info",
-      "additives_info",
-      "brand_owner_FSSAI_license_no",
-      "other_FSSAI_license_no",
-      "importer_FSSAI_license_no"
+      'nutritional_info',
+      'additives_info',
+      'brand_owner_FSSAI_license_no',
+      'other_FSSAI_license_no',
+      'importer_FSSAI_license_no',
     ],
-    '@ondc/org/statutory_reqs_packaged_commodities': ["manufacturer_or_packer_name",
-      "manufacturer_or_packer_address",
-      "common_or_generic_name_of_commodity",
-      "month_year_of_manufacture_packing_import"]
+    '@ondc/org/statutory_reqs_packaged_commodities': [
+      'manufacturer_or_packer_name',
+      'manufacturer_or_packer_address',
+      'common_or_generic_name_of_commodity',
+      'month_year_of_manufacture_packing_import',
+    ],
   }
 
-  if (!_.isEmpty(item[statutory_req] || typeof item[statutory_req] !== "object" || item[statutory_req] === null)) {
+  if (!_.isEmpty(item[statutory_req] || typeof item[statutory_req] !== 'object' || item[statutory_req] === null)) {
     const data = item[statutory_req]
     requiredFields[statutory_req].forEach((field: any, k: number) => {
-      if (typeof data[field] !== "string" || data[field].trim() === "") {
-        Object.assign(errorObj, { [`prvdr${i}item${j}${field}${k}statutoryReq`]: `The item${j}/'${statutory_req}'/${field}${k} is missing or not a string in bpp/providers/items for /${constants.ON_SEARCH}` })
+      if (typeof data[field] !== 'string' || data[field].trim() === '') {
+        Object.assign(errorObj, {
+          [`prvdr${i}item${j}${field}${k}statutoryReq`]: `The item${j}/'${statutory_req}'/${field}${k} is missing or not a string in bpp/providers/items for /${constants.ON_SEARCH}`,
+        })
       }
     })
-  }
-  else {
-    Object.assign(errorObj, { [`prvdr${i}item${j}statutoryReq`]: `The following item/category_id is not having item${j}/'${statutory_req}' in bpp/providers for /${constants.ON_SEARCH}` })
+  } else {
+    Object.assign(errorObj, {
+      [`prvdr${i}item${j}statutoryReq`]: `The following item/category_id is not having item${j}/'${statutory_req}' in bpp/providers for /${constants.ON_SEARCH}`,
+    })
   }
 
   return errorObj
 }
 
 export function getStatutoryRequirement(category: string): statutory_reqs | undefined {
-  return groceryCategoryMappingWithStatutory[category];
+  return groceryCategoryMappingWithStatutory[category]
 }
 
 function isValidTimestamp(timestamp: string): boolean {
   return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(timestamp)
+}
+
+export function checkIdInUri(Uri: string, id: string): boolean {
+  return Uri.includes(id)
+}
+
+export function validateBapUri(bapUri: string, bap_id: string, errorObj: any): any {
+  if (!checkIdInUri(bapUri, bap_id)) {
+    errorObj['bap_id_in_uri'] = `Bap_id ${bap_id} is not found in BapUri ${bapUri}`
+  }
+}
+
+export function validateBppUri(bppUri: string, bpp_id: string, errorObj: any): any {
+  if (!checkIdInUri(bppUri, bpp_id)) {
+    errorObj['bpp_id_in_uri'] = `Bpp_id ${bpp_id} is not found in BppUri ${bppUri}`
+  }
 }

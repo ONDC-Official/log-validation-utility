@@ -18,10 +18,9 @@ export const groceryJSON: { [key: string]: ICategoryJSON } = {
   'Masala & Seasoning': groceryObj,
   'Falseil & Ghee': groceryObj,
   'Eggs, Meat & Fish': groceryObj,
-  'Cleaning & Household': groceryObj,
+  'Detergents and Dishwash': groceryObj,
   'Bakery, Cakes & Dairy': groceryObj,
   'Pet Care': groceryObj,
-  Stationery: groceryObj,
   'Dairy and Cheese': groceryObj,
   'Snacks, Dry Fruits, Nuts': groceryObj,
   'Pasta, Soup and Noodles': groceryObj,
@@ -48,15 +47,15 @@ export const groceryJSON: { [key: string]: ICategoryJSON } = {
 }
 
 const healthObj: ICategoryJSON = {
-  Brand: {
+  brand: {
     mandatory: true,
     value: [],
   },
-  Prescription_Required: {
+  prescription_required: {
     mandatory: true,
     value: [],
   },
-  Usage_Instruction: {
+  usage_instruction: {
     mandatory: false,
     value: [],
   },
@@ -103,62 +102,62 @@ export const healthJSON: { [key: string]: ICategoryJSON } = {
   'Gift Voucher': healthObj,
 }
 
-const homeObj: ICategoryJSON = {
-  Brand: {
+const homeObj = {
+  brand: {
     mandatory: true,
     value: [],
   },
-  Colour: {
+  colour: {
+    mandatory: true,
+    value: "/^#([a-fA-F0-9]{6})/",
+  },
+  colour_name: {
     mandatory: true,
     value: [],
   },
-  Colour_Name: {
-    mandatory: false,
-    value: [],
-  },
-  Material: {
+  material: {
     mandatory: true,
     value: [],
   },
-  Size: {
+  size: {
     mandatory: false,
     value: [],
   },
-  Weight: {
+  weight: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+  },
+  length: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+  },
+  breadth: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+  },
+  height: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+  },
+  model: {
     mandatory: false,
     value: [],
   },
-  Length: {
+  assembly_required: {
     mandatory: false,
     value: [],
   },
-  Breadth: {
+  care_instructions: {
     mandatory: false,
     value: [],
   },
-  Height: {
-    mandatory: false,
-    value: [],
-  },
-  Model: {
-    mandatory: false,
-    value: [],
-  },
-  Assembly_Required: {
-    mandatory: false,
-    value: [],
-  },
-  Care_Instructions: {
-    mandatory: false,
-    value: [],
-  },
-  Special_Features: {
+  special_features: {
     mandatory: false,
     value: [],
   },
 }
 
-export const homeJSON: { [key: string]: ICategoryJSON } = {
+export const homeJSON = {
   'Home Decor': homeObj,
   Furniture: homeObj,
   'Home Furnishing - Bedding and Linen': homeObj,
@@ -178,43 +177,43 @@ export const homeJSON: { [key: string]: ICategoryJSON } = {
 }
 
 const BPCObj: ICategoryJSON = {
-  Brand: {
+  brand: {
     mandatory: true,
     value: [],
   },
-  Colour: {
+  colour: {
     mandatory: false,
     value: [],
   },
-  Colour_Name: {
+  colour_Name: {
     mandatory: false,
     value: [],
   },
-  Gender: {
+  gender: {
     mandatory: false,
     value: [],
   },
-  Concern: {
+  concern: {
     mandatory: false,
     value: [],
   },
-  Ingredient: {
+  ingredient: {
     mandatory: false,
     value: [],
   },
-  Conscious: {
+  conscious: {
     mandatory: false,
     value: [],
   },
-  Preference: {
+  preference: {
     mandatory: false,
     value: [],
   },
-  Formulation: {
+  formulation: {
     mandatory: false,
     value: [],
   },
-  Skin_Type: {
+  skin_type: {
     mandatory: false,
     value: [],
   },
@@ -246,6 +245,13 @@ export const BPCJSON: { [key: string]: ICategoryJSON } = {
   'Hair Care - Shampoo, Oils, Conditioners': BPCObj,
   'Skin Care - Lotions, Moisturisers, and Creams': BPCObj,
   'Skin Care - Oils and Serums': BPCObj,
+  'Trimmer':BPCObj,
+  'Shaver':BPCObj,
+  'Epilator':BPCObj,
+  'Hair Straightener':BPCObj,
+  'Hair Dryer':BPCObj,
+  'Hair Curler':BPCObj,
+  'Hair Crimper':BPCObj
 }
 
 export const groceryCategoryMappingWithStatutory: { [key: string]: statutory_reqs } = {
@@ -266,7 +272,6 @@ export const groceryCategoryMappingWithStatutory: { [key: string]: statutory_req
   "Masala & Seasoning": statutory_reqs.PackagedCommodities,
   "Oil & Ghee": statutory_reqs.PackagedCommodities,
   "Eggs, Meat & Fish": statutory_reqs.PackagedCommodities,
-  "Cleaning & Household": statutory_reqs.PackagedCommodities,
   "Pet Care": statutory_reqs.PackagedCommodities,
   "Pasta, Soup and Noodles": statutory_reqs.PackagedCommodities,
   "Cooking and Baking Needs": statutory_reqs.PackagedCommodities,

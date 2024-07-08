@@ -460,7 +460,7 @@ export const onSearchIncSchema = {
                                   type: 'string',
                                   pattern: '^[0-9]+$',
                                   errorMessage:
-                                    'maximum count must be numbers only ',
+                                    'maximum count must be numbers only in string ',
                                 },
                               },
                               required: ['count'],

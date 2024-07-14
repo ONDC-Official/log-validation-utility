@@ -77,7 +77,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/',
     },
     fabric: {
       mandatory: true,
@@ -443,8 +443,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -809,8 +808,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -1175,8 +1173,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -1567,8 +1564,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -1959,8 +1955,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -2351,8 +2346,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -2721,8 +2715,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -3091,8 +3084,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -3457,8 +3449,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -3823,8 +3814,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -4215,8 +4205,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -4973,8 +4962,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -5339,8 +5327,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -5728,8 +5715,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -6117,8 +6103,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -6483,8 +6468,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -6849,8 +6833,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -7215,8 +7198,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -7581,8 +7563,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -7947,8 +7928,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -8339,8 +8319,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -8728,8 +8707,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -9117,8 +9095,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -9506,8 +9483,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -9898,8 +9874,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -10290,8 +10265,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -10679,8 +10653,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -11047,8 +11020,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -11439,8 +11411,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -11828,8 +11799,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -12220,8 +12190,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -12609,8 +12578,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: false,
       value: FABRIC,
@@ -13343,8 +13311,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -13711,8 +13678,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -14118,8 +14084,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -14507,8 +14472,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -14873,8 +14837,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -15243,8 +15206,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -15611,8 +15573,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -15979,8 +15940,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -16382,8 +16342,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -16762,8 +16721,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -17175,8 +17133,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -17564,8 +17521,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -17977,8 +17933,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -18343,8 +18298,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -18709,8 +18663,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -19075,8 +19028,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -19464,8 +19416,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -19830,8 +19781,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -20377,8 +20327,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -20743,8 +20692,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -21132,8 +21080,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -21498,8 +21445,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -22046,8 +21992,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -22412,8 +22357,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -23144,8 +23088,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -23510,8 +23453,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -23902,8 +23844,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -24268,8 +24209,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -25372,8 +25312,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -27580,8 +27519,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -27956,8 +27894,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -29432,8 +29369,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -29808,8 +29744,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -30184,8 +30119,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -30560,8 +30494,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: false,
       value: FABRIC,
@@ -30936,8 +30869,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: false,
       value: FABRIC,
@@ -31312,8 +31244,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,
@@ -31688,8 +31619,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: false,
       value: FABRIC,
@@ -32064,8 +31994,7 @@ export const fashion = {
     },
     size_chart: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^https?:\/\/[-A-Za-z0-9+&@#\/%?=~_|!:,.;]*[-A-Za-z0-9+&@#\/%=~_|]$/'},
     fabric: {
       mandatory: true,
       value: FABRIC,

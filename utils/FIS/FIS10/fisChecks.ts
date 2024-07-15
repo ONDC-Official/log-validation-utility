@@ -3,7 +3,7 @@ import constants, { flowsFis10 } from '../../../constants/'
 import { logger } from '../../../shared/logger'
 import { checkIdAndUri, checkFISContext, isValidEmail, isValidPhoneNumber, isValidUrl } from '../../'
 import _, { isEmpty, isEqual } from 'lodash'
-import { validatePaymentTags } from './tags'
+import { validateItemsTags, validateOffersTags, validatePaymentTags } from './tags'
 
 export const checkUniqueCategoryIds = (categoryIds: (string | number)[], availableCategoryIds: any): boolean => {
   const uniqueCategoryIds = new Set(categoryIds)
@@ -142,7 +142,9 @@ export const validateDescriptor = (
     const errorObj: any = {}
     if (!descriptor) {
       errorObj.descriptor = `descriptor is missing at ${path}.`
-    } else {
+    }else if(_.isEmpty(descriptor)) {
+      errorObj[`${path}`] = `descriptor is cannot be empty.`
+    }else {
       if (checkCode) {
         if (!descriptor?.code.trim()) {
           errorObj.code = `descriptor.code is missing at ${path}.`
@@ -422,6 +424,14 @@ export const validateBapItems = (items: any, action: string, checkPrice: boolean
         }
 
         //tags
+        if(item?.tags){
+          const tags = item?.tags;
+          const tagValidation = validateItemsTags(tags, action);
+          if (!tagValidation.isValid) {
+            Object.assign(errorObj, { [`item${index}.tag`]: tagValidation.errors })
+          }
+        }
+        
       })
 
       setValue('itemsId', itemsId)
@@ -471,6 +481,14 @@ export const validateBapOffers = (offers: any, action: string) => {
         }
 
         //tags
+        if(offer?.tags){
+          const tags = offer?.tags;
+          const tagValidation = validateOffersTags(tags);
+          if (!tagValidation.isValid) {
+            Object.assign(errorObj, { [`offers${index}.tags`]: tagValidation.errors })
+          }
+        }
+
       })
 
       setValue('offerIds', offerIds)

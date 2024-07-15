@@ -5,16 +5,14 @@ import { setValue } from '../../../shared/dao'
 import constants from '../../../constants'
 import { validateSchema, isObjectEmpty } from '../../'
 import { checkUniqueCategoryIds, validateContext, validateDescriptor } from './fisChecks'
-import { validateItemsTags } from './tags'
+import { validateItemsTags, validateOffersTags } from './tags'
 import { isEmpty } from 'lodash'
 
 export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: string) => {
   if (!data || isObjectEmpty(data)) {
     return { [constants.ON_SEARCH]: 'JSON cannot be empty' }
   }
-
-  console.log('flow---------------', flow)
-
+  console.log(flow)
   const { message, context } = data
   if (!message || !context || !message.catalog || isObjectEmpty(message) || isObjectEmpty(message.catalog)) {
     return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
@@ -80,7 +78,6 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
   } catch (error: any) {
     logger.error(`!!Errors while checking fulfillments`)
   }
-
   // check providers
   try {
     logger.info(`Checking providers info in /${constants.ON_SEARCH}`)
@@ -296,62 +293,74 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
               }
 
               // Validate cancellation_terms
-              if (isEmpty(item?.cancellation_terms?.cancel_eligible)) {
-                errorObj[`prvdr${i}.cancellation_terms`] = `cancel_eligible is missing at providers[${i}].items[${j}]`
+              if (item?.cancellation_terms) {
+                errorObj[`prvdr${i}.cancellation_terms`] = `cancellation_terms are missing at providers[${i}].items[${j}]`
+              }else {
+                item?.cancellation_terms.forEach((element:any, index:number) => {
+                  if(!element.cancel_eligible){
+                    errorObj[`provdr[${i}].cancellation_terms[${index}]`] = `cancel_eligible is missing at providers[${i}].cancellation_terms[${index}]`
+                  }
+                });
               }
 
               // Validate return_terms
-              if (isEmpty(item?.return_terms?.return_eligible)) {
-                errorObj[`prvdr${i}.return_terms`] = `return_eligible is missing at providers[${i}].items[${j}]`
+              if (!item?.return_terms) {
+                errorObj[`prvdr${i}.return_terms`] = `return_terms are missing at providers[${i}].items[${j}]`
+              }else {
+                item?.return_terms.forEach((element:any, index:number) => {
+                  if(!element?.return_eligible){
+                    errorObj[`prvdr${i}.return_terms[${index}]`] = `return_eligible is missing at providers[${i}].items[${j}]`
+                  }
+                })
               }
             }
 
             // Validate Item tags
-            const tagsValidation = validateItemsTags(item?.tags)
+            const tagsValidation = validateItemsTags(item?.tags, constants.ON_SEARCH)
             if (!tagsValidation.isValid) {
               Object.assign(errorObj, { tags: tagsValidation.errors })
             }
 
             // Validate add_ons
-            try {
-              logger.info(`Checking add_ons`)
-              if (isEmpty(item?.add_ons))
-                errorObj[`prvdr${i}.item[${j}]_add_ons`] = `add_ons array is missing or empty in ${action}`
-              else {
-                item?.add_ons?.forEach((addOn: any, index: number) => {
-                  const key = `prvdr${i}.item[${j}]_add_ons[${index}]`
+            // try {
+            //   logger.info(`Checking add_ons`)
+            //   if (isEmpty(item?.add_ons))
+            //     errorObj[`prvdr${i}.item[${j}]_add_ons`] = `add_ons array is missing or empty in ${action}`
+            //   else {
+            //     item?.add_ons?.forEach((addOn: any, index: number) => {
+            //       const key = `prvdr${i}.item[${j}]_add_ons[${index}]`
 
-                  console.log(
-                    'addOn?.id------------------------------------------',
-                    addOn?.id,
-                    addOn?.quantity.selected,
-                  )
+            //       console.log(
+            //         'addOn?.id------------------------------------------',
+            //         addOn?.id,
+            //         addOn?.quantity.selected,
+            //       )
 
-                  if (!addOn?.id) {
-                    errorObj[`${key}.id`] = `id is missing in add_ons[${index}]`
-                  } else if (addOnIdSet.has(addOn?.id)) {
-                    errorObj[`${key}.id`] = `duplicate provider id: ${addOn?.id} in add_ons`
-                  } else {
-                    addOnIdSet.add(addOn?.id)
-                  }
+            //       if (!addOn?.id) {
+            //         errorObj[`${key}.id`] = `id is missing in add_ons[${index}]`
+            //       } else if (addOnIdSet.has(addOn?.id)) {
+            //         errorObj[`${key}.id`] = `duplicate provider id: ${addOn?.id} in add_ons`
+            //       } else {
+            //         addOnIdSet.add(addOn?.id)
+            //       }
 
-                  if (!addOn?.descriptor?.code || !/^[A-Z_]+$/.test(addOn?.descriptor?.code))
-                    errorObj[`${key}.code`] = 'code should be present in a generic enum format'
+            //       if (!addOn?.descriptor?.code || !/^[A-Z_]+$/.test(addOn?.descriptor?.code))
+            //         errorObj[`${key}.code`] = 'code should be present in a generic enum format'
 
-                  if (
-                    !addOn?.quantity.available.count ||
-                    !Number.isInteger(addOn?.quantity.available.count) ||
-                    addOn?.quantity.available.count <= 0
-                  ) {
-                    errorObj[`${key}.code`] = 'Invalid quantity.selected count'
-                  }
-                })
-              }
+            //       if (
+            //         !addOn?.quantity.available.count ||
+            //         !Number.isInteger(addOn?.quantity.available.count) ||
+            //         addOn?.quantity.available.count <= 0
+            //       ) {
+            //         errorObj[`${key}.code`] = 'Invalid quantity.selected count'
+            //       }
+            //     })
+            //   }
 
-              return errorObj
-            } catch (error: any) {
-              logger.error(`!!Error while checking add_ons in /${action}, ${error.stack}`)
-            }
+            //   return errorObj
+            // } catch (error: any) {
+            //   logger.error(`!!Error while checking add_ons in /${action}, ${error.stack}`)
+            // }
           })
 
           if (action?.includes('_offer') && parentItems == 0)
@@ -401,11 +410,11 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
               }
             }
 
-            // Validate offer tags
-            // const tagsValidation = validateOffersTags(offer?.tags)
-            // if (!tagsValidation.isValid) {
-            //   Object.assign(errorObj, { tags: tagsValidation.errors })
-            // }
+            //Validate offer tags
+            const tagsValidation = validateOffersTags(offer?.tags)
+            if (!tagsValidation.isValid) {
+              Object.assign(errorObj, { [`offers[${j}].tags`]: tagsValidation.errors })
+            }
           })
         }
       } catch (error: any) {
@@ -418,7 +427,6 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
     setValue(`${constants.ON_SEARCH}_itemsId`, Array.from(itemsId))
     setValue(`${constants.ON_SEARCH}_offerIds`, Array.from(offersId))
     setValue(`${constants.ON_SEARCH}_addOnIdSet`, addOnIdSet)
-    console.log('fulfillmentTypes11111111111111111111111111', fulfillmentTypes)
     setValue(`fulfillmentTypes`, fulfillmentTypes)
   } catch (error: any) {
     logger.error(`!!Error while checking Providers info in /${constants.ON_SEARCH}, ${error.stack}`)

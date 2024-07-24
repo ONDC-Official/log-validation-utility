@@ -1193,9 +1193,10 @@ export function compareTimeRanges(data1: any, action1: any, data2: any, action2:
   keys.forEach((key) => {
     if (!data1[key]?.time?.range || !data2[key]?.time?.range) {
       errors.push(`/${key}/range is not provided in one or both objects`)
-      return // Skip comparison if range is not provided
+      return 
     }
 
+    // Check if range1.start, range1.end, range2.start, range2.end are valid timestamps
     const range1 = data1[key].time.range
     const range2 = data2[key].time.range
 
@@ -1206,7 +1207,7 @@ export function compareTimeRanges(data1: any, action1: any, data2: any, action2:
       !isValidTimestamp(range2.end)
     ) {
       errors.push(`/${key}/range has invalid timestamp format`)
-      return // Skip comparison if timestamp format is invalid
+      return 
     }
 
     if (range1.start !== range2.start) {

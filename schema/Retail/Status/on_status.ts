@@ -109,6 +109,9 @@ export const onStatusSchema = {
                       type: 'string',
                       minLength: 1,
                     },
+                    state: {
+                      type: 'string', 
+                    },
                   },
                   required: ['id', 'state'],
                 },
@@ -274,9 +277,6 @@ export const onStatusSchema = {
                       },
                     },
                     then: {
-                      allOf: [
-                        timeRules,
-                        {
                           type: 'object',
                           properties: {
                             id: {
@@ -562,8 +562,7 @@ export const onStatusSchema = {
                             'start',
                             'end',
                           ],
-                        },
-                      ],
+
                     },
                   },
                   {
@@ -576,7 +575,6 @@ export const onStatusSchema = {
                       },
                     },
                     then: {
-                      properties: {
                         type: 'object',
                         properties: {
                           id: {
@@ -636,7 +634,6 @@ export const onStatusSchema = {
                           },
                         },
                         required: ['id', 'type', 'state', 'tags'],
-                      },
                     },
                     else: {
                       type: 'object',
@@ -918,6 +915,7 @@ export const onStatusSchema = {
                       ],
                     },
                   },
+                  {timeRules}
                 ],
               },
             },

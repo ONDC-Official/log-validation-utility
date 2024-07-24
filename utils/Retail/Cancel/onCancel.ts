@@ -570,6 +570,8 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
           const key = `missingRTO`
           onCnclObj[key] = `RTO object is mandatory for ${constants.ON_CANCEL}`
         } else {
+        setValue('RTO_Obj', RTOobj[0])
+        setValue('cnfrmpymnt', on_cancel.payment)
           for (let item of RTOobj) {
             const validVal = ['RTO-Initiated', 'RTO-Delivered', 'RTO-Disposed']
             if (!validVal.includes(item.state?.descriptor?.code)) {
@@ -642,7 +644,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
           const key = `missingDelivery`
           onCnclObj[key] = `Delivery object is mandatory for ${constants.ON_CANCEL}`
         } else {
-
+          setValue('DEL_Obj', DELobj[0])
           // Checking for start object inside Delivery
           if (!_.isEmpty(DELobj[0]?.start)) {
             const del_obj_start = DELobj[0]?.start

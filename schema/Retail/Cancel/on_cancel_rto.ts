@@ -1,4 +1,4 @@
-export const cancel_RTO_Schema = {
+export const status_cancel_RTO_Schema = {
   type: 'object',
   properties: {
     context: {
@@ -18,7 +18,7 @@ export const cancel_RTO_Schema = {
         },
         action: {
           type: 'string',
-          const: 'on_cancel',
+          enum: ["on_cancel", "on_status"]
         },
         core_version: {
           type: 'string',

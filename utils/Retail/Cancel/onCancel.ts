@@ -859,9 +859,22 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
                 onCnclObj[key] = `precancel_state.updated_at of ${constants.ON_CANCEL} is not equal with the ${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} order.updated_at`
               }
             }
+            const fulfillmentStateObj = _.filter(preCancelObj[0]?.list, { code: 'fulfillment_state' })
+            if (!fulfillmentStateObj.length) {
+              logger.error(`Pre Cancel fulfillment state is mandatory for ${constants.ON_CANCEL}`)
+              const key = `missingPrecancelFulfillmentState`
+              onCnclObj[key] = `Pre Cancel fulfillment state is mandatory for ${constants.ON_CANCEL}`
+            }
+            else {
+              if (!_.isEqual(getValue('ffIdPrecancel'), fulfillmentStateObj[0].value)) {
+                logger.error(`precancel_state.fulfillment_state of ${constants.ON_CANCEL} is not equal with the ${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} fulfillment state`)
+                const key = `precancelState.fulfillment_state`
+                onCnclObj[key] = `precancel_state.fulfillment_state of ${constants.ON_CANCEL} is not equal with the ${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} fulfillment state`
+              }
+            }
           } catch (error: any) {
             logger.error(
-              `!!Error while comparing timestamp for /${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} and /${constants.ON_CANCEL} api, ${error.stack}`,
+              `!!Error while comparing fulfillment state for /${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} and /${constants.ON_CANCEL} api, ${error.stack}`,
             )
           }
         }

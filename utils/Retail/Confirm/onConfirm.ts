@@ -445,7 +445,7 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any) => {
         const ffDesc = on_confirm.fulfillments[i].state.descriptor
 
         const ffStateCheck = ffDesc.hasOwnProperty('code') ? ffDesc.code === 'Pending' : false
-
+        setValue(`ffIdPrecancel`, ffDesc?.code)
         if (!ffStateCheck) {
           const key = `ffState${i}`
           onCnfrmObj[key] = `default fulfillments state is missing in /${constants.ON_CONFIRM}`

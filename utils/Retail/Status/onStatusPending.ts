@@ -212,7 +212,8 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
       logger.error(`Error while checking transaction is in message.order.payment`)
     }
 
-    if (flow == '6') {
+    if (flow === '6' || flow === '2' || flow === '3' || flow === '5') 
+    {
       try {
         // For Delivery Object
         const fulfillments = on_status.fulfillments

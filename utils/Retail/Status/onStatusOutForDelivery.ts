@@ -164,6 +164,8 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
         const key = `missingDelivery`
         onStatusObj[key] = `Delivery object is mandatory for ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}`
       } else {
+        const ffStateCode = DELobj[0]?.state?.descriptor?.code
+        setValue(`ffIdPrecancel`, ffStateCode)
         const deliveryObj = DELobj[0]
         if (!deliveryObj.tags) {
           const key = `missingTags`
@@ -381,7 +383,7 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
       )
     }
 
-    if (flow == '6') {
+    if (flow === '6' || flow === '2' || flow === '3' || flow === '5') {
       try {
         // For Delivery Object
         const fulfillments = on_status.fulfillments

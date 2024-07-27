@@ -13,7 +13,7 @@ import {
   checkBppIdOrBapId,
   checkServiceabilityType,
   validateLocations,
-  isSequenceValid,
+  // isSequenceValid,
   isValidPhoneNumber,
   compareSTDwithArea,
   areTimestampsLessThanOrEqualTo,
@@ -72,7 +72,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
   if (context.transaction_id == context.message_id) {
     errorObj['on_search_full_catalog_refresh'] = `Context transaction_id (${context.transaction_id}) and message_id (${context.message_id}) can't be the same.`;
   }
-  
+
   setValue(`${ApiSequence.ON_SEARCH}`, data)
 
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
@@ -141,7 +141,8 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
   const prvdrLocId = new Set()
   const onSearchFFTypeSet = new Set()
   const itemsId = new Set()
-
+  let customMenuIds: any = []
+  let customMenu = false
   // Storing static fulfillment ids in onSearchFFIdsArray, OnSearchFFTypeSet
   try {
     logger.info(`Saving static fulfillment ids in /${constants.ON_SEARCH}`)
@@ -991,14 +992,93 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
       }
 
       try {
-        logger.info(`checking rank in bpp/providers[${i}].category.tags`)
-        const rankSeq = isSequenceValid(seqSet)
-        if (rankSeq === false) {
-          const key = `prvdr${i}ctgry_tags`
-          errorObj[key] = `rank should be in sequence provided in bpp/providers[${i}]/categories/tags/display`
+        let customMenus = []
+        customMenus = categories.filter((category: any) =>
+          category.tags.some((tag: any) => tag.code === 'type' && tag.list.some((type: any) => type.value === 'custom_menu'))
+        );
+
+        if (customMenus.size() > 0) {
+          customMenu = true
+
+          const ranks = customMenus.map((cstmMenu: any) =>
+            parseInt(cstmMenu.tags.find((tag: any) => tag.code === 'display').list.find((display: any) => display.code === 'rank').value)
+          );
+
+          // Check for duplicates and missing ranks
+          const hasDuplicates = ranks.length !== new Set(ranks).size;
+          const missingRanks = [...Array(Math.max(...ranks)).keys()].map(i => i + 1).filter(rank => !ranks.includes(rank));
+
+          if (hasDuplicates) {
+            const key = `message/catalog/bpp/providers${i}/categories/ranks`
+            errorObj[key] = `Duplicate ranks found, ${ranks} in providers${i}/categories`
+            logger.error(`Duplicate ranks found, ${ranks} in providers${i}/categories`)
+          } else if (missingRanks.length > 0) {
+            const key = `message/catalog/bpp/providers${i}/categories/ranks`
+            errorObj[key] = `Missing ranks:, ${missingRanks} in providers${i}/categories`
+            logger.error(`Missing ranks:, ${missingRanks} in providers${i}/categories`)
+          } else {
+            // Sort customMenus by rank
+            const sortedCustomMenus = customMenus.sort((a: any, b: any) => {
+              const rankA = a.tags.find((tag: any) => tag.code === 'display').list.find((display: any) => display.code === 'rank').value;
+              const rankB = b.tags.find((tag: any) => tag.code === 'display').list.find((display: any) => display.code === 'rank').value;
+              return rankA - rankB;
+            });
+
+            // Extract IDs
+            customMenuIds = sortedCustomMenus.map((item: any) => item.id);
+          }
         }
       } catch (error: any) {
         logger.error(`!!Errors while checking rank in bpp/providers[${i}].category.tags, ${error.stack}`)
+
+      }
+      if (customMenu) {
+        try {
+          const categoryMap: Record<string, number[]> = {};
+          onSearchCatalog['bpp/providers'][i]['items'].forEach((item: any) => {
+            if (item?.category_ids) {
+              item?.category_ids?.forEach((category_id: any) => {
+                const [category, sequence] = category_id.split(':').map(Number);
+                if (!categoryMap[category]) {
+                  categoryMap[category] = [];
+                }
+                categoryMap[category].push(sequence);
+              });
+
+              // Sort the sequences for each category
+              Object.keys(categoryMap).forEach(category => {
+                categoryMap[category].sort((a, b) => a - b);
+              });
+            }
+          });
+          let countSeq = 0;
+
+          customMenuIds.map((category_id: any) => {
+            const categoryArray = categoryMap[`${category_id}`]
+            if (!categoryArray) {
+              const key = `message/catalog/bpp/providers${i}/categories/items`
+              errorObj[key] = `No items are mapped with the given category_id ${category_id} in providers${i}/items`
+              logger.error(`No items are mapped with the given category_id ${category_id} in providers${i}/items`)
+            }
+            else {
+              let i = 0
+              while (i < categoryArray.length) {
+                countSeq++;
+                const exist = categoryArray.includes(countSeq);
+                if (!exist) {
+                  const key = `providers${i}/categories/items/${countSeq}`
+                  errorObj[key] = `The given sequence ${countSeq} doesn't exist with with the given category_id ${category_id} in providers${i}/items according to the rank`
+                  logger.error(`The given sequence ${countSeq} doesn't exist with with the given category_id ${category_id} in providers${i}/items according to the rank`)
+                }
+                i++;
+              }
+            }
+          })
+        } catch (error: any) {
+          logger.error(
+            `!!Errors while category_ids in the items, ${error.stack}`,
+          )
+        }
       }
 
       // Checking image array for bpp/providers/[]/categories/[]/descriptor/images[]
@@ -1284,6 +1364,10 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
           const key = `prvdr${i}tags/serviceability`
           errorObj[key] =
             `serviceability construct is mandatory in /bpp/providers[${i}]/tags`
+        } else if (serviceabilitySet.size != itemCategory_id.size) {
+          const key = `prvdr${i}/serviceability`
+          errorObj[key] =
+            `The number of unique category_id should be equal to count of serviceability in /bpp/providers[${i}]`
         }
         if (isEmpty(timingSet)) {
           const key = `prvdr${i}tags/timing`

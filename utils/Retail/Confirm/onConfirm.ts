@@ -153,7 +153,8 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any) => {
       const cnfrmOrdrCrtd = getValue('ordrCrtd')
       const cnfrmOrdrUpdtd = getValue('ordrUpdtd')
       if (!_.isEmpty(on_confirm?.state))
-        setValue('onCnfrmState', on_confirm.state)
+        setValue('orderState', on_confirm.state)
+      setValue('onCnfrmState', on_confirm.state)
       if (on_confirm.state === 'Created' || on_confirm.state === 'Accepted') {
         if (cnfrmOrdrCrtd && (!on_confirm.created_at || on_confirm.created_at != cnfrmOrdrCrtd)) {
           onCnfrmObj.crtdtmstmp = `order.created_at timestamp mismatches in /${constants.CONFIRM} and /${constants.ON_CONFIRM}`

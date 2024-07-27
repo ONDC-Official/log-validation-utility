@@ -162,6 +162,7 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
 
     try {
       logger.info(`Validating order state`)
+      setValue('orderState', on_status.state)
       if (on_status.state !== 'Accepted') {
         onStatusObj[`order_state`] =
           `Order state should be accepted whenever Status is being sent 'Accepted'. Current state: ${on_status.state}`

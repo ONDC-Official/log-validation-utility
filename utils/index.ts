@@ -1022,9 +1022,17 @@ export const checkQuoteTrailSum = (
 ) => {
   let quoteTrailSum = 0
   for (const obj of fulfillmentArr) {
+    const arrType = ['misc', 'packing', 'delivery', 'tax', 'item']
     const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
     for (const item of quoteTrailItems) {
       for (const val of item.list) {
+        if(val.code === 'type')
+        {
+          if(!arrType.includes(val.value))
+          {
+            errorObj[`invalidQuoteTrailType${apiSeq}`] = `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax' or 'item'`
+          }
+        }
         if (val.code === 'value') {
           quoteTrailSum -= val.value
         }
@@ -1193,10 +1201,9 @@ export function compareTimeRanges(data1: any, action1: any, data2: any, action2:
   keys.forEach((key) => {
     if (!data1[key]?.time?.range || !data2[key]?.time?.range) {
       errors.push(`/${key}/range is not provided in one or both objects`)
-      return 
+      return // Skip comparison if range is not provided
     }
 
-    // Check if range1.start, range1.end, range2.start, range2.end are valid timestamps
     const range1 = data1[key].time.range
     const range2 = data2[key].time.range
 
@@ -1207,7 +1214,7 @@ export function compareTimeRanges(data1: any, action1: any, data2: any, action2:
       !isValidTimestamp(range2.end)
     ) {
       errors.push(`/${key}/range has invalid timestamp format`)
-      return 
+      return
     }
 
     if (range1.start !== range2.start) {

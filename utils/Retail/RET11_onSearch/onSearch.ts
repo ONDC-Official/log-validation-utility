@@ -1516,6 +1516,96 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
   } catch (error: any) {
     logger.error(`!!Error while checking Providers info in /${constants.ON_SEARCH}, ${error.stack}`)
   }
+  try {
+    logger.info(`Checking for errors in default flow in /${constants.ON_SEARCH}`);
+    const providers = data.message.catalog['bpp/providers'];
+
+    providers.forEach((provider: any) => {
+      let customGroupDetails: any = {};
+
+      provider?.categories.forEach((category: any) => {
+        const id: string = category?.id;
+        const customGroupTag = category.tags.find((tag: any) => tag.code === "type" && tag.list.some((item: any) => item.value === "custom_group"));
+
+        if (customGroupTag) {
+          const configTag = category.tags.find((tag: any) => tag.code === "config");
+          const min = configTag ? parseInt(configTag.list.find((item: any) => item.code === "min")?.value, 10) : 0;
+          const max = configTag ? parseInt(configTag.list.find((item: any) => item.code === "max")?.value, 10) : 0;
+
+          if(min > max){
+            errorObj[`${provider.id}/categories/${id}`] = `The "min" is more than "max"`
+          }
+          customGroupDetails[id] = {
+            min: min,
+            max: max,
+            numberOfDefaults: 0,
+            numberOfElements: 0 
+          };
+        }
+      });
+
+      let combinedIds: any = [];
+
+      provider?.items.forEach((item: any) => {
+        const typeTag = item.tags.find((tag: any) => tag.code === "type");
+        const typeValue = typeTag ? typeTag.list.find((listItem: any) => listItem.code === "type")?.value : null;
+
+        if (typeValue === "item") {
+          const customGroupTags = item.tags.filter((tag: any) => tag.code === "custom_group");
+          combinedIds = customGroupTags.flatMap((tag: any) => tag.list.map((listItem: any) => listItem.value));
+
+        } else if (typeValue === "customization") {
+          const parentTag = item.tags.find((tag: any) => tag.code === "parent");
+          const customizationGroupId = parentTag?.list.find((listItem: any) => listItem.code === "id")?.value;
+
+          if (customizationGroupId && customGroupDetails[customizationGroupId]) {
+            customGroupDetails[customizationGroupId].numberOfElements += 1;
+
+            const defaultParent = parentTag?.list.find((listItem: any) => listItem.code === "default" && listItem.value === "yes");
+            if (defaultParent) {
+              customGroupDetails[customizationGroupId].numberOfDefaults += 1;
+
+              const childTag = item.tags.find((tag: any) => tag.code === "child");
+              if (childTag) {
+                const childIds = childTag.list.map((listItem: any) => listItem.value);
+                combinedIds = [...combinedIds, ...childIds];
+              }
+            }
+          }
+        }
+      });
+
+      combinedIds.forEach((id: any) => {
+        if (customGroupDetails[id]) {
+          const group = customGroupDetails[id];
+          const min = group.min
+          const max = group.max
+
+          if (group.numberOfElements < max) {
+            errorObj[`${provider.id}/categories/${id}/number_of_elements`] = "The number of elements in this customization group is less than the maximum that can be selected.";
+          }
+
+          if (min > 0 && group.numberOfDefaults < min) {
+            errorObj[`${provider.id}/categories/${id}/number_of_defaults`] = "The number of defaults of this customization group is less than the minimum that can be selected.";
+          }
+        }
+      });
+
+      const customGroupIds = Object.keys(customGroupDetails);
+      customGroupIds.forEach(id => {
+        const group = customGroupDetails[id];
+        const max = group.max
+
+        if (group.numberOfElements < max) {
+          errorObj[`${provider.id}/categories/${id}/number_of_defaults`] = "The number of elements in this customization group is less than the maximum that can be selected.";
+        }
+      });
+    });
+  } catch (error: any) {
+    logger.error(
+      `Error while storing items of bpp/providers in itemsArray for /${constants.ON_SEARCH}, ${error.stack}`
+    );
+  }
 
   return Object.keys(errorObj).length > 0 && errorObj
 }

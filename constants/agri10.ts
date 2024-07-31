@@ -1,11 +1,11 @@
 const agri = {
   seed: {
     subcategory: {
-      mandatory: true,
+      mandatory: false,
       value: [],
     },
     manufacturer: {
-      mandatory: true,
+      mandatory: false,
       value: [],
     },
     brand: {
@@ -111,12 +111,12 @@ const agri = {
   },
   pesticide: {
     subcategory: {
-      mandatory: true,
+      mandatory: false,
       value: [],
     },
 
     manufacturer: {
-      mandatory: true,
+      mandatory: false,
       value: [],
     },
     brand: {
@@ -222,12 +222,12 @@ const agri = {
   },
   fertilizer: {
     subcategory: {
-      mandatory: true,
+      mandatory: false,
       value: [],
     },
 
     manufacturer: {
-      mandatory: true,
+      mandatory: false,
       value: [],
     },
     brand: {
@@ -333,12 +333,12 @@ const agri = {
   },
   organic_crop_protection: {
     subcategory: {
-      mandatory: true,
+      mandatory: false,
       value: [],
     },
 
     manufacturer: {
-      mandatory: true,
+      mandatory: false,
       value: [],
     },
     brand: {
@@ -444,12 +444,12 @@ const agri = {
   },
   organic_crop_nutrition: {
     subcategory: {
-      mandatory: true,
+      mandatory: false,
       value: [],
     },
 
     manufacturer: {
-      mandatory: true,
+      mandatory: false,
       value: [],
     },
     brand: {
@@ -555,12 +555,12 @@ const agri = {
   },
   tools_and_machinery: {
     subcategory: {
-      mandatory: true,
+      mandatory: false,
       value: [],
     },
 
     manufacturer: {
-      mandatory: true,
+      mandatory: false,
       value: [],
     },
     brand: {
@@ -666,12 +666,12 @@ const agri = {
   },
   cattle_feed: {
     subcategory: {
-      mandatory: true,
+      mandatory: false,
       value: [],
     },
 
     manufacturer: {
-      mandatory: true,
+      mandatory: false,
       value: [],
     },
     brand: {

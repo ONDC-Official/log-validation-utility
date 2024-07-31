@@ -1,11 +1,11 @@
-const ret1a = {
-  'gaskets_&_valves': {
+export const ret1a = {
+  'Gaskets & Valves': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -329,13 +329,13 @@ const ret1a = {
       value: [],
     },
   },
-  'automotive_belts_&_pulleys': {
+  'Automotive Belts & Pulleys': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -659,13 +659,13 @@ const ret1a = {
       value: [],
     },
   },
-  'radiators,_pumps_&_elbow_components': {
+  'Radiators, Pumps & Elbow Components': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -989,13 +989,13 @@ const ret1a = {
       value: [],
     },
   },
-  filters: {
+  Filters: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -1319,13 +1319,13 @@ const ret1a = {
       value: [],
     },
   },
-  bearings: {
+  Bearings: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -1649,13 +1649,13 @@ const ret1a = {
       value: [],
     },
   },
-  clutches: {
+  Clutches: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -1979,13 +1979,13 @@ const ret1a = {
       value: [],
     },
   },
-  engine_cooling: {
+  'Engine Cooling': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -2309,13 +2309,13 @@ const ret1a = {
       value: [],
     },
   },
-  'oils_&_lubricants': {
+  'Oils & Lubricants': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -2639,13 +2639,13 @@ const ret1a = {
       value: [],
     },
   },
-  mounting: {
+  Mounting: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -2969,13 +2969,13 @@ const ret1a = {
       value: [],
     },
   },
-  'ac_&_components': {
+  'AC & Components': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -3299,13 +3299,13 @@ const ret1a = {
       value: [],
     },
   },
-  'kit_&_engine_components': {
+  'Kit & Engine Components': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -3629,13 +3629,13 @@ const ret1a = {
       value: [],
     },
   },
-  'suspension_parts_&_rubber_kits': {
+  'Suspension Parts & Rubber Kits': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -3959,13 +3959,13 @@ const ret1a = {
       value: [],
     },
   },
-  'steering_parts_&_components': {
+  'Steering Parts & Components': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -4289,13 +4289,13 @@ const ret1a = {
       value: [],
     },
   },
-  brake_parts: {
+  'Brake Parts': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -4619,13 +4619,13 @@ const ret1a = {
       value: [],
     },
   },
-  'tyres,_rims_&_alloys': {
+  'Tyres, Rims & Alloys': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -4949,13 +4949,13 @@ const ret1a = {
       value: [],
     },
   },
-  'interior_accessories_&_care': {
+  'Interior Accessories & Care': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -5279,13 +5279,13 @@ const ret1a = {
       value: [],
     },
   },
-  'exterior_accessories_&_care': {
+  'Exterior Accessories & Care': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -5609,13 +5609,13 @@ const ret1a = {
       value: [],
     },
   },
-  'paintwork,_tools_&_accessories': {
+  'Paintwork, Tools & Accessories': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -5939,13 +5939,13 @@ const ret1a = {
       value: [],
     },
   },
-  styling_comforts: {
+  'Styling Comforts': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -6269,13 +6269,13 @@ const ret1a = {
       value: [],
     },
   },
-  vehicle_storage: {
+  'Vehicle Storage': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -6599,13 +6599,13 @@ const ret1a = {
       value: [],
     },
   },
-  vehicle_tools: {
+  'Vehicle Tools': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -6929,13 +6929,13 @@ const ret1a = {
       value: [],
     },
   },
-  'security_&_cameras': {
+  'Security & Cameras': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -7259,13 +7259,13 @@ const ret1a = {
       value: [],
     },
   },
-  'electric_parts_&_components': {
+  'Electric Parts & Components': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -7589,13 +7589,13 @@ const ret1a = {
       value: [],
     },
   },
-  'plugs,_switches_&_ignitions': {
+  'Plugs, Switches & Ignitions': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -7919,13 +7919,13 @@ const ret1a = {
       value: [],
     },
   },
-  lights: {
+  Lights: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -8249,13 +8249,13 @@ const ret1a = {
       value: [],
     },
   },
-  sensors: {
+  Sensors: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -8579,13 +8579,13 @@ const ret1a = {
       value: [],
     },
   },
-  navigation_devices: {
+  'Navigation Devices': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -8909,13 +8909,13 @@ const ret1a = {
       value: [],
     },
   },
-  'vehicle_eletronics_&_accessories': {
+  'Vehicle Eletronics & Accessories': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -9239,13 +9239,13 @@ const ret1a = {
       value: [],
     },
   },
-  'battery_&_accessories': {
+  'Battery & Accessories': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -9569,13 +9569,13 @@ const ret1a = {
       value: [],
     },
   },
-  exhaust_systems: {
+  'Exhaust Systems': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -9899,13 +9899,13 @@ const ret1a = {
       value: [],
     },
   },
-  'auto_body_parts_&_mirrors': {
+  'Auto Body Parts & Mirrors': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -10229,13 +10229,13 @@ const ret1a = {
       value: [],
     },
   },
-  windscreen: {
+  Windscreen: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -10559,13 +10559,13 @@ const ret1a = {
       value: [],
     },
   },
-  'bike_safety_&_accessories': {
+  'Bike Safety & Accessories': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -10889,13 +10889,13 @@ const ret1a = {
       value: [],
     },
   },
-  helmets: {
+  Helmets: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -11219,13 +11219,13 @@ const ret1a = {
       value: [],
     },
   },
-  special_apparel: {
+  'Special Apparel': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -11549,13 +11549,13 @@ const ret1a = {
       value: [],
     },
   },
-  'glasses_&_eyewear': {
+  'Glasses & Eyewear': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -11879,13 +11879,13 @@ const ret1a = {
       value: [],
     },
   },
-  gloves: {
+  Gloves: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -12209,13 +12209,13 @@ const ret1a = {
       value: [],
     },
   },
-  't-shirts_&_tops': {
+  'T-shirts & Tops': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -12539,13 +12539,13 @@ const ret1a = {
       value: [],
     },
   },
-  jackets: {
+  Jackets: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -12869,13 +12869,13 @@ const ret1a = {
       value: [],
     },
   },
-  'protective_wear_&_guards': {
+  'Protective wear & guards': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -13199,13 +13199,13 @@ const ret1a = {
       value: [],
     },
   },
-  eyewear: {
+  Eyewear: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -13529,13 +13529,13 @@ const ret1a = {
       value: [],
     },
   },
-  'gifts_&_merchandise': {
+  'Gifts & Merchandise': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -13859,13 +13859,13 @@ const ret1a = {
       value: [],
     },
   },
-  'backpacks_&_bags': {
+  'Backpacks & Bags': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -14189,13 +14189,13 @@ const ret1a = {
       value: [],
     },
   },
-  'badges_&_emblems': {
+  'Badges & Emblems': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -14519,13 +14519,13 @@ const ret1a = {
       value: [],
     },
   },
-  gift_sets: {
+  'Gift Sets': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -14849,13 +14849,13 @@ const ret1a = {
       value: [],
     },
   },
-  key_rings: {
+  'Key Rings': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -15179,13 +15179,13 @@ const ret1a = {
       value: [],
     },
   },
-  lighters: {
+  Lighters: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -15509,13 +15509,13 @@ const ret1a = {
       value: [],
     },
   },
-  patches: {
+  Patches: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -15839,13 +15839,13 @@ const ret1a = {
       value: [],
     },
   },
-  model_vehicles: {
+  'Model Vehicles': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -16169,13 +16169,13 @@ const ret1a = {
       value: [],
     },
   },
-  signs: {
+  Signs: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -16499,13 +16499,13 @@ const ret1a = {
       value: [],
     },
   },
-  'service,_labour_charges': {
+  'Service, Labour charges': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -16829,13 +16829,13 @@ const ret1a = {
       value: [],
     },
   },
-  cycle: {
+  Cycle: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -17159,13 +17159,13 @@ const ret1a = {
       value: [],
     },
   },
-  scooter: {
+  Scooter: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -17489,13 +17489,13 @@ const ret1a = {
       value: [],
     },
   },
-  motorcycle: {
+  Motorcycle: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -17819,13 +17819,13 @@ const ret1a = {
       value: [],
     },
   },
-  electric_bikes: {
+  'Electric Bikes': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -18149,13 +18149,13 @@ const ret1a = {
       value: [],
     },
   },
-  electric_scooters: {
+  'Electric Scooters': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -18479,13 +18479,13 @@ const ret1a = {
       value: [],
     },
   },
-  electric_cycle_: {
+  'Electric Cycle ': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -18809,13 +18809,13 @@ const ret1a = {
       value: [],
     },
   },
-  scooty: {
+  Scooty: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -19139,13 +19139,13 @@ const ret1a = {
       value: [],
     },
   },
-  mopeds: {
+  Mopeds: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -19469,13 +19469,13 @@ const ret1a = {
       value: [],
     },
   },
-  three_wheeler: {
+  'Three Wheeler': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -19799,13 +19799,13 @@ const ret1a = {
       value: [],
     },
   },
-  sedan: {
+  Sedan: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -20129,13 +20129,13 @@ const ret1a = {
       value: [],
     },
   },
-  convertible: {
+  Convertible: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -20459,13 +20459,13 @@ const ret1a = {
       value: [],
     },
   },
-  coupe: {
+  Coupe: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -20789,13 +20789,13 @@ const ret1a = {
       value: [],
     },
   },
-  station_wagon: {
+  'Station Wagon': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -21119,13 +21119,13 @@ const ret1a = {
       value: [],
     },
   },
-  hatchback: {
+  Hatchback: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -21449,13 +21449,13 @@ const ret1a = {
       value: [],
     },
   },
-  crossover: {
+  Crossover: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -21779,13 +21779,13 @@ const ret1a = {
       value: [],
     },
   },
-  van: {
+  Van: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -22109,13 +22109,13 @@ const ret1a = {
       value: [],
     },
   },
-  muv: {
+  MUV: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -22439,13 +22439,13 @@ const ret1a = {
       value: [],
     },
   },
-  suv: {
+  SUV: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -22769,13 +22769,13 @@ const ret1a = {
       value: [],
     },
   },
-  truck: {
+  Truck: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -23099,13 +23099,13 @@ const ret1a = {
       value: [],
     },
   },
-  luxury_suv: {
+  'Luxury SUV': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -23429,13 +23429,13 @@ const ret1a = {
       value: [],
     },
   },
-  luxury_hatchback: {
+  'Luxury Hatchback': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -23759,13 +23759,13 @@ const ret1a = {
       value: [],
     },
   },
-  luxury_sedan: {
+  'Luxury Sedan': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -24089,13 +24089,13 @@ const ret1a = {
       value: [],
     },
   },
-  sports_vehicle: {
+  'Sports Vehicle': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -24419,13 +24419,13 @@ const ret1a = {
       value: [],
     },
   },
-  golf_cart: {
+  'Golf Cart': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -24749,13 +24749,13 @@ const ret1a = {
       value: [],
     },
   },
-  carriage: {
+  Carriage: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -25079,13 +25079,13 @@ const ret1a = {
       value: [],
     },
   },
-  bus: {
+  Bus: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -25409,13 +25409,13 @@ const ret1a = {
       value: [],
     },
   },
-  agricultural_vehicles: {
+  'Agricultural Vehicles': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -25739,13 +25739,13 @@ const ret1a = {
       value: [],
     },
   },
-  motorhomes: {
+  Motorhomes: {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {
@@ -26069,13 +26069,13 @@ const ret1a = {
       value: [],
     },
   },
-  vehicle_rental: {
+  'Vehicle Rental': {
     category_id: {
       mandatory: false,
       value: [],
     },
     brand: {
-      mandatory: false,
+      mandatory: true,
       value: [],
     },
     product: {

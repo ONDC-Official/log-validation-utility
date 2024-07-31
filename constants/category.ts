@@ -1,6 +1,6 @@
 import { statutory_reqs } from "../utils/enum"
-
-interface ICategoryJSON {
+import { cattle_feed_Obj, fertilizer_Obj, organic_crop_nutrition_Obj, organic_crop_protection_Obj, pesticide_Obj, seed_Obj, tools_and_machinery_Obj } from "./agriculture"
+export interface ICategoryJSON {
   [key: string]: {
     [key: string]: boolean | String[]
   }
@@ -44,6 +44,16 @@ export const groceryJSON: { [key: string]: ICategoryJSON } = {
   'Frozen Vegetables': groceryObj,
   'Frozen Snacks': groceryObj,
   'Gift Voucher': groceryObj,
+}
+
+export const agriJSON: { [key: string]: ICategoryJSON } = {
+  'Seed': seed_Obj,
+  'Pesticide': pesticide_Obj,
+  'Fertilizer': fertilizer_Obj,
+  'Organic Crop Protection': organic_crop_protection_Obj,
+  'Organic Crop Nutrition':organic_crop_nutrition_Obj,
+  'Tools and Machinery': tools_and_machinery_Obj,
+  'Cattle Feed': cattle_feed_Obj,
 }
 
 const healthObj: ICategoryJSON = {

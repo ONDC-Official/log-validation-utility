@@ -24,11 +24,12 @@ import {
 } from '../../../utils'
 import _, { isEmpty } from 'lodash'
 import { compareSTDwithArea } from '../../index';
-import { BPCJSON, groceryJSON, healthJSON, homeJSON } from '../../../constants/category'
+import { BPCJSON, agriJSON, groceryJSON, healthJSON, homeJSON } from '../../../constants/category'
 import { electronicsData } from '../../../constants/electronics'
 import { applianceData } from '../../../constants/appliance'
 import { fashion } from '../../../constants/fashion'
 import { DOMAIN, statutory_reqs } from '../../../utils/enum'
+import { ret1aJSON } from '../../../constants/ret1a'
 export const checkOnsearch = (data: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.ON_SEARCH]: 'JSON cannot be empty' }
@@ -242,6 +243,12 @@ export const checkOnsearch = (data: any) => {
         case DOMAIN.RET18:
           errors = checkMandatoryTags(i, items, errorObj, healthJSON, 'Health & Wellness')
           break
+        case DOMAIN.AGR10:
+          errors = checkMandatoryTags(i, items, errorObj, agriJSON, 'Agriculture')
+          break
+        case DOMAIN.RET1A:
+          errors = checkMandatoryTags(i, items, errorObj, ret1aJSON, 'Automobile')
+          break
       }
       Object.assign(errorObj, errors)
     }
@@ -327,8 +334,10 @@ export const checkOnsearch = (data: any) => {
           const itemCodeArr = item.descriptor.code.split(":")
           const itemDescType = itemCodeArr[0]
           const itemDescCode = itemCodeArr[1]
-          const domain = getValue('domain')?.substring(3)
-          switch (domain) {
+          const domain = getValue('domain')
+          const subdomain = domain?.substring(3)
+          if (domain != 'AGR10' && domain != 'RET1A') {
+          switch (subdomain) {
             case "10":
             case "13":
             case "16":
@@ -383,6 +392,7 @@ export const checkOnsearch = (data: any) => {
               errorObj[key] =
                 `code should have a valid value in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor/code`
               break;
+            }
           }
         }
       })

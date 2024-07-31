@@ -1033,6 +1033,13 @@ export const checkQuoteTrailSum = (
             errorObj[`invalidQuoteTrailType${apiSeq}`] = `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax' or 'item'`
           }
         }
+        if(val.code === 'type')
+        {
+          if(!arrType.includes(val.value))
+          {
+            errorObj[`invalidQuoteTrailType${apiSeq}`] = `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax' or 'item'`
+          }
+        }
         if (val.code === 'value') {
           quoteTrailSum -= val.value
         }
@@ -1214,7 +1221,7 @@ export function compareTimeRanges(data1: any, action1: any, data2: any, action2:
       !isValidTimestamp(range2.end)
     ) {
       errors.push(`/${key}/range has invalid timestamp format`)
-      return
+      return // Skip comparison if timestamp format is invalid
     }
 
     if (range1.start !== range2.start) {

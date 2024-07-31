@@ -196,7 +196,7 @@ export const status_cancel_RTO_Schema = {
                 updated_at: {
                   type: 'string',
                   format: 'rfc3339-date-time',
-                },
+                }
               },
               required: ['name', 'address', 'phone', 'created_at', 'updated_at'],
             },

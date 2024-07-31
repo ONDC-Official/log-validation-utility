@@ -509,9 +509,21 @@ export const onSearchSchema = {
                             },
                             code: {
                               type: 'string',
-                              pattern: '^(1|2|3|4|5):[a-zA-Z0-9]+$',
-                              errorMessage:
-                                'item/descriptor/code should be in this format - "type:code" where type is 1 - EAN, 2 - ISBN, 3 - GTIN, 4 - HSN, 5 - others',
+                              oneOf: [
+                                {
+                                  pattern: '^(1|2|3|4|5):[a-zA-Z0-9]+$',
+                                  errorMessage:
+                                    'item/descriptor/code should be in this format - "type:code" where type is 1 - EAN, 2 - ISBN, 3 - GTIN, 4 - HSN, 5 - others',
+                                },
+                                {
+                                  if: {
+                                    properties: { domain: { enum: ['ONDC:RET1A', 'ONDC:AGR10'] } },
+                                  },
+                                  then: {
+                                    type: 'string',
+                                  }
+                                }
+                              ]
                             },
                             symbol: {
                               type: 'string',

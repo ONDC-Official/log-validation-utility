@@ -347,6 +347,8 @@ export const retailDomains = [
   'ONDC:RET18',
   'ONDC:RET19',
   'ONDC:RET20',
+  'ONDC:AGR10',
+  'ONDC:RET1A'
 ]
 export const ROUTING_ENUMS = ['P2P', 'P2H2P']
 export const MOB_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']

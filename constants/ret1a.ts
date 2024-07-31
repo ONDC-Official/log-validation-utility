@@ -1,4 +1,5 @@
-export const ret1a = {
+import { ICategoryJSON } from "./category"
+export const ret1aJSON:{ [key: string]: ICategoryJSON } = {
   'Gaskets & Valves': {
     category_id: {
       mandatory: false,
@@ -989,7 +990,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Filters: {
+  'Filters': {
     category_id: {
       mandatory: false,
       value: [],
@@ -1319,7 +1320,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Bearings: {
+  'Bearings': {
     category_id: {
       mandatory: false,
       value: [],
@@ -1649,7 +1650,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Clutches: {
+  'Clutches': {
     category_id: {
       mandatory: false,
       value: [],
@@ -2639,7 +2640,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Mounting: {
+  'Mounting': {
     category_id: {
       mandatory: false,
       value: [],
@@ -7919,7 +7920,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Lights: {
+  'Lights': {
     category_id: {
       mandatory: false,
       value: [],
@@ -8249,7 +8250,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Sensors: {
+  'Sensors': {
     category_id: {
       mandatory: false,
       value: [],
@@ -10229,7 +10230,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Windscreen: {
+  'Windscreen': {
     category_id: {
       mandatory: false,
       value: [],
@@ -10889,7 +10890,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Helmets: {
+  'Helmets': {
     category_id: {
       mandatory: false,
       value: [],
@@ -11879,7 +11880,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Gloves: {
+  'Gloves': {
     category_id: {
       mandatory: false,
       value: [],
@@ -12539,7 +12540,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Jackets: {
+  'Jackets': {
     category_id: {
       mandatory: false,
       value: [],
@@ -13199,7 +13200,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Eyewear: {
+  'Eyewear': {
     category_id: {
       mandatory: false,
       value: [],
@@ -15179,7 +15180,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Lighters: {
+  'Lighters': {
     category_id: {
       mandatory: false,
       value: [],
@@ -15509,7 +15510,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Patches: {
+  'Patches': {
     category_id: {
       mandatory: false,
       value: [],
@@ -16169,7 +16170,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Signs: {
+  'Signs': {
     category_id: {
       mandatory: false,
       value: [],
@@ -16829,7 +16830,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Cycle: {
+  'Cycle': {
     category_id: {
       mandatory: false,
       value: [],
@@ -17159,7 +17160,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Scooter: {
+  'Scooter': {
     category_id: {
       mandatory: false,
       value: [],
@@ -17489,7 +17490,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Motorcycle: {
+  'Motorcycle': {
     category_id: {
       mandatory: false,
       value: [],
@@ -18479,7 +18480,7 @@ export const ret1a = {
       value: [],
     },
   },
-  'Electric Cycle ': {
+  'Electric Cycle': {
     category_id: {
       mandatory: false,
       value: [],
@@ -18809,7 +18810,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Scooty: {
+  'Scooty': {
     category_id: {
       mandatory: false,
       value: [],
@@ -19139,7 +19140,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Mopeds: {
+  'Mopeds': {
     category_id: {
       mandatory: false,
       value: [],
@@ -19799,7 +19800,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Sedan: {
+  'Sedan': {
     category_id: {
       mandatory: false,
       value: [],
@@ -20129,7 +20130,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Convertible: {
+  'Convertible': {
     category_id: {
       mandatory: false,
       value: [],
@@ -20459,7 +20460,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Coupe: {
+  'Coupe': {
     category_id: {
       mandatory: false,
       value: [],
@@ -21119,7 +21120,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Hatchback: {
+  'Hatchback': {
     category_id: {
       mandatory: false,
       value: [],
@@ -21449,7 +21450,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Crossover: {
+  'Crossover': {
     category_id: {
       mandatory: false,
       value: [],
@@ -21779,7 +21780,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Van: {
+  'Van': {
     category_id: {
       mandatory: false,
       value: [],
@@ -22109,7 +22110,7 @@ export const ret1a = {
       value: [],
     },
   },
-  MUV: {
+  'MUV': {
     category_id: {
       mandatory: false,
       value: [],
@@ -22439,7 +22440,7 @@ export const ret1a = {
       value: [],
     },
   },
-  SUV: {
+  'SUV': {
     category_id: {
       mandatory: false,
       value: [],
@@ -22769,7 +22770,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Truck: {
+  'Truck': {
     category_id: {
       mandatory: false,
       value: [],
@@ -24749,7 +24750,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Carriage: {
+  'Carriage': {
     category_id: {
       mandatory: false,
       value: [],
@@ -25079,7 +25080,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Bus: {
+  'Bus': {
     category_id: {
       mandatory: false,
       value: [],
@@ -25739,7 +25740,7 @@ export const ret1a = {
       value: [],
     },
   },
-  Motorhomes: {
+  'Motorhomes': {
     category_id: {
       mandatory: false,
       value: [],

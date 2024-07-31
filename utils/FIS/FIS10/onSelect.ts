@@ -13,9 +13,6 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: string) => {
   if (!data || isObjectEmpty(data)) {
     return { [constants.ON_SELECT]: 'JSON cannot be empty' }
   }
-
-  console.log('flow---------------', flow)
-
   const { message, context } = data
   if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }

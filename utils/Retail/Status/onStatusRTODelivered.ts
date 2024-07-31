@@ -451,9 +451,6 @@ export const checkOnStatusRTODelivered = (data: any) => {
             if (!_.isEqual(on_status_rto.payment['@ondc/org/settlement_details'][0], getValue('sttlmntdtls'))) {
                 onStatusRtoObj.sttlmntdtls = `payment settlement_details mismatch in /${constants.ON_INIT} & /${constants.ON_STATUS_RTO_DELIVERED}`
             }
-            console.log("🚀 ~ checkOnStatusRTODelivered ~ on_status_rto.payment['@ondc/org/settlement_details'][0]:", on_status_rto.payment['@ondc/org/settlement_details'][0])
-            console.log("🚀 ~ checkOnStatusRTODelivered ~ getValue('sttlmntdtls'):", getValue('sttlmntdtls'))
-
             if (!on_status_rto.hasOwnProperty('created_at') || !on_status_rto.hasOwnProperty('updated_at')) {
                 onStatusRtoObj.ordertmpstmp = `order created and updated timestamps are mandatory in /${constants.ON_STATUS_RTO_DELIVERED}`
             } else {

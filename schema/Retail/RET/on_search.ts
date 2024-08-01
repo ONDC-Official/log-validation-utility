@@ -15,15 +15,14 @@ export const onSearchSchema = {
           const: 'on_search',
         },
         country: {
-          country: {
-            type: 'string',
-            const: 'IND',
-          },
+          type: 'string',
+          const: 'IND',
         },
         city: {
           type: 'string',
           minLength: 1,
           not: {
+            type: 'string',
             pattern: '\\*',
           },
           errorMessage: `City Code can't be * for on_search request`,
@@ -144,6 +143,7 @@ export const onSearchSchema = {
                           oneOf: [
                             {
                               if: {
+                                type: 'object',
                                 properties: {
                                   code: { const: 'np_type' },
                                 },
@@ -166,9 +166,13 @@ export const onSearchSchema = {
                             },
                             {
                               if: {
+                                type: 'object',
                                 properties: {
-                                  code: { const: 'accept_bap_terms' },
+                                  code: {
+                                    const: 'accept_bap_terms',
+                                  },
                                 },
+                                required: ['code'],
                               },
                               then: {
                                 type: 'object',
@@ -188,6 +192,7 @@ export const onSearchSchema = {
                             },
                             {
                               if: {
+                                type: 'object',
                                 properties: {
                                   code: { const: 'collect_payment' },
                                 },
@@ -413,7 +418,7 @@ export const onSearchSchema = {
                           required: ['gps', 'radius'],
                         },
                       },
-                      required: ['id', 'time', 'gps', 'address', 'time'],
+                      required: ['id', 'time', 'gps', 'address'],
                     },
                   },
                   categories: {
@@ -512,12 +517,14 @@ export const onSearchSchema = {
                               type: 'string',
                               oneOf: [
                                 {
+                                  type: 'string',
                                   pattern: '^(1|2|3|4|5):[a-zA-Z0-9]+$',
                                   errorMessage:
                                     'item/descriptor/code should be in this format - "type:code" where type is 1 - EAN, 2 - ISBN, 3 - GTIN, 4 - HSN, 5 - others',
                                 },
                                 {
                                   if: {
+                                    type: 'object',
                                     properties: { domain: { enum: ['ONDC:RET1A', 'ONDC:AGR10'] } },
                                   },
                                   then: {
@@ -715,12 +722,16 @@ export const onSearchSchema = {
                             },
                             required: ['code', 'list'],
                             if: {
+                              type: 'object',
                               properties: { code: { const: 'origin' } },
                             },
                             then: {
+                              type: 'object',
                               properties: {
                                 list: {
+                                  type: 'array',
                                   items: {
+                                    type: 'object',
                                     properties: {
                                       value: {
                                         type: 'string',
@@ -764,6 +775,7 @@ export const onSearchSchema = {
                       allOf: [
                         {
                           if: {
+                            type: 'object',
                             properties: {
                               code: {
                                 const: 'timing',
@@ -771,6 +783,7 @@ export const onSearchSchema = {
                             },
                           },
                           then: {
+                            type: 'object',
                             properties: {
                               list: {
                                 type: 'array',
@@ -778,6 +791,7 @@ export const onSearchSchema = {
                                   allOf: [
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'type',
@@ -785,6 +799,7 @@ export const onSearchSchema = {
                                         },
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
                                             type: 'string',
@@ -798,6 +813,7 @@ export const onSearchSchema = {
                                     },
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'location',
@@ -805,6 +821,7 @@ export const onSearchSchema = {
                                         },
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
                                             type: 'string',
@@ -815,6 +832,7 @@ export const onSearchSchema = {
                                     },
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'day_from',
@@ -822,6 +840,7 @@ export const onSearchSchema = {
                                         },
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
                                             type: 'string',
@@ -835,6 +854,7 @@ export const onSearchSchema = {
                                     },
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'day_to',
@@ -842,6 +862,7 @@ export const onSearchSchema = {
                                         },
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
                                             type: 'string',
@@ -855,6 +876,7 @@ export const onSearchSchema = {
                                     },
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'time_from',
@@ -862,6 +884,7 @@ export const onSearchSchema = {
                                         },
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
                                             type: 'string',
@@ -876,6 +899,7 @@ export const onSearchSchema = {
                                     },
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'time_to',
@@ -883,6 +907,7 @@ export const onSearchSchema = {
                                         },
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
                                             type: 'string',
@@ -902,6 +927,7 @@ export const onSearchSchema = {
                         },
                         {
                           if: {
+                            type: 'object',
                             properties: {
                               code: {
                                 const: 'serviceability',
@@ -909,6 +935,7 @@ export const onSearchSchema = {
                             },
                           },
                           then: {
+                            type: 'object',
                             properties: {
                               list: {
                                 type: 'array',
@@ -943,6 +970,7 @@ export const onSearchSchema = {
                         },
                         {
                           if: {
+                            type: 'object',
                             properties: {
                               code: {
                                 const: 'catalog_link',
@@ -950,6 +978,7 @@ export const onSearchSchema = {
                             },
                           },
                           then: {
+                            type: 'object',
                             properties: {
                               list: {
                                 type: 'array',
@@ -957,6 +986,7 @@ export const onSearchSchema = {
                                   allOf: [
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'type_validity',
@@ -965,8 +995,10 @@ export const onSearchSchema = {
                                         required: ['code'],
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
+                                            type: 'string',
                                             format: 'duration',
                                             errorMessage: 'Duration must be RFC3339 duration.',
                                           },
@@ -976,6 +1008,7 @@ export const onSearchSchema = {
                                     },
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'last_update',
@@ -984,8 +1017,10 @@ export const onSearchSchema = {
                                         required: ['code'],
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
+                                            type: 'string',
                                             description: 'RFC3339 UTC timestamp format',
                                             format: 'rfc3339-date-time',
                                             errorMessage: 'Time must be RFC3339 UTC timestamp format.',
@@ -996,6 +1031,7 @@ export const onSearchSchema = {
                                     },
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'type_value',
@@ -1004,8 +1040,10 @@ export const onSearchSchema = {
                                         required: ['code'],
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
+                                            type: 'string',
                                             format: 'url',
                                             errorMessage: 'Type value must be url',
                                           },
@@ -1015,6 +1053,7 @@ export const onSearchSchema = {
                                     },
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'last_update',
@@ -1023,8 +1062,10 @@ export const onSearchSchema = {
                                         required: ['code'],
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
+                                            type: 'string',
                                             description: 'RFC3339 UTC timestamp format',
                                             format: 'rfc3339-date-time',
                                             errorMessage: 'Time must be RFC3339 UTC timestamp format.',
@@ -1035,6 +1076,7 @@ export const onSearchSchema = {
                                     },
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'type',
@@ -1043,8 +1085,10 @@ export const onSearchSchema = {
                                         required: ['code'],
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
+                                            type: 'string',
                                             enum: ['inline', 'link'],
                                             errorMessage:
                                               "Type value must be 'inline'(items array in inline response, which is the default today) or 'link'(link to zip file for items array for the provider)",
@@ -1061,6 +1105,7 @@ export const onSearchSchema = {
                         },
                         {
                           if: {
+                            type: 'object',
                             properties: {
                               code: {
                                 const: 'order_value',
@@ -1068,6 +1113,7 @@ export const onSearchSchema = {
                             },
                           },
                           then: {
+                            type: 'object',
                             properties: {
                               list: {
                                 type: 'array',
@@ -1075,6 +1121,7 @@ export const onSearchSchema = {
                                   allOf: [
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'min_value',
@@ -1083,8 +1130,10 @@ export const onSearchSchema = {
                                         required: ['code'],
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
+                                            type: 'string',
                                             pattern: '^[0-9]+(?:.[0-9]{1,2})?$',
                                             errorMessage: 'min_value must be number with exactly two decimal places',
                                           },

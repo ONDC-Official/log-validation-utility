@@ -54,7 +54,7 @@ The table below outlines the payload structure for various transaction flows in 
 |               | on_status_picked           | on_status_pending          |            | on_status_picked           | on_status_pending             |
 |               | on_status_out_for_delivery | on_status_packed           |            | on_status_out_for_delivery | on_status_packed              |
 |               | on_status_delivered        | on_status_picked           |            | on_cancel                  | on_status_picked              |
-|               |                            | on_status_out_for_delivery |            |                            | on_status_out_for_delivery    |
+|               |                            | on_status_out_for_delivery |            | on_status_rto_delivered    | on_status_out_for_delivery    |
 |               |                            | on_status_delivered        |            |                            | on_status_delivered           |
 |               |                            |                            |            |                            | update_reverse_qc             |
 |               |                            |                            |            |                            | on_update_interim_reverse_qc  |

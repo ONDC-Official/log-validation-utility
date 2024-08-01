@@ -16,9 +16,9 @@ export const onSearchSchema = {
         },
         country: {
           country: {
-          type: 'string',
-          const: 'IND',
-          }
+            type: 'string',
+            const: 'IND',
+          },
         },
         city: {
           type: 'string',
@@ -389,6 +389,7 @@ export const onSearchSchema = {
                             },
                           },
                           required: ['locality', 'street', 'city', 'area_code', 'state'],
+                          additionalProperties: false,
                         },
                         circle: {
                           type: 'object',
@@ -521,9 +522,9 @@ export const onSearchSchema = {
                                   },
                                   then: {
                                     type: 'string',
-                                  }
-                                }
-                              ]
+                                  },
+                                },
+                              ],
                             },
                             symbol: {
                               type: 'string',
@@ -1084,7 +1085,7 @@ export const onSearchSchema = {
                                       then: {
                                         properties: {
                                           value: {
-                                            pattern: '^[0-9]+(?:\.[0-9]{1,2})?$',
+                                            pattern: '^[0-9]+(?:.[0-9]{1,2})?$',
                                             errorMessage: 'min_value must be number with exactly two decimal places',
                                           },
                                         },

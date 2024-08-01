@@ -12,6 +12,9 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
   if (!data || isObjectEmpty(data)) {
     return { [constants.ON_SEARCH]: 'JSON cannot be empty' }
   }
+
+  console.log('flow---------------', flow)
+
   const { message, context } = data
   if (!message || !context || !message.catalog || isObjectEmpty(message) || isObjectEmpty(message.catalog)) {
     return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
@@ -415,6 +418,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
     setValue(`${constants.ON_SEARCH}_itemsId`, Array.from(itemsId))
     setValue(`${constants.ON_SEARCH}_offerIds`, Array.from(offersId))
     setValue(`${constants.ON_SEARCH}_addOnIdSet`, addOnIdSet)
+    console.log('fulfillmentTypes11111111111111111111111111', fulfillmentTypes)
     setValue(`fulfillmentTypes`, fulfillmentTypes)
   } catch (error: any) {
     logger.error(`!!Error while checking Providers info in /${constants.ON_SEARCH}, ${error.stack}`)

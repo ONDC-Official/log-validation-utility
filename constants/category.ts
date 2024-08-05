@@ -8,7 +8,7 @@ export interface ICategoryJSON {
 
 const groceryObj: ICategoryJSON = {
   brand: {
-    mandatory: false,
+    mandatory: true,
     value: [],
   },
 }

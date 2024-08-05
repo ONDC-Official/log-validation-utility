@@ -643,6 +643,7 @@ export const onSearchSchema = {
                         },
                         '@ondc/org/time_to_ship': {
                           type: 'string',
+                          format: 'duration',
                         },
                         '@ondc/org/available_on_cod': {
                           type: 'boolean',

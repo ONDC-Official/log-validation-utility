@@ -992,46 +992,45 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
       }
 
       try {
-        let customMenus = []
+        let customMenus = [];
         customMenus = categories.filter((category: any) =>
           category.tags.some((tag: any) => tag.code === 'type' && tag.list.some((type: any) => type.value === 'custom_menu'))
         );
-
-        if (customMenus.size() > 0) {
-          customMenu = true
-
+      
+        if (customMenus.length > 0) { 
+          customMenu = true;
+      
           const ranks = customMenus.map((cstmMenu: any) =>
             parseInt(cstmMenu.tags.find((tag: any) => tag.code === 'display').list.find((display: any) => display.code === 'rank').value)
           );
-
+      
           // Check for duplicates and missing ranks
           const hasDuplicates = ranks.length !== new Set(ranks).size;
           const missingRanks = [...Array(Math.max(...ranks)).keys()].map(i => i + 1).filter(rank => !ranks.includes(rank));
-
+      
           if (hasDuplicates) {
-            const key = `message/catalog/bpp/providers${i}/categories/ranks`
-            errorObj[key] = `Duplicate ranks found, ${ranks} in providers${i}/categories`
-            logger.error(`Duplicate ranks found, ${ranks} in providers${i}/categories`)
+            const key = `message/catalog/bpp/providers${i}/categories/ranks`;
+            errorObj[key] = `Duplicate ranks found, ${ranks} in providers${i}/categories`;
+            logger.error(`Duplicate ranks found, ${ranks} in providers${i}/categories`);
           } else if (missingRanks.length > 0) {
-            const key = `message/catalog/bpp/providers${i}/categories/ranks`
-            errorObj[key] = `Missing ranks:, ${missingRanks} in providers${i}/categories`
-            logger.error(`Missing ranks:, ${missingRanks} in providers${i}/categories`)
+            const key = `message/catalog/bpp/providers${i}/categories/ranks`;
+            errorObj[key] = `Missing ranks:, ${missingRanks} in providers${i}/categories`;
+            logger.error(`Missing ranks:, ${missingRanks} in providers${i}/categories`);
           } else {
             // Sort customMenus by rank
             const sortedCustomMenus = customMenus.sort((a: any, b: any) => {
-              const rankA = a.tags.find((tag: any) => tag.code === 'display').list.find((display: any) => display.code === 'rank').value;
-              const rankB = b.tags.find((tag: any) => tag.code === 'display').list.find((display: any) => display.code === 'rank').value;
+              const rankA = parseInt(a.tags.find((tag: any) => tag.code === 'display').list.find((display: any) => display.code === 'rank').value);
+              const rankB = parseInt(b.tags.find((tag: any) => tag.code === 'display').list.find((display: any) => display.code === 'rank').value);
               return rankA - rankB;
             });
-
+      
             // Extract IDs
             customMenuIds = sortedCustomMenus.map((item: any) => item.id);
           }
         }
       } catch (error: any) {
-        logger.error(`!!Errors while checking rank in bpp/providers[${i}].category.tags, ${error.stack}`)
-
-      }
+        logger.error(`!!Errors while checking rank in bpp/providers[${i}].category.tags, ${error.stack}`);
+      }   
       if (customMenu) {
         try {
           const categoryMap: Record<string, number[]> = {};

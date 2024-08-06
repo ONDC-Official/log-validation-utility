@@ -592,7 +592,7 @@ export const onSearchSchema = {
                                 count: {
                                   type: 'string',
                                   pattern: '^[0-9]+$',
-                                  errorMessage: 'maximum count must be numbers only in string ',
+                                  errorMessage: 'maximum count must be in stringified number format. ',
                                 },
                               },
                               required: ['count'],

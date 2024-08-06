@@ -346,7 +346,6 @@ export const retailDomains = [
   'ONDC:RET17',
   'ONDC:RET18',
   'ONDC:RET19',
-  'ONDC:RET20',
   'ONDC:AGR10',
   'ONDC:RET1A'
 ]

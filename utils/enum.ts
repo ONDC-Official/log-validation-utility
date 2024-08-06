@@ -679,7 +679,6 @@ export enum DOMAIN {
   RET17 = 'RET17',
   RET18 = 'RET18',
   RET19 = 'RET19',
-  RET20 = 'RET20',
   AGR10 = 'AGR10',
   RET1A = 'RET1A'
 }

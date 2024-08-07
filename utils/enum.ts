@@ -432,6 +432,14 @@ export const homeCategories = [
   'Stationery',
   'Gift Voucher',
   'Home & Kitchen',
+  'Bins and Bathroom',
+  'Disposables and Garbage Bags',
+  'Fresheners and Repellents',
+  'Mops, Brushes and Scrubs',
+  'Party and Festive Needs',
+  'Flowers',
+  'Pooja Needs',
+  'Car and Shoe Care',
 ]
 
 export const healthCategories = [

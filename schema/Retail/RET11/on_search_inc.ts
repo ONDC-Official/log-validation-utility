@@ -279,6 +279,7 @@ export const FnBonSearchIncSchema = {
                             },
                           },
                           required: ['locality', 'street', 'city', 'area_code', 'state'],
+                          additionalProperties: false,
                         },
                         circle: {
                           type: 'object',
@@ -458,7 +459,7 @@ export const FnBonSearchIncSchema = {
                                 count: {
                                   type: 'string',
                                   pattern: '^[0-9]+$',
-                                  errorMessage: 'maximum count must be numbers only ',
+                                  errorMessage: 'maximum count must be in stringified number format. ',
                                 },
                               },
                               required: ['count'],

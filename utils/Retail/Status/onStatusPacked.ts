@@ -206,7 +206,7 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
       logger.error(`!!Error while checking order state in /${constants.ON_STATUS}_${state} Error: ${error.stack}`)
     }
 
-    if (flow == '6') {
+    if (flow === '6' || flow === '2' || flow === '3' || flow === '5') {
       try {
         // For Delivery Object
         const fulfillments = on_status.fulfillments

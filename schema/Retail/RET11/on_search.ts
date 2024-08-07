@@ -380,6 +380,7 @@ export const FnBonSearchSchema = {
                             },
                           },
                           required: ['locality', 'street', 'city', 'area_code', 'state'],
+                          additionalProperties: false,
                         },
                         circle: {
                           type: 'object',
@@ -561,7 +562,7 @@ export const FnBonSearchSchema = {
                                 count: {
                                   type: 'string',
                                   pattern: '^[0-9]+$',
-                                  errorMessage: 'maximum count must be numbers only ',
+                                  errorMessage: 'maximum count must be in stringified number format. ',
                                 },
                               },
                               required: ['count'],
@@ -695,14 +696,7 @@ export const FnBonSearchSchema = {
                           },
                         },
                       },
-                      required: [
-                        'id',
-                        'descriptor',
-                        'quantity',
-                        'price',
-                        'category_id',
-                        'tags',
-                      ],
+                      required: ['id', 'descriptor', 'quantity', 'price', 'category_id', 'tags'],
                     },
                   },
                   offers: {
@@ -939,41 +933,42 @@ export const FnBonSearchSchema = {
                           if: {
                             properties: {
                               code: {
-                                const: "serviceability"
-                              }
-                            }
+                                const: 'serviceability',
+                              },
+                            },
                           },
                           then: {
                             properties: {
                               list: {
-                                type: "array",
+                                type: 'array',
                                 items: {
-                                  type: "object",
+                                  type: 'object',
                                   properties: {
                                     code: {
-                                      type: "string",
-                                      enum: ["location", "category", "type", "val", "unit"],
-                                      errorMessage: "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit'"
+                                      type: 'string',
+                                      enum: ['location', 'category', 'type', 'val', 'unit'],
+                                      errorMessage:
+                                        "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit'",
                                     },
                                     value: {
-                                      type: "string"
-                                    }
+                                      type: 'string',
+                                    },
                                   },
-                                  required: ["code", "value"],
-                                  additionalProperties: false
+                                  required: ['code', 'value'],
+                                  additionalProperties: false,
                                 },
                                 minItems: 5,
                                 maxItems: 5,
                                 uniqueItems: true,
                                 errorMessage: {
-                                  minItems: "Serviceability must have minimum 5 values",
-                                  maxItems: "Serviceability must have maximum 5 values",
-                                  uniqueItems: "Serviceability must have unique items",
-                                  _: "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit' and no duplicacy or other elements allowed"
-                                }
-                              }
-                            }
-                          }
+                                  minItems: 'Serviceability must have minimum 5 values',
+                                  maxItems: 'Serviceability must have maximum 5 values',
+                                  uniqueItems: 'Serviceability must have unique items',
+                                  _: "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit' and no duplicacy or other elements allowed",
+                                },
+                              },
+                            },
+                          },
                         },
                         {
                           if: {

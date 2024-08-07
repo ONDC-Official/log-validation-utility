@@ -548,7 +548,8 @@ export const onInitSchema = {
                   list: {
                     type: 'array',
                     items: {
-                      allOf: [
+                      type: 'object',
+                      anyOf: [
                         {
                           if: {
                             properties: {
@@ -559,6 +560,10 @@ export const onInitSchema = {
                           },
                           then: {
                             properties: {
+                              code: {
+                                type: 'string',
+                                const: 'max_liability',
+                              },
                               value: {
                                 type: 'string',
                                 pattern: '^[0-9]+(\\.[0-9]+)?$',
@@ -578,12 +583,17 @@ export const onInitSchema = {
                           },
                           then: {
                             properties: {
+                              code: {
+                                type: 'string',
+                                const: 'max_liability_cap',
+                              },
                               value: {
                                 type: 'string',
                                 pattern: '^[0-9]+(\\.[0-9]+)?$',
                                 errorMessage: 'Value for max_liability_cap must be a number',
                               },
                             },
+                            required: ['code', 'value'],
                           },
                         },
                         {
@@ -596,12 +606,17 @@ export const onInitSchema = {
                           },
                           then: {
                             properties: {
+                              code: {
+                                type: 'string',
+                                const: 'mandatory_arbitration',
+                              },
                               value: {
                                 type: 'string',
                                 pattern: '^(true|false)$',
                                 errorMessage: "Value for mandatory_arbitration must be either 'true' or 'false'",
                               },
                             },
+                            required: ['code', 'value'],
                           },
                         },
                         {
@@ -614,12 +629,17 @@ export const onInitSchema = {
                           },
                           then: {
                             properties: {
+                              code: {
+                                type: 'string',
+                                const: 'court_jurisdiction',
+                              },
                               value: {
                                 type: 'string',
                                 pattern: '^[A-Za-z\\s]+$',
                                 errorMessage: 'Value for court_jurisdiction must be alphabetic characters only',
                               },
                             },
+                            required: ['code', 'value'],
                           },
                         },
                         {
@@ -632,23 +652,33 @@ export const onInitSchema = {
                           },
                           then: {
                             properties: {
+                              code: {
+                                type: 'string',
+                                const: 'delay_interest',
+                              },
                               value: {
                                 type: 'string',
                                 pattern: '^[0-9]+(\\.[0-9]+)?$',
                                 errorMessage: 'Value for delay_interest must be a number',
                               },
                             },
+                            required: ['code', 'value'],
                           },
                         },
                         {
                           if: {
                             properties: {
-                              code: { const: 'tax_number' },
+                              code: {
+                                const: 'tax_number',
+                              },
                             },
                           },
                           then: {
-                            type: 'object',
                             properties: {
+                              code: {
+                                type: 'string',
+                                const: 'tax_number',
+                              },
                               value: {
                                 type: 'string',
                                 pattern: '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$|^GSTIN[0-9]{10}$',
@@ -662,12 +692,17 @@ export const onInitSchema = {
                         {
                           if: {
                             properties: {
-                              code: { const: 'provider_tax_number' },
+                              code: {
+                                const: 'provider_tax_number',
+                              },
                             },
                           },
                           then: {
-                            type: 'object',
                             properties: {
+                              code: {
+                                type: 'string',
+                                const: 'provider_tax_number',
+                              },
                               value: {
                                 type: 'string',
                                 pattern: '[A-Z]{5}[0-9]{4}[A-Z]{1}',
@@ -681,6 +716,7 @@ export const onInitSchema = {
                     },
                   },
                 },
+                required: ['code', 'list'],
               },
             },
             additionalProperties: false,

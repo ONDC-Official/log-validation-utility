@@ -13,7 +13,7 @@ import {
   checkBppIdOrBapId,
   checkServiceabilityType,
   validateLocations,
-  isSequenceValid,
+  // isSequenceValid,
   isValidPhoneNumber,
   compareSTDwithArea,
   areTimestampsLessThanOrEqualTo,
@@ -72,7 +72,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
   if (context.transaction_id == context.message_id) {
     errorObj['on_search_full_catalog_refresh'] = `Context transaction_id (${context.transaction_id}) and message_id (${context.message_id}) can't be the same.`;
   }
-  
+
   setValue(`${ApiSequence.ON_SEARCH}`, data)
 
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
@@ -141,7 +141,8 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
   const prvdrLocId = new Set()
   const onSearchFFTypeSet = new Set()
   const itemsId = new Set()
-
+  let customMenuIds: any = []
+  let customMenu = false
   // Storing static fulfillment ids in onSearchFFIdsArray, OnSearchFFTypeSet
   try {
     logger.info(`Saving static fulfillment ids in /${constants.ON_SEARCH}`)
@@ -991,14 +992,92 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
       }
 
       try {
-        logger.info(`checking rank in bpp/providers[${i}].category.tags`)
-        const rankSeq = isSequenceValid(seqSet)
-        if (rankSeq === false) {
-          const key = `prvdr${i}ctgry_tags`
-          errorObj[key] = `rank should be in sequence provided in bpp/providers[${i}]/categories/tags/display`
+        let customMenus = [];
+        customMenus = categories.filter((category: any) =>
+          category.tags.some((tag: any) => tag.code === 'type' && tag.list.some((type: any) => type.value === 'custom_menu'))
+        );
+      
+        if (customMenus.length > 0) { 
+          customMenu = true;
+      
+          const ranks = customMenus.map((cstmMenu: any) =>
+            parseInt(cstmMenu.tags.find((tag: any) => tag.code === 'display').list.find((display: any) => display.code === 'rank').value)
+          );
+      
+          // Check for duplicates and missing ranks
+          const hasDuplicates = ranks.length !== new Set(ranks).size;
+          const missingRanks = [...Array(Math.max(...ranks)).keys()].map(i => i + 1).filter(rank => !ranks.includes(rank));
+      
+          if (hasDuplicates) {
+            const key = `message/catalog/bpp/providers${i}/categories/ranks`;
+            errorObj[key] = `Duplicate ranks found, ${ranks} in providers${i}/categories`;
+            logger.error(`Duplicate ranks found, ${ranks} in providers${i}/categories`);
+          } else if (missingRanks.length > 0) {
+            const key = `message/catalog/bpp/providers${i}/categories/ranks`;
+            errorObj[key] = `Missing ranks:, ${missingRanks} in providers${i}/categories`;
+            logger.error(`Missing ranks:, ${missingRanks} in providers${i}/categories`);
+          } else {
+            // Sort customMenus by rank
+            const sortedCustomMenus = customMenus.sort((a: any, b: any) => {
+              const rankA = parseInt(a.tags.find((tag: any) => tag.code === 'display').list.find((display: any) => display.code === 'rank').value);
+              const rankB = parseInt(b.tags.find((tag: any) => tag.code === 'display').list.find((display: any) => display.code === 'rank').value);
+              return rankA - rankB;
+            });
+      
+            // Extract IDs
+            customMenuIds = sortedCustomMenus.map((item: any) => item.id);
+          }
         }
       } catch (error: any) {
-        logger.error(`!!Errors while checking rank in bpp/providers[${i}].category.tags, ${error.stack}`)
+        logger.error(`!!Errors while checking rank in bpp/providers[${i}].category.tags, ${error.stack}`);
+      }   
+      if (customMenu) {
+        try {
+          const categoryMap: Record<string, number[]> = {};
+          onSearchCatalog['bpp/providers'][i]['items'].forEach((item: any) => {
+            if (item?.category_ids) {
+              item?.category_ids?.forEach((category_id: any) => {
+                const [category, sequence] = category_id.split(':').map(Number);
+                if (!categoryMap[category]) {
+                  categoryMap[category] = [];
+                }
+                categoryMap[category].push(sequence);
+              });
+
+              // Sort the sequences for each category
+              Object.keys(categoryMap).forEach(category => {
+                categoryMap[category].sort((a, b) => a - b);
+              });
+            }
+          });
+          let countSeq = 0;
+
+          customMenuIds.map((category_id: any) => {
+            const categoryArray = categoryMap[`${category_id}`]
+            if (!categoryArray) {
+              const key = `message/catalog/bpp/providers${i}/categories/items`
+              errorObj[key] = `No items are mapped with the given category_id ${category_id} in providers${i}/items`
+              logger.error(`No items are mapped with the given category_id ${category_id} in providers${i}/items`)
+            }
+            else {
+              let i = 0
+              while (i < categoryArray.length) {
+                countSeq++;
+                const exist = categoryArray.includes(countSeq);
+                if (!exist) {
+                  const key = `providers${i}/categories/items/${countSeq}`
+                  errorObj[key] = `The given sequence ${countSeq} doesn't exist with with the given category_id ${category_id} in providers${i}/items according to the rank`
+                  logger.error(`The given sequence ${countSeq} doesn't exist with with the given category_id ${category_id} in providers${i}/items according to the rank`)
+                }
+                i++;
+              }
+            }
+          })
+        } catch (error: any) {
+          logger.error(
+            `!!Errors while category_ids in the items, ${error.stack}`,
+          )
+        }
       }
 
       // Checking image array for bpp/providers/[]/categories/[]/descriptor/images[]
@@ -1284,6 +1363,10 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
           const key = `prvdr${i}tags/serviceability`
           errorObj[key] =
             `serviceability construct is mandatory in /bpp/providers[${i}]/tags`
+        } else if (serviceabilitySet.size != itemCategory_id.size) {
+          const key = `prvdr${i}/serviceability`
+          errorObj[key] =
+            `The number of unique category_id should be equal to count of serviceability in /bpp/providers[${i}]`
         }
         if (isEmpty(timingSet)) {
           const key = `prvdr${i}tags/timing`
@@ -1431,6 +1514,96 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
     setValue(`${ApiSequence.ON_SEARCH}itemsId`, itemsId)
   } catch (error: any) {
     logger.error(`!!Error while checking Providers info in /${constants.ON_SEARCH}, ${error.stack}`)
+  }
+  try {
+    logger.info(`Checking for errors in default flow in /${constants.ON_SEARCH}`);
+    const providers = data.message.catalog['bpp/providers'];
+
+    providers.forEach((provider: any) => {
+      let customGroupDetails: any = {};
+
+      provider?.categories.forEach((category: any) => {
+        const id: string = category?.id;
+        const customGroupTag = category.tags.find((tag: any) => tag.code === "type" && tag.list.some((item: any) => item.value === "custom_group"));
+
+        if (customGroupTag) {
+          const configTag = category.tags.find((tag: any) => tag.code === "config");
+          const min = configTag ? parseInt(configTag.list.find((item: any) => item.code === "min")?.value, 10) : 0;
+          const max = configTag ? parseInt(configTag.list.find((item: any) => item.code === "max")?.value, 10) : 0;
+
+          if(min > max){
+            errorObj[`${provider.id}/categories/${id}`] = `The "min" is more than "max"`
+          }
+          customGroupDetails[id] = {
+            min: min,
+            max: max,
+            numberOfDefaults: 0,
+            numberOfElements: 0 
+          };
+        }
+      });
+
+      let combinedIds: any = [];
+
+      provider?.items.forEach((item: any) => {
+        const typeTag = item.tags.find((tag: any) => tag.code === "type");
+        const typeValue = typeTag ? typeTag.list.find((listItem: any) => listItem.code === "type")?.value : null;
+
+        if (typeValue === "item") {
+          const customGroupTags = item.tags.filter((tag: any) => tag.code === "custom_group");
+          combinedIds = customGroupTags.flatMap((tag: any) => tag.list.map((listItem: any) => listItem.value));
+
+        } else if (typeValue === "customization") {
+          const parentTag = item.tags.find((tag: any) => tag.code === "parent");
+          const customizationGroupId = parentTag?.list.find((listItem: any) => listItem.code === "id")?.value;
+
+          if (customizationGroupId && customGroupDetails[customizationGroupId]) {
+            customGroupDetails[customizationGroupId].numberOfElements += 1;
+
+            const defaultParent = parentTag?.list.find((listItem: any) => listItem.code === "default" && listItem.value === "yes");
+            if (defaultParent) {
+              customGroupDetails[customizationGroupId].numberOfDefaults += 1;
+
+              const childTag = item.tags.find((tag: any) => tag.code === "child");
+              if (childTag) {
+                const childIds = childTag.list.map((listItem: any) => listItem.value);
+                combinedIds = [...combinedIds, ...childIds];
+              }
+            }
+          }
+        }
+      });
+
+      combinedIds.forEach((id: any) => {
+        if (customGroupDetails[id]) {
+          const group = customGroupDetails[id];
+          const min = group.min
+          const max = group.max
+
+          if (group.numberOfElements < max) {
+            errorObj[`${provider.id}/categories/${id}/number_of_elements`] = "The number of elements in this customization group is less than the maximum that can be selected.";
+          }
+
+          if (min > 0 && group.numberOfDefaults < min) {
+            errorObj[`${provider.id}/categories/${id}/number_of_defaults`] = "The number of defaults of this customization group is less than the minimum that can be selected.";
+          }
+        }
+      });
+
+      const customGroupIds = Object.keys(customGroupDetails);
+      customGroupIds.forEach(id => {
+        const group = customGroupDetails[id];
+        const max = group.max
+
+        if (group.numberOfElements < max) {
+          errorObj[`${provider.id}/categories/${id}/number_of_defaults`] = "The number of elements in this customization group is less than the maximum that can be selected.";
+        }
+      });
+    });
+  } catch (error: any) {
+    logger.error(
+      `Error while storing items of bpp/providers in itemsArray for /${constants.ON_SEARCH}, ${error.stack}`
+    );
   }
 
   return Object.keys(errorObj).length > 0 && errorObj

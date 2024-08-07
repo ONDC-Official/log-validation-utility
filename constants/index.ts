@@ -29,6 +29,7 @@ export default Object.freeze({
   ON_STATUS_PICKED: 'on_status_picked',
   ON_STATUS_OUT_FOR_DELIVERY: 'on_status_out_for_delivery',
   ON_STATUS_DELIVERED: 'on_status_delivered',
+  ON_STATUS_RTO_DELIVERED: 'on_status_rto_delivered/disposed',
   CANCEL: 'cancel',
   ON_CANCEL: 'on_cancel',
   ON_CANCEL_RTO: 'on_cancel_rto',
@@ -65,6 +66,7 @@ export const ApiSequence = {
   ON_STATUS_PICKED: 'on_status_picked',
   ON_STATUS_OUT_FOR_DELIVERY: 'on_status_out_for_delivery',
   ON_STATUS_DELIVERED: 'on_status_delivered',
+  ON_STATUS_RTO_DELIVERED: 'on_status_rto_delivered/disposed',
   ON_UPDATE_PART_CANCEL: 'on_update_part_cancel',
   UPDATE: 'update',
   UPDATE_REVERSE_QC: 'update_reverse_qc',
@@ -344,7 +346,8 @@ export const retailDomains = [
   'ONDC:RET17',
   'ONDC:RET18',
   'ONDC:RET19',
-  'ONDC:RET20',
+  'ONDC:AGR10',
+  'ONDC:RET1A'
 ]
 export const ROUTING_ENUMS = ['P2P', 'P2H2P']
 export const MOB_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']

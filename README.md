@@ -38,7 +38,6 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
 ```
 
 The table below outlines the payload structure for various transaction flows in the Retail Log Validation Utility. Each flow corresponds to specific actions within the ONDC network, and the payload structure provides a clear representation of the data expected for each action. This comprehensive reference assists developers in constructing accurate and valid JSON payloads for their transactions.
-
 | Flow 1        | Flow 2                     | Flow 3                     | Flow 4     | Flow 5                     | Flow 6                        |
 | ------------- | -------------------------- | -------------------------- | ---------- | -------------------------- | ----------------------------- |
 | search        | search                     | search                     | search     | search                     | search                        |
@@ -54,7 +53,7 @@ The table below outlines the payload structure for various transaction flows in 
 |               | on_status_picked           | on_status_pending          |            | on_status_picked           | on_status_pending             |
 |               | on_status_out_for_delivery | on_status_packed           |            | on_status_out_for_delivery | on_status_packed              |
 |               | on_status_delivered        | on_status_picked           |            | on_cancel                  | on_status_picked              |
-|               |                            | on_status_out_for_delivery |            |                            | on_status_out_for_delivery    |
+|               |                            | on_status_out_for_delivery |            | on_status_rto_delivered/disposed | on_status_out_for_delivery    |
 |               |                            | on_status_delivered        |            |                            | on_status_delivered           |
 |               |                            |                            |            |                            | update_reverse_qc             |
 |               |                            |                            |            |                            | on_update_interim_reverse_qc  |
@@ -62,11 +61,10 @@ The table below outlines the payload structure for various transaction flows in 
 |               |                            |                            |            |                            | on_update_picked              |
 |               |                            |                            |            |                            | update_settlement_reverse_qc  |
 |               |                            |                            |            |                            | on_update_delivered           |
-|               |                            |                            |            |                            | update_liquidated           |
-|               |                            |                            |            |                            | on_update_interim_liquidated|
+|               |                            |                            |            |                            | update_liquidated             |
+|               |                            |                            |            |                            | on_update_interim_liquidated  |
 |               |                            |                            |            |                            | on_update_liquidated          |
-|               |                            |                            |            |                            | update_settlement_liquidated|
-
+|               |                            |                            |            |                            | update_settlement_liquidated  |
 ### Sample Postman Request/Response
 
 ```shell
@@ -548,8 +546,9 @@ curl --location 'http://localhost:3008/api/validate' \
         "on_status_pending": {},
         "on_status_packed": {},
         "on_status_picked": {},
-        "on_status_out_for_delivery": {}
+        "on_status_out_for_delivery": {},
         "on_cancel": {},
+        "on_status_rto_delivered/disposed":{}
     },
     "flow": "5"
 }'

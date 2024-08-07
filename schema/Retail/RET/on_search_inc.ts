@@ -279,6 +279,7 @@ export const onSearchIncSchema = {
                             },
                           },
                           required: ['locality', 'street', 'city', 'area_code', 'state'],
+                          additionalProperties: false,
                         },
                         circle: {
                           type: 'object',
@@ -460,7 +461,7 @@ export const onSearchIncSchema = {
                                   type: 'string',
                                   pattern: '^[0-9]+$',
                                   errorMessage:
-                                    'maximum count must be numbers only ',
+                                    'maximum count must be in stringified number format. ',
                                 },
                               },
                               required: ['count'],

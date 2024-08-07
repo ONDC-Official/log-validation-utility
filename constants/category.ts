@@ -1,6 +1,6 @@
 import { statutory_reqs } from "../utils/enum"
-
-interface ICategoryJSON {
+import { cattle_feed_Obj, fertilizer_Obj, organic_crop_nutrition_Obj, organic_crop_protection_Obj, pesticide_Obj, seed_Obj, tools_and_machinery_Obj } from "./agriculture"
+export interface ICategoryJSON {
   [key: string]: {
     [key: string]: boolean | String[]
   }
@@ -8,7 +8,7 @@ interface ICategoryJSON {
 
 const groceryObj: ICategoryJSON = {
   brand: {
-    mandatory: false,
+    mandatory: true,
     value: [],
   },
 }
@@ -44,6 +44,16 @@ export const groceryJSON: { [key: string]: ICategoryJSON } = {
   'Frozen Vegetables': groceryObj,
   'Frozen Snacks': groceryObj,
   'Gift Voucher': groceryObj,
+}
+
+export const agriJSON: { [key: string]: ICategoryJSON } = {
+  'Seed': seed_Obj,
+  'Pesticide': pesticide_Obj,
+  'Fertilizer': fertilizer_Obj,
+  'Organic Crop Protection': organic_crop_protection_Obj,
+  'Organic Crop Nutrition':organic_crop_nutrition_Obj,
+  'Tools and Machinery': tools_and_machinery_Obj,
+  'Cattle Feed': cattle_feed_Obj,
 }
 
 const healthObj: ICategoryJSON = {
@@ -156,6 +166,60 @@ const homeObj = {
     value: [],
   },
 }
+const homeObj_colour_not_mandatory = {
+  brand: {
+    mandatory: true,
+    value: [],
+  },
+  colour: {
+    mandatory: false,
+    value: "/^#([a-fA-F0-9]{6})/",
+  },
+  colour_name: {
+    mandatory: false,
+    value: [],
+  },
+  material: {
+    mandatory: true,
+    value: [],
+  },
+  size: {
+    mandatory: false,
+    value: [],
+  },
+  weight: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+  },
+  length: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+  },
+  breadth: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+  },
+  height: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+  },
+  model: {
+    mandatory: false,
+    value: [],
+  },
+  assembly_required: {
+    mandatory: false,
+    value: [],
+  },
+  care_instructions: {
+    mandatory: false,
+    value: [],
+  },
+  special_features: {
+    mandatory: false,
+    value: [],
+  },
+}
 
 export const homeJSON = {
   'Home Decor': homeObj,
@@ -174,6 +238,14 @@ export const homeJSON = {
   'Toys and Games': homeObj,
   Stationery: homeObj,
   'Gift Voucher': {},
+  'Disposables and Garbage Bags':homeObj,
+  'Fresheners and Repellents':homeObj_colour_not_mandatory,
+  'Mops, Brushes and Scrubs':homeObj_colour_not_mandatory,
+  'Party and Festive Needs':homeObj_colour_not_mandatory,
+  'Flowers':homeObj,
+  'Pooja Needs':homeObj_colour_not_mandatory,
+  'Car and Shoe Care':homeObj_colour_not_mandatory,
+
 }
 
 const BPCObj: ICategoryJSON = {

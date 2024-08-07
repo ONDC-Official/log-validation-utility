@@ -162,6 +162,7 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
 
     try {
       logger.info(`Validating order state`)
+      setValue('orderState', on_status.state)
       if (on_status.state !== 'Accepted') {
         onStatusObj[`order_state`] =
           `Order state should be accepted whenever Status is being sent 'Accepted'. Current state: ${on_status.state}`
@@ -212,7 +213,8 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
       logger.error(`Error while checking transaction is in message.order.payment`)
     }
 
-    if (flow == '6') {
+    if (flow === '6' || flow === '2' || flow === '3' || flow === '5') 
+    {
       try {
         // For Delivery Object
         const fulfillments = on_status.fulfillments

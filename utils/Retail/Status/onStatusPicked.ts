@@ -203,8 +203,6 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
           pickupTimestamps[fulfillment.id] = pickUpTime
           if (!pickUpTime) {
             onStatusObj.pickUpTime = `picked timestamp is missing`
-          } else if(fulfillment.start.time){
-            console.log(fulfillment.start.time,"lololololol")
           }
           else {
             try {
@@ -314,7 +312,7 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
       )
     }
 
-    if (flow === '6') {
+    if (flow === '6' || flow === '2' || flow === '3' || flow === '5') {
       try {
         // For Delivery Object
         const fulfillments = on_status.fulfillments

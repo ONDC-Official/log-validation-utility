@@ -1022,9 +1022,24 @@ export const checkQuoteTrailSum = (
 ) => {
   let quoteTrailSum = 0
   for (const obj of fulfillmentArr) {
+    const arrType = ['misc', 'packing', 'delivery', 'tax', 'item']
     const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
     for (const item of quoteTrailItems) {
       for (const val of item.list) {
+        if(val.code === 'type')
+        {
+          if(!arrType.includes(val.value))
+          {
+            errorObj[`invalidQuoteTrailType${apiSeq}`] = `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax' or 'item'`
+          }
+        }
+        if(val.code === 'type')
+        {
+          if(!arrType.includes(val.value))
+          {
+            errorObj[`invalidQuoteTrailType${apiSeq}`] = `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax' or 'item'`
+          }
+        }
         if (val.code === 'value') {
           quoteTrailSum -= val.value
         }

@@ -319,6 +319,15 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
 
         const flowSixAChecks = (data: any) => {
             try {
+                try {
+                    const orderState = getValue('orderState')
+                    if (data.state != orderState) {
+                        onupdtObj[`order.state`] = `order.state shouldn't be changed from ${orderState} to ${data.state} in /${apiSeq}`
+                    }
+                }
+                catch {
+                    logger.error(`Error while checkign order.state for the /${apiSeq}`)
+                }
 
                 try {
                     setValue(`${ApiSequence.ON_UPDATE_PART_CANCEL}_tmpstmp`, context.timestamp)
@@ -573,6 +582,17 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
             } catch (e: any) {
                 logger.error(`Error while returnFulfillment for the /${apiSeq}`)
             }
+
+            try {
+                if (on_update.state != 'Completed') {
+                    onupdtObj[`order.state`] = `Order state should be equal to the 'Completed' in the ${apiSeq}`
+                }
+
+            } catch (error: any) {
+                logger.error(`Error while checking order.state for the /${apiSeq}`)
+
+            }
+
         }
 
         if (flow === '6-a') {

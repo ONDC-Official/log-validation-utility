@@ -107,8 +107,9 @@ export const checkOnSelect_OOS = (data: any) => {
   let ON_SELECT_OUT_OF_STOCK_error: any = {}
   try {
     logger.info(`Checking domain-error in /${constants.ON_SELECT}`)
-    if (data.hasOwnProperty('error')) {
+    if (!data.hasOwnProperty('error')) {
       ON_SELECT_OUT_OF_STOCK_error = data.error
+      errorObj[`${ApiSequence.ON_SELECT_OUT_OF_STOCK}_error`]='error object missing'
     }
   } catch (error: any) {
     logger.info(`Error while checking domain-error in /${constants.ON_SELECT}, ${error.stack}`)

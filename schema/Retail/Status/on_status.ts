@@ -609,7 +609,7 @@ export const onStatusSchema = {
                               properties: {
                                 code: {
                                   type: 'string',
-                                  enum: ['quote_trail'],
+                                  enum: ['quote_trail','cancel_request'],
                                 },
                                 list: {
                                   type: 'array',
@@ -618,7 +618,7 @@ export const onStatusSchema = {
                                     properties: {
                                       code: {
                                         type: 'string',
-                                        enum: ['type', 'id', 'currency', 'value'],
+                                        enum: ['type', 'id', 'currency', 'value','reason_id','initiated_by'],
                                       },
                                       value: {
                                         type: ['string', 'number', 'boolean'],

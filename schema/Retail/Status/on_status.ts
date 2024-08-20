@@ -630,7 +630,7 @@ export const onStatusSchema = {
                               },
                               required: ['code', 'list'],
                             },
-                            minItems: 1,
+                            minItems: 2,
                           },
                         },
                         required: ['id', 'type', 'state', 'tags'],

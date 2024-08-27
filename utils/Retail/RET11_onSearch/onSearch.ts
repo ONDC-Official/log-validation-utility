@@ -1580,7 +1580,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
           const min = group.min
           const max = group.max
 
-          if (group.numberOfElements < max) {
+          if (group.numberOfElements <= max) {
             errorObj[`${provider.id}/categories/${id}/number_of_elements`] = "The number of elements in this customization group is less than the maximum that can be selected.";
           }
 

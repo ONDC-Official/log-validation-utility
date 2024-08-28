@@ -50,7 +50,7 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
       if (!prvrdID) {
         logger.info(`Skipping Provider Id check due to insufficient data`)
         setValue('providerId', selectedProviderId)
-      } else if (!_.isEqual(prvrdID, onSelect.provider.id)) {
+      } else if (!prvrdID.includes(selectedProviderId)) {
         errorObj.prvdrId = `Provider Id for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
       } else {
         setValue('providerId', selectedProviderId)
@@ -66,12 +66,12 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
       onSelect.fulfillments.forEach((fulfillment: any, index: number) => {
         const fulfillmentKey = `fulfillments[${index}]`
 
-        if (storedFull && !storedFull.includes(fulfillment.id)) {
-          errorObj[`${fulfillmentKey}.id`] =
-            `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
-        } else {
-          fulfillmentIdsSet.add(fulfillment.id)
-        }
+        // if (storedFull && !storedFull.includes(fulfillment.id)) {
+        //   errorObj[`${fulfillmentKey}.id`] =
+        //     `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+        // } else {
+        //   fulfillmentIdsSet.add(fulfillment.id)
+        // }
 
         if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
           errorObj[`${fulfillmentKey}.vehicleCategory`] =
@@ -80,15 +80,18 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
 
         if (!fulfillment.type) {
           errorObj[`${fulfillmentKey}.type`] = `Fulfillment type is missing`
-        } else if (fulfillment.type !== 'DELIVERY') {
+        } else if (fulfillment.type !== 'TRIP') {
           errorObj[`${fulfillmentKey}.type`] =
-            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_SELECT}`
+            `Fulfillment type must be TRIP at index ${index} in /${constants.ON_SELECT}`
         }
 
         // Check stops for START and END, or time range with valid timestamp and GPS
         const otp = false
         const cancel = false
-        validateStops(fulfillment?.stops, index, otp, cancel)
+        const getStopsError = validateStops(fulfillment?.stops, index, otp, cancel, constants.ON_SELECT)
+        const errorValue = Object.values(getStopsError)[0] || []
+        if (Object.keys(getStopsError).length > 0 && Object.keys(errorValue)?.length)
+          Object.assign(errorObj, getStopsError)
 
         if (fulfillment.tags) {
           // Validate route info tags
@@ -175,8 +178,8 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
       errorObj[`payments`] = `payments  is not part of /${constants.ON_SELECT}`
     }
 
-    if (onSelect?.cancellation_terms) {
-      errorObj[`cancellation_terms`] = `cancellation_terms  is not part of /${constants.ON_SELECT}`
+    if (!onSelect?.cancellation_terms) {
+      errorObj[`cancellation_terms`] = `cancellation_terms is missing in /${constants.ON_SELECT}`
     }
 
     setValue(`${metroSequence.ON_SELECT}`, data)

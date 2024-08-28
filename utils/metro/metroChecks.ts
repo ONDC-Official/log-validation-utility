@@ -1,22 +1,29 @@
 import { logger } from '../../shared/logger'
 import { getValue, setValue } from '../../shared/dao'
 import { checkGpsPrecision, checkIdAndUri, checkMetroContext, timeDiff } from '..'
-import _, { isNil } from 'lodash'
+import _ from 'lodash'
+import { AUTHORIZATION_TYPE, AUTHORIZATION_STATUS } from './enum'
 
 interface Stop {
-  type: string;
+  type: string
+  authorization?: {
+    type: string
+    token: string
+    valid_to: string
+    status: string
+  }
   instructions: {
-      name: string;
-  };
+    name: string
+  }
   location: {
-      descriptor: {
-          name: string;
-          code: string;
-      };
-      gps: string;
-  };
-  id: string;
-  parent_stop_id: string;
+    descriptor: {
+      name: string
+      code: string
+    }
+    gps: string
+  }
+  id: string
+  parent_stop_id: string
 }
 
 export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any) => {
@@ -32,9 +39,16 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
   setValue(`${curentCall}_context`, context)
   msgIdSet.add(context.message_id)
 
-  if (!context.location || !context.location.city || !context.location.country) {
-    errorObj['location'] = 'context/location/city and context/location/country are required'
+  if (!context.location) {
+    errorObj['location'] = 'context/location object is missing.'
   }
+
+  if (!context.location.city) errorObj['city'] = 'context/location/city is required'
+  if (context?.location.city && !context.location.city.code) errorObj['city'] = 'context/location/city/code is required'
+
+  if (!context.location.country) errorObj['country'] = 'context/location/country is required'
+  if (context?.location.country && !context.location.country.code)
+    errorObj['country'] = 'context/location/country/code is required'
 
   try {
     logger.info(`Comparing BAP and BPP in /${curentCall}`)
@@ -146,75 +160,105 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
   }
 }
 
-export const validateStops = (stops: any, index: number, otp: boolean, cancel: boolean) => {
+export const validateStops = (stops: any, index: number, otp: boolean, _cancel: boolean, action: string) => {
   const errorObj: any = {}
+  const errors: { [key: string]: any } = {}
+  let startType = 0
+  let endType = 0
+  let intermediateType = 0
+  let transitStop = 0
+  console.log('tramsitStop', transitStop)
+  const stopsIds = new Set()
 
-  if (!stops) {
-    errorObj[`Stops`] = `Fulfillment ${index} must contain Stops`
+  if (!stops || !stops.length) {
+    errorObj[`fulfimment[${index}].stops`] = `stops are missing or empty at fulfillment[${index}]`
     return errorObj
   }
 
-  const hasStartStop = stops.some((stop: Stop) => stop?.type === 'START')
-  const hasEndStop = stops.some((stop: Stop) => stop?.type === 'END')
-  const checkIntermediateStopExistense = stops && stops?.find((stop: Stop) => stop?.type === 'INTERMEDIATE_STOP')
-  const checkTransitStopExistense = stops && stops?.find((stop: Stop) => stop?.type === 'TRANSIT_STOP')
-  //INTERMEDITAE & TRANSIT stips existence check
-  // END, INTERMEDITAE & TRANSIT parent_stop_id
-  if (!hasStartStop) {
-    errorObj[`fulfillment_${index}_stops`] =
-      `Fulfillment ${index} in  must contain both START stops or a valid time range start`
-  }
+  stops.map((stop: Stop, index: number) => {
+    //check type & parent_stop_id
+    if (!stop?.type) errorObj[`stops[${index}].type`] = `type is missing at stop[${index}]`
+    else {
+      if (stop.type == 'START') {
+        startType++
+        if (otp) {
+          const authorization = stop?.authorization
+          if (authorization) {
+            if (!authorization?.type) errorObj[`stops_${index}_authorization_type`] = `authorization.type is missing`
+            else if (!AUTHORIZATION_TYPE?.includes(authorization?.type)) {
+              errorObj[`stops_${index}_authorization_type`] = `authorization.type must be one of ${AUTHORIZATION_TYPE}`
+            }
 
-  if (!cancel && !hasEndStop) {
-    errorObj[`fulfillment_${index}_stops`] =
-      `Fulfillment ${index} in  must contain both END stops or a valid time range start`
-  }
-
-  if (isNil(checkIntermediateStopExistense))
-    errorObj[`fulfillment_INTERMEDIATE_STOP`] = 'INTERMEDIATE_STOP is Missing in Stops Array'
-
-  if (isNil(checkTransitStopExistense)) errorObj[`fulfillment_TRANSIT_STOP`] = 'TRANSIT_STOP is Missing in Stops Array'
-
-  stops &&
-    stops.forEach((stop: Stop, l: number) => {
-      if (!stop.hasOwnProperty('parent_stop_id')) {
-        errorObj[`Fullfillment_ParentStops_${l}`] = `${stop?.type} has missing Parent stop id in ${l} index.`
-      }
-      // Check if timestamp in the time range is valid only if time.range.start is present
-
-      //instructuions
-
-      // Check if GPS coordinates are valid
-      if (stop?.location?.gps && checkGpsPrecision(stop?.location?.gps)) {
-        errorObj[`fulfillment_${index}_stop_${l}_gpsPrecision`] =
-          'GPS coordinates must be specified with at least six decimal places of precision'
-      }
-    })
-
-  if (otp) {
-    stops.forEach((stop: any, l: number) => {
-      if (stop.authorization) {
-        const authorization = stop.authorization
-        if (authorization.type !== 'OTP') {
-          errorObj[`fulfillment_${index}_stop_${l}_authorization_type`] =
-            'Authorization type must be OTP when otp is true'
+            if (!authorization?.token) errorObj[`stops_${index}_authorization_token`] = `authorization.token is missing`
+            if (!authorization?.valid_to)
+              errorObj[`stops_${index}_authorization_valid_to`] = `authorization.valid_to is missing`
+            if (!authorization?.status)
+              errorObj[`stops_${index}_authorization_status`] = `authorization.status is missing`
+            else if (!AUTHORIZATION_STATUS?.includes(authorization?.status)) {
+              errorObj[`stops_${index}_authorization_status`] =
+                `authorization.status must be one of ${AUTHORIZATION_STATUS}`
+            }
+          }
         }
+      } else {
+        if (stop.type == 'END') endType++
+        else if (stop.type == 'INTERMEDIATE_STOP') intermediateType++
+        else if (stop.type == 'TRANSIT_STOP') transitStop++
+        else errorObj[`stops[${index}].type`] = `invalid type: ${stop.type} at stop[${index}]`
 
-        if (typeof authorization.token !== 'number') {
-          errorObj[`fulfillment_${index}_stop_${l}_authorization_token`] =
-            'Authorization token must be a number when otp is true'
-        }
+        //check parent_stop_id
+        if (!stop?.parent_stop_id)
+          errorObj[`stops[${index}].parent_stop_id`] = `parent_stop_id is missing at stop[${index}]`
       }
-    })
-  }
+    }
 
-  if (_.isEmpty(errorObj)) {
-    const result = { valid: true, SUCCESS: 'Context Valid' }
-    return result
-  } else {
-    const result = { valid: false, ERRORS: errorObj }
-    return result
-  }
+    //check location
+    const location = stop?.location
+    if (!location) errorObj[`stops[${index}].location`] = `location is missing at stop[${index}]`
+    else {
+      //check location descriptor
+      const descriptorError = validateDescriptor(
+        location?.descriptor,
+        action,
+        `stops[${index}].location.desscriptor`,
+        false,
+        [],
+      )
+      if (descriptorError) Object.assign(errorObj, descriptorError)
+
+      // Check if GPS coordinates
+      if (!location?.gps) errorObj[`stops[${index}].location.gps`] = `gps is missing at stop[${index}].location`
+      else if (checkGpsPrecision(stop?.location?.gps) !== 1) {
+        const gpsPrecision = checkGpsPrecision(stop?.location?.gps) as { [key: string]: string | number }
+        errorObj[`stops_${index}.gps`] =
+          `GPS coordinates must be precise upto six decimal places only in ${Number(gpsPrecision.latPrecision) > 6 ? 'latitude' : 'longitude'}.`
+      }
+    }
+
+    // check stops.id
+    const key = `stops[${index}].id`
+    if (!stop?.id) {
+      errorObj[key] = `id is missing at stop[${index}]`
+    } else if (stopsIds.has(stop?.id)) {
+      errorObj[key] = `duplicate stop.id: ${stop.id} at stop[${index}]`
+    } else {
+      stopsIds.add(stop.id)
+    }
+  })
+
+  if (startType == 0)
+    errorObj[`fulfimment[${index}].stops.START`] = `'START' stop type is missing at fulfillment[${index}].stops`
+
+  if (endType == 0)
+    errorObj[`fulfimment[${index}].stops.END`] = `'END' stop type is missing at fulfillment[${index}].stops`
+
+  console.log(intermediateType)
+  // if (intermediateType == 0)
+  //   errorObj[`fulfimment[${index}].stops.INTERMEDIATE`] =
+  //     `'INTERMEDIATE_STOP' stop type is missing at fulfillment[${index}].stops`
+
+  errors[`Fulfillment ${index}`] = errorObj
+  return errors
 }
 
 export const validatePaymentParams = (
@@ -241,36 +285,42 @@ export const validateQuote = (quote: any, action: string) => {
   const errorObj: any = {}
   try {
     logger.info(`Checking quote details in /${action}`)
-    const quoteBreakup = quote.breakup
-    const validBreakupItems = ['BASE_FARE']
+    let totalBreakupValue = 0
+    if (!quote?.breakup) errorObj.breakup = `quote.breakup is missing`
+    else {
+      const quoteBreakup = quote.breakup
+      const validBreakupItems = ['BASE_FARE']
 
-    const requiredBreakupItems = validBreakupItems.filter((item) =>
-      quoteBreakup.some((breakupItem: any) => breakupItem.title.toUpperCase() === item),
-    )
+      const requiredBreakupItems = validBreakupItems.filter((item) =>
+        quoteBreakup.some((breakupItem: any) => breakupItem.title.toUpperCase() === item),
+      )
 
-    const missingBreakupItems = validBreakupItems.filter((item) => !requiredBreakupItems.includes(item))
+      const missingBreakupItems = validBreakupItems.filter((item) => !requiredBreakupItems.includes(item))
 
-    if (missingBreakupItems.length > 0) {
-      errorObj.missingBreakupItems = `Quote breakup is missing the following items: ${missingBreakupItems.join(', ')}`
+      if (missingBreakupItems.length > 0) {
+        errorObj.missingBreakupItems = `Quote breakup is missing the following items: ${missingBreakupItems.join(', ')}`
+      }
+
+      totalBreakupValue = quoteBreakup.reduce((total: any, item: any) => {
+        const itemValue = parseFloat(item.price.value)
+        return isNaN(itemValue) ? total : total + itemValue
+        return total
+      }, 0)
+
+      const currencies = quoteBreakup.map((item: any) => item.currency)
+      if (new Set(currencies).size !== 1) {
+        errorObj.multipleCurrencies = 'Currency must be the same for all items in the quote breakup'
+      }
     }
 
-    const totalBreakupValue = quoteBreakup.reduce((total: any, item: any) => {
-      const itemValue = parseFloat(item.price.value)
-      return isNaN(itemValue) ? total : total + itemValue
-      return total
-    }, 0)
-
-    const priceValue = parseFloat(quote.price.value)
-
-    if (isNaN(totalBreakupValue)) {
-      errorObj.breakupTotalMismatch = 'Invalid values in quote breakup'
-    } else if (totalBreakupValue !== priceValue) {
-      errorObj.breakupTotalMismatch = `Total of quote breakup (${totalBreakupValue}) does not match with price.value (${priceValue})`
-    }
-
-    const currencies = quoteBreakup.map((item: any) => item.currency)
-    if (new Set(currencies).size !== 1) {
-      errorObj.multipleCurrencies = 'Currency must be the same for all items in the quote breakup'
+    if (!quote?.price?.value) errorObj.price = `price.value is missing in quote`
+    else {
+      const priceValue = parseFloat(quote?.price?.value)
+      if (isNaN(totalBreakupValue)) {
+        errorObj.breakupTotalMismatch = 'Invalid values in quote breakup'
+      } else if (totalBreakupValue !== priceValue) {
+        errorObj.breakupTotalMismatch = `Total of quote breakup (${totalBreakupValue}) does not match with price.value (${priceValue})`
+      }
     }
   } catch (error: any) {
     logger.error(`!!Error while checking quote details in /${action}`, error.stack)
@@ -280,6 +330,7 @@ export const validateQuote = (quote: any, action: string) => {
 }
 
 export const validateCancellationTerms = (cancellationTerms: any, action: string) => {
+  //handle object containing external_ref also
   const errorObj: any = {}
   try {
     logger.info(`Checking cancellation terms in /${action}`)
@@ -288,6 +339,17 @@ export const validateCancellationTerms = (cancellationTerms: any, action: string
     } else if (cancellationTerms && cancellationTerms.length > 0) {
       for (let i = 0; i < cancellationTerms.length; i++) {
         const cancellationTerm = cancellationTerms[i]
+
+        if (cancellationTerm.hasOwnProperty('external_ref')) {
+          if (Object.keys(cancellationTerm?.external_ref).length < 1)
+            errorObj.externalRef = `external_ref has in missing property minetype and url in /${action} at cancellation_terms[${i}]`
+          else if (!cancellationTerm?.external_ref?.mimetype)
+            errorObj['externalRef.mimeType'] = `mimetype is required in /${action} at cancellation_terms[${i}]`
+          else if (!cancellationTerm?.external_ref?.url)
+            errorObj['externalRef.url'] = `url is required in /${action} at cancellation_terms[${i}]`
+        } else {
+          errorObj.cancellationTerm = `cancellation_term should have external_ref in /${action} at cancellation_terms[${i}]`
+        }
 
         if (
           cancellationTerm.fulfillment_state &&
@@ -334,14 +396,14 @@ export const validateDescriptor = (
       }
 
       if (descriptor?.images) {
-        descriptor.images.forEach((image: any, index: number) => {
+        descriptor?.images.forEach((image: any, index: number) => {
           const { url, size_type } = image
           if (!isValidUrl(url)) {
             errorObj[`image_url_[${index}]`] = `Invalid URL for image in descriptor at ${path}.`
           }
 
           const validSizes = ['xs', 'md', 'sm', 'lg']
-          if (!validSizes.includes(size_type)) {
+          if (size_type && !validSizes.includes(size_type)) {
             errorObj[`image_size_[${index}]`] = `Invalid image size in descriptor, should be one of: ${validSizes.join(
               ', ',
             )} at ${path}.`
@@ -382,4 +444,33 @@ export const isValidUrl = (url: string) => {
   } catch (error) {
     return false
   }
+}
+
+export function validateItemDescriptor(item: any, index: number, VALID_DESCRIPTOR_CODES: string[]) {
+  const errorObj: any = {}
+  try {
+    if (item?.descriptor) {
+      const { name, code } = item?.descriptor
+
+      if (!code && !name) {
+        errorObj[`item${index}descriptor`] = `descriptor.code and descriptor.name are missing in item[${index}]`
+      } else if (!code) {
+        errorObj[`item${index}descriptor_code`] = `descriptor.code is missing in item[${index}]`
+      } else {
+        if (!VALID_DESCRIPTOR_CODES.includes(code)) {
+          const key = `item_${index}_descriptor`
+          errorObj[key] = `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${code}`
+        }
+      }
+    } else errorObj[`item_${index}_descriptor`] = `Descriptor is missing in items[${index}]`
+  } catch (error: any) {
+    logger.info(`Error while validating item descriptor, ${error.stack}`)
+  }
+
+  return errorObj
+}
+
+export function validateCodeString(str: string) {
+  const regex = /^[A-Z_]+$/
+  return regex.test(str)
 }

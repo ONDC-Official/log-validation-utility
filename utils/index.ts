@@ -254,9 +254,7 @@ export const checkGpsPrecision = (coordinates: string) => {
     const longPrecision = getDecimalPrecision(long)
     const decimalPrecision = constants.DECIMAL_PRECISION
 
-    if (latPrecision >= decimalPrecision && longPrecision >= decimalPrecision) {
-      return 1
-    } else return 0
+    return latPrecision === decimalPrecision && longPrecision === decimalPrecision ? 1 : {latPrecision, longPrecision}
   } catch (error) {
     logger.error(error)
     return error
@@ -753,7 +751,7 @@ export const isValidISO8601Duration = (duration: string): boolean => {
 export const checkIdAndUri = (id: string, uri: string, type: string) => {
   try {
     const errors: string[] = []
-
+    checkIdAndUri
     if (!id) {
       errors.push(`${type}_id is not present`)
     }
@@ -870,9 +868,8 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
                 ) {
                   logger.error(`The item value can only be of possible values.`)
                   const key = `InvldValueforItem[${i}][${index}] : ${tagName}`
-                  errorObj[
-                    key
-                  ] = `Invalid item value: [${originalTag}]. It can only be of possible values as provided in https://github.com/ONDC-Official/protocol-network-extension/tree/main/enums/retail.`
+                  errorObj[key] =
+                    `Invalid item value: [${originalTag}]. It can only be of possible values as provided in https://github.com/ONDC-Official/protocol-network-extension/tree/main/enums/retail.`
                 }
               }
             }
@@ -986,9 +983,8 @@ export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAt
 
     if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
       const key = `invldQuoteTrailPrices`
-      errorObj[
-        key
-      ] = `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM}`
+      errorObj[key] =
+        `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM}`
       logger.error(
         `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM} `,
       )
@@ -1016,9 +1012,8 @@ export const checkQuoteTrail = (quoteTrailItems: any[], errorObj: any, selectPri
 
       if (value && itemValue && value !== itemValue && type === 'item') {
         const key = `invalidPrice[${itemID}]`
-        errorObj[
-          key
-        ] = `Price mismatch for  [${itemID}] provided in quote object '[${value}]'. Should be same as in quote of ${constants.ON_SELECT}`
+        errorObj[key] =
+          `Price mismatch for  [${itemID}] provided in quote object '[${value}]'. Should be same as in quote of ${constants.ON_SELECT}`
       }
 
       if (!itemSet.has(itemID) && type === 'item') {

@@ -13,9 +13,11 @@ import { checkOnConfirm } from '../../utils/metro/onConfirm'
 import { checkStatus } from '../../utils/metro/status'
 import { checkOnStatus } from '../../utils/metro/onStatus'
 
-export function validateLogsForMetro(data: any) {
+export function validateLogsForMetro(data: any, flowName: string) {
   const msgIdSet = new Set()
   let logReport: any = {}
+  const [first, ...rest] = flowName.split('_')
+  const flow = { flow: first, flowSet: rest.join('_') }
   try {
     dropDB()
   } catch (error) {
@@ -87,7 +89,7 @@ export function validateLogsForMetro(data: any) {
     }
 
     if (data[metroSequence.ON_CONFIRM]) {
-      const searchResp = checkOnConfirm(data[metroSequence.ON_CONFIRM], msgIdSet)
+      const searchResp = checkOnConfirm(data[metroSequence.ON_CONFIRM], msgIdSet, flow)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [metroSequence.ON_CONFIRM]: searchResp }
       }

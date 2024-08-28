@@ -2,61 +2,82 @@ import { validatePaymentTags } from '../tags'
 import constants, { metroSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { setValue } from '../../../shared/dao'
+import _ from 'lodash'
 
-export function checkItemQuantity(item: { [key: string]: any }, i: number, j: number) {
+export function checkItemQuantity(quantity: { [key: string]: any }, i: number, j: number) {
   const errorObj: any = {}
-  if (!item?.quantity) {
+  if (!quantity) {
     errorObj[`prvdr${i}item${j}_quantity`] = `Quantity is missing in /providers[${i}]/items[${j}]`
     return errorObj
   }
 
-  if (item?.quantity && Object.keys(item?.quantity).length === 0) {
-    errorObj[`prvdr${i}item${j}_quantity`] =
-      `Quantity object has missing keys "maximum and minimumin" /providers[${i}]/items[${j}]`
-    return errorObj
+  if (!quantity?.maximum?.count) {
+    errorObj[`prvdr${i}item${j}_quantity_maximum`] =
+      `attribute maximium.count is missing in /providers[${i}]/items[${j}]`
   }
-
-  if (item?.quantity && Object.keys(item?.quantity).length === 1) {
-    const keys = Object.keys(item?.quantity)[0]
-    errorObj[`prvdr${i}item${j}_quantity`] =
-      `Quantity object has missing keys ${keys === 'maximum' ? 'minimum' : 'maximum'} in /providers[${i}]/items[${j}]`
-    return errorObj
-  }
-
-  if (item?.quantity?.maximum && item?.quantity?.minimum) {
-    if (!item?.quantity?.maximum?.count) {
-      errorObj[`prvdr${i}item${j}_quantity_maximum`] =
-        `In Quantity object maximum object has missing keys count in /providers[${i}]/items[${j}]`
-      return errorObj
-    }
-    if (!item?.quantity?.minimum?.count) {
-      errorObj[`prvdr${i}item${j}_quantity_minimum`] =
-        `In Quantity object minimum object has missing keys count in /providers[${i}]/items[${j}]`
-      return errorObj
-    }
+  if (!quantity?.minimum?.count) {
+    errorObj[`prvdr${i}item${j}_quantity_minimum`] =
+      `attribute minimum.count is missing in /providers[${i}]/items[${j}]`
   }
 
   return errorObj
 }
 
-export function checkItemTime(item: { [key: string]: any }, i: number, j: number) {
+export function checkItemTime(time: { [key: string]: any }, i: number, j: number) {
   const errorObj: any = {}
-  if (!item?.time) {
-    errorObj['item_time'] = `Time is missing in /providers[${i}]/items[${j}]`
+  if (!time) {
+    errorObj['time'] = `time is missing in /providers[${i}]/items[${j}]`
     return errorObj
   }
 
-  if (item?.time && Object.keys(item?.time).length === 0) {
-    errorObj['item_time'] = `Time has missing keys "label and duration" in /providers[${i}]/items[${j}]`
+  if (!time?.duration) {
+    errorObj[`prvdr${i}item${j}time.duration`] = `duration is missing in /providers[${i}]/items[${j}].time`
+  }
+
+  if (!time?.label) {
+    errorObj[`prvdr${i}item${j}time.label`] = `label is missing in /providers[${i}]/items[${j}].time`
+  } else if (time?.label.toLowerCase() !== 'validity')
+    errorObj[`prvdr${i}item${j}time.label`] = `label should be equal to 'Validity' at /providers[${i}]/items[${j}].time`
+
+  // if (!time?.timestamp) {
+  //   errorObj[`prvdr${i}item${j}time.timestamp`] = `timestamp is missing in /providers[${i}]/items[${j}].time`
+  // }
+
+  return errorObj
+}
+
+export function checkItemPrice(price: { [key: string]: any }, i: number, j: number) {
+  const errorObj: any = {}
+  if (!price) {
+    errorObj['price'] = `price is missing in /providers[${i}]/items[${j}]`
     return errorObj
   }
 
-  if (item?.time && Object.keys(item?.time).length === 1) {
-    const keys = Object.keys(item?.time)[0]
-    errorObj['item_time'] =
-      `Time has missing keys ${keys === 'label' ? 'duration' : 'label'} in /providers[${i}]/items[${j}]`
+  if (!price?.value) {
+    errorObj[`prvdr${i}item${j}price.value`] = `value is missing in /providers[${i}]/items[${j}].price`
+  }
+
+  if (!price?.currency) {
+    errorObj[`prvdr${i}item${j}price.currency`] = `currency is missing in /providers[${i}]/items[${j}].price`
+  } else if (price?.currency.toUpperCase() !== 'INR')
+    errorObj[`prvdr${i}item${j}price.currency`] =
+      `currency should be equal to 'INR' at /providers[${i}]/items[${j}].price`
+
+  return errorObj
+}
+
+export function checkRefIds(refIds: string[], i: number, j: number, storedIds: any, refName: string) {
+  const errorObj: any = {}
+  if (_.isEmpty(refIds)) {
+    errorObj[`${refName}_ids`] = `${refName}_ids is missing or empty at /providers[${i}]/items[${j}]`
     return errorObj
   }
+
+  refIds?.map((id: string) => {
+    if (!storedIds.includes(id))
+      errorObj[`${refName}_ids`] =
+        `id:${id} doesn't match with the id's passed in ${refName}, at /providers[${i}]/items[${j}]`
+  })
 
   return errorObj
 }
@@ -98,62 +119,63 @@ export function checkPayment(payments: any, i: number) {
   return errorObj
 }
 
-export function checkItemsExist(init: any, newItemIDSValue: any) {
+export function checkItemsExist(init: any, newItemIDSValue: any, action: string) {
   const errorObj: any = {}
   try {
-    logger.info(`Comparing item in /${constants.INIT}`)
-    init.items.forEach((item: any, index: number) => {
-      if (!item?.id) errorObj['itemId'] = `/message/order/items/id in ${index}: Item Id is Missing in ${constants.INIT}`
+    if (!init?.items || init?.items?.length === 0) {
+      errorObj['items'] = `/message/order/items is missing in ${action}`
+    } else {
+      logger.info(`Comparing item in /${action}`)
+      init.items.forEach((item: any, index: number) => {
+        if (!item?.id) errorObj['itemId'] = `/message/order/items/id in ${index}: Item Id is Missing in ${action}`
+        else {
+          if (item?.id && !newItemIDSValue.includes(item.id)) {
+            const key = `item[${index}].item_id`
+            errorObj[key] =
+              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+          }
 
-      if (item?.id && !newItemIDSValue.includes(item.id)) {
-        const key = `item[${index}].item_id`
-        errorObj[key] =
-          `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
-      }
+          if (!item?.quantity) errorObj[`item[${index}].quantity`] = `Item quantity is missing in ${action}`
 
-      if (!item?.quantity) errorObj[`item[${index}].quantity`] = `Item quantity is missing in ${constants.INIT}`
+          if (item?.quantity && !item?.quantity?.selected)
+            errorObj[`item[${index}].quantity_selected`] = `Item quantity selected is missing in ${action}`
 
-      if (item?.quantity && !item?.quantity?.selected)
-        errorObj[`item[${index}].quantity_selected`] = `Item quantity selected is missing in ${constants.INIT}`
-
-      if (item?.quantity?.selected && !item?.quantity?.selected?.count)
-        errorObj[`item[${index}].quantity_selected_count`] =
-          `Item quantity selected count is missing in ${constants.INIT}`
-    })
+          if (item?.quantity?.selected && !item?.quantity?.selected?.count)
+            errorObj[`item[${index}].quantity_selected_count`] = `Item quantity selected count is missing in ${action}`
+        }
+      })
+    }
   } catch (error: any) {
-    logger.error(`!!Error while comparing Item Id in /${constants.ON_SEARCH} and /${constants.INIT}`)
+    logger.error(`!!Error while comparing Item Id in /${constants.ON_SEARCH} and /${action}`)
   }
 
   return errorObj
 }
 
-export function checkBilling(init: any) {
+export function checkBilling(billing: any, action: string) {
   const errorObj: { [key: string]: any } = {}
-
   try {
-    const { billing } = init
-
     if (billing) {
       if (!billing.name) {
-        errorObj['billing.name'] = `billing name must be present in /${constants.INIT}`
+        errorObj['billing.name'] = `billing name must be present in /${action}`
       } else {
         setValue('billingName', billing.name)
       }
 
       if (!billing.email) {
-        errorObj['billing.email'] = `billing.email must be present in /${constants.INIT}`
+        errorObj['billing.email'] = `billing.email must be present in /${action}`
       } else if (!isValidEmail(billing.email)) {
-        errorObj['billing.email'] = `billing.email must be valid Email in /${constants.INIT}`
+        errorObj['billing.email'] = `billing.email must be valid Email in /${action}`
       }
 
       if (!billing.phone) {
-        errorObj['billing.phone'] = `billing.phone must be present in /${constants.INIT}`
+        errorObj['billing.phone'] = `billing.phone must be present in /${action}`
       } else if (!isValidPhoneNumber(billing.phone)) {
-        errorObj['billing.phone'] = `billing.phone must be valid Phone Number in /${constants.INIT}`
+        errorObj['billing.phone'] = `billing.phone must be valid Phone Number in /${action}`
       }
     }
   } catch (error: any) {
-    logger.error(`!!Error in billing of /${constants.INIT}`)
+    logger.error(`!!Error in billing of /${action}`)
   }
 
   return errorObj
@@ -172,18 +194,18 @@ function isValidPhoneNumber(phoneNumber: string) {
 export function checkProviderTime(provider: any) {
   const errorObj: any = {}
   try {
+    //seprate the start & end else if blocks
     if (!provider?.time) errorObj.prvdrIdTime = `Provider Time is Missing in /${constants.ON_INIT}`
-    else if (provider?.time && !provider?.time?.range)
+    if (provider?.time && !provider?.time?.range)
       errorObj.prvdrTimeRange = `Provider Time Range is Missing in /${constants.ON_INIT}`
-    else if (provider?.time?.range && !provider?.time?.range?.start)
+    if (provider?.time?.range && !provider?.time?.range?.start)
       errorObj.prvdrTimeRangeStart = `Provider Time Range Start is Missing in /${constants.ON_INIT}`
-    else if (provider?.time?.range && !provider?.time?.range?.end)
+    if (provider?.time?.range && !provider?.time?.range?.end)
       errorObj.prvdrTimeRangeEnd = `Provider Time Range End is Missing in /${constants.ON_INIT}`
-    else if (provider?.time?.range?.start && !isValidDateTime(provider?.time?.range?.start))
+    if (provider?.time?.range?.start && !isValidDateTime(provider?.time?.range?.start))
       errorObj.prvdrStartFormat = `Range.start Time Format is Invalid in /${constants.ON_INIT}`
-    else if (provider?.time?.range?.end && !isValidDateTime(provider?.time?.range?.end))
+    if (provider?.time?.range?.end && !isValidDateTime(provider?.time?.range?.end))
       errorObj.prvdrEndFormat = `Range.end Time Format is Invalid in /${constants.ON_INIT}`
-
   } catch (error: any) {
     logger.error(`!!Error in Provider Time of /${constants.INIT}`)
   }

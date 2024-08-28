@@ -1,16 +1,16 @@
 import { logger } from '../../shared/logger'
 import { setValue } from '../../shared/dao'
+import { validateContext } from './mobilityChecks'
 import constants, { metroSequence } from '../../constants'
-import { validateSchema, isObjectEmpty, checkMetroContext } from '..'
+import { validateSchema, isObjectEmpty } from '..'
 import { validatePaymentTags } from './tags'
 
 export const search = (data: any, msgIdSet: any, secondSearch: boolean) => {
   const errorObj: any = {}
+  const { context, message } = data
   try {
     if (!data || isObjectEmpty(data)) {
-      return secondSearch
-        ? (errorObj[metroSequence.SEARCH2] =  'Json cannot be empty' )
-        : (errorObj[metroSequence.SEARCH1] = 'Json cannot be empty' )
+      return 'Json cannot be empty'
     }
 
     if (
@@ -25,8 +25,8 @@ export const search = (data: any, msgIdSet: any, secondSearch: boolean) => {
     }
 
     const schemaValidation = validateSchema('TRV', constants.SEARCH, data)
-    const contextRes: any = checkMetroContext(data.context, constants.SEARCH)
-    setValue(`${metroSequence.SEARCH1}_context`, data.context)
+    const contextRes: any = validateContext(context, msgIdSet, constants.ON_SEARCH, constants.SEARCH, false)
+    setValue(`${metroSequence.SEARCH1}_message`, message)
     msgIdSet.add(data.context.message_id)
 
     if (schemaValidation !== 'error') {
@@ -37,38 +37,34 @@ export const search = (data: any, msgIdSet: any, secondSearch: boolean) => {
       Object.assign(errorObj, contextRes.ERRORS)
     }
 
-    const context = data?.context
-    if (!context?.location?.city?.code) {
-      errorObj.city = `City code must be present context`
-    }
-
-    if (context?.location?.country?.code !== 'IND') {
-      errorObj.city = `Country code must be IND`
-    }
-
-    if (data.message.intent?.fulfillment) {
-      if (!data.message.intent?.fulfillment?.vehicle) {
+    const fulfillment = data.message.intent?.fulfillment
+    if (fulfillment) {
+      if (!fulfillment?.vehicle || !fulfillment?.vehicle?.category) {
         errorObj['vehicle'] = {
           fulfillment: {
-            vehicle: 'Fulfillment vehicle is missing or empty',
+            vehicle: 'Fulfillment vehicle.category is missing or empty',
           },
         }
       } else {
-        if (data.message.intent?.fulfillment?.vehicle?.category !== 'METRO') {
-          errorObj['vehicle'] = 'Vehicle category should be "METRO" in Fulfillment'
+        if (fulfillment?.vehicle?.category !== 'METRO') {
+          errorObj['vehicle'] = 'vehicle.category should be "METRO" in Fulfillment'
         }
       }
       // Stops & Gps check
       if (secondSearch) {
-        const stops = data.message.intent?.fulfillment?.stops
+        const stops = fulfillment?.stops
         if (!stops || stops.length === 0) {
           errorObj['stops'] = 'Fulfillment stops are missing or empty'
         } else {
-          const stopTypes = stops.map((stop: any) => stop.type)
+          const stopTypes = stops.map((stop: any, index: number) => {
+            if (!stop?.location?.descriptor?.code)
+              errorObj[`stops[${index}]descriptor.code`] = `descriptor.code is missing at stops[${index}]`
+            return stop.type
+          })
           const invalidStopTypes = stopTypes.filter((type: string) => type !== 'START' && type !== 'END')
 
           if (invalidStopTypes.length > 0) {
-            errorObj['stops'] = {
+            errorObj['stops.invalid'] = {
               fulfillments: {
                 stops: `Invalid stop types found: ${invalidStopTypes.join(
                   ', ',
@@ -80,28 +76,30 @@ export const search = (data: any, msgIdSet: any, secondSearch: boolean) => {
           const startStop = stops.find((stop: any) => stop.type === 'START')
           const endStop = stops.find((stop: any) => stop.type === 'END')
 
-          if(!startStop)
-            errorObj['stops'] = 'Fulfillments stops must contain type: START.'
+          if (!startStop) errorObj['stops.start'] = 'Fulfillments stops must contain type: START.'
 
-          if(startStop && !startStop.location?.descriptor?.code){
-              errorObj['stops.descriptor.code'] = 'Start object "Descriptor Code" is missing.'  
+          if (startStop && !startStop.location?.descriptor?.code) {
+            errorObj['stops.start.descriptor.code'] = 'Start object "Descriptor Code" is missing.'
           }
 
-          if(!endStop)
-            errorObj['stops'] = 'Fulfillments stops must contain types: END.'
+          if (!endStop) errorObj['stops.end'] = 'Fulfillments stops must contain types: END.'
 
-          if(endStop && !endStop.location?.descriptor?.code){
-              errorObj['stops.descriptor.code'] = 'End object "Descriptor Code" is missing.'
+          if (endStop && !endStop.location?.descriptor?.code) {
+            errorObj['stops.end.descriptor.code'] = 'End object "Descriptor Code" is missing.'
           }
         }
       }
     } else {
-      errorObj['fulfillments'] = 'Fulfillments field is missing inside the object fulfillment.'
+      errorObj['fulfillments'] = 'fulfillment object is missing.'
     }
 
     try {
       logger.info(`Validating payments object for /${constants.SEARCH}`)
       const payment = data?.message?.intent?.payment
+      if (!payment?.collected_by)
+        errorObj['collected_by'] =
+          `payment.collected_by must be present in ${secondSearch ? metroSequence?.SEARCH2 : metroSequence.SEARCH1}`
+
       const tagsValidation = validatePaymentTags(payment?.tags)
       if (!tagsValidation?.isValid) {
         Object.assign(errorObj, { tags: tagsValidation?.errors })

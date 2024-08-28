@@ -1,9 +1,9 @@
 import { logger } from '../../shared/logger'
 import { getValue, setValue } from '../../shared/dao'
 import { checkGpsPrecision, checkIdAndUri, checkMobilityContext, timestampCheck } from '../../utils'
-import _ from 'lodash'
+import _, { isNil } from 'lodash'
 
-export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any) => {
+export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any, toCheck?: boolean) => {
   const errorObj: any = {}
 
   const contextRes: any = checkMobilityContext(context, curentCall)
@@ -16,14 +16,24 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
   setValue(`${curentCall}_context`, context)
   msgIdSet.add(context.message_id)
 
-  if (!context.location || !context.location.city || !context.location.country) {
-    errorObj['location'] = 'context/location/city and context/location/country are required'
+  if (!context.location) {
+    errorObj['location'] = 'context/location object is missing.'
   }
+
+  if (!context.location.city) errorObj['city'] = 'context/location/city is required'
+  if (context?.location.city && !context.location.city.code) errorObj['city'] = 'context/location/city/code is required'
+
+  if (!context.location.country) errorObj['country'] = 'context/location/country is required'
+  if (context?.location.country && !context.location.country.code)
+    errorObj['country'] = 'context/location/country/code is required'
 
   try {
     logger.info(`Comparing BAP and BPP in /${curentCall}`)
 
-    const bppValidationResult = checkIdAndUri(context?.bpp_id, context?.bpp_uri, 'bpp')
+    let bppValidationResult
+    if(toCheck || isNil(toCheck))
+    bppValidationResult = checkIdAndUri(context?.bpp_id, context?.bpp_uri, 'bpp')
+
     const bapValidationResult = checkIdAndUri(context?.bap_id, context?.bap_uri, 'bap')
 
     if (bppValidationResult !== null) {
@@ -131,15 +141,13 @@ export const validateStops = (stops: any, index: number, otp: boolean, cancel: b
   const hasEndStop = stops.some((stop: any) => stop.type === 'END')
 
   if (!hasStartStop) {
-    errorObj[
-      `fulfillment_${index}_stops`
-    ] = `Fulfillment ${index} in  must contain both START stops or a valid time range start`
+    errorObj[`fulfillment_${index}_stops`] =
+      `Fulfillment ${index} in  must contain both START stops or a valid time range start`
   }
 
   if (!cancel && !hasEndStop) {
-    errorObj[
-      `fulfillment_${index}_stops`
-    ] = `Fulfillment ${index} in  must contain both END stops or a valid time range start`
+    errorObj[`fulfillment_${index}_stops`] =
+      `Fulfillment ${index} in  must contain both END stops or a valid time range start`
   }
 
   stops.forEach((stop: any, l: number) => {
@@ -148,9 +156,8 @@ export const validateStops = (stops: any, index: number, otp: boolean, cancel: b
     if (hasTimeRangeStart) {
       const timestampCheckResult = timestampCheck(stop.time?.range?.start || '')
       if (timestampCheckResult && timestampCheckResult.err) {
-        errorObj[
-          `fulfillment_${index}_stop_${l}_timestamp`
-        ] = `Invalid timestamp for stop ${l} in fulfillment ${index} in : ${timestampCheckResult.err}`
+        errorObj[`fulfillment_${index}_stop_${l}_timestamp`] =
+          `Invalid timestamp for stop ${l} in fulfillment ${index} in : ${timestampCheckResult.err}`
       }
     }
 
@@ -199,9 +206,8 @@ export const validatePaymentParams = (
     errorObj[`payments[${i}]_${storedKey}`] = `payments.params.${storedKey} must be present in ${action}`
   } else {
     if (storedValue && !_.isEqual(storedValue, params[storedKey])) {
-      errorObj[
-        `payments[${i}]_${storedKey}`
-      ] = `payments.params.${storedKey} must match with the value sent in past calls, ${action}`
+      errorObj[`payments[${i}]_${storedKey}`] =
+        `payments.params.${storedKey} must match with the value sent in past calls, ${action}`
     } else {
       setValue(storedKey, params[storedKey])
     }

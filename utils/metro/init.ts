@@ -51,28 +51,27 @@ export const checkInit = (data: any, msgIdSet: any) => {
 
     try {
       logger.info(`Comparing Provider Id of /${constants.ON_SEARCH} and /${constants.INIT}`)
-      const prvrdID: string | null = getValue('providerId')
+      const prvrdID = getValue('providerId') //type should be an array instead of string
       const selectedProviderId = init?.provider?.id ?? null
 
-      if (isNil(selectedProviderId)) {
-        errorObj['providerId'] = 'Provider Id is missing in /' + constants.INIT
-      }
-
-      if (isNil(prvrdID)) {
-        logger.info(`Skipping Provider Id check due to insufficient data`)
-        setValue('providerId', selectedProviderId ?? null)
-      } else if (!_.isEqual(prvrdID, init?.provider?.id)) {
-        errorObj.prvdrId = `Provider Id for /${constants.ON_SEARCH} and /${constants.INIT} api should be same`
-      } else {
-        setValue('providerId', selectedProviderId)
-      }
+      if (!isNil(selectedProviderId)) {
+        if (isNil(prvrdID)) {
+          logger.info(`Skipping Provider Id check due to insufficient data`)
+          setValue('providerId', selectedProviderId ?? null)
+        } else if (!prvrdID?.includes(init?.provider?.id)) {
+          errorObj.prvdrId = `Provider Id for /${constants.ON_SEARCH} and /${constants.INIT} api should be same`
+        } else {
+          setValue('providerId', selectedProviderId)
+        }
+      } else errorObj['providerId'] = 'Provider Id is missing in /' + constants.INIT
     } catch (error: any) {
       logger.info(
         `Error while comparing provider id for /${constants.ON_SEARCH} and /${constants.INIT} api, ${error.stack}`,
       )
     }
 
-    const getItemError = checkItemsExist(init, newItemIDSValue)
+    //check items
+    const getItemError = checkItemsExist(init, newItemIDSValue, 'Init')
     if (Object.keys(getItemError)?.length) Object.assign(errorObj, getItemError)
 
     try {
@@ -137,11 +136,12 @@ export const checkInit = (data: any, msgIdSet: any) => {
       logger.error(`!!Errors while checking payments in /${constants.INIT}, ${error.stack}`)
     }
 
+    //check billing
     if (!isNil(init?.billing)) {
-      const getBillingError = checkBilling(init)
+      const getBillingError = checkBilling(init?.billing, 'Init')
       if (Object.keys(getBillingError)?.length) Object.assign(errorObj, getBillingError)
     } else errorObj['billing'] = `billing object is missing in /${constants.INIT}`
-  
+
     return errorObj
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.INIT} API`, err)

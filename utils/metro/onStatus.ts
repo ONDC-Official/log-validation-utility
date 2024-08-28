@@ -44,7 +44,7 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
     const itemIDS: any = getValue('ItmIDS')
     const itemIdArray: any[] = []
     const fulfillmentIdsSet = new Set()
-    const storedFull: any = getValue(`${metroSequence.ON_SEARCH1}_storedFulfillments`)
+    const storedFull: any = getValue(`${metroSequence.ON_INIT}_storedFulfillments`)
 
     let newItemIDSValue: any[]
 
@@ -82,82 +82,35 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
     }
 
     try {
-      on_status.items &&
-        on_status.items.forEach((item: any, index: number) => {
-          if (!newItemIDSValue.includes(item.id)) {
-            const key = `item[${index}].item_id`
-            errorObj[
-              key
-            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_STATUS}`
-          }
-
-          if (!item.descriptor || !item.descriptor.code) {
-            const key = `item${index}_descriptor`
-            errorObj[key] = `Descriptor is missing in items[${index}]`
-          } else {
-            if (!VALID_DESCRIPTOR_CODES.includes(item.descriptor.code)) {
-              const key = `item${index}_descriptor`
-              errorObj[
-                key
-              ] = `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
-            }
-          }
-
-          const price = item.price
-          if (!price || !price.currency || !price.value) {
-            const key = `item${index}_price`
-            errorObj[key] = `Price is incomplete in /items[${index}]`
-          }
-
-          item.fulfillment_ids &&
-            item.fulfillment_ids.forEach((fulfillmentId: string) => {
-              if (!fulfillmentIdsSet.has(fulfillmentId)) {
-                errorObj[
-                  `invalidFulfillmentId_${index}`
-                ] = `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_STATUS} is not valid`
-              }
-            })
-        })
-    } catch (error: any) {
-      logger.error(`!!Error occcurred while checking items info in /${constants.ON_STATUS},  ${error.message}`)
-      return { error: error.message }
-    }
-
-    try {
       logger.info(`Validating fulfillments object for /${constants.ON_STATUS}`)
       on_status.fulfillments.forEach((fulfillment: any, index: number) => {
         const fulfillmentKey = `fulfillments[${index}]`
 
         if (!storedFull.includes(fulfillment.id)) {
-          errorObj[
-            `${fulfillmentKey}.id`
-          ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+          errorObj[`${fulfillmentKey}.id`] =
+            `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
         } else {
           fulfillmentIdsSet.add(fulfillment.id)
         }
 
-        if(!fulfillment?.vehicle){
-          errorObj['Vehicle']='Vehicle Object Is Missing'
-        }
-        else{
+        if (!fulfillment?.vehicle) {
+          errorObj['Vehicle'] = 'Vehicle Object Is Missing'
+        } else {
           if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment?.vehicle?.category)) {
-            errorObj[
-              `${fulfillmentKey}.vehicleCategory`
-            ] = `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
+            errorObj[`${fulfillmentKey}.vehicleCategory`] =
+              `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
           }
         }
 
         if (fulfillment.type !== 'TRIP') {
-          errorObj[
-            `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_STATUS}`
+          errorObj[`${fulfillmentKey}.type`] =
+            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_STATUS}`
         }
-
 
         // Check stops for START and END, or time range with valid timestamp and GPS
         const otp = true
         const cancel = false
-        validateStops(fulfillment?.stops, index, otp, cancel)
+        validateStops(fulfillment?.stops, index, otp, cancel, constants.ON_STATUS)
 
         if (fulfillment.tags) {
           // Validate route info tags
@@ -173,6 +126,45 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
     }
 
     try {
+      on_status.items &&
+        on_status.items.forEach((item: any, index: number) => {
+          if (!newItemIDSValue.includes(item.id)) {
+            const key = `item[${index}].item_id`
+            errorObj[key] =
+              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_STATUS}`
+          }
+
+          if (!item.descriptor || !item.descriptor.code) {
+            const key = `item${index}_descriptor`
+            errorObj[key] = `Descriptor is missing in items[${index}]`
+          } else {
+            if (!VALID_DESCRIPTOR_CODES.includes(item.descriptor.code)) {
+              const key = `item${index}_descriptor`
+              errorObj[key] =
+                `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
+            }
+          }
+
+          const price = item.price
+          if (!price || !price.currency || !price.value) {
+            const key = `item${index}_price`
+            errorObj[key] = `Price is incomplete in /items[${index}]`
+          }
+
+          item.fulfillment_ids &&
+            item.fulfillment_ids.forEach((fulfillmentId: string) => {
+              if (!fulfillmentIdsSet.has(fulfillmentId)) {
+                errorObj[`invalidFulfillmentId_${index}`] =
+                  `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_STATUS} is not valid`
+              }
+            })
+        })
+    } catch (error: any) {
+      logger.error(`!!Error occcurred while checking items info in /${constants.ON_STATUS},  ${error.message}`)
+      return { error: error.message }
+    }
+
+    try {
       logger.info(`Checking payments in /${constants.ON_STATUS}`)
       on_status?.payments?.forEach((arr: any, i: number) => {
         if (!arr?.collected_by) {
@@ -180,9 +172,8 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
         } else {
           const srchCollectBy = getValue(`collected_by`)
           if (srchCollectBy != arr?.collected_by)
-            errorObj[
-              `payemnts[${i}]_collected_by`
-            ] = `payments.collected_by value sent in ${constants.ON_SEARCH} should be ${srchCollectBy} as sent in ${constants.ON_STATUS}`
+            errorObj[`payemnts[${i}]_collected_by`] =
+              `payments.collected_by value sent in ${constants.ON_SEARCH} should be ${srchCollectBy} as sent in ${constants.ON_STATUS}`
         }
 
         const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']

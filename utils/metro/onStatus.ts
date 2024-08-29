@@ -11,7 +11,7 @@ import {
   validateStops,
   validateCancellationTerms,
 } from './metroChecks'
-import { validatePaymentTags, validateRouteInfoTags } from './tags'
+import { validatePaymentTags } from './tags'
 
 const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
@@ -112,13 +112,13 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
         const cancel = false
         validateStops(fulfillment?.stops, index, otp, cancel, constants.ON_STATUS)
 
-        if (fulfillment.tags) {
-          // Validate route info tags
-          const tagsValidation = validateRouteInfoTags(fulfillment.tags)
-          if (!tagsValidation.isValid) {
-            Object.assign(errorObj, { tags: tagsValidation.errors })
-          }
-        }
+        // if (fulfillment.tags) {
+        //   // Validate route info tags
+        //   const tagsValidation = validateRouteInfoTags(fulfillment.tags)
+        //   if (!tagsValidation.isValid) {
+        //     Object.assign(errorObj, { tags: tagsValidation.errors })
+        //   }
+        // }
       })
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_INIT},  ${error.message}`)
@@ -153,9 +153,9 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
 
           item.fulfillment_ids &&
             item.fulfillment_ids.forEach((fulfillmentId: string) => {
-              if (!fulfillmentIdsSet.has(fulfillmentId)) {
-                errorObj[`invalidFulfillmentId_${index}`] =
-                  `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_STATUS} is not valid`
+              if (!storedFull.includes(fulfillmentId)) {
+                errorObj[`invalidItemFulfillmentId_${index}`] =
+                  `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_STATUS} should be mapped with the ON_INIT fulfillment id.`
               }
             })
         })

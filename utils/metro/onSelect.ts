@@ -39,7 +39,7 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
     const itemIDS: any = getValue(`${metroSequence.ON_SEARCH1}_itemsId`)
     const itemIdArray: any[] = []
     const storedFull: any = getValue(`${metroSequence.ON_SEARCH1}_storedFulfillments`)
-    const fulfillmentIdsSet = new Set()
+    // const fulfillmentIdsSet = new Set()
     const itemIdsSet = new Set()
 
     try {
@@ -148,9 +148,9 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
           errorObj[`invalidFulfillmentId_${index}`] = `fulfillment_ids should be present`
         } else {
           item.fulfillment_ids.forEach((fulfillmentId: string) => {
-            if (!fulfillmentIdsSet.has(fulfillmentId)) {
+            if (!storedFull.includes(fulfillmentId)) {
               errorObj[`invalidFulfillmentId_${index}`] =
-                `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.ON_SELECT} is not valid`
+                `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.ON_SELECT} is not matching with the fulfillment id in previous call`
             }
           })
         }

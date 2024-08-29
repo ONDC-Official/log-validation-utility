@@ -428,6 +428,7 @@ export const onSearchSchema = {
                       properties: {
                         id: {
                           type: 'string',
+                          pattern:'^[a-zA-Z0-9-]{12}$'
                         },
                         descriptor: {
                           type: 'object',
@@ -488,7 +489,7 @@ export const onSearchSchema = {
                       type: 'object',
                       properties: {
                         id: {
-                          type: 'string',
+                          type: 'string'
                         },
                         time: {
                           type: 'object',

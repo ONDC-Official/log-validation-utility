@@ -147,11 +147,11 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
         if (!item?.fulfillment_ids || item?.fulfillment_ids?.length === 0) {
           errorObj[`invalidFulfillmentId_${index}`] = `fulfillment_ids should be present`
         } else {
-          item.fulfillment_ids.forEach((fulfillmentId: string) => {
-            if (!storedFull.includes(fulfillmentId)) {
-              errorObj[`invalidFulfillmentId_${index}`] =
-                `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.ON_SELECT} is not matching with the fulfillment id in previous call`
-            }
+          item.fulfillment_ids.forEach((_fulfillmentId: string) => {
+            // if (!storedFull.includes(fulfillmentId)) {
+            //   errorObj[`invalidItemFulfillmentId_${index}`] =
+            //     `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.ON_SELECT} is not matching with the fulfillment id in previous call`
+            // }
           })
         }
 

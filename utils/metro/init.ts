@@ -106,24 +106,28 @@ export const checkInit = (data: any, msgIdSet: any) => {
         }
 
         const params = arr.params
-        if (!params?.bank_code) {
-          errorObj[`payments[${i}]_bank_code`] = `payments.params.bank_code must be present in ${constants.INIT}`
-        } else {
-          setValue('bank_code', params?.bank_code)
-        }
+        if (arr.collected_by === 'BPP') {
+          if (!params) errorObj[`payments[${i}]_params`] = `payments.params must be present in ${constants.INIT}`
 
-        if (!params?.bank_account_number) {
-          errorObj[`payments[${i}]_bank_account_number`] =
-            `payments.params.bank_account_number must be present in ${constants.INIT}`
-        } else {
-          setValue('bank_account_number', params?.bank_account_number)
-        }
+          if (!params?.bank_code) {
+            errorObj[`payments[${i}]_bank_code`] = `payments.params.bank_code must be present in ${constants.INIT}`
+          } else {
+            setValue('bank_code', params?.bank_code)
+          }
 
-        if (!params?.virtual_payment_address) {
-          errorObj[`payments[${i}]_virtual_payment_address`] =
-            `payments.params.virtual_payment_address must be present in ${constants.INIT}`
-        } else {
-          setValue('virtual_payment_address', params?.virtual_payment_address)
+          if (!params?.bank_account_number) {
+            errorObj[`payments[${i}]_bank_account_number`] =
+              `payments.params.bank_account_number must be present in ${constants.INIT}`
+          } else {
+            setValue('bank_account_number', params?.bank_account_number)
+          }
+
+          if (!params?.virtual_payment_address) {
+            errorObj[`payments[${i}]_virtual_payment_address`] =
+              `payments.params.virtual_payment_address must be present in ${constants.INIT}`
+          } else {
+            setValue('virtual_payment_address', params?.virtual_payment_address)
+          }
         }
 
         // Validate payment tags

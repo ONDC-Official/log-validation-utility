@@ -226,13 +226,14 @@ export const checkOnSearch = (data: any, msgIdSet: any, secondOnSearch: boolean)
     setValue(`${metroSequence.ON_SEARCH1}_itemsId`, Array.from(itemsId))
     setValue(`${metroSequence.ON_SEARCH1}_storedLocations`, Array.from(storedLocations))
     setValue(`${metroSequence.ON_SEARCH1}_storedFulfillments`, Array.from(storedFulfillments))
+    
 
     if (secondOnSearch) {
       const providersId = message?.catalog?.providers?.map((provider: any) => provider?.id)
       setValue('providerId', providersId || [])
-      setValue(`${metroSequence.ON_SEARCH1}_message`, message)
+      setValue(`${metroSequence.ON_SEARCH2}_message`, message)
       setValue(`itemIds`, Array.from(itemsId))
-      setValue(`${metroSequence.ON_SEARCH1}_storedFulfillments`, Array.from(storedFulfillments))
+      // setValue(`${metroSequence.ON_SEARCH2}_storedFulfillments`, Array.from(storedFulfillments))
     }
   } catch (error: any) {
     logger.error(`!!Error while checking Providers info in /${constants.ON_SEARCH}, ${error.stack}`)

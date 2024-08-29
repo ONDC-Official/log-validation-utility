@@ -137,7 +137,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
           if (!newItemIDSValue.includes(item.id)) {
             const key = `item[${index}].item_id`
             errorObj[key] =
-              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_CONFIRM}`
+              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_INIT}`
           }
 
           if (!item.descriptor || !item.descriptor.code) {

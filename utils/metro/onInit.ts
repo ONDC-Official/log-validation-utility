@@ -265,7 +265,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         validatePaymentParams(params, virtualPaymentAddress, 'virtual_payment_address', errorObj, i, constants.ON_INIT)
 
         // Validate payment tags
-        const tagsValidation = validatePaymentTags(arr?.tags)
+        const tagsValidation = validatePaymentTags(arr?.tags, constants?.ON_INIT)
         if (!tagsValidation.isValid) {
           Object.assign(errorObj, { tags: tagsValidation.errors })
         }

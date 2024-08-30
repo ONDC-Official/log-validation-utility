@@ -82,7 +82,7 @@ export function checkRefIds(refIds: string[], i: number, j: number, storedIds: a
   return errorObj
 }
 
-export function checkPayment(payments: any, i: number) {
+export function checkPayment(payments: any, i: number, action: string) {
   const errorObj: any = {}
   if (!payments || payments.length === 0) {
     errorObj[`provider_${i}_payments`] = `Payments are missing for provider ${i}`
@@ -105,7 +105,7 @@ export function checkPayment(payments: any, i: number) {
         // Validate payment tags
         if (!payment?.tags) errorObj['payment.tags'] = `payment.tags is missing in ${metroSequence.ON_SEARCH1}`
 
-        const tagsValidation = validatePaymentTags(payment?.tags)
+        const tagsValidation = validatePaymentTags(payment?.tags, action)
         if (!tagsValidation?.isValid) {
           const dynamicKey = `${i}_tags`
           Object.assign(errorObj, { [dynamicKey]: tagsValidation.errors })

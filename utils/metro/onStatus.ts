@@ -217,7 +217,7 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
         }
 
         // Validate payment tags
-        const tagsValidation = validatePaymentTags(arr.tags)
+        const tagsValidation = validatePaymentTags(arr.tags, constants?.ON_STATUS)
         if (!tagsValidation.isValid) {
           Object.assign(errorObj, { tags: tagsValidation.errors })
         }

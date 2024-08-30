@@ -131,7 +131,7 @@ export const checkInit = (data: any, msgIdSet: any) => {
         }
 
         // Validate payment tags
-        const tagsValidation = validatePaymentTags(arr.tags)
+        const tagsValidation = validatePaymentTags(arr.tags, constants?.INIT)
         if (!tagsValidation.isValid) {
           Object.assign(errorObj, { tags: tagsValidation.errors })
         }

@@ -215,7 +215,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, secondOnSearch: boolean)
         logger.error(`!!Errors while checking items in providers[${i}], ${error.stack}`)
       }
 
-      const paymentError = checkPayment(onSearchCatalog['providers'][i]['payments'], i)
+      const paymentError = checkPayment(onSearchCatalog['providers'][i]['payments'], i, constants.ON_SEARCH)
       if (!isNil(paymentError)) Object.assign(errorObj, paymentError)
 
       i++

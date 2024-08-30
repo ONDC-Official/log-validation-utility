@@ -100,7 +100,7 @@ export const search = (data: any, msgIdSet: any, secondSearch: boolean) => {
         errorObj['collected_by'] =
           `payment.collected_by must be present in ${secondSearch ? metroSequence?.SEARCH2 : metroSequence.SEARCH1}`
 
-      const tagsValidation = validatePaymentTags(payment?.tags)
+      const tagsValidation = validatePaymentTags(payment?.tags, constants.SEARCH)
       if (!tagsValidation?.isValid) {
         Object.assign(errorObj, { tags: tagsValidation?.errors })
       }

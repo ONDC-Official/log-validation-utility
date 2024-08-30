@@ -1,4 +1,5 @@
 /* eslint-disable no-prototype-builtins */
+import { getValue, setValue } from '../../shared/dao'
 import { isValidEmail, isValidPhoneNumber, isValidUrl } from '..'
 
 interface Tag {
@@ -84,8 +85,7 @@ export const validateRouteInfoTags = (tags: RouteInfoTag[]): ValidationResult =>
               errors.push(`route.tag[${index}], List item[${itemIndex}] has an unexpected descriptor code`)
           }
         })
-      }
-      else {
+      } else {
         errors.push(`route.tag[${index}] ROUTE_INFO tag is missing.`)
       }
     })
@@ -96,7 +96,7 @@ export const validateRouteInfoTags = (tags: RouteInfoTag[]): ValidationResult =>
   }
 }
 
-export const validatePaymentTags = (tags: Tag[]): ValidationResult => {
+export const validatePaymentTags = (tags: Tag[], action: string): ValidationResult => {
   const errors: string[] = []
 
   const validDescriptorCodes = ['BUYER_FINDER_FEES', 'SETTLEMENT_TERMS', 'SETTLEMENT_DETAILS']
@@ -213,6 +213,14 @@ export const validatePaymentTags = (tags: Tag[]): ValidationResult => {
                 errors.push(
                   `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid value for DELAY_INTEREST`,
                 )
+              } else if (action === 'search') {
+                setValue(`DELAY_INTEREST`, item.value)
+              } else {
+                const delayInterest = getValue('DELAY_INTEREST')
+                if (delayInterest !== item.value)
+                  errors.push(
+                    `SETTLEMENT_TERMS_[${index}], DELAY_INTEREST must be similar to ${delayInterest} at item[${itemIndex}] in ${action}`,
+                  )
               }
 
               break

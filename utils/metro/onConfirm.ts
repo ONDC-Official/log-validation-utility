@@ -18,6 +18,9 @@ const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', '
 
 export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }) => {
   const errorObj: any = {}
+  const payment = getValue('paymentId')
+  const paymentAmount = getValue('paramsAmount')
+  const paymentTransactionId = getValue('paramsTransactionId')
   try {
     if (!data || isObjectEmpty(data)) {
       return { [metroSequence.ON_CONFIRM]: 'Json cannot be empty' }
@@ -182,6 +185,11 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
               `payments.collected_by value sent in ${constants.ON_SEARCH} should be ${srchCollectBy} as sent in ${constants.ON_CONFIRM}`
         }
 
+        if (!arr.id) errorObj[`payments[${i}]_id`] = `payments.id must be present in ${constants.ON_CONFIRM}`
+
+        if (arr?.id && arr?.id !== payment)
+          errorObj[`payments[${i}]_id`] = `payments.id valueshould be ${payment} as sent in ${constants.CONFIRM}`
+
         const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
         if (!arr?.type || !validTypes.includes(arr.type)) {
           errorObj[`payments[${i}]_type`] = `payments.params.type must be present in ${
@@ -200,6 +208,35 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
         const bankCode: string | null = getValue('bank_code')
         const bankAccountNumber: string | null = getValue('bank_account_number')
         const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
+
+        //--------------------------------------------------------
+        if (!params) {
+          errorObj[`payments[${i}]_params`] = `payments.params must be present in ${constants.CONFIRM}`
+        } else {
+          const { amount, currency, transaction_id } = params
+
+          if (!amount) {
+            errorObj[`payments[${i}]_params_amount`] = `payments.params.amount must be present in ${constants.ON_CONFIRM}`
+          } else if (amount !== paymentAmount) {
+            errorObj[`payments[${i}]_params_amount`] =
+              `payments.params.amount must match with the ${paymentAmount} in ${constants.ON_CONFIRM}`
+          }
+
+          if (!currency) {
+            errorObj[`payments[${i}]_params_currency`] =
+              `payments.params.currency must be present in ${constants.CONFIRM}`
+          } else if (currency !== 'INR') {
+            errorObj[`payments[${i}]_params_currency`] = `payments.params.currency must be INR in ${constants.ON_CONFIRM}`
+          }
+
+          if (!transaction_id) {
+            errorObj[`payments[${i}]_params_transaction_id`] =
+              `payments.params.transaction_id must be present in ${constants.ON_CONFIRM}`
+          } else if (transaction_id !== paymentTransactionId) {
+            errorObj[`payments[${i}]_params_transaction_id`] =
+              `payments.params.transaction_id must match with the ${paymentTransactionId} in ${constants.ON_CONFIRM}`
+          }
+        }
         // Validate bank_code
         validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.ON_CONFIRM)
 
@@ -223,7 +260,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
         }
 
         // Validate payment tags
-        const tagsValidation = validatePaymentTags(arr.tags)
+        const tagsValidation = validatePaymentTags(arr.tags, constants?.ON_CONFIRM)
         if (!tagsValidation.isValid) {
           Object.assign(errorObj, { tags: tagsValidation.errors })
         }
@@ -258,6 +295,14 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
     } catch (error: any) {
       logger.error(`!!Error while checking status in message.order object  /${constants.ON_CONFIRM}, ${error.stack}`)
     }
+
+    if (!on_confirm?.created_at) errorObj.created_at = `created_at is missing in /${constants.ON_CONFIRM}`
+    else if (on_confirm?.created_at !== context?.timestamp)
+      errorObj.created_at = `created_at must match with context.timestamp in /${constants.ON_CONFIRM}`
+
+    if (!on_confirm?.updated_at) errorObj.updated_at = `updated_at is missing in /${constants.ON_CONFIRM}`
+    else if (on_confirm?.updated_at !== context?.timestamp)
+      errorObj.updated_at = `updated_at must match with context.timestamp in /${constants.ON_CONFIRM}`
 
     return errorObj
   } catch (err: any) {

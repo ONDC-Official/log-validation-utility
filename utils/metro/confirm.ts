@@ -105,29 +105,40 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
           } & its value must be one of: ${validStatus.join(', ')}`
         }
 
-        const params = arr.params
-        if (!params?.bank_code) {
-          errorObj[`payments[${i}]_bank_code`] = `payments.params.bank_code must be present in ${constants.CONFIRM}`
-        } else {
-          setValue('bank_code', params?.bank_code)
-        }
+        if (!arr.id) errorObj[`payments[${i}]_id`] = `payments.id must be present in ${constants.CONFIRM}`
+        else setValue('paymentId', arr?.id)
 
-        if (!params?.bank_account_number) {
-          errorObj[`payments[${i}]_bank_account_number`] =
-            `payments.params.bank_account_number must be present in ${constants.CONFIRM}`
-        } else {
-          setValue('bank_account_number', params?.bank_account_number)
-        }
+        const { params } = arr
 
-        if (!params?.virtual_payment_address) {
-          errorObj[`payments[${i}]_virtual_payment_address`] =
-            `payments.params.virtual_payment_address must be present in ${constants.CONFIRM}`
+        if (!params) {
+          errorObj[`payments[${i}]_params`] = `payments.params must be present in ${constants.CONFIRM}`
         } else {
-          setValue('virtual_payment_address', params?.virtual_payment_address)
+          const { amount, currency, transaction_id } = params
+
+          if (!amount) {
+            errorObj[`payments[${i}]_params_amount`] = `payments.params.amount must be present in ${constants.CONFIRM}`
+          }
+          else{
+            setValue('paramsAmount', amount)
+          }
+
+          if (!currency) {
+            errorObj[`payments[${i}]_params_currency`] =
+              `payments.params.currency must be present in ${constants.CONFIRM}`
+          } else if (currency !== 'INR') {
+            errorObj[`payments[${i}]_params_currency`] = `payments.params.currency must be INR in ${constants.CONFIRM}`
+          }
+
+          if (!transaction_id) {
+            errorObj[`payments[${i}]_params_transaction_id`] =
+              `payments.params.transaction_id must be present in ${constants.CONFIRM}`
+          } else {
+            setValue('paramsTransactionId', transaction_id)
+          }
         }
 
         // Validate payment tags
-        const tagsValidation = validatePaymentTags(arr.tags)
+        const tagsValidation = validatePaymentTags(arr.tags, constants?.CONFIRM)
         if (!tagsValidation.isValid) {
           Object.assign(errorObj, { tags: tagsValidation.errors })
         }

@@ -52,14 +52,13 @@ export const checkInit = (data: any, msgIdSet: any) => {
     try {
       logger.info(`Comparing Provider Id of /${constants.ON_SEARCH} and /${constants.INIT}`)
       const prvrdID = getValue('providerId') //type should be an array instead of string
-      console.log('--->>>>>>>', prvrdID)
       const selectedProviderId = init?.provider?.id ?? null
 
       if (!isNil(selectedProviderId)) {
         if (!isNil(prvrdID) || !isEmpty(prvrdID)) {
           if (!_.isEqual(prvrdID, selectedProviderId)) {
             errorObj['providerId'] =
-              'Provider Id for /' + constants.ON_SEARCH + ' and /' + constants.INIT + ' should be same'
+              'Provider Id for /' + constants.ON_SELECT + ' and /' + constants.INIT + ' should be same'
           }
         } else {
           setValue('providerId', [selectedProviderId])

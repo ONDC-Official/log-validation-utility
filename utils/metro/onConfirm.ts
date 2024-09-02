@@ -66,7 +66,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
     try {
       logger.info(`Checking id in message object  /${constants.ON_CONFIRM}`)
       if (!on_confirm.id) {
-        errorObj.id = `Id in message object must be present/${constants.ON_CONFIRM}`
+        errorObj.id = `Order ID must be present/${constants.ON_CONFIRM}`
       } else {
         setValue('orderId', on_confirm?.id)
       }

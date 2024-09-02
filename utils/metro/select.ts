@@ -42,7 +42,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
       } else if (!providerIDs.includes(selectedProviderId)) {
         errorObj.prvdrId = `Provider Id ${selectedProviderId} in /${constants.SELECT} does not exist in /${constants.ON_SEARCH}`
       } else {
-        setValue('providerId', selectedProviderId)
+        setValue('providerId', [selectedProviderId])
       }
     } catch (error: any) {
       logger.info(

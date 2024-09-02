@@ -5,7 +5,7 @@ import { getValue, setValue } from '../../shared/dao'
 import { validateContext } from './metroChecks'
 import { validatePaymentTags } from './tags'
 import { checkItemsExist, checkBilling } from './validate/helper'
-import _, { isNil } from 'lodash'
+import _, { isEmpty, isNil } from 'lodash'
 
 export const checkInit = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
@@ -52,16 +52,17 @@ export const checkInit = (data: any, msgIdSet: any) => {
     try {
       logger.info(`Comparing Provider Id of /${constants.ON_SEARCH} and /${constants.INIT}`)
       const prvrdID = getValue('providerId') //type should be an array instead of string
+      console.log('--->>>>>>>', prvrdID)
       const selectedProviderId = init?.provider?.id ?? null
 
       if (!isNil(selectedProviderId)) {
-        if (isNil(prvrdID)) {
-          logger.info(`Skipping Provider Id check due to insufficient data`)
-          setValue('providerId', selectedProviderId ?? null)
-        } else if (!prvrdID?.includes(init?.provider?.id)) {
-          errorObj.prvdrId = `Provider Id for /${constants.ON_SEARCH} and /${constants.INIT} api should be same`
+        if (!isNil(prvrdID) || !isEmpty(prvrdID)) {
+          if (!_.isEqual(prvrdID, selectedProviderId)) {
+            errorObj['providerId'] =
+              'Provider Id for /' + constants.ON_SEARCH + ' and /' + constants.INIT + ' should be same'
+          }
         } else {
-          setValue('providerId', selectedProviderId)
+          setValue('providerId', [selectedProviderId])
         }
       } else errorObj['providerId'] = 'Provider Id is missing in /' + constants.INIT
     } catch (error: any) {

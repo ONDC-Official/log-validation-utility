@@ -52,17 +52,12 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     try {
       logger.info(`Comparing Provider Id of /${constants.ON_SEARCH} and /${constants.CONFIRM}`)
       const prvrdID = getValue('providerId') //type should be an array instead of string
+
       const selectedProviderId = confirm?.provider?.id ?? null
 
       if (!isNil(selectedProviderId)) {
-        if (isNil(prvrdID)) {
-          logger.info(`Skipping Provider Id check due to insufficient data`)
-          setValue('providerId', selectedProviderId ?? null)
-        } else if (!prvrdID?.includes(confirm?.provider?.id)) {
-          errorObj.prvdrId = `Provider Id for /${constants.ON_SEARCH} and /${constants.CONFIRM} api should be same`
-        } else {
-          setValue('providerId', selectedProviderId)
-        }
+        if (!prvrdID?.includes(selectedProviderId))
+          errorObj['providerId'] = `Provider Id for /${constants.ON_INIT} and /${constants.CONFIRM} api should be same`
       } else errorObj['providerId'] = 'Provider Id is missing in /' + constants.CONFIRM
     } catch (error: any) {
       logger.info(
@@ -117,8 +112,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
 
           if (!amount) {
             errorObj[`payments[${i}]_params_amount`] = `payments.params.amount must be present in ${constants.CONFIRM}`
-          }
-          else{
+          } else {
             setValue('paramsAmount', amount)
           }
 

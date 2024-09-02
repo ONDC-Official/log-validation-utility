@@ -45,6 +45,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     const on_init = message.order
     const itemIDS: any = getValue('ItmIDS')
     const itemIdArray: any[] = []
+    const prvdrId = getValue('providerId') || [] as string[]
     // const storedFull: any = getValue(`${metroSequence.ON_SEARCH1}_storedFulfillments`)
     const fulfillmentIdsSet = new Set()
 
@@ -68,7 +69,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         //seprate both the checks from a single function
         errorObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.ON_INIT}`
 
-      if (on_init.provider.id != getValue('providerId'))
+      if (!prvdrId.includes(on_init.provider.id))
         errorObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.ON_INIT}`
 
       // //use validateDescriptor instead

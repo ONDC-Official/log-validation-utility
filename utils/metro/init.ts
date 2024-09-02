@@ -60,9 +60,7 @@ export const checkInit = (data: any, msgIdSet: any) => {
             errorObj['providerId'] =
               'Provider Id for /' + constants.ON_SELECT + ' and /' + constants.INIT + ' should be same'
           }
-        } else {
-          setValue('providerId', [selectedProviderId])
-        }
+        } else setValue('providerId', [selectedProviderId])
       } else errorObj['providerId'] = 'Provider Id is missing in /' + constants.INIT
     } catch (error: any) {
       logger.info(

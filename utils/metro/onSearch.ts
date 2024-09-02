@@ -229,8 +229,8 @@ export const checkOnSearch = (data: any, msgIdSet: any, secondOnSearch: boolean)
     
 
     if (secondOnSearch) {
-      const providersId = message?.catalog?.providers?.map((provider: any) => provider?.id)
-      setValue('providerId', providersId || [])
+      // const providersId = message?.catalog?.providers?.map((provider: any) => provider?.id)
+      // setValue('providerId', providersId || [])
       setValue(`${metroSequence.ON_SEARCH2}_message`, message)
       setValue(`itemIds`, Array.from(itemsId))
       // setValue(`${metroSequence.ON_SEARCH2}_storedFulfillments`, Array.from(storedFulfillments))

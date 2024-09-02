@@ -64,13 +64,13 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
     //check provider
     try {
-      logger.info(`Checking provider Id in /${constants.INIT} and /${constants.ON_INIT}`)
+      logger.info(`Checking provider Id in /${constants.ON_SEARCH} and /${constants.ON_INIT}`)
       if (!on_init.provider)
         //seprate both the checks from a single function
-        errorObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.ON_INIT}`
+        errorObj.prvdrId = `Provider Id id missing in /${constants.ON_INIT}`
 
       if (!prvdrId.includes(on_init.provider.id))
-        errorObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.ON_INIT}`
+        errorObj.prvdrId = `Provider Id mismatches in /${constants.INIT} and /${constants.ON_INIT}`
 
       // //use validateDescriptor instead
       const descriptorError = validateDescriptor(

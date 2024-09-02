@@ -231,7 +231,7 @@ export const validateStops = (stops: any, index: number, otp: boolean, _cancel: 
       else if (checkGpsPrecision(stop?.location?.gps) !== 1) {
         const gpsPrecision = checkGpsPrecision(stop?.location?.gps) as { [key: string]: string | number }
         errorObj[`stops_${index}.gps`] =
-          `GPS coordinates must be precise upto six decimal places only in ${Number(gpsPrecision.latPrecision) > 6 ? 'latitude' : 'longitude'}.`
+          `GPS coordinates must be precise upto six decimal places only in ${Number(gpsPrecision.latPrecision) !== 6 ? 'latitude' : 'longitude'}.`
       }
     }
 

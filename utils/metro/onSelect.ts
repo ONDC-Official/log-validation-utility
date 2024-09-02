@@ -49,11 +49,11 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
 
       if (!prvrdID) {
         logger.info(`Skipping Provider Id check due to insufficient data`)
-        setValue('providerId', selectedProviderId)
+        setValue('providerId', [selectedProviderId])
       } else if (!prvrdID.includes(selectedProviderId)) {
         errorObj.prvdrId = `Provider Id for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
       } else {
-        setValue('providerId', selectedProviderId)
+        setValue('providerId', [selectedProviderId])
       }
     } catch (error: any) {
       logger.info(

@@ -13,6 +13,7 @@ import { checkOnConfirm } from '../../utils/metro/onConfirm'
 import { checkStatus } from '../../utils/metro/status'
 import { checkOnStatus } from '../../utils/metro/onStatus'
 import { checkCancelPayload } from '../../utils/metro/cancel'
+import { checkOnCancelPayload } from '../../utils/metro/onCancel'
 
 export function validateLogsForMetro(data: any, flowName: string) {
   const msgIdSet = new Set()
@@ -121,6 +122,20 @@ export function validateLogsForMetro(data: any, flowName: string) {
       const searchResp = checkCancelPayload(data[metroSequence.CONFIRM_CANCEL], msgIdSet, true)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [metroSequence.CONFIRM_CANCEL]: searchResp }
+      }
+    }
+
+    if (data[metroSequence.SOFT_ON_CANCEL]) {
+      const searchResp = checkOnCancelPayload(data[metroSequence.SOFT_ON_CANCEL], msgIdSet, flow, false)
+      if (!_.isEmpty(searchResp)) {
+        logReport = { ...logReport, [metroSequence.SOFT_ON_CANCEL]: searchResp }
+      }
+    }
+
+    if (data[metroSequence.CONFIRM_ON_CANCEL]) {
+      const searchResp = checkOnCancelPayload(data[metroSequence.CONFIRM_ON_CANCEL], msgIdSet, flow, true)
+      if (!_.isEmpty(searchResp)) {
+        logReport = { ...logReport, [metroSequence.CONFIRM_ON_CANCEL]: searchResp }
       }
     }
 

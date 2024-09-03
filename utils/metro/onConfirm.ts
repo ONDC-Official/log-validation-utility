@@ -87,7 +87,10 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
 
     try {
       logger.info(`Validating fulfillments object for /${constants.ON_CONFIRM}`)
+      let FULFILLMENT: string[] = []
       on_confirm.fulfillments.forEach((fulfillment: any, index: number) => {
+        FULFILLMENT=[...FULFILLMENT, fulfillment?.id]
+        // setValue(`${metroSequence.ON_CONFIRM}_storedFulfillments`, [...FUL, fulfillment?.id])
         const fulfillmentKey = `fulfillments[${index}]`
 
         if (!storedFull.includes(fulfillment?.id)) {
@@ -112,9 +115,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
         }
 
         // Check stops for START and END, or time range with valid timestamp and GPS
-        const otp = true
-        const cancel = false
-        const getStopsError = validateStops(fulfillment?.stops, index, otp, cancel, constants.ON_CONFIRM)
+        const getStopsError = validateStops(fulfillment?.stops, index, true, false, constants.ON_CONFIRM)
         const errorValue = Object.values(getStopsError)[0] || []
         if (Object.keys(getStopsError).length > 0 && Object.keys(errorValue)?.length)
           Object.assign(errorObj, getStopsError)
@@ -129,6 +130,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
           }
         }
       })
+
+       setValue(`${metroSequence.ON_CONFIRM}_storedFulfillments`, FULFILLMENT || [])
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_INIT},  ${error.message}`)
       return { error: error.message }
@@ -209,7 +212,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
         const bankAccountNumber: string | null = getValue('bank_account_number')
         const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
 
-        //--------------------------------------------------------
+        //--------------------------PAYMENR PARAMS VALIDATION-------------------------------------
         if (!params) {
           errorObj[`payments[${i}]_params`] = `payments.params must be present in ${constants.CONFIRM}`
         } else {
@@ -303,6 +306,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
     if (!on_confirm?.updated_at) errorObj.updated_at = `updated_at is missing in /${constants.ON_CONFIRM}`
     else if (on_confirm?.updated_at !== context?.timestamp)
       errorObj.updated_at = `updated_at must match with context.timestamp in /${constants.ON_CONFIRM}`
+
+    setValue('on_confirm_context', context)
 
     return errorObj
   } catch (err: any) {

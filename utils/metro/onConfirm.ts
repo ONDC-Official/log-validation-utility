@@ -90,7 +90,6 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
       let FULFILLMENT: string[] = []
       on_confirm.fulfillments.forEach((fulfillment: any, index: number) => {
         FULFILLMENT=[...FULFILLMENT, fulfillment?.id]
-        // setValue(`${metroSequence.ON_CONFIRM}_storedFulfillments`, [...FUL, fulfillment?.id])
         const fulfillmentKey = `fulfillments[${index}]`
 
         if (!storedFull.includes(fulfillment?.id)) {

@@ -26,7 +26,7 @@ const controller = {
               domain,
               payload,
               version,
-              flow,
+              flow.toString(),
               bap_id,
               bpp_id,
             )

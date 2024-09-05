@@ -14,6 +14,7 @@ const groceryObj: ICategoryJSON = {
 }
 
 export const groceryJSON: { [key: string]: ICategoryJSON } = {
+  'Oil & Ghee':groceryObj,
   'Fruits and Vegetables': groceryObj,
   'Masala & Seasoning': groceryObj,
   'Falseil & Ghee': groceryObj,

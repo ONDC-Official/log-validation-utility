@@ -219,7 +219,7 @@ export const validatePaymentTags = (tags: Tag[], action: string): ValidationResu
                 const delayInterest = getValue('DELAY_INTEREST')
                 if (delayInterest !== item?.value)
                   errors.push(
-                    `SETTLEMENT_TERMS_[${index}], DELAY_INTEREST must be similar to ${delayInterest} at item[${itemIndex}] in ${action}`,
+                    `SETTLEMENT_TERMS_[${index}], DELAY_INTEREST must be similar to /search value ${delayInterest} instead of ${item?.value} at item[${itemIndex}] in ${action}`,
                   )
               }
 

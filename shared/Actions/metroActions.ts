@@ -28,28 +28,28 @@ export function validateLogsForMetro(data: any, flowName: string) {
 
   try {
     if (data[metroSequence.SEARCH1]) {
-      const searchResp = search(data[metroSequence.SEARCH1], msgIdSet, false)
+      const searchResp = search(data[metroSequence.SEARCH1], msgIdSet, false, flow)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [metroSequence.SEARCH1]: searchResp }
       }
     }
 
     if (data[metroSequence.ON_SEARCH1]) {
-      const searchResp = checkOnSearch(data[metroSequence.ON_SEARCH1], msgIdSet, false)
+      const searchResp = checkOnSearch(data[metroSequence.ON_SEARCH1], msgIdSet, false, flow)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [metroSequence.ON_SEARCH1]: searchResp }
       }
     }
 
     if (data[metroSequence.SEARCH2]) {
-      const searchResp = search(data[metroSequence.SEARCH2], msgIdSet, true)
+      const searchResp = search(data[metroSequence.SEARCH2], msgIdSet, true, flow)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [metroSequence.SEARCH2]: searchResp }
       }
     }
 
     if (data[metroSequence.ON_SEARCH2]) {
-      const searchResp = checkOnSearch(data[metroSequence.ON_SEARCH2], msgIdSet, true)
+      const searchResp = checkOnSearch(data[metroSequence.ON_SEARCH2], msgIdSet, true, flow)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [metroSequence.ON_SEARCH2]: searchResp }
       }

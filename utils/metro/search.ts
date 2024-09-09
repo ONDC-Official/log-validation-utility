@@ -5,7 +5,7 @@ import constants, { metroSequence } from '../../constants'
 import { validateSchema, isObjectEmpty } from '..'
 import { validatePaymentTags } from './tags'
 
-export const search = (data: any, msgIdSet: any, secondSearch: boolean) => {
+export const search = (data: any, msgIdSet: any, secondSearch: boolean, flow: { flow: string; flowSet: string }) => {
   const errorObj: any = {}
   const { context, message } = data
   try {
@@ -46,8 +46,9 @@ export const search = (data: any, msgIdSet: any, secondSearch: boolean) => {
           },
         }
       } else {
-        if (fulfillment?.vehicle?.category !== 'METRO') {
-          errorObj['vehicle'] = 'vehicle.category should be "METRO" in Fulfillment'
+        if (fulfillment?.vehicle?.category !== (String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO')) {
+          errorObj['vehicle'] =
+            `vehicle.category should be ${String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO'} in Fulfillment`
         }
       }
       // Stops & Gps check
@@ -100,7 +101,7 @@ export const search = (data: any, msgIdSet: any, secondSearch: boolean) => {
         errorObj['collected_by'] =
           `payment.collected_by must be present in ${secondSearch ? metroSequence?.SEARCH2 : metroSequence.SEARCH1}`
 
-      const tagsValidation = validatePaymentTags(payment?.tags, constants.SEARCH)
+      const tagsValidation = validatePaymentTags(payment?.tags, secondSearch ? 'search2' : constants.SEARCH)
       if (!tagsValidation?.isValid) {
         Object.assign(errorObj, { tags: tagsValidation?.errors })
       }

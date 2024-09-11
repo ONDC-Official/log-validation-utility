@@ -108,8 +108,12 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
 
     try {
       logger.info(`Comparing transaction Ids of /${pastCall} and /${curentCall}`)
-      if (!_.isEqual(prevContext.transaction_id, context.transaction_id)) {
-        errorObj.transaction_id = `Transaction Id for /${pastCall} and /${curentCall} api should be same`
+      if (
+        pastCall !== 'on_search' &&
+        curentCall !== 'init' &&
+        !_.isEqual(prevContext.transaction_id, context.transaction_id)
+      ) {
+        errorObj.transaction_id = `Transaction ID for /${pastCall} and /${curentCall} API should be the same`
       }
     } catch (error: any) {
       logger.info(`Error while comparing transaction ids for /${pastCall} and /${curentCall} api, ${error.stack}`)

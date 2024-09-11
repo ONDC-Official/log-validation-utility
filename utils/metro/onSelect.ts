@@ -7,8 +7,8 @@ import { validateContext, validateQuote, validateStops } from './metroChecks'
 import { validateRouteInfoTags } from './tags'
 
 const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
-const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
-export const checkOnSelect = (data: any, msgIdSet: any) => {
+// const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
+export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }) => {
   if (!data || isObjectEmpty(data)) {
     return { [metroSequence.ON_SELECT]: 'Json cannot be empty' }
   }
@@ -73,9 +73,9 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
         //   fulfillmentIdsSet.add(fulfillment.id)
         // }
 
-        if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
-          errorObj[`${fulfillmentKey}.vehicleCategory`] =
-            `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
+        if (fulfillment?.vehicle?.category !== (String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO')) {
+          errorObj['vehicle'] =
+            `vehicle.category should be ${String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO'} in Fulfillment`
         }
 
         if (!fulfillment.type) {
@@ -93,7 +93,7 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
         if (Object.keys(getStopsError).length > 0 && Object.keys(errorValue)?.length)
           Object.assign(errorObj, getStopsError)
 
-        if (fulfillment.tags) {
+        if (fulfillment.tags && String(flow?.flow).toUpperCase() !== 'METRO') {
           // Validate route info tags
           const tagsValidation = validateRouteInfoTags(fulfillment.tags)
           if (!tagsValidation.isValid) {
@@ -178,7 +178,7 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
       errorObj[`payments`] = `payments  is not part of /${constants.ON_SELECT}`
     }
 
-    if (!onSelect?.cancellation_terms) {
+    if (!onSelect?.cancellation_terms && String(flow?.flow)?.toUpperCase() !== 'BUS') {
       errorObj[`cancellation_terms`] = `cancellation_terms is missing in /${constants.ON_SELECT}`
     }
 

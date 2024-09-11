@@ -170,6 +170,8 @@ export const checkOnSearch = (
 
           const otp = false
           const cancel = false
+
+          //validating stops
           const getStopsError = validateStops(fulfillment?.stops, k, otp, cancel, constants.ON_SEARCH)
           if (Object.keys(getStopsError).length > 0) {
             for (let key in getStopsError) {

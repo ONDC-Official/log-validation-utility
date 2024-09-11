@@ -63,7 +63,7 @@ export function validateLogsForMetro(data: any, flowName: string) {
     }
 
     if (data[metroSequence.ON_SELECT]) {
-      const searchResp = checkOnSelect(data[metroSequence.ON_SELECT], msgIdSet)
+      const searchResp = checkOnSelect(data[metroSequence.ON_SELECT], msgIdSet, flow)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [metroSequence.ON_SELECT]: searchResp }
       }

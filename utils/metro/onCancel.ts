@@ -511,8 +511,8 @@ export const checkOnCancelPayload = (
     }
 
     try {
-      on_cancel.items &&
-        on_cancel.items.forEach((item: any, index: number) => {
+      on_cancel?.items &&
+        on_cancel?.items.forEach((item: any, index: number) => {
           if (!newItemIDSValue.includes(item.id)) {
             const key = `item[${index}].item_id`
             errorObj[key] =

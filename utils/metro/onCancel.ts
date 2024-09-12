@@ -405,7 +405,12 @@ export const checkOnCancelPayload = (
     }
 
     const schemaValidation = validateSchema('TRV', constants.ON_CANCEL, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.ON_CONFIRM, constants.ON_CANCEL)
+    const contextRes: any = validateContext(
+      context,
+      msgIdSet,
+      constants.ON_CONFIRM,
+      cancelType ? metroSequence?.CONFIRM_ON_CANCEL : metroSequence?.SOFT_ON_CANCEL,
+    )
     setValue(`${constants.ON_CANCEL}_message`, message)
 
     if (schemaValidation !== 'error') {
@@ -648,8 +653,8 @@ export const checkOnCancelPayload = (
 
         if (!cancelled_by) {
           errorObj.cancelled_by = `cancelled_by is missing in /${constants.ON_CANCEL}`
-        } else if (cancelled_by !== 'BAP' || cancelled_by !== 'BPP') {
-          errorObj.cancelled_by = `cancelled_by must be BAP or BPP in /${constants.ON_CANCEL}`
+        } else if (cancelled_by !== 'CONSUMER') {
+          errorObj.cancelled_by = `cancelled_by must be CONSUMER in /${constants.ON_CANCEL}`
         }
 
         if (!time) {

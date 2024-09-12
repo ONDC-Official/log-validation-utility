@@ -113,7 +113,8 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
         curentCall !== 'init' &&
         !_.isEqual(prevContext.transaction_id, context.transaction_id)
       ) {
-        errorObj.transaction_id = `Transaction ID for /${pastCall} and /${curentCall} API should be the same`
+        // errorObj.transaction_id = `Transaction ID for /${pastCall} and /${curentCall} API should be the same`
+        errorObj.transaction_id = `Transaction ID for in /${curentCall} should be same throughout the api`
       }
     } catch (error: any) {
       logger.info(`Error while comparing transaction ids for /${pastCall} and /${curentCall} api, ${error.stack}`)
@@ -128,7 +129,11 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
         }
       } else {
         logger.info(`Checking if Message Ids are different for /${pastCall} and /${curentCall}`)
-        if (_.isEqual(prevContext.message_id, context.message_id)) {
+        if (
+          pastCall !== 'on_confirm' &&
+          curentCall !== 'cancel' &&
+          _.isEqual(prevContext.message_id, context.message_id)
+        ) {
           errorObj.message_id = `Message Id for /${pastCall} and /${curentCall} api should be different`
         }
       }

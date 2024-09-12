@@ -1,4 +1,4 @@
-import constants from '../../constants'
+import constants, { metroSequence } from '../../constants'
 import { logger } from '../../shared/logger'
 import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
@@ -18,7 +18,12 @@ export const checkCancelPayload = (data: any, msgIdSet: any, cancelType: boolean
     }
 
     const schemaValidation = validateSchema('TRV', constants.CANCEL, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.ON_SEARCH, constants.CANCEL)
+    const contextRes: any = validateContext(
+      context,
+      msgIdSet,
+      constants.ON_CONFIRM,
+      cancelType ? metroSequence?.CONFIRM_CANCEL : metroSequence?.SOFT_CANCEL,
+    )
     setValue(`${constants.CANCEL}_message`, message)
 
     if (schemaValidation !== 'error') {

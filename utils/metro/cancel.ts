@@ -22,7 +22,7 @@ export const checkCancelPayload = (data: any, msgIdSet: any, cancelType: boolean
       context,
       msgIdSet,
       cancelType ? metroSequence?.SOFT_CANCEL : constants.ON_CONFIRM,
-      constants?.CANCEL,
+      cancelType ? metroSequence?.CONFIRM_CANCEL : metroSequence?.SOFT_CANCEL,
     )
     setValue(`${constants.CANCEL}_message`, message)
 

@@ -340,7 +340,7 @@ export const onCancelSchema = {
                         required: ['phone'],
                       },
                     },
-                    required: ['location', 'time', 'contact'],
+                    required: ['location', 'contact'],
                   },
                   end: {
                     type: 'object',
@@ -435,7 +435,7 @@ export const onCancelSchema = {
                         required: ['phone'],
                       },
                     },
-                    required: ['location', 'time', 'person', 'contact'],
+                    required: ['location', 'person', 'contact'],
                   },
                   tags: {
                     type: 'array',
@@ -494,7 +494,7 @@ export const onCancelSchema = {
                     },
                     value: {
                       type: 'string',
-                      pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                      pattern: '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                     },
                   },
                   required: ['currency', 'value'],
@@ -527,7 +527,7 @@ export const onCancelSchema = {
                           },
                           value: {
                             type: 'string',
-                            pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                            pattern: '^[-+]?[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                           },
                         },
                         required: ['currency', 'value'],
@@ -543,13 +543,12 @@ export const onCancelSchema = {
                               },
                               value: {
                                 type: 'string',
-                                pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                                pattern: '^[-+]?[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                               },
                             },
                             required: ['currency', 'value'],
                           },
                         },
-                        required: ['price'],
                       },
                     },
                     required: ['@ondc/org/item_id', '@ondc/org/title_type', 'price'],

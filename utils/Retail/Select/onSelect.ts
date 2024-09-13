@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import { getValue, setValue } from '../../../shared/dao'
-import constants, { ApiSequence } from '../../../constants'
+import constants, { ApiSequence, ffCategory } from '../../../constants'
 import { validateSchema, isObjectEmpty, checkContext, timeDiff, isoDurToSec, checkBppIdOrBapId } from '../..'
 import _ from 'lodash'
 import { logger } from '../../../shared/logger'
@@ -40,7 +40,16 @@ export const checkOnSelect = (data: any) => {
   try {
     logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
     if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
-      errorObj[`${ApiSequence.ON_SELECT}_msgId`]  = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+      errorObj[`${ApiSequence.ON_SELECT}_msgId`] = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while checking message id for /${constants.ON_SELECT}, ${error.stack}`)
+  }
+
+  try {
+    logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
+    if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
+      errorObj[`${ApiSequence.ON_SELECT}_msgId`] = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
     }
   } catch (error: any) {
     logger.error(`!!Error while checking message id for /${constants.ON_SELECT}, ${error.stack}`)
@@ -114,10 +123,13 @@ export const checkOnSelect = (data: any) => {
   try {
     const fulfillments = message.order.fulfillments
     const selectFlflmntSet: any = []
+    const fulfillment_tat_obj:any={}
     fulfillments.forEach((flflmnt: any) => {
+      fulfillment_tat_obj[flflmnt.id] = isoDurToSec(flflmnt["@ondc/org/TAT"])
       selectFlflmntSet.push(flflmnt.id)
-    })
+    })        
     setValue('selectFlflmntSet', selectFlflmntSet)
+    setValue('fulfillment_tat_obj', fulfillment_tat_obj)
   } catch (error: any) {
     logger.error(`Error while checking for fulfillment IDs for /${constants.ON_SELECT}`, error.stack)
   }
@@ -137,9 +149,13 @@ export const checkOnSelect = (data: any) => {
   try {
     logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
     if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
-      errorObj[`${ApiSequence.ON_SELECT}_msgId`]  = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+      errorObj[`${ApiSequence.ON_SELECT}_msgId`] = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+      if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
+        errorObj[`${ApiSequence.ON_SELECT}_msgId`] = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+      }
     }
   } catch (error: any) {
+    logger.error(`!!Error while checking message id for /${constants.ON_SELECT}, ${error.stack}`)
     logger.error(`!!Error while checking message id for /${constants.ON_SELECT}, ${error.stack}`)
   }
 
@@ -199,7 +215,6 @@ export const checkOnSelect = (data: any) => {
       itemFlfllmnts[id] = on_select.items[i].fulfillment_id
       i++
     }
-
     setValue('itemFlfllmnts', itemFlfllmnts)
   } catch (error: any) {
     logger.error(`!!Error occurred while mapping and storing item Id and fulfillment Id, ${error.stack}`)
@@ -283,6 +298,37 @@ export const checkOnSelect = (data: any) => {
     logger.error(`!!Error while checking fulfillments' state in /${constants.ON_SELECT}, ${error.stack}`)
   }
 
+  try {
+    logger.info(`Checking fulfillments' state in ${constants.ON_SELECT}`)
+    on_select.fulfillments.forEach((ff: any, idx: number) => {
+      if (ff.state) {
+        const ffDesc = ff.state.descriptor
+
+        function checkFFOrgCategory(selfPickupOrDelivery: number) {
+          if (!ff["@ondc/org/category"] || !ffCategory[selfPickupOrDelivery].includes(ff["@ondc/org/category"])) {
+            const key = `fulfillment${idx}/@ondc/org/category`
+            errorObj[key] =
+              `In Fulfillment${idx}, @ondc/org/category is not a valid value in ${constants.ON_SELECT} and should have one of these values ${[ffCategory[selfPickupOrDelivery]]}`
+          }
+        }
+        if (ffDesc.code === 'Serviceable' && ff.type == "Delivery") {
+          checkFFOrgCategory(0)
+        }
+        else if (ff.type == "Self-Pickup") {
+          checkFFOrgCategory(1)
+        }
+      }
+      else {
+        const key = `fulfillment${idx}/descCode`
+        errorObj[key] =
+          `In Fulfillment${idx}, descriptor code is mandatory in ${constants.ON_SELECT}`
+      }
+    });
+  } catch (error: any) {
+    logger.error(`!!Error while checking fulfillments @ondc/org/category in /${constants.ON_SELECT}, ${error.stack}`)
+  }
+
+
   let onSelectPrice: any = 0 //Net price after discounts and tax in /on_select
   let onSelectItemsPrice = 0 //Price of only items in /on_select
 
@@ -340,7 +386,7 @@ export const checkOnSelect = (data: any) => {
       ) {
         const availCount = parseInt(element.item.quantity.available.count, 10)
         const maxCount = parseInt(element.item.quantity.maximum.count, 10)
-        if (isNaN(availCount) || isNaN(maxCount) || availCount <= 0 ) {
+        if (isNaN(availCount) || isNaN(maxCount) || availCount <= 0) {
           errorObj[`qntcnt${i}`] =
             `Available and Maximum count should be greater than 0 for item id: ${itemId} in quote.breakup[${i}]`
         } else if (
@@ -415,7 +461,7 @@ export const checkOnSelect = (data: any) => {
           if (!Object.values(itemFlfllmnts).includes(element['@ondc/org/item_id'])) {
             const brkupffid = `brkupfftitles${i}`
             errorObj[brkupffid] =
-              `invalid  id: ${element['@ondc/org/item_id']} in ${titleType} line item (should be a valid fulfillment_id)`
+              `invalid  id: ${element['@ondc/org/item_id']} in ${titleType} line item (should be a valid fulfillment_id as provided in message.items for the items)`
           }
         }
       })
@@ -491,9 +537,8 @@ export const checkOnSelect = (data: any) => {
           item['@ondc/org/title_type'] !== 'item' &&
           retailPymntTtl[item.title.toLowerCase().trim()] !== item['@ondc/org/title_type']
         ) {
-          errorObj.pymntttlmap = `Quote breakup Payment title "${item.title}" comes under the title type "${
-            retailPymntTtl[item.title.toLowerCase().trim()]
-          }"`
+          errorObj.pymntttlmap = `Quote breakup Payment title "${item.title}" comes under the title type "${retailPymntTtl[item.title.toLowerCase().trim()]
+            }"`
         }
       })
     } else {
@@ -514,6 +559,33 @@ export const checkOnSelect = (data: any) => {
     })
   } catch (error: any) {
     logger.info(`Error while checking fulfillments TAT in /${constants.ON_SELECT}`)
+  }
+
+
+  try {
+    // Checking fulfillment.id, fulfillment.type and tracking
+    logger.info('Checking fulfillment.id, fulfillment.type and tracking')
+    on_select.fulfillments.forEach((ff: any) => {
+      let ffId = ""
+      if (!ff.id) {
+        logger.info(`Fulfillment Id must be present `)
+        errorObj["ffId"] = `Fulfillment Id must be present`
+      }
+
+      ffId = ff.id
+
+      if (ffId) {
+        if (ff.tracking === false || ff.tracking === true) {
+          setValue(`${ffId}_tracking`, ff.tracking)
+        }
+        else {
+          logger.info(`Tracking must be present for fulfillment ID: ${ff.id} in boolean form`)
+          errorObj["ffTracking"] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
+        }
+      }
+    })
+  } catch (error: any) {
+    logger.info(`Error while checking fulfillments id, type and tracking in /${constants.ON_SELECT}`)
   }
 
   try {

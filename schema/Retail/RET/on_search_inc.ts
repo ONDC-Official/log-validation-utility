@@ -82,8 +82,7 @@ export const onSearchIncSchema = {
                   },
                   type: {
                     type: 'string',
-                    enum: ['Self-Pickup','Order','Delivery', 'All'],
-                    errorMessage: "timing for fulfillment type, enum - 'Order' (online order processing timings 'Delivery' (order shipment timings, will be same as delivery timings for hyperlocal), 'Self-Pickup' (self-pickup timings), All",
+                    enum: ['Self-Pickup','Delivery'],
                   },
                 },
                 required: ['id', 'type'],
@@ -280,6 +279,7 @@ export const onSearchIncSchema = {
                             },
                           },
                           required: ['locality', 'street', 'city', 'area_code', 'state'],
+                          additionalProperties: false,
                         },
                         circle: {
                           type: 'object',
@@ -446,10 +446,10 @@ export const onSearchIncSchema = {
                               type: 'object',
                               properties: {
                                 count: {
-                                  type: 'string',
-                                  pattern: '^[0-9]+$',
+                                  type:'string',
+                                  enum: ['99','0'],
                                   errorMessage:
-                                    'available count must be numbers only',
+                                    'available count must be either 99 or 0 only',
                                 },
                               },
                               required: ['count'],
@@ -461,7 +461,7 @@ export const onSearchIncSchema = {
                                   type: 'string',
                                   pattern: '^[0-9]+$',
                                   errorMessage:
-                                    'maximum count must be numbers only ',
+                                    'maximum count must be in stringified number format. ',
                                 },
                               },
                               required: ['count'],
@@ -478,7 +478,7 @@ export const onSearchIncSchema = {
                             },
                             value: {
                               type: 'string',
-                              pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                              pattern : '^[-+]?[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                             },
                             maximum_value: {
                               type: 'string',
@@ -517,7 +517,8 @@ export const onSearchIncSchema = {
                           type: 'boolean',
                         },
                         '@ondc/org/return_window': {
-                          type: 'string',
+                          type: ['string', 'null'],
+                          format: 'duration',
                         },
                         '@ondc/org/seller_pickup_return': {
                           type: 'boolean',

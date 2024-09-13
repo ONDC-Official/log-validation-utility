@@ -16,7 +16,7 @@ export const setValue = (key: string, value: any): void => {
   myDB.close()
 }
 
-export const getValue = (key: string): string | null => {
+export const getValue = (key: string): any => {
   const myDB = getConnection()
   const value: any = myDB.get(key)
   myDB.close()

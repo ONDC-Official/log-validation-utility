@@ -45,7 +45,7 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
   try {
     if (flow === '3' && apiSeq == ApiSequence.SELECT_OUT_OF_STOCK) {
       logger.info(`Adding Message Id /${constants.SELECT_OUT_OF_STOCK}`)
-      if (msgIdSet.has(context.message_id)){
+      if (msgIdSet.has(context.message_id)) {
         errorObj[`${ApiSequence.SELECT_OUT_OF_STOCK}_msgId`] = `Message id should not be same with previous calls`
       }
       msgIdSet.add(context.message_id)
@@ -53,7 +53,7 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
     }
     else {
       logger.info(`Adding Message Id /${constants.SELECT}`)
-      if (msgIdSet.has(context.message_id)){
+      if (msgIdSet.has(context.message_id)) {
         errorObj[`${ApiSequence.SELECT}_msgId`] = `Message id should not be same with previous calls`
       }
       msgIdSet.add(context.message_id)
@@ -229,7 +229,17 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
     let onSearchItems = allOnSearchItems.flat()
     select.items.forEach((item: any, index: number) => {
       onSearchItems.forEach((it: any) => {
-        if (it.id === item.id && it.location_id !== item.location_id) {
+        const tagsTypeArr = _.filter(it?.tags, { code: 'type' })
+        let isNotCustomization = true;
+        if (tagsTypeArr.length > 0) {
+          const tagsType = _.filter(tagsTypeArr[0]?.list, { code: 'type' })
+          if (tagsType.length > 0) {
+            if (tagsType[0]?.value == "customization") {
+              isNotCustomization = false;
+            }
+          }
+        }
+        if (it.id === item.id && it.location_id !== item.location_id && isNotCustomization) {
           errorObj[`location_id[${index}]`] = `location_id should be same for the item ${item.id} as in on_search`
         }
       })

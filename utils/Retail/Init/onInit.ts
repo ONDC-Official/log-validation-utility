@@ -84,6 +84,8 @@ export const checkOnInit = (data: any) => {
       }
 
       setValue('tmpstmp', context.timestamp)
+      setValue('onInitTmpstmp', context.timestamp)
+
     } catch (error: any) {
       logger.error(
         `!!Error while comparing timestamp for /${constants.INIT} and /${constants.ON_INIT} api, ${error.stack}`,
@@ -113,6 +115,16 @@ export const checkOnInit = (data: any) => {
     const on_init = message.order
 
     try {
+      logger.info(`Checking Cancellation terms for /${constants.ON_INIT}`)
+      if (message.order.cancellation_terms && message.order.cancellation_terms.length > 0) {
+        onInitObj[`message.order`] =
+          `'cancellation_terms' in /message/order should not be provided as those are not enabled yet`
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking Cancellation terms for /${constants.ON_INIT}, ${error.stack}`)
+    }
+
+    try {
       logger.info(`Checking provider id and location in /${constants.CONFIRM}`)
       if (on_init.provider.id != getValue('providerId')) {
         onInitObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.CONFIRM}`
@@ -136,8 +148,7 @@ export const checkOnInit = (data: any) => {
       const np_type_on_search = getValue(`${ApiSequence.ON_SEARCH}np_type`)
       let tax_number: any = {}
       let provider_tax_number: any = {}
-      if(accept_bap_terms.length > 0)
-      {
+      if (accept_bap_terms.length > 0) {
         const key = 'message.order.tags[0].list'
         onInitObj[key] = `accept_bap_terms is not required for now!`
       }
@@ -275,6 +286,36 @@ export const checkOnInit = (data: any) => {
     }
 
     try {
+      // Checking fulfillment.id, fulfillment.type and tracking
+      logger.info('Checking fulfillment.id, fulfillment.type and tracking')
+      on_init.fulfillments.forEach((ff: any) => {
+        let ffId = ""
+
+        if (!ff.id) {
+          logger.info(`Fulfillment Id must be present `)
+          onInitObj["ffId"] = `Fulfillment Id must be present`
+        }
+
+        ffId = ff.id
+
+        if (getValue(`${ffId}_tracking`)) {
+          if (ff.tracking === false || ff.tracking === true) {
+            if (getValue(`${ffId}_tracking`) != ff.tracking) {
+              logger.info(`Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`)
+              onInitObj["ffTracking"] = `Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`
+            }
+          }
+          else {
+            logger.info(`Tracking must be present for fulfillment ID: ${ff.id} in boolean form`)
+            onInitObj["ffTracking"] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
+          }
+        }
+      })
+    } catch (error: any) {
+      logger.info(`Error while checking fulfillments id, type and tracking in /${constants.ON_INIT}`)
+    }
+
+    try {
       logger.info(`Comparing billing object in /${constants.INIT} and /${constants.ON_INIT}`)
       const billing = getValue('billing')
 
@@ -315,7 +356,7 @@ export const checkOnInit = (data: any) => {
         }
 
         if (!_.isEqual(on_init.fulfillments[i].end.location.gps, getValue('buyerGps'))) {
-          const gpskey = `gpsKey${i}`
+          const gpskey = `ff/end/location/gpsKey${i}`
           onInitObj[gpskey] =
             `gps coordinates in fulfillments[${i}].end.location mismatch in /${constants.SELECT} & /${constants.ON_INIT}`
         }
@@ -489,9 +530,13 @@ export const checkOnInit = (data: any) => {
 
       for (const tag of tags) {
         if (tag.code === 'bap_terms') {
-          onInitObj['message/order/tags/bap_terms'] = `bap_terms terms is not required for now! in ${constants.ON_INIT}`
+          const hasStaticTerms = tag.list.some((item: { code: string }) => item.code === 'static_terms');
+          if (hasStaticTerms) {
+            onInitObj['message/order/tags/bap_terms/static_terms'] = `static_terms is not required for now! in ${constants.ON_INIT}`;
+          }
         }
       }
+
     } catch (err: any) {
       logger.error(
         `Error while Checking bap_terms in ${constants.ON_INIT}, ${err.stack} `,

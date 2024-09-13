@@ -482,7 +482,7 @@ export const FnBonConfirmSchema = {
                     value: {
                       type: 'string',
                       minLength: 1,
-                      pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                      pattern: '^[0-9]+(\.[0-9]{1,2})?$',
                       errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                     },
                   },
@@ -523,7 +523,7 @@ export const FnBonConfirmSchema = {
                           value: {
                             type: 'string',
                             minLength: 1,
-                            pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                            pattern: '^[-+]?[0-9]+(\.[0-9]{1,2})?$',
                             errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                           },
                         },
@@ -545,7 +545,7 @@ export const FnBonConfirmSchema = {
                               value: {
                                 type: 'string',
                                 minLength: 1,
-                                pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                                pattern: '^[-+]?[0-9]+(\.[0-9]{1,2})?$',
                                 errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                               },
                             },
@@ -775,7 +775,7 @@ export const FnBonConfirmSchema = {
                             properties: {
                               value: {
                                 type: 'string',
-                                pattern: '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$',
+                                pattern: '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$|^GSTIN[0-9]{10}$',
                                 errorMessage: 'Value for tax_number must be a valid tax number i.e alphanumeric with 15 characters ',
                               },
                             },

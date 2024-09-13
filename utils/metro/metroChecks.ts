@@ -465,11 +465,9 @@ export function validateItemDescriptor(item: any, index: number, VALID_DESCRIPTO
         errorObj[`item${index}descriptor`] = `descriptor.code and descriptor.name are missing in item[${index}]`
       } else if (!code) {
         errorObj[`item${index}descriptor_code`] = `descriptor.code is missing in item[${index}]`
-      } else {
-        if (!VALID_DESCRIPTOR_CODES.includes(code)) {
-          const key = `item_${index}_descriptor`
-          errorObj[key] = `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${code}`
-        }
+      } else if (!VALID_DESCRIPTOR_CODES.includes(code)) {
+        const key = `item_${index}_descriptor`
+        errorObj[key] = `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${code}`
       }
     } else errorObj[`item_${index}_descriptor`] = `Descriptor is missing in items[${index}]`
   } catch (error: any) {

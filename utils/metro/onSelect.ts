@@ -18,7 +18,7 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SELECT, data)
+  const schemaValidation = validateSchema('TRV', constants.ON_SELECT, data)
   const contextRes: any = validateContext(context, msgIdSet, constants.SELECT, constants.ON_SELECT)
   setValue(`${metroSequence.ON_SELECT}_message`, message)
   const errorObj: any = {}
@@ -31,15 +31,13 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
     Object.assign(errorObj, contextRes.ERRORS)
   }
 
-  // const searchContext: any = getValue(`${metroSequence.SEARCH}_context`)
   const select: any = getValue(`${metroSequence.SELECT}`)
 
   try {
     const onSelect = message.order
-    const itemIDS: any = getValue(`${metroSequence.ON_SEARCH}_itemsId`)
+    const itemIDS: any = getValue(`${metroSequence.ON_SEARCH1}_itemsId`)
     const itemIdArray: any[] = []
-    const storedFull: any = getValue(`${metroSequence.ON_SEARCH}_storedFulfillments`)
-    const fulfillmentIdsSet = new Set()
+    const storedFull: any = getValue(`${metroSequence.ON_SEARCH1}_storedFulfillments`)
     const itemIdsSet = new Set()
 
     try {
@@ -49,11 +47,11 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
 
       if (!prvrdID) {
         logger.info(`Skipping Provider Id check due to insufficient data`)
-        setValue('providerId', selectedProviderId)
-      } else if (!_.isEqual(prvrdID, onSelect.provider.id)) {
+        setValue('providerId', [selectedProviderId])
+      } else if (!prvrdID.includes(selectedProviderId)) {
         errorObj.prvdrId = `Provider Id for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
       } else {
-        setValue('providerId', selectedProviderId)
+        setValue('providerId', [selectedProviderId])
       }
     } catch (error: any) {
       logger.info(
@@ -66,13 +64,6 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
       onSelect.fulfillments.forEach((fulfillment: any, index: number) => {
         const fulfillmentKey = `fulfillments[${index}]`
 
-        if (storedFull && !storedFull.includes(fulfillment.id)) {
-          errorObj[`${fulfillmentKey}.id`] =
-            `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
-        } else {
-          fulfillmentIdsSet.add(fulfillment.id)
-        }
-
         if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
           errorObj[`${fulfillmentKey}.vehicleCategory`] =
             `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
@@ -80,15 +71,18 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
 
         if (!fulfillment.type) {
           errorObj[`${fulfillmentKey}.type`] = `Fulfillment type is missing`
-        } else if (fulfillment.type !== 'DELIVERY') {
+        } else if (fulfillment.type !== 'TRIP') {
           errorObj[`${fulfillmentKey}.type`] =
-            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_SELECT}`
+            `Fulfillment type must be TRIP at index ${index} in /${constants.ON_SELECT}`
         }
 
         // Check stops for START and END, or time range with valid timestamp and GPS
         const otp = false
         const cancel = false
-        validateStops(fulfillment?.stops, index, otp, cancel)
+        const getStopsError = validateStops(fulfillment?.stops, index, otp, cancel, constants.ON_SELECT)
+        const errorValue = Object.values(getStopsError)[0] || []
+        if (Object.keys(getStopsError).length > 0 && Object.keys(errorValue)?.length)
+          Object.assign(errorObj, getStopsError)
 
         if (fulfillment.tags) {
           // Validate route info tags
@@ -144,12 +138,7 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
         if (!item?.fulfillment_ids || item?.fulfillment_ids?.length === 0) {
           errorObj[`invalidFulfillmentId_${index}`] = `fulfillment_ids should be present`
         } else {
-          item.fulfillment_ids.forEach((fulfillmentId: string) => {
-            if (!fulfillmentIdsSet.has(fulfillmentId)) {
-              errorObj[`invalidFulfillmentId_${index}`] =
-                `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.ON_SELECT} is not valid`
-            }
-          })
+          item.fulfillment_ids.forEach((_fulfillmentId: string) => {})
         }
 
         if (item?.payment_ids) {
@@ -175,8 +164,8 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
       errorObj[`payments`] = `payments  is not part of /${constants.ON_SELECT}`
     }
 
-    if (onSelect?.cancellation_terms) {
-      errorObj[`cancellation_terms`] = `cancellation_terms  is not part of /${constants.ON_SELECT}`
+    if (!onSelect?.cancellation_terms) {
+      errorObj[`cancellation_terms`] = `cancellation_terms is missing in /${constants.ON_SELECT}`
     }
 
     setValue(`${metroSequence.ON_SELECT}`, data)

@@ -23,7 +23,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SELECT, data)
+  const schemaValidation = validateSchema('TRV', constants.ON_SELECT, data)
   const contextRes: any = validateContext(context, msgIdSet, constants.SELECT, constants.ON_SELECT)
   setValue(`${mobilitySequence.ON_SELECT}_message`, message)
   const errorObj: any = {}

@@ -14,7 +14,7 @@ export const checkUpdate = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.UPDATE, data)
+  const schemaValidation = validateSchema('TRV', constants.UPDATE, data)
 
   const contextRes: any = checkMobilityContext(context, constants.UPDATE)
   msgIdSet.add(context.message_id)

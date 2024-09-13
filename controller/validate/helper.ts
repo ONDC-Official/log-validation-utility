@@ -132,7 +132,7 @@ const validateMobility = async (domain: string, payload: string, version: string
       break
 
     case 'ONDC:TRV11':
-      response = validateLogsForMetro(payload)
+      response = validateLogsForMetro(payload, flow)
 
       if (_.isEmpty(response)) {
         success = true

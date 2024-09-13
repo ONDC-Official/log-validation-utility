@@ -30,7 +30,7 @@ export const checkOnUpdate = (data: any, version: any) => {
     const searchContext: any = getValue(`${mobilitySequence.SEARCH}_context`)
     // const parentItemIdSet: any = getValue(`parentItemIdSet`)
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_UPDATE, data)
+    const schemaValidation = validateSchema('TRV', constants.ON_UPDATE, data)
 
     const contextRes: any = checkMobilityContext(context, constants.ON_UPDATE)
 

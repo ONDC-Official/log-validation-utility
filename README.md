@@ -728,6 +728,36 @@ curl --location 'https://localhost:3006/api/validate/trv/trv10' \
 }'
 ```
 
+```shell
+curl --location 'https://localhost:3006/api/validate/trv/trv10' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:TRV11",
+    "version": "2.0.0",
+    "flow": "RIDER_CANCEL",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search1": {},
+        "on_search1":{},
+        "search2": {},
+        "on_search2":{},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "status": {},
+        "on_status": {},
+        "soft_cancel": {},
+        "soft_on_cancel": {},
+        "confirm_cancel": {},
+        "confirm_on_cancel": {}
+    }
+}'
+```
+
 Using Postman, you can import the above `curl` command into Postman and replace the empty objects in the payload with your actual data. This allows for easy testing and validation of transaction logs on your local environment.
 
 With these instructions, you can start using the Retail Logs Validation Utility for local log validation.

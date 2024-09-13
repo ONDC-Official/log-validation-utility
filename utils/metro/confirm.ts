@@ -3,9 +3,9 @@ import { logger } from '../../shared/logger'
 import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
 import { validateContext } from './metroChecks'
-import { validatePaymentTags } from './tags'
+import { validatePaymentsTags } from './tags'
 import { checkItemsExist, checkBilling } from './validate/helper'
-import _, { isNil } from 'lodash'
+import _, { isEmpty, isNil } from 'lodash'
 
 export const checkConfirm = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
@@ -51,7 +51,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
 
     try {
       logger.info(`Comparing Provider Id of /${constants.ON_SEARCH} and /${constants.CONFIRM}`)
-      const prvrdID = getValue('providerId') //type should be an array instead of string
+      const prvrdID = getValue('providerId')
 
       const selectedProviderId = confirm?.provider?.id ?? null
 
@@ -69,76 +69,79 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     const getItemError = checkItemsExist(confirm, newItemIDSValue, 'CONFIRM')
     if (Object.keys(getItemError)?.length) Object.assign(errorObj, getItemError)
 
+    // check payments
     try {
       logger.info(`Checking payments in /${constants.CONFIRM}`)
-      confirm?.payments?.forEach((arr: any, i: number) => {
-        if (!arr?.collected_by) {
-          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.ON_SEARCH}`
-        } else {
-          const srchCollectBy = getValue(`collected_by`)
-          if (srchCollectBy && srchCollectBy != arr?.collected_by)
-            errorObj[`payemnts[${i}]_collected_by`] =
-              `payments.collected_by value sent in ${constants.ON_SEARCH} should be ${srchCollectBy} as sent in ${constants.CONFIRM}`
+      const payments = confirm?.payments
+      if (isEmpty(payments)) {
+        errorObj.payments = `payments array is missing or is empty`
+      } else {
+        const paymentId = getValue('paymentId')
+        const allowedStatusValues = ['NOT-PAID', 'PAID']
+        const requiredParams = ['transaction_id', 'amount', 'currency']
+        payments?.forEach((arr: any, i: number) => {
+          const terms = [
+            { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^(P(d+D)?(T(d+H)?(d+M)?(d+S)?)?)$/' },
+            {
+              code: 'SETTLEMENT_BASIS',
+              type: 'enum',
+              value: ['INVOICE_RECEIPT', 'Delivery'],
+            },
+            { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
+            { code: 'STATIC_TERMS', type: 'url' },
+            { code: 'COURT_JURISDICTION', type: 'string' },
+            { code: 'SETTLEMENT_AMOUNT', type: 'amount' },
+            { code: 'SETTLEMENT_TYPE', type: 'enum', value: ['NEFT', 'UPI'] },
+          ]
 
-          if (arr?.collected_by === 'BPP' && 'id' in arr)
-            errorObj[`payemnts[${i}]_id`] = `id should not be present if collector is BPP`
+          if (!arr.id) errorObj[`payments[${i}]_id`] = `payments.id must be present in ${constants.CONFIRM}`
+          else if (arr?.id && arr?.id !== paymentId) {
+            setValue('paymentId', arr?.id)
+            errorObj[`payments[${i}]_id`] = `payments.id value should be ${paymentId} as sent in ${constants.ON_INIT}`
+          }
 
-          setValue(`collected_by`, arr?.collected_by)
-        }
-
-        const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
-        if (!arr?.type || !validTypes.includes(arr.type)) {
-          errorObj[`payments[${i}]_type`] = `payments.params.type must be present in ${
-            constants.CONFIRM
-          } & its value must be one of: ${validTypes.join(', ')}`
-        }
-
-        const validStatus = ['NOT-PAID', 'PAID']
-        if (!arr?.status || !validStatus.includes(arr.status)) {
-          errorObj[`payments[${i}]_status`] = `payments.status must be present in ${
-            constants.CONFIRM
-          } & its value must be one of: ${validStatus.join(', ')}`
-        }
-
-        if (!arr.id) errorObj[`payments[${i}]_id`] = `payments.id must be present in ${constants.CONFIRM}`
-        else setValue('paymentId', arr?.id)
-
-        const { params } = arr
-
-        if (!params) {
-          errorObj[`payments[${i}]_params`] = `payments.params must be present in ${constants.CONFIRM}`
-        } else {
-          const { amount, currency, transaction_id } = params
-
-          if (!amount) {
-            errorObj[`payments[${i}]_params_amount`] = `payments.params.amount must be present in ${constants.CONFIRM}`
+          if (!arr?.collected_by) {
+            errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.CONFIRM}`
           } else {
-            setValue('paramsAmount', amount)
+            const collectedBy = getValue(`collected_by`)
+            if (collectedBy && collectedBy != arr?.collected_by)
+              errorObj[`payemnts[${i}]_collected_by`] =
+                `payments.collected_by value sent in ${constants.CONFIRM} should be same as sent in past call: ${collectedBy}`
           }
 
-          if (!currency) {
-            errorObj[`payments[${i}]_params_currency`] =
-              `payments.params.currency must be present in ${constants.CONFIRM}`
-          } else if (currency !== 'INR') {
-            errorObj[`payments[${i}]_params_currency`] = `payments.params.currency must be INR in ${constants.CONFIRM}`
+          // check status
+          if (!arr?.status) errorObj.paymentStatus = `payment.status is missing for index:${i} in payments`
+          else if (!arr?.status || !allowedStatusValues.includes(arr?.status)) {
+            errorObj.paymentStatus = `invalid status at index:${i} in payments, should be either of ${allowedStatusValues}`
           }
 
-          if (!transaction_id) {
-            errorObj[`payments[${i}]_params_transaction_id`] =
-              `payments.params.transaction_id must be present in ${constants.CONFIRM}`
-          } else {
-            setValue('paramsTransactionId', transaction_id)
+          // check type
+          const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
+          if (!arr?.type || !validTypes.includes(arr.type)) {
+            errorObj[`payments[${i}]_type`] = `payments.type must be present in ${
+              constants.CONFIRM
+            } & its value must be one of: ${validTypes.join(', ')}`
           }
-        }
 
-        // Validate payment tags
-        const tagsValidation = validatePaymentTags(arr.tags, constants?.CONFIRM)
-        if (!tagsValidation.isValid) {
-          Object.assign(errorObj, { tags: tagsValidation.errors })
-        }
-      })
+          // check params
+          const params = arr?.params
+          if (!params) errorObj.params = `payment.params is missing for index:${i} in payments`
+          else {
+            const missingParams = requiredParams.filter((param) => !Object.prototype.hasOwnProperty.call(params, param))
+            if (missingParams.length > 0) {
+              errorObj.missingParams = `Required params ${missingParams.join(', ')} are missing in payments`
+            }
+          }
+
+          // Validate payment tags
+          const tagsValidation = validatePaymentsTags(arr?.tags, terms)
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { tags: tagsValidation.errors })
+          }
+        })
+      }
     } catch (error: any) {
-      logger.error(`!!Errors while checking payments in /${constants.CONFIRM}, ${error.stack}`)
+      logger.error(`!!Errors while checking payments in /${constants.INIT}, ${error.stack}`)
     }
 
     //check billing

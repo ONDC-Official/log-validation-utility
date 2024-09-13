@@ -108,8 +108,13 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
 
     try {
       logger.info(`Comparing transaction Ids of /${pastCall} and /${curentCall}`)
-      if (!_.isEqual(prevContext.transaction_id, context.transaction_id)) {
-        errorObj.transaction_id = `Transaction Id for /${pastCall} and /${curentCall} api should be same`
+      if (
+        pastCall !== 'on_search' &&
+        curentCall !== 'init' &&
+        !_.isEqual(prevContext.transaction_id, context.transaction_id)
+      ) {
+        // errorObj.transaction_id = `Transaction ID for /${pastCall} and /${curentCall} API should be the same`
+        errorObj.transaction_id = `Transaction ID for in /${curentCall} should be same throughout the api`
       }
     } catch (error: any) {
       logger.info(`Error while comparing transaction ids for /${pastCall} and /${curentCall} api, ${error.stack}`)
@@ -124,7 +129,11 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
         }
       } else {
         logger.info(`Checking if Message Ids are different for /${pastCall} and /${curentCall}`)
-        if (_.isEqual(prevContext.message_id, context.message_id)) {
+        if (
+          pastCall !== 'on_confirm' &&
+          curentCall !== 'cancel' &&
+          _.isEqual(prevContext.message_id, context.message_id)
+        ) {
           errorObj.message_id = `Message Id for /${pastCall} and /${curentCall} api should be different`
         }
       }
@@ -456,11 +465,9 @@ export function validateItemDescriptor(item: any, index: number, VALID_DESCRIPTO
         errorObj[`item${index}descriptor`] = `descriptor.code and descriptor.name are missing in item[${index}]`
       } else if (!code) {
         errorObj[`item${index}descriptor_code`] = `descriptor.code is missing in item[${index}]`
-      } else {
-        if (!VALID_DESCRIPTOR_CODES.includes(code)) {
-          const key = `item_${index}_descriptor`
-          errorObj[key] = `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${code}`
-        }
+      } else if (!VALID_DESCRIPTOR_CODES.includes(code)) {
+        const key = `item_${index}_descriptor`
+        errorObj[key] = `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${code}`
       }
     } else errorObj[`item_${index}_descriptor`] = `Descriptor is missing in items[${index}]`
   } catch (error: any) {

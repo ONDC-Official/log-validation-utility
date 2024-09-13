@@ -177,7 +177,10 @@ export const checkMetroContext = (
     errObj.id_err = "transaction_id and message id can't be same"
   }
 
-  if (data.action != path) {
+  let action = path
+  if (action === 'soft_cancel' || action === 'confirm_cancel') action = 'cancel'
+  else if (action === 'soft_on_cancel' || action === 'confirm_on_cancel') action = 'on_cancel'
+  if (data.action != action) {
     errObj.action_err = `context.action should be ${path}`
   }
 
@@ -254,7 +257,7 @@ export const checkGpsPrecision = (coordinates: string) => {
     const longPrecision = getDecimalPrecision(long)
     const decimalPrecision = constants.DECIMAL_PRECISION
 
-    return latPrecision === decimalPrecision && longPrecision === decimalPrecision ? 1 : {latPrecision, longPrecision}
+    return latPrecision === decimalPrecision && longPrecision === decimalPrecision ? 1 : { latPrecision, longPrecision }
   } catch (error) {
     logger.error(error)
     return error

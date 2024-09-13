@@ -6,12 +6,13 @@ import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
 import {
   validateContext,
-  validatePaymentParams,
+  // validatePaymentParams,
   validateQuote,
   validateStops,
   validateCancellationTerms,
 } from './metroChecks'
-import { validatePaymentTags } from './tags'
+import { validatePaymentsTags } from './tags'
+import { isEmpty } from 'lodash'
 
 const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
@@ -111,14 +112,6 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
         const otp = true
         const cancel = false
         validateStops(fulfillment?.stops, index, otp, cancel, constants.ON_STATUS)
-
-        // if (fulfillment.tags) {
-        //   // Validate route info tags
-        //   const tagsValidation = validateRouteInfoTags(fulfillment.tags)
-        //   if (!tagsValidation.isValid) {
-        //     Object.assign(errorObj, { tags: tagsValidation.errors })
-        //   }
-        // }
       })
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_INIT},  ${error.message}`)
@@ -164,67 +157,75 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
       return { error: error.message }
     }
 
+    // check payments
     try {
       logger.info(`Checking payments in /${constants.ON_STATUS}`)
-      on_status?.payments?.forEach((arr: any, i: number) => {
-        if (!arr?.collected_by) {
-          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.ON_SEARCH}`
-        } else {
-          const srchCollectBy = getValue(`collected_by`)
-          if (srchCollectBy != arr?.collected_by)
-            errorObj[`payemnts[${i}]_collected_by`] =
-              `payments.collected_by value sent in ${constants.ON_SEARCH} should be ${srchCollectBy} as sent in ${constants.ON_STATUS}`
-        }
+      const payments = on_status?.payments
+      if (isEmpty(payments)) {
+        errorObj.payments = `payments array is missing or is empty`
+      } else {
+        const allowedStatusValues = ['NOT-PAID', 'PAID']
+        const requiredParams = ['bank_code', 'bank_account_number', 'transaction_id', 'amount', 'currency']
+        payments?.forEach((arr: any, i: number) => {
+          const terms = [
+            { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^(P(d+D)?(T(d+H)?(d+M)?(d+S)?)?)$/' },
+            {
+              code: 'SETTLEMENT_BASIS',
+              type: 'enum',
+              value: ['INVOICE_RECEIPT', 'Delivery'],
+            },
+            { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
+            { code: 'STATIC_TERMS', type: 'url' },
+            { code: 'COURT_JURISDICTION', type: 'string' },
+            { code: 'SETTLEMENT_AMOUNT', type: 'amount' },
+            { code: 'SETTLEMENT_TYPE', type: 'enum', value: ['NEFT', 'UPI'] },
+          ]
 
-        const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
-        if (!arr?.type || !validTypes.includes(arr.type)) {
-          errorObj[`payments[${i}]_type`] = `payments.params.type must be present in ${
-            constants.ON_STATUS
-          } & its value must be one of: ${validTypes.join(', ')}`
-        }
-
-        const validStatus = ['NOT-PAID', 'PAID']
-        if (!arr?.status || !validStatus.includes(arr.status)) {
-          errorObj[`payments[${i}]_status`] = `payments.status must be present in ${
-            constants.ON_STATUS
-          } & its value must be one of: ${validStatus.join(', ')}`
-        }
-
-        const params = arr.params
-        const bankCode: string | null = getValue('bank_code')
-        const bankAccountNumber: string | null = getValue('bank_account_number')
-        const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
-        // Validate bank_code
-        validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.ON_STATUS)
-
-        // Validate bank_account_number
-        validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.ON_STATUS)
-
-        // Validate virtual_payment_address
-        validatePaymentParams(
-          params,
-          virtualPaymentAddress,
-          'virtual_payment_address',
-          errorObj,
-          i,
-          constants.ON_STATUS,
-        )
-
-        if (arr.time) {
-          if (!arr.label || arr.label !== 'INSTALLMENT') {
-            errorObj.time.label = `If time is present in payment, the corresponding label should be INSTALLMENT.`
+          if (!arr?.collected_by) {
+            errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.ON_STATUS}`
+          } else {
+            const collectedBy = getValue(`collected_by`)
+            if (collectedBy && collectedBy != arr?.collected_by)
+              errorObj[`payemnts[${i}]_collected_by`] =
+                `payments.collected_by value sent in ${constants.ON_STATUS} should be same as sent in past call: ${collectedBy}`
           }
-        }
 
-        // Validate payment tags
-        const tagsValidation = validatePaymentTags(arr.tags, constants?.ON_STATUS)
-        if (!tagsValidation.isValid) {
-          Object.assign(errorObj, { tags: tagsValidation.errors })
-        }
-      })
-    } catch (error: any) {
-      logger.error(`!!Errors while checking payments in /${constants.ON_STATUS}, ${error.stack}`)
-    }
+          // check status
+          if (!arr?.status) errorObj.paymentStatus = `payment.status is missing for index:${i} in payments`
+          else if (!arr?.status || !allowedStatusValues.includes(arr?.status)) {
+            errorObj.paymentStatus = `invalid status at index:${i} in payments, should be either of ${allowedStatusValues}`
+          }
+
+          // check type
+          const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
+          if (!arr?.type || !validTypes.includes(arr.type)) {
+            errorObj[`payments[${i}]_type`] = `payments.type must be present in ${
+              constants.ON_STATUS
+            } & its value must be one of: ${validTypes.join(', ')}`
+          }
+
+          // check params
+          const params = arr?.params
+          if (!params) errorObj.params = `payment.params is missing for index:${i} in payments`
+          else {
+            const settlementTerms = arr?.tags.find((tag: any) => tag.descriptor.code === 'SETTLEMENT_TERMS')
+            const settlementType = settlementTerms?.list.find((item: any) => item.descriptor.code === 'SETTLEMENT_TYPE')
+            if (settlementType && settlementType?.value?.toUpperCase() == 'UPI')
+              requiredParams.push('virtual_payment_address')
+            const missingParams = requiredParams.filter((param) => !Object.prototype.hasOwnProperty.call(params, param))
+            if (missingParams.length > 0) {
+              errorObj.missingParams = `Required params ${missingParams.join(', ')} are missing in payments`
+            }
+          }
+
+          // Validate payment tags
+          const tagsValidation = validatePaymentsTags(arr?.tags, terms)
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { tags: tagsValidation.errors })
+          }
+        })
+      }
+    } catch (error: any) {}
 
     try {
       logger.info(`Checking quote details in /${constants.ON_STATUS}`)
@@ -243,11 +244,22 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
       logger.error(`!!Error while checking cancellation_terms in /${constants.ON_STATUS}, ${error.stack}`)
     }
 
+    if (!on_status?.created_at) errorObj.created_at = `created_at is missing in /${constants.ON_STATUS}`
+    else {
+      const createdAt = getValue('created_at')
+      if (on_status?.created_at !== createdAt)
+        errorObj.created_at = `created_at should match /${constants.ON_CONFIRM}'s created_at`
+    }
+
+    if (!on_status?.updated_at) errorObj.updated_at = `updated_at is missing in /${constants.ON_STATUS}`
+    else if (on_status?.updated_at > context?.timestamp)
+      errorObj.updated_at = `updated_at should be lesser or equal to context.timestamp in /${constants.ON_STATUS}`
+
     try {
       logger.info(`Checking status in message object  /${constants.ON_STATUS}`)
-      if (!message.order.status || !['COMPLETE', 'ACTIVE'].includes(message.order.status)) {
-        errorObj.status =
-          'Invalid or missing"` status in the message.order object. It must be one of: COMPLETE or ACTIVE'
+      if (!message.order.status) errorObj.status = 'status is missing in the message.order object'
+      else if (!['COMPLETE', 'ACTIVE'].includes(message.order.status)) {
+        errorObj.status = 'Invalid value for status in the message.order object. Should be one of: COMPLETE or ACTIVE'
       }
     } catch (error: any) {
       logger.error(`!!Error while checking status in message.order object  /${constants.ON_STATUS}, ${error.stack}`)

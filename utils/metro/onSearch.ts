@@ -3,13 +3,7 @@ import { setValue } from '../../shared/dao'
 import { validateTags } from './tags'
 import constants, { metroSequence } from '../../constants'
 import { validateDescriptor, validateStops } from './metroChecks'
-import {
-  validateSchema,
-  isObjectEmpty,
-  // checkMetroContext,
-  // checkBppIdOrBapId,
-  // timeDiff,
-} from '..'
+import { validateSchema, isObjectEmpty } from '..'
 import { validateContext } from './metroChecks'
 import { isNil } from 'lodash'
 import { checkItemPrice, checkItemQuantity, checkItemTime, checkPayment, checkRefIds } from './validate/helper'
@@ -51,7 +45,6 @@ export const checkOnSearch = (data: any, msgIdSet: any, secondOnSearch: boolean)
   try {
     logger.info(`Validating Descriptor for catalog`)
     const descriptor = onSearchCatalog?.descriptor
-    // send true as last argument in case if descriptor?.code validation is needed
     const descriptorError = validateDescriptor(descriptor, constants.ON_SEARCH, `catalog.descriptor`, false, [])
     if (descriptorError) Object.assign(errorObj, descriptorError)
   } catch (error: any) {
@@ -65,10 +58,11 @@ export const checkOnSearch = (data: any, msgIdSet: any, secondOnSearch: boolean)
     while (i < len) {
       //validate categories
       const categories = onSearchCatalog['providers'][i]?.categories
-      // if (onSearchCatalog['providers'][i]?.tags) {
-      const tagsValidation: { [key: string]: any } | null = validateTags(onSearchCatalog['providers'][i]?.tags ?? [], i)
-      if (!isNil(tagsValidation)) Object.assign(errorObj, tagsValidation)
-      // }
+      const tags = onSearchCatalog['providers'][i]?.tags
+      if (tags) {
+        const tagsValidation: { [key: string]: any } | null = validateTags(tags ?? [], i)
+        if (!isNil(tagsValidation)) Object.assign(errorObj, tagsValidation)
+      }
 
       const categoriesIds: string[] = []
       if (categories) {
@@ -103,7 +97,6 @@ export const checkOnSearch = (data: any, msgIdSet: any, secondOnSearch: boolean)
         errorObj[`provider_${i}_fulfillments`] = `Fulfillments are missing for provider ${i}`
       } else {
         fulfillments.forEach((fulfillment: any, k: number) => {
-          //fulfillments id
           if (!fulfillment?.id) {
             errorObj[`provider_${i}_fulfillment_${k}id`] = `id is missing at fulfillments.`
           } else if (storedFulfillments.has(fulfillment?.id)) {
@@ -112,8 +105,6 @@ export const checkOnSearch = (data: any, msgIdSet: any, secondOnSearch: boolean)
           } else {
             storedFulfillments.add(fulfillment.id)
           }
-
-          //fulfillments type
           if (!fulfillment?.type) {
             errorObj[`provider_${i}_fulfillment_${k}type`] = `Fulfillment type should be present in provider.`
           } else {
@@ -226,14 +217,10 @@ export const checkOnSearch = (data: any, msgIdSet: any, secondOnSearch: boolean)
     setValue(`${metroSequence.ON_SEARCH1}_itemsId`, Array.from(itemsId))
     setValue(`${metroSequence.ON_SEARCH1}_storedLocations`, Array.from(storedLocations))
     setValue(`${metroSequence.ON_SEARCH1}_storedFulfillments`, Array.from(storedFulfillments))
-    
 
     if (secondOnSearch) {
-      // const providersId = message?.catalog?.providers?.map((provider: any) => provider?.id)
-      // setValue('providerId', providersId || [])
       setValue(`${metroSequence.ON_SEARCH2}_message`, message)
       setValue(`itemIds`, Array.from(itemsId))
-      // setValue(`${metroSequence.ON_SEARCH2}_storedFulfillments`, Array.from(storedFulfillments))
     }
   } catch (error: any) {
     logger.error(`!!Error while checking Providers info in /${constants.ON_SEARCH}, ${error.stack}`)

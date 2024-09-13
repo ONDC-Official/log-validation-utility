@@ -39,10 +39,6 @@ export function checkItemTime(time: { [key: string]: any }, i: number, j: number
   } else if (time?.label.toLowerCase() !== 'validity')
     errorObj[`prvdr${i}item${j}time.label`] = `label should be equal to 'Validity' at /providers[${i}]/items[${j}].time`
 
-  // if (!time?.timestamp) {
-  //   errorObj[`prvdr${i}item${j}time.timestamp`] = `timestamp is missing in /providers[${i}]/items[${j}].time`
-  // }
-
   return errorObj
 }
 
@@ -156,21 +152,25 @@ export function checkBilling(billing: any, action: string) {
   const errorObj: { [key: string]: any } = {}
   try {
     if (billing) {
+      const allowedKeys = ['name', 'email', 'phone']
+      const objKeys = Object.keys(billing)
+      const isValid = objKeys.filter((key) => !allowedKeys.includes(key))
+      console.log('isValidasdnjkwnfjewnfjewnfjenfjkewnfjkernfjernnevnever', isValid)
+      if (isValid?.length) {
+        errorObj['billing'] = `Invalid keys found: ${isValid}`
+      }
+
       if (!billing.name) {
         errorObj['billing.name'] = `billing name must be present in /${action}`
       } else {
         setValue('billingName', billing.name)
       }
 
-      if (!billing.email) {
-        errorObj['billing.email'] = `billing.email must be present in /${action}`
-      } else if (!isValidEmail(billing.email)) {
+      if (billing?.email && !isValidEmail(billing.email)) {
         errorObj['billing.email'] = `billing.email must be valid Email in /${action}`
       }
 
-      if (!billing.phone) {
-        errorObj['billing.phone'] = `billing.phone must be present in /${action}`
-      } else if (!isValidPhoneNumber(billing.phone)) {
+      if (billing?.phone && !isValidPhoneNumber(billing.phone)) {
         errorObj['billing.phone'] = `billing.phone must be valid Phone Number in /${action}`
       }
     }
@@ -187,7 +187,7 @@ function isValidEmail(email: string) {
 }
 
 function isValidPhoneNumber(phoneNumber: string) {
-  const phoneRegex = /^\+91-\d{10}$/
+  const phoneRegex = /^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/
   return phoneRegex.test(phoneNumber)
 }
 

@@ -31,8 +31,7 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
     logger.info(`Comparing BAP and BPP in /${curentCall}`)
 
     let bppValidationResult
-    if(toCheck || isNil(toCheck))
-    bppValidationResult = checkIdAndUri(context?.bpp_id, context?.bpp_uri, 'bpp')
+    if (toCheck || isNil(toCheck)) bppValidationResult = checkIdAndUri(context?.bpp_id, context?.bpp_uri, 'bpp')
 
     const bapValidationResult = checkIdAndUri(context?.bap_id, context?.bap_uri, 'bap')
 
@@ -151,7 +150,6 @@ export const validateStops = (stops: any, index: number, otp: boolean, cancel: b
   }
 
   stops.forEach((stop: any, l: number) => {
-    // Check if timestamp in the time range is valid only if time.range.start is present
     const hasTimeRangeStart = stop.time?.range?.start
     if (hasTimeRangeStart) {
       const timestampCheckResult = timestampCheck(stop.time?.range?.start || '')

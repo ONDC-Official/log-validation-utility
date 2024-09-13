@@ -5,16 +5,19 @@ import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
 import {
   validateContext,
-  validatePaymentParams,
+  // validatePaymentParams,
   validateQuote,
   validateStops,
   validateCancellationTerms,
   validateItemDescriptor,
   validateDescriptor,
 } from './metroChecks'
-import { validatePaymentTags } from './tags'
+import {
+  // validatePaymentTags,
+  validatePaymentsTags,
+} from './tags'
 import { checkItemTime, checkProviderTime } from './validate/helper'
-import { isNil } from 'lodash'
+import { isEmpty, isNil } from 'lodash'
 
 const VALID_DESCRIPTOR_CODES = ['SJT', 'SFSJT', 'RJT', 'PASS']
 const VALID_VEHICLE_CATEGORIES = ['METRO']
@@ -45,8 +48,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     const on_init = message.order
     const itemIDS: any = getValue('ItmIDS')
     const itemIdArray: any[] = []
-    const prvdrId = getValue('providerId') || [] as string[]
-    // const storedFull: any = getValue(`${metroSequence.ON_SEARCH1}_storedFulfillments`)
+    const prvdrId = getValue('providerId') || ([] as string[])
     const fulfillmentIdsSet = new Set()
 
     let newItemIDSValue: any[]
@@ -81,17 +83,6 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         [],
       )
       if (descriptorError) Object.assign(errorObj, descriptorError)
-      // if (!on_init?.provider?.descriptor)
-      //   errorObj.prvdrIdDescriptor = `Provider Descriptor is Missing in /${constants.ON_INIT}`
-      // else if (
-      //   on_init?.provider?.descriptor &&
-      //   (!on_init.provider.descriptor.name || on_init.provider.descriptor.name === '')
-      // ) {
-      //   errorObj.DescriptorName = `Provider Descriptor Name is Missing or Empty /${constants.ON_INIT}`
-      // }
-
-      //check time validation
-      // fix checkProviderTime also
       const checkTimeError = checkProviderTime(on_init?.provider)
       if (Object.keys(checkTimeError).length > 0) Object.assign(errorObj, checkTimeError)
     } catch (error: any) {
@@ -100,7 +91,6 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       )
     }
 
-    //add billing & SCHEDULED_INFO tag-group function also
     //check fulfillments
     try {
       logger.info(`Validating fulfillments object for /${constants.ON_INIT}`)
@@ -114,10 +104,6 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
             fulfillmentIdsSet.add(fulfillment?.id)
             FULFILLMENT = [...FULFILLMENT, fulfillment?.id as string]
             setValue(`${metroSequence.ON_INIT}_storedFulfillments`, FULFILLMENT)
-            // if (!storedFull.includes(fulfillment?.id)) {
-            //   errorObj[`${fulfillmentKey}.id`] =
-            //     `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
-            // }
           } else {
             errorObj[`Fulfillment[${index}].id`] = `fulfillment.id missing in /${constants.ON_INIT}`
           }
@@ -149,11 +135,9 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
     //check items
     try {
-      //items null check
       if (!on_init?.items) errorObj.items = `Items missing in /${constants.ON_INIT}`
       else {
         on_init.items.forEach((item: any, index: number) => {
-          //handle id non-existant check
           if (!item.id) errorObj[`item[${index}].id`] = `Item id missing in /${constants.ON_INIT}`
           else if (!newItemIDSValue.includes(item.id)) {
             const key = `item[${index}].item_id`
@@ -161,30 +145,24 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
               `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_INIT}`
           }
 
-          //use common descriptor function
           const getDescriptorError = validateItemDescriptor(item, index, VALID_DESCRIPTOR_CODES)
           if (Object.keys(getDescriptorError)?.length) Object.assign(errorObj, getDescriptorError)
 
-          //handle price non-existant check
           const price = item?.price
           if (!price || !price.currency || !price.value) {
             const key = `item${index}_price`
             errorObj[key] = `Price is incomplete or missing in /items[${index}]`
           }
 
-          //missing time check
           const itemTimeError = checkItemTime(item?.time, 0, index)
           if (!isNil(itemTimeError)) Object.assign(errorObj, itemTimeError)
 
-          //missing category_ids check
           if (!item?.category_ids)
             errorObj[`item${index}category_ids`] = `Category_ids array is missing in /${constants.ON_INIT}`
           else {
             if (item?.category_ids && !item?.category_ids.length)
               errorObj[`item${index}category_ids`] = `Category_ids array is empty in /${constants.ON_INIT}`
           }
-
-          //missing quantity check
 
           if (!item?.quantity) {
             errorObj[`item${index}quantity`] = `Quantity is missing in /${constants.ON_INIT}`
@@ -197,7 +175,6 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
                 `Quantity selected count is missing in /${constants.ON_INIT}`
           }
 
-          //handle fulfillment_ids non-existant check
           if (!item?.fulfillment_ids)
             errorObj[`item${index}fulfillment_ids`] = `Fulfillment ids missing in /${constants.ON_INIT}`
           else {
@@ -215,8 +192,6 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       return { error: error.message }
     }
 
-    //check cancellation_terms
-    // revisit & handle external_ref check
     try {
       logger.info(`Checking cancellation terms in /${constants.ON_INIT}`)
       const cancellationErrors = validateCancellationTerms(on_init?.cancellation_terms, constants.ON_INIT)
@@ -225,54 +200,82 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       logger.error(`!!Error while checking cancellation_terms in /${constants.ON_INIT}, ${error.stack}`)
     }
 
-    //check payments
+    // check payments
     try {
       logger.info(`Checking payments in /${constants.ON_INIT}`)
-      on_init?.payments?.forEach((arr: any, i: number) => {
-        if (!arr?.collected_by) {
-          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.ON_INIT}`
-        } else {
-          const srchCollectBy = getValue(`collected_by`)
-          if (srchCollectBy != arr?.collected_by)
-            errorObj[`payemnts[${i}]_collected_by`] =
-              `payments.collected_by value sent in ${constants.ON_INIT} should be ${srchCollectBy} as sent in ${constants.ON_SEARCH}`
-        }
+      const payments = on_init?.payments
+      if (isEmpty(payments)) {
+        errorObj.payments = `payments array is missing or is empty`
+      } else {
+        const allowedStatusValues = ['NOT-PAID', 'PAID']
+        const requiredParams = ['bank_code', 'bank_account_number']
+        payments?.forEach((arr: any, i: number) => {
+          const terms = [
+            { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^(P(d+D)?(T(d+H)?(d+M)?(d+S)?)?)$/' },
+            {
+              code: 'SETTLEMENT_BASIS',
+              type: 'enum',
+              value: ['INVOICE_RECEIPT', 'Delivery'],
+            },
+            { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
+            { code: 'STATIC_TERMS', type: 'url' },
+            { code: 'COURT_JURISDICTION', type: 'string' },
+            { code: 'SETTLEMENT_AMOUNT', type: 'amount' },
+            { code: 'SETTLEMENT_TYPE', type: 'enum', value: ['NEFT', 'UPI'] },
+          ]
 
-        const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
-        if (!arr?.type || !validTypes.includes(arr.type)) {
-          errorObj[`payments[${i}]_type`] = `payments.params.type must be present in ${
-            constants.ON_INIT
-          } & its value must be one of: ${validTypes.join(', ')}`
-        }
+          if (!arr?.id) {
+            errorObj[`payemnts[${i}]_id`] = `payments.id must be present in ${constants.ON_INIT}`
+          } else {
+            setValue(`paymentId`, arr?.id)
+          }
 
-        const validStatus = ['NOT-PAID', 'PAID']
-        if (!arr?.status || !validStatus.includes(arr.status)) {
-          errorObj[`payments[${i}]_status`] = `payments.status must be present in ${
-            constants.ON_INIT
-          } & its value must be one of: ${validStatus.join(', ')}`
-        }
+          if (!arr?.collected_by) {
+            errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.ON_INIT}`
+          } else {
+            const collectedBy = getValue(`collected_by`)
+            if (collectedBy && collectedBy != arr?.collected_by)
+              errorObj[`payemnts[${i}]_collected_by`] =
+                `payments.collected_by value sent in ${constants.ON_INIT} should be same as sent in past call: ${collectedBy}`
+          }
 
-        const params = arr.params
-        const bankCode: string | null = getValue('bank_code')
-        const bankAccountNumber: string | null = getValue('bank_account_number')
-        const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
-        // Validate bank_code
-        validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.ON_INIT)
+          // check status
+          if (!arr?.status) errorObj.paymentStatus = `payment.status is missing for index:${i} in payments`
+          else if (!arr?.status || !allowedStatusValues.includes(arr?.status)) {
+            errorObj.paymentStatus = `invalid status at index:${i} in payments, should be either of ${allowedStatusValues}`
+          }
 
-        // Validate bank_account_number
-        validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.ON_INIT)
+          // check type
+          const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
+          if (!arr?.type || !validTypes.includes(arr.type)) {
+            errorObj[`payments[${i}]_type`] = `payments.type must be present in ${
+              constants.ON_INIT
+            } & its value must be one of: ${validTypes.join(', ')}`
+          }
 
-        // Validate virtual_payment_address
-        validatePaymentParams(params, virtualPaymentAddress, 'virtual_payment_address', errorObj, i, constants.ON_INIT)
+          // check params
+          const params = arr?.params
+          if (!params) errorObj.params = `payment.params is missing for index:${i} in payments`
+          else {
+            const settlementTerms = arr?.tags.find((tag: any) => tag.descriptor.code === 'SETTLEMENT_TERMS')
+            const settlementType = settlementTerms?.list.find((item: any) => item.descriptor.code === 'SETTLEMENT_TYPE')
+            if (settlementType && settlementType?.value?.toUpperCase() == 'UPI')
+              requiredParams.push('virtual_payment_address')
+            const missingParams = requiredParams.filter((param) => !Object.prototype.hasOwnProperty.call(params, param))
+            if (missingParams.length > 0) {
+              errorObj.missingParams = `Required params ${missingParams.join(', ')} are missing in payments`
+            }
+          }
 
-        // Validate payment tags
-        const tagsValidation = validatePaymentTags(arr?.tags, constants?.ON_INIT)
-        if (!tagsValidation.isValid) {
-          Object.assign(errorObj, { tags: tagsValidation.errors })
-        }
-      })
+          // Validate payment tags
+          const tagsValidation = validatePaymentsTags(arr?.tags, terms)
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { tags: tagsValidation.errors })
+          }
+        })
+      }
     } catch (error: any) {
-      logger.error(`!!Errors while checking payments in /${constants.ON_INIT}, ${error.stack}`)
+      logger.error(`!!Errors while checking payments in /${constants.INIT}, ${error.stack}`)
     }
 
     //check quote

@@ -51,7 +51,7 @@ export const checkInit = (data: any, msgIdSet: any) => {
 
     try {
       logger.info(`Comparing Provider Id of /${constants.ON_SEARCH} and /${constants.INIT}`)
-      const prvrdID = getValue('providerId') as any //type should be an array instead of string
+      const prvrdID = getValue('providerId') as any
       const selectedProviderId = init?.provider?.id ?? null
 
       if (!isNil(selectedProviderId)) {

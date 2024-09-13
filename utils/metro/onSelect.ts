@@ -31,7 +31,6 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
     Object.assign(errorObj, contextRes.ERRORS)
   }
 
-  // const searchContext: any = getValue(`${metroSequence.SEARCH}_context`)
   const select: any = getValue(`${metroSequence.SELECT}`)
 
   try {
@@ -39,7 +38,6 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
     const itemIDS: any = getValue(`${metroSequence.ON_SEARCH1}_itemsId`)
     const itemIdArray: any[] = []
     const storedFull: any = getValue(`${metroSequence.ON_SEARCH1}_storedFulfillments`)
-    // const fulfillmentIdsSet = new Set()
     const itemIdsSet = new Set()
 
     try {
@@ -65,13 +63,6 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
       logger.info(`Validating fulfillments object for /${constants.ON_SELECT}`)
       onSelect.fulfillments.forEach((fulfillment: any, index: number) => {
         const fulfillmentKey = `fulfillments[${index}]`
-
-        // if (storedFull && !storedFull.includes(fulfillment.id)) {
-        //   errorObj[`${fulfillmentKey}.id`] =
-        //     `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
-        // } else {
-        //   fulfillmentIdsSet.add(fulfillment.id)
-        // }
 
         if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
           errorObj[`${fulfillmentKey}.vehicleCategory`] =
@@ -147,12 +138,7 @@ export const checkOnSelect = (data: any, msgIdSet: any) => {
         if (!item?.fulfillment_ids || item?.fulfillment_ids?.length === 0) {
           errorObj[`invalidFulfillmentId_${index}`] = `fulfillment_ids should be present`
         } else {
-          item.fulfillment_ids.forEach((_fulfillmentId: string) => {
-            // if (!storedFull.includes(fulfillmentId)) {
-            //   errorObj[`invalidItemFulfillmentId_${index}`] =
-            //     `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.ON_SELECT} is not matching with the fulfillment id in previous call`
-            // }
-          })
+          item.fulfillment_ids.forEach((_fulfillmentId: string) => {})
         }
 
         if (item?.payment_ids) {

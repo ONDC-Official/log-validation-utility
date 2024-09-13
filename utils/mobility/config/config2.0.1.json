@@ -1,0 +1,234 @@
+{
+  "search": {
+    "message": {
+      "intent": {
+        "fulfillment": {
+          "stops": [
+            {
+              "location": {
+                "address": {
+                  "required": true
+                }
+              }
+            }
+          ],
+          "tags": {
+            "required": true,
+            "type": "tag",
+            "name": "LOCATION"
+          }
+        }
+      }
+    }
+  },
+  "on_search": {
+    "message": {
+      "catalog": {
+        "providers": [
+          {
+            "fulfillments": [
+              {
+                "stops": [
+                  {
+                    "location": {
+                      "address": {
+                        "required": true
+                      }
+                    }
+                  }
+                ],
+                "vehicle": {
+                  "variant": {
+                    "required": true
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "on_select": {
+    "message": {
+      "order": {
+        "fulfillments": [
+          {
+            "stops": [
+              {
+                "location": {
+                  "address": {
+                    "required": true
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "init": {
+    "message": {
+      "order": {
+        "fulfillments": [
+          {
+            "stops": [
+              {
+                "location": {
+                  "address": {
+                    "required": true
+                  }
+                }
+              }
+            ],
+            "tags": {
+              "required": true,
+              "type": "tag",
+              "name": "LOCATION"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "on_init": {
+    "message": {
+      "order": {
+        "fulfillments": [
+          {
+            "stops": [
+              {
+                "location": {
+                  "address": {
+                    "required": true
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "confirm": {
+    "message": {
+      "order": {
+        "fulfillments": [
+          {
+            "stops": [
+              {
+                "location": {
+                  "address": {
+                    "required": true
+                  }
+                }
+              }
+            ],
+            "tags": {
+              "required": true,
+              "type": "tag",
+              "name": "LOCATION"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "on_confirm": {
+    "message": {
+      "order": {
+        "fulfillments": [
+          {
+            "stops": [
+              {
+                "location": {
+                  "address": {
+                    "required": true
+                  }
+                }
+              }
+            ],
+            "tags": {
+              "required": true,
+              "type": "tag",
+              "name": "LOCATION"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "on_update": {
+    "message": {
+      "order": {
+        "fulfillments": [
+          {
+            "stops": [
+              {
+                "location": {
+                  "address": {
+                    "required": true
+                  }
+                }
+              }
+            ],
+            "tags": {
+              "required": true,
+              "type": "tag",
+              "name": "LOCATION"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "on_status": {
+    "message": {
+      "order": {
+        "fulfillments": [
+          {
+            "stops": [
+              {
+                "location": {
+                  "address": {
+                    "required": true
+                  }
+                }
+              }
+            ],
+            "tags": {
+              "required": true,
+              "type": "tag",
+              "name": "LOCATION"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "on_cancel": {
+    "message": {
+      "order": {
+        "fulfillments": [
+          {
+            "stops": [
+              {
+                "location": {
+                  "address": {
+                    "required": true
+                  }
+                }
+              }
+            ],
+            "tags": {
+              "required": true,
+              "type": "tag",
+              "name": "LOCATION"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+version: '2'
+
+services:
+  retail-logs-utility:
+    container_name: retail-logs-utility
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3006:3006'
+
+  nginx:
+    build:
+      context: nginx
+      dockerfile: DockerfileWithoutSSL
+    container_name: nginx-service
+    depends_on:
+      - retail-logs-utility
+    expose:
+      - 80
+    ports:
+      - 80:80
+      - 443:443

@@ -8,6 +8,7 @@ import { validateLogsForMobility } from '../../shared/Actions/mobilityActions'
 import { validateLogsForMetro } from '../../shared/Actions/metroActions'
 import { validateLogsForFIS10 } from '../../shared/Actions/FIS10Actions'
 import { validateLogsForFIS13 } from '../../shared/Actions/FIS13Actions'
+import { validateLogsForFIS14 } from 'shared/Actions/FIS14Actions'
 
 const createSignature = async ({ message }: { message: string }) => {
   const privateKey = process.env.SIGN_PRIVATE_KEY as string
@@ -94,6 +95,16 @@ const validateFinance = async (domain: string, payload: string, version: string,
 
     case 'ONDC:FIS13':
       response = validateLogsForFIS13(payload, flow, version)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+
+      break
+
+    case 'ONDC:FIS14':
+      response = validateLogsForFIS14(payload, domain, flow)
 
       if (_.isEmpty(response)) {
         success = true

@@ -254,10 +254,10 @@ export const insuranceFlows = {
 }
 
 export const fis14Flows = {
-  search_full_pull: 'search_full_pull',
-  search_increment: 'search_increment',
-  SIP_new_folio_with_KYC: 'SIP_new_folio_with_KYC',
-  Lumpsum_new_folio_with_KYC: 'Lumpsum_new_folio_with_KYC',
+  SEARCH_FULL_PULL: 'SEARCH_FULL_PULL',
+  SEARCH_INCREMENT: 'SEARCH_INCREMENT',
+  SIP_NEW_FOLIO_WITH_KYC: 'SIP_NEW_FOLIO_WITH_KYC',
+  LUMPSUM_NEW_FOLIO_WITH_KYC: 'LUMPSUM_NEW_FOLIO_WITH_KYC',
 }
 
 export const onDemandFlows = {

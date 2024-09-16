@@ -253,6 +253,13 @@ export const insuranceFlows = {
   RENEW_HEALTH: 'RENEW_HEALTH_INSURANCE',
 }
 
+export const fis14Flows = {
+  search_full_pull: 'search_full_pull',
+  search_increment: 'search_increment',
+  SIP_new_folio_with_KYC: 'SIP_new_folio_with_KYC',
+  Lumpsum_new_folio_with_KYC: 'Lumpsum_new_folio_with_KYC',
+}
+
 export const onDemandFlows = {
   HAPPY_FLOW: 'HAPPY_FLOW',
   RIDER_CANCEL: 'RIDER_CANCEL',
@@ -347,7 +354,7 @@ export const retailDomains = [
   'ONDC:RET18',
   'ONDC:RET19',
   'ONDC:AGR10',
-  'ONDC:RET1A'
+  'ONDC:RET1A',
 ]
 export const ROUTING_ENUMS = ['P2P', 'P2H2P']
 export const MOB_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
@@ -362,4 +369,7 @@ export const MOB_FULL_STATE = [
   'RIDE_ARRIVED_PICKUP',
 ]
 
-export const ffCategory = [["Immediate Delivery", "Standard Delivery", "Express Delivery"], ["Takeaway", "Kerbside"]]
+export const ffCategory = [
+  ['Immediate Delivery', 'Standard Delivery', 'Express Delivery'],
+  ['Takeaway', 'Kerbside'],
+]

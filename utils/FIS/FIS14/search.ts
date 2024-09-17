@@ -3,6 +3,7 @@ import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
 import _ from 'lodash'
+import { validateContext } from './fis14checks'
 
 export const checkSearch = (data: any, msgIdSet: any, flow: string, action: string) => {
   const errorObj: any = {}
@@ -27,6 +28,11 @@ export const checkSearch = (data: any, msgIdSet: any, flow: string, action: stri
   const schemaValidation = validateSchema('FIS', constants.SEARCH, data)
   if (schemaValidation !== 'error') {
     Object.assign(errorObj, schemaValidation)
+  }
+  let contextRes = validateContext(context, msgIdSet, action, constants.SEARCH)
+
+  if ('ERRORS' in contextRes) {
+    Object.assign(errorObj, contextRes.ERRORS)
   }
 
   try {

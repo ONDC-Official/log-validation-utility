@@ -454,8 +454,8 @@ export const checkOnCancelPayload = (
 
     if (!on_cancel?.status) errorObj.status = `status should be sent in /${constants.CONFIRM}`
     else if (on_cancel?.status != (cancelType ? 'CANCELLED' : 'SOFT_CANCEL'))
-      errorObj['descriptor_code'] =
-        `descriptor code should be ${cancelType ? 'CANCELLED' : 'SOFT_CANCEL'} in /${constants.ON_CANCEL}`
+      errorObj['status'] =
+        `status should be ${cancelType ? 'CANCELLED' : 'SOFT_CANCEL'} in /${constants.ON_CANCEL}`
 
     try {
       logger.info(`Comparing provider object in /${constants.CONFIRM} and /${constants.ON_CANCEL}`)
@@ -544,8 +544,8 @@ export const checkOnCancelPayload = (
           item.fulfillment_ids &&
             item.fulfillment_ids.forEach((fulfillmentId: string) => {
               if (!fulfillmentIdsSet.has(fulfillmentId)) {
-                errorObj[`invalidFulfillmentId_${index}`] =
-                  `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_CANCEL} is not valid`
+                errorObj[`invalidItemFulfillmentId_${index}`] =
+                  `Item Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_CANCEL}.`
               }
             })
         })

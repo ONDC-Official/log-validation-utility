@@ -113,7 +113,6 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
         curentCall !== 'init' &&
         !_.isEqual(prevContext.transaction_id, context.transaction_id)
       ) {
-        // errorObj.transaction_id = `Transaction ID for /${pastCall} and /${curentCall} API should be the same`
         errorObj.transaction_id = `Transaction ID for in /${curentCall} should be same throughout the api`
       }
     } catch (error: any) {

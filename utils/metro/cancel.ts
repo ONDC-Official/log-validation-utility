@@ -36,7 +36,7 @@ export const checkCancelPayload = (data: any, msgIdSet: any, cancelType: boolean
 
     if (!message?.order_id) errorObj['order_id'] = `order_id should be sent in /${constants.CANCEL}`
     else {
-      if (message?.order_id !== orderId) errorObj['order_id'] = `order_id should be same as in /${constants.INIT}`
+      if (message?.order_id !== orderId) errorObj['order_id'] = `order_id should be same as in /${constants.ON_CONFIRM}`
 
       const { cancellation_reason_id, descriptor } = message
       if (!cancellation_reason_id)

@@ -163,6 +163,25 @@ export const FIS13HealthSequence = {
   ON_UPDATE_UNCOLICATED: 'on_update_uncolicated',
 }
 
+export const FIS14ApiSequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SELECT: 'select',
+  ON_SELECT: 'on_select',
+  SELECT_1: 'select_1',
+  ON_SELECT_1: 'on_select_1',
+  SELECT_2: 'select_2',
+  ON_SELECT_2: 'on_select_2',
+  SELECT_3: 'select_3',
+  ON_SELECT_3: 'on_select_3',
+  INIT: 'init',
+  ON_INIT: 'on_init',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  ON_STATUS: 'on_status',
+  ON_UPDATE: 'on_update',
+}
+
 export const mobilitySequence = {
   SEARCH: 'search',
   ON_SEARCH: 'on_search',

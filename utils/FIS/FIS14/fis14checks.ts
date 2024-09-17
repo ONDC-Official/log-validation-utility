@@ -123,6 +123,14 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
     return result
   }
 }
+const isValidUrl = (url: string): boolean => {
+  try {
+    new URL(url)
+    return true
+  } catch (error) {
+    return false
+  }
+}
 
 export const isValidPhoneNumber = (value: string): boolean => {
   const phoneRegex = /^(\d{10}|\d{11})$/
@@ -132,4 +140,87 @@ export const isValidPhoneNumber = (value: string): boolean => {
 
   const val = value?.replace(/[^\d]/g, '')
   return phoneRegex.test(val)
+}
+
+export const validateProvider = (provider: any, action: string) => {
+  try {
+    const providerErrors: any = {}
+    if (!provider) {
+      providerErrors.provider = 'Provider details are missing or invalid.'
+      return providerErrors
+    }
+
+    if (!provider?.id) providerErrors.prvdrId = `provider.id is missing`
+    else {
+      logger.info(`Comparing provider id of /${action} & past call`)
+      const prvrdID: any = getValue('providerId')
+      if (!_.isEqual(prvrdID, provider?.id)) {
+        providerErrors.prvdrId = `provider.id for /${action} & past call api should be same`
+        setValue('providerId', provider?.id)
+      }
+    }
+
+    // send true as last argument in case if code validation is needed
+    const descriptorError = validateDescriptor(provider?.descriptor, action, `provider.descriptor`, false)
+    if (descriptorError) Object.assign(providerErrors, descriptorError)
+    return providerErrors
+  } catch (error: any) {
+    logger.info(`Error while checking provider object in /${action} api, ${error.stack}`)
+  }
+}
+
+export const validateDescriptor = (descriptor: any, action: string, path: string, checkCode: boolean): any => {
+  try {
+    const errorObj: any = {}
+    if (!descriptor) {
+      errorObj.descriptor = `descriptor is missing at ${path}.`
+    } else {
+      if (checkCode) {
+        if (!descriptor?.code.trim()) {
+          errorObj.code = `descriptor.code is missing at ${path}.`
+        } else if (descriptor.code?.trim() !== descriptor.code?.trim()?.toUpperCase()) {
+          errorObj.code = `descriptor.code must be in uppercase at ${path}., ${descriptor.code}`
+        }
+      }
+
+      if (descriptor?.images) {
+        descriptor.images.forEach((image: any, index: number) => {
+          const { url, size_type } = image
+          if (!isValidUrl(url)) {
+            errorObj[`image_url_[${index}]`] = `Invalid URL for image in descriptor at ${path}.`
+          }
+
+          const validSizes = ['xs', 'md', 'sm', 'lg']
+          if (!validSizes.includes(size_type)) {
+            errorObj[`image_size_[${index}]`] = `Invalid image size in descriptor, should be one of: ${validSizes.join(
+              ', ',
+            )} at ${path}.`
+          }
+        })
+      }
+
+      //validate name only if checkCode is false or name is present
+      if (!checkCode || descriptor?.name) {
+        if (!descriptor?.name?.trim()) {
+          errorObj.name = `descriptor.name is missing or empty ${path}.`
+        }
+      }
+
+      if (descriptor?.short_desc) {
+        if (!descriptor.short_desc.trim()) {
+          errorObj.short_desc = `descriptor.short_desc is empty at ${path}.`
+        }
+      }
+
+      if (descriptor?.long_desc) {
+        if (!descriptor.long_desc.trim()) {
+          errorObj.long_desc = `descriptor.long_desc is empty at ${path}.`
+        }
+      }
+    }
+
+    return errorObj
+  } catch (error: any) {
+    logger.info(`Error while validating descriptor for /${action} at ${path}, ${error.stack}`)
+  }
 }

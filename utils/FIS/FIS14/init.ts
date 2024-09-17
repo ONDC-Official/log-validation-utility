@@ -141,6 +141,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
     } catch (error: any) {
       logger.error(`!!Error while checking tags in /${constants.INIT}, ${error.stack}`)
     }
+    return errorObj
   } catch (error: any) {
     logger.error(`!!Error while checking provider object for /${constants.INIT}, ${error.stack}`)
     return { error: error.message }

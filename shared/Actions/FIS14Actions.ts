@@ -4,10 +4,11 @@ import { logger } from '../logger'
 import { FIS14ApiSequence, fis14Flows } from '../../constants'
 import { checkSearch } from '../../utils/FIS/FIS14/search'
 import { checkInit } from '../../utils/FIS/FIS14/init'
-import { checkOnInit } from '../../utils/FIS/FIS14/on_init'
+import { checkOnInit } from '../../utils/FIS/FIS14/onInit'
 import { checkConfirm } from '../../utils/FIS/FIS14/confirm'
-import { checkOnConfirm } from '../../utils/FIS/FIS14/on_confirm'
-import { checkOnStatus } from '../../utils/FIS/FIS14/on_status'
+import { checkOnConfirm } from '../../utils/FIS/FIS14/onConfirm'
+import { checkOnStatus } from '../../utils/FIS/FIS14/onStatus'
+import { checkOnUpdate } from '../../utils/FIS/FIS14/onUpdate'
 
 export function validateLogsForFIS14(data: any, flow: string, version: string) {
   const msgIdSet = new Set()
@@ -65,6 +66,13 @@ export function validateLogsForFIS14(data: any, flow: string, version: string) {
       const onStatusResp = checkOnStatus(data[FIS14ApiSequence.ON_STATUS], msgIdSet, FIS14ApiSequence.ON_STATUS)
       if (!_.isEmpty(onStatusResp)) {
         logReport = { ...logReport, [FIS14ApiSequence.ON_STATUS]: onStatusResp }
+      }
+    }
+
+    if (data[FIS14ApiSequence.ON_UPDATE]) {
+      const onUpdateResp = checkOnUpdate(data[FIS14ApiSequence.ON_UPDATE], msgIdSet, FIS14ApiSequence.ON_UPDATE)
+      if (!_.isEmpty(onUpdateResp)) {
+        logReport = { ...logReport, [FIS14ApiSequence.ON_UPDATE]: onUpdateResp }
       }
     }
 

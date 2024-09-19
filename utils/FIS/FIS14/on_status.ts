@@ -1,4 +1,4 @@
-import { isObjectEmpty, validateSchema } from 'utils'
+import { isObjectEmpty, validateSchema } from '../..'
 import constants from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { checkItems, isValidPhoneNumber, validateContext, validateProvider } from './fis14checks'

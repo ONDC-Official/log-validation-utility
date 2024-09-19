@@ -1,5 +1,7 @@
-import { logger } from 'shared/logger'
-import { isObjectEmpty, validateSchema } from 'utils'
+import { logger } from '../../../shared/logger'
+
+import { validateSchema, isObjectEmpty } from '../../'
+
 import constants from '../../../constants'
 import { checkItems, isValidPhoneNumber, validateContext, validateProvider } from './fis14checks'
 import { isEmpty } from 'lodash'
@@ -7,7 +9,7 @@ import { isEmpty } from 'lodash'
 export const checkConfirm = (data: any, msgIdSet: any, sequence: string) => {
   try {
     const errorObj: any = {}
-
+    console.log('sequence', sequence)
     if (!data || isObjectEmpty(data)) {
       return { [constants.ON_CONFIRM]: 'JSON cannot be empty' }
     }

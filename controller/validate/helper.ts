@@ -8,7 +8,7 @@ import { validateLogsForMobility } from '../../shared/Actions/mobilityActions'
 import { validateLogsForMetro } from '../../shared/Actions/metroActions'
 import { validateLogsForFIS10 } from '../../shared/Actions/FIS10Actions'
 import { validateLogsForFIS13 } from '../../shared/Actions/FIS13Actions'
-import { validateLogsForFIS14 } from 'shared/Actions/FIS14Actions'
+import { validateLogsForFIS14 } from '../../shared/Actions/FIS14Actions'
 
 const createSignature = async ({ message }: { message: string }) => {
   const privateKey = process.env.SIGN_PRIVATE_KEY as string

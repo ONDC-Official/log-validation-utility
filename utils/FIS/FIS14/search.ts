@@ -1,7 +1,7 @@
 import constants from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty } from '../../'
-import { getValue, setValue } from '../../../shared/dao'
+// import { getValue, setValue } from '../../../shared/dao'
 import _ from 'lodash'
 import { validateContext } from './fis14checks'
 
@@ -10,7 +10,7 @@ export const checkSearch = (data: any, msgIdSet: any, flow: string, action: stri
   if (!data || isObjectEmpty(data)) {
     return { [action]: 'JSON cannot be empty' }
   }
-
+  console.log('flow', flow)
   if (
     !data.message ||
     !data.context ||

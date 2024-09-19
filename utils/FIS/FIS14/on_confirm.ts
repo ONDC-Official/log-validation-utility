@@ -1,8 +1,9 @@
-import { logger } from 'shared/logger'
+import { logger } from '../../../shared/logger'
+
 import constants from '../../../constants'
-import { isValidPhoneNumber, validateSchema } from 'utils'
+import { isValidPhoneNumber, validateSchema } from '../..'
 import { checkItems, validateContext, validateProvider } from './fis14checks'
-import { error } from 'console'
+// import { error } from 'console'
 import { isEmpty } from 'lodash'
 import _ from 'lodash'
 
@@ -12,7 +13,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, sequence: string) => {
     if (!data || Object.keys(data).length === 0) {
       return { error: 'JSON cannot be empty' }
     }
-
+    console.log('sequence', sequence)
     const { message, context }: any = data
     if (
       !message ||

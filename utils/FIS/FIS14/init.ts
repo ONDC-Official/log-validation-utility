@@ -1,12 +1,14 @@
-import { logger } from 'shared/logger'
+import { logger } from '../../../shared/logger'
 import _, { isEmpty } from 'lodash'
 import constants from '../../../constants'
-import { validateSchema } from 'utils'
+import { validateSchema } from '../../'
+
 import { validateContext, isValidPhoneNumber } from './fis14checks'
-import { getValue, setValue } from 'shared/dao'
+import { getValue, setValue } from '../../../shared/dao'
 
 export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
   const errorObj: any = {}
+  console.log('sequence', sequence)
   try {
     if (!data || isEmpty(data)) {
       return { [constants.INIT]: 'JSON cannot be empty' }

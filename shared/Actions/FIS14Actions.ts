@@ -2,9 +2,12 @@ import _ from 'lodash'
 import { dropDB } from '../dao'
 import { logger } from '../logger'
 import { FIS14ApiSequence, fis14Flows } from '../../constants'
-import { checkSearch } from 'utils/FIS/FIS14/search'
-import { checkInit } from 'utils/FIS/FIS14/init'
-import { checkOnInit } from 'utils/FIS/FIS14/on_init'
+import { checkSearch } from '../../utils/FIS/FIS14/search'
+import { checkInit } from '../../utils/FIS/FIS14/init'
+import { checkOnInit } from '../../utils/FIS/FIS14/on_init'
+import { checkConfirm } from '../../utils/FIS/FIS14/confirm'
+import { checkOnConfirm } from '../../utils/FIS/FIS14/on_confirm'
+import { checkOnStatus } from '../../utils/FIS/FIS14/on_status'
 
 export function validateLogsForFIS14(data: any, flow: string, version: string) {
   const msgIdSet = new Set()
@@ -41,6 +44,27 @@ export function validateLogsForFIS14(data: any, flow: string, version: string) {
       const onInitResp = checkOnInit(data[FIS14ApiSequence.ON_INIT], msgIdSet, FIS14ApiSequence.ON_INIT)
       if (!_.isEmpty(onInitResp)) {
         logReport = { ...logReport, [FIS14ApiSequence.ON_INIT]: onInitResp }
+      }
+    }
+
+    if (data[FIS14ApiSequence.CONFIRM]) {
+      const confirmResp = checkConfirm(data[FIS14ApiSequence.CONFIRM], msgIdSet, FIS14ApiSequence.CONFIRM)
+      if (!_.isEmpty(confirmResp)) {
+        logReport = { ...logReport, [FIS14ApiSequence.CONFIRM]: confirmResp }
+      }
+    }
+
+    if (data[FIS14ApiSequence.ON_CONFIRM]) {
+      const onConfirmResp = checkOnConfirm(data[FIS14ApiSequence.ON_CONFIRM], msgIdSet, FIS14ApiSequence.ON_CONFIRM)
+      if (!_.isEmpty(onConfirmResp)) {
+        logReport = { ...logReport, [FIS14ApiSequence.ON_CONFIRM]: onConfirmResp }
+      }
+    }
+
+    if (data[FIS14ApiSequence.ON_STATUS]) {
+      const onStatusResp = checkOnStatus(data[FIS14ApiSequence.ON_STATUS], msgIdSet, FIS14ApiSequence.ON_STATUS)
+      if (!_.isEmpty(onStatusResp)) {
+        logReport = { ...logReport, [FIS14ApiSequence.ON_STATUS]: onStatusResp }
       }
     }
 

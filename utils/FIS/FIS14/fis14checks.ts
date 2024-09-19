@@ -2,6 +2,7 @@ import { getValue, setValue } from 'shared/dao'
 import { logger } from 'shared/logger'
 import { checkIdAndUri, checkFISContext } from '../../'
 import _, { isEmpty } from 'lodash'
+import constants from '../../../constants'
 
 export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any) => {
   const errorObj: any = {}
@@ -222,5 +223,31 @@ export const validateDescriptor = (descriptor: any, action: string, path: string
     return errorObj
   } catch (error: any) {
     logger.info(`Error while validating descriptor for /${action} at ${path}, ${error.stack}`)
+  }
+}
+
+export const checkItems = (order: any) => {
+  const errorObj: any = {}
+  try {
+    logger.info(`Validating items array in /${constants.INIT}`)
+    const items = order?.items
+    if (!items) {
+      errorObj.items = `items is missing at /${constants.INIT}`
+    } else {
+      items?.map((item: any, i: number) => {
+        if (!item?.id) {
+          errorObj[`items[${i}].id`] = `items[${i}].id is missing in /${constants.INIT}`
+        }
+        if (!item?.quantity) {
+          errorObj[`items[${i}].quantity`] = `items[${i}].quantity is missing in /${constants.INIT}`
+        }
+        if (!item?.price) {
+          errorObj[`items[${i}].fulfillment_ids`] = `items[${i}].fulfillment_ids is missing in /${constants.INIT}`
+        }
+      })
+    }
+    return errorObj
+  } catch (error: any) {
+    logger.error(`!!Error while checking items array in /${constants.INIT}, ${error.stack}`)
   }
 }

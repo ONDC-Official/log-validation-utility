@@ -217,3 +217,57 @@ function isValidDateTime(dateTimeString: string): boolean {
   const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
   return regex.test(dateTimeString)
 }
+
+export function validateFarePolicyTags(tags: { [key: string]: any }[], i: number, j: number, action: string) {
+  const errorObj: string[] = []
+  try {
+    tags?.forEach((tag) => {
+      if (tag?.descriptor?.code !== 'FARE_POLICY')
+        errorObj.push(`Tag descriptor code should be 'FARE_POLICY' in /providers[${i}]/items[${j}]`)
+      else {
+        let hasRestrictedPerson = false
+        let hasRestrictedProof = false
+
+        tag?.list?.forEach((item: any, itemIndex: number) => {
+          const descriptorCode = item.descriptor.code
+
+          // Check if descriptor code is not in uppercase
+          if (descriptorCode !== descriptorCode.toUpperCase()) {
+            errorObj.push(`Code should be in uppercase at Fare Policy Tag[${i}], List item[${itemIndex}].`)
+          }
+
+          // Validate known descriptor codes
+          if (descriptorCode?.toUpperCase() === 'RESTRICTED_PERSON') {
+            hasRestrictedPerson = true // Mark ROUTE_ID as found
+            if (typeof item.value !== 'string') {
+              errorObj.push(
+                `Fare Policy Tag[${i}], List item[${itemIndex}] has an invalid value for RESTRICTED_PERSON. It should be a string.`,
+              )
+            }
+          }
+          if (descriptorCode?.toUpperCase() === 'RESTRICTED_PROOF') {
+            hasRestrictedProof = true // Mark ROUTE_DIRECTION as found
+            if (typeof item.value !== 'string') {
+              errorObj.push(
+                `Fare Policy Tag[${i}], List item[${itemIndex}] has an invalid value for RESTRICTED_PROOF. It should be a string.`,
+              )
+            }
+          }
+        })
+
+        // Check if both ROUTE_ID and ROUTE_DIRECTION are present
+        if (!hasRestrictedPerson) {
+          errorObj.push(`Fare Policy tag[${i}] is missing RESTRICTED_PERSON.`)
+        }
+
+        if (!hasRestrictedProof) {
+          errorObj.push(`Fare Policy tag[${i}] is missing RESTRICTED_PROOF.`)
+        }
+      }
+    })
+  } catch (error: any) {
+    logger.error(`!!Error in Provider Time of /${action}`)
+  }
+
+  return errorObj
+}

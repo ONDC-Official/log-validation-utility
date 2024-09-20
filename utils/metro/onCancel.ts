@@ -87,7 +87,7 @@ export const checkOnCancelPayload = (
 
     try {
       logger.info(`Comparing provider object in /${constants.CONFIRM} and /${constants.ON_CANCEL}`)
-      if (on_cancel.provider.id != getValue('providerId')) {
+      if (on_cancel?.provider?.id != getValue('providerId')) {
         errorObj.prvdrId = `Provider Id mismatches in /${constants.CONFIRM} and /${constants.ON_CANCEL}`
       }
     } catch (error: any) {
@@ -98,7 +98,7 @@ export const checkOnCancelPayload = (
 
     try {
       logger.info(`Validating fulfillments object for /${constants.ON_CANCEL}`)
-      on_cancel.fulfillments.forEach((fulfillment: any, index: number) => {
+      on_cancel?.fulfillments?.forEach((fulfillment: any, index: number) => {
         const fulfillmentKey = `fulfillments[${index}]`
 
         if (!storedFull.includes(fulfillment?.id)) {

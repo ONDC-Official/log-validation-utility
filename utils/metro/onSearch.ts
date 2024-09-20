@@ -1,6 +1,6 @@
 import { logger } from '../../shared/logger'
 import { setValue } from '../../shared/dao'
-import { validateTags } from './tags'
+import { validateRouteInfoTags, validateTags } from './tags'
 import constants, { metroSequence } from '../../constants'
 import { validateDescriptor, validateStops } from './metroChecks'
 import {
@@ -12,7 +12,14 @@ import {
 } from '..'
 import { validateContext } from './metroChecks'
 import { isNil } from 'lodash'
-import { checkItemPrice, checkItemQuantity, checkItemTime, checkPayment, checkRefIds } from './validate/helper'
+import {
+  checkItemPrice,
+  checkItemQuantity,
+  checkItemTime,
+  checkPayment,
+  checkRefIds,
+  validateFarePolicyTags,
+} from './validate/helper'
 import { VALID_DESCRIPTOR_CODES } from './enum'
 
 export const checkOnSearch = (
@@ -143,6 +150,14 @@ export const checkOnSearch = (
             storedFulfillments.add(fulfillment.id)
           }
 
+          if (fulfillment.tags && String(flow?.flow).toUpperCase() !== 'METRO') {
+            // Validate route info tags
+            const tagsValidation = validateRouteInfoTags(fulfillment?.tags)
+            if (!tagsValidation.isValid) {
+              Object.assign(errorObj, { tags: tagsValidation.errors })
+            }
+          }
+
           //fulfillments type
           if (!fulfillment?.type) {
             errorObj[`provider_${i}_fulfillment_${k}type`] = `Fulfillment type should be present in provider.`
@@ -225,9 +240,21 @@ export const checkOnSearch = (
                 if (!isNil(priceError)) Object.assign(errorObj, priceError)
               }
 
+              if (String(flow?.flow).toUpperCase() !== 'METRO' && item?.descriptor?.code === 'SFSJT') {
+                if (!item?.tags)
+                  errorObj[`items${j}.tags`] =
+                    `tags is missing in /providers[${i}]/items[${j}]. It should be present when descriptor code is SFSJT.`
+                else {
+                  const polictTagsError = validateFarePolicyTags(item?.tags, i, j, context?.action || '')
+                  if (!isNil(polictTagsError)) Object.assign(errorObj, polictTagsError)
+                }
+              }
+
               //check category_ids
-              const categoryIdsError = checkRefIds(item?.category_ids, i, j, categoriesIds, 'category')
-              if (!isNil(categoryIdsError)) Object.assign(errorObj, categoryIdsError)
+              if (String(flow?.flow).toUpperCase() === 'METRO') {
+                const categoryIdsError = checkRefIds(item?.category_ids, i, j, categoriesIds, 'category')
+                if (!isNil(categoryIdsError)) Object.assign(errorObj, categoryIdsError)
+              }
 
               //check fulfillment_ids
               const fulfillmentIdsError = checkRefIds(

@@ -51,40 +51,44 @@ export const validateRouteInfoTags = (tags: RouteInfoTag[]): ValidationResult =>
   tags &&
     tags?.forEach((tag, index) => {
       if (tag.descriptor.code === 'ROUTE_INFO') {
-        if (tag.display !== undefined && typeof tag?.display !== 'boolean') {
-          errors.push(`route.tag[${index}] has an invalid value for the 'display' property. It should be a boolean.`)
-        }
+        let hasRouteId = false
+        let hasRouteDirection = false
 
         tag.list.forEach((item, itemIndex) => {
           const descriptorCode = item.descriptor.code
 
+          // Check if descriptor code is not in uppercase
           if (descriptorCode !== descriptorCode.toUpperCase()) {
-            errors.push(`code should be in uppercase at route.tag[${index}], List item[${itemIndex}].`)
+            errors.push(`Code should be in uppercase at route.tag[${index}], List item[${itemIndex}].`)
           }
 
-          switch (descriptorCode.toUpperCase()) {
-            case 'ENCODED_POLYLINE':
-              if (typeof item.value !== 'string') {
-                errors.push(
-                  `route.tag[${index}], List item[${itemIndex}] has an invalid value for ENCODED_POLYLINE. It should be a string.`,
-                )
-              }
-
-              break
-
-            case 'WAYPOINTS':
-              if (typeof item.value !== 'string') {
-                errors.push(
-                  `route.tag[${index}], List item[${itemIndex}] has an invalid value for WAYPOINTS. It should be a string.`,
-                )
-              }
-
-              break
-
-            default:
-              errors.push(`route.tag[${index}], List item[${itemIndex}] has an unexpected descriptor code`)
+          // Validate known descriptor codes
+          if (descriptorCode?.toUpperCase() === 'ROUTE_ID') {
+            hasRouteId = true // Mark ROUTE_ID as found
+            if (typeof item.value !== 'string') {
+              errors.push(
+                `route.tag[${index}], List item[${itemIndex}] has an invalid value for ROUTE_ID. It should be a string.`,
+              )
+            }
+          }
+          if (descriptorCode?.toUpperCase() === 'ROUTE_DIRECTION') {
+            hasRouteDirection = true // Mark ROUTE_DIRECTION as found
+            if (!['UP', 'DOWN'].includes(item.value)) {
+              errors.push(
+                `route.tag[${index}], List item[${itemIndex}] has an invalid value for ROUTE_DIRECTION. It should be UP or DOWN.`,
+              )
+            }
           }
         })
+
+        // Check if both ROUTE_ID and ROUTE_DIRECTION are present
+        if (!hasRouteId) {
+          errors.push(`route.tag[${index}] is missing ROUTE_ID.`)
+        }
+
+        if (!hasRouteDirection) {
+          errors.push(`route.tag[${index}] is missing ROUTE_DIRECTION.`)
+        }
       } else {
         errors.push(`route.tag[${index}] ROUTE_INFO tag is missing.`)
       }

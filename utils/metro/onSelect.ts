@@ -95,7 +95,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
 
         if (fulfillment.tags && String(flow?.flow).toUpperCase() !== 'METRO') {
           // Validate route info tags
-          const tagsValidation = validateRouteInfoTags(fulfillment.tags)
+          const tagsValidation = validateRouteInfoTags(fulfillment?.tags)
           if (!tagsValidation.isValid) {
             Object.assign(errorObj, { tags: tagsValidation.errors })
           }

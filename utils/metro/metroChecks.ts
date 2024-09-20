@@ -183,7 +183,7 @@ export const validateStops = (stops: any, index: number, otp: boolean, _cancel: 
     return errorObj
   }
 
-  stops.map((stop: Stop, index: number) => {
+  stops?.map((stop: Stop, index: number) => {
     //check type & parent_stop_id
     if (!stop?.type) errorObj[`stops[${index}].type`] = `type is missing at stop[${index}]`
     else {

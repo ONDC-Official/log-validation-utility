@@ -255,7 +255,7 @@ export function validateFarePolicyTags(tags: { [key: string]: any }[], i: number
           }
         })
 
-        // Check if both ROUTE_ID and ROUTE_DIRECTION are present
+        // Check if both RESTRICTED_PERSON and RESTRICTED_PROOF are present
         if (!hasRestrictedPerson) {
           errorObj.push(`Fare Policy tag[${i}] is missing RESTRICTED_PERSON.`)
         }

@@ -188,7 +188,7 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
           }
         }
 
-        if (flow === fisFlows.LOAN_FORECLOSURE) {
+        if (flow === 'LOAN_FORECLOSURE') {
           if (data[FisApiSequence.ON_UPDATE_UNSOLICATED]) {
             const onUpdate = checkOnUpdate(
               data[FisApiSequence.ON_UPDATE_UNSOLICATED],

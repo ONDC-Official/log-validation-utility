@@ -1,7 +1,7 @@
 /* eslint-disable no-prototype-builtins */
 import constants, { FisApiSequence, fisFlows } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, isValidUrl } from '../../'
+import { validateSchema, isObjectEmpty } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
 import {
   validateCancellationTerms,
@@ -13,9 +13,10 @@ import {
   validateProvider,
   validateQuote,
 } from './fisChecks'
-import { validateLoanInfoTags, validateProviderTags } from './tags'
+import { validateLoanInfoTags, validateProviderTags, validatePaymentTags } from './tags'
 import _ from 'lodash'
 
+const validStatus = ['PAID', 'NOT-PAID']
 export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: string) => {
   const errorObj: any = {}
   try {
@@ -80,9 +81,8 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
         on_update.items.forEach((item: any, index: number) => {
           if (selectedItemId && !selectedItemId.includes(item.id)) {
             const key = `item[${index}].item_id`
-            errorObj[
-              key
-            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+            errorObj[key] =
+              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
           }
 
           // Validate parent_item_id
@@ -169,83 +169,155 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
       let unPaidInstallments = 0
       let defferedInstallments = 0
       let delayedInstallments = 0
+      let labelObjCount = 0
+      let additionalObjCount = 0
+      const terms = [
+        { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' },
+        {
+          code: 'SETTLEMENT_BASIS',
+          type: 'enum',
+          value: ['INVOICE_RECEIPT', 'Delivery'],
+        },
+        { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
+        { code: 'STATIC_TERMS', type: 'url' },
+        { code: 'COURT_JURISDICTION', type: 'string' },
+        { code: 'DELAY_INTEREST', type: 'amount' },
+        { code: 'SETTLEMENT_AMOUNT', type: 'amount' },
+        { code: 'SETTLEMENT_TYPE', type: 'enum', value: ['upi', 'neft', 'rtgs'] },
+        {
+          code: 'OFFLINE_CONTRACT',
+          type: 'boolean',
+        },
+      ]
 
-      for (let i = 0; i < payments.length; i++) {
-        const payment = payments[i]
+      console.log('labelObjCount', labelObjCount)
+      console.log('additionalObjCount', additionalObjCount)
 
-        if (i == 0 && flow != fisFlows?.PERSONAL && payment?.time?.label) {
-          if (payment?.time?.label != flow) {
+      payments?.map((payment: any, i: number) => {
+        // if (i == 0 && flow != fisFlows?.PERSONAL && payment?.time?.label) {
+        //   if (payment?.time?.label != flow) {
+        //     errorObj['label'] = `label should be present & it's value should be ${
+        //       fisFlows[flow as keyof typeof fisFlows]
+        //     }`
+        //   }
+
+        //   if (action == FisApiSequence.ON_UPDATE_UNSOLICATED) {
+        //     if (payment?.status !== 'PAID') {
+        //       errorObj.invalidPaymentStatus = `payment status should be PAID at index ${i}`
+        //     }
+
+        //     if (payment?.url) {
+        //       errorObj['payment.url'] = `payment.url should not be present at index ${i}`
+        //     }
+        //   } else {
+        //     if (!payment?.url) {
+        //       errorObj['payment.url'] = `payment.url should be present at index ${i}`
+        //     }
+        //   }
+
+        //   return
+        // }
+
+        // check status
+        if (payment?.status && validStatus?.includes(payment?.status)) {
+          errorObj.invalidPaymentStatus = `Invalid payment status (${payment.status}) at index ${i}`
+        }
+
+        if (payment?.time?.label) {
+          labelObjCount++
+
+          if (payment?.time && payment?.time?.range) {
+            const { start, end } = payment.time.range
+            const startTime = new Date(start).getTime()
+            const endTime = new Date(end).getTime()
+  
+            if (isNaN(startTime) || isNaN(endTime) || startTime > endTime) {
+              errorObj.invalidTimeRange = `Invalid time range for payment at index ${i}`
+            }
+  
+            if (i > 0) {
+              const prevEndTime = new Date(payments[i - 1].time?.range?.end).getTime()
+              if (startTime <= prevEndTime) {
+                errorObj.timeRangeOrderError = `Time range order error for payment at index ${i}`
+              }
+            }
+          } else {
+            errorObj.missingTimeRange = `Missing time range for payment at index ${i}`
+          }
+
+          if (payment?.time?.label == 'INSTALLMENT') {
+            if (flow === fisFlows.LOAN_FORECLOSURE && payment?.status) {
+              if (payment?.status == 'NOT-PAID') unPaidInstallments++
+              if (action == FisApiSequence.ON_UPDATE_UNSOLICATED && payment?.status == 'DEFERRED')
+                defferedInstallments++
+            }
+
+            if (flow === fisFlows.MISSED_EMI_PAYMENT && payment?.status) {
+              if (action == FisApiSequence.ON_UPDATE_UNSOLICATED && payment?.status == 'DEFERRED')
+                defferedInstallments++
+              if (action == FisApiSequence.ON_UPDATE && payment?.status == 'DELAYED') delayedInstallments++
+            }
+            // solicated : count of NOT-PAID
+            // UNCOLICATED : count of DEFFERED
+            // count of NOT-PAID == count of DEFFERED
+          } else if (payment?.time?.label == flow) {
+            if (action == FisApiSequence.ON_UPDATE_UNSOLICATED) {
+              if (payment?.status !== 'PAID') {
+                errorObj.invalidPaymentStatus = `payment status should be PAID at index ${i}`
+              }
+
+              if (payment?.url) {
+                errorObj['payment.url'] = `payment.url should not be present at index ${i}`
+              }
+            } else {
+              if (!payment?.url) {
+                errorObj['payment.url'] = `payment.url should be present at index ${i}`
+              }
+            }
+          } else {
+            console.log('fisFlows[flow as keyof typeof fisFlows]',flow as keyof typeof fisFlows, fisFlows,  fisFlows[flow as keyof typeof fisFlows])
             errorObj['label'] = `label should be present & it's value should be ${
               fisFlows[flow as keyof typeof fisFlows]
             }`
           }
-
-          if (action == FisApiSequence.ON_UPDATE_UNSOLICATED) {
-            if (payment?.status !== 'PAID') {
-              errorObj.invalidPaymentStatus = `payment status should be PAID at index ${i}`
-            }
-
-            if (payment?.url) {
-              errorObj['payment.url'] = `payment.url should not be present at index ${i}`
-            }
-          } else {
-            if (!payment?.url) {
-              errorObj['payment.url'] = `payment.url should be present at index ${i}`
-            }
-          }
-
-          continue
-        }
-
-        if (flow === fisFlows.LOAN_FORECLOSURE && payment?.status) {
-          if (payment?.status == 'NOT-PAID') unPaidInstallments++
-          if (action == FisApiSequence.ON_UPDATE_UNSOLICATED && payment?.status == 'DEFERRED') defferedInstallments++
-        }
-
-        if (flow === fisFlows.MISSED_EMI_PAYMENT && payment?.status) {
-          if (action == FisApiSequence.ON_UPDATE_UNSOLICATED && payment?.status == 'DEFERRED') defferedInstallments++
-          if (action == FisApiSequence.ON_UPDATE && payment?.status == 'DELAYED') delayedInstallments++
-        }
-
-        // !personal -> solicated : count of NOT-PAID
-        // !personal -> UNCOLICATED : count of DEFFERED
-        // count of NOT-PAID == count of DEFFERED
-
-        if (payment.url) {
-          if (!isValidUrl(payment.url)) {
-            errorObj['invalidPaymentUrl'] = `Invalid payment url (${payment.url}) at index ${i}`
-          } else {
-            const updateValue = getValue(`updatePayment`)
-            if (payment?.params?.amount !== updateValue)
-              errorObj[
-                'invalidPaymentAmount'
-              ] = `Invalid payment amount (${payment.url}) at index ${i}, should be the same as sent in update call`
-          }
-        }
-
-        if (payment.status !== 'PAID' && payment.status !== 'NOT-PAID') {
-          errorObj.invalidPaymentStatus = `Invalid payment status (${payment.status}) at index ${i}`
-        }
-
-        if (payment?.time && payment?.time?.range) {
-          const { start, end } = payment.time.range
-          const startTime = new Date(start).getTime()
-          const endTime = new Date(end).getTime()
-
-          if (isNaN(startTime) || isNaN(endTime) || startTime > endTime) {
-            errorObj.invalidTimeRange = `Invalid time range for payment at index ${i}`
-          }
-
-          if (i > 0) {
-            const prevEndTime = new Date(payments[i - 1].time?.range?.end).getTime()
-            if (startTime <= prevEndTime) {
-              errorObj.timeRangeOrderError = `Time range order error for payment at index ${i}`
-            }
-          }
+          return
         } else {
-          errorObj.missingTimeRange = `Missing time range for payment at index ${i}`
+          additionalObjCount++
+          // check collected_by
+          if (!payment?.collected_by) {
+            errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${action}`
+          } else {
+            const collectedBy = getValue(`collected_by`)
+            if (collectedBy && collectedBy != payment?.collected_by)
+              errorObj[`payemnts[${i}]_collected_by`] =
+                `payments.collected_by value sent in ${action} should be same as sent in past call: ${collectedBy}`
+          }
+
+          // check type
+          const validTypes = ['ON-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
+          if (!payment?.type || !validTypes.includes(payment.type)) {
+            errorObj[`payments[${i}]_type`] =
+              `payments.type must be present in ${action} & its value must be one of: ${validTypes.join(', ')}`
+          }
+
+          // Validate payment tags
+          const tagsValidation = validatePaymentTags(payment?.tags, terms)
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { tags: tagsValidation.errors })
+          }
         }
-      }
+
+        // if (payment.url) {
+        //   if (!isValidUrl(payment.url)) {
+        //     errorObj['invalidPaymentUrl'] = `Invalid payment url (${payment.url}) at index ${i}`
+        //   } else {
+        //     const updateValue = getValue(`updatePayment`)
+        //     if (payment?.params?.amount !== updateValue)
+        //       errorObj['invalidPaymentAmount'] =
+        //         `Invalid payment amount (${payment.url}) at index ${i}, should be the same as sent in update call`
+        //   }
+        // }
+      })
 
       if (flow == fisFlows.LOAN_FORECLOSURE) {
         if (action == FisApiSequence.ON_UPDATE) {
@@ -264,41 +336,6 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
           const delayedCount: any = getValue('delayedInstallments')
           if (delayedCount && delayedCount != defferedInstallments)
             errorObj.deffered = `No. of DEFERRED status object should be the same as no. of DELAYED status object from previous call`
-        }
-      }
-
-      if (action != FisApiSequence.ON_UPDATE_UNSOLICATED) {
-        const buyerFinderFeesTag = payments[0].tags?.find((tag: any) => tag.descriptor.code === 'BUYER_FINDER_FEES')
-        const settlementTermsTag = payments[0].tags?.find((tag: any) => tag.descriptor.code === 'SETTLEMENT_TERMS')
-
-        if (!buyerFinderFeesTag) {
-          errorObj.buyerFinderFees = `BUYER_FINDER_FEES tag is missing in payments`
-        }
-
-        if (!settlementTermsTag) {
-          errorObj.settlementTerms = `SETTLEMENT_TERMS tag is missing in payments`
-        }
-
-        if (!payments[0].collected_by) {
-          errorObj.payments = `collected_by  is missing in payments`
-        } else {
-          const allowedCollectedByValues = ['BPP', 'BAP']
-          const allowedStatusValues = ['NOT-PAID', 'PAID']
-
-          const collectedBy = getValue(`collected_by`)
-          if (collectedBy && collectedBy !== payments[0].collected_by) {
-            errorObj.collectedBy = `Collected_By didn't match with what was sent in previous call.`
-          } else {
-            if (!allowedCollectedByValues.includes(payments[0].collected_by)) {
-              errorObj.collectedBy = `Invalid value for collected_by. It should be either BPP or BAP.`
-            }
-
-            setValue(`collected_by`, payments[0].collected_by)
-          }
-
-          if (!allowedStatusValues.includes(payments[0].status)) {
-            errorObj.paymentStatus = `Invalid value for status. It should be either of NOT-PAID or PAID.`
-          }
         }
       }
     } catch (error: any) {

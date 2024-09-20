@@ -49,6 +49,7 @@ export const validatePaymentTags = (tags: Tag[], terms: any): ValidationResult =
             errors.push(`BUYER_FINDER_FEES tag.list is missing or empty`)
           } else {
             const expectedDescriptorCodes = ['BUYER_FINDER_FEES_PERCENTAGE', 'BUYER_FINDER_FEES_TYPE']
+            const finderFeeValues = ['percent-annualized', 'percent']
             const actualDescriptorCodes = tag.list.map((item: any) => item.descriptor.code)
             const invalidDescriptorCodes = actualDescriptorCodes.filter(
               (code) => !expectedDescriptorCodes.includes(code),
@@ -75,8 +76,8 @@ export const validatePaymentTags = (tags: Tag[], terms: any): ValidationResult =
               (item) => item.descriptor.code === 'BUYER_FINDER_FEES_PERCENTAGE',
             )
 
-            if (buyerFinderFeesType && buyerFinderFeesType.value !== 'percent-annualized') {
-              errors.push(`BUYER_FINDER_FEES_[${index}], BUYER_FINDER_FEES_TYPE must be 'percent-annualized'`)
+            if (buyerFinderFeesType && finderFeeValues.includes(buyerFinderFeesType.value.toLowerCase())) {
+              errors.push(`BUYER_FINDER_FEES_[${index}], BUYER_FINDER_FEES_TYPE must be one of ${finderFeeValues}`)
             }
 
             if (buyerFinderFeesPercentage && !/^[+-]?\d+(\.\d+)?$/.test(buyerFinderFeesPercentage.value)) {

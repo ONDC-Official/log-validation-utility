@@ -4,9 +4,7 @@ import { validateSchema, isObjectEmpty, checkFISContext } from '../../../utils'
 // import { validateContext, validateXInputSubmission } from './fis14Checks'
 import { validateContext } from './fis14checks'
 import _ from 'lodash'
-import {  setValue } from '../../../shared/dao'
-
-
+import { setValue } from '../../../shared/dao'
 
 export const checkSearch = (data: any, msgIdSet: any, flow: string, action: string) => {
   const errorObj: any = {}
@@ -25,8 +23,7 @@ export const checkSearch = (data: any, msgIdSet: any, flow: string, action: stri
       errorObj['missingFields'] = '/context, /message, /intent or /message/intent is missing or empty'
       return Object.keys(errorObj).length > 0 && errorObj
     }
-    console.log(flow);
-    
+    console.log(flow)
 
     const { context, message } = data
     msgIdSet.add(context.message_id)
@@ -59,54 +56,63 @@ export const checkSearch = (data: any, msgIdSet: any, flow: string, action: stri
       logger.info(`Validating category in /${action}`)
       const code = message.intent?.category?.descriptor?.code
       if (code) {
-        if (code != "MUTUAL_FUNDS") {
-          errorObj['category'] = `code value should be MUTUAL FUNDS, in a standard enum format as at category.descriptor`
+        if (code != 'MUTUAL_FUNDS') {
+          errorObj['category'] =
+            `code value should be MUTUAL FUNDS, in a standard enum format as at category.descriptor`
         }
-      } else
-        errorObj['category'] = `code: ${
-          "code must be present at catagory"
-        } must be present at category.descriptor`
+      } else errorObj['category'] = `code: ${'code must be present at catagory'} must be present at category.descriptor`
     } catch (error: any) {
       logger.error(`!!Error occcurred while validating category in /${action},  ${error.message}`)
     }
 
     // validate payments
-  
 
     // checking providers
-  // check fullfillment
-  try {
-    logger.info(`Validating fulfillments array in /${constants.SEARCH}`)
-    const fulfillments = search?.fulfillments
-    if (!fulfillments) {
-      errorObj.fulfillments = `fulfillments is missing at /${constants.SEARCH}`
-    } else {
-      fulfillments?.map((fulfillment: any, i: number) => {
-        if (!fulfillment?.type) {
-          errorObj[`fulfillments[${i}].type`] =
-            `fulfillment[${i}].type should be present in fulfillment${i} at /${constants.ON_INIT}`
-        }
-      
-        if (!fulfillment?.stops?.time?.schedule?.frequency) {
-          errorObj[`fulfillments[${i}].stops.time.schedule.frequency`] =
-            `fulfillment[${i}].stops.time.schedule.frequency should be present in fulfillment${i} at /${constants.ON_INIT}`
-        }
-        if (!fulfillment?.customer?.person?.id) {
-          errorObj[`fulfillments[${i}].customer.person.id`] =
-            `fulfillment[${i}].customer.person.id should be present in fulfillment${i} at /${constants.ON_INIT}`
-        }
-        if (!fulfillment?.agent) {
-          errorObj[`fulfillments[${i}].agent`] =
-            `fulfillment[${i}].agent should be present in fulfillment${i} at /${constants.ON_INIT}`
-        }
-      })
-    }
-  } catch (error: any) {
-    logger.error(`!!Error while checking fulfillments array in /${constants.ON_INIT}, ${error.stack}`)
-  }
+    // check fullfillment
+    try {
+      logger.info(`Checking fulfillment object in /${constants.SEARCH}`)
+      const fulfillment = search?.fulfillment
+      const errorObj: any = {}
 
-  }
-  catch (error: any) {
+      if (!fulfillment) {
+        errorObj.fulfillment = `fulfillment is missing in /${constants.SEARCH}`
+      } else {
+        if (!fulfillment?.agent) {
+          errorObj.agent = `agent is missing in /${constants.SEARCH}`
+        } else {
+          const organization = fulfillment.agent.organization
+
+          if (!organization) {
+            errorObj.organization = `organization is missing in /${constants.SEARCH}`
+          } else {
+            const creds = organization.creds
+
+            if (!creds || !Array.isArray(creds) || creds.length === 0) {
+              errorObj.creds = `creds array is missing or is empty in /${constants.SEARCH}`
+            } else {
+              creds.map((cred: any, i: number) => {
+                if (!cred?.id) {
+                  errorObj[`creds[${i}].id`] = `creds[${i}].id is missing in /${constants.SEARCH}`
+                }
+                if (!cred?.type) {
+                  errorObj[`creds[${i}].type`] = `creds[${i}].type is missing in /${constants.SEARCH}`
+                }
+              })
+            }
+          }
+        }
+      }
+
+      if (Object.keys(errorObj).length > 0) {
+        logger.warn(`Validation errors found in /${constants.SEARCH}:`, errorObj)
+      } else {
+        logger.info(`All checks passed in /${constants.SEARCH}`)
+      }
+    } catch (error: any) {
+      logger.error(`!!Errors while checking fulfillment in /${constants.SEARCH}, ${error.stack}`)
+    }
+    return errorObj
+  } catch (error: any) {
     logger.error(`!!Error while checking confirm details in /${constants.ON_CONFIRM}`, error.stack)
     return { error: error.message }
   }

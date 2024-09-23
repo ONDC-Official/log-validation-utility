@@ -32,6 +32,7 @@ export function validateLogsForFIS14(data: any, flow: string, version: string) {
 
   try {
     if (data[FIS14ApiSequence.SEARCH]) {
+      console.log('validing search')
       const searchResp = checkSearch(data[FIS14ApiSequence.SEARCH], msgIdSet, flow, FIS14ApiSequence.SEARCH)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [FIS14ApiSequence.SEARCH]: searchResp }

@@ -9,6 +9,9 @@ import { checkConfirm } from '../../utils/FIS/FIS14/confirm'
 import { checkOnConfirm } from '../../utils/FIS/FIS14/onConfirm'
 import { checkOnStatus } from '../../utils/FIS/FIS14/onStatus'
 import { checkOnUpdate } from '../../utils/FIS/FIS14/onUpdate'
+import { checkonSearch } from '../../utils/FIS/FIS14/on_Search'
+import { checkSelect } from '../../utils/FIS/FIS14/select'
+import { checkOnSelect } from '../../utils/FIS/FIS14/on_Select'
 
 export function validateLogsForFIS14(data: any, flow: string, version: string) {
   const msgIdSet = new Set()
@@ -32,6 +35,24 @@ export function validateLogsForFIS14(data: any, flow: string, version: string) {
       const searchResp = checkSearch(data[FIS14ApiSequence.SEARCH], msgIdSet, flow, FIS14ApiSequence.SEARCH)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [FIS14ApiSequence.SEARCH]: searchResp }
+      }
+    }
+    if (data[FIS14ApiSequence.ON_SEARCH]) {
+      const onSearchResp = checkonSearch(data[FIS14ApiSequence.ON_SEARCH], msgIdSet, flow)
+      if (!_.isEmpty(onSearchResp)) {
+        logReport = { ...logReport, [FIS14ApiSequence.ON_SEARCH]: onSearchResp }
+      }
+    }
+    if (data[FIS14ApiSequence.SELECT]) {
+      const selectResp = checkSelect(data[FIS14ApiSequence.SELECT], msgIdSet, flow)
+      if (!_.isEmpty(selectResp)) {
+        logReport = { ...logReport, [FIS14ApiSequence.SELECT]: selectResp }
+      }
+    }
+    if (data[FIS14ApiSequence.ON_SELECT]) {
+      const onSelectResp = checkOnSelect(data[FIS14ApiSequence.ON_SELECT], msgIdSet, flow)
+      if (!_.isEmpty(onSelectResp)) {
+        logReport = { ...logReport, [FIS14ApiSequence.ON_SELECT]: onSelectResp }
       }
     }
     if (data[FIS14ApiSequence.INIT]) {

@@ -6,7 +6,7 @@ import { validateSchema } from '../../'
 import { validateContext, isValidPhoneNumber } from './fis14checks'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkonSelect = (data: any, msgIdSet: any, sequence: string) => {
+export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
   const errorObj: any = {}
   console.log('sequence', sequence)
   try {
@@ -59,7 +59,8 @@ export const checkonSelect = (data: any, msgIdSet: any, sequence: string) => {
             errorObj[`items[${i}].quantity`] = `items[${i}].quantity is missing in /${constants.ON_SELECT}`
           }
           if (!item?.price) {
-            errorObj[`items[${i}].fulfillment_ids`] = `items[${i}].fulfillment_ids is missing in /${constants.ON_SELECT}`
+            errorObj[`items[${i}].fulfillment_ids`] =
+              `items[${i}].fulfillment_ids is missing in /${constants.ON_SELECT}`
           }
         })
       }
@@ -113,7 +114,8 @@ export const checkonSelect = (data: any, msgIdSet: any, sequence: string) => {
             errorObj[`payments[${i}].type`] = `payments[${i}].type is missing in /${constants.ON_SELECT}`
           }
           if (!payment.collected_by) {
-            errorObj[`payments[${i}].collected_by`] = `payments[${i}].collected_by is missing in /${constants.ON_SELECT}`
+            errorObj[`payments[${i}].collected_by`] =
+              `payments[${i}].collected_by is missing in /${constants.ON_SELECT}`
           }
           if (!payment.params.source_bank_code) {
             errorObj[`payments[${i}].params.source_bank_code`] =

@@ -18,7 +18,7 @@ export const checkOnStatus = (data: any, msgIdSet: any, sequence: string) => {
     }
 
     const schemaValidation = validateSchema('FIS', constants.ON_STATUS, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.INIT, constants.ON_STATUS)
+    const contextRes: any = validateContext(context, msgIdSet, constants.ON_STATUS, constants.ON_STATUS)
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
@@ -40,36 +40,36 @@ export const checkOnStatus = (data: any, msgIdSet: any, sequence: string) => {
 
     // check fullfillment
     try {
-      logger.info(`Validating fulfillments array in /${constants.INIT}`)
+      logger.info(`Validating fulfillments array in /${constants.ON_STATUS}`)
       const fulfillments = ON_STATUS?.fulfillments
       if (!fulfillments) {
-        errorObj.fulfillments = `fulfillments is missing at /${constants.INIT}`
+        errorObj.fulfillments = `fulfillments is missing at /${constants.ON_STATUS}`
       } else {
         fulfillments?.map((fulfillment: any, i: number) => {
           if (!fulfillment?.type) {
             errorObj[`fulfillments[${i}].type`] =
-              `fulfillment[${i}].type should be present in fulfillment${i} at /${constants.INIT}`
+              `fulfillment[${i}].type should be present in fulfillment${i} at /${constants.ON_STATUS}`
           }
           if (!fulfillment?.contact?.phone || !isValidPhoneNumber(fulfillment?.contact?.phone)) {
             errorObj[`fulfillments[${i}].contact.phone`] =
-              `contact.phone should be present with valid value in fulfillment${i} at /${constants.INIT}`
+              `contact.phone should be present with valid value in fulfillment${i} at /${constants.ON_STATUS}`
           }
           if (!fulfillment?.stops?.time?.schedule?.frequency) {
             errorObj[`fulfillments[${i}].stops.time.schedule.frequency`] =
-              `fulfillment[${i}].stops.time.schedule.frequency should be present in fulfillment${i} at /${constants.INIT}`
+              `fulfillment[${i}].stops.time.schedule.frequency should be present in fulfillment${i} at /${constants.ON_STATUS}`
           }
           if (!fulfillment?.customer?.person?.id) {
             errorObj[`fulfillments[${i}].customer.person.id`] =
-              `fulfillment[${i}].customer.person.id should be present in fulfillment${i} at /${constants.INIT}`
+              `fulfillment[${i}].customer.person.id should be present in fulfillment${i} at /${constants.ON_STATUS}`
           }
           if (!fulfillment?.agent) {
             errorObj[`fulfillments[${i}].agent`] =
-              `fulfillment[${i}].agent should be present in fulfillment${i} at /${constants.INIT}`
+              `fulfillment[${i}].agent should be present in fulfillment${i} at /${constants.ON_STATUS}`
           }
         })
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking fulfillments array in /${constants.INIT}, ${error.stack}`)
+      logger.error(`!!Error while checking fulfillments array in /${constants.ON_STATUS}, ${error.stack}`)
     }
 
     // check quote
@@ -101,34 +101,35 @@ export const checkOnStatus = (data: any, msgIdSet: any, sequence: string) => {
 
     // check payments
     try {
-      logger.info(`Checking payments in /${constants.INIT}`)
+      logger.info(`Checking payments in /${constants.ON_STATUS}`)
       const payments = ON_STATUS?.payments
       if (isEmpty(payments)) {
         errorObj.payments = `payments array is missing or is empty`
       } else {
         payments?.map((payment: any, i: number) => {
           if (!payment?.type) {
-            errorObj[`payments[${i}].type`] = `payments[${i}].type is missing in /${constants.INIT}`
+            errorObj[`payments[${i}].type`] = `payments[${i}].type is missing in /${constants.ON_STATUS}`
           }
           if (!payment.collected_by) {
-            errorObj[`payments[${i}].collected_by`] = `payments[${i}].collected_by is missing in /${constants.INIT}`
+            errorObj[`payments[${i}].collected_by`] =
+              `payments[${i}].collected_by is missing in /${constants.ON_STATUS}`
           }
           if (!payment.params.source_bank_code) {
             errorObj[`payments[${i}].params.source_bank_code`] =
-              `payments[${i}].params.source_bank_code is missing in /${constants.INIT}`
+              `payments[${i}].params.source_bank_code is missing in /${constants.ON_STATUS}`
           }
           if (!payment.params.source_bank_account_number) {
             errorObj[`payments[${i}].params.source_bank_account_number`] =
-              `payments[${i}].params.source_bank_account_number is missing in /${constants.INIT}`
+              `payments[${i}].params.source_bank_account_number is missing in /${constants.ON_STATUS}`
           }
           if (!!payment.params.source_bank_account_name) {
             errorObj[`payments[${i}].params.source_bank_account_name`] =
-              `payments[${i}].params.source_bank_account_name is missing in /${constants.INIT}`
+              `payments[${i}].params.source_bank_account_name is missing in /${constants.ON_STATUS}`
           }
         })
       }
     } catch (error: any) {
-      logger.error(`!!Errors while checking payments in /${constants.INIT}, ${error.stack}`)
+      logger.error(`!!Errors while checking payments in /${constants.ON_STATUS}, ${error.stack}`)
     }
     // check items
     try {

@@ -150,11 +150,16 @@ export const checkOnSearch = (
             storedFulfillments.add(fulfillment.id)
           }
 
-          if (fulfillment.tags && String(flow?.flow).toUpperCase() !== 'METRO') {
-            // Validate route info tags
-            const tagsValidation = validateRouteInfoTags(fulfillment?.tags)
-            if (!tagsValidation.isValid) {
-              Object.assign(errorObj, { tags: tagsValidation.errors })
+          if (String(flow?.flow).toUpperCase() !== 'METRO') {
+            if (!fulfillment?.tags)
+              errorObj[`provider_${i}_fulfillment_${k}tags`] =
+                `Fullfiment Tags should be present in provider in case of Intracity.`
+            else {
+              // Validate route info tags
+              const tagsValidation = validateRouteInfoTags(fulfillment?.tags)
+              if (!tagsValidation.isValid) {
+                Object.assign(errorObj, { tags: tagsValidation.errors })
+              }
             }
           }
 

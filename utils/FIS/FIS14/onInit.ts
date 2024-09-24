@@ -1,7 +1,7 @@
 import { isObjectEmpty, validateSchema } from '../..'
 import constants from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { checkItems, isValidPhoneNumber, validateContext, validateProvider } from './fis14checks'
+import { checkItems, validateContext, validateProvider } from './fis14checks'
 import _, { isEmpty } from 'lodash'
 
 export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
@@ -50,14 +50,17 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
             errorObj[`fulfillments[${i}].type`] =
               `fulfillment[${i}].type should be present in fulfillment${i} at /${constants.ON_INIT}`
           }
-          if (!fulfillment?.contact?.phone || !isValidPhoneNumber(fulfillment?.contact?.phone)) {
-            errorObj[`fulfillments[${i}].contact.phone`] =
-              `contact.phone should be present with valid value in fulfillment${i} at /${constants.ON_INIT}`
+
+          if (!fulfillment?.stops) {
+            errorObj[`fulfillments[${i}].stops`] =
+              `fulfillment[${i}].stops should be present in fulfillment${i} at /${constants.ON_SELECT}`
           }
-          if (!fulfillment?.stops?.time?.schedule?.frequency) {
-            errorObj[`fulfillments[${i}].stops.time.schedule.frequency`] =
-              `fulfillment[${i}].stops.time.schedule.frequency should be present in fulfillment${i} at /${constants.ON_INIT}`
-          }
+          fulfillment?.stops.map((stop: any) => {
+            if (!stop?.time?.schedule?.frequency) {
+              errorObj[`fulfillments[${i}].stops.time.schedule.frequency`] =
+                `fulfillment[${i}].stops.time.schedule.frequency should be present in fulfillment${i} at /${constants.SELECT}`
+            }
+          })
           if (!fulfillment?.customer?.person?.id) {
             errorObj[`fulfillments[${i}].customer.person.id`] =
               `fulfillment[${i}].customer.person.id should be present in fulfillment${i} at /${constants.ON_INIT}`
@@ -88,12 +91,14 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
         if (!quote?.breakup) {
           errorObj['quotes.breakup'] = 'quotes.breakup is missing in message.order'
         }
-        if (!quote?.breakup?.price) {
-          errorObj['quotes.breakup.price'] = 'quotes.breakup.price is missing in message.order'
-        }
-        if (!quote?.breakup?.title) {
-          errorObj['quotes.breakup.title'] = 'quotes.breakup.title is missing in message.order'
-        }
+        quote.breakup?.map((breakup: any, i: number) => {
+          if (!breakup?.price) {
+            errorObj[`quotes.breakup[${i}].price`] = `quotes.breakup[${i}].price is missing in message.order`
+          }
+          if (!breakup?.title) {
+            errorObj[`quotes.breakup[${i}].title`] = `quotes.breakup[${i}].title is missing in message.order`
+          }
+        })
       }
     } catch (error: any) {
       logger.error(`!!Error while checking quotes in /${constants.ON_INIT}`, error.stack)
@@ -121,7 +126,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
             errorObj[`payments[${i}].params.source_bank_account_number`] =
               `payments[${i}].params.source_bank_account_number is missing in /${constants.ON_INIT}`
           }
-          if (!!payment.params.source_bank_account_name) {
+          if (!payment.params.source_bank_account_name) {
             errorObj[`payments[${i}].params.source_bank_account_name`] =
               `payments[${i}].params.source_bank_account_name is missing in /${constants.ON_INIT}`
           }

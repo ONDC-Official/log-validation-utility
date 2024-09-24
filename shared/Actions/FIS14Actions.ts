@@ -9,9 +9,9 @@ import { checkConfirm } from '../../utils/FIS/FIS14/confirm'
 import { checkOnConfirm } from '../../utils/FIS/FIS14/onConfirm'
 import { checkOnStatus } from '../../utils/FIS/FIS14/onStatus'
 import { checkOnUpdate } from '../../utils/FIS/FIS14/onUpdate'
-import { checkonSearch } from '../../utils/FIS/FIS14/on_Search'
+import { checkonSearch } from '../../utils/FIS/FIS14/onSearch'
 import { checkSelect } from '../../utils/FIS/FIS14/select'
-import { checkOnSelect } from '../../utils/FIS/FIS14/on_Select'
+import { checkOnSelect } from '../../utils/FIS/FIS14/onSelect'
 
 export function validateLogsForFIS14(data: any, flow: string, version: string) {
   const msgIdSet = new Set()

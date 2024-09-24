@@ -241,9 +241,6 @@ export const checkItems = (order: any) => {
         if (!item?.quantity) {
           errorObj[`items[${i}].quantity`] = `items[${i}].quantity is missing in /${constants.INIT}`
         }
-        if (!item?.price) {
-          errorObj[`items[${i}].fulfillment_ids`] = `items[${i}].fulfillment_ids is missing in /${constants.INIT}`
-        }
       })
     }
     return errorObj

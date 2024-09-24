@@ -3,7 +3,7 @@ import _, { isEmpty } from 'lodash'
 import constants from '../../../constants'
 import { validateSchema } from '../../'
 
-import { validateContext, isValidPhoneNumber } from './fis14checks'
+import { validateContext } from './fis14checks'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
@@ -58,9 +58,9 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
           if (!item?.quantity) {
             errorObj[`items[${i}].quantity`] = `items[${i}].quantity is missing in /${constants.INIT}`
           }
-          if (!item?.price) {
-            errorObj[`items[${i}].fulfillment_ids`] = `items[${i}].fulfillment_ids is missing in /${constants.INIT}`
-          }
+          // if (!item?.price) {
+          //   errorObj[`items[${i}].fulfillment_ids`] = `items[${i}].fulfillment_ids is missing in /${constants.INIT}`
+          // }
         })
       }
     } catch (error: any) {
@@ -79,14 +79,17 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
             errorObj[`fulfillments[${i}].type`] =
               `fulfillment[${i}].type should be present in fulfillment${i} at /${constants.INIT}`
           }
-          if (!fulfillment?.contact?.phone || !isValidPhoneNumber(fulfillment?.contact?.phone)) {
-            errorObj[`fulfillments[${i}].contact.phone`] =
-              `contact.phone should be present with valid value in fulfillment${i} at /${constants.INIT}`
+
+          if (!fulfillment?.stops) {
+            errorObj[`fulfillments[${i}].stops`] =
+              `fulfillment[${i}].stops should be present in fulfillment${i} at /${constants.ON_SELECT}`
           }
-          if (!fulfillment?.stops?.time?.schedule?.frequency) {
-            errorObj[`fulfillments[${i}].stops.time.schedule.frequency`] =
-              `fulfillment[${i}].stops.time.schedule.frequency should be present in fulfillment${i} at /${constants.INIT}`
-          }
+          fulfillment?.stops.map((stop: any) => {
+            if (!stop?.time?.schedule?.frequency) {
+              errorObj[`fulfillments[${i}].stops.time.schedule.frequency`] =
+                `fulfillment[${i}].stops.time.schedule.frequency should be present in fulfillment${i} at /${constants.SELECT}`
+            }
+          })
           if (!fulfillment?.customer?.person?.id) {
             errorObj[`fulfillments[${i}].customer.person.id`] =
               `fulfillment[${i}].customer.person.id should be present in fulfillment${i} at /${constants.INIT}`
@@ -123,7 +126,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
             errorObj[`payments[${i}].params.source_bank_account_number`] =
               `payments[${i}].params.source_bank_account_number is missing in /${constants.INIT}`
           }
-          if (!!payment.params.source_bank_account_name) {
+          if (!payment.params.source_bank_account_name) {
             errorObj[`payments[${i}].params.source_bank_account_name`] =
               `payments[${i}].params.source_bank_account_name is missing in /${constants.INIT}`
           }

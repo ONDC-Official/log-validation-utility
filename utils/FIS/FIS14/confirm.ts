@@ -3,7 +3,7 @@ import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty } from '../../'
 
 import constants from '../../../constants'
-import { checkItems, isValidPhoneNumber, validateContext, validateProvider } from './fis14checks'
+import { checkItems, validateContext, validateProvider } from './fis14checks'
 import { isEmpty } from 'lodash'
 
 export const checkConfirm = (data: any, msgIdSet: any, sequence: string) => {
@@ -11,15 +11,15 @@ export const checkConfirm = (data: any, msgIdSet: any, sequence: string) => {
     const errorObj: any = {}
     console.log('sequence', sequence)
     if (!data || isObjectEmpty(data)) {
-      return { [constants.ON_CONFIRM]: 'JSON cannot be empty' }
+      return { [constants.CONFIRM]: 'JSON cannot be empty' }
     }
     const { message, context }: any = data
     if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema('FIS', constants.ON_CONFIRM, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.CONFIRM, constants.ON_CONFIRM)
+    const schemaValidation = validateSchema('FIS', constants.CONFIRM, data)
+    const contextRes: any = validateContext(context, msgIdSet, constants.CONFIRM, constants.CONFIRM)
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
@@ -59,14 +59,16 @@ export const checkConfirm = (data: any, msgIdSet: any, sequence: string) => {
             errorObj[`fulfillments[${i}].type`] =
               `fulfillment[${i}].type should be present in fulfillment${i} at /${constants.CONFIRM}`
           }
-          if (!fulfillment?.contact?.phone || !isValidPhoneNumber(fulfillment?.contact?.phone)) {
-            errorObj[`fulfillments[${i}].contact.phone`] =
-              `contact.phone should be present with valid value in fulfillment${i} at /${constants.CONFIRM}`
+          if (!fulfillment?.stops) {
+            errorObj[`fulfillments[${i}].stops`] =
+              `fulfillment[${i}].stops should be present in fulfillment${i} at /${constants.ON_SELECT}`
           }
-          if (!fulfillment?.stops?.time?.schedule?.frequency) {
-            errorObj[`fulfillments[${i}].stops.time.schedule.frequency`] =
-              `fulfillment[${i}].stops.time.schedule.frequency should be present in fulfillment${i} at /${constants.CONFIRM}`
-          }
+          fulfillment?.stops.map((stop: any) => {
+            if (!stop?.time?.schedule?.frequency) {
+              errorObj[`fulfillments[${i}].stops.time.schedule.frequency`] =
+                `fulfillment[${i}].stops.time.schedule.frequency should be present in fulfillment${i} at /${constants.SELECT}`
+            }
+          })
           if (!fulfillment?.customer?.person?.id) {
             errorObj[`fulfillments[${i}].customer.person.id`] =
               `fulfillment[${i}].customer.person.id should be present in fulfillment${i} at /${constants.CONFIRM}`
@@ -103,7 +105,7 @@ export const checkConfirm = (data: any, msgIdSet: any, sequence: string) => {
             errorObj[`payments[${i}].params.source_bank_account_number`] =
               `payments[${i}].params.source_bank_account_number is missing in /${constants.CONFIRM}`
           }
-          if (!!payment.params.source_bank_account_name) {
+          if (!payment.params.source_bank_account_name) {
             errorObj[`payments[${i}].params.source_bank_account_name`] =
               `payments[${i}].params.source_bank_account_name is missing in /${constants.CONFIRM}`
           }
@@ -115,7 +117,7 @@ export const checkConfirm = (data: any, msgIdSet: any, sequence: string) => {
 
     return errorObj
   } catch (error: any) {
-    logger.error(`!!Error while checking confirm details in /${constants.ON_CONFIRM}`, error.stack)
+    logger.error(`!!Error while checking confirm details in /${constants.CONFIRM}`, error.stack)
     return { error: error.message }
   }
 }

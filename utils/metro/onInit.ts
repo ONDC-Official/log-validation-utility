@@ -12,13 +12,13 @@ import {
   validateItemDescriptor,
   validateDescriptor,
 } from './metroChecks'
-import { validatePaymentTags } from './tags'
+import { validatePaymentTags, validateRouteInfoTags, validateTags } from './tags'
 import { checkItemTime, checkProviderTime } from './validate/helper'
 import { isNil } from 'lodash'
 
 const VALID_DESCRIPTOR_CODES = ['SJT', 'SFSJT', 'RJT', 'PASS']
 const VALID_VEHICLE_CATEGORIES = ['METRO']
-export const checkOnInit = (data: any, msgIdSet: any) => {
+export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }) => {
   try {
     const errorObj: any = {}
     let FULFILLMENT: string[] = []
@@ -45,7 +45,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     const on_init = message.order
     const itemIDS: any = getValue('ItmIDS')
     const itemIdArray: any[] = []
-    const prvdrId = getValue('providerId') || [] as string[]
+    const prvdrId = getValue('providerId') || ([] as string[])
     // const storedFull: any = getValue(`${metroSequence.ON_SEARCH1}_storedFulfillments`)
     const fulfillmentIdsSet = new Set()
 
@@ -64,6 +64,11 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
     //check provider
     try {
+      if (String(flow?.flow)?.toUpperCase() === 'METRO' && on_init?.tags) {
+        const tagsValidation: { [key: string]: any } | null = validateTags(on_init?.tags ?? [], 0)
+        if (!isNil(tagsValidation)) Object.assign(errorObj, tagsValidation)
+      }
+
       logger.info(`Checking provider Id in /${constants.ON_SEARCH} and /${constants.ON_INIT}`)
       if (!on_init.provider)
         //seprate both the checks from a single function
@@ -92,8 +97,10 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
       //check time validation
       // fix checkProviderTime also
-      const checkTimeError = checkProviderTime(on_init?.provider)
-      if (Object.keys(checkTimeError).length > 0) Object.assign(errorObj, checkTimeError)
+      if (String(flow?.flow).toUpperCase() === 'METRO') {
+        const checkTimeError = checkProviderTime(on_init?.provider)
+        if (Object.keys(checkTimeError).length > 0) Object.assign(errorObj, checkTimeError)
+      }
     } catch (error: any) {
       logger.error(
         `!!Error while comparing provider Id in /${constants.ON_SEARCH} and /${constants.ON_INIT}, ${error.stack}`,
@@ -138,6 +145,18 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
           const errorValue = Object.values(getStopsError)[0] || []
           if (Object.keys(getStopsError).length > 0 && Object.keys(errorValue)?.length)
             Object.assign(errorObj, getStopsError)
+
+          if (String(flow?.flow).toUpperCase() !== 'METRO') {
+            if (!fulfillment?.tags)
+              errorObj[`ulfillment_${index}_tags`] = `Tags should be present in Fulfillment in case of Intracity.`
+            else {
+              // Validate route info tags
+              const tagsValidation = validateRouteInfoTags(fulfillment?.tags)
+              if (!tagsValidation.isValid) {
+                Object.assign(errorObj, { tags: tagsValidation.errors })
+              }
+            }
+          }
         })
 
         setValue(`storedFulfillments`, fulfillmentIdsSet)
@@ -177,11 +196,13 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
           if (!isNil(itemTimeError)) Object.assign(errorObj, itemTimeError)
 
           //missing category_ids check
-          if (!item?.category_ids)
-            errorObj[`item${index}category_ids`] = `Category_ids array is missing in /${constants.ON_INIT}`
-          else {
-            if (item?.category_ids && !item?.category_ids.length)
-              errorObj[`item${index}category_ids`] = `Category_ids array is empty in /${constants.ON_INIT}`
+          if (String(flow?.flow)?.toUpperCase() === 'METRO') {
+            if (!item?.category_ids)
+              errorObj[`item${index}category_ids`] = `Category_ids array is missing in /${constants.ON_INIT}`
+            else {
+              if (item?.category_ids && !item?.category_ids.length)
+                errorObj[`item${index}category_ids`] = `Category_ids array is empty in /${constants.ON_INIT}`
+            }
           }
 
           //missing quantity check
@@ -218,9 +239,14 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     //check cancellation_terms
     // revisit & handle external_ref check
     try {
-      logger.info(`Checking cancellation terms in /${constants.ON_INIT}`)
-      const cancellationErrors = validateCancellationTerms(on_init?.cancellation_terms, constants.ON_INIT)
-      Object.assign(errorObj, cancellationErrors)
+      if (!on_init?.cancellation_terms)
+        errorObj.cancellation_terms = `cancellation_terms missing in /${constants.ON_INIT}`
+      else {
+        logger.info(`Checking cancellation terms in /${constants.ON_INIT}`)
+
+        const cancellationErrors = validateCancellationTerms(on_init?.cancellation_terms, constants.ON_INIT)
+        if (!isNil(cancellationErrors)) Object.assign(errorObj, cancellationErrors)
+      }
     } catch (error: any) {
       logger.error(`!!Error while checking cancellation_terms in /${constants.ON_INIT}, ${error.stack}`)
     }

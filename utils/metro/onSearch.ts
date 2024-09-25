@@ -77,8 +77,7 @@ export const checkOnSearch = (
     while (i < len) {
       //validate categories
       const categories = onSearchCatalog['providers'][i]?.categories
-      // if (onSearchCatalog['providers'][i]?.tags) {
-      if (String(flow?.flow)?.toUpperCase() === 'METRO') {
+      if (String(flow?.flow)?.toUpperCase() === 'METRO' && onSearchCatalog['providers'][i]?.tags) {
         const tagsValidation: { [key: string]: any } | null = validateTags(
           onSearchCatalog['providers'][i]?.tags ?? [],
           i,
@@ -153,7 +152,7 @@ export const checkOnSearch = (
           if (String(flow?.flow).toUpperCase() !== 'METRO') {
             if (!fulfillment?.tags)
               errorObj[`provider_${i}_fulfillment_${k}tags`] =
-                `Fullfiment Tags should be present in provider in case of Intracity.`
+                `Tags should be present in Fulfillment in case of Intracity.`
             else {
               // Validate route info tags
               const tagsValidation = validateRouteInfoTags(fulfillment?.tags)

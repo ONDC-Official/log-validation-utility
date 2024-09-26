@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { dropDB } from '../dao'
 import { logger } from '../logger'
-import { FIS14ApiSequence, fis14Flows } from '../../constants'
+import { FIS14ApiSequence, fis14Flows, fis14FlowSequence } from '../../constants'
 import { checkSearch } from '../../utils/FIS/FIS14/search'
 import { checkInit } from '../../utils/FIS/FIS14/init'
 import { checkOnInit } from '../../utils/FIS/FIS14/onInit'
@@ -28,6 +28,11 @@ export function validateLogsForFIS14(data: any, flow: string, version: string) {
 
   if (!(flow in fis14Flows)) {
     logReport = { ...logReport, version: `Invalid flow ${flow}` }
+  }
+
+  if (flow in fis14Flows) {
+    const validateApiSequence = validateApiSequenceForFIS14(data, flow as any)
+    logReport = { ...logReport, validateApiSequence }
   }
 
   try {
@@ -104,4 +109,16 @@ export function validateLogsForFIS14(data: any, flow: string, version: string) {
     logger.error(error.message)
     return error.message
   }
+}
+
+function validateApiSequenceForFIS14(data: any, flow: keyof typeof fis14FlowSequence) {
+  const dataKeys = Object.keys(data)
+  const flowSequeunce: string[] = fis14FlowSequence[flow]
+  const errorObjet: any = {}
+  for (const item of flowSequeunce) {
+    if (!dataKeys.includes(item.toLowerCase())) {
+      errorObjet[item] = `Missing ${item} in the sequence`
+    }
+  }
+  return errorObjet
 }

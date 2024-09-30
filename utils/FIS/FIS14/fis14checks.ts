@@ -1,7 +1,7 @@
 import { logger } from '../../../shared/logger'
 import { checkIdAndUri, checkFISContext } from '../../'
 import _ from 'lodash'
-import constants from '../../../constants'
+import constants, { fis14Flows } from '../../../constants'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any) => {
@@ -247,4 +247,25 @@ export const checkItems = (order: any) => {
   } catch (error: any) {
     logger.error(`!!Error while checking items array in /${constants.INIT}, ${error.stack}`)
   }
+}
+
+export const checkFullfillementType = (type: string, flow: keyof typeof fis14Flows) => {
+  const errorObj: any = {}
+  const sip = [
+    fis14Flows.SIP_INSTALLEMENT_FAILURE,
+    fis14Flows.SIP_INSTALLEMENT_SUCCESS,
+    fis14Flows.SIP_NEW_FOLIO_WITH_KYC,
+  ]
+  const lumpsum = [fis14Flows.LUMPSUM_EXISTING_FOLIO, fis14Flows.LUMPSUM_PAYMENT_RETRY]
+  if (sip.includes(flow)) {
+    if (type !== 'SIP') {
+      errorObj.type = `fulfillment type should be SIP for ${flow}`
+    }
+  }
+  if (lumpsum.includes(flow)) {
+    if (type !== 'LUMPSUM') {
+      errorObj.type = `fulfillment type should be LUMPSUM for ${flow}`
+    }
+  }
+  return errorObj
 }

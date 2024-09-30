@@ -3,7 +3,7 @@ import _, { isEmpty } from 'lodash'
 import constants from '../../../constants'
 import { validateSchema } from '../../'
 
-import { validateContext } from './fis14checks'
+import { checkFullfillementType, validateContext } from './fis14checks'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
@@ -78,6 +78,11 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
           if (!fulfillment?.type) {
             errorObj[`fulfillments[${i}].type`] =
               `fulfillment[${i}].type should be present in fulfillment${i} at /${constants.ON_SELECT}`
+          } else {
+            const obj = checkFullfillementType(fulfillment?.type, sequence as any)
+            if (Object.keys(obj).length > 0) {
+              errorObj.typeError = obj
+            }
           }
           // if (!fulfillment?.contact?.phone || !isValidPhoneNumber(fulfillment?.contact?.phone)) {
           //   errorObj[`fulfillments[${i}].contact.phone`] =

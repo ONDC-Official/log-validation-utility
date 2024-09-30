@@ -3,7 +3,7 @@ import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty } from '../../'
 
 import constants from '../../../constants'
-import { checkItems, validateContext, validateProvider } from './fis14checks'
+import { checkFullfillementType, checkItems, validateContext, validateProvider } from './fis14checks'
 import { isEmpty } from 'lodash'
 
 export const checkConfirm = (data: any, msgIdSet: any, sequence: string) => {
@@ -58,7 +58,13 @@ export const checkConfirm = (data: any, msgIdSet: any, sequence: string) => {
           if (!fulfillment?.type) {
             errorObj[`fulfillments[${i}].type`] =
               `fulfillment[${i}].type should be present in fulfillment${i} at /${constants.CONFIRM}`
+          } else {
+            const obj = checkFullfillementType(fulfillment?.type, sequence as any)
+            if (Object.keys(obj).length > 0) {
+              errorObj.typeError = obj
+            }
           }
+
           if (!fulfillment?.stops) {
             errorObj[`fulfillments[${i}].stops`] =
               `fulfillment[${i}].stops should be present in fulfillment${i} at /${constants.ON_SELECT}`

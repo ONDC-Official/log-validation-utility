@@ -2,7 +2,7 @@ import { logger } from '../../../shared/logger'
 
 import constants from '../../../constants'
 import { isValidPhoneNumber, validateSchema } from '../..'
-import { checkItems, validateContext, validateProvider } from './fis14checks'
+import { checkFullfillementType, checkItems, validateContext, validateProvider } from './fis14checks'
 // import { error } from 'console'
 import { isEmpty } from 'lodash'
 import _ from 'lodash'
@@ -63,6 +63,11 @@ export const checkOnConfirm = (data: any, msgIdSet: any, sequence: string) => {
           if (!fulfillment?.type) {
             errorObj[`fulfillments[${i}].type`] =
               `fulfillment[${i}].type should be present in fulfillment${i} at /${constants.ON_CONFIRM}`
+          } else {
+            const obj = checkFullfillementType(fulfillment?.type, sequence as any)
+            if (Object.keys(obj).length > 0) {
+              errorObj.typeError = obj
+            }
           }
           if (!fulfillment?.contact?.phone || !isValidPhoneNumber(fulfillment?.contact?.phone)) {
             errorObj[`fulfillments[${i}].contact.phone`] =

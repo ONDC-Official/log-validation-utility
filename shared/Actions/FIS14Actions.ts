@@ -66,48 +66,48 @@ export function validateLogsForFIS14(data: any, flow: string, version: string) {
       data[FIS14ApiSequence.ON_SELECT_2] ||
       data[FIS14ApiSequence.ON_SELECT_3]
     ) {
-      const onSelectResp = checkOnSelect(data[FIS14ApiSequence.ON_SELECT], msgIdSet, flow)
+      const onSelectResp = checkOnSelect(data[FIS14ApiSequence.ON_SELECT], msgIdSet, flow as any)
       if (!_.isEmpty(onSelectResp)) {
         logReport = { ...logReport, [FIS14ApiSequence.ON_SELECT]: onSelectResp }
       }
     }
     if (data[FIS14ApiSequence.INIT]) {
-      const initResp = checkInit(data[FIS14ApiSequence.INIT], msgIdSet, FIS14ApiSequence.INIT)
+      const initResp = checkInit(data[FIS14ApiSequence.INIT], msgIdSet, flow)
       if (!_.isEmpty(initResp)) {
         logReport = { ...logReport, [FIS14ApiSequence.INIT]: initResp }
       }
     }
 
     if (data[FIS14ApiSequence.ON_INIT]) {
-      const onInitResp = checkOnInit(data[FIS14ApiSequence.ON_INIT], msgIdSet, FIS14ApiSequence.ON_INIT)
+      const onInitResp = checkOnInit(data[FIS14ApiSequence.ON_INIT], msgIdSet, flow)
       if (!_.isEmpty(onInitResp)) {
         logReport = { ...logReport, [FIS14ApiSequence.ON_INIT]: onInitResp }
       }
     }
 
     if (data[FIS14ApiSequence.CONFIRM]) {
-      const confirmResp = checkConfirm(data[FIS14ApiSequence.CONFIRM], msgIdSet, FIS14ApiSequence.CONFIRM)
+      const confirmResp = checkConfirm(data[FIS14ApiSequence.CONFIRM], msgIdSet, flow)
       if (!_.isEmpty(confirmResp)) {
         logReport = { ...logReport, [FIS14ApiSequence.CONFIRM]: confirmResp }
       }
     }
 
     if (data[FIS14ApiSequence.ON_CONFIRM]) {
-      const onConfirmResp = checkOnConfirm(data[FIS14ApiSequence.ON_CONFIRM], msgIdSet, FIS14ApiSequence.ON_CONFIRM)
+      const onConfirmResp = checkOnConfirm(data[FIS14ApiSequence.ON_CONFIRM], msgIdSet, flow)
       if (!_.isEmpty(onConfirmResp)) {
         logReport = { ...logReport, [FIS14ApiSequence.ON_CONFIRM]: onConfirmResp }
       }
     }
 
     if (data[FIS14ApiSequence.ON_STATUS]) {
-      const onStatusResp = checkOnStatus(data[FIS14ApiSequence.ON_STATUS], msgIdSet, FIS14ApiSequence.ON_STATUS)
+      const onStatusResp = checkOnStatus(data[FIS14ApiSequence.ON_STATUS], msgIdSet, flow)
       if (!_.isEmpty(onStatusResp)) {
         logReport = { ...logReport, [FIS14ApiSequence.ON_STATUS]: onStatusResp }
       }
     }
 
     if (data[FIS14ApiSequence.ON_UPDATE] || data[FIS14ApiSequence.ON_UPDATE_1]) {
-      const onUpdateResp = checkOnUpdate(data[FIS14ApiSequence.ON_UPDATE], msgIdSet, FIS14ApiSequence.ON_UPDATE)
+      const onUpdateResp = checkOnUpdate(data[FIS14ApiSequence.ON_UPDATE], msgIdSet, flow)
       if (!_.isEmpty(onUpdateResp)) {
         logReport = { ...logReport, [FIS14ApiSequence.ON_UPDATE]: onUpdateResp }
       }

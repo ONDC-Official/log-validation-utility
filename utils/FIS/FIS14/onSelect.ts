@@ -1,12 +1,12 @@
 import { logger } from '../../../shared/logger'
 import _, { isEmpty } from 'lodash'
-import constants from '../../../constants'
+import constants, { fis14Flows } from '../../../constants'
 import { validateSchema } from '../..'
 
-import { validateContext } from './fis14checks'
+import { checkFullfillementType, validateContext } from './fis14checks'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
+export const checkOnSelect = (data: any, msgIdSet: any, sequence: keyof typeof fis14Flows) => {
   const errorObj: any = {}
   console.log('sequence', sequence)
   try {
@@ -79,7 +79,13 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
           if (!fulfillment?.type) {
             errorObj[`fulfillments[${i}].type`] =
               `fulfillment[${i}].type should be present in fulfillment${i} at /${constants.ON_SELECT}`
+          } else {
+            const obj = checkFullfillementType(fulfillment?.type, sequence)
+            if (Object.keys(obj).length > 0) {
+              errorObj.typeError = obj
+            }
           }
+
           // if (!fulfillment?.contact?.phone || !isValidPhoneNumber(fulfillment?.contact?.phone)) {
           //   errorObj[`fulfillments[${i}].contact.phone`] =
           //     `contact.phone should be present with valid value in fulfillment${i} at /${constants.ON_SELECT}`

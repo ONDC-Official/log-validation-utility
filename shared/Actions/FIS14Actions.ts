@@ -49,13 +49,23 @@ export function validateLogsForFIS14(data: any, flow: string, version: string) {
         logReport = { ...logReport, [FIS14ApiSequence.ON_SEARCH]: onSearchResp }
       }
     }
-    if (data[FIS14ApiSequence.SELECT]) {
+    if (
+      data[FIS14ApiSequence.SELECT] ||
+      data[FIS14ApiSequence.SELECT_1] ||
+      data[FIS14ApiSequence.SELECT_2] ||
+      data[FIS14ApiSequence.SELECT_3]
+    ) {
       const selectResp = checkSelect(data[FIS14ApiSequence.SELECT], msgIdSet, flow)
       if (!_.isEmpty(selectResp)) {
         logReport = { ...logReport, [FIS14ApiSequence.SELECT]: selectResp }
       }
     }
-    if (data[FIS14ApiSequence.ON_SELECT]) {
+    if (
+      data[FIS14ApiSequence.ON_SELECT] ||
+      data[FIS14ApiSequence.ON_SELECT_1] ||
+      data[FIS14ApiSequence.ON_SELECT_2] ||
+      data[FIS14ApiSequence.ON_SELECT_3]
+    ) {
       const onSelectResp = checkOnSelect(data[FIS14ApiSequence.ON_SELECT], msgIdSet, flow)
       if (!_.isEmpty(onSelectResp)) {
         logReport = { ...logReport, [FIS14ApiSequence.ON_SELECT]: onSelectResp }
@@ -96,7 +106,7 @@ export function validateLogsForFIS14(data: any, flow: string, version: string) {
       }
     }
 
-    if (data[FIS14ApiSequence.ON_UPDATE]) {
+    if (data[FIS14ApiSequence.ON_UPDATE] || data[FIS14ApiSequence.ON_UPDATE_1]) {
       const onUpdateResp = checkOnUpdate(data[FIS14ApiSequence.ON_UPDATE], msgIdSet, FIS14ApiSequence.ON_UPDATE)
       if (!_.isEmpty(onUpdateResp)) {
         logReport = { ...logReport, [FIS14ApiSequence.ON_UPDATE]: onUpdateResp }

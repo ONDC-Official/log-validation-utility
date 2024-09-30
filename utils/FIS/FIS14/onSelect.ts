@@ -58,10 +58,10 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
           if (!item?.quantity) {
             errorObj[`items[${i}].quantity`] = `items[${i}].quantity is missing in /${constants.ON_SELECT}`
           }
-          // if (!item?.price) {
-          //   errorObj[`items[${i}].fulfillment_ids`] =
-          //     `items[${i}].fulfillment_ids is missing in /${constants.ON_SELECT}`
-          // }
+          if (!item?.price) {
+            errorObj[`items[${i}].fulfillment_ids`] =
+              `items[${i}].fulfillment_ids is missing in /${constants.ON_SELECT}`
+          }
         })
       }
     } catch (error: any) {

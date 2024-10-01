@@ -26,7 +26,7 @@ interface Stop {
   parent_stop_id: string
 }
 
-export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any) => {
+export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any, searchType?: boolean) => {
   const errorObj: any = {}
 
   const contextRes: any = checkMetroContext(context, curentCall)
@@ -65,13 +65,17 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
     }
 
     if (prevContext) {
-      if (pastCall !== 'search') {
-        if (!_.isEqual(prevContext.bpp_id, context.bpp_id)) {
+      if (context?.action !== 'search' || (context?.action === 'search' && searchType)) {
+        if (!context?.bpp_id) {
+          errorObj.bppId = 'context/bpp_id is missing'
+        } else if (prevContext.bpp_id && !_.isEqual(prevContext.bpp_id, context.bpp_id)) {
           errorObj.bppIdContextMismatch = `BPP Id mismatch in /${pastCall} and /${curentCall}`
         }
 
-        if (!_.isEqual(prevContext.bpp_uri, context.bpp_uri)) {
-          errorObj.bppUriContextMismatch = `BPP URI mismatch in /${pastCall} and /${curentCall}`
+        if (!context?.bpp_uri) {
+          errorObj.bppUri = 'context/bpp_uri is missing'
+        } else if (prevContext.bpp_uri && !_.isEqual(prevContext.bpp_uri, context.bpp_uri)) {
+          errorObj.bppUriContextMismatch = `BPP URL mismatch in /${pastCall} and /${curentCall}`
         }
       }
 
@@ -121,19 +125,19 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
 
     try {
       logger.info(`Comparing Message Ids of /${pastCall} and /${curentCall}`)
-      if (curentCall.startsWith('on_')) {
+      if (curentCall.startsWith('on_') || curentCall === 'soft_on_cancel' || curentCall === 'confirm_on_cancel') {
         logger.info(`Comparing Message Ids of /${pastCall} and /${curentCall}`)
         if (!_.isEqual(prevContext.message_id, context.message_id)) {
-          errorObj.message_id = `Message Id for /${pastCall} and /${curentCall} api should be same`
+          errorObj.message_id = `Message Id for /${pastCall} and /${curentCall} api should be same.`
         }
       } else {
         logger.info(`Checking if Message Ids are different for /${pastCall} and /${curentCall}`)
         if (
-          pastCall !== 'on_confirm' &&
-          curentCall !== 'cancel' &&
+          pastCall === 'on_confirm' &&
+          curentCall === 'soft_cancel' &&
           _.isEqual(prevContext.message_id, context.message_id)
         ) {
-          errorObj.message_id = `Message Id for /${pastCall} and /${curentCall} api should be different`
+          errorObj.message_id = `Message Id for /${pastCall} and /${curentCall} api should be different.`
         }
       }
     } catch (error: any) {

@@ -17,7 +17,6 @@ import { checkItemTime, checkProviderTime } from './validate/helper'
 import { isNil } from 'lodash'
 
 const VALID_DESCRIPTOR_CODES = ['SJT', 'SFSJT', 'RJT', 'PASS']
-const VALID_VEHICLE_CATEGORIES = ['METRO']
 export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }) => {
   try {
     const errorObj: any = {}
@@ -129,9 +128,9 @@ export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flow
             errorObj[`Fulfillment[${index}].id`] = `fulfillment.id missing in /${constants.ON_INIT}`
           }
 
-          if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
+          if (fulfillment?.vehicle?.category !== (String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO')) {
             errorObj[`${fulfillmentKey}.vehicleCategory`] =
-              `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
+              `Vehicle category should be ${String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO'} in Fulfillment.`
           }
 
           if (fulfillment.type !== 'TRIP') {
@@ -171,7 +170,7 @@ export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flow
       //items null check
       if (!on_init?.items) errorObj.items = `Items missing in /${constants.ON_INIT}`
       else {
-        on_init.items.forEach((item: any, index: number) => {
+        on_init?.items?.forEach((item: any, index: number) => {
           //handle id non-existant check
           if (!item.id) errorObj[`item[${index}].id`] = `Item id missing in /${constants.ON_INIT}`
           else if (!newItemIDSValue.includes(item.id)) {
@@ -239,13 +238,15 @@ export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flow
     //check cancellation_terms
     // revisit & handle external_ref check
     try {
-      if (!on_init?.cancellation_terms)
-        errorObj.cancellation_terms = `cancellation_terms missing in /${constants.ON_INIT}`
-      else {
-        logger.info(`Checking cancellation terms in /${constants.ON_INIT}`)
+      if (String(flow?.flow)?.toUpperCase() === 'METRO') {
+        if (!on_init?.cancellation_terms)
+          errorObj.cancellation_terms = `cancellation_terms missing in /${constants.ON_INIT}`
+        else {
+          logger.info(`Checking cancellation terms in /${constants.ON_INIT}`)
 
-        const cancellationErrors = validateCancellationTerms(on_init?.cancellation_terms, constants.ON_INIT)
-        if (!isNil(cancellationErrors)) Object.assign(errorObj, cancellationErrors)
+          const cancellationErrors = validateCancellationTerms(on_init?.cancellation_terms, constants.ON_INIT)
+          if (!isNil(cancellationErrors)) Object.assign(errorObj, cancellationErrors)
+        }
       }
     } catch (error: any) {
       logger.error(`!!Error while checking cancellation_terms in /${constants.ON_INIT}, ${error.stack}`)

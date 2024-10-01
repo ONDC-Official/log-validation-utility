@@ -25,7 +25,7 @@ export const search = (data: any, msgIdSet: any, secondSearch: boolean, flow: { 
     }
 
     const schemaValidation = validateSchema('TRV', constants.SEARCH, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.ON_SEARCH, constants.SEARCH, false)
+    const contextRes: any = validateContext(context, msgIdSet, constants.ON_SEARCH, constants.SEARCH, false, secondSearch)
     setValue(`${metroSequence.SEARCH1}_message`, message)
     msgIdSet.add(data.context.message_id)
 

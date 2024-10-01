@@ -5,7 +5,7 @@ import { setValue, getValue } from '../../../shared/dao'
 import constants from '../../../constants'
 import { validateSchema, isObjectEmpty } from '../../'
 import { checkUniqueCategoryIds, getCodes, validateContext, validateDescriptor, validateXInput } from './fisChecks'
-import { validatePaymentTags, validateItemsTags } from './tags'
+import { validatePaymentTags, validateItemsTags, validateGeneralInfo } from './tags'
 import { isEmpty } from 'lodash'
 
 export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: string) => {
@@ -152,15 +152,13 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
             ]
 
             if (!arr?.collected_by) {
-              errorObj[
-                `payemnts[${i}]_collected_by`
-              ] = `payments.collected_by must be present in ${constants.ON_SEARCH}`
+              errorObj[`payemnts[${i}]_collected_by`] =
+                `payments.collected_by must be present in ${constants.ON_SEARCH}`
             } else {
               const srchCollectBy = getValue(`collected_by`)
               if (srchCollectBy != arr?.collected_by)
-                errorObj[
-                  `payemnts[${i}]_collected_by`
-                ] = `payments.collected_by value sent in ${constants.ON_SEARCH} should be same as sent in ${constants.SEARCH}: ${srchCollectBy}`
+                errorObj[`payemnts[${i}]_collected_by`] =
+                  `payments.collected_by value sent in ${constants.ON_SEARCH} should be same as sent in ${constants.SEARCH}: ${srchCollectBy}`
             }
 
             // Validate payment tags
@@ -200,21 +198,10 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
               const areCategoryIdsUnique = checkUniqueCategoryIds(item.category_ids, categoriesId)
               if (!areCategoryIdsUnique) {
                 const key = `prvdr${i}item${j}_category_ids`
-                errorObj[
-                  key
-                ] = `category_ids value in /providers[${i}]/items[${j}] should match with id provided in categories`
+                errorObj[key] =
+                  `category_ids value in /providers[${i}]/items[${j}] should match with id provided in categories`
               }
             }
-
-            // Validate descriptor
-            const descriptorError = validateDescriptor(
-              item?.descriptor,
-              constants.ON_SEARCH,
-              `items[${j}].descriptor`,
-              false,
-              [],
-            )
-            if (descriptorError) Object.assign(errorObj, descriptorError)
 
             if (insurance == 'HEALTH') {
               // Validate time
@@ -224,9 +211,8 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
                 const time = item?.time
                 if (!time?.label) errorObj['time.label'] = `label is missing at providers[${i}].items[${j}]`
                 else if (time?.label !== 'TENURE')
-                  errorObj[
-                    'time.label'
-                  ] = `label is missing or should be equal to TENURE at providers[${i}].items[${j}]`
+                  errorObj['time.label'] =
+                    `label is missing or should be equal to TENURE at providers[${i}].items[${j}]`
 
                 if (!time?.duration) {
                   errorObj['time.duration'] = `duration is missing at providers[${i}].items[${j}]`
@@ -243,12 +229,6 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
                 else {
                   item?.add_ons?.forEach((addOn: any, index: number) => {
                     const key = `item[${j}]_add_ons[${index}]`
-
-                    console.log(
-                      'addOn?.id------------------------------------------',
-                      addOn?.id,
-                      addOn?.quantity.selected,
-                    )
 
                     if (!addOn?.id) {
                       errorObj[`${key}.id`] = `id is missing in add_ons[${index}]`
@@ -313,9 +293,30 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
             }
 
             // Validate Item tags
-            const tagsValidation = validateItemsTags(item?.tags)
+            let tagsValidation: any = {}
+            if (insurance == 'MARINE_INSURANCE') {
+              tagsValidation = validateGeneralInfo(item?.tags)
+              console.log('tagsValidation', tagsValidation)
+            } else {
+              tagsValidation = validateItemsTags(item?.tags)
+            }
             if (!tagsValidation.isValid) {
-              Object.assign(errorObj, { tags: tagsValidation.errors })
+              errorObj[`items.tags[${j}]`] = { ...tagsValidation.errors }
+            }
+
+            // Validate descriptor
+            if (!item?.descriptor && insurance == 'MARINE_INSURANCE') {
+              //optional for MARINE
+              return
+            } else {
+              const descriptorError = validateDescriptor(
+                item?.descriptor,
+                constants.ON_SEARCH,
+                `items[${j}].descriptor`,
+                false,
+                [],
+              )
+              if (descriptorError) Object.assign(errorObj, descriptorError)
             }
           })
 

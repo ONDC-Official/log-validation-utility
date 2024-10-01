@@ -12,7 +12,7 @@ import {
   validateQuote,
   validateXInput,
 } from './fisChecks'
-import { validateItemsTags } from './tags'
+import { validateItemsTags, validatePolicyDetails } from './tags'
 
 export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
   if (!data || isObjectEmpty(data)) {
@@ -65,9 +65,8 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
           if (!item?.id) {
             errorObj[`item${index}`] = `item.id: is missing at index: ${index}`
           } else if (!selectedItemId?.includes(item.id)) {
-            errorObj[
-              `item${index}`
-            ] = `item id: ${item.id} in items[${index}], should be one of the selected id from /${constants.SELECT} api`
+            errorObj[`item${index}`] =
+              `item id: ${item.id} in items[${index}], should be one of the selected id from /${constants.SELECT} api`
           } else if (itemsId.has(item.id)) {
             errorObj[`item${index}`] = `duplicate item id: ${item.id} in items[${index}]`
           } else {
@@ -104,7 +103,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
           }
 
           // checks (time, parent_item_id & add_ons) for MOTOR & HEATLH
-          if (insurance != 'MARINE') {
+          if (insurance != 'MARINE_INSURANCE') {
             //Validate time
             if (_.isEmpty(item?.time)) {
               errorObj.time = `time is missing or empty at items[${index}]`
@@ -185,9 +184,15 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
           }
 
           // Validate Item tags
-          const tagsValidation = validateItemsTags(item?.tags)
+          let tagsValidation: any = {}
+          if (insurance == 'MARINE_INSURANCE') {
+            tagsValidation = validatePolicyDetails(item?.tags, sequence)
+            console.log('tagsValidation', sequence, tagsValidation)
+          } else {
+            tagsValidation = validateItemsTags(item?.tags)
+          }
           if (!tagsValidation.isValid) {
-            Object.assign(errorObj, { tags: tagsValidation.errors })
+            errorObj[`items.tags[${index}]`] = { ...tagsValidation.errors }
           }
         })
         setValue('itemsId', itemsId)

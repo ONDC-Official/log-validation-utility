@@ -10,10 +10,6 @@ import { checkInit } from '../../utils/FIS/FIS13/init'
 import { checkOnInit } from '../../utils/FIS/FIS13/onInit'
 import { checkConfirm } from '../../utils/FIS/FIS13/confirm'
 import { checkOnConfirm } from '../../utils/FIS/FIS13/onConfirm'
-// import { checkStatus } from '../../utils/FIS/FIS13/status'
-// import { checkOnStatus } from '../../utils/FIS/FIS13/onStatus'
-// import { checkCancel } from '../../utils/mobility/cancel'
-// import { checkOnCancel } from '../../utils/mobility/onCancel'
 
 export function validateLogsForFIS13(data: any, flow: string, version: string) {
   const msgIdSet = new Set()
@@ -57,21 +53,39 @@ export function validateLogsForFIS13(data: any, flow: string, version: string) {
           }
         }
 
-        if (data[FIS13HealthSequence.SELECT]) {
-          const selectResp = checkSelect(data[FIS13HealthSequence.SELECT], msgIdSet, FIS13HealthSequence.SELECT)
+        if (data[FIS13HealthSequence.SELECT_1]) {
+          const selectResp = checkSelect(data[FIS13HealthSequence.SELECT_1], msgIdSet, FIS13HealthSequence.SELECT_1)
           if (!_.isEmpty(selectResp)) {
-            logReport = { ...logReport, [FIS13HealthSequence.SELECT]: selectResp }
+            logReport = { ...logReport, [FIS13HealthSequence.SELECT_1]: selectResp }
           }
         }
 
-        if (data[FIS13HealthSequence.ON_SELECT]) {
+        if (data[FIS13HealthSequence.ON_SELECT_1]) {
           const onSelectResp = checkOnSelect(
-            data[FIS13HealthSequence.ON_SELECT],
+            data[FIS13HealthSequence.ON_SELECT_1],
             msgIdSet,
-            FIS13HealthSequence.ON_SELECT,
+            FIS13HealthSequence.ON_SELECT_1,
           )
           if (!_.isEmpty(onSelectResp)) {
-            logReport = { ...logReport, [FIS13HealthSequence.ON_SELECT]: onSelectResp }
+            logReport = { ...logReport, [FIS13HealthSequence.ON_SELECT_1]: onSelectResp }
+          }
+        }
+
+        if (data[FIS13HealthSequence.SELECT_2]) {
+          const selectResp = checkSelect(data[FIS13HealthSequence.SELECT_2], msgIdSet, FIS13HealthSequence.SELECT_2)
+          if (!_.isEmpty(selectResp)) {
+            logReport = { ...logReport, [FIS13HealthSequence.SELECT_2]: selectResp }
+          }
+        }
+
+        if (data[FIS13HealthSequence.ON_SELECT_2]) {
+          const onSelectResp = checkOnSelect(
+            data[FIS13HealthSequence.ON_SELECT_2],
+            msgIdSet,
+            FIS13HealthSequence.ON_SELECT_2,
+          )
+          if (!_.isEmpty(onSelectResp)) {
+            logReport = { ...logReport, [FIS13HealthSequence.ON_SELECT_2]: onSelectResp }
           }
         }
 

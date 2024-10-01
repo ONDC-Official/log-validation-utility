@@ -2,16 +2,20 @@
 // import _ from 'lodash'
 import constants from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, isValidEmail, isValidPhoneNumber } from '../../'
+import {
+  validateSchema,
+  isObjectEmpty,
+} from '../../'
 import {
   checkUniqueCategoryIds,
   validateContext,
   validateDescriptor,
+  validateFulfillmentsArray,
   validateProvider,
   validateQuote,
 } from './fisChecks'
 import { getValue, setValue } from '../../../shared/dao'
-import { validateItemsTags } from './tags'
+import { validateItemsTags, validatePolicyDetails } from './tags'
 import _ from 'lodash'
 
 export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
@@ -42,6 +46,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
     setValue(`${constants.ON_INIT}`, data)
 
     const on_init = message.order
+    const insurance: any = getValue('insurance')
 
     //provider checks
     try {
@@ -64,18 +69,8 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
         on_init.items.forEach((item: any, index: number) => {
           if (selectedItemId && !selectedItemId.includes(item.id)) {
             const key = `item[${index}].item_id`
-            errorObj[
-              key
-            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
-          }
-
-          // Validate parent_item_id
-          if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in providers[${index}]`
-          else {
-            const parentItemId: any = getValue('parentItemId')
-            if (parentItemId && !parentItemId.has(item?.parent_item_id)) {
-              errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id's from past call in providers[${index}]`
-            }
+            errorObj[key] =
+              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
           }
 
           // Validate category_ids
@@ -95,6 +90,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
             constants.ON_INIT,
             `items[${index}].descriptor`,
             false,
+            [],
           )
           if (descriptorError) Object.assign(errorObj, descriptorError)
 
@@ -103,56 +99,82 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
             errorObj.time = `time is missing or empty at items[${index}]`
           } else {
             const time = item?.time
-            if (time?.label && time?.label !== 'TENURE')
-              errorObj['time.label'] = `label is missing or should be equal to TENURE at items[${index}]`
+            //Coverage Time -> MARINE
+            if (time?.label && time?.label !== 'Coverage Time')
+              errorObj['time.label'] = `label is missing or should be equal to 'Coverage Time' at items[${index}]`
 
-            if (time?.duration && !/^PT\d+([YMH])$/.test(time?.duration)) {
-              errorObj['time.duration'] = `duration is missing at items[${index}]`
-            } else if (!/^PT\d+[MH]$/.test(time?.duration)) {
-              errorObj['time.duration'] = `incorrect format or type for duration at items[${index}]`
+            if (insurance != 'MARINE_INSURANCE') {
+              if (time?.duration && !/^PT\d+([YMH])$/.test(time?.duration)) {
+                errorObj['time.duration'] = `duration is missing at items[${index}]`
+              } else if (!/^PT\d+([YMH])$/.test(time?.duration)) {
+                errorObj['time.duration'] = `incorrect format or type for duration at items[${index}]`
+              }
+            } else {
+              if (!time?.range || !time?.range?.start || !time?.range?.end) {
+                errorObj['time.range'] = `range.start/end is missing at items[${index}].time`
+              }
             }
           }
 
-          // Validate add_ons
-          try {
-            logger.info(`Checking add_ons`)
-            if (_.isEmpty(item?.add_ons))
-              errorObj[`item[${index}]_add_ons`] = `add_ons array is missing or empty in ${constants.ON_INIT}`
+          // checks (parent_item_id & add_ons) for MOTOR & HEATLH, time for MARINE
+          if (insurance != 'MARINE_INSURANCE') {
+            // Validate parent_item_id
+            if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in providers[${index}]`
             else {
-              const selectedAddOnIds: any = getValue(`selectedAddOnIds`)
-              item?.add_ons?.forEach((addOn: any, j: number) => {
-                const key = `item[${index}]_add_ons[${j}]`
-
-                if (!addOn?.id) {
-                  errorObj[`${key}.id`] = `id is missing in add_ons[${j}]`
-                } else {
-                  if (selectedAddOnIds && !selectedAddOnIds.has(addOn?.id)) {
-                    errorObj[`${key}.id`] = `id: ${addOn?.id} not found in previous provided add_ons`
-                  }
-                }
-
-                if (!addOn?.descriptor?.code || !/^[A-Z_]+$/.test(addOn?.descriptor?.code))
-                  errorObj[`${key}.code`] = 'code should be present in a generic enum format'
-
-                if (
-                  !addOn?.quantity.selected ||
-                  !Number.isInteger(addOn?.quantity.selected) ||
-                  addOn?.quantity.selected <= 0
-                ) {
-                  errorObj[`${key}.code`] = 'Invalid quantity.selected count'
-                }
-              })
+              const parentItemId: any = getValue('parentItemId')
+              if (parentItemId && !parentItemId.has(item?.parent_item_id)) {
+                errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id's from past call in providers[${index}]`
+              }
             }
 
-            return errorObj
-          } catch (error: any) {
-            logger.error(`!!Error while checking add_ons in /${constants.ON_INIT}, ${error.stack}`)
+            // Validate add_ons
+            try {
+              logger.info(`Checking add_ons`)
+              if (_.isEmpty(item?.add_ons))
+                errorObj[`item[${index}]_add_ons`] = `add_ons array is missing or empty in ${constants.ON_INIT}`
+              else {
+                const selectedAddOnIds: any = getValue(`selectedAddOnIds`)
+                item?.add_ons?.forEach((addOn: any, j: number) => {
+                  const key = `item[${index}]_add_ons[${j}]`
+
+                  if (!addOn?.id) {
+                    errorObj[`${key}.id`] = `id is missing in add_ons[${j}]`
+                  } else {
+                    if (selectedAddOnIds && !selectedAddOnIds.has(addOn?.id)) {
+                      errorObj[`${key}.id`] = `id: ${addOn?.id} not found in previous provided add_ons`
+                    }
+                  }
+
+                  if (!addOn?.descriptor?.code || !/^[A-Z_]+$/.test(addOn?.descriptor?.code))
+                    errorObj[`${key}.code`] = 'code should be present in a generic enum format'
+
+                  if (
+                    !addOn?.quantity.selected ||
+                    !Number.isInteger(addOn?.quantity.selected) ||
+                    addOn?.quantity.selected <= 0
+                  ) {
+                    errorObj[`${key}.code`] = 'Invalid quantity.selected count'
+                  }
+                })
+              }
+
+              return errorObj
+            } catch (error: any) {
+              logger.error(`!!Error while checking add_ons in /${constants.ON_INIT}, ${error.stack}`)
+            }
           }
 
           // Validate Item tags
-          const tagsValidation = validateItemsTags(item?.tags)
+          let tagsValidation: any = {}
+          if (insurance == 'MARINE_INSURANCE') {
+            tagsValidation = validatePolicyDetails(item?.tags, sequence)
+            console.log('tagsValidation', sequence, tagsValidation)
+          } else {
+            tagsValidation = validateItemsTags(item?.tags)
+          }
           if (!tagsValidation.isValid) {
-            Object.assign(errorObj, { tags: tagsValidation.errors })
+            // Object.assign(errorObj, { tags: tagsValidation.errors })
+            errorObj[`items.tags[${index}]`] = { ...tagsValidation.errors }
           }
         })
       }
@@ -161,34 +183,9 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
     }
 
     //check fulfillments
-    try {
-      logger.info(`checking fulfillments array in /${constants.ON_INIT}`)
-      const fulfillments = on_init.fulfillments
-      if (!fulfillments) {
-        errorObj.fulfillments = `fulfillments should be present & non empty in /${constants.ON_INIT}`
-      } else {
-        const fulfillmentIds = new Set()
-        fulfillments?.map((fulfillment: any, i: number) => {
-          if (!fulfillment.id) errorObj[`fulfillment${i}`] = `missing fulfillment.id in providers[${i}]`
-          else if (fulfillmentIds.has(fulfillment.id)) {
-            errorObj[`fulfillment${i}`] = `duplicate fulfillment id: ${fulfillment.id} in providers[${i}]`
-          } else {
-            fulfillmentIds.add(fulfillment.id)
-          }
-
-          if (!fulfillment?.person?.name || typeof fulfillment?.person?.name !== 'string')
-            errorObj.name = `person.name should be present with valid value in fulfillment${i} at /${constants.ON_INIT}`
-
-          if (!fulfillment?.contact?.email || isValidEmail(fulfillment?.contact?.email))
-            errorObj.email = `contact.email should be present with valid email in fulfillment${i} at /${constants.ON_INIT}`
-
-          if (!fulfillment?.contact?.phone || isValidPhoneNumber(fulfillment?.contact?.phone))
-            errorObj.phone = `contact.phone should be present with valid number in fulfillment${i} at /${constants.ON_INIT}`
-        })
-        setValue(`fulfillmentIds`, fulfillmentIds)
-      }
-    } catch (error: any) {
-      logger.error(`!!Error while checking fulfillments array in /${constants.ON_INIT}, ${error.stack}`)
+    const fulfillmentValidation: string[] = validateFulfillmentsArray(on_init?.fulfillments, sequence)
+    if (fulfillmentValidation.length > 0) {
+      errorObj.fulfillments = fulfillmentValidation
     }
 
     //check payments

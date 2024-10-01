@@ -3,7 +3,6 @@ import constants from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, isValidPhoneNumber, isValidEmail } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
-// import { validatePaymentTags } from './tags'
 import { checkUniqueCategoryIds, validateContext, validateQuote, validateXInputSubmission } from './fisChecks'
 import { validatePaymentTags } from './tags'
 
@@ -101,7 +100,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
           }
 
           // checks (parent_item_id & add_ons) for MOTOR & HEATLH, time for MARINE
-          if (insurance != 'MARINE') {
+          if (insurance != 'MARINE_INSURANCE') {
             // Validate parent_item_id
             if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in items[${index}]`
             else if (!parentItemId.includes(item?.parent_item_id)) {
@@ -158,7 +157,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
           const xinputErrors = validateXInputSubmission(item?.xinput, index, sequence)
           Object.assign(errorObj, xinputErrors)
 
-          if (insurance == 'MOTOR') {
+          if (insurance == 'MOTOR_INSURANCE') {
             // Validate category_ids
             if (_.isEmpty(item?.category_ids)) {
               errorObj.category_ids = `category_ids is missing or empty at items[${index}]`
@@ -255,7 +254,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
     }
 
     //check quote
-    if (insurance == 'MARINE') {
+    if (insurance == 'MARINE_INSURANCE') {
       try {
         logger.info(`Checking quote details in /${constants.INIT}`)
         const quoteErrors = validateQuote(init?.quote)

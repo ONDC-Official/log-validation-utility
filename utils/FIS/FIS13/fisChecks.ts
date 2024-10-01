@@ -2,12 +2,24 @@ import { getValue, setValue } from '../../../shared/dao'
 import { insuranceFormHeadings } from '../../../constants/'
 import { logger } from '../../../shared/logger'
 import { checkIdAndUri, checkFISContext } from '../../'
-import _, { isEmpty } from 'lodash'
+import _, { isArray, isEmpty } from 'lodash'
 const FULFILLMENT_STATE_CODES = ['INITIATED', 'SANCTIONED', 'DISBURSED', 'PENDING', 'REJECTED', 'COMPLETED']
 
 export const checkUniqueCategoryIds = (categoryIds: (string | number)[], availableCategoryIds: any): boolean => {
+  console.log('categoryIds', categoryIds)
+  console.log('availableCategoryIds', availableCategoryIds)
   const uniqueCategoryIds = new Set(categoryIds)
-  return categoryIds.length === uniqueCategoryIds.size && categoryIds.every((id) => availableCategoryIds.has(id))
+  const isIdAvailable = (id: string | number) => {
+    if (availableCategoryIds instanceof Set) {
+      return availableCategoryIds.has(id) 
+    } else if (Array.isArray(availableCategoryIds)) {
+      return availableCategoryIds.includes(id) 
+    } else {
+      throw new TypeError('availableCategoryIds must be either an Array or Set')
+    }
+  }
+
+  return categoryIds.length === uniqueCategoryIds.size && categoryIds.every((id) => isIdAvailable(id))
 }
 
 const getFormHeading = (action: any, insuranceType: any): string[] | string | null => {
@@ -20,15 +32,15 @@ const getFormHeading = (action: any, insuranceType: any): string[] | string | nu
 
 const getQuoteCodes = (flow: string): string[] => {
   switch (flow) {
-    case 'HEALTH':
+    case 'HEALTH_INSURANCE':
       return ['BASE_PRICE', 'CONVIENCE', 'TAX', 'PROCESSING_FEE']
       break
 
-    case 'MARINE':
-      return ['BASE_PRICE', 'CONVIENCE', 'TAX', 'PROCESSING_FEE']
+    case 'MARINE_INSURANCE':
+      return ['BASE_PRICE', 'TAX', 'PROCESSING_FEE']
       break
 
-    case 'MOTOR':
+    case 'MOTOR_INSURANCE':
       return ['BASE_PRICE', 'TAX', 'PROCESSING_FEE']
       break
 
@@ -41,10 +53,10 @@ const getQuoteCodes = (flow: string): string[] => {
 export const getCodes = (): string[] => {
   const insurance = getValue('insurance')
   switch (insurance) {
-    case 'HEALTH':
+    case 'HEALTH_INSURANCE':
       return ['INDIVIDUAL_INSURANCE', 'FAMILY_INSURANCE', 'HEALTH_INSURANCE']
 
-    case 'MARINE':
+    case 'MARINE_INSURANCE':
       return ['MARINE_INSURANCE']
 
     default:
@@ -167,9 +179,8 @@ export const validateXInput = (xinput: any, j: number, action: string, currIndex
       const id = form.id
 
       if (!url || typeof url !== 'string' || !isValidUrl(url)) {
-        errors[
-          `item${j}_xinput_form_url`
-        ] = `url is missing, not a string, or not a valid URL in items[${j}].xinput.form`
+        errors[`item${j}_xinput_form_url`] =
+          `url is missing, not a string, or not a valid URL in items[${j}].xinput.form`
       }
 
       if (!id || typeof id !== 'string') {
@@ -187,7 +198,7 @@ export const validateXInput = (xinput: any, j: number, action: string, currIndex
         }
       }
 
-      if (!form?.resubmit || typeof form?.resubmit !== 'boolean') {
+      if (!isEmpty(form?.resubmit) || typeof form?.resubmit !== 'boolean') {
         errors.resubmit = `resubmit is missing or type is incorrect in items[${j}].xinput.form`
       }
 
@@ -334,66 +345,57 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
   }
 }
 
-export const validateCancellationTerms = (cancellationTerms: any, action: string) => {
-  const errorObj: any = {}
-  try {
-    logger.info(`Checking cancellation terms in /${action}`)
-    const cancellationTermsState = new Map()
-    if (!cancellationTerms) {
-      errorObj.cancellationTerms = `cancellation_terms are required in /${action}`
-    } else if (cancellationTerms && cancellationTerms.length > 0) {
-      for (let i = 0; i < cancellationTerms.length; i++) {
-        const cancellationTerm = cancellationTerms[i]
+export const validateCancellationTerms = (cancellationTerms: any) => {
+  const errors: string[] = []
 
-        const hasExternalRef = cancellationTerm?.external_ref !== undefined
-        const hasFulfillmentState = cancellationTerm?.fulfillment_state !== undefined
-        const hasCancellationFee = cancellationTerm?.cancellation_fee !== undefined
-        const hasPercentage = hasCancellationFee && cancellationTerm?.cancellation_fee?.percentage !== undefined
-        const hasAmount = hasCancellationFee && cancellationTerm?.cancellation_fee?.amount !== undefined
-
-        const isValidTerm =
-          (hasExternalRef || (hasFulfillmentState && hasCancellationFee && (hasPercentage || hasAmount))) &&
-          (!hasFulfillmentState ||
-            (hasFulfillmentState &&
-              cancellationTerm.fulfillment_state.descriptor &&
-              cancellationTerm.fulfillment_state.descriptor.code &&
-              ((hasPercentage &&
-                !isNaN(parseFloat(cancellationTerm.cancellation_fee.percentage)) &&
-                parseFloat(cancellationTerm.cancellation_fee.percentage) > 0 &&
-                Number.isInteger(parseFloat(cancellationTerm.cancellation_fee.percentage))) ||
-                (hasAmount &&
-                  !isNaN(parseFloat(cancellationTerm.cancellation_fee.amount)) &&
-                  parseFloat(cancellationTerm.cancellation_fee.amount) > 0))))
-
-        if (!isValidTerm) {
-          errorObj.cancellationFee = `Invalid Cancellation Term[${i}] - Either external_ref or fulfillment_state with valid cancellation_fee is required`
-        }
-
-        if (hasFulfillmentState) {
-          const descriptorCode = cancellationTerm.fulfillment_state.descriptor.code
-          const storedPercentage = cancellationTermsState.get(descriptorCode)
-
-          if (storedPercentage === undefined) {
-            cancellationTermsState.set(
-              descriptorCode,
-              hasPercentage ? cancellationTerm.cancellation_fee.percentage : cancellationTerm.cancellation_fee.amount,
-            )
-          } else if (
-            storedPercentage !==
-            (hasPercentage ? cancellationTerm.cancellation_fee.percentage : cancellationTerm.cancellation_fee.amount)
-          ) {
-            errorObj.cancellationFee = `Cancellation terms percentage or amount for ${descriptorCode} has changed`
-          }
-        }
-      }
-    } else {
-      errorObj.cancellationTerms = `cancellation_terms should be an array in /${action}`
-    }
-  } catch (error: any) {
-    logger.error(`!!Error while checking cancellation_terms in /${action}, ${error.stack}`)
+  if (!isArray(cancellationTerms)) {
+    errors.push(`cancellationTerms are missing or empty`)
+    return errors
   }
 
-  return errorObj
+  const isValidPercentage = (percentage: string) => /^[1-9][0-9]?%$/.test(percentage) // Valid percentages from 1% to 99%
+  const isValidMIMEType = (mimetype: string) => mimetype === 'text/html' // Only allowing 'text/html' in this case
+  const isValidURL = (url: string) => /^(https?:\/\/[^\s]+$)/.test(url) // Valid URL format
+  const isValidFulfillmentStateCode = (code: string) => ['INSURANCE_PROCESSING', 'INSURANCE_GRANTED'].includes(code) // Allowed codes
+
+  cancellationTerms.forEach((term: any, index: number) => {
+    // Vaidate cancellation_fee
+    if (term.cancellation_fee && term.cancellation_fee.percentage) {
+      const { percentage } = term.cancellation_fee
+      if (!isValidPercentage(percentage)) {
+        errors.push(
+          `CancellationTerm[${index}] has an invalid percentage '${percentage}'. Expected a valid percentage like '3%'.`,
+        )
+      }
+    } else {
+      errors.push(`CancellationTerm[${index}] is missing the 'cancellation_fee' or 'percentage'.`)
+    }
+
+    // Validate external_ref
+    if (term.external_ref) {
+      const { mimetype, url } = term.external_ref
+      if (!isValidMIMEType(mimetype)) {
+        errors.push(`CancellationTerm[${index}] has an invalid mimetype '${mimetype}'. Expected 'text/html'.`)
+      }
+      if (!isValidURL(url)) {
+        errors.push(`CancellationTerm[${index}] has an invalid URL '${url}'.`)
+      }
+    } else {
+      errors.push(`CancellationTerm[${index}] is missing 'external_ref'.`)
+    }
+
+    // Validate fulfillment_state
+    if (term.fulfillment_state && term.fulfillment_state.descriptor) {
+      const { code } = term.fulfillment_state.descriptor
+      if (!isValidFulfillmentStateCode(code)) {
+        errors.push(`CancellationTerm[${index}] has an invalid fulfillment state code '${code}'.`)
+      }
+    } else {
+      errors.push(`CancellationTerm[${index}] is missing 'fulfillment_state' or 'descriptor'.`)
+    }
+  })
+
+  return errors
 }
 
 export const validateDescriptor = (
@@ -414,7 +416,7 @@ export const validateDescriptor = (
         } else if (descriptor.code?.trim() !== descriptor.code?.trim()?.toUpperCase()) {
           errorObj.code = `descriptor.code must be in uppercase at ${path}., ${descriptor.code}`
         } else if (codes && codes?.includes(descriptor?.code))
-          errorObj.code = `descriptor.code should be one of ${codes}`
+          errorObj.code = `descriptor.code should be one of ${codes} at ${path}`
       }
 
       if (descriptor?.images) {
@@ -465,8 +467,8 @@ export const validateXInputSubmission = (xinput: any, index: number, sequence: s
   if (!xinput) {
     errorObj[`item${index}`] = `xinput is missing in item${index}`
   } else {
-    if (!Object.prototype.hasOwnProperty.call(xinput?.form, 'id')) {
-      errorObj[`item${index}_form`] = `/message/order/items/form in item[${index}] must have id in form`
+    if (!xinput?.form) {
+      errorObj[`item${index}_form`] = `form is missing in items[${index}].xinput`
     } else {
       const formId: any = getValue(`formId`)
       if (!formId?.includes(xinput?.form?.id)) {
@@ -474,26 +476,26 @@ export const validateXInputSubmission = (xinput: any, index: number, sequence: s
       }
     }
 
-    if (!Object.prototype.hasOwnProperty.call(xinput?.form_response, 'status')) {
-      errorObj[
-        `item${index}_xinput`
-      ] = `/message/order/items/xinput in item[${index}] must have status in form_response`
+    //check form_response
+    if (!xinput?.form_response) {
+      errorObj[`item${index}_form_response`] = `form_response is missing in items[${index}].xinput`
     } else {
-      const status = xinput?.form_response?.status
-      const code = 'SUCCESS'
-      if (status !== code) {
-        errorObj[
-          `item${index}_status`
-        ] = `/message/order/items/xinput/form_response/status in item[${index}] should be '${code}'`
+      const formResponse = xinput?.form_response
+      if (!formResponse?.status) {
+        errorObj[`item${index}_form_response.status`] = `status is missing in xinput.form_response`
+      } else {
+        const status = xinput?.form_response?.status
+        const code = 'SUCCESS'
+        if (status !== code) {
+          errorObj[`item${index}_status`] =
+            `/message/order/items/xinput/form_response/status in item[${index}] should be '${code}'`
+        }
       }
-    }
-
-    if (!Object.prototype.hasOwnProperty.call(xinput?.form_response, 'submission_id')) {
-      errorObj[
-        `item${index}_xinput`
-      ] = `/message/order/items/xinput in item[${index}] must have submission_id in form_response`
-    } else {
-      setValue(`${sequence}_submission_id`, xinput?.form_response?.submission_id)
+      if (!formResponse?.submission_id) {
+        errorObj[`item${index}_form_response.submission_id`] = `submission_id is missing in xinput.form_response`
+      } else {
+        setValue(`${sequence}_submission_id`, xinput?.form_response?.submission_id)
+      }
     }
   }
 
@@ -603,7 +605,14 @@ export const validateQuote = (quote: any) => {
         errorObj.breakupTotalMismatch = `Total of quote breakup (${totalBreakupValue}) does not match with price.value (${priceValue})`
       }
 
-      const currencies = quoteBreakup.map((item: any) => item.currency)
+      const currencies = quoteBreakup.map((item: any, index: number) => {
+        if (!item?.price?.currency) {
+          console.log('item?.price?.currency', index, item)
+          errorObj[`missingCurrency[${index}]`] = `Currency is missing for breakup item: ${item.title}`
+        }
+        return item?.price?.currency
+      })
+
       if (new Set(currencies).size !== 1) {
         errorObj.multipleCurrencies = 'Currency must be the same for all items in the quote breakup'
       }
@@ -612,7 +621,7 @@ export const validateQuote = (quote: any) => {
         errorObj.missingTTL = 'TTL is required in the quote'
       }
 
-      if (insurance == 'HEALTH' && !quote?.id) {
+      if (insurance == 'HEALTH_INSURANCE' && !quote?.id) {
         errorObj.quoteId = 'id is missing in quote'
       }
     }
@@ -654,13 +663,15 @@ export const validateDocuments = (documents: any, action: string) => {
   try {
     logger.info(`Checking documents in /${action}`)
     const errors: any = {}
+    const insurance: any = getValue('insurance')
 
     console.log('documents', documents)
 
     if (!documents || !Array.isArray(documents) || documents.length === 0) {
       errors.documents = 'Documents array is missing or empty in order'
     } else {
-      const requiredDocumentCodes = ['POLICY_DOC', 'CLAIM_DOC', 'RENEW_DOC']
+      const requiredDocumentCodes = ['POLICY_DOC', 'CLAIM_DOC']
+      if (insurance != 'MARINE_INSURANCE') requiredDocumentCodes.push('RENEW_DOC')
 
       documents.forEach((document, index) => {
         console.log('document', document)
@@ -755,4 +766,129 @@ export const validateAddOns = (addOns: any, action: string) => {
   } catch (error: any) {
     logger.error(`!!Error while checking add_ons in /${action}, ${error.stack}`)
   }
+}
+
+export const validateFulfillmentsArray = (fulfillments: any, action: string) => {
+  const errors: string[] = []
+  const fullIds: string[] = []
+
+  if (!isArray(fulfillments)) {
+    errors.push(`Fulfillments are missing or empty`)
+    return errors
+  }
+  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+  const isValidPhone = (phone: string) => /^\+?\d{1,3}?[- ]?\d{10}$/.test(phone) // E.g. +91-9999999999
+  const isValidDate = (date: string) => /^\d{4}-\d{2}-\d{2}$/.test(date) && !isNaN(new Date(date).getTime())
+  const isValidGender = (gender: string) => ['male', 'female', 'other'].includes(gender)
+  const isValidGSTIN = (gstin: string) => /^[0-9A-Z]{15}$/.test(gstin) // GSTIN: 15 alphanumeric characters
+  const isBooleanString = (value: string) => value === 'true' || value === 'false'
+
+  fulfillments.forEach((fulfillment: any, index: number) => {
+    // Validate the customer object
+    if (!fulfillment.customer) {
+      errors.push(`Fulfillment[${index}] is missing the customer object.`)
+    } else {
+      const customer = fulfillment?.customer
+
+      // Validate the contact details
+      if (customer?.contact) {
+        const { email, phone } = customer.contact
+        if (!isValidEmail(email)) {
+          errors.push(`Fulfillment[${index}] has an invalid email '${email}'.`)
+        }
+        if (!isValidPhone(phone)) {
+          errors.push(`Fulfillment[${index}] has an invalid phone number '${phone}'.`)
+        }
+      } else {
+        errors.push(`Fulfillment[${index}] is missing contact details.`)
+      }
+
+      // Validate the organization address
+      if (action.includes('on_')) {
+        if (
+          !customer?.organization ||
+          (typeof customer?.organization?.address === 'string' && customer?.organization?.address?.length === 0)
+        ) {
+          errors.push(`Fulfillment[${index}] has an invalid or missing organization address.`)
+        }
+      }
+
+      // Validate the person details
+      if (customer.person) {
+        const { dob, gender, name, tags } = customer.person
+        if (!isValidDate(dob)) {
+          errors.push(`Fulfillment[${index}] has an invalid date of birth '${dob}'.`)
+        }
+        if (!isValidGender(gender)) {
+          errors.push(`Fulfillment[${index}] has an invalid gender '${gender}'.`)
+        }
+        if (!name || typeof name !== 'string' || name.length === 0) {
+          errors.push(`Fulfillment[${index}] has an invalid name '${name}'.`)
+        }
+
+        if (action.includes('confirm')) {
+          if (tags && Array.isArray(tags)) {
+            fulfillment.tags.forEach((tag: any, tagIndex: number) => {
+              if (!tag.descriptor || !tag.descriptor.code || !tag.descriptor.name) {
+                errors.push(`Fulfillment[${index}] -> Tag[${tagIndex}] is missing descriptor fields.`)
+              }
+
+              // Only validate PERSON_ADDITIONAL_DETAILS
+              if (tag.descriptor.code === 'PERSON_ADDITIONAL_DETAILS') {
+                tag.list.forEach((item: any, itemIndex: number) => {
+                  const descriptorCode = item.descriptor?.code
+                  const value = item.value
+
+                  // Validate POLITICALLY_EXPOSED_PERSON
+                  if (descriptorCode === 'POLITICALLY_EXPOSED_PERSON') {
+                    if (!isBooleanString(value)) {
+                      errors.push(
+                        `Fulfillment[${index}] -> Tag[${tagIndex}] -> List[${itemIndex}] has an invalid value for 'POLITICALLY_EXPOSED_PERSON'. Expected 'true' or 'false'.`,
+                      )
+                    }
+                  }
+
+                  // Validate GSTIN
+                  if (descriptorCode === 'GSTIN') {
+                    if (!isValidGSTIN(value)) {
+                      errors.push(
+                        `Fulfillment[${index}] -> Tag[${tagIndex}] -> List[${itemIndex}] has an invalid GSTIN '${value}'. Expected a valid 15-character alphanumeric GSTIN.`,
+                      )
+                    }
+                  }
+                })
+              }
+            })
+          } else if (tags) {
+            errors.push(`Fulfillment[${index}] has an invalid 'tags' field. It should be an array.`)
+          } else {
+            errors.push(`tags not present at Fulfillments[${index}]`)
+          }
+
+          if (action == 'on_confirm') {
+            if (!customer?.state || !customer?.state?.descriptor || !customer?.state?.descriptor?.code) {
+              errors.push(`state.descriptor.code is missing at Fulfillment[${index}]`)
+            }
+          }
+        }
+      } else {
+        errors.push(`Fulfillment[${index}] is missing person details.`)
+      }
+    }
+
+    // Validate the fulfillment ID and type
+    if (!fulfillment.id || typeof fulfillment.id !== 'string' || fulfillment.id.length === 0) {
+      errors.push(`Fulfillment[${index}] has an invalid or missing ID.`)
+    } else {
+      fullIds?.push(fulfillment.id)
+    }
+    if (!fulfillment.type || typeof fulfillment.type !== 'string' || fulfillment.type.length === 0) {
+      errors.push(`Fulfillment[${index}] has an invalid or missing type.`)
+    } else if (fulfillment.type !== 'POLICY') {
+      errors.push(`Fulfillment[${index}] has an unsupported type '${fulfillment.type}'. Expected 'POLICY'.`)
+    }
+  })
+
+  if (action == 'on_init') setValue(`fulfillmentIds`, fullIds)
+  return errors
 }

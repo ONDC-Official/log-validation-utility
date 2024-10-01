@@ -63,7 +63,7 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
     }
 
     //check fulfillments for HEALTH
-    if (insurance != 'HEALTH') {
+    if (insurance == 'HEALTH_INSURANCE') {
       try {
         logger.info(`checking fulfillments object for /${constants.ON_SEARCH} and /${constants.SELECT}`)
 
@@ -93,6 +93,16 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
       }
     }
 
+    //check fulfillments
+    if (select?.fulfillments) {
+      errorObj.fulfillments = `fulfillments shouldn't be present in /${constants.SELECT}`
+    }
+
+    //check tags
+    if (select?.tags) {
+      errorObj.tags = `tags shouldn't be present in /${constants.SELECT}`
+    }
+
     //check items
     try {
       logger.info(`checking items array in /${constants.SELECT}`)
@@ -111,14 +121,13 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
             selectedItemId?.add(item?.id)
             if (itemId && !itemId.includes(item.id)) {
               const key = `item[${index}].item_id`
-              errorObj[
-                key
-              ] = `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
+              errorObj[key] =
+                `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
             }
           }
 
           // Validate parent_item_id & add_ons for HEALTH & MOTOR
-          if (insurance != 'MARINE') {
+          if (insurance != 'MARINE_INSURANCE') {
             // Validate parent_item_id
             if (!item?.parent_item_id) errorObj.parent_item_id = `sub-parent_item_id not found in providers[${index}]`
             else {
@@ -161,10 +170,14 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
             } catch (error: any) {
               logger.error(`!!Error while checking add_ons in /${constants.SELECT}, ${error.stack}`)
             }
+          } else {
+            if (item?.parent_item_id)
+              errorObj.parent_item_id = `parent_item_id shouldn't be present in providers[${index}]`
+            if (item?.add_ons) errorObj.add_ons = `add_ons shouldn't be present in providers[${index}]`
           }
 
           //validate xInput form for MARINE & MOTOR
-          if (insurance != 'HEALTH') {
+          if (insurance != 'HEALTH_INSURANCE') {
             const xinputErrors = validateXInputSubmission(item?.xinput, index, sequence)
             Object.assign(errorObj, xinputErrors)
           }

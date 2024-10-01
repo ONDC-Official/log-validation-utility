@@ -719,19 +719,14 @@ export function validateStatusOrderAndTimestamp(set: any) {
   }
 }
 
-export const isValidEmail = (value: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailRegex.test(value)
+export const isValidEmail = (email: string) => {
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+  return emailRegex.test(email)
 }
 
-export const isValidPhoneNumber = (value: string): boolean => {
-  const phoneRegex = /^(\d{10}|\d{11})$/
-  if (value.startsWith('0')) {
-    value = value.substring(1)
-  }
-
-  const val = value?.replace(/[^\d]/g, '')
-  return phoneRegex.test(val)
+export const isValidPhoneNumber = (phoneNumber: string): boolean => {
+  const phoneRegex = /^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/
+  return phoneRegex.test(phoneNumber)
 }
 
 export const isValidUrl = (url: string) => {
@@ -870,9 +865,8 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
                 ) {
                   logger.error(`The item value can only be of possible values.`)
                   const key = `InvldValueforItem[${i}][${index}] : ${tagName}`
-                  errorObj[
-                    key
-                  ] = `Invalid item value: [${originalTag}]. It can only be of possible values as provided in https://github.com/ONDC-Official/protocol-network-extension/tree/main/enums/retail.`
+                  errorObj[key] =
+                    `Invalid item value: [${originalTag}]. It can only be of possible values as provided in https://github.com/ONDC-Official/protocol-network-extension/tree/main/enums/retail.`
                 }
               }
             }
@@ -986,9 +980,8 @@ export const checkQuoteTrailSum = (fulfillmentArr: any[], price: number, priceAt
 
     if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
       const key = `invldQuoteTrailPrices`
-      errorObj[
-        key
-      ] = `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM}`
+      errorObj[key] =
+        `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM}`
       logger.error(
         `quote_trail price and item quote price sum for ${constants.ON_UPDATE} should be equal to the price as in ${constants.ON_CONFIRM} `,
       )
@@ -1016,9 +1009,8 @@ export const checkQuoteTrail = (quoteTrailItems: any[], errorObj: any, selectPri
 
       if (value && itemValue && value !== itemValue && type === 'item') {
         const key = `invalidPrice[${itemID}]`
-        errorObj[
-          key
-        ] = `Price mismatch for  [${itemID}] provided in quote object '[${value}]'. Should be same as in quote of ${constants.ON_SELECT}`
+        errorObj[key] =
+          `Price mismatch for  [${itemID}] provided in quote object '[${value}]'. Should be same as in quote of ${constants.ON_SELECT}`
       }
 
       if (!itemSet.has(itemID) && type === 'item') {

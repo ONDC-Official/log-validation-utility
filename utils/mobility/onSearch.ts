@@ -59,7 +59,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
 
       //provider fulfillments checks
       const fulfillments = bppPrvdrs[i]['fulfillments']
-      if (!fulfillments || fulfillments.length === 0) {
+      if (!fulfillments || fulfillments?.length === 0) {
         errorObj[`provider_${i}_fulfillments`] = `Fulfillments is missing or empty for provider ${i}`
       } else {
         fulfillments.forEach((fulfillment: any, k: number) => {
@@ -72,8 +72,15 @@ export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
             storedFulfillments.add(fulfillment.id)
           }
 
-          if (!ON_DEMAND_VEHICLE.includes(fulfillment.vehicle.category)) {
-            errorObj[`${key}.vehicleCategory`] = `Vehicle category should be one of ${ON_DEMAND_VEHICLE}`
+          const vehicleKeys = Object.keys(fulfillment?.vehicle)
+          if (vehicleKeys?.length > 2)
+            errorObj[`${key}.vehicleKeys`] = `additional keys present in fulfillments.vehicle`
+          if (!fulfillment?.vehicle?.category) {
+            errorObj[`${key}.vehicleCategory`] = `category is missing in fulfillments.vehicle`
+          } else {
+            if (!ON_DEMAND_VEHICLE.includes(fulfillment?.vehicle?.category)) {
+              errorObj[`${key}.vehicleCategory`] = `category should be one of ${ON_DEMAND_VEHICLE} fulfillments.vehicle`
+            }
           }
 
           if (fulfillment.type !== 'DELIVERY') {
@@ -90,7 +97,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
 
       //location checks
       const locations = bppPrvdrs[i]['locations']
-      if (locations && locations.length > 0) {
+      if (locations && locations?.length > 0) {
         locations.forEach((location: any, j: number) => {
           storedLocations.add(location.id)
 
@@ -119,7 +126,9 @@ export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
             }
 
             //price check
-            if (!item?.price?.value) errorObj[`${itemKey}.price`] = `value is missing at item.index ${index} `
+            if (!item?.price?.value) errorObj[`${itemKey}.price.value`] = `value is missing at item.index ${index} `
+            if (!item?.price?.currency)
+              errorObj[`${itemKey}.price.currency`] = `currency is missing at item.index ${index} `
 
             //fulfillment_ids, location_ids & payment_ids checks
             const refIdsErrors = validateItemRefIds(
@@ -136,9 +145,8 @@ export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
             if (!item?.descriptor?.code)
               errorObj[`${itemKey}.code`] = `descriptor.code is missing at index: ${index} in /${constants.ON_SEARCH}`
             else if (item?.descriptor?.code !== 'RIDE') {
-              errorObj[
-                `${itemKey}.code`
-              ] = `descriptor.code must be RIDE at item.index ${index} in /${constants.ON_SEARCH}`
+              errorObj[`${itemKey}.code`] =
+                `descriptor.code must be RIDE at item.index ${index} in /${constants.ON_SEARCH}`
             }
           })
         }
@@ -174,15 +182,13 @@ export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
             ]
 
             if (!arr?.collected_by) {
-              errorObj[
-                `payemnts[${i}]_collected_by`
-              ] = `payments.collected_by must be present in ${constants.ON_SEARCH}`
+              errorObj[`payemnts[${i}]_collected_by`] =
+                `payments.collected_by must be present in ${constants.ON_SEARCH}`
             } else {
               const srchCollectBy = getValue(`collected_by`)
               if (srchCollectBy != arr?.collected_by)
-                errorObj[
-                  `payemnts[${i}]_collected_by`
-                ] = `payments.collected_by value sent in ${constants.ON_SEARCH} should be same as sent in ${constants.SEARCH}: ${srchCollectBy}`
+                errorObj[`payemnts[${i}]_collected_by`] =
+                  `payments.collected_by value sent in ${constants.ON_SEARCH} should be same as sent in ${constants.SEARCH}: ${srchCollectBy}`
             }
 
             // Validate payment tags

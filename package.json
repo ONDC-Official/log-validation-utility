@@ -43,7 +43,9 @@
     "libsodium-wrappers": "^0.7.13",
     "lmdb": "^2.9.2",
     "pino": "^7.6.4",
-    "swagger-ui-express": "^4.3.0"
+    "swagger-autogen": "^2.23.7",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^4.6.3"
   },
   "devDependencies": {
     "@types/body-parser": "^1.19.2",

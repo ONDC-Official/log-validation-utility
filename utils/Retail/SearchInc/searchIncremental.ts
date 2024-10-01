@@ -33,7 +33,6 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
         errorObj[`${ApiSequence.INC_SEARCH}_msgId`] = `Message id should not be same with previous calls`
       }
       msgIdSet.add(context.message_id)
-      setValue(`${ApiSequence.INC_SEARCH}_msgId`, data.context.message_id)
     } catch (error: any) {
       logger.error(`!!Error while checking message id for /${constants.INC_SEARCH}, ${error.stack}`)
     }
@@ -51,6 +50,19 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
 
     if (context.city !== '*') {
       errorObj.contextCityError = 'context/city should be "*" while sending search_inc_catalog request'
+    }
+
+    const onSearchContext: any = getValue(`${ApiSequence.ON_SEARCH}_context`)
+    try {
+      logger.info(`Comparing timestamp of /${constants.ON_SEARCH} and /${constants.INC_SEARCH}}`)
+      const tmpstmp = onSearchContext?.timestamp
+      if (_.gte(tmpstmp, context.timestamp)) {
+        errorObj.tmpstmp = `Timestamp for /${constants.ON_SEARCH} api cannot be greater than or equal to /${constants.INC_SEARCH} api`
+      }
+    } catch (error: any) {
+      logger.info(
+        `Error while comparing timestamp for /${constants.ON_SEARCH} and /${constants.INC_SEARCH}} api, ${error.stack}`,
+      )
     }
 
     const buyerFF = parseFloat(message.intent?.payment?.['@ondc/org/buyer_app_finder_fee_amount'])
@@ -85,7 +97,8 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
     }
 
     if (message.intent?.tags) {
-      let tags = checkTagConditions(message, context)
+      setValue(`${ApiSequence.INC_SEARCH}_push`, false)
+      let tags = checkTagConditions(message, context, ApiSequence.INC_SEARCH)
       if (tags) {
         errorObj.intent = { ...errorObj.intent, tags }
       }

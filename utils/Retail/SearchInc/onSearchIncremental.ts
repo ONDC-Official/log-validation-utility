@@ -3,10 +3,14 @@
 import { logger } from '../../../shared/logger'
 import { setValue, getValue } from '../../../shared/dao'
 import constants, { ApiSequence } from '../../../constants'
-import { validateSchema, isObjectEmpty, checkContext, checkGpsPrecision, emailRegex } from '../..'
+import { electronicsData } from '../../../constants/electronics'
+import { applianceData } from '../../../constants/appliance'
+import { fashion } from '../../../constants/fashion'
+import { DOMAIN } from '../../../utils/enum'
+import { validateSchema, isObjectEmpty, checkContext, checkGpsPrecision, emailRegex, checkMandatoryTags } from '../..'
 import _, { isEmpty } from 'lodash'
 
-export const checkOnsearchIncremental = (data: any, _msgIdSet: any) => {
+export const checkOnsearchIncremental = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.INC_ONSEARCH]: 'JSON cannot be empty' }
   }
@@ -23,10 +27,13 @@ export const checkOnsearchIncremental = (data: any, _msgIdSet: any) => {
 
   const errorObj: any = {}
   try {
-    logger.info(`Comparing Message Ids of /${constants.INC_SEARCH} and /${constants.ON_SEARCHINC}`)
-    if (!_.isEqual(getValue(`${ApiSequence.INC_SEARCH}_msgId`), context.message_id)) {
-      errorObj[`${ApiSequence.INC_ONSEARCH}_msgId`]  = `Message Ids for /${constants.INC_SEARCH} and /${constants.ON_SEARCHINC} api should be same`
+    logger.info(`Adding Message Id of /${constants.ON_SEARCHINC}`)
+    if (getValue(`${ApiSequence.INC_SEARCH}_push`)) {
+      if (msgIdSet.has(context.message_id)) {
+        errorObj[`${ApiSequence.INC_ONSEARCH}_msgId`] = `Message id should not be same with previous calls as it's incremental push based call`
+      }
     }
+    msgIdSet.add(context.message_id)
   } catch (error: any) {
     logger.error(`!!Error while checking message id for /${constants.ON_SEARCHINC}, ${error.stack}`)
   }
@@ -55,6 +62,8 @@ export const checkOnsearchIncremental = (data: any, _msgIdSet: any) => {
     logger.error(`!!Error while storing BAP and BPP Ids in /${constants.ON_SEARCH}, ${error.stack}`)
   }
 
+  const onSearchContext: any = getValue(`${ApiSequence.ON_SEARCH}_context`)
+
   try {
     logger.info(`Comparing city Ids of  /${ApiSequence.INC_ONSEARCH}`)
     if (context.city !== '*') {
@@ -72,6 +81,60 @@ export const checkOnsearchIncremental = (data: any, _msgIdSet: any) => {
     logger.info(
       `Error while comparing transaction ids for /${ApiSequence.INC_SEARCH} and /${ApiSequence.INC_ONSEARCH} api, ${error.stack}`,
     )
+  }
+  // removed timestamp difference check
+  // try {
+  //   logger.info(`Comparing timestamp of /${constants.INC_SEARCH} and /${constants.ON_SEARCHINC}`)
+  //   const tmpstmp = incSearchContext?.timestamp
+  //   if (_.gte(tmpstmp, context.timestamp)) {
+  //     errorObj.tmpstmp = `Timestamp for /${constants.INC_SEARCH} api cannot be greater than or equal to /${constants.ON_SEARCHINC} api`
+  //   } else {
+  //     const timeDiff = timeDifference(context.timestamp, tmpstmp)
+  //     logger.info(timeDiff)
+  //     if (timeDiff > 5000) {
+  //       errorObj.tmpstmp = `context/timestamp difference between /${constants.ON_SEARCHINC} and /${constants.INC_SEARCH} should be less than 5 sec`
+  //     }
+  //   }
+  // } catch (error: any) {
+  //   logger.info(
+  //     `Error while comparing timestamp for /${constants.INC_SEARCH} and /${constants.ON_SEARCHINC} api, ${error.stack}`,
+  //   )
+  // }
+
+  try {
+    logger.info(`Comparing timestamp of /${constants.ON_SEARCHINC} and /${constants.ON_SEARCH}`)
+    const tmpstmp = onSearchContext?.timestamp
+    if (_.gte(tmpstmp, context.timestamp)) {
+      errorObj['tmpstmp/'] = `Timestamp for /${constants.ON_SEARCH} api cannot be greater than or equal to /${constants.ON_SEARCHINC} api`
+    }
+  } catch (error: any) {
+    logger.info(
+      `Error while comparing timestamp for /${constants.ON_SEARCH} and /${constants.ON_SEARCHINC} api, ${error.stack}`,
+    )
+  }
+
+  // Checking for mandatory Items in provider IDs
+  try {
+    const domain = context.domain.split(':')[1]
+    logger.info(`Checking for item tags in bpp/providers[0].items.tags in ${domain}`)
+    for (let i in message.catalog['bpp/providers']) {
+      const items = message.catalog['bpp/providers'][i].items
+      let errors: any
+      switch (domain) {
+        case DOMAIN.RET12:
+          errors = checkMandatoryTags(i, items, errorObj, fashion, 'Fashion')
+          break
+        case DOMAIN.RET14:
+          errors = checkMandatoryTags(i, items, errorObj, electronicsData, 'Electronics')
+          break
+        case DOMAIN.RET15:
+          errors = checkMandatoryTags(i, items, errorObj, applianceData, 'Appliances')
+          break
+      }
+      Object.assign(errorObj, errors)
+    }
+  } catch (error: any) {
+    logger.error(`!!Errors while checking for items in bpp/providers/items, ${error.stack}`)
   }
 
   try {
@@ -100,7 +163,7 @@ export const checkOnsearchIncremental = (data: any, _msgIdSet: any) => {
   }
 
   const onSearchCatalog: any = message.catalog
-  const onSearchFFIds: any = getValue('onSearchFFIds')
+  const onSearchFFIdsArray: any = getValue('onSearchFFIdsArray')
 
   const prvdrsId = new Set()
 
@@ -294,10 +357,10 @@ export const checkOnsearchIncremental = (data: any, _msgIdSet: any) => {
 
                 logger.info(`Checking fulfillment_id for item id: ${item.id}`)
 
-                if (item.fulfillment_id && !onSearchFFIds.includes(item.fulfillment_id)) {
+                if (item.fulfillment_id && !onSearchFFIdsArray[i].includes(item.fulfillment_id)) {
                   const key = `prvdr${i}item${j}ff`
                   errorObj[key] =
-                    `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/fulfillments`
+                    `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/prvdr${i}/fulfillments`
                 }
 
                 logger.info(`Comparing fulfillment_id of /${constants.SEARCH} and /${constants.ON_SEARCH} api`)
@@ -349,10 +412,11 @@ export const checkOnsearchIncremental = (data: any, _msgIdSet: any) => {
                           const key = `prvdr${i}item${j}time`
                           errorObj[key] = `item_id: ${item.id} should contain time object in bpp/providers[${i}]`
                         }
-
-                        if (!item.category_ids) {
-                          const key = `prvdr${i}item${j}ctgry_ids`
-                          errorObj[key] = `item_id: ${item.id} should contain category_ids in bpp/providers[${i}]`
+                        if (getValue('domain') === "RET11") {
+                          if (!item.category_ids) {
+                            const key = `prvdr${i}item${j}ctgry_ids`
+                            errorObj[key] = `item_id: ${item.id} should contain category_ids in bpp/providers[${i}]`
+                          }
                         }
                       }
 

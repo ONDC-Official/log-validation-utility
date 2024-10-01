@@ -185,7 +185,7 @@ export const FnBonSelectSchema = {
                     },
                     value: {
                       type: 'string',
-                      pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                      pattern: '^[0-9]+(\.[0-9]{1,2})?$',
                       errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                     },
                   },
@@ -222,7 +222,7 @@ export const FnBonSelectSchema = {
                           },
                           value: {
                             type: 'string',
-                            pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                            pattern: '^[-+]?[0-9]+(\.[0-9]{1,2})?$',
                             errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                           },
                         },
@@ -242,6 +242,8 @@ export const FnBonSelectSchema = {
                                 properties: {
                                   count: {
                                     type: 'string',
+                                    enum: ['99', '0'],
+                                    errorMessage: 'available count must be either 99 or 0 only',
                                   },
                                 },
                                 required: ['count'],
@@ -266,7 +268,7 @@ export const FnBonSelectSchema = {
                               },
                               value: {
                                 type: 'string',
-                                pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                                pattern: '^[-+]?[0-9]+(\.[0-9]{1,2})?$',
                                 errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                               },
                             },

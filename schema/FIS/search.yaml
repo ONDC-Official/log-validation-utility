@@ -612,6 +612,24 @@ properties:
                                   type: object
                                   additionalProperties: false
                                   properties:
+                                    creds:
+                                      type: array
+                                      items:
+                                        description: >-
+                                          Describes a credential of an entity -
+                                          Person or Organization
+                                        type: object
+                                        additionalProperties: false
+                                        properties:
+                                          id:
+                                            type: string
+                                          type:
+                                            type: string
+                                            default: VerifiableCredential
+                                          url:
+                                            description: URL of the credential
+                                            type: string
+                                            format: uri
                                     descriptor: *ref_4
                                     address:
                                       description: The postal address of the organization
@@ -646,6 +664,7 @@ properties:
                                             A Jcard object as per
                                             draft-ietf-jcardcal-jcard-03
                                             specification
+
                                 person: &ref_15
                                   description: Describes a person as any individual
                                   type: object
@@ -681,7 +700,7 @@ properties:
                                         identify as a binary gender.Allowed
                                         values for this field can be published
                                         in the network policy
-                                    creds:
+                                    creds: &ref_cred
                                       type: array
                                       items:
                                         description: >-

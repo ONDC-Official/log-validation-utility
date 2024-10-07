@@ -8,6 +8,7 @@ import {
   validateStops,
   validatePayloadAgainstSchema,
   validatePaymentObject,
+  validateProviderId,
 } from './mobilityChecks'
 import _ from 'lodash'
 import attributeConfig from './config/config2.0.1.json'
@@ -37,27 +38,16 @@ export const checkInit = (data: any, msgIdSet: any, version: any) => {
     }
 
     const init = message.order
-
     const itemIDS: any = getValue('itemIds')
     const storedFull: any = getValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`)
 
+    //provider id check
     try {
-      logger.info(`Comparing Provider Id of /${constants.ON_SELECT} and /${constants.INIT}`)
-      const prvrdID: any = getValue('providerId')
-      const selectedProviderId = init.provider.id
-
-      if (!prvrdID) {
-        logger.info(`Skipping Provider Id check due to insufficient data`)
-        setValue('providerId', selectedProviderId)
-      } else if (!_.isEqual(prvrdID, init.provider.id)) {
-        errorObj.prvdrId = `Provider Id for /${constants.ON_SELECT} and /${constants.INIT} api should be same`
-      } else {
-        setValue('providerId', selectedProviderId)
-      }
+      logger.info(`Checking provider id in /${constants.INIT}`)
+      const providerError = validateProviderId(init?.provider?.id, constants.ON_SELECT, constants.INIT)
+      Object.assign(errorObj, providerError)
     } catch (error: any) {
-      logger.info(
-        `Error while comparing provider id for /${constants.ON_SELECT} and /${constants.INIT} api, ${error.stack}`,
-      )
+      logger.error(`!!Error while checking provider id in /${constants.INIT}, ${error.stack}`)
     }
 
     //items check
@@ -67,9 +57,8 @@ export const checkInit = (data: any, msgIdSet: any, version: any) => {
       else {
         init.items.forEach((item: any, index: number) => {
           if (!itemIDS.includes(item.id)) {
-            errorObj[
-              `item[${index}].item_id`
-            ] = `/message/order/items/id in item: ${item.id} at /${constants.INIT} should be one of the /item/id mapped in past call`
+            errorObj[`item[${index}].item_id`] =
+              `/message/order/items/id in item: ${item.id} at /${constants.INIT} should be one of the /item/id mapped in past call`
           }
         })
       }
@@ -84,13 +73,19 @@ export const checkInit = (data: any, msgIdSet: any, version: any) => {
         if (!fulfillment?.id) {
           errorObj[fulfillmentKey] = `id is missing in fulfillments[${index}]`
         } else if (!storedFull.includes(fulfillment.id)) {
-          errorObj[
-            `${fulfillmentKey}.id`
-          ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+          errorObj[`${fulfillmentKey}.id`] =
+            `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
         }
 
-        if (!ON_DEMAND_VEHICLE.includes(fulfillment.vehicle.category)) {
-          errorObj[`${fulfillmentKey}.vehicleCategory`] = `Vehicle category should be one of ${ON_DEMAND_VEHICLE}`
+        const vehicleKeys = Object.keys(fulfillment?.vehicle)
+        if (vehicleKeys?.length > 2)
+          errorObj[`${index}.vehicleKeys`] = `additional keys present in fulfillments.vehicle`
+        if (!fulfillment?.vehicle?.category) {
+          errorObj[`${index}.vehicleCategory`] = `category is missing in fulfillments.vehicle`
+        } else {
+          if (!ON_DEMAND_VEHICLE.includes(fulfillment?.vehicle?.category)) {
+            errorObj[`${index}.vehicleCategory`] = `category should be one of ${ON_DEMAND_VEHICLE} fulfillments.vehicle`
+          }
         }
 
         //customer checks

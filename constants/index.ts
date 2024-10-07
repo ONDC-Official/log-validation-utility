@@ -144,9 +144,15 @@ export const FIS13HealthSequence = {
   ON_SEARCH_OFFER: 'on_search_offer',
   SELECT: 'select',
   ON_SELECT: 'on_select',
+  SELECT_1: 'select_1',
+  ON_SELECT_1: 'on_select_1',
+  SELECT_2: 'select_2',
+  ON_SELECT_2: 'on_select_2',
+  INIT: 'init',
   INIT_1: 'init_1',
   INIT_2: 'init_2',
   INIT_3: 'init_3',
+  ON_INIT: 'on_init',
   ON_INIT_1: 'on_init_1',
   ON_INIT_2: 'on_init_2',
   ON_INIT_3: 'on_init_3',
@@ -252,7 +258,7 @@ export const insuranceFormHeadings: any = {
   },
   MARINE_INSURANCE: {
     on_search: ['Individual Information'],
-    on_select: ['EKYC'],
+    on_select: ['additional information form', 'Aadhar/kyc form'],
     on_init: ['Buyer Details', 'Manual Review', 'Nominee Details'],
   },
 }
@@ -311,7 +317,8 @@ export const fis14FlowSequence = {
 }
 
 export const onDemandFlows = {
-  HAPPY_FLOW: 'HAPPY_FLOW',
+  DRIVER_ON_CONFIRM: 'DRIVER_ON_CONFIRM',
+  DRIVER_POST_CONFIRM: 'DRIVER_POST_CONFIRM',
   RIDER_CANCEL: 'RIDER_CANCEL',
   DRIVER_CANCEL: 'DRIVER_CANCEL',
   PRICE_UPDATE: 'PRICE_UPDATE',

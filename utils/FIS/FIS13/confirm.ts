@@ -1,11 +1,11 @@
 /* eslint-disable no-prototype-builtins */
 import constants from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, isValidEmail, isValidPhoneNumber } from '../../'
+import { validateSchema, isObjectEmpty } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
-import { validateContext, validateQuote } from './fisChecks'
+import { validateContext, validateFulfillmentsArray, validateQuote } from './fisChecks'
 import _, { isEmpty } from 'lodash'
-import { validatePaymentTags } from './tags'
+import { validatePaymentTags, validatePolicyDetails } from './tags'
 
 export const checkConfirm = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
@@ -32,6 +32,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
 
     const confirm = message.order
     const itemIDS: any = getValue('ItmIDS')
+    const insurance: any = getValue('insurance')
 
     // check provider
     try {
@@ -50,33 +51,9 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     }
 
     //check fulfillments
-    try {
-      logger.info(`checking fulfillments array in /${constants.CONFIRM}`)
-      const fulfillments = confirm.fulfillments
-      if (!fulfillments) {
-        errorObj.fulfillments = `fulfillments is missing at /${constants.CONFIRM}`
-      } else {
-        const fulfillmentIds: any = getValue(`fulfillmentIds`)
-        fulfillments?.map((fulfillment: any, i: number) => {
-          if (!fulfillment?.id) errorObj[`fulfillment${i}`] = `missing fulfillment.id in providers[${i}]`
-          else if (fulfillmentIds && !fulfillmentIds.has(fulfillment.id)) {
-            fulfillmentIds.add(fulfillment.id)
-            errorObj[`fulfillment${i}`] = `mismatched fulfillment id: ${fulfillment.id} in providers[${i}]`
-          }
-
-          if (!fulfillment?.person?.name)
-            errorObj.name = `person.name is missing in fulfillment${i} at /${constants.CONFIRM}`
-
-          if (!fulfillment?.contact?.email || !isValidEmail(fulfillment?.contact?.email))
-            errorObj.email = `contact.email should be present with valid email in fulfillment${i} at /${constants.CONFIRM}`
-
-          if (!fulfillment?.contact?.phone || !isValidPhoneNumber(fulfillment?.contact?.phone))
-            errorObj.phone = `contact.phone should be present with valid number in fulfillment${i} at /${constants.CONFIRM}`
-        })
-        setValue(`fulfillmentIds`, fulfillmentIds)
-      }
-    } catch (error: any) {
-      logger.error(`!!Error while checking fulfillments array in /${constants.CONFIRM}, ${error.stack}`)
+    const fulfillmentValidation: string[] = validateFulfillmentsArray(confirm?.fulfillments, 'confirm')
+    if (fulfillmentValidation.length > 0) {
+      errorObj.fulfillments = fulfillmentValidation
     }
 
     //check items
@@ -93,17 +70,58 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
           } else {
             if (itemIDS && !itemIDS.includes(item.id)) {
               const key = `item[${index}].item_id`
-              errorObj[
-                key
-              ] = `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
+              errorObj[key] =
+                `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
             }
           }
 
-          // Validate parent_item_id
-          if (!item?.parent_item_id) errorObj.parent_item_id = `sub-parent_item_id not found in providers[${index}]`
-          else if (!_.isEqual(item.parent_item_id, parentItemId)) {
-            setValue('parentItemId', item.parent_item_id)
-            errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id from past call in providers[${index}]`
+          if (!item?.price?.value) {
+            errorObj[`item[${index}].price.value`] =
+              `price.value should be present at item[${index}] /${constants.CONFIRM}`
+          }
+
+          // Validate time
+          if (_.isEmpty(item?.time)) {
+            errorObj.time = `time is missing or empty at items[${index}]`
+          } else {
+            const time = item?.time
+            //Coverage Time -> MARINE
+            if (time?.label && time?.label !== 'Coverage Time')
+              errorObj['time.label'] = `label is missing or should be equal to 'Coverage Time' at items[${index}]`
+
+            if (insurance != 'MARINE_INSURANCE') {
+              if (time?.duration && !/^PT\d+([YMH])$/.test(time?.duration)) {
+                errorObj['time.duration'] = `duration is missing at items[${index}]`
+              } else if (!/^PT\d+([YMH])$/.test(time?.duration)) {
+                errorObj['time.duration'] = `incorrect format or type for duration at items[${index}]`
+              }
+            } else {
+              if (!time?.range || !time?.range?.start || !time?.range?.end) {
+                errorObj['time.range'] = `range.start/end is missing at items[${index}].time`
+              }
+            }
+          }
+
+          // checks (parent_item_id & add_ons) for MOTOR & HEATLH, time for MARINE
+          if (insurance != 'MARINE_INSURANCE') {
+            // Validate parent_item_id
+            if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in providers[${index}]`
+            else if (!_.isEqual(item.parent_item_id, parentItemId)) {
+              setValue('parentItemId', item.parent_item_id)
+              errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id from past call in providers[${index}]`
+            }
+          } else {
+            // Validate Item tags
+            let tagsValidation: any = {}
+            if (insurance == 'MARINE_INSURANCE') {
+              tagsValidation = validatePolicyDetails(item?.tags, 'confirm')
+            } else {
+              // tagsValidation = validateItemsTags(item?.tags)
+            }
+            if (!tagsValidation.isValid) {
+              // Object.assign(errorObj, { tags: tagsValidation.errors })
+              errorObj[`items.tags[${index}]`] = { ...tagsValidation.errors }
+            }
           }
         })
       }
@@ -139,9 +157,8 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
           } else {
             const collectedBy = getValue(`collected_by`)
             if (collectedBy && collectedBy != arr?.collected_by)
-              errorObj[
-                `payemnts[${i}]_collected_by`
-              ] = `payments.collected_by value sent in ${constants.CONFIRM} should be same as sent in past call: ${collectedBy}`
+              errorObj[`payemnts[${i}]_collected_by`] =
+                `payments.collected_by value sent in ${constants.CONFIRM} should be same as sent in past call: ${collectedBy}`
 
             if (arr?.collected_by === 'BPP') {
               terms.push({ code: 'SETTLEMENT_AMOUNT', type: 'amount' })

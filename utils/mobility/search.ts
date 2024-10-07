@@ -77,12 +77,7 @@ export const search = (data: any, msgIdSet: any, version: any) => {
       const allowedCollectedByValues = ['BPP', 'BAP']
       const terms: any = [
         { code: 'STATIC_TERMS', type: 'url' },
-        {
-          code: 'SETTLEMENT_TYPE',
-          type: 'enum',
-          value: ['upi', 'neft', 'rtgs'],
-        },
-        { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' },
+        { code: 'DELAY_INTEREST', type: 'amount' },
       ]
 
       if (!collectedBy) {

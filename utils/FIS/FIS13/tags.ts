@@ -176,7 +176,7 @@ export const validatePaymentTags = (tags: Tag[], terms: any): ValidationResult =
 
                 default:
                   errors.push(
-                    `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid descriptor code: ${item?.descriptor?.code}`,
+                    `tag: ${item?.descriptor?.code} should not be part of SETTLEMENT_TERMS tag-group at index [${index}]`,
                   )
               }
             })
@@ -324,7 +324,7 @@ export const validateItemsTags = (tags: Tag[]): ValidationResult => {
       errors.push(`Tag[${index}] has an invalid value for the 'display' property. It should be a boolean.`)
     }
 
-    switch (tag.descriptor.code) {
+    switch (tag?.descriptor?.code) {
       case 'LOAN_INFO': {
         tag.list.forEach((item: any, itemIndex) => {
           switch (item.descriptor.code) {
@@ -382,8 +382,208 @@ export const validateItemsTags = (tags: Tag[]): ValidationResult => {
 
         break
       }
+
+      case 'GENERAL_INFO': {
+        tag.list.forEach((item: any, itemIndex) => {
+          switch (item.descriptor.code) {
+            case 'FORECLOSURE_FEE': {
+              const ratio = parseFloat(item.value)
+              if (isNaN(ratio) || ratio < 0 || ratio > 1) {
+                errors.push(
+                  `'CLAIM_SETTLEMENT_RATIO' in Tag[${index}], List item[${itemIndex}] must be a valid decimal between 0 and 1.`,
+                )
+              }
+
+              break
+            }
+
+            case 'OTHER_PENALTY_FEE':
+            case 'DELAY_PENALTY_FEE':
+            case 'INTEREST_RATE_CONVERSION_CHARGE':
+            case 'APPLICATION_FEE':
+            case 'TERM':
+            case 'INTEREST_RATE': {
+              const numericValue = parseInt(item.value, 10)
+              if (isNaN(numericValue) || numericValue < 0) {
+                errors.push(
+                  `'${item.descriptor.code}' in Tag[${index}], List item[${itemIndex}] must be a valid non-negative integer.`,
+                )
+              }
+
+              break
+            }
+
+            // case 'INITIAL_WAITING_PERIOD': {
+            //   if (item.value.toLowerCase() !== 'true' && item.value.toLowerCase() !== 'false') {
+            //     errors.push(
+            //       `'${item.descriptor.code}' in Tag[${index}], List item[${itemIndex}] must be a boolean in string.`,
+            //     )
+            //   }
+
+            //   break
+            // }
+
+            // case 'MATERNITY_COVERAGE':
+            // case 'INITIAL_WAITING_PERIOD':
+            // case 'CO_PAYMENT':
+            // case 'RESTORATION_BENEFIT': {
+            //   if (item.value.toLowerCase() !== 'no' && item.value.toLowerCase() !== 'yes') {
+            //     errors.push(
+            //       `'${item.descriptor.code}' in Tag[${index}], List item[${itemIndex}] must be either of yes or no`,
+            //     )
+            //   }
+
+            //   break
+            // }
+          }
+        })
+
+        break
+      }
+
+      default:
+        errors.push(`code is missing or invalid at Tag[${index}]`)
     }
   })
+
+  return {
+    isValid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  }
+}
+
+export const validateGeneralInfo = (tags: any) => {
+  const errors: string[] = []
+
+  const requiredDescriptors: any = {
+    CO_PAYMENT: (value: string) => value === 'Yes' || value === 'No',
+    LIABILITY_COVERAGE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+    PROTECTION_AND_INDEMNITY: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+    EXTENDED_COVERAGE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+    DEDUCTIBLES_AND_EXCESS: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+    INSTITUTE_CARGO_CLAUSE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+  }
+
+  tags.forEach((tag: any, tagIndex: number) => {
+    if (!tag.descriptor || !tag.descriptor.code || !tag.descriptor.name) {
+      errors.push(`Tag[${tagIndex}] is missing required descriptor fields (code or name).`)
+    }
+
+    // Check if list exists and is an array
+    if (!tag.list || !Array.isArray(tag.list)) {
+      errors.push(`Tag[${tagIndex}] has an invalid 'list' field. It should be an array.`)
+    } else {
+      // Iterate through the list of items
+      tag.list.forEach((item: any, itemIndex: number) => {
+        const descriptorCode = item.descriptor?.code
+        const descriptorName = item.descriptor?.name
+        const value = item.value
+
+        // Check if descriptor fields exist
+        if (!descriptorCode || !descriptorName) {
+          errors.push(`Tag[${tagIndex}] -> List[${itemIndex}] is missing required descriptor fields (code or name).`)
+          return
+        }
+
+        // Validate descriptor code
+        if (!(descriptorCode in requiredDescriptors)) {
+          errors.push(`Tag[${tagIndex}] -> List[${itemIndex}] has an unknown descriptor code: '${descriptorCode}'.`)
+        } else {
+          // Validate the value based on descriptor code
+          const validateValue = requiredDescriptors[descriptorCode]
+          if (!validateValue(value)) {
+            errors.push(
+              `Tag[${tagIndex}] -> List[${itemIndex}] has an invalid value '${value}' for descriptor code '${descriptorCode}'.`,
+            )
+          }
+        }
+      })
+    }
+  })
+
+  return {
+    isValid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  }
+}
+
+export const validatePolicyDetails = (tags: any, action: string) => {
+  const errors: string[] = []
+
+  let requiredDescriptors: any = {
+    COMMODITY_TYPE: (value: string) => typeof value === 'string' && value.length > 0,
+    SUM_INSURED: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+    MODE_OF_CONVEYANCE: (value: string) => ['cargo', 'air', 'sea'].includes(value?.toLowerCase()),
+    BASIS_OF_VALUATION: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) > 0,
+  }
+
+  if (action != 'on_select_1') {
+    const conditionalDescriptors: any = {
+      POLICY_START_DATE: (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value), // YYYY-MM-DD format
+      // COVERAGE_FROM: (value: string) => typeof value === 'string' && value.length > 0,
+      // COVERAGE_TO: (value: string) => typeof value === 'string' && value.length > 0,
+      INVOICE_DATE: (value: string) => /^\d{4}-\d{2}-\d{2}$/.test(value), // YYYY-MM-DD format
+      // CARGO_DETAILS: (value: string) => typeof value === 'string' && value.length > 0,
+      // PACKAGING_DETAILS: (value: string) => typeof value === 'string' && value.length > 0,
+      INVOICE_NUMBER: (value: string) => typeof value === 'string' && /^\d+$/.test(value), // Numeric string
+    }
+
+    requiredDescriptors = { ...requiredDescriptors, ...conditionalDescriptors }
+  }
+
+  // if (action === 'confirm') {
+  //   delete requiredDescriptors['COMMODITY_TYPE']
+  //   delete requiredDescriptors['MODE_OF_CONVEYANCE']
+  //   delete requiredDescriptors['BASIS_OF_VALUATION']
+  // }
+
+  console.log('requiredDescriptors', action, requiredDescriptors)
+  tags.forEach((tag: any, tagIndex: number) => {
+    if (!tag.descriptor || !tag.descriptor.code) {
+      errors.push(`descriptor.code is missing at Tag[${tagIndex}]`)
+    } else if (tag.descriptor.code !== 'POLICY_DETAILS') {
+      errors.push(`descriptor.code should be 'POLICY_DETAILS' at Tag[${tagIndex}]`)
+    }
+
+    if (!tag.descriptor || !tag.descriptor.name) {
+      errors.push(`descriptor.name is missing at Tag[${tagIndex}]`)
+    }
+
+    if (!tag.list || !Array.isArray(tag.list)) {
+      errors.push(`Tag[${tagIndex}] has an invalid 'list' field. It should be an array.`)
+    } else {
+      tag.list.forEach((item: any, itemIndex: number) => {
+        const descriptorCode = item.descriptor?.code
+        const descriptorName = item.descriptor?.name
+        const value = item.value
+
+        // Check if descriptor fields exist
+        if (!descriptorCode || !descriptorName) {
+          errors.push(`Tag[${tagIndex}] -> List[${itemIndex}] is missing required descriptor fields (code or name).`)
+          return
+        }
+
+        // Validate descriptor code
+        if (!(descriptorCode in requiredDescriptors)) {
+          errors.push(`Tag[${tagIndex}] -> List[${itemIndex}] has an unknown descriptor code: '${descriptorCode}'.`)
+        } else {
+          // Validate the value based on descriptor code
+          const validateValue = requiredDescriptors[descriptorCode]
+          if (!validateValue(value)) {
+            errors.push(
+              `Tag[${tagIndex}] -> List[${itemIndex}] has an invalid value '${value}' for descriptor code '${descriptorCode}'.`,
+            )
+          }
+
+          delete requiredDescriptors[descriptorCode]
+        }
+      })
+    }
+  })
+
+  if (Object.keys(requiredDescriptors)?.length > 0) {
+    errors.push(`Missing tags ${Object.keys(requiredDescriptors)} at POLICY_DETAILS tag-group`)
+  }
 
   return {
     isValid: errors.length === 0,

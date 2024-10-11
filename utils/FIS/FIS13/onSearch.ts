@@ -8,6 +8,14 @@ import { checkUniqueCategoryIds, getCodes, validateContext, validateDescriptor, 
 import { validatePaymentTags, validateItemsTags, validateGeneralInfo } from './tags'
 import { isEmpty } from 'lodash'
 
+const validAddOnsCodes = [
+  'NO_CLAIM_BONUS',
+  'DAYCARE_COVER',
+  'DAILY_CASH_ALLOWANCE',
+  'DOMICILIARY_EXPENSES',
+  'HEALTH_CHECK_UPS',
+]
+
 export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: string) => {
   if (!data || isObjectEmpty(data)) {
     return { [constants.ON_SEARCH]: 'JSON cannot be empty' }
@@ -21,7 +29,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
   }
 
   const schemaValidation = validateSchema('FIS', constants.ON_SEARCH, data)
-  const contextRes: any = validateContext(context, msgIdSet, constants.SEARCH, constants.ON_SEARCH)
+  const contextRes: any = validateContext(context, msgIdSet, constants.SEARCH, action)
 
   setValue(`${constants.ON_SEARCH}_message`, message)
   setValue(`${constants.ON_SEARCH}`, data)
@@ -156,9 +164,11 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
                 `payments.collected_by must be present in ${constants.ON_SEARCH}`
             } else {
               const srchCollectBy = getValue(`collected_by`)
-              if (srchCollectBy != arr?.collected_by)
+              if (srchCollectBy != arr?.collected_by) {
+                setValue(`collected_by`, arr?.collected_by)
                 errorObj[`payemnts[${i}]_collected_by`] =
-                  `payments.collected_by value sent in ${constants.ON_SEARCH} should be same as sent in ${constants.SEARCH}: ${srchCollectBy}`
+                  `payments.collected_by mismatch with what was sent in /${constants.ON_SEARCH}`
+              }
             }
 
             // Validate payment tags
@@ -203,7 +213,23 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
               }
             }
 
-            if (insurance == 'HEALTH') {
+            if (insurance == 'HEALTH_INSURANCE') {
+              // check item Descriptor
+              try {
+                logger.info(`Validating item Descriptor at index: ${j}`)
+                const descriptor = item?.descriptor
+                const descriptorError = validateDescriptor(
+                  descriptor,
+                  constants.ON_SEARCH,
+                  `providers[${i}].items[${j}].descriptor`,
+                  false,
+                  [],
+                )
+                if (descriptorError) Object.assign(errorObj, descriptorError)
+              } catch (error: any) {
+                logger.info(`Error while validating descriptor for items at /${constants.ON_SEARCH}, ${error.stack}`)
+              }
+
               // Validate time
               if (isEmpty(item?.time)) {
                 errorObj.time = `time is missing or empty at providers[${i}].items[${j}]`
@@ -223,6 +249,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
 
               // Validate add_ons
               try {
+                console.log('``item?.add_ons-----------``', item?.add_ons)
                 logger.info(`Checking add_ons`)
                 if (isEmpty(item?.add_ons))
                   errorObj[`item[${j}]_add_ons`] = `add_ons array is missing or empty in ${action}`
@@ -238,11 +265,26 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
                       addOnIdSet.add(addOn?.id)
                     }
 
-                    if (!addOn?.descriptor?.code || !/^[A-Z_]+$/.test(addOn?.descriptor?.code))
-                      errorObj[`${key}.code`] = 'code should be present in a generic enum format'
+                    if (!item?.price) {
+                      errorObj[`${key}.price`] = `price is missing at ${key}`
+                    } else {
+                      if (!item?.price?.value) {
+                        errorObj[`${key}.price.value`] = `price.value should be present at ${key}`
+                      }
 
-                    if (
-                      !addOn?.quantity.available.count ||
+                      if (!item?.price?.currency) {
+                        errorObj[`${key}.price.currency`] = `price.currency should be present at ${key}`
+                      }
+                    }
+
+                    const code = addOn?.descriptor?.code
+                    if (!code) errorObj[`${key}.code`] = 'descriptor.code is missing'
+                    else if (!validAddOnsCodes?.includes(code))
+                      errorObj[`${key}.code`] = `descriptor.code should be one of ${validAddOnsCodes}`
+
+                    if (!addOn?.quantity?.available?.count) {
+                      errorObj[`${key}.code`] = 'quantity.count is missing in add_ons'
+                    } else if (
                       !Number.isInteger(addOn?.quantity.available.count) ||
                       addOn?.quantity.available.count <= 0
                     ) {
@@ -260,6 +302,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
             // Validate parent_item_id & price for multi-offer calls
             if (action?.includes('_offer')) {
               // parent_item_id check
+              console.log('itemsId---------------11', item)
               if (!item?.parent_item_id)
                 errorObj['parent_item_id'] = `parent_item_id is missing at providers[${i}].items[${j}]`
               else {
@@ -294,8 +337,8 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
 
             // Validate Item tags
             let tagsValidation: any = {}
-            if (insurance == 'MARINE_INSURANCE') {
-              tagsValidation = validateGeneralInfo(item?.tags)
+            if (insurance != 'MOTOR_INSURANCE') {
+              tagsValidation = validateGeneralInfo(item?.tags, action)
               console.log('tagsValidation', tagsValidation)
             } else {
               tagsValidation = validateItemsTags(item?.tags)
@@ -321,7 +364,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
           })
 
           if (action?.includes('_offer') && parentItems == 0)
-            errorObj.parent_item_id = `sub-items not found in providers[${i}]`
+            errorObj.parent_item_id = `child-items not found in providers[${i}]`
         }
       } catch (error: any) {
         logger.error(`!!Errors while checking items in providers[${i}], ${error.stack}`)

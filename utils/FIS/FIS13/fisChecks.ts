@@ -3,7 +3,7 @@ import { insuranceFormHeadings } from '../../../constants/'
 import { logger } from '../../../shared/logger'
 import { checkIdAndUri, checkFISContext } from '../../'
 import _, { isArray, isEmpty } from 'lodash'
-const FULFILLMENT_STATE_CODES = ['INITIATED', 'SANCTIONED', 'DISBURSED', 'PENDING', 'REJECTED', 'COMPLETED']
+import { validatePaymentTags } from './tags'
 
 export const checkUniqueCategoryIds = (categoryIds: (string | number)[], availableCategoryIds: any): boolean => {
   console.log('categoryIds', categoryIds)
@@ -11,9 +11,9 @@ export const checkUniqueCategoryIds = (categoryIds: (string | number)[], availab
   const uniqueCategoryIds = new Set(categoryIds)
   const isIdAvailable = (id: string | number) => {
     if (availableCategoryIds instanceof Set) {
-      return availableCategoryIds.has(id) 
+      return availableCategoryIds.has(id)
     } else if (Array.isArray(availableCategoryIds)) {
-      return availableCategoryIds.includes(id) 
+      return availableCategoryIds.includes(id)
     } else {
       throw new TypeError('availableCategoryIds must be either an Array or Set')
     }
@@ -33,7 +33,7 @@ const getFormHeading = (action: any, insuranceType: any): string[] | string | nu
 const getQuoteCodes = (flow: string): string[] => {
   switch (flow) {
     case 'HEALTH_INSURANCE':
-      return ['BASE_PRICE', 'CONVIENCE', 'TAX', 'PROCESSING_FEE']
+      return ['BASE_PRICE', 'CONVIENCE_FEE', 'TAX', 'PROCESSING_FEE']
       break
 
     case 'MARINE_INSURANCE':
@@ -64,69 +64,9 @@ export const getCodes = (): string[] => {
   }
 }
 
-//remove
-export const validateFulfillments = (fulfillment: any, i: number, documents: any[]): any | null => {
-  const errors: any = {}
-
-  const insuranceType: any = getValue(`insuranceType`)
-
-  if (!fulfillment.state || !fulfillment.state.descriptor || !fulfillment.state.descriptor.code) {
-    errors.fulfillmentState = `Fulfillment[${i}] state descriptor code is missing`
-  } else {
-    const { code } = fulfillment.state.descriptor
-    if (!FULFILLMENT_STATE_CODES.includes(code)) {
-      errors.fulfillmentState = `Fulfillment[${i}] state descriptor code must be one of ${FULFILLMENT_STATE_CODES.join(
-        ', ',
-      )}`
-    }
-  }
-
-  if (insuranceType === 'PERSONAL_LOAN') {
-    if (
-      !fulfillment.customer ||
-      !fulfillment.customer.contact ||
-      !fulfillment.customer.contact.email ||
-      !fulfillment.customer.contact.phone ||
-      !fulfillment.customer.person ||
-      !fulfillment.customer.person.name
-    ) {
-      errors.customerInfo = `Customer information is incomplete for Fulfillment[${i}]`
-    }
-  }
-
-  if (insuranceType === 'INVOICE_BASED_LOAN') {
-    if (
-      !fulfillment.customer ||
-      !fulfillment.customer.organisation.address ||
-      !fulfillment.customer.organisation.state ||
-      !fulfillment.customer.organisation.state.name ||
-      !fulfillment.customer.organisation.city ||
-      !fulfillment.customer.organisation.city.name ||
-      !fulfillment.customer.organisation.city.code ||
-      !fulfillment.customer.organisation.contact ||
-      !fulfillment.customer.organisation.contact.phone ||
-      !fulfillment.customer.organisation.contact.email
-    ) {
-      errors.customerInfo = `Customer information is incomplete for Fulfillment[${i}]`
-    }
-  }
-
-  if (fulfillment.code === 'DISBURSED') {
-    const hasLoanCancellationDocument = documents.some((document: any) => {
-      return document.descriptor && document.descriptor.code === 'LOAN_CANCELLATION'
-    })
-
-    if (!hasLoanCancellationDocument) {
-      errors.missingLoanCancellationDocument =
-        'Documents must contain LOAN_CANCELLATION when fulfillment code is DISBURSED'
-    }
-  }
-
-  return Object.keys(errors).length > 0 ? errors : null
-}
-
 export const validateXInput = (xinput: any, j: number, action: string, currIndex: number): any | null => {
   const errors: any = {}
+  console.log('action------', action)
   if (!xinput || typeof xinput !== 'object') {
     errors[`item${j}_xinput`] = `xinput is missing or not an object in items[${j}]`
   } else {
@@ -187,6 +127,7 @@ export const validateXInput = (xinput: any, j: number, action: string, currIndex
         errors[`item${j}_xinput_form_id`] = `id is missing or not a string in items[${j}].xinput.form`
       } else {
         const formId: string[] | any = getValue('formId')
+        console.log('formId-------==============', formId, action)
         if (Array.isArray(formId)) {
           formId.push(id)
           setValue('formId', formId)
@@ -347,6 +288,7 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
 
 export const validateCancellationTerms = (cancellationTerms: any) => {
   const errors: string[] = []
+  const insurance: any = getValue('insurance')
 
   if (!isArray(cancellationTerms)) {
     errors.push(`cancellationTerms are missing or empty`)
@@ -359,20 +301,8 @@ export const validateCancellationTerms = (cancellationTerms: any) => {
   const isValidFulfillmentStateCode = (code: string) => ['INSURANCE_PROCESSING', 'INSURANCE_GRANTED'].includes(code) // Allowed codes
 
   cancellationTerms.forEach((term: any, index: number) => {
-    // Vaidate cancellation_fee
-    if (term.cancellation_fee && term.cancellation_fee.percentage) {
-      const { percentage } = term.cancellation_fee
-      if (!isValidPercentage(percentage)) {
-        errors.push(
-          `CancellationTerm[${index}] has an invalid percentage '${percentage}'. Expected a valid percentage like '3%'.`,
-        )
-      }
-    } else {
-      errors.push(`CancellationTerm[${index}] is missing the 'cancellation_fee' or 'percentage'.`)
-    }
-
     // Validate external_ref
-    if (term.external_ref) {
+    if (term?.external_ref) {
       const { mimetype, url } = term.external_ref
       if (!isValidMIMEType(mimetype)) {
         errors.push(`CancellationTerm[${index}] has an invalid mimetype '${mimetype}'. Expected 'text/html'.`)
@@ -384,14 +314,28 @@ export const validateCancellationTerms = (cancellationTerms: any) => {
       errors.push(`CancellationTerm[${index}] is missing 'external_ref'.`)
     }
 
-    // Validate fulfillment_state
-    if (term.fulfillment_state && term.fulfillment_state.descriptor) {
-      const { code } = term.fulfillment_state.descriptor
-      if (!isValidFulfillmentStateCode(code)) {
-        errors.push(`CancellationTerm[${index}] has an invalid fulfillment state code '${code}'.`)
+    if (insurance == 'MARINE_INSURANCE') {
+      if (term.cancellation_fee && term.cancellation_fee.percentage) {
+        // Vaidate cancellation_fee
+        const { percentage } = term.cancellation_fee
+        if (!isValidPercentage(percentage)) {
+          errors.push(
+            `CancellationTerm[${index}] has an invalid percentage '${percentage}'. Expected a valid percentage like '3%'.`,
+          )
+        }
+      } else {
+        errors.push(`CancellationTerm[${index}] is missing the 'cancellation_fee' or 'percentage'.`)
       }
-    } else {
-      errors.push(`CancellationTerm[${index}] is missing 'fulfillment_state' or 'descriptor'.`)
+
+      // Validate fulfillment_state
+      if (term.fulfillment_state && term.fulfillment_state.descriptor) {
+        const { code } = term.fulfillment_state.descriptor
+        if (!isValidFulfillmentStateCode(code)) {
+          errors.push(`CancellationTerm[${index}] has an invalid fulfillment state code '${code}'.`)
+        }
+      } else {
+        errors.push(`CancellationTerm[${index}] is missing 'fulfillment_state' or 'descriptor'.`)
+      }
     }
   })
 
@@ -408,29 +352,28 @@ export const validateDescriptor = (
   try {
     const errorObj: any = {}
     if (!descriptor) {
-      errorObj.descriptor = `descriptor is missing at ${path}.`
+      errorObj[`${path}.descriptor`] = `descriptor is missing at ${path}.`
     } else {
       if (checkCode) {
-        if (!descriptor?.code.trim()) {
-          errorObj.code = `descriptor.code is missing at ${path}.`
+        if (!descriptor?.code?.trim()) {
+          errorObj[`${path}.code`] = `descriptor.code is missing at ${path}.`
         } else if (descriptor.code?.trim() !== descriptor.code?.trim()?.toUpperCase()) {
-          errorObj.code = `descriptor.code must be in uppercase at ${path}., ${descriptor.code}`
-        } else if (codes && codes?.includes(descriptor?.code))
-          errorObj.code = `descriptor.code should be one of ${codes} at ${path}`
+          errorObj[`${path}.code`] = `descriptor.code must be in uppercase at ${path}., ${descriptor.code}`
+        } else if (codes && !codes?.includes(descriptor?.code))
+          errorObj[`${path}.code`] = `descriptor.code should be one of ${codes} at ${path}`
       }
 
       if (descriptor?.images) {
         descriptor.images.forEach((image: any, index: number) => {
           const { url, size_type } = image
           if (!isValidUrl(url)) {
-            errorObj[`image_url_[${index}]`] = `Invalid URL for image in descriptor at ${path}.`
+            errorObj[`${path}.image_url_[${index}]`] = `Invalid URL for image in descriptor at ${path}.`
           }
 
           const validSizes = ['xs', 'md', 'sm', 'lg']
           if (!validSizes.includes(size_type)) {
-            errorObj[`image_size_[${index}]`] = `Invalid image size in descriptor, should be one of: ${validSizes.join(
-              ', ',
-            )} at ${path}.`
+            errorObj[`${path}.image_size_[${index}]`] =
+              `Invalid image size in descriptor, should be one of: ${validSizes.join(', ')} at ${path}.`
           }
         })
       }
@@ -438,19 +381,19 @@ export const validateDescriptor = (
       //validate name only if checkCode is false or name is present
       if (!checkCode || descriptor?.name) {
         if (!descriptor?.name?.trim()) {
-          errorObj.name = `descriptor.name is missing or empty ${path}.`
+          errorObj[`${path}.name`] = `descriptor.name is missing or empty ${path}.`
         }
       }
 
       if (descriptor?.short_desc) {
         if (!descriptor.short_desc.trim()) {
-          errorObj.short_desc = `descriptor.short_desc is empty at ${path}.`
+          errorObj[`${path}.short_desc`] = `descriptor.short_desc is empty at ${path}.`
         }
       }
 
       if (descriptor?.long_desc) {
         if (!descriptor.long_desc.trim()) {
-          errorObj.long_desc = `descriptor.long_desc is empty at ${path}.`
+          errorObj[`${path}.long_desc`] = `descriptor.long_desc is empty at ${path}.`
         }
       }
     }
@@ -471,6 +414,7 @@ export const validateXInputSubmission = (xinput: any, index: number, sequence: s
       errorObj[`item${index}_form`] = `form is missing in items[${index}].xinput`
     } else {
       const formId: any = getValue(`formId`)
+      console.log('formId------------', sequence, formId)
       if (!formId?.includes(xinput?.form?.id)) {
         errorObj[`item${index}_formId`] = `form.id: ${xinput?.form?.id} mismatches with form.id sent in past call`
       }
@@ -502,70 +446,6 @@ export const validateXInputSubmission = (xinput: any, index: number, sequence: s
   return errorObj
 }
 
-export const validatePaymentsObject = (payments: any, action: string) => {
-  try {
-    logger.info(`checking payment object in /${action}`)
-    const errorObj: any = {}
-    // const buyerFinderFeesTag = payments[0].tags.find((tag: any) => tag.descriptor.code === 'BUYER_FINDER_FEES')
-    // const settlementTermsTag = payments[0].tags.find((tag: any) => tag.descriptor.code === 'SETTLEMENT_TERMS')
-
-    // if (!buyerFinderFeesTag) {
-    //   errorObj.buyerFinderFees = `BUYER_FINDER_FEES tag is missing in payments`
-    // }
-
-    // if (!settlementTermsTag) {
-    //   errorObj.settlementTerms = `SETTLEMENT_TERMS tag is missing in payments`
-    // }
-
-    if (_.isEmpty(payments)) errorObj.payments = `payments array is missing or empty in ${action}`
-    else {
-      const allowedStatusValues = ['NOT-PAID', 'PAID']
-      const allowedTypeValues = ['PRE-ORDER', 'ON-FULFILLMENT']
-      const requiredParams = ['bank_code', 'bank_account_number', 'virtual_payment_address']
-      payments?.forEach((payment: any, index: number) => {
-        // check status
-        if (!payment?.status)
-          errorObj.paymentStatus = `payment.status is missing for index:${index} in payments at ${action}`
-        else if (!payment?.status || !allowedStatusValues.includes(payment?.status)) {
-          errorObj.paymentStatus = `invalid status at index:${index} in payments, should be either of ${allowedStatusValues}`
-        }
-
-        // check type
-        if (!payment?.type) errorObj.paymentType = `payment.type is missing for index:${index} in payments at ${action}`
-        else if (!payment?.type || !allowedTypeValues.includes(payment?.type)) {
-          errorObj.paymentType = `invalid type at index:${index} in payments, should be one of ${allowedTypeValues}`
-        }
-
-        // check params
-        const params = payment?.params
-        const missingParams = requiredParams.filter((param) => !Object.prototype.hasOwnProperty.call(params, param))
-        if (missingParams.length > 0) {
-          errorObj.missingParams = `Required params ${missingParams.join(', ')} are missing in payments`
-        }
-
-        // check collected_by
-        if (!payment.collected_by) {
-          errorObj.payments = `collected_by is missing in payments`
-        } else {
-          const collectedBy = getValue(`collected_by`)
-          if (collectedBy && collectedBy !== payment.collected_by) {
-            errorObj.collectedBy = `collected_by didn't match with what was sent in previous call.`
-          } else {
-            const allowedCollectedByValues = ['BPP', 'BAP']
-            if (!allowedCollectedByValues.includes(payment.collected_by)) {
-              errorObj.collectedBy = `Invalid value for collected_by, should be either of ${allowedCollectedByValues}`
-            }
-
-            setValue(`collected_by`, payment.collected_by)
-          }
-        }
-      })
-    }
-  } catch (error: any) {
-    logger.error(`!!Error while checking payment object in /${action}, ${error.stack}`)
-  }
-}
-
 export const validateQuote = (quote: any) => {
   const errorObj: any = {}
 
@@ -582,9 +462,16 @@ export const validateQuote = (quote: any) => {
       )
 
       const missingBreakupItems = validBreakupItems.filter((item) => !requiredBreakupItems.includes(item))
+      const additionalBreakupItems = quoteBreakup
+        .filter((item: any) => !validBreakupItems.includes(item.title))
+        ?.map((item: any) => item.title)
 
       if (missingBreakupItems.length > 0) {
         errorObj.missingBreakupItems = `Quote breakup is missing the following items: ${missingBreakupItems.join(', ')}`
+      }
+
+      if (additionalBreakupItems.length > 0) {
+        errorObj.additionalBreakupItems = `Quote breakup is missing the following items: ${additionalBreakupItems.join(', ')}`
       }
 
       const totalBreakupValue = quoteBreakup.reduce((total: any, item: any) => {
@@ -617,12 +504,18 @@ export const validateQuote = (quote: any) => {
         errorObj.multipleCurrencies = 'Currency must be the same for all items in the quote breakup'
       }
 
-      if (!quote.ttl) {
-        errorObj.missingTTL = 'TTL is required in the quote'
-      }
+      //Optional
+      // if (!quote.ttl) {
+      //   errorObj.missingTTL = 'TTL is required in the quote'
+      // }
 
       if (insurance == 'HEALTH_INSURANCE' && !quote?.id) {
         errorObj.quoteId = 'id is missing in quote'
+      } else {
+        const quoteId = getValue('quoteId')
+        if (!quoteId) setValue('quoteId', quote?.id)
+        else if (quoteId !== quote?.id)
+          errorObj.quoteId = `id:${quote?.id} should be same as sent in past call:${quoteId}`
       }
     }
   } catch (error: any) {
@@ -698,7 +591,7 @@ export const validateDocuments = (documents: any, action: string) => {
         if (!document.mime_type) {
           errors[`${documentKey}.mime_type`] = 'Document mime_type is missing or empty'
         } else {
-          const allowedMimeTypes = ['application/pdf']
+          const allowedMimeTypes = ['application/pdf', 'application/html']
           if (!allowedMimeTypes.includes(document.mime_type)) {
             errors[`${documentKey}.mime_type`] = `Invalid mime_type: ${document.mime_type}`
           }
@@ -771,6 +664,7 @@ export const validateAddOns = (addOns: any, action: string) => {
 export const validateFulfillmentsArray = (fulfillments: any, action: string) => {
   const errors: string[] = []
   const fullIds: string[] = []
+  const insurance: any = getValue('insurance')
 
   if (!isArray(fulfillments)) {
     errors.push(`Fulfillments are missing or empty`)
@@ -803,92 +697,184 @@ export const validateFulfillmentsArray = (fulfillments: any, action: string) => 
         errors.push(`Fulfillment[${index}] is missing contact details.`)
       }
 
-      // Validate the organization address
-      if (action.includes('on_')) {
-        if (
-          !customer?.organization ||
-          (typeof customer?.organization?.address === 'string' && customer?.organization?.address?.length === 0)
-        ) {
-          errors.push(`Fulfillment[${index}] has an invalid or missing organization address.`)
-        }
-      }
-
-      // Validate the person details
-      if (customer.person) {
-        const { dob, gender, name, tags } = customer.person
-        if (!isValidDate(dob)) {
-          errors.push(`Fulfillment[${index}] has an invalid date of birth '${dob}'.`)
-        }
-        if (!isValidGender(gender)) {
-          errors.push(`Fulfillment[${index}] has an invalid gender '${gender}'.`)
-        }
-        if (!name || typeof name !== 'string' || name.length === 0) {
-          errors.push(`Fulfillment[${index}] has an invalid name '${name}'.`)
+      if (insurance == 'MARINE_INSURANCE') {
+        // Validate the organization address
+        if (action.includes('on_')) {
+          if (
+            !customer?.organization ||
+            (typeof customer?.organization?.address === 'string' && customer?.organization?.address?.length === 0)
+          ) {
+            errors.push(`Fulfillment[${index}] has an invalid or missing organization address.`)
+          }
         }
 
-        if (action.includes('confirm')) {
-          if (tags && Array.isArray(tags)) {
-            fulfillment.tags.forEach((tag: any, tagIndex: number) => {
-              if (!tag.descriptor || !tag.descriptor.code || !tag.descriptor.name) {
-                errors.push(`Fulfillment[${index}] -> Tag[${tagIndex}] is missing descriptor fields.`)
-              }
-
-              // Only validate PERSON_ADDITIONAL_DETAILS
-              if (tag.descriptor.code === 'PERSON_ADDITIONAL_DETAILS') {
-                tag.list.forEach((item: any, itemIndex: number) => {
-                  const descriptorCode = item.descriptor?.code
-                  const value = item.value
-
-                  // Validate POLITICALLY_EXPOSED_PERSON
-                  if (descriptorCode === 'POLITICALLY_EXPOSED_PERSON') {
-                    if (!isBooleanString(value)) {
-                      errors.push(
-                        `Fulfillment[${index}] -> Tag[${tagIndex}] -> List[${itemIndex}] has an invalid value for 'POLITICALLY_EXPOSED_PERSON'. Expected 'true' or 'false'.`,
-                      )
-                    }
-                  }
-
-                  // Validate GSTIN
-                  if (descriptorCode === 'GSTIN') {
-                    if (!isValidGSTIN(value)) {
-                      errors.push(
-                        `Fulfillment[${index}] -> Tag[${tagIndex}] -> List[${itemIndex}] has an invalid GSTIN '${value}'. Expected a valid 15-character alphanumeric GSTIN.`,
-                      )
-                    }
-                  }
-                })
-              }
-            })
-          } else if (tags) {
-            errors.push(`Fulfillment[${index}] has an invalid 'tags' field. It should be an array.`)
-          } else {
-            errors.push(`tags not present at Fulfillments[${index}]`)
+        // Validate the person details
+        if (customer.person) {
+          const { dob, gender, name, tags } = customer.person
+          if (!isValidDate(dob)) {
+            errors.push(`Fulfillment[${index}] has an invalid date of birth '${dob}'.`)
+          }
+          if (!isValidGender(gender)) {
+            errors.push(`Fulfillment[${index}] has an invalid gender '${gender}'.`)
+          }
+          if (!name || typeof name !== 'string' || name.length === 0) {
+            errors.push(`Fulfillment[${index}] has an invalid name '${name}'.`)
           }
 
-          if (action == 'on_confirm') {
-            if (!customer?.state || !customer?.state?.descriptor || !customer?.state?.descriptor?.code) {
-              errors.push(`state.descriptor.code is missing at Fulfillment[${index}]`)
+          if (action.includes('confirm')) {
+            if (tags && Array.isArray(tags)) {
+              fulfillment.tags.forEach((tag: any, tagIndex: number) => {
+                if (!tag.descriptor || !tag.descriptor.code || !tag.descriptor.name) {
+                  errors.push(`Fulfillment[${index}] -> Tag[${tagIndex}] is missing descriptor fields.`)
+                }
+
+                // Only validate PERSON_ADDITIONAL_DETAILS
+                if (tag.descriptor.code === 'PERSON_ADDITIONAL_DETAILS') {
+                  tag.list.forEach((item: any, itemIndex: number) => {
+                    const descriptorCode = item.descriptor?.code
+                    const value = item.value
+
+                    // Validate POLITICALLY_EXPOSED_PERSON
+                    if (descriptorCode === 'POLITICALLY_EXPOSED_PERSON') {
+                      if (!isBooleanString(value)) {
+                        errors.push(
+                          `Fulfillment[${index}] -> Tag[${tagIndex}] -> List[${itemIndex}] has an invalid value for 'POLITICALLY_EXPOSED_PERSON'. Expected 'true' or 'false'.`,
+                        )
+                      }
+                    }
+
+                    // Validate GSTIN
+                    if (descriptorCode === 'GSTIN') {
+                      if (!isValidGSTIN(value)) {
+                        errors.push(
+                          `Fulfillment[${index}] -> Tag[${tagIndex}] -> List[${itemIndex}] has an invalid GSTIN '${value}'. Expected a valid 15-character alphanumeric GSTIN.`,
+                        )
+                      }
+                    }
+                  })
+                }
+              })
+            } else if (tags) {
+              errors.push(`Fulfillment[${index}] has an invalid 'tags' field. It should be an array.`)
+            } else {
+              errors.push(`tags not present at Fulfillments[${index}]`)
+            }
+
+            if (action == 'on_confirm') {
+              if (!customer?.state || !customer?.state?.descriptor || !customer?.state?.descriptor?.code) {
+                errors.push(`state.descriptor.code is missing at Fulfillment[${index}]`)
+              }
             }
           }
+        } else {
+          errors.push(`Fulfillment[${index}] is missing person details.`)
         }
-      } else {
-        errors.push(`Fulfillment[${index}] is missing person details.`)
       }
     }
 
-    // Validate the fulfillment ID and type
-    if (!fulfillment.id || typeof fulfillment.id !== 'string' || fulfillment.id.length === 0) {
-      errors.push(`Fulfillment[${index}] has an invalid or missing ID.`)
+    if (!fulfillment.id) {
+      errors.push(`id is missing at Fulfillment[${index}]`)
     } else {
       fullIds?.push(fulfillment.id)
     }
-    if (!fulfillment.type || typeof fulfillment.type !== 'string' || fulfillment.type.length === 0) {
-      errors.push(`Fulfillment[${index}] has an invalid or missing type.`)
+
+    if (!fulfillment.type) {
+      errors.push(`type is missing at Fulfillment[${index}]`)
     } else if (fulfillment.type !== 'POLICY') {
-      errors.push(`Fulfillment[${index}] has an unsupported type '${fulfillment.type}'. Expected 'POLICY'.`)
+      errors.push(`Fulfillment[${index}].type has an unsupported value '${fulfillment.type}'. Expected 'POLICY'.`)
+    }
+
+    if (!action.includes('on_init')) {
+      if (!fulfillment?.state?.descriptor?.code) {
+        errors.push(`descriptor.code is missing at Fulfillment[${index}].state`)
+      } else if (fulfillment?.state?.descriptor?.code !== 'GRANTED') {
+        errors.push(
+          `descriptor.code at Fulfillment[${index}] has an unsupported value '${fulfillment.type}'. Expected 'GRANTED'.`,
+        )
+      }
     }
   })
-
-  if (action == 'on_init') setValue(`fulfillmentIds`, fullIds)
+  if (action.includes('on_init')) setValue(`fulfillmentIds`, fullIds)
   return errors
+}
+
+export const validatePaymentObject = (payments: any, action: string): any => {
+  try {
+    const errorObj: any = {}
+    if (isEmpty(payments)) {
+      errorObj.payments = `payments array is missing or is empty`
+    } else {
+      const allowedStatusValues = ['NOT-PAID', 'PAID']
+      const requiredParams = ['bank_code', 'bank_account_number', 'virtual_payment_address']
+      payments?.forEach((arr: any, i: number) => {
+        const terms = [
+          { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' },
+          {
+            code: 'SETTLEMENT_BASIS',
+            type: 'enum',
+            value: ['INVOICE_RECEIPT', 'Delivery'],
+          },
+          { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
+          { code: 'STATIC_TERMS', type: 'url' },
+          { code: 'COURT_JURISDICTION', type: 'string' },
+          { code: 'DELAY_INTEREST', type: 'amount' },
+          {
+            code: 'SETTLEMENT_TYPE',
+            type: 'enum',
+            value: ['upi', 'neft', 'rtgs'],
+          },
+          { code: 'SETTLEMENT_AMOUNT', type: 'amount' },
+        ]
+
+        if (!arr?.collected_by)
+          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${action}`
+        else {
+          const collectedBy = getValue(`collected_by`)
+          if (collectedBy && collectedBy != arr?.collected_by)
+            errorObj[`payemnts[${i}]_collected_by`] =
+              `payments.collected_by value sent in ${action} should be same as sent in past call: ${collectedBy}`
+        }
+
+        // check status
+        if (!arr?.status) errorObj.paymentStatus = `payment.status is missing for index:${i} in payments`
+        else if (!arr?.status || !allowedStatusValues.includes(arr?.status)) {
+          errorObj.paymentStatus = `invalid status at index:${i} in payments, should be either of ${allowedStatusValues}`
+        }
+
+        // check type
+        const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT', 'PRE-FULFILLMENT']
+        if (!arr?.type || !validTypes.includes(arr.type)) {
+          errorObj[`payments[${i}]_type`] =
+            `payments.params.type must be present in ${action} & its value must be one of: ${validTypes.join(', ')}`
+        }
+
+        // check params
+        const params = arr?.params
+        if (!params) errorObj.params = `payment.params is missing for index:${i} in payments`
+        else {
+          const missingParams = requiredParams.filter((param) => !Object.prototype.hasOwnProperty.call(params, param))
+          if (missingParams.length > 0) {
+            errorObj.missingParams = `Required params ${missingParams.join(', ')} are missing in payments`
+          }
+        }
+
+        if (!action.includes('init')) {
+          if (!arr?.id) errorObj.id = `payment.id is missing for index:${i} in payments`
+          else setValue(`paymentId`, arr?.id)
+        } else {
+          if (!arr?.url) errorObj.url = `payment.url is missing for index:${i} in payments`
+        }
+
+        // Validate payment tags
+        const tagsValidation = validatePaymentTags(arr?.tags, terms)
+        if (!tagsValidation.isValid) {
+          Object.assign(errorObj, { tags: tagsValidation.errors })
+        }
+      })
+    }
+
+    return errorObj
+  } catch (error) {
+    logger.error(`!!Some error occurred while checking payment object /${action} API`, error)
+  }
 }

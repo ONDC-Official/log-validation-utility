@@ -1,10 +1,7 @@
 /* eslint-disable no-prototype-builtins */
-import constants, { FisApiSequence } from '../../../constants'
+import constants from '../../../constants'
 import { logger } from '../../../shared/logger'
-import {
-  validateSchema,
-  isObjectEmpty,
-} from '../../'
+import { validateSchema, isObjectEmpty } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
 import {
   checkUniqueCategoryIds,
@@ -13,17 +10,18 @@ import {
   validateDescriptor,
   validateDocuments,
   validateFulfillmentsArray,
+  validatePaymentObject,
   validateProvider,
   validateQuote,
 } from './fisChecks'
-import { validateItemsTags, validatePolicyDetails } from './tags'
+import { validateGeneralInfo, validatePolicyDetails } from './tags'
 import _ from 'lodash'
 
 export const checkOnConfirm = (data: any, msgIdSet: any) => {
-  const errorObj: any = {}
   try {
+    const errorObj: any = {}
     if (!data || isObjectEmpty(data)) {
-      return { [FisApiSequence.ON_CONFIRM]: 'JSON cannot be empty' }
+      return { [constants.ON_CONFIRM]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -42,25 +40,16 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
       Object.assign(errorObj, contextRes.ERRORS)
     }
 
-    setValue(`${FisApiSequence.ON_CONFIRM}`, data)
-
     const on_confirm = message.order
-    const itemIDS: any = getValue('ItmIDS')
-    const itemIdArray: any[] = []
     const insurance: any = getValue('insurance')
+    const isAddOnPresent = getValue('isAddOnPresent')
 
-    let newItemIDSValue: any[]
-
-    if (itemIDS && itemIDS.length > 0) {
-      newItemIDSValue = itemIDS
-    } else {
-      on_confirm.items.map((item: { id: string }) => {
-        itemIdArray.push(item.id)
-      })
-      newItemIDSValue = itemIdArray
-    }
-
-    setValue('ItmIDS', newItemIDSValue)
+    if (!on_confirm?.created_at) errorObj.created_at = `created_at in missing at message.order`
+    else if (context?.timestamp < on_confirm?.created_at)
+      errorObj.created_at = `created_at should be either equal or less than context.timestamp`
+    if (!on_confirm?.updated_at) errorObj.updated_at = `updated_at in missing at message.order`
+    else if (context?.timestamp < on_confirm?.updated_at)
+      errorObj.updated_at = `updated_at should be either equal or less than context.timestamp`
 
     //validate id
     try {
@@ -89,7 +78,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
     try {
       logger.info(`Checking provider id /${constants.ON_CONFIRM}`)
       const providerErrors = validateProvider(on_confirm?.provider, constants.ON_CONFIRM)
-      Object.assign(on_confirm, providerErrors)
+      Object.assign(errorObj, providerErrors)
     } catch (error: any) {
       logger.error(`!!Error while checking provider id /${constants.ON_CONFIRM}, ${error.stack}`)
     }
@@ -103,6 +92,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
       } else {
         const selectedItemId = getValue('selectedItemId')
         const categoriesId = getValue(`${constants.ON_SEARCH}categoryId`)
+        const fullIds = getValue('fulfillmentIds')
         on_confirm.items.forEach((item: any, index: number) => {
           if (selectedItemId && !selectedItemId.includes(item.id)) {
             const key = `item[${index}].item_id`
@@ -121,6 +111,17 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
             }
           }
 
+          // Validate fulfillment_ids
+          if (_.isEmpty(item.fulfillment_ids)) {
+            errorObj.fulfillment_ids = `fulfillment_ids is missing or empty at items[${index}]`
+          } else {
+            const areFulfillmentIdsUnique = checkUniqueCategoryIds(item.fulfillment_ids, fullIds)
+            if (!areFulfillmentIdsUnique) {
+              const key = `item${index}_fulfillment_ids`
+              errorObj[key] = `fulfillment_ids value in items[${index}] should match with id provided in fulfillments`
+            }
+          }
+
           // Validate descriptor
           const descriptorError = validateDescriptor(
             item?.descriptor,
@@ -131,17 +132,26 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
           )
           if (descriptorError) Object.assign(errorObj, descriptorError)
 
+          // Validate price
+          const price = item?.price
+          if (!price) errorObj[`items[${index}].price`] = `price is missing at items[${index}]`
+          else {
+            if (!price?.currency) errorObj[`items[${index}].currency`] = `currency is missing at items[${index}].price`
+            if (!price?.value) errorObj[`items[${index}].value`] = `value is missing at items[${index}].price`
+          }
+
           // Validate time
           if (_.isEmpty(item?.time)) {
             errorObj.time = `time is missing or empty at items[${index}]`
           } else {
             const time = item?.time
             //Coverage Time -> MARINE
-            if (time?.label && time?.label !== 'Coverage Time')
-              errorObj['time.label'] = `label is missing or should be equal to 'Coverage Time' at items[${index}]`
+            const label = insurance == 'MARINE_INSURANCE' ? 'Coverage Time' : 'TENURE'
+            if (time?.label && time?.label !== label)
+              errorObj['time.label'] = `label is missing or should be equal to  ${label} at items[${index}]`
 
             if (insurance != 'MARINE_INSURANCE') {
-              if (time?.duration && !/^PT\d+([YMH])$/.test(time?.duration)) {
+              if (time?.duration) {
                 errorObj['time.duration'] = `duration is missing at items[${index}]`
               } else if (!/^PT\d+([YMH])$/.test(time?.duration)) {
                 errorObj['time.duration'] = `incorrect format or type for duration at items[${index}]`
@@ -159,43 +169,51 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
             if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in providers[${index}]`
             else {
               const parentItemId: any = getValue('parentItemId')
-              if (parentItemId && !parentItemId.has(item?.parent_item_id)) {
+              if (parentItemId && !parentItemId.includes(item?.parent_item_id)) {
                 errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id's from past call in providers[${index}]`
               }
             }
 
             // Validate add_ons
             try {
-              logger.info(`Checking add_ons`)
-              if (_.isEmpty(item?.add_ons))
-                errorObj[`item[${index}]_add_ons`] = `add_ons array is missing or empty in ${constants.ON_CONFIRM}`
-              else {
-                const selectedAddOnIds: any = getValue(`selectedAddOnIds`)
-                item?.add_ons?.forEach((addOn: any, j: number) => {
-                  const key = `item[${index}]_add_ons[${j}]`
+              if (isAddOnPresent) {
+                logger.info(`Checking add_ons`)
+                if (_.isEmpty(item?.add_ons))
+                  errorObj[`item[${index}]_add_ons`] = `add_ons array is missing or empty in ${constants.ON_CONFIRM}`
+                else {
+                  const selectedAddOnIds: any = getValue(`selectedAddOnIds`)
+                  item?.add_ons?.forEach((addOn: any, j: number) => {
+                    const key = `item[${index}]_add_ons[${j}]`
 
-                  if (!addOn?.id) {
-                    errorObj[`${key}.id`] = `id is missing in add_ons[${j}]`
-                  } else {
-                    if (selectedAddOnIds && !selectedAddOnIds.has(addOn?.id)) {
-                      errorObj[`${key}.id`] = `id: ${addOn?.id} not found in previous provided add_ons`
+                    if (!addOn?.id) {
+                      errorObj[`${key}.id`] = `id is missing in add_ons[${j}]`
+                    } else {
+                      if (selectedAddOnIds && !selectedAddOnIds.has(addOn?.id)) {
+                        errorObj[`${key}.id`] = `id: ${addOn?.id} not found in previous provided add_ons`
+                      }
                     }
-                  }
 
-                  if (!addOn?.descriptor?.code || !/^[A-Z_]+$/.test(addOn?.descriptor?.code))
-                    errorObj[`${key}.code`] = 'code should be present in a generic enum format'
+                    const price = addOn?.price
+                    if (!price) errorObj[`${key}.price`] = `price is missing at items[${index}]`
+                    else {
+                      if (!price?.currency) errorObj[`${key}.currency`] = `currency is missing at items[${index}].price`
+                      if (!price?.value) errorObj[`${key}.value`] = `value is missing at items[${index}].price`
+                    }
 
-                  if (
-                    !addOn?.quantity.selected ||
-                    !Number.isInteger(addOn?.quantity.selected) ||
-                    addOn?.quantity.selected <= 0
-                  ) {
-                    errorObj[`${key}.code`] = 'Invalid quantity.selected count'
-                  }
-                })
+                    if (!addOn?.descriptor?.code || !/^[A-Z_]+$/.test(addOn?.descriptor?.code))
+                      errorObj[`${key}.code`] = 'code should be present in a generic enum format'
+
+                    if (!addOn?.quantity?.selected?.count) {
+                      errorObj[`${key}.code`] = 'quantity.count is missing in add_ons'
+                    } else if (
+                      !Number.isInteger(addOn?.quantity.selected.count) ||
+                      addOn?.quantity.selected.count <= 0
+                    ) {
+                      errorObj[`${key}.code`] = 'Invalid quantity.selected count'
+                    }
+                  })
+                }
               }
-
-              return errorObj
             } catch (error: any) {
               logger.error(`!!Error while checking add_ons in /${constants.ON_CONFIRM}, ${error.stack}`)
             }
@@ -207,7 +225,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
             tagsValidation = validatePolicyDetails(item?.tags, 'on_confirm')
             console.log('tagsValidation', 'on_confirm', tagsValidation)
           } else {
-            tagsValidation = validateItemsTags(item?.tags)
+            tagsValidation = validateGeneralInfo(item?.tags, constants.ON_CONFIRM)
+            // tagsValidation = validateItemsTags(item?.tags)
           }
           if (!tagsValidation.isValid) {
             // Object.assign(errorObj, { tags: tagsValidation.errors })
@@ -235,19 +254,19 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
     }
 
     //check payments
-    // try {
-    //   logger.info(`Checking payments details in /${constants.ON_CONFIRM}`)
-    //   const paymentErrors = validatePayments(on_confirm?.payments, constants.ON_CONFIRM, on_confirm?.quote)
-    //   Object.assign(errorObj, paymentErrors)
-    // } catch (error: any) {
-    //   logger.error(`!!Error while checking payments details in /${constants.ON_CONFIRM}`, error.stack)
-    // }
+    try {
+      logger.info(`Checking payments details in /${constants.ON_CONFIRM}`)
+      const paymentErrors = validatePaymentObject(on_confirm?.payments, constants.ON_CONFIRM)
+      Object.assign(errorObj, paymentErrors)
+    } catch (error: any) {
+      logger.error(`!!Error while checking payments details in /${constants.ON_CONFIRM}`, error.stack)
+    }
 
     //check cancellation terms
     try {
       logger.info(`Checking cancellation terms in /${constants.ON_CONFIRM}`)
       const cancellationErrors = validateCancellationTerms(on_confirm?.cancellation_terms)
-      errorObj.cancellation_terms = cancellationErrors
+      Object.assign(errorObj, cancellationErrors)
     } catch (error: any) {
       logger.error(`!!Error while checking cancellation_terms in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
@@ -255,14 +274,11 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
     //check documents
     try {
       logger.info(`Checking documents in /${constants.ON_CONFIRM}`)
-      const cancellationErrors = validateDocuments(on_confirm?.documents, constants.ON_CONFIRM)
-      Object.assign(errorObj, cancellationErrors)
+      const documentsErrors = validateDocuments(on_confirm?.documents, constants.ON_CONFIRM)
+      Object.assign(errorObj, documentsErrors)
     } catch (error: any) {
       logger.error(`!!Error while checking documents in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
-
-    if (!on_confirm?.created_at) errorObj.created_at = `created_at in missing at message.order`
-    if (!on_confirm?.updated_at) errorObj.updated_at = `updated_at in missing at message.order`
 
     return errorObj
   } catch (err: any) {

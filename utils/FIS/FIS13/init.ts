@@ -31,18 +31,19 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
 
     const init = message.order
     const insurance: any = getValue('insurance')
+    const isAddOnPresent = getValue('isAddOnPresent')
 
     // check provider
     try {
       logger.info(`Validating provider object for /${constants.INIT}`)
-      const selectedProviderId = getValue('selectedProviderId')
+      const selectedProviderId = getValue('providerId')
       const providerId = init?.provider?.id
 
       if (!providerId) {
         errorObj.prvdrId = `provider.id is missing in /${constants.INIT}`
       } else if (selectedProviderId && !_.isEqual(selectedProviderId, providerId)) {
         errorObj.prvdrId = `provider.id: ${providerId} in /${constants.INIT} does'nt matches with the selected id ${selectedProviderId}`
-        setValue('selectedProviderId', providerId)
+        setValue('providerId', providerId)
       }
     } catch (error: any) {
       logger.error(`!!Error while checking provider object for /${constants.INIT}, ${error.stack}`)
@@ -55,7 +56,10 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
       if (!fulfillments) {
         errorObj.fulfillments = `fulfillments is missing at /${constants.INIT}`
       } else {
+        const fullIds: any = getValue('fulfillmentIds')
+        console.log('fullIds', fullIds)
         fulfillments?.map((fulfillment: any, i: number) => {
+          const key = `fulfillment[${i}]`
           const customer = fulfillment?.customer
           if (!customer?.person?.name) errorObj.name = `person.name is missing in fulfillment${i} at /${constants.INIT}`
 
@@ -64,6 +68,18 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
 
           if (!customer?.contact?.phone || !isValidPhoneNumber(customer?.contact?.phone))
             errorObj.phone = `contact.phone should be present with valid value in fulfillment${i} at /${constants.INIT}`
+
+          if (sequence == 'init_2') {
+            if (!fulfillment?.id) {
+              errorObj[`${key}.id`] = `fulfillment.id: is missing at index: ${i}`
+            } else if (!fullIds?.includes(fulfillment.id)) {
+              errorObj[`${key}.id`] = `fulfillment.id: should be of the id sent in past call, at ${i}`
+            }
+
+            if (!fulfillment?.type) {
+              errorObj[`${key}.type`] = `fulfillment.type: is missing at index: ${i}`
+            }
+          }
         })
       }
     } catch (error: any) {
@@ -77,7 +93,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
         errorObj.items = `items is missing in /${constants.INIT}`
       } else {
         const parentItemId: any = getValue('parentItemId')
-        const storedItemId: any = getValue('itemsId')
+        const storedItemId: any = getValue('selectedItemId')
         const categoriesId = getValue(`${constants.ON_SEARCH}categoryId`)
         const itemsId = new Set()
         init.items.forEach((item: any, index: number) => {
@@ -103,39 +119,40 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
           if (insurance != 'MARINE_INSURANCE') {
             // Validate parent_item_id
             if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in items[${index}]`
-            else if (!parentItemId.includes(item?.parent_item_id)) {
+            else if (parentItemId && !parentItemId.includes(item?.parent_item_id)) {
               errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id from past call in items[${index}]`
             }
 
             // Validate add_ons
             try {
-              logger.info(`Checking add_ons`)
-              if (_.isEmpty(item?.add_ons))
-                errorObj[`item[${index}]_add_ons`] = `add_ons array is missing or empty in ${constants.INIT}`
-              else {
-                const selectedAddOnIds: any = getValue(`selectedAddOnIds`)
-                item?.add_ons?.forEach((addOn: any, j: number) => {
-                  const key = `item[${index}]_add_ons[${j}]`
+              if (isAddOnPresent) {
+                logger.info(`Checking add_ons`)
+                if (_.isEmpty(item?.add_ons))
+                  errorObj[`item[${index}]_add_ons`] = `add_ons array is missing or empty in ${constants.INIT}`
+                else {
+                  const selectedAddOnIds: any = getValue(`selectedAddOnIds`)
+                  item?.add_ons?.forEach((addOn: any, j: number) => {
+                    const key = `item[${index}]_add_ons[${j}]`
 
-                  if (!addOn?.id) {
-                    errorObj[`${key}.id`] = `id is missing in add_ons[${j}]`
-                  } else {
-                    if (selectedAddOnIds && !selectedAddOnIds.has(addOn?.id)) {
-                      errorObj[`${key}.id`] = `id: ${addOn?.id} not found in previous provided add_ons`
+                    if (!addOn?.id) {
+                      errorObj[`${key}.id`] = `id is missing in add_ons[${j}]`
+                    } else {
+                      if (selectedAddOnIds && !selectedAddOnIds.has(addOn?.id)) {
+                        errorObj[`${key}.id`] = `id: ${addOn?.id} not found in previous provided add_ons`
+                      }
                     }
-                  }
 
-                  if (
-                    !addOn?.quantity.selected ||
-                    !Number.isInteger(addOn?.quantity.selected) ||
-                    addOn?.quantity.selected <= 0
-                  ) {
-                    errorObj[`${key}.code`] = 'Invalid quantity.selected count'
-                  }
-                })
+                    if (!addOn?.quantity?.selected?.count) {
+                      errorObj[`${key}.code`] = 'quantity.count is missing in add_ons'
+                    } else if (
+                      !Number.isInteger(addOn?.quantity.selected.count) ||
+                      addOn?.quantity.selected.count <= 0
+                    ) {
+                      errorObj[`${key}.code`] = 'Invalid quantity.selected count'
+                    }
+                  })
+                }
               }
-
-              return errorObj
             } catch (error: any) {
               logger.error(`!!Error while checking add_ons in /${constants.INIT}, ${error.stack}`)
             }
@@ -165,9 +182,8 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
               const areCategoryIdsUnique = checkUniqueCategoryIds(item?.category_ids, categoriesId)
               if (!areCategoryIdsUnique) {
                 const key = `item${index}_category_ids`
-                errorObj[
-                  key
-                ] = `category_ids value in items[${index}] should match with id provided in categories on on_search`
+                errorObj[key] =
+                  `category_ids value in items[${index}] should match with id provided in categories on on_search`
               }
             }
           }
@@ -194,10 +210,10 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
               type: 'enum',
               value: ['INVOICE_RECEIPT', 'Delivery'],
             },
-            { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
+            // { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
             { code: 'OFFLINE_CONTRACT', type: 'boolean' },
             { code: 'STATIC_TERMS', type: 'url' },
-            { code: 'COURT_JURISDICTION', type: 'string' },
+            // { code: 'COURT_JURISDICTION', type: 'string' },
             { code: 'DELAY_INTEREST', type: 'amount' },
           ]
 
@@ -206,9 +222,8 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
           } else {
             const collectedBy = getValue(`collected_by`)
             if (collectedBy && collectedBy != arr?.collected_by)
-              errorObj[
-                `payemnts[${i}]_collected_by`
-              ] = `payments.collected_by value sent in ${constants.INIT} should be same as sent in past call: ${collectedBy}`
+              errorObj[`payemnts[${i}]_collected_by`] =
+                `payments.collected_by value sent in ${constants.INIT} should be same as sent in past call: ${collectedBy}`
 
             if (arr?.collected_by === 'BPP') {
               terms.push({ code: 'SETTLEMENT_AMOUNT', type: 'amount' })
@@ -227,7 +242,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
           // check type
           const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
           if (!arr?.type || !validTypes.includes(arr.type)) {
-            errorObj[`payments[${i}]_type`] = `payments.type must be present in ${
+            errorObj[`payments[${i}]_type`] = `payments.type is missing in ${
               constants.INIT
             } & its value must be one of: ${validTypes.join(', ')}`
           }

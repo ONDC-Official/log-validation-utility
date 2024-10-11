@@ -1,3 +1,4 @@
+import { getValue } from '../../../shared/dao'
 import { isValidEmail, isValidPhoneNumber, isValidUrl } from '../../index'
 
 interface Tag {
@@ -109,75 +110,83 @@ export const validatePaymentTags = (tags: Tag[], terms: any): ValidationResult =
             })
 
             tag?.list?.forEach((item: any, itemIndex) => {
-              switch (item.descriptor.code) {
-                case terms.find((term: any) => term.code === item.descriptor.code)?.code: {
-                  const termDefinition: any = terms.find((term: any) => term.code === item.descriptor.code)
+              const code = item.descriptor.code
+              const value = item.value
+              if (!code) {
+                errors.push(`SETTLEMENT_TERMS_[${index}], code is missing at List item[${itemIndex}]`)
+              } else if (!value) {
+                errors.push(`SETTLEMENT_TERMS_[${index}], value is missing at List item[${itemIndex}]`)
+              } else {
+                switch (item.descriptor.code) {
+                  case terms.find((term: any) => term.code === item.descriptor.code)?.code: {
+                    const termDefinition: any = terms.find((term: any) => term.code === item.descriptor.code)
 
-                  switch (termDefinition?.type) {
-                    case 'time':
-                      console.log('/^PTd+[MH]$/.test(item.value)', /^PT\d+[MH]$/.test(item.value))
-                      if (!/^PT\d+[MH]$/.test(item.value)) {
-                        errors.push(
-                          `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid duration value for ${termDefinition.code}`,
-                        )
-                      }
+                    switch (termDefinition?.type) {
+                      case 'time':
+                        console.log('/^PTd+[MH]$/.test(item.value)', /^PT\d+[MH]$/.test(item.value))
+                        if (!/^PT\d+[MH]$/.test(item.value)) {
+                          errors.push(
+                            `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid duration value for ${termDefinition.code}`,
+                          )
+                        }
 
-                      break
+                        break
 
-                    case 'enum':
-                      if (!termDefinition?.value.includes(item.value)) {
-                        errors.push(
-                          `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid value for ${termDefinition.code}`,
-                        )
-                      }
+                      case 'enum':
+                        if (!termDefinition?.value.includes(item.value)) {
+                          errors.push(
+                            `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid value for ${termDefinition.code}`,
+                          )
+                        }
 
-                      break
+                        break
 
-                    case 'amount':
-                      if (!/^\d+(\.\d+)?$/.test(item.value)) {
-                        errors.push(
-                          `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid value for ${termDefinition.code}`,
-                        )
-                      }
+                      case 'amount':
+                        if (!/^\d+(\.\d+)?$/.test(item.value)) {
+                          errors.push(
+                            `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid value for ${termDefinition.code}`,
+                          )
+                        }
 
-                      break
+                        break
 
-                    case 'boolean':
-                      if (!['TRUE', 'FALSE'].includes(item.value.toUpperCase())) {
-                        errors.push(
-                          `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid value for ${termDefinition.code}, should be a boolean`,
-                        )
-                      }
+                      case 'boolean':
+                        if (!['TRUE', 'FALSE'].includes(item.value.toUpperCase())) {
+                          errors.push(
+                            `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid value for ${termDefinition.code}, should be a boolean`,
+                          )
+                        }
 
-                      break
+                        break
 
-                    case 'url':
-                      if (typeof item.value !== 'string' || !isValidUrl(item.value)) {
-                        errors.push(
-                          `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid URL for ${termDefinition.code}`,
-                        )
-                      }
+                      case 'url':
+                        if (typeof item.value !== 'string' || !isValidUrl(item.value)) {
+                          errors.push(
+                            `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid URL for ${termDefinition.code}`,
+                          )
+                        }
 
-                      break
+                        break
 
-                    case 'string':
-                      if (typeof item.value !== 'string') {
-                        errors.push(`SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] type should be string`)
-                      }
+                      case 'string':
+                        if (typeof item.value !== 'string') {
+                          errors.push(`SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] type should be string`)
+                        }
 
-                      break
+                        break
 
-                    default:
-                      errors.push(`SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid type`)
+                      default:
+                        errors.push(`SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid type`)
+                    }
+
+                    break
                   }
 
-                  break
+                  default:
+                    errors.push(
+                      `tag: ${item?.descriptor?.code} should not be part of SETTLEMENT_TERMS tag-group at index [${index}]`,
+                    )
                 }
-
-                default:
-                  errors.push(
-                    `tag: ${item?.descriptor?.code} should not be part of SETTLEMENT_TERMS tag-group at index [${index}]`,
-                  )
               }
             })
           }
@@ -452,10 +461,11 @@ export const validateItemsTags = (tags: Tag[]): ValidationResult => {
   }
 }
 
-export const validateGeneralInfo = (tags: any) => {
+export const validateGeneralInfo = (tags: any, action: string) => {
   const errors: string[] = []
+  const insuranceType = getValue('insurance')
 
-  const requiredDescriptors: any = {
+  const marineDescriptors: any = {
     CO_PAYMENT: (value: string) => value === 'Yes' || value === 'No',
     LIABILITY_COVERAGE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
     PROTECTION_AND_INDEMNITY: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
@@ -463,6 +473,46 @@ export const validateGeneralInfo = (tags: any) => {
     DEDUCTIBLES_AND_EXCESS: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
     INSTITUTE_CARGO_CLAUSE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
   }
+
+  let healthDescriptors: any = {
+    COVERAGE_AMOUNT: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) > 0,
+    CO_PAYMENT: (value: string) => value === 'Yes' || value === 'No',
+    ROOM_RENT_CAP: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+    RESTORATION_BENEFIT: (value: string) => value === 'Yes' || value === 'No',
+    CLAIM_SETTLEMENT_RATIO: (value: string) =>
+      !isNaN(parseFloat(value)) && parseFloat(value) >= 0 && parseFloat(value) <= 1,
+    PRE_HOSPITALIZATION_COVERAGE_DAYS: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+    POST_HOSPITALIZATION_COVERAGE_DAYS: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+    MATERNITY_COVERAGE: (value: string) => value === 'Yes' || value === 'No',
+    INITIAL_WAITING_PERIOD: (value: string) => value === 'Yes' || value === 'No',
+    CASHLESS_HOSPITALS: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+    ROOM_CATEGORY: (value: string) => typeof value === 'string' && value.length > 0,
+  }
+
+  if (action.includes('_offer')) {
+    const conditionalDescriptors: any = {
+      BASE_PRICE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+      CONVIENCE_FEE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+      PROCESSING_FEE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+      TAX: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+      OFFER_VALIDITY: (value: string) => /^P(T?\d+H?M?D?)$/.test(value),
+    }
+    healthDescriptors = { ...healthDescriptors, ...conditionalDescriptors }
+  } else if (action.includes('on_')) {
+    healthDescriptors = {
+      ...healthDescriptors,
+      PROPOSAL_ID: (value: string) => typeof value === 'string' && value.length > 0,
+    }
+  }
+
+  const requiredDescriptors = insuranceType === 'MARINE_INSURANCE' ? marineDescriptors : healthDescriptors
+  const descriptorCodesSet = new Set(tags.flatMap((tag: any) => tag.list?.map((item: any) => item.descriptor?.code)))
+
+  Object.keys(requiredDescriptors).forEach((requiredCode) => {
+    if (!descriptorCodesSet.has(requiredCode)) {
+      errors.push(`Missing required descriptor code: '${requiredCode}'.`)
+    }
+  })
 
   tags.forEach((tag: any, tagIndex: number) => {
     if (!tag.descriptor || !tag.descriptor.code || !tag.descriptor.name) {

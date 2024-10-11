@@ -12,7 +12,7 @@ import {
   validateQuote,
   validateXInput,
 } from './fisChecks'
-import { validateItemsTags, validatePolicyDetails } from './tags'
+import { validateGeneralInfo, validatePolicyDetails } from './tags'
 
 export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
   if (!data || isObjectEmpty(data)) {
@@ -44,6 +44,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
     const itemsId = new Set()
     const categoriesId = getValue(`${constants.ON_SEARCH}categoryId`)
     const insurance = getValue('insurance')
+    const isAddOnPresent = getValue('isAddOnPresent')
 
     //provider checks
     try {
@@ -112,7 +113,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
               if (time?.label && time?.label !== 'TENURE')
                 errorObj['time.label'] = `label is missing or should be equal to TENURE at items[${index}]`
 
-              if (time?.duration && !/^PT\d+([YMH])$/.test(time?.duration)) {
+              if (!time?.duration) {
                 errorObj['time.duration'] = `duration is missing at items[${index}]`
               } else if (!/^PT\d+[MH]$/.test(time?.duration)) {
                 errorObj['time.duration'] = `incorrect format or type for duration at items[${index}]`
@@ -130,47 +131,50 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
 
             // Validate add_ons
             try {
-              logger.info(`Checking add_ons`)
-              if (_.isEmpty(item?.add_ons))
-                errorObj[`item[${index}]_add_ons`] = `add_ons array is missing or empty in ${constants.SELECT}`
-              else {
-                const selectedAddOnIds: any = getValue(`selectedAddOnIds`)
-                item?.add_ons?.forEach((addOn: any, j: number) => {
-                  const key = `item[${index}]_add_ons[${j}]`
+              if (isAddOnPresent) {
+                logger.info(`Checking add_ons`)
+                if (_.isEmpty(item?.add_ons))
+                  errorObj[`item[${index}]_add_ons`] = `add_ons array is missing or empty in ${constants.SELECT}`
+                else {
+                  const selectedAddOnIds: any = getValue(`selectedAddOnIds`)
+                  item?.add_ons?.forEach((addOn: any, j: number) => {
+                    const key = `item[${index}]_add_ons[${j}]`
 
-                  if (!addOn?.id) {
-                    errorObj[`${key}.id`] = `id is missing in add_ons[${j}]`
-                  } else {
-                    if (selectedAddOnIds && !selectedAddOnIds.has(addOn?.id)) {
-                      errorObj[`${key}.id`] = `id: ${addOn?.id} not found in previous provided add_ons`
+                    if (!addOn?.id) {
+                      errorObj[`${key}.id`] = `id is missing in add_ons[${j}]`
+                    } else {
+                      if (selectedAddOnIds && !selectedAddOnIds.has(addOn?.id)) {
+                        errorObj[`${key}.id`] = `id: ${addOn?.id} not found in previous provided add_ons`
+                      }
                     }
-                  }
 
-                  if (!addOn?.descriptor?.code || !/^[A-Z_]+$/.test(addOn?.descriptor?.code))
-                    errorObj[`${key}.code`] = 'code should be present in a generic enum format'
+                    if (!addOn?.descriptor?.code || !/^[A-Z_]+$/.test(addOn?.descriptor?.code))
+                      errorObj[`${key}.code`] = 'code should be present in a generic enum format'
 
-                  if (
-                    !addOn?.quantity.selected ||
-                    !Number.isInteger(addOn?.quantity.selected) ||
-                    addOn?.quantity.selected <= 0
-                  ) {
-                    errorObj[`${key}.code`] = 'Invalid quantity.selected count'
-                  }
-
-                  // price check
-                  if (insurance != 'MOTOR') {
-                    const price = addOn?.price
-                    if (!price) errorObj['add_ons.price'] = `price is missing at items[${index}]`
-                    else {
-                      if (!price?.currency)
-                        errorObj['add_ons.currency'] = `currency is missing at items[${index}].price`
-                      if (!price?.value) errorObj['add_ons.value'] = `value is missing at items[${index}].price`
+                    if (!addOn?.quantity?.selected?.count) {
+                      errorObj[`${key}.code`] = 'quantity.count is missing in add_ons'
+                    } else if (
+                      !Number.isInteger(addOn?.quantity.selected.count) ||
+                      addOn?.quantity.selected.count <= 0
+                    ) {
+                      errorObj[`${key}.code`] = 'Invalid quantity.selected count'
                     }
-                  }
-                })
+
+                    // price check
+                    if (insurance != 'MOTOR_INSURANCE') {
+                      const price = addOn?.price
+                      if (!price) errorObj['add_ons.price'] = `price is missing at items[${index}]`
+                      else {
+                        if (!price?.currency)
+                          errorObj['add_ons.currency'] = `currency is missing at items[${index}].price`
+                        if (!price?.value) errorObj['add_ons.value'] = `value is missing at items[${index}].price`
+                      }
+                    }
+                  })
+                }
+
+                // return errorObj
               }
-
-              return errorObj
             } catch (error: any) {
               logger.error(`!!Error while checking add_ons in /${constants.SELECT}, ${error.stack}`)
             }
@@ -189,13 +193,13 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
             tagsValidation = validatePolicyDetails(item?.tags, sequence)
             console.log('tagsValidation', sequence, tagsValidation)
           } else {
-            tagsValidation = validateItemsTags(item?.tags)
+            tagsValidation = validateGeneralInfo(item?.tags, sequence)
           }
           if (!tagsValidation.isValid) {
             errorObj[`items.tags[${index}]`] = { ...tagsValidation.errors }
           }
         })
-        setValue('itemsId', itemsId)
+        setValue('selectedItemId', itemsId)
       }
     } catch (error: any) {
       logger.error(

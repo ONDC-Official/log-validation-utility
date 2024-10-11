@@ -37,7 +37,7 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
     let contextRes: any
     if (action?.includes('_offer')) {
       // if action is search_offer, validate context with bpp & bap details
-      contextRes = validateContext(context, msgIdSet, action, constants.SEARCH)
+      contextRes = validateContext(context, msgIdSet, constants.ON_SEARCH, action)
     } else {
       // if action is search, validate context with only bap details
       contextRes = checkFISContext(data.context, action)

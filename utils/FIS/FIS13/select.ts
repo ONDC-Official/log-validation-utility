@@ -1,7 +1,7 @@
 /* eslint-disable no-prototype-builtins */
 import { getValue, setValue } from '../../../shared/dao'
 import constants from '../../../constants'
-import { validateSchema, isObjectEmpty, isValidEmail, isValidPhoneNumber } from '../../'
+import { validateSchema, isObjectEmpty } from '../../'
 import { isEmpty } from 'lodash'
 import { logger } from '../../../shared/logger'
 import { validateContext, validateXInputSubmission } from './fisChecks'
@@ -63,35 +63,35 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
     }
 
     //check fulfillments for HEALTH
-    if (insurance == 'HEALTH_INSURANCE') {
-      try {
-        logger.info(`checking fulfillments object for /${constants.ON_SEARCH} and /${constants.SELECT}`)
+    // if (insurance == 'HEALTH_INSURANCE') {
+    //   try {
+    //     logger.info(`checking fulfillments object for /${constants.ON_SEARCH} and /${constants.SELECT}`)
 
-        if (isEmpty(select?.fulfillments)) {
-          errorObj.fulfillments = `fulfillments must be present & should be non empty in /${constants.SELECT}`
-        } else {
-          select?.fulfillments.forEach((fulfillment: any, index: number) => {
-            const customer = fulfillment?.customer
-            if (customer?.contact?.email && !isValidEmail(customer?.contact?.email)) {
-              errorObj[`fulfillment${index}_email`] = `email is missing or is invalid for fulfillment at index ${index}`
-            }
+    //     if (isEmpty(select?.fulfillments)) {
+    //       errorObj.fulfillments = `fulfillments must be present & should be non empty in /${constants.SELECT}`
+    //     } else {
+    //       select?.fulfillments.forEach((fulfillment: any, index: number) => {
+    //         const customer = fulfillment?.customer
+    //         if (customer?.contact?.email && !isValidEmail(customer?.contact?.email)) {
+    //           errorObj[`fulfillment${index}_email`] = `email is missing or is invalid for fulfillment at index ${index}`
+    //         }
 
-            const phone = customer?.contact?.phone
-            if (!phone || !isValidPhoneNumber(phone)) {
-              errorObj[`fulfillment${index}_phone`] = `Invalid phone number for fulfillment at index ${index}`
-            }
+    //         const phone = customer?.contact?.phone
+    //         if (!phone || !isValidPhoneNumber(phone)) {
+    //           errorObj[`fulfillment${index}_phone`] = `Invalid phone number for fulfillment at index ${index}`
+    //         }
 
-            const person = customer?.person
-            if (!person) {
-              errorObj[`fulfillment${index}_person`] = `Person is missing for fulfillment at index ${index}`
-            }
-          })
-        }
-      } catch (error: any) {
-        logger.error(`!!Error occcurred while checking fulfillments in /${constants.SELECT},  ${error.message}`)
-        return { error: error.message }
-      }
-    }
+    //         const person = customer?.person
+    //         if (!person) {
+    //           errorObj[`fulfillment${index}_person`] = `Person is missing for fulfillment at index ${index}`
+    //         }
+    //       })
+    //     }
+    //   } catch (error: any) {
+    //     logger.error(`!!Error occcurred while checking fulfillments in /${constants.SELECT},  ${error.message}`)
+    //     return { error: error.message }
+    //   }
+    // }
 
     //check fulfillments
     if (select?.fulfillments) {
@@ -129,7 +129,7 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
           // Validate parent_item_id & add_ons for HEALTH & MOTOR
           if (insurance != 'MARINE_INSURANCE') {
             // Validate parent_item_id
-            if (!item?.parent_item_id) errorObj.parent_item_id = `sub-parent_item_id not found in providers[${index}]`
+            if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in providers[${index}]`
             else {
               parentItemId.add(item?.parent_item_id)
               if (itemId && !itemId.includes(item?.parent_item_id)) {
@@ -140,10 +140,12 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
             // Validate add_ons
             try {
               logger.info(`Checking add_ons`)
-              if (isEmpty(item?.add_ons))
-                errorObj[`item[${index}]_add_ons`] = `add_ons array is missing or empty in ${constants.SELECT}`
-              else {
+              if (!isEmpty(item?.add_ons)) {
+                setValue('isAddOnPresent', 'Yes')
+                // errorObj[`item[${index}]_add_ons`] = `add_ons array is missing or empty in ${constants.SELECT}`
+                // else {
                 const addOnIdSet: any = getValue(`${constants.ON_SEARCH}_addOnIdSet`)
+                console.log('addOnIdSet--------', addOnIdSet)
                 item?.add_ons?.forEach((addOn: any, j: number) => {
                   const key = `item[${index}]_add_ons[${j}]`
 
@@ -151,17 +153,15 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
                     errorObj[`${key}.id`] = `id is missing in add_ons[${j}]`
                   } else {
                     selectedAddOn.add(addOn?.id)
-                    if (addOnIdSet && !addOnIdSet.has(addOn?.id)) {
+                    if (addOnIdSet && !addOnIdSet.includes(addOn?.id)) {
                       errorObj[`${key}.id`] = `id: ${addOn?.id} not found in add_ons provided in past call`
                     }
                   }
 
-                  if (
-                    !addOn?.quantity.selected ||
-                    !Number.isInteger(addOn?.quantity.selected) ||
-                    addOn?.quantity.selected <= 0
-                  ) {
-                    errorObj[`${key}.code`] = 'Invalid or missing quantity.selected count'
+                  if (!addOn?.quantity?.selected?.count) {
+                    errorObj[`${key}.code`] = 'quantity.count is missing in add_ons'
+                  } else if (!Number.isInteger(addOn?.quantity.selected.count) || addOn?.quantity.selected.count <= 0) {
+                    errorObj[`${key}.code`] = 'Invalid quantity.selected count'
                   }
                 })
               }

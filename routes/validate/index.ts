@@ -10,5 +10,6 @@ router.post('/validate/trv', validateController.validate)
 router.post('/validate-schema', validateController.validateSingleAction)
 router.post('/validate/token', validateController.validateToken)
 router.post('/validate/rsf', validateController.validate)
+router.get('/validation-format/:dom', validateController.getValidationFormat)
 
 export default router

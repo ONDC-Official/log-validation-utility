@@ -121,6 +121,11 @@ export function validateLogsForFIS14(data: any, flow: string, version: string) {
   }
 }
 
+export function getFis14Format(version: string) {
+  console.log('version', version)
+  return fis14FlowSequence
+}
+
 function validateApiSequenceForFIS14(data: any, flow: keyof typeof fis14FlowSequence) {
   const dataKeys = Object.keys(data)
   const flowSequeunce: string[] = fis14FlowSequence[flow]

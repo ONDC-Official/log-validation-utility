@@ -208,7 +208,7 @@ const getFinanceValidationFormat = (domain: string, version: string) => {
     case 'ONDC:FIS14':
       return getFis14Format(version)
     default:
-      return `Invalid Domain!`
+      throw new Error('Domain not supported yet')
   }
 }
 

@@ -234,6 +234,101 @@ export function validateLogsForFIS13(data: any, flow: string, version: string) {
       break
     }
 
+    case 'MOTOR': {
+      try {
+        if (data[FIS13HealthSequence.SEARCH]) {
+          const searchResp = search(data[FIS13HealthSequence.SEARCH], msgIdSet, flow, FIS13HealthSequence.SEARCH)
+          if (!_.isEmpty(searchResp)) {
+            logReport = { ...logReport, [FIS13HealthSequence.SEARCH]: searchResp }
+          }
+        }
+
+        if (data[FIS13HealthSequence.ON_SEARCH]) {
+          const onSearchResp = checkOnSearch(
+            data[FIS13HealthSequence.ON_SEARCH],
+            msgIdSet,
+            flow,
+            FIS13HealthSequence.ON_SEARCH,
+          )
+          if (!_.isEmpty(onSearchResp)) {
+            logReport = { ...logReport, [FIS13HealthSequence.ON_SEARCH]: onSearchResp }
+          }
+        }
+
+        if (data[FIS13HealthSequence.SELECT_1]) {
+          const selectResp = checkSelect(data[FIS13HealthSequence.SELECT_1], msgIdSet, FIS13HealthSequence.SELECT_1)
+          if (!_.isEmpty(selectResp)) {
+            logReport = { ...logReport, [FIS13HealthSequence.SELECT_1]: selectResp }
+          }
+        }
+
+        if (data[FIS13HealthSequence.ON_SELECT_1]) {
+          const onSelectResp = checkOnSelect(
+            data[FIS13HealthSequence.ON_SELECT_1],
+            msgIdSet,
+            FIS13HealthSequence.ON_SELECT_1,
+          )
+          if (!_.isEmpty(onSelectResp)) {
+            logReport = { ...logReport, [FIS13HealthSequence.ON_SELECT_1]: onSelectResp }
+          }
+        }
+
+        if (data[FIS13HealthSequence.SELECT_2]) {
+          const selectResp = checkSelect(data[FIS13HealthSequence.SELECT_2], msgIdSet, FIS13HealthSequence.SELECT_2)
+          if (!_.isEmpty(selectResp)) {
+            logReport = { ...logReport, [FIS13HealthSequence.SELECT_2]: selectResp }
+          }
+        }
+
+        if (data[FIS13HealthSequence.ON_SELECT_2]) {
+          const onSelectResp = checkOnSelect(
+            data[FIS13HealthSequence.ON_SELECT_2],
+            msgIdSet,
+            FIS13HealthSequence.ON_SELECT_2,
+          )
+          if (!_.isEmpty(onSelectResp)) {
+            logReport = { ...logReport, [FIS13HealthSequence.ON_SELECT_2]: onSelectResp }
+          }
+        }
+
+        if (data[FIS13HealthSequence.INIT]) {
+          const init = checkInit(data[FIS13HealthSequence.INIT], msgIdSet, FIS13HealthSequence.INIT)
+          if (!_.isEmpty(init)) {
+            logReport = { ...logReport, [FIS13HealthSequence.INIT]: init }
+          }
+        }
+
+        if (data[FIS13HealthSequence.ON_INIT]) {
+          const onInit = checkOnInit(data[FIS13HealthSequence.ON_INIT], msgIdSet, FIS13HealthSequence.ON_INIT)
+          if (!_.isEmpty(onInit)) {
+            logReport = { ...logReport, [FIS13HealthSequence.ON_INIT]: onInit }
+          }
+        }
+
+        if (data[FIS13HealthSequence.CONFIRM]) {
+          const confirm = checkConfirm(data[FIS13HealthSequence.CONFIRM], msgIdSet)
+          if (!_.isEmpty(confirm)) {
+            logReport = { ...logReport, [FIS13HealthSequence.CONFIRM]: confirm }
+          }
+        }
+
+        if (data[FIS13HealthSequence.ON_CONFIRM]) {
+          const onConfirm = checkOnConfirm(data[FIS13HealthSequence.ON_CONFIRM], msgIdSet)
+          if (!_.isEmpty(onConfirm)) {
+            logReport = { ...logReport, [FIS13HealthSequence.ON_CONFIRM]: onConfirm }
+          }
+        }
+
+        logger.info(logReport, 'Report Generated Successfully!!')
+        return logReport
+      } catch (error: any) {
+        logger.error(error.message)
+        return error.message
+      }
+
+      break
+    }
+
     default:
       logReport = { ...logReport, version: `Invalid flow ${flow}` }
       break

@@ -171,6 +171,27 @@ export const FIS13HealthSequence = {
   ON_UPDATE_UNCOLICATED: 'on_update_uncolicated',
 }
 
+export const FIS14ApiSequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SELECT: 'select',
+  ON_SELECT: 'on_select',
+  SELECT_1: 'select_1',
+  ON_SELECT_1: 'on_select_1',
+  SELECT_2: 'select_2',
+  ON_SELECT_2: 'on_select_2',
+  SELECT_3: 'select_3',
+  ON_SELECT_3: 'on_select_3',
+  INIT: 'init',
+  ON_INIT: 'on_init',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  ON_STATUS: 'on_status',
+  UPDATE: 'update',
+  ON_UPDATE: 'on_update',
+  ON_UPDATE_1: 'on_update_1',
+}
+
 export const mobilitySequence = {
   SEARCH: 'search',
   SEARCH_INC: 'search_inc',
@@ -272,6 +293,42 @@ export const insuranceFlows = {
   CANCEL_MARINE: 'CANCEL_MARINE_INSURANCE',
   CLAIM_MOTOR: 'CLAIM_MOTOR_INSURANCE',
   CANCEL_MOTOR: 'CANCEL_MOTOR_INSURANCE',
+}
+
+export const fis14Flows = {
+  SEARCH_FULL_PULL: 'SEARCH_FULL_PULL',
+  SEARCH_INCREMENT: 'SEARCH_INCREMENT',
+  SIP_NEW_FOLIO_WITH_KYC: 'SIP_NEW_FOLIO_WITH_KYC',
+  SIP_INSTALLEMENT_SUCCESS: 'SIP_INSTALLEMENT_SUCCESS',
+  SIP_INSTALLEMENT_FAILURE: 'SIP_INSTALLEMENT_FAILURE',
+  LUMPSUM_EXISTING_FOLIO: 'LUMPSUM_EXISTING_FOLIO',
+  LUMPSUM_PAYMENT_RETRY: 'LUMPSUM_PAYMENT_RETRY',
+  REDEMPTION: 'REDEMPTION',
+}
+
+export const fis14FlowSequence = {
+  SEARCH_FULL_PULL: ['SEARCH', 'ON_SEARCH'],
+  SEACH_INCREMENT: ['SEARCH', 'ON_SEARCH'],
+  SIP_NEW_FOLIO_WITH_KYC: [
+    'SELECT',
+    'ON_SELECT',
+    'SELECT_1',
+    'ON_SELECT_1',
+    'SELECT_2',
+    'ON_SELECT_2',
+    'SELECT_3',
+    'ON_SELECT_3',
+    'INIT',
+    'ON_INIT',
+    'CONFIRM',
+    'ON_CONFIRM',
+    'ON_STATUS',
+  ],
+  SIP_INSTALLEMENT_SUCCESS: ['ON_UPDATE', 'ON_CONFIRM', 'ON_STATUS', 'ON_UPDATE_1'],
+  SIP_INSTALLEMENT_FAILURE: ['ON_UPDATE', 'ON_CONFIRM', 'ON_UPDATE_1'],
+  LUMPSUM_EXISTING_FOLIO: ['SELECT', 'ON_SELECT', 'INIT', 'ON_INIT', 'CONFIRM', 'ON_CONFIRM', 'ON_STATUS', 'ON_UPDATE'],
+  LUMPSUM_PAYMENT_RETRY: ['SELECT', 'ON_SELECT', 'INIT', 'ON_INIT', 'CONFIRM', 'ON_UPDATE', 'UPDATE', 'ON_UPDATE_1'],
+  REDEMPTION: ['SELECT', 'ON_SELECT', 'INIT', 'ON_INIT', 'CONFIRM', 'ON_CONFIRM', 'ON_UPDATE'],
 }
 
 export const onDemandFlows = {

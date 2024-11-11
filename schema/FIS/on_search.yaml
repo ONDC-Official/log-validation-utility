@@ -522,7 +522,7 @@ properties:
                                     type: string
                                   name:
                                     type: string
-                            tags:
+                            tags: &ref_tags
                               type: array
                               items: &ref_15
                                 description: >-
@@ -1493,6 +1493,7 @@ properties:
           ttl:
             description: Duration in seconds after which this catalog will expire
             type: string
+          tags: *ref_tags
     required:
       - catalog
   error: *ref_31

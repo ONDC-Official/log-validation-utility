@@ -1,3 +1,4 @@
+import { isEmpty } from 'lodash'
 import { getValue } from '../../../shared/dao'
 import { isValidEmail, isValidPhoneNumber, isValidUrl } from '../../index'
 
@@ -474,6 +475,22 @@ export const validateGeneralInfo = (tags: any, action: string) => {
     INSTITUTE_CARGO_CLAUSE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
   }
 
+  const motorDescriptors: any = {
+    PERSONAL_ACCIDENT_COVER: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+    DEPRECIATION_COVER: (value: string) => value === 'Yes' || value === 'No',
+    ROAD_SIDE_ASSISTANCE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+    CONSUMABLES_COVER: (value: string) => value === 'Yes' || value === 'No',
+    ELECTRICAL_ACCESSORIES_COVER: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+    NON_ELECTRICAL_ACCESSORIES_COVER: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+    ENGINE_COVER: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+    EXTERNAL_CNG_OR_LPG_COVER: (value: string) => value === 'Yes' || value === 'No',
+    KEY_COVER: (value: string) => value === 'Yes' || value === 'No',
+    PERSONAL_BAGGAGE_COVER: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+    TYRE_COVER: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+    RETURN_TO_INVOICE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+    PER_DAY_CASH: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+  }
+
   let healthDescriptors: any = {
     COVERAGE_AMOUNT: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) > 0,
     CO_PAYMENT: (value: string) => value === 'Yes' || value === 'No',
@@ -489,23 +506,33 @@ export const validateGeneralInfo = (tags: any, action: string) => {
     ROOM_CATEGORY: (value: string) => typeof value === 'string' && value.length > 0,
   }
 
-  if (action.includes('_offer')) {
-    const conditionalDescriptors: any = {
-      BASE_PRICE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
-      CONVIENCE_FEE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
-      PROCESSING_FEE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
-      TAX: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
-      OFFER_VALIDITY: (value: string) => /^P(T?\d+H?M?D?)$/.test(value),
-    }
-    healthDescriptors = { ...healthDescriptors, ...conditionalDescriptors }
-  } else if (action.includes('on_')) {
-    healthDescriptors = {
-      ...healthDescriptors,
-      PROPOSAL_ID: (value: string) => typeof value === 'string' && value.length > 0,
+  let requiredDescriptors: any
+  if (insuranceType === 'MARINE_INSURANCE') {
+    requiredDescriptors = marineDescriptors
+  } else if (insuranceType === 'HEALTH_INSURANCE') {
+    requiredDescriptors = healthDescriptors
+  } else if (insuranceType === 'MOTOR_INSURANCE') {
+    requiredDescriptors = motorDescriptors
+  }
+
+  if (insuranceType !== 'MARINE_INSURANCE') {
+    if (action.includes('_offer')) {
+      const conditionalDescriptors: any = {
+        BASE_PRICE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+        CONVIENCE_FEE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+        PROCESSING_FEE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+        TAX: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+        OFFER_VALIDITY: (value: string) => /^P(T?\d+H?M?D?)$/.test(value),
+      }
+      requiredDescriptors = { ...requiredDescriptors, ...conditionalDescriptors }
+    } else if (action.includes('on_')) {
+      requiredDescriptors = {
+        ...requiredDescriptors,
+        PROPOSAL_ID: (value: string) => typeof value === 'string' && value.length > 0,
+      }
     }
   }
 
-  const requiredDescriptors = insuranceType === 'MARINE_INSURANCE' ? marineDescriptors : healthDescriptors
   const descriptorCodesSet = new Set(tags.flatMap((tag: any) => tag.list?.map((item: any) => item.descriptor?.code)))
 
   Object.keys(requiredDescriptors).forEach((requiredCode) => {
@@ -514,42 +541,50 @@ export const validateGeneralInfo = (tags: any, action: string) => {
     }
   })
 
-  tags.forEach((tag: any, tagIndex: number) => {
-    if (!tag.descriptor || !tag.descriptor.code || !tag.descriptor.name) {
-      errors.push(`Tag[${tagIndex}] is missing required descriptor fields (code or name).`)
-    }
+  if (!tags || isEmpty(tags)) {
+    errors.push(`Tags is empty or missing`)
+  } else {
+    tags.forEach((tag: any, tagIndex: number) => {
+      if (!tag.descriptor || !tag.descriptor.code || !tag.descriptor.name) {
+        errors.push(`Tag[${tagIndex}] is missing required descriptor fields (code or name).`)
+      }
 
-    // Check if list exists and is an array
-    if (!tag.list || !Array.isArray(tag.list)) {
-      errors.push(`Tag[${tagIndex}] has an invalid 'list' field. It should be an array.`)
-    } else {
-      // Iterate through the list of items
-      tag.list.forEach((item: any, itemIndex: number) => {
-        const descriptorCode = item.descriptor?.code
-        const descriptorName = item.descriptor?.name
-        const value = item.value
+      // Check if list exists and is an array
+      if (!tag?.list || isEmpty(tag?.list)) {
+        errors.push(`Tag[${tagIndex}] has an missing or empty list.`)
+      } else {
+        // Iterate through the list of items
+        tag.list.forEach((item: any, itemIndex: number) => {
+          const descriptorCode = item.descriptor?.code
+          const descriptorName = item.descriptor?.name
+          const value = item?.value
 
-        // Check if descriptor fields exist
-        if (!descriptorCode || !descriptorName) {
-          errors.push(`Tag[${tagIndex}] -> List[${itemIndex}] is missing required descriptor fields (code or name).`)
-          return
-        }
-
-        // Validate descriptor code
-        if (!(descriptorCode in requiredDescriptors)) {
-          errors.push(`Tag[${tagIndex}] -> List[${itemIndex}] has an unknown descriptor code: '${descriptorCode}'.`)
-        } else {
-          // Validate the value based on descriptor code
-          const validateValue = requiredDescriptors[descriptorCode]
-          if (!validateValue(value)) {
-            errors.push(
-              `Tag[${tagIndex}] -> List[${itemIndex}] has an invalid value '${value}' for descriptor code '${descriptorCode}'.`,
-            )
+          // Check if descriptor fields exist
+          if (!descriptorCode || !descriptorName) {
+            errors.push(`Tag[${tagIndex}] -> List[${itemIndex}] is missing required descriptor fields (code or name).`)
+            return
           }
-        }
-      })
-    }
-  })
+
+          // Validate descriptor code
+          if (!(descriptorCode in requiredDescriptors)) {
+            errors.push(`Tag[${tagIndex}] -> List[${itemIndex}] has an unknown descriptor code: '${descriptorCode}'.`)
+          } else {
+            // Validate the value based on descriptor code
+            const validateValue = requiredDescriptors[descriptorCode]
+            if (!value) {
+              errors.push(
+                `Tag[${tagIndex}] -> value is missing at List[${itemIndex}] for descriptor code '${descriptorCode}'.`,
+              )
+            } else if (!validateValue(value)) {
+              errors.push(
+                `Tag[${tagIndex}] -> List[${itemIndex}] has an invalid value '${value}' for descriptor code '${descriptorCode}'.`,
+              )
+            }
+          }
+        })
+      }
+    })
+  }
 
   return {
     isValid: errors.length === 0,
@@ -633,6 +668,36 @@ export const validatePolicyDetails = (tags: any, action: string) => {
 
   if (Object.keys(requiredDescriptors)?.length > 0) {
     errors.push(`Missing tags ${Object.keys(requiredDescriptors)} at POLICY_DETAILS tag-group`)
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  }
+}
+
+export const validateIdvSelected = (tags: any) => {
+  const errors: string[] = []
+
+  const generalInfoTag = tags.find((tag: any) => tag.descriptor?.code === 'GENERAL_INFO')
+
+  if (!generalInfoTag) {
+    errors.push("Missing 'GENERAL_INFO' tag.")
+  } else {
+    if (!generalInfoTag.list || !Array.isArray(generalInfoTag.list)) {
+      errors.push("'GENERAL_INFO' tag has an invalid 'list' field. It should be an array.")
+    } else {
+      const idvItem = generalInfoTag.list.find((item: any) => item.descriptor?.code === 'IDV_SELECTED')
+
+      if (!idvItem) {
+        errors.push("Missing 'IDV_SELECTED' descriptor in the 'GENERAL_INFO' tag.")
+      } else {
+        const value = idvItem.value
+        if (isNaN(parseFloat(value)) || parseFloat(value) < 0) {
+          errors.push(`Invalid value '${value}' for 'IDV_SELECTED'. It should be a number greater than or equal to 0.`)
+        }
+      }
+    }
   }
 
   return {

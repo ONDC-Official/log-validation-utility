@@ -76,7 +76,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
               errorObj[`${key}.id`] = `fulfillment.id: should be of the id sent in past call, at ${i}`
             }
 
-            if (!fulfillment?.type) {
+            if (insurance == 'HEALTH_INSURANCE' && !fulfillment?.type) {
               errorObj[`${key}.type`] = `fulfillment.type: is missing at index: ${i}`
             }
           }

@@ -15,7 +15,7 @@ import {
   validateXInput,
 } from './fisChecks'
 import { getValue } from '../../../shared/dao'
-import { validateGeneralInfo, validatePolicyDetails } from './tags'
+import { validateGeneralInfo } from './tags'
 import _ from 'lodash'
 
 export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
@@ -54,6 +54,12 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
       logger.error(`!!Error while checking provider details in /${constants.ON_INIT}`, error.stack)
     }
 
+    //check fulfillments
+    const fulfillmentValidation: string[] = validateFulfillmentsArray(on_init?.fulfillments, sequence)
+    if (fulfillmentValidation.length > 0) {
+      errorObj.fulfillments = fulfillmentValidation
+    }
+
     //checks items
     try {
       logger.info(`Comparing item in /${constants.ON_INIT}`)
@@ -71,7 +77,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
           }
 
           // Validate category_ids
-          if (_.isEmpty(item.category_ids)) {
+          if (_.isEmpty(item?.category_ids)) {
             errorObj.category_ids = `category_ids is missing or empty at items[${index}]`
           } else {
             const areCategoryIdsUnique = checkUniqueCategoryIds(item.category_ids, categoriesId)
@@ -183,17 +189,32 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
             if (xinputValidationErrors) {
               Object.assign(errorObj, xinputValidationErrors)
             }
+
+            // Validate fulfillment_ids
+            if (insurance == 'MOTOR_INSURANCE') {
+              const fullIds = getValue('fulfillmentIds')
+              if (_.isEmpty(item.fulfillment_ids)) {
+                errorObj.fulfillment_ids = `fulfillment_ids is missing or empty at items[${index}]`
+              } else {
+                const areFulfillmentIdsUnique = checkUniqueCategoryIds(item.fulfillment_ids, fullIds)
+                if (!areFulfillmentIdsUnique) {
+                  const key = `item${index}_fulfillment_ids`
+                  errorObj[key] =
+                    `fulfillment_ids value in items[${index}] should match with id provided in fulfillments`
+                }
+              }
+            }
           }
 
           // Validate Item tags
-          let tagsValidation: any = {}
-          if (insurance == 'MARINE_INSURANCE') {
-            tagsValidation = validatePolicyDetails(item?.tags, sequence)
-            console.log('tagsValidation', sequence, tagsValidation)
-          } else {
-            tagsValidation = validateGeneralInfo(item?.tags, sequence)
-            // tagsValidation = validateItemsTags(item?.tags)
-          }
+          // let tagsValidation: any = {}
+          // if (insurance == 'MARINE_INSURANCE') {
+          //   tagsValidation = validatePolicyDetails(item?.tags, sequence)
+          //   console.log('tagsValidation', sequence, tagsValidation)
+          // } else {
+          const tagsValidation = validateGeneralInfo(item?.tags, sequence)
+          // tagsValidation = validateItemsTags(item?.tags)
+          // }
           if (!tagsValidation.isValid) {
             // Object.assign(errorObj, { tags: tagsValidation.errors })
             errorObj[`items.tags[${index}]`] = { ...tagsValidation.errors }
@@ -202,12 +223,6 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while checking items object in /${constants.ON_INIT}, ${error.stack}`)
-    }
-
-    //check fulfillments
-    const fulfillmentValidation: string[] = validateFulfillmentsArray(on_init?.fulfillments, sequence)
-    if (fulfillmentValidation.length > 0) {
-      errorObj.fulfillments = fulfillmentValidation
     }
 
     //check quote
@@ -229,13 +244,14 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
     }
 
     //check cancellation terms
-    try {
-      logger.info(`Checking cancellation terms in /${constants.ON_INIT}`)
-      const cancellationErrors = validateCancellationTerms(on_init?.cancellation_terms)
-      errorObj.cancellation_terms = cancellationErrors
-    } catch (error: any) {
-      logger.error(`!!Error while checking cancellation_terms in /${constants.ON_INIT}, ${error.stack}`)
-    }
+    if (insurance != 'MOTOR_INSURANCE')
+      try {
+        logger.info(`Checking cancellation terms in /${constants.ON_INIT}`)
+        const cancellationErrors = validateCancellationTerms(on_init?.cancellation_terms)
+        errorObj.cancellation_terms = cancellationErrors
+      } catch (error: any) {
+        logger.error(`!!Error while checking cancellation_terms in /${constants.ON_INIT}, ${error.stack}`)
+      }
 
     return errorObj
   } catch (err: any) {

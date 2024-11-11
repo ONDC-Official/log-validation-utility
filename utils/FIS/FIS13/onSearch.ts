@@ -5,7 +5,7 @@ import { setValue, getValue } from '../../../shared/dao'
 import constants from '../../../constants'
 import { validateSchema, isObjectEmpty } from '../../'
 import { checkUniqueCategoryIds, getCodes, validateContext, validateDescriptor, validateXInput } from './fisChecks'
-import { validatePaymentTags, validateItemsTags, validateGeneralInfo } from './tags'
+import { validatePaymentTags, validateGeneralInfo } from './tags'
 import { isEmpty } from 'lodash'
 
 const validAddOnsCodes = [
@@ -221,7 +221,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
                 const descriptorError = validateDescriptor(
                   descriptor,
                   constants.ON_SEARCH,
-                  `providers[${i}].items[${j}].descriptor`,
+                  `providers[${i}].items[${j}]`,
                   false,
                   [],
                 )
@@ -336,13 +336,13 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
             }
 
             // Validate Item tags
-            let tagsValidation: any = {}
-            if (insurance != 'MOTOR_INSURANCE') {
-              tagsValidation = validateGeneralInfo(item?.tags, action)
-              console.log('tagsValidation', tagsValidation)
-            } else {
-              tagsValidation = validateItemsTags(item?.tags)
-            }
+            // let tagsValidation: any = {}
+            // if (insurance != 'MOTOR_INSURANCE') {
+            const tagsValidation = validateGeneralInfo(item?.tags, action)
+            console.log('tagsValidation', tagsValidation)
+            // } else {
+            //   tagsValidation = validateItemsTags(item?.tags)
+            // }
             if (!tagsValidation.isValid) {
               errorObj[`items.tags[${j}]`] = { ...tagsValidation.errors }
             }

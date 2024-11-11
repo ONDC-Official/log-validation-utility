@@ -1,15 +1,27 @@
 /* eslint-disable no-prototype-builtins */
-import constants, { FisApiSequence, fisFlows, insuranceFlows } from '../../../constants'
+import constants from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, isValidUrl } from '../../'
+import { validateSchema, isObjectEmpty } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
-import { validateCancellationTerms, validateContext, validateDocuments, validateFulfillments } from './fisChecks'
+import {
+  checkUniqueCategoryIds,
+  validateCancellationTerms,
+  validateContext,
+  validateDescriptor,
+  validateDocuments,
+  validateFulfillmentsArray,
+  validatePaymentObject,
+  validateProvider,
+  validateQuote,
+} from './fisChecks'
+import { validateGeneralInfo } from './tags'
+import _ from 'lodash'
 
-export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: string) => {
-  const onUpdateObj: any = {}
+export const checkOnUpdate = (data: any, msgIdSet: any) => {
   try {
+    const errorObj: any = {}
     if (!data || isObjectEmpty(data)) {
-      return { [FisApiSequence.ON_UPDATE]: 'JSON cannot be empty' }
+      return { [constants.ON_UPDATE]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -18,345 +30,250 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
     }
 
     const schemaValidation = validateSchema('FIS', constants.ON_UPDATE, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.UPDATE, constants.ON_UPDATE)
+    const contextRes: any = validateContext(context, msgIdSet, constants.ON_CONFIRM, constants.ON_UPDATE)
 
     if (schemaValidation !== 'error') {
-      Object.assign(onUpdateObj, schemaValidation)
+      Object.assign(errorObj, schemaValidation)
     }
 
     if (!contextRes?.valid) {
-      Object.assign(onUpdateObj, contextRes.ERRORS)
+      Object.assign(errorObj, contextRes.ERRORS)
     }
 
-    setValue(`${FisApiSequence.ON_UPDATE}`, data)
     const on_update = message.order
-    const itemIDS: any = getValue('ItmIDS')
-    const itemIdArray: any[] = []
+    const insurance: any = getValue('insurance')
+    const isAddOnPresent = getValue('isAddOnPresent')
 
-    let newItemIDSValue: any[]
-
-    if (itemIDS && itemIDS.length > 0) {
-      newItemIDSValue = itemIDS
-    } else {
-      on_update.items.map((item: { id: string }) => {
-        itemIdArray.push(item.id)
-      })
-      newItemIDSValue = itemIdArray
+    if (!on_update?.created_at) errorObj.created_at = `created_at in missing at message.order`
+    else {
+      const createdAt = getValue('created_at')
+      if (createdAt != on_update?.created_at)
+        errorObj.created_at = `created_at should be equal to created_at of past call`
+    }
+    if (!on_update?.updated_at) errorObj.updated_at = `updated_at in missing at message.order`
+    else {
+      const updatedAt = getValue('updated_at')
+      if (context?.timestamp < on_update?.updated_at)
+        errorObj.updated_at = `updated_at should be either equal or less than context.timestamp`
+      else if (updatedAt != on_update?.updated_at)
+        errorObj.updated_at = `updated_at shouldn't be equal to updated_at of past call`
     }
 
-    setValue('ItmIDS', newItemIDSValue)
+    //validate id
+    try {
+      logger.info(`Checking id in message object  /${constants.ON_UPDATE}`)
+      if (!on_update?.id) {
+        errorObj.id = `Id in message object must be present/${constants.ON_UPDATE}`
+      } else {
+        setValue('orderId', on_update?.id)
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking id in message object  /${constants.ON_UPDATE}, ${error.stack}`)
+    }
 
+    //validate status
+    try {
+      logger.info(`Checking status in message object  /${constants.ON_UPDATE}`)
+      if (!on_update?.status) {
+        errorObj.status = `status in message object must be present/${constants.ON_UPDATE}`
+      } else if (on_update?.status !== 'ACTIVE')
+        errorObj.status = `status should be a generic enum 'ACTIVE' at /${constants.ON_UPDATE}`
+    } catch (error: any) {
+      logger.error(`!!Error while checking status in message object  /${constants.ON_UPDATE}, ${error.stack}`)
+    }
+
+    //provider checks
     try {
       logger.info(`Checking provider id /${constants.ON_UPDATE}`)
-      if (on_update.provider.id != getValue('providerId')) {
-        onUpdateObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.ON_UPDATE}`
-      }
-
-      logger.info(`Checking tags in /${constants.ON_UPDATE}`)
-      const providerTags = on_update.provider.tags
-
-      if (!providerTags || !Array.isArray(providerTags) || providerTags.length === 0) {
-        onUpdateObj.tags = 'Tags array is missing or empty in provider'
-      }
+      const providerErrors = validateProvider(on_update?.provider, constants.ON_UPDATE)
+      Object.assign(errorObj, providerErrors)
     } catch (error: any) {
       logger.error(`!!Error while checking provider id /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
+    //checks items
     try {
-      logger.info(`Comparing item in and /${constants.ON_UPDATE}`)
+      logger.info(`Comparing item in /${constants.ON_UPDATE}`)
 
-      on_update.items.forEach((item: any, index: number) => {
-        if (!newItemIDSValue.includes(item.id)) {
-          const key = `item[${index}].item_id`
-          onUpdateObj[
-            key
-          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
-        }
-
-        if (item.tags) {
-          const loanInfoTag = item.tags.find((tag: any) => tag.descriptor.code === 'LOAN_INFO')
-          if (!loanInfoTag) {
-            onUpdateObj[`loanInfoTagSubtagsMissing`] = `The LOAN_INFO tag group for Item ${item.id}: was not found`
+      if (_.isEmpty(on_update?.items)) {
+        errorObj['items'] = 'items array is missing or empty in message.order'
+      } else {
+        const selectedItemId = getValue('selectedItemId')
+        const categoriesId = getValue(`${constants.ON_SEARCH}categoryId`)
+        const fullIds = getValue('fulfillmentIds')
+        on_update?.items.forEach((item: any, index: number) => {
+          if (selectedItemId && !selectedItemId.includes(item.id)) {
+            const key = `item[${index}].item_id`
+            errorObj[key] =
+              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
           }
-        }
 
-        if (item?.descriptor?.code !== fisFlows.PERSONAL)
-          onUpdateObj[
-            `item[${index}].code`
-          ] = `Descriptor code: ${item?.descriptor?.code} in item[${index}] must be the same as ${flow}`
+          // Validate category_ids
+          if (_.isEmpty(item.category_ids)) {
+            errorObj.category_ids = `category_ids is missing or empty at items[${index}]`
+          } else {
+            const areCategoryIdsUnique = checkUniqueCategoryIds(item.category_ids, categoriesId)
+            if (!areCategoryIdsUnique) {
+              const key = `item${index}_category_ids`
+              errorObj[key] = `category_ids value in items[${index}] should match with id provided in categories`
+            }
+          }
 
-        if (on_update.quote.price.value !== item?.price?.value) {
-          onUpdateObj[`item${index}_price`] = `Price mismatch for item: ${item.id}`
-        }
-      })
-    } catch (error: any) {
-      logger.error(`!!Error while comparing Item in /${constants.ON_UPDATE}, ${error.stack}`)
-    }
+          // Validate fulfillment_ids
+          if (_.isEmpty(item.fulfillment_ids)) {
+            errorObj.fulfillment_ids = `fulfillment_ids is missing or empty at items[${index}]`
+          } else {
+            const areFulfillmentIdsUnique = checkUniqueCategoryIds(item.fulfillment_ids, fullIds)
+            if (!areFulfillmentIdsUnique) {
+              const key = `item${index}_fulfillment_ids`
+              errorObj[key] = `fulfillment_ids value in items[${index}] should match with id provided in fulfillments`
+            }
+          }
 
-    try {
-      logger.info(`Checking fulfillments objects in /${constants.ON_UPDATE}`)
-      let i = 0
-      const len = on_update.fulfillments.length
-      while (i < len) {
-        const fulfillment = on_update.fulfillments[i]
-        const fulfillmentErrors = validateFulfillments(fulfillment, i, on_update.documents)
-        if (
-          flow == fisFlows.LOAN_FORECLOSURE &&
-          action == FisApiSequence.ON_UPDATE_UNSOLICATED &&
-          fulfillment?.state?.descriptor?.code &&
-          fulfillment.state.descriptor.code !== 'COMPLETED'
-        ) {
-          onUpdateObj.fulfillmentState = `Fulfillment[${i}] state descriptor code should be 'COMPLETED'`
-        }
+          // Validate descriptor
+          const descriptorError = validateDescriptor(
+            item?.descriptor,
+            constants.ON_UPDATE,
+            `items[${index}].descriptor`,
+            false,
+            [],
+          )
+          if (descriptorError) Object.assign(errorObj, descriptorError)
 
-        if (fulfillmentErrors) {
-          Object.assign(onUpdateObj, fulfillmentErrors)
-        }
+          // Validate price
+          const price = item?.price
+          if (!price) errorObj[`items[${index}].price`] = `price is missing at items[${index}]`
+          else {
+            if (!price?.currency) errorObj[`items[${index}].currency`] = `currency is missing at items[${index}].price`
+            if (!price?.value) errorObj[`items[${index}].value`] = `value is missing at items[${index}].price`
+          }
 
-        i++
+          // Validate time
+          if (_.isEmpty(item?.time)) {
+            errorObj.time = `time is missing or empty at items[${index}]`
+          } else {
+            const time = item?.time
+            //Coverage Time -> MARINE
+            const label = insurance == 'MARINE_INSURANCE' ? 'Coverage Time' : 'TENURE'
+            if (time?.label && time?.label !== label)
+              errorObj['time.label'] = `label is missing or should be equal to  ${label} at items[${index}]`
+
+            if (insurance != 'MARINE_INSURANCE') {
+              if (time?.duration) {
+                errorObj['time.duration'] = `duration is missing at items[${index}]`
+              } else if (!/^PT\d+([YMH])$/.test(time?.duration)) {
+                errorObj['time.duration'] = `incorrect format or type for duration at items[${index}]`
+              }
+            } else {
+              if (!time?.range || !time?.range?.start || !time?.range?.end) {
+                errorObj['time.range'] = `range.start/end is missing at items[${index}].time`
+              }
+            }
+          }
+
+          // checks (parent_item_id & add_ons) for MOTOR & HEATLH, time for MARINE
+          if (insurance != 'MARINE_INSURANCE') {
+            // Validate parent_item_id
+            if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in providers[${index}]`
+            else {
+              const parentItemId: any = getValue('parentItemId')
+              if (parentItemId && !parentItemId.includes(item?.parent_item_id)) {
+                errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id's from past call in providers[${index}]`
+              }
+            }
+
+            // Validate add_ons
+            try {
+              if (isAddOnPresent) {
+                logger.info(`Checking add_ons`)
+                if (_.isEmpty(item?.add_ons))
+                  errorObj[`item[${index}]_add_ons`] = `add_ons array is missing or empty in ${constants.ON_UPDATE}`
+                else {
+                  const selectedAddOnIds: any = getValue(`selectedAddOnIds`)
+                  item?.add_ons?.forEach((addOn: any, j: number) => {
+                    const key = `item[${index}]_add_ons[${j}]`
+
+                    if (!addOn?.id) {
+                      errorObj[`${key}.id`] = `id is missing in add_ons[${j}]`
+                    } else {
+                      if (selectedAddOnIds && !selectedAddOnIds.has(addOn?.id)) {
+                        errorObj[`${key}.id`] = `id: ${addOn?.id} not found in previous provided add_ons`
+                      }
+                    }
+
+                    const price = addOn?.price
+                    if (!price) errorObj[`${key}.price`] = `price is missing at items[${index}]`
+                    else {
+                      if (!price?.currency) errorObj[`${key}.currency`] = `currency is missing at items[${index}].price`
+                      if (!price?.value) errorObj[`${key}.value`] = `value is missing at items[${index}].price`
+                    }
+
+                    if (!addOn?.descriptor?.code || !/^[A-Z_]+$/.test(addOn?.descriptor?.code))
+                      errorObj[`${key}.code`] = 'code should be present in a generic enum format'
+
+                    if (!addOn?.quantity?.selected?.count) {
+                      errorObj[`${key}.code`] = 'quantity.count is missing in add_ons'
+                    } else if (
+                      !Number.isInteger(addOn?.quantity.selected.count) ||
+                      addOn?.quantity.selected.count <= 0
+                    ) {
+                      errorObj[`${key}.code`] = 'Invalid quantity.selected count'
+                    }
+                  })
+                }
+              }
+            } catch (error: any) {
+              logger.error(`!!Error while checking add_ons in /${constants.ON_UPDATE}, ${error.stack}`)
+            }
+          }
+
+          // Validate Item tags
+          // let tagsValidation: any = {}
+          // if (insurance == 'MARINE_INSURANCE') {
+          //   tagsValidation = validatePolicyDetails(item?.tags, constants.ON_UPDATE)
+          // } else {
+          const tagsValidation = validateGeneralInfo(item?.tags, constants.ON_UPDATE)
+          // tagsValidation = validateItemsTags(item?.tags)
+          // }
+          if (!tagsValidation.isValid) {
+            // Object.assign(errorObj, { tags: tagsValidation.errors })
+            errorObj[`items.tags[${index}]`] = { ...tagsValidation.errors }
+          }
+        })
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking fulfillments object in /${constants.ON_UPDATE}, ${error.stack}`)
+      logger.error(`!!Error while checking items object in /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
+    //check fulfillments
+    const fulfillmentValidation: string[] = validateFulfillmentsArray(on_update?.fulfillments, 'on_update')
+    if (fulfillmentValidation.length > 0) {
+      errorObj.fulfillments = fulfillmentValidation
+    }
+
+    //check quote
     try {
       logger.info(`Checking quote details in /${constants.ON_UPDATE}`)
-
-      const quote = on_update.quote
-      const quoteBreakup = quote.breakup
-
-      const requiredBreakupItems = [
-        'PRINCIPAL',
-        'INTEREST',
-        'NET_DISBURSED_AMOUNT',
-        'OTHER_UPFRONT_CHARGES',
-        'INSURANCE_CHARGES',
-        'OTHER_CHARGES',
-        'PROCESSING_FEE',
-      ]
-      const missingBreakupItems = requiredBreakupItems.filter(
-        (item) => !quoteBreakup.find((breakupItem: any) => breakupItem.title.toUpperCase() === item),
-      )
-
-      if (missingBreakupItems.length > 0) {
-        onUpdateObj.missingBreakupItems = `Quote breakup is missing the following items: ${missingBreakupItems.join(
-          ', ',
-        )}`
-      }
-
-      const totalBreakupValue = quoteBreakup.reduce(
-        (total: any, item: any) =>
-          total + (item.title.toUpperCase() != 'NET_DISBURSED_AMOUNT' ? parseFloat(item.price.value) : 0),
-        0,
-      )
-      const priceValue = parseFloat(quote.price.value)
-
-      if (totalBreakupValue !== priceValue) {
-        onUpdateObj.breakupTotalMismatch = `Total of quote breakup (${totalBreakupValue}) does not match with price.value (${priceValue})`
-      }
-
-      const currencies = quoteBreakup.map((item: any) => item.currency)
-      if (new Set(currencies).size !== 1) {
-        onUpdateObj.multipleCurrencies = 'Currency must be the same for all items in the quote breakup'
-      }
-
-      if (!quote.ttl) {
-        onUpdateObj.missingTTL = 'TTL is required in the quote'
-      }
+      const quoteErrors = validateQuote(on_update?.quote)
+      Object.assign(errorObj, quoteErrors)
     } catch (error: any) {
       logger.error(`!!Error while checking quote details in /${constants.ON_UPDATE}`, error.stack)
     }
 
+    //check payments
     try {
       logger.info(`Checking payments details in /${constants.ON_UPDATE}`)
-
-      const payments = on_update.payments
-
-      const totalPaymentsAmount = payments
-        .filter((payment: any) => payment.params && payment.params.amount)
-        .reduce((total: any, payment: any) => total + parseFloat(payment.params.amount), 0)
-      const quotePriceValue = parseFloat(on_update.quote.price.value)
-
-      if (totalPaymentsAmount !== quotePriceValue) {
-        onUpdateObj.paymentsAmountMismatch = `Total payments amount (${totalPaymentsAmount}) does not match with quote.price.value (${quotePriceValue})`
-      }
-
-      let unPaidInstallments = 0
-      let defferedInstallments = 0
-      let delayedInstallments = 0
-
-      for (let i = 0; i < payments.length; i++) {
-        const payment = payments[i]
-
-        if (i == 0 && flow != fisFlows?.PERSONAL && payment?.time?.label) {
-          if (payment?.time?.label != flow) {
-            onUpdateObj['label'] = `label should be present & it's value should be ${flow}`
-          }
-
-          if (action == FisApiSequence.ON_UPDATE_UNSOLICATED) {
-            if (payment?.status !== 'PAID') {
-              onUpdateObj.invalidPaymentStatus = `payment status should be PAID at index ${i}`
-            }
-
-            if (payment?.url) {
-              onUpdateObj['payment.url'] = `payment.url should not be present at index ${i}`
-            }
-          } else {
-            if (!payment?.url) {
-              onUpdateObj['payment.url'] = `payment.url should be present at index ${i}`
-            }
-          }
-
-          continue
-        }
-
-        if (flow === fisFlows.LOAN_FORECLOSURE && payment?.status) {
-          if (payment?.status == 'NOT-PAID') unPaidInstallments++
-          if (action == FisApiSequence.ON_UPDATE_UNSOLICATED && payment?.status == 'DEFERRED') defferedInstallments++
-        }
-
-        if (flow === fisFlows.MISSED_EMI_PAYMENT && payment?.status) {
-          if (action == FisApiSequence.ON_UPDATE_UNSOLICATED && payment?.status == 'DEFERRED') defferedInstallments++
-          if (action == FisApiSequence.ON_UPDATE && payment?.status == 'DELAYED') delayedInstallments++
-        }
-
-        // !personal -> solicated : count of NOT-PAID
-        // !personal -> UNCOLICATED : count of DEFFERED
-        // count of NOT-PAID == count of DEFFERED
-
-        if (payment.url) {
-          if (!isValidUrl(payment.url)) {
-            onUpdateObj['invalidPaymentUrl'] = `Invalid payment url (${payment.url}) at index ${i}`
-          } else {
-            const updateValue = getValue(`updatePayment`)
-            if (payment?.params?.amount !== updateValue)
-              onUpdateObj[
-                'invalidPaymentAmount'
-              ] = `Invalid payment amount (${payment.url}) at index ${i}, should be the same as sent in update call`
-          }
-        }
-
-        if (payment.status !== 'PAID' && payment.status !== 'NOT-PAID') {
-          onUpdateObj.invalidPaymentStatus = `Invalid payment status (${payment.status}) at index ${i}`
-        }
-
-        if (payment?.time && payment?.time?.range) {
-          const { start, end } = payment.time.range
-          const startTime = new Date(start).getTime()
-          const endTime = new Date(end).getTime()
-
-          if (isNaN(startTime) || isNaN(endTime) || startTime > endTime) {
-            onUpdateObj.invalidTimeRange = `Invalid time range for payment at index ${i}`
-          }
-
-          if (i > 0) {
-            const prevEndTime = new Date(payments[i - 1].time?.range?.end).getTime()
-            if (startTime <= prevEndTime) {
-              onUpdateObj.timeRangeOrderError = `Time range order error for payment at index ${i}`
-            }
-          }
-        } else {
-          onUpdateObj.missingTimeRange = `Missing time range for payment at index ${i}`
-        }
-      }
-
-      if (flow == fisFlows.LOAN_FORECLOSURE) {
-        if (action == FisApiSequence.ON_UPDATE) {
-          setValue('unPaidInstallments', unPaidInstallments)
-        } else {
-          const pastUnPaidCount: any = getValue('unPaidInstallments')
-          if (pastUnPaidCount && pastUnPaidCount != defferedInstallments)
-            onUpdateObj.deffered = `No. of DEFERRED status object should be the same as no. of NOT-PAID status object from previous call`
-        }
-      }
-
-      if (flow == fisFlows.MISSED_EMI_PAYMENT) {
-        if (action == FisApiSequence.ON_UPDATE) {
-          setValue('delayedInstallments', delayedInstallments)
-        } else {
-          const delayedCount: any = getValue('delayedInstallments')
-          if (delayedCount && delayedCount != defferedInstallments)
-            onUpdateObj.deffered = `No. of DEFERRED status object should be the same as no. of DELAYED status object from previous call`
-        }
-      }
-
-      if (flow == insuranceFlows.CLAIM_HEALTH || flow == insuranceFlows.RENEW_HEALTH) {
-        const ins_status = on_update.status
-        if (['ACTIVE', 'COMPLETE', 'CANCELLED'].indexOf(ins_status) == -1) {
-          onUpdateObj.ins_status = `Invalid status for insurance order`
-        }
-
-        if (!Object.hasOwnProperty.call(on_update.order, 'updated_at')) {
-          onUpdateObj.updated_at = `updated_at is missing in insurance order`
-        }
-
-        if (!Object.hasOwnProperty.call(on_update.order, 'created_at')) {
-          onUpdateObj.created_at = `created_at is missing in insurance order`
-        }
-
-        if (flow == insuranceFlows.RENEW_HEALTH) {
-          if (message.order.fulfillments[1].type != 'RENEWAL') {
-            onUpdateObj.fulfillments = `Fulfillment type should be RENEWAL`
-          }
-
-          if (message.order.fulfillments[1].state.descriptor.code != 'RENEWAL_INITIATED') {
-            onUpdateObj.fulfillments = `Fulfillment state descriptor code should be RENEWAL_INITIATED`
-          }
-        }
-
-        if (flow == insuranceFlows.CLAIM_HEALTH) {
-          if (message.order.fulfillments[1].type != 'CLAIM') {
-            onUpdateObj.fulfillments = `Fulfillment type should be CLAIM`
-          }
-
-          if (message.order.fulfillments[1].state.descriptor.code != 'CLAIM_INITIATED') {
-            onUpdateObj.fulfillments = `Fulfillment state descriptor code should be CLAIM_INITIATED`
-          }
-        }
-      }
-
-      if (action != FisApiSequence.ON_UPDATE_UNSOLICATED) {
-        const buyerFinderFeesTag = payments[0].tags?.find((tag: any) => tag.descriptor.code === 'BUYER_FINDER_FEES')
-        const settlementTermsTag = payments[0].tags?.find((tag: any) => tag.descriptor.code === 'SETTLEMENT_TERMS')
-
-        if (!buyerFinderFeesTag) {
-          onUpdateObj.buyerFinderFees = `BUYER_FINDER_FEES tag is missing in payments`
-        }
-
-        if (!settlementTermsTag) {
-          onUpdateObj.settlementTerms = `SETTLEMENT_TERMS tag is missing in payments`
-        }
-
-        if (!payments[0].collected_by) {
-          onUpdateObj.payments = `collected_by  is missing in payments`
-        } else {
-          const allowedCollectedByValues = ['BPP', 'BAP']
-          const allowedStatusValues = ['NOT-PAID', 'PAID']
-
-          const collectedBy = getValue(`collected_by`)
-          if (collectedBy && collectedBy !== payments[0].collected_by) {
-            onUpdateObj.collectedBy = `Collected_By didn't match with what was sent in previous call.`
-          } else {
-            if (!allowedCollectedByValues.includes(payments[0].collected_by)) {
-              onUpdateObj.collectedBy = `Invalid value for collected_by. It should be either BPP or BAP.`
-            }
-
-            setValue(`collected_by`, payments[0].collected_by)
-          }
-
-          if (!allowedStatusValues.includes(payments[0].status)) {
-            onUpdateObj.paymentStatus = `Invalid value for status. It should be either of NOT-PAID or PAID.`
-          }
-        }
-      }
+      const paymentErrors = validatePaymentObject(on_update?.payments, constants.ON_UPDATE)
+      Object.assign(errorObj, paymentErrors)
     } catch (error: any) {
-      logger.error(`!!Error while checking payments details in /${action} : `, error.stack)
+      logger.error(`!!Error while checking payments details in /${constants.ON_UPDATE}`, error.stack)
     }
 
+    //check cancellation terms
     try {
       logger.info(`Checking cancellation terms in /${constants.ON_UPDATE}`)
-      const cancellationErrors = validateCancellationTerms(on_update?.cancellation_terms, constants.ON_UPDATE)
-      Object.assign(onUpdateObj, cancellationErrors)
+      const cancellationErrors = validateCancellationTerms(on_update?.cancellation_terms)
+      Object.assign(errorObj, cancellationErrors)
     } catch (error: any) {
       logger.error(`!!Error while checking cancellation_terms in /${constants.ON_UPDATE}, ${error.stack}`)
     }
@@ -364,15 +281,14 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
     //check documents
     try {
       logger.info(`Checking documents in /${constants.ON_UPDATE}`)
-      const cancellationErrors = validateDocuments(on_update?.documents, constants.ON_UPDATE)
-      Object.assign(onUpdateObj, cancellationErrors)
+      const documentsErrors = validateDocuments(on_update?.documents, constants.ON_UPDATE)
+      Object.assign(errorObj, documentsErrors)
     } catch (error: any) {
       logger.error(`!!Error while checking documents in /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
-    console.log('onUpdateObj', onUpdateObj)
-
-    return onUpdateObj
+    setValue('updated_at', on_update?.updated_at)
+    return errorObj
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.ON_UPDATE} API`, JSON.stringify(err.stack))
     return { error: err.message }

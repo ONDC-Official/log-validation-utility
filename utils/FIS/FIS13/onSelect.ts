@@ -12,7 +12,7 @@ import {
   validateQuote,
   validateXInput,
 } from './fisChecks'
-import { validateGeneralInfo, validatePolicyDetails } from './tags'
+import { validateGeneralInfo } from './tags'
 
 export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
   if (!data || isObjectEmpty(data)) {
@@ -188,13 +188,13 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
           }
 
           // Validate Item tags
-          let tagsValidation: any = {}
-          if (insurance == 'MARINE_INSURANCE') {
-            tagsValidation = validatePolicyDetails(item?.tags, sequence)
-            console.log('tagsValidation', sequence, tagsValidation)
-          } else {
-            tagsValidation = validateGeneralInfo(item?.tags, sequence)
-          }
+          // let tagsValidation: any = {}
+          // if (insurance == 'MARINE_INSURANCE') {
+          //   tagsValidation = validatePolicyDetails(item?.tags, sequence)
+          //   console.log('tagsValidation', sequence, tagsValidation)
+          // } else {
+          const tagsValidation = validateGeneralInfo(item?.tags, sequence)
+          // }
           if (!tagsValidation.isValid) {
             errorObj[`items.tags[${index}]`] = { ...tagsValidation.errors }
           }

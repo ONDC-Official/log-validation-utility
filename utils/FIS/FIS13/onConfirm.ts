@@ -14,7 +14,7 @@ import {
   validateProvider,
   validateQuote,
 } from './fisChecks'
-import { validateGeneralInfo, validatePolicyDetails } from './tags'
+import { validateGeneralInfo } from './tags'
 import _ from 'lodash'
 
 export const checkOnConfirm = (data: any, msgIdSet: any) => {
@@ -45,11 +45,17 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
     const isAddOnPresent = getValue('isAddOnPresent')
 
     if (!on_confirm?.created_at) errorObj.created_at = `created_at in missing at message.order`
-    else if (context?.timestamp < on_confirm?.created_at)
-      errorObj.created_at = `created_at should be either equal or less than context.timestamp`
+    else {
+      setValue('created_at', on_confirm?.created_at)
+      if (context?.timestamp < on_confirm?.created_at)
+        errorObj.created_at = `created_at should be either equal or less than context.timestamp`
+    }
     if (!on_confirm?.updated_at) errorObj.updated_at = `updated_at in missing at message.order`
-    else if (context?.timestamp < on_confirm?.updated_at)
-      errorObj.updated_at = `updated_at should be either equal or less than context.timestamp`
+    else {
+      setValue('updated_at', on_confirm?.updated_at)
+      if (context?.timestamp < on_confirm?.updated_at)
+        errorObj.updated_at = `updated_at should be either equal or less than context.timestamp`
+    }
 
     //validate id
     try {
@@ -81,6 +87,12 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
       Object.assign(errorObj, providerErrors)
     } catch (error: any) {
       logger.error(`!!Error while checking provider id /${constants.ON_CONFIRM}, ${error.stack}`)
+    }
+
+    //check fulfillments
+    const fulfillmentValidation: string[] = validateFulfillmentsArray(on_confirm?.fulfillments, 'on_confirm')
+    if (fulfillmentValidation.length > 0) {
+      errorObj.fulfillments = fulfillmentValidation
     }
 
     //checks items
@@ -220,14 +232,13 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
           }
 
           // Validate Item tags
-          let tagsValidation: any = {}
-          if (insurance == 'MARINE_INSURANCE') {
-            tagsValidation = validatePolicyDetails(item?.tags, 'on_confirm')
-            console.log('tagsValidation', 'on_confirm', tagsValidation)
-          } else {
-            tagsValidation = validateGeneralInfo(item?.tags, constants.ON_CONFIRM)
-            // tagsValidation = validateItemsTags(item?.tags)
-          }
+          // let tagsValidation: any = {}
+          // if (insurance == 'MARINE_INSURANCE') {
+          //   tagsValidation = validatePolicyDetails(item?.tags, constants.ON_CONFIRM)
+          // } else {
+          const tagsValidation = validateGeneralInfo(item?.tags, constants.ON_CONFIRM)
+          // tagsValidation = validateItemsTags(item?.tags)
+          // }
           if (!tagsValidation.isValid) {
             // Object.assign(errorObj, { tags: tagsValidation.errors })
             errorObj[`items.tags[${index}]`] = { ...tagsValidation.errors }
@@ -236,12 +247,6 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while checking items object in /${constants.ON_CONFIRM}, ${error.stack}`)
-    }
-
-    //check fulfillments
-    const fulfillmentValidation: string[] = validateFulfillmentsArray(on_confirm?.fulfillments, 'on_confirm')
-    if (fulfillmentValidation.length > 0) {
-      errorObj.fulfillments = fulfillmentValidation
     }
 
     //check quote

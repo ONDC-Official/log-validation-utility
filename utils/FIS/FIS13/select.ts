@@ -5,6 +5,7 @@ import { validateSchema, isObjectEmpty } from '../../'
 import { isEmpty } from 'lodash'
 import { logger } from '../../../shared/logger'
 import { validateContext, validateXInputSubmission } from './fisChecks'
+import { validateIdvSelected } from './tags'
 
 export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
   if (!data || isObjectEmpty(data)) {
@@ -176,10 +177,15 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
             if (item?.add_ons) errorObj.add_ons = `add_ons shouldn't be present in providers[${index}]`
           }
 
-          //validate xInput form for MARINE & MOTOR
+          //validate xInput & tags form for MARINE & MOTOR
           if (insurance != 'HEALTH_INSURANCE') {
-            const xinputErrors = validateXInputSubmission(item?.xinput, index, sequence)
-            Object.assign(errorObj, xinputErrors)
+            if (insurance === 'MOTOR_INSURANCE' && sequence.includes('_1')) {
+              const tagsErrors = validateIdvSelected(item?.tags)
+              Object.assign(errorObj, tagsErrors)
+            } else {
+              const xinputErrors = validateXInputSubmission(item?.xinput, index, sequence)
+              Object.assign(errorObj, xinputErrors)
+            }
           }
         })
       }

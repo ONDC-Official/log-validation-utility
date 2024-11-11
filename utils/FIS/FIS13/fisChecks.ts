@@ -41,7 +41,7 @@ const getQuoteCodes = (flow: string): string[] => {
       break
 
     case 'MOTOR_INSURANCE':
-      return ['BASE_PRICE', 'TAX', 'PROCESSING_FEE']
+      return ['BASE_PRICE', 'CONVIENCE_FEE', 'TAX', 'PROCESSING_FEE']
       break
 
     default:
@@ -58,6 +58,18 @@ export const getCodes = (): string[] => {
 
     case 'MARINE_INSURANCE':
       return ['MARINE_INSURANCE']
+
+    case 'MOTOR_INSURANCE':
+      return [
+        'MOTOR_INSURANCE',
+        'COMPRIHENSIVE_INSURANCE',
+        'FOUR_WHEELER_INSURANCE',
+        'THIRD_PARTY_INSURANCE',
+        'TWO_WHEELER_INSURANCE',
+        'NEW_INSURANCE',
+        'TRANSFER_INSURANCE',
+        'OWN_DAMAGE',
+      ]
 
     default:
       return []
@@ -564,7 +576,7 @@ export const validateDocuments = (documents: any, action: string) => {
       errors.documents = 'Documents array is missing or empty in order'
     } else {
       const requiredDocumentCodes = ['POLICY_DOC', 'CLAIM_DOC']
-      if (insurance != 'MARINE_INSURANCE') requiredDocumentCodes.push('RENEW_DOC')
+      if (insurance == 'HEALTH_INSURANCE') requiredDocumentCodes.push('RENEW_DOC')
 
       documents.forEach((document, index) => {
         console.log('document', document)
@@ -697,9 +709,9 @@ export const validateFulfillmentsArray = (fulfillments: any, action: string) => 
         errors.push(`Fulfillment[${index}] is missing contact details.`)
       }
 
-      if (insurance == 'MARINE_INSURANCE') {
+      if (insurance != 'HEALTH_INSURANCE') {
         // Validate the organization address
-        if (action.includes('on_')) {
+        if (insurance == 'MARINE_INSURANCE' && action.includes('on_')) {
           if (
             !customer?.organization ||
             (typeof customer?.organization?.address === 'string' && customer?.organization?.address?.length === 0)
@@ -712,13 +724,13 @@ export const validateFulfillmentsArray = (fulfillments: any, action: string) => 
         if (customer.person) {
           const { dob, gender, name, tags } = customer.person
           if (!isValidDate(dob)) {
-            errors.push(`Fulfillment[${index}] has an invalid date of birth '${dob}'.`)
+            errors.push(`Fulfillment[${index}] has an invalid or missing date of birth '${dob}'.`)
           }
           if (!isValidGender(gender)) {
-            errors.push(`Fulfillment[${index}] has an invalid gender '${gender}'.`)
+            errors.push(`Fulfillment[${index}] has an invalid or missing gender '${gender}'.`)
           }
           if (!name || typeof name !== 'string' || name.length === 0) {
-            errors.push(`Fulfillment[${index}] has an invalid name '${name}'.`)
+            errors.push(`Fulfillment[${index}] has an invalid or missing name '${name}'.`)
           }
 
           if (action.includes('confirm')) {
@@ -781,10 +793,24 @@ export const validateFulfillmentsArray = (fulfillments: any, action: string) => 
     if (!fulfillment.type) {
       errors.push(`type is missing at Fulfillment[${index}]`)
     } else if (fulfillment.type !== 'POLICY') {
+      //CLAIM -> CLAIM
       errors.push(`Fulfillment[${index}].type has an unsupported value '${fulfillment.type}'. Expected 'POLICY'.`)
     }
 
     if (!action.includes('on_init')) {
+      //CLAIM
+      //on_update_1 -> INITIATED
+      //on_update_2 -> PROCESSING
+      //on_status_1 -> PROCESSED
+
+      //RENEW
+      //on_update_1 -> INITIATED
+      //on_update_2 -> PROCESSING
+
+      //MOTOR
+      //on_init -> INITIATED
+      //on_confirm -> GRANTED
+
       if (!fulfillment?.state?.descriptor?.code) {
         errors.push(`descriptor.code is missing at Fulfillment[${index}].state`)
       } else if (fulfillment?.state?.descriptor?.code !== 'GRANTED') {

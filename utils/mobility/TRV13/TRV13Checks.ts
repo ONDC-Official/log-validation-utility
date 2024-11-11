@@ -1,9 +1,9 @@
 import _, { isEmpty, isEqual } from 'lodash'
-import { logger } from '../../shared/logger'
-import { getValue, setValue } from '../../shared/dao'
-import { checkSixDigitGpsPrecision, checkIdAndUri, checkMobilityContext, timestampCheck } from '../../utils'
+import { logger } from '../../../shared/logger'
+import { getValue, setValue } from '../../../shared/dao'
+import { checkSixDigitGpsPrecision, checkIdAndUri, checkMobilityContext, timestampCheck, isValidUrl } from '../../../utils'
 import { validateItemsTags, validateLocationTag, validatePaymentTags, validateRouteInfoTags } from './tags'
-import { ON_DEMAND_VEHICLE, MOB_FULL_STATE as VALID_FULL_STATE } from '../../constants'
+import { ON_DEMAND_VEHICLE, MOB_FULL_STATE as VALID_FULL_STATE } from '../../../constants'
 
 export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any) => {
   const errorObj: any = {}
@@ -172,7 +172,7 @@ export const validateStops = (stops: any, index: number, otp: boolean, cancel: b
     }
 
     // Check if GPS coordinates are valid
-    if (stop.location?.gps && !checkSixDigitGpsPrecision(stop.location.gps)) {
+    if (stop?.location?.gps && !checkSixDigitGpsPrecision(stop.location.gps)) {
       errorObj[`fulfillment[${index}]stop_${l}_gpsPrecision`] =
         'GPS coordinates must be specified with precision of six decimal places'
     }
@@ -464,8 +464,10 @@ export const validatePayloadAgainstSchema = (
   key: string,
   path: string,
 ): boolean => {
+  // Base case: if the current schema node is required and the corresponding node in payload is missing, return false
   if (schema.required) {
     if (!payload) {
+      console.error(`Error: Required field missing in payload`, key)
       errorObj[`${key}`] = `${key} is missing`
       return false
     } else {
@@ -479,6 +481,7 @@ export const validatePayloadAgainstSchema = (
 
   if (Array.isArray(schema)) {
     if (!Array.isArray(payload)) {
+      console.error(`Error: Expected array in payload`)
       errorObj.path = 'Expected array'
       return false
     } else {
@@ -490,11 +493,6 @@ export const validatePayloadAgainstSchema = (
     // Recursive case: if the schema node is an object, traverse through its keys
     // if (typeof schema === 'object' && schema !== null) {
     for (const key in schema) {
-      console.log('key', key)
-      if (!(key in payload)) {
-        errorObj[`${key}`] = `${key} is missing`
-        continue
-      }
       // Recursive call for each key
       const isValid = validatePayloadAgainstSchema(schema[key], payload[key], errorObj, key, path + key + '.')
       if (!isValid) {
@@ -740,5 +738,67 @@ export const validateFulfillments = (
   } catch (error: any) {
     logger.error(`!!Error occcurred while checking fulfillments info in /${action},  ${error.message}`)
     return { error: error.message }
+  }
+}
+
+export const validateDescriptor = (
+  descriptor: any,
+  action: string,
+  path: string,
+  checkCode: boolean,
+  codes: string[],
+): any => {
+  try {
+    const errorObj: any = {}
+    if (!descriptor) {
+      errorObj[`${path}.descriptor`] = `descriptor is missing at ${path}.`
+    } else {
+      if (checkCode) {
+        if (!descriptor?.code?.trim()) {
+          errorObj[`${path}.code`] = `descriptor.code is missing at ${path}.`
+        } else if (descriptor.code?.trim() !== descriptor.code?.trim()?.toUpperCase()) {
+          errorObj[`${path}.code`] = `descriptor.code must be in uppercase at ${path}., ${descriptor.code}`
+        } else if (codes && !codes?.includes(descriptor?.code))
+          errorObj[`${path}.code`] = `descriptor.code should be one of ${codes} at ${path}`
+      }
+
+      if (descriptor?.images) {
+        descriptor.images.forEach((image: any, index: number) => {
+          const { url, size_type } = image
+          if (!isValidUrl(url)) {
+            errorObj[`${path}.image_url_[${index}]`] = `Invalid URL for image in descriptor at ${path}.`
+          }
+
+          const validSizes = ['xs', 'md', 'sm', 'lg']
+          if (!validSizes.includes(size_type)) {
+            errorObj[`${path}.image_size_[${index}]`] =
+              `Invalid image size in descriptor, should be one of: ${validSizes.join(', ')} at ${path}.`
+          }
+        })
+      }
+
+      //validate name only if checkCode is false or name is present
+      if (!checkCode || descriptor?.name) {
+        if (!descriptor?.name?.trim()) {
+          errorObj[`${path}.name`] = `descriptor.name is missing or empty ${path}.`
+        }
+      }
+
+      if (descriptor?.short_desc) {
+        if (!descriptor.short_desc.trim()) {
+          errorObj[`${path}.short_desc`] = `descriptor.short_desc is empty at ${path}.`
+        }
+      }
+
+      if (descriptor?.long_desc) {
+        if (!descriptor.long_desc.trim()) {
+          errorObj[`${path}.long_desc`] = `descriptor.long_desc is empty at ${path}.`
+        }
+      }
+    }
+
+    return errorObj
+  } catch (error: any) {
+    logger.info(`Error while validating descriptor for /${action} at ${path}, ${error.stack}`)
   }
 }

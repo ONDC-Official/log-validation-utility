@@ -26,7 +26,7 @@ export function validateLogsForMobility(data: any, flow: string, version: string
     logger.error('!!Error while removing LMDB', error)
   }
 
-  if (!_.isEqual(version, '2.0.0')) {
+  if (!_.isEqual(version, '2.0.0') || !_.isEqual(version, '2.0.1')) {
     logReport = { ...logReport, version: `Invalid version ${version}` }
   }
 

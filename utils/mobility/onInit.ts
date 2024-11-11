@@ -29,7 +29,7 @@ export const checkOnInit = (data: any, msgIdSet: any, version: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_INIT, data)
+    const schemaValidation = validateSchema('TRV', constants.ON_INIT, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.INIT, constants.ON_INIT)
     setValue(`${mobilitySequence.ON_INIT}_message`, message)
 

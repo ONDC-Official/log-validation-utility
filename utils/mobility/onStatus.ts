@@ -28,7 +28,7 @@ export const checkOnStatus = (data: any, msgIdSet: any, version: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_STATUS, data)
+    const schemaValidation = validateSchema('TRV', constants.ON_STATUS, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.STATUS, constants.ON_STATUS)
     setValue(`${mobilitySequence.ON_STATUS}`, data)
 

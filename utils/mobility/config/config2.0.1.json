@@ -11,12 +11,7 @@
                 }
               }
             }
-          ],
-          "tags": {
-            "required": true,
-            "type": "tag",
-            "name": "LOCATION"
-          }
+          ]
         }
       }
     }

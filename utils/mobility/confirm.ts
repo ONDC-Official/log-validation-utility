@@ -24,7 +24,7 @@ export const checkConfirm = (data: any, msgIdSet: any, version: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.CONFIRM, data)
+    const schemaValidation = validateSchema('TRV', constants.CONFIRM, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.ON_INIT, constants.CONFIRM)
     setValue(`${mobilitySequence.CONFIRM}_message`, message)
 

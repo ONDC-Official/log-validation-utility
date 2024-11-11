@@ -24,7 +24,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SELECT, data)
+  const schemaValidation = validateSchema('TRV', constants.ON_SELECT, data)
   const contextRes: any = validateContext(context, msgIdSet, constants.SELECT, constants.ON_SELECT)
   setValue(`${mobilitySequence.ON_SELECT}_message`, message)
   const errorObj: any = {}
@@ -116,7 +116,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
       logger.info(`Validating items object for /${constants.ON_SELECT}`)
       if (!onSelect?.items) errorObj.items = `items is missing in /${constants.ON_SELECT}`
       else {
-        onSelect.items.forEach((item: any, index: number) => {
+        onSelect.items?.forEach((item: any, index: number) => {
           const itemKey = `items[${index}]`
           //id checks
           if (!item?.id) {
@@ -152,7 +152,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
 
           // FARE_POLICY & INFO checks
           if (item.tags) {
-            const tagsValidation = validateItemsTags(item.tags)
+            const tagsValidation = validateItemsTags(item?.tags)
             if (!tagsValidation.isValid) {
               Object.assign(errorObj, { tags: tagsValidation.errors })
             }

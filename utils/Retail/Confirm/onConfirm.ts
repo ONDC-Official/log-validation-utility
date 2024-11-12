@@ -252,7 +252,7 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any) => {
       logger.error(`Error while Storing delivery fulfillment, ${error.stack}`)
     }
 
-    if (on_confirm.state === "Accepted") {
+    if (on_confirm.state === "Accepted" || on_confirm.state === "Created") {
 
       try {
         // For Delivery Object
@@ -262,17 +262,27 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any) => {
           onCnfrmObj[key] = `missingFulfillments is mandatory for ${ApiSequence.ON_CONFIRM}`
         }
         else {
-          const deliveryObjArr = _.filter(fulfillments, { type: "Delivery" })
-          if (!deliveryObjArr.length) {
-            onCnfrmObj[`message/order.fulfillments/`] = `Delivery fullfillment must be present in ${ApiSequence.ON_CONFIRM} if the Order.state is 'Accepted'`
+          if (on_confirm.state === "Created") {
+            const deliveryObjArr = _.filter(fulfillments, { type: "Delivery" })
+            const deliverObj = deliveryObjArr[0]
+            if (!_.isEmpty(deliverObj?.start?.time?.range) || !_.isEmpty(deliverObj?.end?.time?.range)) {
+              const key = `invalidTimeRange`
+              onCnfrmObj[key] = `Time ranges should only be provided in ${ApiSequence.ON_CONFIRM} whent he order.state is 'Accepted'`
+            }
           }
           else {
-            const deliverObj = deliveryObjArr[0]
-            delete deliverObj?.state
-            delete deliverObj?.tags
-            delete deliverObj?.start?.instructions
-            delete deliverObj?.end?.instructions
-            fulfillmentsItemsSet.add(deliverObj)
+            const deliveryObjArr = _.filter(fulfillments, { type: "Delivery" })
+            if (!deliveryObjArr.length) {
+              onCnfrmObj[`message/order.fulfillments/`] = `Delivery fullfillment must be present in ${ApiSequence.ON_CONFIRM} if the Order.state is 'Accepted'`
+            }
+            else {
+              const deliverObj = deliveryObjArr[0]
+              delete deliverObj?.state
+              delete deliverObj?.tags
+              delete deliverObj?.start?.instructions
+              delete deliverObj?.end?.instructions
+              fulfillmentsItemsSet.add(deliverObj)
+            }
           }
         }
 

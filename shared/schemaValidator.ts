@@ -35,6 +35,7 @@ import issueCloseSchema from '../schema/Igm/issueCloseSchema'
 import { onSearchIncSchema } from '../schema/Retail/RET/on_search_inc'
 import { onUpdateSchema } from '../schema/Retail/Update/on_update'
 import { updateSchema } from '../schema/Retail/Update/update'
+import { catalogRejectionSchema } from '../schema/Retail/CatalogRejection/catalogRejection'
 import receiverReconSchema from '../schema/RSF/receiverReconSchema'
 import onReceiverReconSchema from '../schema/RSF/onReciverReconSchema'
 import { findProviderLocation } from '../utils'
@@ -196,6 +197,13 @@ const validate_schema_inc_search_AGR10_for_json = (data: any) => {
 }
 const validate_schema_inc_search_RET1A_for_json = (data: any) => {
   const error_list = validate_schema(data, searchSchema)
+  return formatted_error(error_list)
+}
+
+// Catalog Rejection
+
+const validate_schema_catalog_rejection_RET_for_json = (data: any) => {
+  const error_list = validate_schema(data, catalogRejectionSchema)
   return formatted_error(error_list)
 }
 
@@ -1004,6 +1012,7 @@ export default {
   validate_schema_search_RET13_for_json,
   validate_schema_search_RET14_for_json,
   validate_schema_on_search_RET10_for_json,
+  validate_schema_catalog_rejection_RET_for_json,
   validate_schema_on_search_RET12_for_json,
   validate_schema_select_RET10_for_json,
   validate_schema_select_RET12_for_json,

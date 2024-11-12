@@ -30,7 +30,7 @@ export const checkOnSelect = (data: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
   const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SELECT, data)
-
+  const domain = getValue(`domain`)
   const contextRes: any = checkContext(context, constants.ON_SELECT)
 
   const errorObj: any = {}
@@ -55,7 +55,7 @@ export const checkOnSelect = (data: any) => {
     logger.error(`!!Error while checking message id for /${constants.ON_SELECT}, ${error.stack}`)
   }
 
-  if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+  if (!_.isEqual(data.context.domain.split(':')[1], domain)) {
     errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
   }
 
@@ -225,6 +225,7 @@ export const checkOnSelect = (data: any) => {
     const tts: any = getValue('timeToShip')
     on_select.fulfillments.forEach((ff: { [x: string]: any }, indx: any) => {
       const tat = isoDurToSec(ff['@ondc/org/TAT'])
+      console.log("🚀 ~ on_select.fulfillments.forEach ~ tat:", tat)
 
       if (tat < tts) {
         errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be less than @ondc/org/time_to_ship (O2S) in /${constants.ON_SEARCH}`
@@ -308,7 +309,13 @@ export const checkOnSelect = (data: any) => {
           if (!ff["@ondc/org/category"] || !ffCategory[selfPickupOrDelivery].includes(ff["@ondc/org/category"])) {
             const key = `fulfillment${idx}/@ondc/org/category`
             errorObj[key] =
-              `In Fulfillment${idx}, @ondc/org/category is not a valid value in ${constants.ON_SELECT} and should have one of these values ${[ffCategory[selfPickupOrDelivery]]}`
+            `In Fulfillment${idx}, @ondc/org/category is not a valid value in ${constants.ON_SELECT} and should have one of these values ${[ffCategory[selfPickupOrDelivery]]}`
+          }
+          if(ff["type"] = "Delivery" && domain == "RET11" && ff["@ondc/org/category"] != "Immediate Delivery")
+          {
+            const key = `fulfillment${idx}/@ondc/org/category`
+            errorObj[key] =
+            `In Fulfillment${idx}, @ondc/org/category is not a valid value in ${constants.ON_SELECT} and should be "Immediate Delivery" in case of "F&B"}`
           }
         }
         if (ffDesc.code === 'Serviceable' && ff.type == "Delivery") {

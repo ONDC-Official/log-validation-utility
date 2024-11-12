@@ -751,10 +751,10 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
                       errorObj[key] = `item_id: ${item.id} should contain time object in bpp/providers[${i}]`
                     }
 
-                    if (!item.category_ids) {
-                      const key = `prvdr${i}item${j}ctgry_ids`
-                      errorObj[key] = `item_id: ${item.id} should contain category_ids in bpp/providers[${i}]`
-                    }
+                    // if (!item.category_ids) {
+                    //   const key = `prvdr${i}item${j}ctgry_ids`
+                    //   errorObj[key] = `item_id: ${item.id} should contain category_ids in bpp/providers[${i}]`
+                    // }
                   }
 
                   break
@@ -1037,7 +1037,8 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
           onSearchCatalog['bpp/providers'][i]['items'].forEach((item: any) => {
             if (item?.category_ids) {
               item?.category_ids?.forEach((category_id: any) => {
-                const [category, sequence] = category_id.split(':').map(Number);
+                let [category, sequence] = category_id.split(':')
+                sequence = Number(sequence)
                 if (!categoryMap[category]) {
                   categoryMap[category] = [];
                 }

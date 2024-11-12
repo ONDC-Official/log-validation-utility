@@ -1041,6 +1041,9 @@ export const checkQuoteTrailSum = (
           }
         }
         if (val.code === 'value') {
+          if (Math.abs(Number(val?.value)) <= 0) { 
+            errorObj[`invalidQuoteTrailValue`] = `Invalid quote trail value, if the value is 0 in the quote.breakup shouldn't be provided in the quote_trail`
+           }
           quoteTrailSum -= val.value
         }
       }

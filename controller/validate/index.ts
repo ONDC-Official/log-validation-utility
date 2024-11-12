@@ -26,7 +26,7 @@ const controller = {
               domain,
               payload,
               version,
-              flow.toString(),
+              flow,
               bap_id,
               bpp_id,
             )
@@ -155,6 +155,26 @@ const controller = {
 
       if (!_.isEmpty(error)) res.status(400).send({ success: false, error })
       else return res.status(200).send({ success: true, error })
+    } catch (error) {
+      logger.error(error)
+      return res.status(500).send({ success: false, error: error })
+    }
+  },
+  getValidationFormat: async (req: Request, res: Response): Promise<Response | void> => {
+    try {
+      const upperDomain = req.params.dom
+      const { domain, version } = req.query
+      if (!domain || !version) return res.status(400).send({ success: false, error: 'domain, version are required' })
+
+      const domainEnum = helper.getEnumForDomain(upperDomain)
+
+      switch (domainEnum) {
+        case DOMAIN.FINANCE:
+          const format = helper.getFinanceValidationFormat(domain as string, version as string)
+          return res.status(200).send({ success: true, response: format })
+        default:
+          return res.status(400).send({ success: false, error: 'Domain not supported yet' })
+      }
     } catch (error) {
       logger.error(error)
       return res.status(500).send({ success: false, error: error })

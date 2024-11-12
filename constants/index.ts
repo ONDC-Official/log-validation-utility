@@ -11,6 +11,7 @@ export default Object.freeze({
   INC_SEARCH: 'inc_search',
   ON_SEARCH: 'on_search',
   ON_SEARCHINC: 'on_search_inc',
+  CATALOG_REJECTION: 'catalog_rejection',
   SELECT: 'select',
   ON_SELECT: 'on_select',
   SELECT_OUT_OF_STOCK: 'select_out_of_stock',
@@ -50,6 +51,7 @@ export const ApiSequence = {
   ON_SEARCH: 'on_search_full_catalog_refresh',
   INC_SEARCH: 'search_inc_refresh',
   INC_ONSEARCH: 'on_search_inc_refresh',
+  CATALOG_REJECTION: 'catalog_rejection',
   SELECT: 'select',
   ON_SELECT: 'on_select',
   INIT: 'init',
@@ -163,6 +165,27 @@ export const FIS13HealthSequence = {
   ON_UPDATE_UNCOLICATED: 'on_update_uncolicated',
 }
 
+export const FIS14ApiSequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SELECT: 'select',
+  ON_SELECT: 'on_select',
+  SELECT_1: 'select_1',
+  ON_SELECT_1: 'on_select_1',
+  SELECT_2: 'select_2',
+  ON_SELECT_2: 'on_select_2',
+  SELECT_3: 'select_3',
+  ON_SELECT_3: 'on_select_3',
+  INIT: 'init',
+  ON_INIT: 'on_init',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  ON_STATUS: 'on_status',
+  UPDATE: 'update',
+  ON_UPDATE: 'on_update',
+  ON_UPDATE_1: 'on_update_1',
+}
+
 export const mobilitySequence = {
   SEARCH: 'search',
   ON_SEARCH: 'on_search',
@@ -251,6 +274,42 @@ export const insuranceFlows = {
   MARINE: 'MARINE_INSURANCE',
   CLAIM_HEALTH: 'CLAIM_HEALTH_INSURANCE',
   RENEW_HEALTH: 'RENEW_HEALTH_INSURANCE',
+}
+
+export const fis14Flows = {
+  SEARCH_FULL_PULL: 'SEARCH_FULL_PULL',
+  SEARCH_INCREMENT: 'SEARCH_INCREMENT',
+  SIP_NEW_FOLIO_WITH_KYC: 'SIP_NEW_FOLIO_WITH_KYC',
+  SIP_INSTALLEMENT_SUCCESS: 'SIP_INSTALLEMENT_SUCCESS',
+  SIP_INSTALLEMENT_FAILURE: 'SIP_INSTALLEMENT_FAILURE',
+  LUMPSUM_EXISTING_FOLIO: 'LUMPSUM_EXISTING_FOLIO',
+  LUMPSUM_PAYMENT_RETRY: 'LUMPSUM_PAYMENT_RETRY',
+  REDEMPTION: 'REDEMPTION',
+}
+
+export const fis14FlowSequence = {
+  SEARCH_FULL_PULL: ['SEARCH', 'ON_SEARCH'],
+  SEACH_INCREMENT: ['SEARCH', 'ON_SEARCH'],
+  SIP_NEW_FOLIO_WITH_KYC: [
+    'SELECT',
+    'ON_SELECT',
+    'SELECT_1',
+    'ON_SELECT_1',
+    'SELECT_2',
+    'ON_SELECT_2',
+    'SELECT_3',
+    'ON_SELECT_3',
+    'INIT',
+    'ON_INIT',
+    'CONFIRM',
+    'ON_CONFIRM',
+    'ON_STATUS',
+  ],
+  SIP_INSTALLEMENT_SUCCESS: ['ON_UPDATE', 'ON_CONFIRM', 'ON_STATUS', 'ON_UPDATE_1'],
+  SIP_INSTALLEMENT_FAILURE: ['ON_UPDATE', 'ON_CONFIRM', 'ON_UPDATE_1'],
+  LUMPSUM_EXISTING_FOLIO: ['SELECT', 'ON_SELECT', 'INIT', 'ON_INIT', 'CONFIRM', 'ON_CONFIRM', 'ON_STATUS', 'ON_UPDATE'],
+  LUMPSUM_PAYMENT_RETRY: ['SELECT', 'ON_SELECT', 'INIT', 'ON_INIT', 'CONFIRM', 'ON_UPDATE', 'UPDATE', 'ON_UPDATE_1'],
+  REDEMPTION: ['SELECT', 'ON_SELECT', 'INIT', 'ON_INIT', 'CONFIRM', 'ON_CONFIRM', 'ON_UPDATE'],
 }
 
 export const onDemandFlows = {
@@ -347,7 +406,7 @@ export const retailDomains = [
   'ONDC:RET18',
   'ONDC:RET19',
   'ONDC:AGR10',
-  'ONDC:RET1A'
+  'ONDC:RET1A',
 ]
 export const ROUTING_ENUMS = ['P2P', 'P2H2P']
 export const MOB_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
@@ -362,4 +421,7 @@ export const MOB_FULL_STATE = [
   'RIDE_ARRIVED_PICKUP',
 ]
 
-export const ffCategory = [["Immediate Delivery", "Standard Delivery", "Express Delivery"], ["Takeaway", "Kerbside"]]
+export const ffCategory = [
+  ['Immediate Delivery', 'Standard Delivery', 'Express Delivery'],
+  ['Takeaway', 'Kerbside'],
+]

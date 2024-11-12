@@ -43,6 +43,7 @@ import { checkCancel } from '../utils/Retail/Cancel/cancel'
 import { checkOnCancel } from '../utils/Retail/Cancel/onCancel'
 import checkRsfReceiverRecon from '../utils/RSF/rsfReceiverRecon'
 import checkRsfOnReceiverRecon from '../utils/RSF/rsfOnReciverRecon'
+import { checkCatalogRejection } from '../utils/Retail/Catalog_Rejection/catalogRejection'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
@@ -59,7 +60,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
   }
 
   try {
-    const validFlows = ['1', '2', '3', '4', '5', '6']
+    const validFlows = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
     if (!retailDomains.includes(domain)) {
       return 'Domain should be one of the 1.2.0 retail domains'
     }
@@ -158,6 +159,23 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED,
     ]
 
+    const flowSevenSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.CATALOG_REJECTION,
+    ]
+
+    const flowEightSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+    ]
+
+    const flowNineSequence = [
+      ApiSequence.INC_SEARCH,
+      ApiSequence.INC_ONSEARCH,
+      ApiSequence.CATALOG_REJECTION,
+    ]
+
     const processApiSequence = (apiSequence: any, data: any, logReport: any, msgIdSet: any, flow: string) => {
       if (validFlows.includes(flow)) {
         apiSequence.forEach((apiSeq: any) => {
@@ -178,6 +196,8 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
     }
     const getResponse = (apiSeq: any, data: any, msgIdSet: any) => {
       switch (apiSeq) {
+        case ApiSequence.CATALOG_REJECTION:
+          return checkCatalogRejection(data)
         case ApiSequence.SEARCH:
           return checkSearch(data, msgIdSet)
         case ApiSequence.ON_SEARCH:
@@ -278,6 +298,15 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         break
       case FLOW.FLOW6:
         logReport = processApiSequence(flowSixSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW7:
+        logReport = processApiSequence(flowSevenSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW8:
+        logReport = processApiSequence(flowEightSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW9:
+        logReport = processApiSequence(flowNineSequence, data, logReport, msgIdSet, flow)
         break
     }
   } catch (error: any) {

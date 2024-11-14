@@ -418,8 +418,8 @@ export const FnBonSearchSchema = {
                       properties: {
                         id: {
                           type: 'string',
-                          pattern:'^[a-zA-Z0-9-]{12}$',
-                          errorMessage: 'categories.id should be alphanumeric and upto 12 characters',
+                          pattern: '^[a-zA-Z0-9]{5}:[a-zA-Z0-9]{5,6}$',
+                          errorMessage: 'categories.id  must be followed as per API contract',
                         },
                         parent_category_id: {
                           type: 'string',
@@ -630,7 +630,7 @@ export const FnBonSearchSchema = {
                           type: 'array',
                           items: {
                             type: 'string',
-                            pattern: '^[a-zA-Z0-9]{1,12}:[a-zA-Z0-9]{1,12}$',
+                            pattern: '^[a-zA-Z0-9]{5}:[a-zA-Z0-9]{5,6}$',
                             errorMessage: 'format of category_ids must be followed as per API contract',
                           },
                         },

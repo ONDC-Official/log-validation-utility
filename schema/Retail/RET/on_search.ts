@@ -428,7 +428,8 @@ export const onSearchSchema = {
                       properties: {
                         id: {
                           type: 'string',
-                          pattern:'^[a-zA-Z0-9-]{12}$'
+                          pattern: '^[a-zA-Z0-9]{5}:[a-zA-Z0-9]{5,6}$',
+                          errorMessage: 'categories.id  must be followed as per API contract',
                         },
                         descriptor: {
                           type: 'object',
@@ -622,6 +623,14 @@ export const onSearchSchema = {
                           type: 'string',
                           enum: combinedCategory,
                           errorMessage: `Invalid category ID found for item for on_search`,
+                        },
+                        category_ids: {
+                          type: 'array',
+                          items: {
+                            type: 'string',
+                            pattern: '^[a-zA-Z0-9]{5}:[a-zA-Z0-9]{5,6}$',
+                            errorMessage: 'format of category_ids must be followed as per API contract',
+                          },
                         },
                         fulfillment_id: {
                           type: 'string',

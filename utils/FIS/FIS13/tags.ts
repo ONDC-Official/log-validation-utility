@@ -517,18 +517,35 @@ export const validateGeneralInfo = (tags: any, action: string) => {
 
   if (insuranceType !== 'MARINE_INSURANCE') {
     if (action.includes('_offer')) {
-      const conditionalDescriptors: any = {
+      let conditionalDescriptors: any = {
         BASE_PRICE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
         CONVIENCE_FEE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
         PROCESSING_FEE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
         TAX: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
         OFFER_VALIDITY: (value: string) => /^P(T?\d+H?M?D?)$/.test(value),
       }
+      if (insuranceType === 'MOTOR_INSURANCE') {
+        conditionalDescriptors = {
+          ...conditionalDescriptors,
+          MANUAL_REVIEW: (value: string) => value === 'true' || value === 'false',
+          IDV_VALUE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+          IDV_MIN_VALUE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+          IDV_MAX_VALUE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+        }
+      }
       requiredDescriptors = { ...requiredDescriptors, ...conditionalDescriptors }
     } else if (action.includes('on_')) {
-      requiredDescriptors = {
-        ...requiredDescriptors,
-        PROPOSAL_ID: (value: string) => typeof value === 'string' && value.length > 0,
+      if (insuranceType === 'HEALTH_INSURANCE') {
+        requiredDescriptors = {
+          ...requiredDescriptors,
+          PROPOSAL_ID: (value: string) => typeof value === 'string' && value.length > 0,
+        }
+      } else if (insuranceType === 'MOTOR_INSURANCE') {
+        requiredDescriptors = {
+          ...requiredDescriptors,
+          MANUAL_REVIEW: (value: string) => value === 'true' || value === 'false',
+          IDV_VALUE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
+        }
       }
     }
   }

@@ -179,7 +179,7 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
 
           //validate xInput & tags form for MARINE & MOTOR
           if (insurance != 'HEALTH_INSURANCE') {
-            if (insurance === 'MOTOR_INSURANCE' && sequence.includes('_1')) {
+            if (insurance === 'MOTOR_INSURANCE' && sequence.includes('_2')) {
               const tagsErrors = validateIdvSelected(item?.tags)
               Object.assign(errorObj, tagsErrors)
             } else {

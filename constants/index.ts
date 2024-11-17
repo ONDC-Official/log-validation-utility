@@ -266,7 +266,7 @@ export const insuranceFormHeadings: any = {
     on_init: ['Buyer Details', 'Manual Review', 'Nominee Details'],
   },
   MOTOR_INSURANCE: {
-    on_search: ['Individual Information'],
+    on_search: ['Vehicle Details'],
     on_select: ['Manual Review', 'PAN & DOB', 'Know your Customer'],
     on_init: ['Vehicle & Nominee Details', 'Personal Info'],
   },

@@ -128,7 +128,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
             }
           }
 
-          // checks (parent_item_id & add_ons) for MOTOR & HEATLH, time for MARINE
+          // checks (parent_item_id, xinput & add_ons) for MOTOR & HEATLH, time for MARINE
           if (insurance != 'MARINE_INSURANCE') {
             // Validate parent_item_id
             if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in providers[${index}]`

@@ -161,15 +161,15 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
                     }
 
                     // price check
-                    if (insurance != 'MOTOR_INSURANCE') {
-                      const price = addOn?.price
-                      if (!price) errorObj['add_ons.price'] = `price is missing at items[${index}]`
-                      else {
-                        if (!price?.currency)
-                          errorObj['add_ons.currency'] = `currency is missing at items[${index}].price`
-                        if (!price?.value) errorObj['add_ons.value'] = `value is missing at items[${index}].price`
-                      }
+                    // if (insurance != 'MOTOR_INSURANCE') {
+                    const price = addOn?.price
+                    if (!price) errorObj['add_ons.price'] = `price is missing at items[${index}]`
+                    else {
+                      if (!price?.currency)
+                        errorObj['add_ons.currency'] = `currency is missing at items[${index}].price`
+                      if (!price?.value) errorObj['add_ons.value'] = `value is missing at items[${index}].price`
                     }
+                    // }
                   })
                 }
 

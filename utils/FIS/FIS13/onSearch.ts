@@ -213,7 +213,8 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
               }
             }
 
-            if (insurance == 'HEALTH_INSURANCE') {
+            // Validate descriptor & time
+            if (insurance != 'MARINE_INSURANCE') {
               // check item Descriptor
               try {
                 logger.info(`Validating item Descriptor at index: ${j}`)
@@ -283,12 +284,23 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
                       errorObj[`${key}.code`] = `descriptor.code should be one of ${validAddOnsCodes}`
 
                     if (!addOn?.quantity?.available?.count) {
-                      errorObj[`${key}.code`] = 'quantity.count is missing in add_ons'
+                      errorObj[`${key}.quantity.available`] = 'quantity.count is missing in add_ons'
                     } else if (
                       !Number.isInteger(addOn?.quantity.available.count) ||
                       addOn?.quantity.available.count <= 0
                     ) {
-                      errorObj[`${key}.code`] = 'Invalid quantity.selected count'
+                      errorObj[`${key}.quantity.available`] = 'Invalid quantity.selected count'
+                    }
+
+                    if (insurance == 'MOTOR_INSURANCE') {
+                      if (!addOn?.quantity?.maximum?.count) {
+                        errorObj[`${key}.quantity.maximum`] = 'quantity.count is missing in add_ons'
+                      } else if (
+                        !Number.isInteger(addOn?.quantity.maximum.count) ||
+                        addOn?.quantity.maximum.count <= 0
+                      ) {
+                        errorObj[`${key}.quantity.maximum`] = 'Invalid quantity.selected count'
+                      }
                     }
                   })
                 }
@@ -324,7 +336,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
 
             // Validate xinput
             // either call shouldn't be of multi-offer, or parent_item_id should be present to validate xinput
-            if (!action?.includes('_offer') || item?.parent_item_id) {
+            if (!action?.includes('_offer') || insurance == 'MOTOR_INSURANCE' || item?.parent_item_id) {
               const xinput = item?.xinput
               if (!xinput) errorObj['xinput'] = `xinput is missing or empty at providers[${i}].items[${j}]`
               else {
@@ -348,19 +360,19 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
             }
 
             // Validate descriptor
-            if (!item?.descriptor && insurance == 'MARINE_INSURANCE') {
-              //optional for MARINE
-              return
-            } else {
-              const descriptorError = validateDescriptor(
-                item?.descriptor,
-                constants.ON_SEARCH,
-                `items[${j}].descriptor`,
-                false,
-                [],
-              )
-              if (descriptorError) Object.assign(errorObj, descriptorError)
-            }
+            // if (!item?.descriptor && insurance == 'MARINE_INSURANCE') {
+            //   //optional for MARINE
+            //   return
+            // } else {
+            //   const descriptorError = validateDescriptor(
+            //     item?.descriptor,
+            //     constants.ON_SEARCH,
+            //     `items[${j}].descriptor`,
+            //     false,
+            //     [],
+            //   )
+            //   if (descriptorError) Object.assign(errorObj, descriptorError)
+            // }
           })
 
           if (action?.includes('_offer') && parentItems == 0)

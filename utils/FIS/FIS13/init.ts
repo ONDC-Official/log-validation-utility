@@ -32,6 +32,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
     const init = message.order
     const insurance: any = getValue('insurance')
     const isAddOnPresent = getValue('isAddOnPresent')
+    const fullIds: any = getValue('fulfillmentIds')
 
     // check provider
     try {
@@ -56,18 +57,20 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
       if (!fulfillments) {
         errorObj.fulfillments = `fulfillments is missing at /${constants.INIT}`
       } else {
-        const fullIds: any = getValue('fulfillmentIds')
         console.log('fullIds', fullIds)
         fulfillments?.map((fulfillment: any, i: number) => {
           const key = `fulfillment[${i}]`
           const customer = fulfillment?.customer
-          if (!customer?.person?.name) errorObj.name = `person.name is missing in fulfillment${i} at /${constants.INIT}`
+          if (!customer?.person?.name)
+            errorObj[`${key}.name`] = `person.name is missing in fulfillment${i} at /${constants.INIT}`
 
           if (!customer?.contact?.email || !isValidEmail(customer?.contact?.email))
-            errorObj.email = `contact.email should be present with valid value in fulfillment${i} at /${constants.INIT}`
+            errorObj[`${key}.email`] =
+              `contact.email should be present with valid value in fulfillment${i} at /${constants.INIT}`
 
           if (!customer?.contact?.phone || !isValidPhoneNumber(customer?.contact?.phone))
-            errorObj.phone = `contact.phone should be present with valid value in fulfillment${i} at /${constants.INIT}`
+            errorObj[`${key}.phone`] =
+              `contact.phone should be present with valid value in fulfillment${i} at /${constants.INIT}`
 
           if (sequence == 'init_2') {
             if (!fulfillment?.id) {
@@ -185,6 +188,14 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
                 errorObj[key] =
                   `category_ids value in items[${index}] should match with id provided in categories on on_search`
               }
+            }
+
+            // Validate fulfillment_ids
+            if (!item?.fulfillment_ids) {
+              errorObj[`${key}.fulfillment_ids`] = `item.fulfillment_ids: is missing at index: ${index}`
+            } else if (fullIds && !fullIds.includes(item?.fulfillment_ids)) {
+              errorObj[`${key}.fulfillment_ids`] =
+                `item.fulfillment_ids: at index: ${index}, should match with id's provided in fulfillment`
             }
           }
         })

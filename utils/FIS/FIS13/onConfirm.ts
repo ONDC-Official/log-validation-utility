@@ -55,6 +55,9 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
       setValue('updated_at', on_confirm?.updated_at)
       if (context?.timestamp < on_confirm?.updated_at)
         errorObj.updated_at = `updated_at should be either equal or less than context.timestamp`
+
+      if (on_confirm?.created_at && on_confirm?.updated_at != on_confirm?.created_at)
+        errorObj.updated_at = `updated_at should match created_at`
     }
 
     //validate id
@@ -268,12 +271,14 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
     }
 
     //check cancellation terms
-    try {
-      logger.info(`Checking cancellation terms in /${constants.ON_CONFIRM}`)
-      const cancellationErrors = validateCancellationTerms(on_confirm?.cancellation_terms)
-      Object.assign(errorObj, cancellationErrors)
-    } catch (error: any) {
-      logger.error(`!!Error while checking cancellation_terms in /${constants.ON_CONFIRM}, ${error.stack}`)
+    if (insurance != 'MOTOR_INSURANCE') {
+      try {
+        logger.info(`Checking cancellation terms in /${constants.ON_CONFIRM}`)
+        const cancellationErrors = validateCancellationTerms(on_confirm?.cancellation_terms)
+        Object.assign(errorObj, cancellationErrors)
+      } catch (error: any) {
+        logger.error(`!!Error while checking cancellation_terms in /${constants.ON_CONFIRM}, ${error.stack}`)
+      }
     }
 
     //check documents

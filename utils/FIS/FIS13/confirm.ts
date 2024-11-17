@@ -4,6 +4,7 @@ import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, isValidEmail, isValidPhoneNumber } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
 import {
+  checkUniqueCategoryIds,
   validateContext,
   //  validateFulfillmentsArray,
   validateQuote,
@@ -39,6 +40,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     // const itemIDS: any = getValue('ItmIDS')
     const insurance: any = getValue('insurance')
     const isAddOnPresent = getValue('isAddOnPresent')
+    const fullIds: any = getValue('fulfillmentIds')
 
     // check provider
     try {
@@ -69,18 +71,19 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       if (!fulfillments) {
         errorObj.fulfillments = `fulfillments is missing at /${constants.CONFIRM}`
       } else {
-        const fullIds: any = getValue('fulfillmentIds')
         fulfillments?.map((fulfillment: any, i: number) => {
           const key = `fulfillment[${i}]`
           const customer = fulfillment?.customer
           if (!customer?.person?.name)
-            errorObj.name = `person.name is missing in fulfillment${i} at /${constants.CONFIRM}`
+            errorObj[`${key}.name`] = `person.name is missing in fulfillment${i} at /${constants.CONFIRM}`
 
           if (!customer?.contact?.email || !isValidEmail(customer?.contact?.email))
-            errorObj.email = `contact.email should be present with valid value in fulfillment${i} at /${constants.CONFIRM}`
+            errorObj[`${key}.email`] =
+              `contact.email should be present with valid value in fulfillment${i} at /${constants.CONFIRM}`
 
           if (!customer?.contact?.phone || !isValidPhoneNumber(customer?.contact?.phone))
-            errorObj.phone = `contact.phone should be present with valid value in fulfillment${i} at /${constants.CONFIRM}`
+            errorObj[`${key}.phone`] =
+              `contact.phone should be present with valid value in fulfillment${i} at /${constants.CONFIRM}`
 
           if (!fulfillment?.id) {
             errorObj[`${key}.id`] = `fulfillment.id: is missing at index: ${i}`
@@ -105,6 +108,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       } else {
         const parentItemId: any = getValue('parentItemId')
         const storedItemId: any = getValue('selectedItemId')
+        const categoriesId = getValue(`${constants.ON_SEARCH}categoryId`)
         // const categoriesId = getValue(`${constants.ON_SEARCH}categoryId`)
         const itemsId = new Set()
         confirm.items.forEach((item: any, index: number) => {
@@ -125,7 +129,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
             }
           }
 
-          // checks (parent_item_id & add_ons) for MOTOR & HEATLH, time for MARINE
+          // checks (parent_item_id, xinput & add_ons) for MOTOR & HEATLH, time for MARINE
           if (insurance != 'MARINE_INSURANCE') {
             // Validate parent_item_id
             if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in providers[${index}]`
@@ -210,6 +214,28 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
               }
             }
           }
+
+          if (insurance == 'MOTOR_INSURANCE') {
+            // Validate category_ids
+            if (_.isEmpty(item?.category_ids)) {
+              errorObj.category_ids = `category_ids is missing or empty at items[${index}]`
+            } else {
+              const areCategoryIdsUnique = checkUniqueCategoryIds(item?.category_ids, categoriesId)
+              if (!areCategoryIdsUnique) {
+                const key = `item${index}_category_ids`
+                errorObj[key] =
+                  `category_ids value in items[${index}] should match with id provided in categories on on_search`
+              }
+            }
+
+            // Validate fulfillment_ids
+            if (!item?.fulfillment_ids) {
+              errorObj[`${key}.fulfillment_ids`] = `item.fulfillment_ids: is missing at index: ${index}`
+            } else if (fullIds && !fullIds.includes(item?.fulfillment_ids)) {
+              errorObj[`${key}.fulfillment_ids`] =
+                `item.fulfillment_ids: at index: ${index}, should match with id's provided in fulfillment`
+            }
+          }
         })
       }
     } catch (error: any) {
@@ -224,7 +250,14 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         errorObj.payments = `payments array is missing or is empty`
       } else {
         const allowedStatusValues = ['NOT-PAID', 'PAID']
-        const requiredParams = ['bank_code', 'bank_account_number', 'virtual_payment_address']
+        const requiredParams = [
+          'bank_code',
+          'bank_account_number',
+          'virtual_payment_address',
+          'transaction_id',
+          'amount',
+          'currency',
+        ]
         payments?.forEach((arr: any, i: number) => {
           const terms = [
             { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' },
@@ -238,6 +271,8 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
             { code: 'STATIC_TERMS', type: 'url' },
             { code: 'COURT_JURISDICTION', type: 'string' },
             { code: 'DELAY_INTEREST', type: 'amount' },
+            { code: 'SETTLEMENT_AMOUNT', type: 'amount' },
+            { code: 'SETTLEMENT_TYPE', type: 'enum', value: ['upi', 'neft', 'rtgs'] },
           ]
 
           if (!arr?.collected_by) {
@@ -249,8 +284,8 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
                 `payments.collected_by value sent in ${constants.CONFIRM} should be same as sent in past call: ${collectedBy}`
 
             if (arr?.collected_by === 'BPP') {
-              terms.push({ code: 'SETTLEMENT_AMOUNT', type: 'amount' })
-              terms.push({ code: 'SETTLEMENT_TYPE', type: 'enum', value: ['upi', 'neft', 'rtgs'] })
+              // terms.push({ code: 'SETTLEMENT_AMOUNT', type: 'amount' })
+              // terms.push({ code: 'SETTLEMENT_TYPE', type: 'enum', value: ['upi', 'neft', 'rtgs'] })
             }
           }
 
@@ -290,12 +325,14 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     }
 
     //check quote
-    try {
-      logger.info(`Checking quote details in /${constants.CONFIRM}`)
-      const quoteErrors = validateQuote(confirm?.quote)
-      Object.assign(errorObj, quoteErrors)
-    } catch (error: any) {
-      logger.error(`!!Error while checking quote details in /${constants.CONFIRM}`, error.stack)
+    if (insurance == 'MARINE_INSURANCE') {
+      try {
+        logger.info(`Checking quote details in /${constants.CONFIRM}`)
+        const quoteErrors = validateQuote(confirm?.quote)
+        Object.assign(errorObj, quoteErrors)
+      } catch (error: any) {
+        logger.error(`!!Error while checking quote details in /${constants.CONFIRM}`, error.stack)
+      }
     }
 
     return errorObj

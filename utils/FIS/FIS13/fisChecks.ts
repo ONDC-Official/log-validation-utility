@@ -723,17 +723,20 @@ export const validateFulfillmentsArray = (fulfillments: any, action: string) => 
         // Validate the person details
         if (customer.person) {
           const { dob, gender, name, tags } = customer.person
-          if (!isValidDate(dob)) {
-            errors.push(`Fulfillment[${index}] has an invalid or missing date of birth '${dob}'.`)
-          }
-          if (!isValidGender(gender)) {
-            errors.push(`Fulfillment[${index}] has an invalid or missing gender '${gender}'.`)
+
+          if (insurance != 'MOTOR_INSURANCE') {
+            if (!isValidDate(dob)) {
+              errors.push(`Fulfillment[${index}] has an invalid or missing date of birth '${dob}'.`)
+            }
+            if (!isValidGender(gender)) {
+              errors.push(`Fulfillment[${index}] has an invalid or missing gender '${gender}'.`)
+            }
           }
           if (!name || typeof name !== 'string' || name.length === 0) {
             errors.push(`Fulfillment[${index}] has an invalid or missing name '${name}'.`)
           }
 
-          if (action.includes('confirm')) {
+          if (action.includes('confirm') && insurance == 'MARINE_INSURANCE') {
             if (tags && Array.isArray(tags)) {
               fulfillment.tags.forEach((tag: any, tagIndex: number) => {
                 if (!tag.descriptor || !tag.descriptor.code || !tag.descriptor.name) {

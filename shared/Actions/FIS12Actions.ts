@@ -19,6 +19,7 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
   const msgIdSet = new Set()
   let logReport: any = {}
   setValue('version', version)
+  setValue('flow', flow)
 
   try {
     dropDB()
@@ -34,7 +35,7 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
     switch (version) {
       case '2.0.0': {
         if (data[FisApiSequence.SEARCH]) {
-          const searchResp = search(data[FisApiSequence.SEARCH], msgIdSet, flow)
+          const searchResp = search(data[FisApiSequence.SEARCH], msgIdSet, flow, FisApiSequence.SEARCH)
           if (!_.isEmpty(searchResp)) {
             logReport = { ...logReport, [FisApiSequence.SEARCH]: searchResp }
           }
@@ -55,12 +56,7 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         }
 
         if (data[FisApiSequence.ON_SELECT_1]) {
-          const onSelectResp = checkOnSelect(
-            data[FisApiSequence.ON_SELECT_1],
-            msgIdSet,
-            FisApiSequence.ON_SELECT_1,
-            flow,
-          )
+          const onSelectResp = checkOnSelect(data[FisApiSequence.ON_SELECT_1], msgIdSet, FisApiSequence.ON_SELECT_1)
           if (!_.isEmpty(onSelectResp)) {
             logReport = { ...logReport, [FisApiSequence.ON_SELECT_1]: onSelectResp }
           }
@@ -74,12 +70,7 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         }
 
         if (data[FisApiSequence.ON_SELECT_2]) {
-          const onSelect2Resp = checkOnSelect(
-            data[FisApiSequence.ON_SELECT_2],
-            msgIdSet,
-            FisApiSequence.ON_SELECT_2,
-            flow,
-          )
+          const onSelect2Resp = checkOnSelect(data[FisApiSequence.ON_SELECT_2], msgIdSet, FisApiSequence.ON_SELECT_2)
           if (!_.isEmpty(onSelect2Resp)) {
             logReport = { ...logReport, [FisApiSequence.ON_SELECT_2]: onSelect2Resp }
           }
@@ -93,14 +84,21 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         }
 
         if (data[FisApiSequence.ON_SELECT_3]) {
-          const onSelect3Resp = checkOnSelect(
-            data[FisApiSequence.ON_SELECT_3],
-            msgIdSet,
-            FisApiSequence.ON_SELECT_3,
-            flow,
-          )
+          const onSelect3Resp = checkOnSelect(data[FisApiSequence.ON_SELECT_3], msgIdSet, FisApiSequence.ON_SELECT_3)
           if (!_.isEmpty(onSelect3Resp)) {
             logReport = { ...logReport, [FisApiSequence.ON_SELECT_3]: onSelect3Resp }
+          }
+        }
+
+        if (data[FisApiSequence.ON_STATUS_EKYC]) {
+          const onStatusKyc = checkOnStatus(
+            data[FisApiSequence.ON_STATUS_EKYC],
+            msgIdSet,
+            FisApiSequence.ON_STATUS_EKYC,
+            flow,
+          )
+          if (!_.isEmpty(onStatusKyc)) {
+            logReport = { ...logReport, [FisApiSequence.ON_STATUS_EKYC]: onStatusKyc }
           }
         }
 
@@ -112,7 +110,7 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         }
 
         if (data[FisApiSequence.ON_INIT_1]) {
-          const onInit = checkOnInit(data[FisApiSequence.ON_INIT_1], msgIdSet, FisApiSequence.ON_INIT_1, flow)
+          const onInit = checkOnInit(data[FisApiSequence.ON_INIT_1], msgIdSet, FisApiSequence.ON_INIT_1)
           if (!_.isEmpty(onInit)) {
             logReport = { ...logReport, [FisApiSequence.ON_INIT_1]: onInit }
           }
@@ -126,9 +124,21 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         }
 
         if (data[FisApiSequence.ON_INIT_2]) {
-          const onInit2 = checkOnInit(data[FisApiSequence.ON_INIT_2], msgIdSet, FisApiSequence.ON_INIT_2, flow)
+          const onInit2 = checkOnInit(data[FisApiSequence.ON_INIT_2], msgIdSet, FisApiSequence.ON_INIT_2)
           if (!_.isEmpty(onInit2)) {
             logReport = { ...logReport, [FisApiSequence.ON_INIT_2]: onInit2 }
+          }
+        }
+
+        if (data[FisApiSequence.ON_STATUS_ENACH]) {
+          const onStatusKyc = checkOnStatus(
+            data[FisApiSequence.ON_STATUS_ENACH],
+            msgIdSet,
+            FisApiSequence.ON_STATUS_ENACH,
+            flow,
+          )
+          if (!_.isEmpty(onStatusKyc)) {
+            logReport = { ...logReport, [FisApiSequence.ON_STATUS_ENACH]: onStatusKyc }
           }
         }
 
@@ -140,9 +150,21 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         }
 
         if (data[FisApiSequence.ON_INIT_3]) {
-          const onInit3 = checkOnInit(data[FisApiSequence.ON_INIT_3], msgIdSet, FisApiSequence.ON_INIT_3, flow)
+          const onInit3 = checkOnInit(data[FisApiSequence.ON_INIT_3], msgIdSet, FisApiSequence.ON_INIT_3)
           if (!_.isEmpty(onInit3)) {
             logReport = { ...logReport, [FisApiSequence.ON_INIT_3]: onInit3 }
+          }
+        }
+
+        if (data[FisApiSequence.ON_STATUS_ESIGN]) {
+          const onStatusKyc = checkOnStatus(
+            data[FisApiSequence.ON_STATUS_ESIGN],
+            msgIdSet,
+            FisApiSequence.ON_STATUS_ESIGN,
+            flow,
+          )
+          if (!_.isEmpty(onStatusKyc)) {
+            logReport = { ...logReport, [FisApiSequence.ON_STATUS_ESIGN]: onStatusKyc }
           }
         }
 
@@ -188,7 +210,7 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
           }
         }
 
-        if (flow === fisFlows.LOAN_FORECLOSURE) {
+        if (flow !== fisFlows.PERSONAL) {
           if (data[FisApiSequence.ON_UPDATE_UNSOLICATED]) {
             const onUpdate = checkOnUpdate(
               data[FisApiSequence.ON_UPDATE_UNSOLICATED],
@@ -210,38 +232,9 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         }
 
         if (data[FisApiSequence.ON_STATUS]) {
-          const onStatus = checkOnStatus(data[FisApiSequence.ON_STATUS], msgIdSet, FisApiSequence.ON_STATUS)
+          const onStatus = checkOnStatus(data[FisApiSequence.ON_STATUS], msgIdSet, FisApiSequence.ON_STATUS, flow)
           if (!_.isEmpty(onStatus)) {
             logReport = { ...logReport, [FisApiSequence.ON_STATUS]: onStatus }
-          }
-        }
-
-        if (data[FisApiSequence.ON_STATUS_KYC]) {
-          const onStatusKyc = checkOnStatus(data[FisApiSequence.ON_STATUS_KYC], msgIdSet, FisApiSequence.ON_STATUS_KYC)
-          if (!_.isEmpty(onStatusKyc)) {
-            logReport = { ...logReport, [FisApiSequence.ON_STATUS_KYC]: onStatusKyc }
-          }
-        }
-
-        if (data[FisApiSequence.ON_STATUS_EMANDATE]) {
-          const onStatusEmandate = checkOnStatus(
-            data[FisApiSequence.ON_STATUS_EMANDATE],
-            msgIdSet,
-            FisApiSequence.ON_STATUS_EMANDATE,
-          )
-          if (!_.isEmpty(onStatusEmandate)) {
-            logReport = { ...logReport, [FisApiSequence.ON_STATUS_EMANDATE]: onStatusEmandate }
-          }
-        }
-
-        if (data[FisApiSequence.ON_STATUS_LOAN]) {
-          const onStatusLoan = checkOnStatus(
-            data[FisApiSequence.ON_STATUS_LOAN],
-            msgIdSet,
-            FisApiSequence.ON_STATUS_LOAN,
-          )
-          if (!_.isEmpty(onStatusLoan)) {
-            logReport = { ...logReport, [FisApiSequence.ON_STATUS_LOAN]: onStatusLoan }
           }
         }
 
@@ -250,7 +243,7 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
 
       case '2.1.0': {
         if (data[FisApiSequence.SEARCH]) {
-          const searchResp = search(data[FisApiSequence.SEARCH], msgIdSet, flow)
+          const searchResp = search(data[FisApiSequence.SEARCH], msgIdSet, flow, FisApiSequence.SEARCH)
           if (!_.isEmpty(searchResp)) {
             logReport = { ...logReport, [FisApiSequence.SEARCH]: searchResp }
           }
@@ -264,40 +257,40 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         }
 
         if (data[FisApiSequence.SEARCH_2]) {
-          const searchResp = search(data[FisApiSequence.SEARCH_2], msgIdSet, flow)
-          if (!_.isEmpty(searchResp)) {
-            logReport = { ...logReport, [FisApiSequence.SEARCH_2]: searchResp }
+          const search2Resp = search(data[FisApiSequence.SEARCH_2], msgIdSet, flow, FisApiSequence.SEARCH_2)
+          if (!_.isEmpty(search2Resp)) {
+            logReport = { ...logReport, [FisApiSequence.SEARCH_2]: search2Resp }
           }
         }
 
         if (data[FisApiSequence.ON_SEARCH_2]) {
-          const onSearchResp = checkOnSearch(
+          const onSearch2Resp = checkOnSearch(
             data[FisApiSequence.ON_SEARCH_2],
             msgIdSet,
             FisApiSequence.ON_SEARCH_2,
             flow,
           )
-          if (!_.isEmpty(onSearchResp)) {
-            logReport = { ...logReport, [FisApiSequence.ON_SEARCH_2]: onSearchResp }
+          if (!_.isEmpty(onSearch2Resp)) {
+            logReport = { ...logReport, [FisApiSequence.ON_SEARCH_2]: onSearch2Resp }
           }
         }
 
         if (data[FisApiSequence.SEARCH_3]) {
-          const searchResp = search(data[FisApiSequence.SEARCH_3], msgIdSet, flow)
-          if (!_.isEmpty(searchResp)) {
-            logReport = { ...logReport, [FisApiSequence.SEARCH_3]: searchResp }
+          const search3Resp = search(data[FisApiSequence.SEARCH_3], msgIdSet, flow, FisApiSequence.SEARCH_3)
+          if (!_.isEmpty(search3Resp)) {
+            logReport = { ...logReport, [FisApiSequence.SEARCH_3]: search3Resp }
           }
         }
 
         if (data[FisApiSequence.ON_SEARCH_3]) {
-          const onSearchResp = checkOnSearch(
+          const onSearch3Resp = checkOnSearch(
             data[FisApiSequence.ON_SEARCH_3],
             msgIdSet,
             FisApiSequence.ON_SEARCH_3,
             flow,
           )
-          if (!_.isEmpty(onSearchResp)) {
-            logReport = { ...logReport, [FisApiSequence.ON_SEARCH_3]: onSearchResp }
+          if (!_.isEmpty(onSearch3Resp)) {
+            logReport = { ...logReport, [FisApiSequence.ON_SEARCH_3]: onSearch3Resp }
           }
         }
 
@@ -309,12 +302,7 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         }
 
         if (data[FisApiSequence.ON_SELECT_1]) {
-          const onSelectResp = checkOnSelect(
-            data[FisApiSequence.ON_SELECT_1],
-            msgIdSet,
-            FisApiSequence.ON_SELECT_1,
-            flow,
-          )
+          const onSelectResp = checkOnSelect(data[FisApiSequence.ON_SELECT_1], msgIdSet, FisApiSequence.ON_SELECT_1)
           if (!_.isEmpty(onSelectResp)) {
             logReport = { ...logReport, [FisApiSequence.ON_SELECT_1]: onSelectResp }
           }
@@ -328,12 +316,7 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         }
 
         if (data[FisApiSequence.ON_SELECT_2]) {
-          const onSelect2Resp = checkOnSelect(
-            data[FisApiSequence.ON_SELECT_2],
-            msgIdSet,
-            FisApiSequence.ON_SELECT_2,
-            flow,
-          )
+          const onSelect2Resp = checkOnSelect(data[FisApiSequence.ON_SELECT_2], msgIdSet, FisApiSequence.ON_SELECT_2)
           if (!_.isEmpty(onSelect2Resp)) {
             logReport = { ...logReport, [FisApiSequence.ON_SELECT_2]: onSelect2Resp }
           }
@@ -347,7 +330,7 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         }
 
         if (data[FisApiSequence.ON_INIT_1]) {
-          const onInit = checkOnInit(data[FisApiSequence.ON_INIT_1], msgIdSet, FisApiSequence.ON_INIT_1, flow)
+          const onInit = checkOnInit(data[FisApiSequence.ON_INIT_1], msgIdSet, FisApiSequence.ON_INIT_1)
           if (!_.isEmpty(onInit)) {
             logReport = { ...logReport, [FisApiSequence.ON_INIT_1]: onInit }
           }
@@ -361,7 +344,7 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         }
 
         if (data[FisApiSequence.ON_INIT_2]) {
-          const onInit2 = checkOnInit(data[FisApiSequence.ON_INIT_2], msgIdSet, FisApiSequence.ON_INIT_2, flow)
+          const onInit2 = checkOnInit(data[FisApiSequence.ON_INIT_2], msgIdSet, FisApiSequence.ON_INIT_2)
           if (!_.isEmpty(onInit2)) {
             logReport = { ...logReport, [FisApiSequence.ON_INIT_2]: onInit2 }
           }
@@ -375,7 +358,7 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         }
 
         if (data[FisApiSequence.ON_INIT_3]) {
-          const onInit3 = checkOnInit(data[FisApiSequence.ON_INIT_3], msgIdSet, FisApiSequence.ON_INIT_3, flow)
+          const onInit3 = checkOnInit(data[FisApiSequence.ON_INIT_3], msgIdSet, FisApiSequence.ON_INIT_3)
           if (!_.isEmpty(onInit3)) {
             logReport = { ...logReport, [FisApiSequence.ON_INIT_3]: onInit3 }
           }
@@ -389,7 +372,7 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         }
 
         if (data[FisApiSequence.ON_INIT_4]) {
-          const onInit3 = checkOnInit(data[FisApiSequence.ON_INIT_4], msgIdSet, FisApiSequence.ON_INIT_4, flow)
+          const onInit3 = checkOnInit(data[FisApiSequence.ON_INIT_4], msgIdSet, FisApiSequence.ON_INIT_4)
           if (!_.isEmpty(onInit3)) {
             logReport = { ...logReport, [FisApiSequence.ON_INIT_4]: onInit3 }
           }
@@ -459,7 +442,7 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         }
 
         if (data[FisApiSequence.ON_STATUS]) {
-          const onStatus = checkOnStatus(data[FisApiSequence.ON_STATUS], msgIdSet, FisApiSequence.ON_STATUS)
+          const onStatus = checkOnStatus(data[FisApiSequence.ON_STATUS], msgIdSet, FisApiSequence.ON_STATUS, flow)
           if (!_.isEmpty(onStatus)) {
             logReport = { ...logReport, [FisApiSequence.ON_STATUS]: onStatus }
           }

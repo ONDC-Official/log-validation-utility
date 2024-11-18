@@ -95,7 +95,7 @@ export const checkFISContext = (
     errObj.id_err = "transaction_id and message id can't be same"
   }
 
-  if (data.action != path) {
+  if (data.action != path.replace('_unsolicated','')) {
     errObj.action_err = `context.action should be ${path}`
   }
 
@@ -727,19 +727,14 @@ export function validateStatusOrderAndTimestamp(set: any) {
   }
 }
 
-export const isValidEmail = (value: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  return emailRegex.test(value)
+export const isValidEmail = (email: string) => {
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+  return emailRegex.test(email)
 }
 
-export const isValidPhoneNumber = (value: string): boolean => {
-  const phoneRegex = /^(\d{10}|\d{11})$/
-  if (value.startsWith('0')) {
-    value = value.substring(1)
-  }
-
-  const val = value?.replace(/[^\d]/g, '')
-  return phoneRegex.test(val)
+export const isValidPhoneNumber = (phoneNumber: string): boolean => {
+  const phoneRegex = /^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/
+  return phoneRegex.test(phoneNumber)
 }
 
 export const isValidUrl = (url: string) => {

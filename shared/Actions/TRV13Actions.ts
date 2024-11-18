@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { dropDB, setValue } from '../dao'
 import { logger } from '../logger'
 import { mobilitySequence, onDemandFlows } from '../../constants'
-import { search } from '../../utils/mobility/search'
+import { search } from '../../utils/mobility/TRV13/search'
 import { checkCancel } from '../../utils/mobility/cancel'
 import { checkOnSearch } from '../../utils/mobility/onSearch'
 import { checkSelect } from '../../utils/mobility/select'
@@ -17,7 +17,7 @@ import { checkStatus } from '../../utils/mobility/status'
 import { checkOnStatus } from '../../utils/mobility/onStatus'
 import { checkOnCancel } from '../../utils/mobility/onCancel'
 
-export function validateLogsForMobility(data: any, flow: string, version: string) {
+export function validateLogsForTRV13(data: any, flow: string, version: string) {
   const msgIdSet = new Set()
   let logReport: any = {}
   try {
@@ -26,7 +26,7 @@ export function validateLogsForMobility(data: any, flow: string, version: string
     logger.error('!!Error while removing LMDB', error)
   }
 
-  if (!_.isEqual(version, '2.0.0') || !_.isEqual(version, '2.0.1')) {
+  if (!_.isEqual(version, '2.0.0')) {
     logReport = { ...logReport, version: `Invalid version ${version}` }
   }
 
@@ -36,7 +36,7 @@ export function validateLogsForMobility(data: any, flow: string, version: string
 
   try {
     if (data[mobilitySequence.SEARCH]) {
-      const errors = search(data[mobilitySequence.SEARCH], msgIdSet, version)
+      const errors = search(data[mobilitySequence.SEARCH], msgIdSet, version, mobilitySequence.SEARCH)
       if (!_.isEmpty(errors)) {
         logReport = { ...logReport, [mobilitySequence.SEARCH]: errors }
       }
@@ -46,6 +46,20 @@ export function validateLogsForMobility(data: any, flow: string, version: string
       const errors = checkOnSearch(data[mobilitySequence.ON_SEARCH], msgIdSet, version)
       if (!_.isEmpty(errors)) {
         logReport = { ...logReport, [mobilitySequence.ON_SEARCH]: errors }
+      }
+    }
+
+    if (data[mobilitySequence.SEARCH_INC]) {
+      const errors = search(data[mobilitySequence.SEARCH_INC], msgIdSet, version, mobilitySequence.SEARCH_INC)
+      if (!_.isEmpty(errors)) {
+        logReport = { ...logReport, [mobilitySequence.SEARCH]: errors }
+      }
+    }
+
+    if (data[mobilitySequence.SEARCH_TIME]) {
+      const errors = search(data[mobilitySequence.SEARCH_TIME], msgIdSet, version, mobilitySequence.SEARCH_TIME)
+      if (!_.isEmpty(errors)) {
+        logReport = { ...logReport, [mobilitySequence.SEARCH]: errors }
       }
     }
 

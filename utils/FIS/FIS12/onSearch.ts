@@ -2,13 +2,18 @@
 /* eslint-disable no-prototype-builtins */
 import { logger } from '../../../shared/logger'
 import { setValue, getValue } from '../../../shared/dao'
-import constants, { FisApiSequence, fisFlows } from '../../../constants'
+import constants, { FisApiSequence } from '../../../constants'
 import { validateSchema, isObjectEmpty } from '../../'
-import { checkUniqueCategoryIds, validateContext, validateXInput, validateXInputSubmission } from './fisChecks'
 import {
-  // validateProviderTags,
+  checkUniqueCategoryIds,
+  validateContext,
+  validateDescriptor,
+  validateXInput,
+  validateXInputSubmission,
+} from './fisChecks'
+import {
   validatePaymentTags,
-  validateItemsTags,
+  validateLoanTags,
 } from './tags'
 import { isEmpty } from 'lodash'
 
@@ -27,6 +32,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, sequence: string, flow: 
 
   setValue(`${FisApiSequence.ON_SEARCH}_message`, message)
   setValue(`${FisApiSequence.ON_SEARCH}`, data)
+  console.log('flow', flow)
   const errorObj: any = {}
 
   if (schemaValidation !== 'error') {
@@ -44,6 +50,17 @@ export const checkOnSearch = (data: any, msgIdSet: any, sequence: string, flow: 
   const loanCode = getValue(`LoanType`)
   const version = getValue('version')
 
+  // check descriptor
+  try {
+    logger.info(`Validating Descriptor for catalog`)
+    const descriptor = onSearchCatalog?.descriptor
+    // send true as last argument in case if descriptor?.code validation is needed
+    const descriptorError = validateDescriptor(descriptor, constants.ON_SEARCH, `catalog.descriptor`, false, [])
+    if (descriptorError) Object.assign(errorObj, descriptorError)
+  } catch (error: any) {
+    logger.info(`Error while validating descriptor for /${constants.ON_SEARCH}, ${error.stack}`)
+  }
+
   try {
     logger.info(`Checking Providers info (providers) in /${constants.ON_SEARCH}`)
     const bppPrvdrs = onSearchCatalog['providers']
@@ -59,83 +76,60 @@ export const checkOnSearch = (data: any, msgIdSet: any, sequence: string, flow: 
       const categoriesId = new Set()
       const prvdr = bppPrvdrs[i]
 
-      if (prvdrsId.has(prvdr.id)) {
-        const key = `prvdr${i}id`
-        errorObj[key] = `duplicate provider id: ${prvdr.id} in providers`
+      // check provider id
+      logger.info(`Validating uniqueness for provider id in providers[${i}]...`)
+      if (!prvdr?.id) {
+        errorObj[`prvdr${i}id`] = `provider.id: is missing at index: ${i}`
+      } else if (prvdrsId.has(prvdr.id)) {
+        errorObj[`prvdr${i}id`] = `duplicate provider id: ${prvdr.id} in providers`
       } else {
         prvdrsId.add(prvdr.id)
       }
 
+      // check provider Descriptor
       try {
-        logger.info(`Validating Descriptor for /${constants.ON_SEARCH}`)
+        logger.info(`Validating Descriptor at index: ${i}`)
         const descriptor = onSearchCatalog['providers'][i]['descriptor']
-
-        if (!descriptor) {
-          errorObj.descriptor = 'Provider descriptor is missing or invalid.'
-        }
-
-        if (descriptor.images) {
-          descriptor.images.forEach((image: any, index: number) => {
-            const { url, size_type } = image
-            if (typeof url !== 'string' || !url.trim()) {
-              errorObj[`image_url_[${index}]`] = `Invalid URL for image in descriptor.`
-            }
-
-            const validSizes = ['md', 'sm', 'lg']
-            if (!validSizes.includes(size_type)) {
-              errorObj[
-                `image_size_[${index}]`
-              ] = `Invalid image size in descriptor. It should be one of: ${validSizes.join(', ')}`
-            }
-          })
-        }
-
-        if (!descriptor.name || !descriptor.name.trim()) {
-          errorObj.name = `Provider name cannot be empty.`
-        } else {
-          if (descriptor.name !== onSearchCatalog['descriptor']['name'])
-            errorObj.name = `Provider name should be same as sent in catalog/descriptor.`
-        }
-
-        if (descriptor.short_desc && !descriptor.short_desc.trim()) {
-          errorObj.short_desc = `Short description cannot be empty.`
-        }
-
-        if (descriptor.long_desc && !descriptor.long_desc.trim()) {
-          errorObj.long_desc = `Long description cannot be empty.`
-        }
+        const descriptorError = validateDescriptor(
+          descriptor,
+          constants.ON_SEARCH,
+          `providers[${i}].descriptor`,
+          false,
+          [],
+        )
+        if (descriptorError) Object.assign(errorObj, descriptorError)
       } catch (error: any) {
         logger.info(`Error while validating descriptor for /${constants.ON_SEARCH}, ${error.stack}`)
       }
 
+      // check provider categories
       try {
-        logger.info(`Checking categories for provider (${prvdr.id}) in providers[${i}]`)
-        let j = 0
+        logger.info(`Checking categories for provider (${prvdr.id})`)
         const categories = onSearchCatalog['providers'][i]['categories']
-        const iLen = categories.length
 
-        if (iLen === 0 || iLen === undefined) {
-          errorObj['categories'] = 'Categories array is missing or empty in /message/catalog/providers/categories'
-        }
+        if (isEmpty(categories)) {
+          errorObj['categories'] = 'Categories array is missing or empty in providers'
+        } else {
+          categories.forEach((category: any, j: number) => {
+            logger.info(`Validating uniqueness for categories id in category[${j}]...`)
+            if (!category?.id) {
+              errorObj[`category${j}`] = `category.id: is missing at index: ${j}`
+            } else if (categoriesId.has(category.id)) {
+              errorObj[`category${j}`] = `duplicate category id: ${category.id} in providers[${i}]`
+            } else {
+              categoriesId.add(category.id)
+            }
 
-        while (j < iLen) {
-          logger.info(`Validating uniqueness for categories id in providers[${i}].items[${j}]...`)
-          const category = categories[j]
-
-          if (categoriesId.has(category.id)) {
-            const key = `prvdr${i}category${j}`
-            errorObj[key] = `duplicate category id: ${category.id} in providers[${i}]`
-          } else {
-            categoriesId.add(category.id)
-          }
-
-          logger.info(`Validating descriptor code in providers[${i}].categories[${j}]...`)
-
-          if (category?.descriptor?.code !== loanCode)
-            errorObj[`prvdr[${i}].category[${j}].code`] = `category code: ${
-              category?.descriptor?.code
-            } in providers[${i}] must be the same as ${fisFlows[flow as keyof typeof fisFlows]}`
-          j++
+            logger.info(`Validating descriptor in providers[${i}].categories[${j}]...`)
+            const descriptorError = validateDescriptor(
+              category?.descriptor,
+              constants.ON_SEARCH,
+              `categories[${j}]`,
+              true,
+              [loanCode],
+            )
+            if (descriptorError) Object.assign(errorObj, descriptorError)
+          })
         }
       } catch (error: any) {
         logger.error(`!!Errors while checking categories in providers[${i}], ${error.stack}`)
@@ -159,7 +153,6 @@ export const checkOnSearch = (data: any, msgIdSet: any, sequence: string, flow: 
               { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
               { code: 'STATIC_TERMS', type: 'url' },
               { code: 'COURT_JURISDICTION', type: 'string' },
-              { code: 'DELAY_INTEREST', type: 'amount' },
               {
                 code: 'OFFLINE_CONTRACT',
                 type: 'boolean',
@@ -167,21 +160,22 @@ export const checkOnSearch = (data: any, msgIdSet: any, sequence: string, flow: 
             ]
 
             if (!arr?.collected_by) {
-              errorObj[
-                `payemnts[${i}]_collected_by`
-              ] = `payments.collected_by must be present in ${constants.ON_SEARCH}`
+              errorObj[`payemnts[${i}]_collected_by`] =
+                `payments.collected_by must be present in ${constants.ON_SEARCH}`
             } else {
               const srchCollectBy = getValue(`collected_by`)
               if (srchCollectBy != arr?.collected_by)
-                errorObj[
-                  `payemnts[${i}]_collected_by`
-                ] = `payments.collected_by value sent in ${constants.ON_SEARCH} should be same as sent in ${constants.SEARCH}: ${srchCollectBy}`
+                errorObj[`payemnts[${i}]_collected_by`] =
+                  `payments.collected_by value sent in ${constants.ON_SEARCH} should be same as sent in ${constants.SEARCH}: ${srchCollectBy}`
+
+              if (arr?.collected_by == 'BAP') terms.push({ code: 'DELAY_INTEREST', type: 'amount' })
             }
 
             // Validate payment tags
             const tagsValidation = validatePaymentTags(arr.tags, terms)
+            console.log('tagsValidation', tagsValidation)
             if (!tagsValidation.isValid) {
-              Object.assign(errorObj, { tags: tagsValidation.errors })
+              Object.assign(errorObj, { paymentTags: tagsValidation.errors })
             }
           })
         }
@@ -193,7 +187,8 @@ export const checkOnSearch = (data: any, msgIdSet: any, sequence: string, flow: 
         logger.info(`Checking items for provider (${prvdr.id}) in providers[${i}]`)
         let j = 0
         const items = onSearchCatalog['providers'][i]['items']
-        const iLen = items.length
+        const iLen = items?.length
+        let parentItems = 0
 
         if (iLen === 0 || iLen === undefined) {
           errorObj['items'] = 'Items array is missing or empty in /message/catalog/providers/items'
@@ -203,9 +198,10 @@ export const checkOnSearch = (data: any, msgIdSet: any, sequence: string, flow: 
           logger.info(`Validating uniqueness for item id in providers[${i}].items[${j}]...`)
           const item = items[j]
 
-          if (itemsId.has(item.id)) {
-            const key = `prvdr${i}item${j}`
-            errorObj[key] = `duplicate item id: ${item.id} in providers[${i}]`
+          if (!item?.id) {
+            errorObj[`item${j}`] = `item.id: is missing at index: ${j}`
+          } else if (itemsId.has(item.id)) {
+            errorObj[`prvdr${i}item${j}`] = `duplicate item id: ${item.id} in providers[${i}]`
           } else {
             itemsId.add(item.id)
           }
@@ -215,9 +211,47 @@ export const checkOnSearch = (data: any, msgIdSet: any, sequence: string, flow: 
 
             if (!areCategoryIdsUnique) {
               const key = `prvdr${i}item${j}uniqueCategoryIds`
-              errorObj[
-                key
-              ] = `category_ids value in /providers[${i}]/items[${j}] should match with id provided in categories`
+              errorObj[key] =
+                `category_ids value in /providers[${i}]/items[${j}] should match with id provided in categories`
+            }
+          }
+
+          // check item Descriptor
+          try {
+            logger.info(`Validating item Descriptor at index: ${j}`)
+            const descriptor = item?.descriptor
+            const descriptorError = validateDescriptor(
+              descriptor,
+              constants.ON_SEARCH,
+              `providers[${i}].items[${j}]`,
+              true,
+              [loanCode],
+            )
+            if (descriptorError) Object.assign(errorObj, descriptorError)
+          } catch (error: any) {
+            logger.info(`Error while validating descriptor for items at /${constants.ON_SEARCH}, ${error.stack}`)
+          }
+
+          // Validate parent_item_id & price for multi-offer calls
+          if (sequence?.includes('_3')) {
+            // parent_item_id check
+            console.log('itemsId---------------11', item)
+            if (!item?.parent_item_id)
+              errorObj['parent_item_id'] = `parent_item_id is missing at providers[${i}].items[${j}]`
+            else {
+              parentItems++
+              console.log('itemsId---------------', itemsId, item.parent_item_id)
+              if (!itemsId.has(item.parent_item_id)) {
+                errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id}  doesn't match with previous item.id in providers[${i}]`
+              }
+            }
+
+            // price check
+            const price = item?.price
+            if (!price) errorObj['price'] = `price is missing at providers[${i}].items[${j}]`
+            else {
+              if (!price?.currency) errorObj['currency'] = `currency is missing at providers[${i}].items[${j}].price`
+              if (!price?.value) errorObj['value'] = `value is missing at providers[${i}].items[${j}].price`
             }
           }
 
@@ -236,21 +270,33 @@ export const checkOnSearch = (data: any, msgIdSet: any, sequence: string, flow: 
           //   Object.assign(errorObj, xinputValidationErrors)
           // }
 
-          const xinput = item.xinput
-          const xinputValidationErrors =
-            version == '2.1.0' && sequence == 'on_search_2'
-              ? validateXInputSubmission(xinput, j, sequence)
-              : validateXInput(xinput, i, constants.ON_SEARCH, j)
+          const xinput = item?.xinput
+          const currIndex = parseInt(sequence.replace('on_search_', ''))
+          let xinputValidationErrors
+          if (version == '2.1.0' && sequence == 'on_search_2') {
+            xinputValidationErrors = validateXInputSubmission(xinput, j, sequence)
+          } else if (version == '2.1.0' && sequence == 'on_search_3') xinputValidationErrors = null
+          else {
+            xinputValidationErrors = validateXInput(xinput, i, constants.ON_SEARCH, currIndex ? currIndex - 1 : 0)
+          }
           if (xinputValidationErrors) {
             Object.assign(errorObj, xinputValidationErrors)
           }
 
           // Validate Item tags
-          const tagsValidation = validateItemsTags(item?.tags)
-          if (!tagsValidation.isValid) {
+          let tagsValidation: any = {}
+          if (true) {
+            tagsValidation = validateLoanTags(item?.tags, sequence)
+          } else {
+            // tagsValidation = validateItemsTags(item?.tags)
+          }
+
+          if (!tagsValidation?.isValid) {
             Object.assign(errorObj, { tags: tagsValidation.errors })
           }
 
+          if (sequence?.includes('_3') && parentItems == 0)
+            errorObj.parent_item_id = `child-items not found in providers[${i}]`
           j++
         }
       } catch (error: any) {
@@ -270,6 +316,8 @@ export const checkOnSearch = (data: any, msgIdSet: any, sequence: string, flow: 
       // } catch (error: any) {
       //   logger.error(`!!Error while checking tags construct for providers[${i}], ${error.stack}`)
       // }
+
+      //tags missing
 
       i++
     }

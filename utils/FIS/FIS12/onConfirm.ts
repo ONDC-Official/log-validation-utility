@@ -13,7 +13,7 @@ import {
   validateProvider,
   validateQuote,
 } from './fisChecks'
-import { validateLoanInfoTags, validateProviderTags } from './tags'
+import { validateLoanInfoTags, validateLoanTags, validateProviderTags } from './tags'
 import _ from 'lodash'
 
 export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
@@ -43,6 +43,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
 
     const on_confirm = message.order
     const version: any = getValue('version')
+    const LoanType: any = getValue('LoanType')
 
     //check order.id
     try {
@@ -104,11 +105,17 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
             constants.ON_CONFIRM,
             `items[${index}].descriptor`,
             false,
+            []
           )
           if (descriptorError) Object.assign(errorObj, descriptorError)
 
           // Validate Item tags
-          const tagsValidation = validateLoanInfoTags(item?.tags, flow)
+          let tagsValidation: any = {}
+          if (LoanType == 'INVOICE_BASED_LOAN') {
+            tagsValidation = validateLoanTags(item?.tags, constants.ON_CONFIRM)
+          } else {
+            tagsValidation = validateLoanInfoTags(item?.tags, flow)
+          }
           if (!tagsValidation.isValid) {
             Object.assign(errorObj, { tags: tagsValidation.errors })
           }
@@ -127,7 +134,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
         const fulfillment = on_confirm.fulfillments[i]
         const fulfillmentErrors = validateFulfillments(fulfillment, i, on_confirm.documents)
         if (fulfillmentErrors) {
-          Object.assign(errorObj, fulfillmentErrors)
+          errorObj[`fulfillment${i}`] = fulfillmentErrors
         }
 
         i++

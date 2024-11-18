@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import { isEmpty } from 'lodash'
-import { isValidEmail, isValidPhoneNumber, isValidUrl } from '../'
+import { isValidEmail, isValidPhoneNumber, isValidUrl } from '../../'
 
 interface Tag {
   display: boolean
@@ -380,21 +380,14 @@ export const validateProviderTags = (tags: Tag[]): ValidationResult => {
 
 export const validateItemsTags = (tags: Tag[]): ValidationResult => {
   const errors: string[] = []
+
   if (!tags) {
     errors.push('Tags are required for validation in items')
     return {
       isValid: false,
       errors,
     }
-  } else if (typeof tags == 'object' && !Array.isArray(tags)) {
-    errors.push('item.tags must be an array of object')
-    return {
-      isValid: false,
-      errors,
-    }
   }
-
-  console.log('tags', tags)
 
   tags.forEach((tag, index) => {
     switch (tag.descriptor.code) {
@@ -505,4 +498,69 @@ export const validateLocationTag = (tags: Tag[]): ValidationResult => {
     isValid: errors.length === 0,
     errors: errors.length > 0 ? errors : undefined,
   }
+}
+
+export const validateTermsAndFeesTags = (tags: any, sequence: string) => {
+  const errors: string[] = []
+
+  // Expected structure requirements for each tag
+  const requiredTagStructure: any = {
+    BAP_TERMS: ['STATIC_TERMS', 'STATIC_TERMS_NEW', 'EFFECTIVE_DATE'],
+    BUYER_FINDER_FEES: ['BUYER_FINDER_FEES_PERCENTAGE'],
+  }
+
+  if (sequence?.includes('_inc')) requiredTagStructure['CATALOG_INC'] = ['MODE']
+
+  console.log('requiredTagStructure---', requiredTagStructure)
+
+  // Descriptors with specific validation rules
+  const descriptorValidators: any = {
+    STATIC_TERMS: (value: string) => /^https?:\/\/.+/.test(value),
+    STATIC_TERMS_NEW: (value: string) => /^https?:\/\/.+/.test(value),
+    EFFECTIVE_DATE: (value: string) => !isNaN(Date.parse(value)),
+    BUYER_FINDER_FEES_PERCENTAGE: (value: string) => /^[0-9]+(\.[0-9]+)?$/.test(value),
+    MODE: (value: string) => ['START', 'STOP'].includes(value),
+  }
+
+  // Check if required tags are present
+  const foundTags: any = {}
+  tags.forEach((tag: any) => {
+    if (!requiredTagStructure[tag.descriptor?.code]) {
+      errors.push(`Invalid tag-group '${tag.descriptor?.code}'.`)
+    } else if (tag.descriptor?.code) {
+      foundTags[tag.descriptor.code] = tag
+    }
+  })
+
+  for (const requiredTag in requiredTagStructure) {
+    if (!foundTags[requiredTag]) {
+      errors.push(`Missing tag-group '${requiredTag}'.`)
+      continue
+    }
+
+    const tag = foundTags[requiredTag]
+    const requiredDescriptors = requiredTagStructure[requiredTag]
+    // const descriptorsMap = tag.list.reduce((acc: any, item: any) => {
+    //   if (item.descriptor?.code) {
+    //     acc[item.descriptor.code] = item?.value
+    //   }
+    //   return acc
+    // }, {})
+
+    // Validate each required descriptor within the tag
+    requiredDescriptors.forEach((descriptorCode: string) => {
+      const descriptorItem = tag.list.find((item: any) => item.descriptor?.code === descriptorCode)
+      if (!descriptorItem) {
+        errors.push(`Missing required descriptor code '${descriptorCode}' in tag-group '${requiredTag}'.`)
+      } else if (descriptorItem.value === undefined || descriptorItem.value === null || descriptorItem.value === '') {
+        errors.push(`Missing required value for descriptor '${descriptorCode}' in tag-group '${requiredTag}'.`)
+      } else if (descriptorValidators[descriptorCode] && !descriptorValidators[descriptorCode](descriptorItem.value)) {
+        errors.push(
+          `Invalid value '${descriptorItem.value}' for descriptor '${descriptorCode}' in tag-group '${requiredTag}'.`,
+        )
+      }
+    })
+  }
+
+  return errors
 }

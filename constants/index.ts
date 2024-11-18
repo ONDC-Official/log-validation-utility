@@ -114,9 +114,11 @@ export const FisApiSequence = {
   ON_CANCEL: 'on_cancel',
   STATUS: 'status',
   ON_STATUS: 'on_status',
-  ON_STATUS_KYC: 'on_status_kyc',
-  ON_STATUS_EMANDATE: 'on_status_emandate',
-  ON_STATUS_LOAN: 'on_status_loan',
+  ON_STATUS_EKYC: 'on_status_ekyc',
+  ON_STATUS_ENACH: 'on_status_enach',
+  ON_STATUS_ESIGN: 'on_status_esign',
+  // ON_STATUS_EMANDATE: 'on_status_emandate',
+  // ON_STATUS_LOAN: 'on_status_loan',
   UPDATE: 'update',
   ON_UPDATE: 'on_update',
   ON_UPDATE_UNSOLICATED: 'on_update_unsolicated',
@@ -144,9 +146,15 @@ export const FIS13HealthSequence = {
   ON_SEARCH_OFFER: 'on_search_offer',
   SELECT: 'select',
   ON_SELECT: 'on_select',
+  SELECT_1: 'select_1',
+  ON_SELECT_1: 'on_select_1',
+  SELECT_2: 'select_2',
+  ON_SELECT_2: 'on_select_2',
+  INIT: 'init',
   INIT_1: 'init_1',
   INIT_2: 'init_2',
   INIT_3: 'init_3',
+  ON_INIT: 'on_init',
   ON_INIT_1: 'on_init_1',
   ON_INIT_2: 'on_init_2',
   ON_INIT_3: 'on_init_3',
@@ -186,6 +194,8 @@ export const FIS14ApiSequence = {
 
 export const mobilitySequence = {
   SEARCH: 'search',
+  SEARCH_INC: 'search_inc',
+  SEARCH_TIME: 'search_time',
   ON_SEARCH: 'on_search',
   SELECT: 'select',
   ON_SELECT: 'on_select',
@@ -233,8 +243,8 @@ export const mobilityFlow: any = {
 export const formHeadingsFis: any = {
   INVOICE_BASED_LOAN: {
     on_search: ['Organization Information'],
-    on_select: ['Set Loan Amount', 'Know your Customer'],
-    on_init: 'Account details based loan form',
+    on_select: ['Set Loan Amount', 'Individual KYC'],
+    on_init: ['Entity KYC', 'Account Information', 'E-mandate', 'Loan Agreement'],
   },
   PERSONAL_LOAN: {
     on_search: ['Personal Information'],
@@ -252,8 +262,13 @@ export const insuranceFormHeadings: any = {
   },
   MARINE_INSURANCE: {
     on_search: ['Individual Information'],
-    on_select: ['EKYC'],
+    on_select: ['additional information form', 'Aadhar/kyc form'],
     on_init: ['Buyer Details', 'Manual Review', 'Nominee Details'],
+  },
+  MOTOR_INSURANCE: {
+    on_search: ['Vehicle Details'],
+    on_select: ['Manual Review', 'PAN & DOB', 'Know your Customer'],
+    on_init: ['Vehicle & Nominee Details', 'Personal Info'],
   },
 }
 
@@ -262,16 +277,22 @@ export const fisFlows = {
   PERSONAL: 'PERSONAL_LOAN',
   PRE_INVOICE: 'PERSONAL_LOAN',
   PRE_PERSONAL: 'INVOICE_BASED_LOAN',
-  LOAN_FORECLOSURE: 'FORECLOSURE',
-  PRE_PART_PAYMENT: 'PRE_PART_PAYMENT',
-  MISSED_EMI_PAYMENT: 'MISSED_EMI_PAYMENT',
+  FORECLOSURE_PERSONAL: 'FORECLOSURE_PERSONAL',
+  PRE_PART_PERSONAL: 'PRE_PART_PERSONAL',
+  MISSED_EMI_PERSONAL: 'MISSED_EMI_PERSONAL',
 }
 
 export const insuranceFlows = {
   HEALTH: 'HEALTH_INSURANCE',
   MARINE: 'MARINE_INSURANCE',
+  MOTOR: 'MOTOR_INSURANCE',
   CLAIM_HEALTH: 'CLAIM_HEALTH_INSURANCE',
   RENEW_HEALTH: 'RENEW_HEALTH_INSURANCE',
+  CANCEL_HEALTH: 'CANCEL_HEALTH_INSURANCE',
+  CLAIM_MARINE: 'CLAIM_MARINE_INSURANCE',
+  CANCEL_MARINE: 'CANCEL_MARINE_INSURANCE',
+  CLAIM_MOTOR: 'CLAIM_MOTOR_INSURANCE',
+  CANCEL_MOTOR: 'CANCEL_MOTOR_INSURANCE',
 }
 
 export const fis14Flows = {
@@ -311,7 +332,8 @@ export const fis14FlowSequence = {
 }
 
 export const onDemandFlows = {
-  HAPPY_FLOW: 'HAPPY_FLOW',
+  DRIVER_ON_CONFIRM: 'DRIVER_ON_CONFIRM',
+  DRIVER_POST_CONFIRM: 'DRIVER_POST_CONFIRM',
   RIDER_CANCEL: 'RIDER_CANCEL',
   DRIVER_CANCEL: 'DRIVER_CANCEL',
   PRICE_UPDATE: 'PRICE_UPDATE',

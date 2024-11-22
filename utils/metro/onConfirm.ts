@@ -11,9 +11,10 @@ import {
   validateStops,
   validateCancellationTerms,
 } from './metroChecks'
-import { validatePaymentTags, validateRouteInfoTags } from './tags'
+import { validatePaymentTags, validateRouteInfoTags, validateTags } from './tags'
+import { isNil } from 'lodash'
 
-const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
+// const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
 
 export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }) => {
@@ -89,7 +90,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
       logger.info(`Validating fulfillments object for /${constants.ON_CONFIRM}`)
       let FULFILLMENT: string[] = []
       on_confirm.fulfillments.forEach((fulfillment: any, index: number) => {
-        FULFILLMENT=[...FULFILLMENT, fulfillment?.id]
+        FULFILLMENT = [...FULFILLMENT, fulfillment?.id]
         const fulfillmentKey = `fulfillments[${index}]`
 
         if (!storedFull.includes(fulfillment?.id)) {
@@ -101,11 +102,11 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
 
         if (!fulfillment?.vehicle) {
           errorObj['Vehicle'] = 'Vehicle Object Is Missing'
-        } else {
-          if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
-            errorObj[`${fulfillmentKey}.vehicleCategory`] =
-              `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
-          }
+        } else if (
+          fulfillment?.vehicle?.category !== (String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO')
+        ) {
+          errorObj[`${fulfillmentKey}.vehicleCategory`] =
+            `Vehicle category should be ${String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO'} in Fulfillment.`
         }
 
         if (fulfillment.type !== 'TRIP') {
@@ -119,10 +120,12 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
         if (Object.keys(getStopsError).length > 0 && Object.keys(errorValue)?.length)
           Object.assign(errorObj, getStopsError)
 
-        if (fulfillment.tags) {
-          // Validate route info tags
-          if (String(flow.flow.toUpperCase()).includes('INTRACITY')) {
-            const tagsValidation = validateRouteInfoTags(fulfillment.tags)
+        if (String(flow?.flow).toUpperCase() !== 'METRO') {
+          if (!fulfillment?.tags)
+            errorObj[`ulfillment_${index}_tags`] = `Tags should be present in Fulfillment in case of Intracity.`
+          else {
+            // Validate route info tags
+            const tagsValidation = validateRouteInfoTags(fulfillment?.tags)
             if (!tagsValidation.isValid) {
               Object.assign(errorObj, { tags: tagsValidation.errors })
             }
@@ -130,7 +133,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
         }
       })
 
-       setValue(`${metroSequence.ON_CONFIRM}_storedFulfillments`, FULFILLMENT || [])
+      setValue(`${metroSequence.ON_CONFIRM}_storedFulfillments`, FULFILLMENT || [])
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_INIT},  ${error.message}`)
       return { error: error.message }
@@ -162,8 +165,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
             errorObj[key] = `Price is incomplete in /items[${index}]`
           }
 
-          item.fulfillment_ids &&
-            item.fulfillment_ids.forEach((fulfillmentId: string) => {
+          item?.fulfillment_ids &&
+            item?.fulfillment_ids?.forEach((fulfillmentId: string) => {
               if (!fulfillmentIdsSet.has(fulfillmentId)) {
                 errorObj[`invalidFulfillmentId_${index}`] =
                   `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_CONFIRM} is not valid`
@@ -218,7 +221,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
           const { amount, currency, transaction_id } = params
 
           if (!amount) {
-            errorObj[`payments[${i}]_params_amount`] = `payments.params.amount must be present in ${constants.ON_CONFIRM}`
+            errorObj[`payments[${i}]_params_amount`] =
+              `payments.params.amount must be present in ${constants.ON_CONFIRM}`
           } else if (amount !== paymentAmount) {
             errorObj[`payments[${i}]_params_amount`] =
               `payments.params.amount must match with the ${paymentAmount} in ${constants.ON_CONFIRM}`
@@ -228,7 +232,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
             errorObj[`payments[${i}]_params_currency`] =
               `payments.params.currency must be present in ${constants.CONFIRM}`
           } else if (currency !== 'INR') {
-            errorObj[`payments[${i}]_params_currency`] = `payments.params.currency must be INR in ${constants.ON_CONFIRM}`
+            errorObj[`payments[${i}]_params_currency`] =
+              `payments.params.currency must be INR in ${constants.ON_CONFIRM}`
           }
 
           if (!transaction_id) {
@@ -282,8 +287,16 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
 
     try {
       logger.info(`Checking cancellation terms in /${constants.ON_CONFIRM}`)
-      const cancellationErrors = validateCancellationTerms(on_confirm.cancellation_terms, constants.ON_CONFIRM)
-      Object.assign(errorObj, cancellationErrors)
+      if (String(flow?.flow)?.toUpperCase() === 'METRO') {
+        if (!on_confirm?.cancellation_terms)
+          errorObj.cancellation_terms = `cancellation_terms missing in /${constants.ON_CONFIRM}`
+        else {
+          logger.info(`Checking cancellation terms in /${constants.ON_CONFIRM}`)
+
+          const cancellationErrors = validateCancellationTerms(on_confirm?.cancellation_terms, constants.ON_CONFIRM)
+          if (!isNil(cancellationErrors)) Object.assign(errorObj, cancellationErrors)
+        }
+      }
     } catch (error: any) {
       logger.error(`!!Error while checking cancellation_terms in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
@@ -296,6 +309,11 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
       }
     } catch (error: any) {
       logger.error(`!!Error while checking status in message.order object  /${constants.ON_CONFIRM}, ${error.stack}`)
+    }
+
+    if (String(flow?.flow)?.toUpperCase() === 'METRO' && on_confirm?.tags) {
+      const tagsValidation: { [key: string]: any } | null = validateTags(on_confirm?.tags ?? [], 0)
+      if (!isNil(tagsValidation)) Object.assign(errorObj, tagsValidation)
     }
 
     if (!on_confirm?.created_at) errorObj.created_at = `created_at is missing in /${constants.ON_CONFIRM}`

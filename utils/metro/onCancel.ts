@@ -36,7 +36,7 @@ export const checkOnCancelPayload = (
     const contextRes: any = validateContext(
       context,
       msgIdSet,
-      cancelType ? metroSequence?.SOFT_ON_CANCEL : metroSequence?.CONFIRM_CANCEL,
+      cancelType ? metroSequence?.CONFIRM_CANCEL : metroSequence?.SOFT_CANCEL,
       cancelType ? metroSequence?.CONFIRM_ON_CANCEL : metroSequence?.SOFT_ON_CANCEL,
     )
     setValue(`${constants.ON_CANCEL}_message`, message)

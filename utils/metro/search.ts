@@ -25,7 +25,14 @@ export const search = (data: any, msgIdSet: any, secondSearch: boolean, flow: { 
     }
 
     const schemaValidation = validateSchema('TRV', constants.SEARCH, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.ON_SEARCH, constants.SEARCH, false)
+    const contextRes: any = validateContext(
+      context,
+      msgIdSet,
+      constants.ON_SEARCH,
+      constants.SEARCH,
+      false,
+      secondSearch,
+    )
     setValue(`${metroSequence.SEARCH1}_message`, message)
     msgIdSet.add(data.context.message_id)
 
@@ -97,13 +104,29 @@ export const search = (data: any, msgIdSet: any, secondSearch: boolean, flow: { 
     try {
       logger.info(`Validating payments object for /${constants.SEARCH}`)
       const payment = data?.message?.intent?.payment
-      if (!payment?.collected_by)
-        errorObj['collected_by'] =
-          `payment.collected_by must be present in ${secondSearch ? metroSequence?.SEARCH2 : metroSequence.SEARCH1}`
 
-      const tagsValidation = validatePaymentTags(payment?.tags, secondSearch ? 'search2' : constants.SEARCH)
-      if (!tagsValidation?.isValid) {
-        Object.assign(errorObj, { tags: tagsValidation?.errors })
+      if (!payment) {
+        errorObj['payment'] = 'payment object is missing.'
+      } else {
+        // Validate `collected_by`
+        if (!payment.collected_by) {
+          errorObj['collected_by'] = `payment.collected_by must be present in ${
+            secondSearch ? metroSequence?.SEARCH2 : metroSequence.SEARCH1
+          }`
+        }
+
+        // Validate `tags`
+        if (!payment.tags) {
+          errorObj['payment.tags'] = `payment.tags is missing in ${
+            secondSearch ? metroSequence?.SEARCH2 : metroSequence.SEARCH1
+          }`
+        } else {
+          // Validate tags using external function
+          const tagsValidation = validatePaymentTags(payment.tags, secondSearch ? 'search2' : constants.SEARCH)
+          if (!tagsValidation?.isValid) {
+            errorObj.tags = tagsValidation.errors
+          }
+        }
       }
     } catch (error: any) {
       logger.error(`!!Error occcurred while validating payments in /${constants.SEARCH},  ${error.message}`)

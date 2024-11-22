@@ -62,9 +62,8 @@ export const checkConfirm = (data: any, msgIdSet: any, version: any) => {
       else {
         confirm.items.forEach((item: any, index: number) => {
           if (!itemIDS.includes(item.id)) {
-            errorObj[
-              `item[${index}].item_id`
-            ] = `/message/order/items/id in item: ${item.id} at /${constants.CONFIRM} should be one of the /item/id mapped in past call`
+            errorObj[`item[${index}].item_id`] =
+              `/message/order/items/id in item: ${item.id} at /${constants.CONFIRM} should be one of the /item/id mapped in past call`
           }
         })
       }
@@ -84,30 +83,32 @@ export const checkConfirm = (data: any, msgIdSet: any, version: any) => {
 
     try {
       logger.info(`Validating fulfillments object for /${constants.CONFIRM}`)
-      confirm.fulfillments.forEach((fulfillment: any, index: number) => {
-        const fulfillmentKey = `fulfillments[${index}]`
-        if (!fulfillment?.id) {
-          errorObj[fulfillmentKey] = `id is missing in fulfillments[${index}]`
-        } else if (!storedFull.includes(fulfillment.id)) {
-          errorObj[
-            `${fulfillmentKey}.id`
-          ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
-        }
+      if (!confirm?.fulfillments) errorObj[`fulfillments`] = `fulfillments is missing or empty`
+      else {
+        confirm.fulfillments.forEach((fulfillment: any, index: number) => {
+          const fulfillmentKey = `fulfillments[${index}]`
+          if (!fulfillment?.id) {
+            errorObj[fulfillmentKey] = `id is missing in fulfillments[${index}]`
+          } else if (!storedFull.includes(fulfillment.id)) {
+            errorObj[`${fulfillmentKey}.id`] =
+              `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+          }
 
-        if (!ON_DEMAND_VEHICLE.includes(fulfillment.vehicle.category)) {
-          errorObj[`${fulfillmentKey}.vehicleCategory`] = `Vehicle category should be one of ${ON_DEMAND_VEHICLE}`
-        }
+          if (!ON_DEMAND_VEHICLE.includes(fulfillment.vehicle.category)) {
+            errorObj[`${fulfillmentKey}.vehicleCategory`] = `Vehicle category should be one of ${ON_DEMAND_VEHICLE}`
+          }
 
-        //customer checks
-        const customerErrors = validateEntity(fulfillment.customer, 'customer', constants.CONFIRM, index)
-        Object.assign(errorObj, customerErrors)
+          //customer checks
+          const customerErrors = validateEntity(fulfillment.customer, 'customer', constants.CONFIRM, index)
+          Object.assign(errorObj, customerErrors)
 
-        // Check stops for START and END, or time range with valid timestamp and GPS
-        const otp = false
-        const cancel = false
-        const stopsError = validateStops(fulfillment?.stops, index, otp, cancel)
-        if (!stopsError?.valid) Object.assign(errorObj, stopsError?.errors)
-      })
+          // Check stops for START and END, or time range with valid timestamp and GPS
+          const otp = false
+          const cancel = false
+          const stopsError = validateStops(fulfillment?.stops, index, otp, cancel)
+          if (!stopsError?.valid) Object.assign(errorObj, stopsError?.errors)
+        })
+      }
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking fulfillments info in /${constants.CONFIRM},  ${error.message}`)
       return { error: error.message }

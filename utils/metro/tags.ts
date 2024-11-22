@@ -167,7 +167,7 @@ export const validatePaymentTags = (tags: Tag[], action: string): ValidationResu
           break
         }
 
-        tag.list.forEach((item: any, itemIndex) => {
+        tag?.list?.forEach((item: any, itemIndex) => {
           switch (item.descriptor.code) {
             case 'SETTLEMENT_WINDOW':
               if (!/^(P(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?)$/.test(item.value)) {
@@ -221,7 +221,7 @@ export const validatePaymentTags = (tags: Tag[], action: string): ValidationResu
                 setValue(`DELAY_INTEREST`, item.value)
               } else {
                 const delayInterest = getValue('DELAY_INTEREST')
-                if (delayInterest !== item?.value)
+                if (delayInterest && delayInterest !== item?.value)
                   errors.push(
                     `SETTLEMENT_TERMS_[${index}], DELAY_INTEREST must be similar to /search value ${delayInterest} instead of ${item?.value} at item[${itemIndex}] in ${action}`,
                   )

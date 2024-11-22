@@ -3,7 +3,14 @@ import { getValue, setValue } from '../../shared/dao'
 import { checkGpsPrecision, checkIdAndUri, checkMobilityContext, timestampCheck } from '../../utils'
 import _, { isNil } from 'lodash'
 
-export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any, toCheck?: boolean) => {
+export const validateContext = (
+  context: any,
+  msgIdSet: any,
+  pastCall: any,
+  curentCall: any,
+  toCheck?: boolean,
+  searchType?: boolean,
+) => {
   const errorObj: any = {}
 
   const contextRes: any = checkMobilityContext(context, curentCall)
@@ -31,8 +38,7 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
     logger.info(`Comparing BAP and BPP in /${curentCall}`)
 
     let bppValidationResult
-    if(toCheck || isNil(toCheck))
-    bppValidationResult = checkIdAndUri(context?.bpp_id, context?.bpp_uri, 'bpp')
+    if (toCheck || isNil(toCheck)) bppValidationResult = checkIdAndUri(context?.bpp_id, context?.bpp_uri, 'bpp')
 
     const bapValidationResult = checkIdAndUri(context?.bap_id, context?.bap_uri, 'bap')
 
@@ -45,12 +51,16 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
     }
 
     if (prevContext) {
-      if (pastCall !== 'search') {
-        if (!_.isEqual(prevContext.bpp_id, context.bpp_id)) {
+      if (context?.action !== 'search' || (context?.action === 'search' && searchType)) {
+        if (!context?.bpp_id) {
+          errorObj.bppId = 'context/bpp_id is missing'
+        } else if (prevContext.bpp_id && !_.isEqual(prevContext.bpp_id, context.bpp_id)) {
           errorObj.bppIdContextMismatch = `BPP Id mismatch in /${pastCall} and /${curentCall}`
         }
 
-        if (!_.isEqual(prevContext.bpp_uri, context.bpp_uri)) {
+        if (!context?.bpp_uri) {
+          errorObj.bppUri = 'context/bpp_uri is missing'
+        } else if (prevContext.bpp_uri && !_.isEqual(prevContext.bpp_uri, context.bpp_uri)) {
           errorObj.bppUriContextMismatch = `BPP URL mismatch in /${pastCall} and /${curentCall}`
         }
       }

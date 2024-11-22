@@ -77,7 +77,7 @@ export function validateLogsForMetro(data: any, flowName: string) {
     }
 
     if (data[metroSequence.ON_INIT]) {
-      const searchResp = checkOnInit(data[metroSequence.ON_INIT], msgIdSet)
+      const searchResp = checkOnInit(data[metroSequence.ON_INIT], msgIdSet, flow)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [metroSequence.ON_INIT]: searchResp }
       }

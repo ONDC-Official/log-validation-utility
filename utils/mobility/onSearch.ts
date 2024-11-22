@@ -63,6 +63,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
         errorObj[`provider_${i}_fulfillments`] = `Fulfillments is missing or empty for provider ${i}`
       } else {
         fulfillments.forEach((fulfillment: any, k: number) => {
+          console.log("------/>>>>>>>", fulfillment?.type)
           const key = `prvdr${i}fulfillment${k}`
           if (!fulfillment?.id) {
             errorObj[key] = `id is missing in fulfillments[${k}]`
@@ -77,7 +78,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
           }
 
           if (fulfillment.type !== 'DELIVERY') {
-            errorObj[`${key}.type`] = `Fulfillment type must be DELIVERY at index ${i} in /${constants.ON_SEARCH}`
+            errorObj[`${key}.type`] = `Fulfillment type must be DELIVERY at index ${k} in /${constants.ON_SEARCH}`
           }
 
           // Check stops for START and END, or time range with valid timestamp and GPS

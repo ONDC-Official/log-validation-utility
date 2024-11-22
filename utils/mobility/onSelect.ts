@@ -72,9 +72,8 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
         if (!fulfillment?.id) {
           errorObj[fulfillmentKey] = `id is missing in fulfillments[${index}]`
         } else if (storedFull && !storedFull.includes(fulfillment.id)) {
-          errorObj[
-            `${fulfillmentKey}.id`
-          ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+          errorObj[`${fulfillmentKey}.id`] =
+            `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
         } else {
           fulfillmentIdsSet.add(fulfillment.id)
         }
@@ -86,9 +85,8 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
         if (!fulfillment.type) {
           errorObj[`${fulfillmentKey}.type`] = `Fulfillment type is missing`
         } else if (fulfillment.type !== 'DELIVERY') {
-          errorObj[
-            `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_SELECT}`
+          errorObj[`${fulfillmentKey}.type`] =
+            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_SELECT}`
         }
 
         // Check stops for START and END, or time range with valid timestamp and GPS
@@ -121,9 +119,8 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
           if (!item?.id) {
             errorObj[`${itemKey}.id`] = `id is missing in [${itemKey}]`
           } else if (!itemIDS.includes(item.id)) {
-            errorObj[
-              `${itemKey}.id`
-            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_SELECT}`
+            errorObj[`${itemKey}.id`] =
+              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_SELECT}`
           }
 
           //price check
@@ -144,13 +141,12 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
           if (!item?.descriptor?.code)
             errorObj[`${itemKey}.code`] = `descriptor.code is missing at index: ${index} in /${constants.ON_SELECT}`
           else if (item.descriptor.code !== 'RIDE') {
-            errorObj[
-              `${itemKey}.type`
-            ] = `descriptor.code must be RIDE at item.index ${index} in /${constants.ON_SELECT}`
+            errorObj[`${itemKey}.type`] =
+              `descriptor.code must be RIDE at item.index ${index} in /${constants.ON_SELECT}`
           }
 
           // FARE_POLICY & INFO checks
-          if (item.tags) {
+          if (item.tags && Array.isArray(item?.tags)) {
             const tagsValidation = validateItemsTags(item.tags)
             if (!tagsValidation.isValid) {
               Object.assign(errorObj, { tags: tagsValidation.errors })
@@ -187,7 +183,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
     }
 
     setValue(`${mobilitySequence.ON_SELECT}`, data)
-    setValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`, Array.from(storedFull))
+    setValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`, Array.from(storedFull ?? []))
   } catch (error: any) {
     logger.error(`!!Error occcurred while checking order info in /${constants.ON_SELECT},  ${error.message}`)
     return { error: error.message }

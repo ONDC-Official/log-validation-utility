@@ -943,26 +943,27 @@ const FISValidator = {
   validate_schema_on_confirm_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_confirm.yaml'),
   validate_schema_update_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/update.yaml'),
   validate_schema_on_update_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_update.yaml'),
+  validate_schema_on_update_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/FIS12/on_update.yaml'),
   validate_schema_status_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/status.yaml'),
   validate_schema_on_status_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_status.yaml'),
 }
 
-const TRV10Validator = {
-  validate_schema_search_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/search.yaml'),
-  validate_schema_on_search_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_search.yaml'),
-  validate_schema_select_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/select.yaml'),
-  validate_schema_on_select_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_select.yaml'),
-  validate_schema_init_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/init.yaml'),
-  validate_schema_on_init_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_init.yaml'),
-  validate_schema_confirm_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/confirm.yaml'),
-  validate_schema_on_confirm_TRV10_for_json: (data: any) =>
+const TRVValidator = {
+  validate_schema_search_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/search.yaml'),
+  validate_schema_on_search_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_search.yaml'),
+  validate_schema_select_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/select.yaml'),
+  validate_schema_on_select_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_select.yaml'),
+  validate_schema_init_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/init.yaml'),
+  validate_schema_on_init_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_init.yaml'),
+  validate_schema_confirm_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/confirm.yaml'),
+  validate_schema_on_confirm_TRV_for_json: (data: any) =>
     validate_schema_for_json(data, 'schema/FIS/on_confirm.yaml'),
-  validate_schema_update_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/update.yaml'),
-  validate_schema_on_update_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_update.yaml'),
-  validate_schema_status_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/status.yaml'),
-  validate_schema_on_status_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_status.yaml'),
-  validate_schema_cancel_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/cancel.yaml'),
-  validate_schema_on_cancel_TRV10_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_cancel.yaml'),
+  validate_schema_update_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/update.yaml'),
+  validate_schema_on_update_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_update.yaml'),
+  validate_schema_status_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/status.yaml'),
+  validate_schema_on_status_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_status.yaml'),
+  validate_schema_cancel_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/cancel.yaml'),
+  validate_schema_on_cancel_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_cancel.yaml'),
 }
 
 const validate_schema_issue_close_igm_for_json = (data: any) => {
@@ -1180,6 +1181,6 @@ export default {
   validate_schema_inc_search_RET1A_for_json,
   validate_schema_on_search_inc_RET1A_for_json,
   
-  ...TRV10Validator,
+  ...TRVValidator,
   ...FISValidator,
 }

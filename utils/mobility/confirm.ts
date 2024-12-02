@@ -8,6 +8,7 @@ import {
   validateStops,
   validatePayloadAgainstSchema,
   validatePaymentObject,
+  validateProviderId,
 } from './mobilityChecks'
 import attributeConfig from './config/config2.0.1.json'
 
@@ -23,7 +24,7 @@ export const checkConfirm = (data: any, msgIdSet: any, version: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.CONFIRM, data)
+    const schemaValidation = validateSchema('TRV', constants.CONFIRM, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.ON_INIT, constants.CONFIRM)
     setValue(`${mobilitySequence.CONFIRM}_message`, message)
 
@@ -45,14 +46,11 @@ export const checkConfirm = (data: any, msgIdSet: any, version: any) => {
 
     //provider id check
     try {
-      logger.info(`Comparing provider object in /${constants.ON_INIT} and /${constants.CONFIRM}`)
-      if (getValue('providerId') != confirm.provider['id']) {
-        errorObj.prvdId = `Provider Id mismatches in /${constants.ON_INIT} and /${constants.CONFIRM}`
-      }
+      logger.info(`Checking provider id in /${constants.CONFIRM}`)
+      const providerError = validateProviderId(confirm?.provider?.id, constants.ON_INIT, constants.CONFIRM)
+      Object.assign(errorObj, providerError)
     } catch (error: any) {
-      logger.error(
-        `!!Error while checking provider object in /${constants.ON_INIT} and /${constants.CONFIRM}, ${error.stack}`,
-      )
+      logger.error(`!!Error while checking provider id in /${constants.CONFIRM}, ${error.stack}`)
     }
 
     //items check
@@ -62,9 +60,8 @@ export const checkConfirm = (data: any, msgIdSet: any, version: any) => {
       else {
         confirm.items.forEach((item: any, index: number) => {
           if (!itemIDS.includes(item.id)) {
-            errorObj[
-              `item[${index}].item_id`
-            ] = `/message/order/items/id in item: ${item.id} at /${constants.CONFIRM} should be one of the /item/id mapped in past call`
+            errorObj[`item[${index}].item_id`] =
+              `/message/order/items/id in item: ${item.id} at /${constants.CONFIRM} should be one of the /item/id mapped in past call`
           }
         })
       }
@@ -89,13 +86,19 @@ export const checkConfirm = (data: any, msgIdSet: any, version: any) => {
         if (!fulfillment?.id) {
           errorObj[fulfillmentKey] = `id is missing in fulfillments[${index}]`
         } else if (!storedFull.includes(fulfillment.id)) {
-          errorObj[
-            `${fulfillmentKey}.id`
-          ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+          errorObj[`${fulfillmentKey}.id`] =
+            `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
         }
 
-        if (!ON_DEMAND_VEHICLE.includes(fulfillment.vehicle.category)) {
-          errorObj[`${fulfillmentKey}.vehicleCategory`] = `Vehicle category should be one of ${ON_DEMAND_VEHICLE}`
+        const vehicleKeys = Object.keys(fulfillment?.vehicle)
+        if (vehicleKeys?.length > 2)
+          errorObj[`${index}.vehicleKeys`] = `additional keys present in fulfillments.vehicle`
+        if (!fulfillment?.vehicle?.category) {
+          errorObj[`${index}.vehicleCategory`] = `category is missing in fulfillments.vehicle`
+        } else {
+          if (!ON_DEMAND_VEHICLE.includes(fulfillment?.vehicle?.category)) {
+            errorObj[`${index}.vehicleCategory`] = `category should be one of ${ON_DEMAND_VEHICLE} fulfillments.vehicle`
+          }
         }
 
         //customer checks
@@ -114,7 +117,9 @@ export const checkConfirm = (data: any, msgIdSet: any, version: any) => {
     }
 
     if ('billing' in confirm && confirm?.billing?.name) {
-      setValue('billingName', confirm?.billing?.name)
+      const billingName = getValue('billingName')
+      if (billingName && billingName != confirm?.billing?.name)
+        errorObj['billing'] = `billing must be same as sent in past call`
     } else {
       errorObj['billing'] = `billing must be part of /${constants.CONFIRM}`
     }

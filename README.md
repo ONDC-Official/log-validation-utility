@@ -690,7 +690,7 @@ curl --location 'https://log-validation.ondc.org/api/validate/fis/fis12' \
     "bap_id": "BUYER_APP_SUBSCRIBER_ID",
     "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
-    "search": {},
+        "search": {},
         "on_search":{},
         "select_1": {},
         "on_select_1": {},
@@ -698,18 +698,22 @@ curl --location 'https://log-validation.ondc.org/api/validate/fis/fis12' \
         "on_select_2": {},
         "select_3": {},
         "on_select_3":{},
+        "on_status_ekyc": {},
         "init_1": {},
         "on_init_1": {},
         "init_2": {},
         "on_init_2": {},
+        "on_status_enach": {},
         "init_3": {},
         "on_init_3": {},
+        "on_status_esign": {},
         "confirm": {},
         "on_confirm": {},
         "status": {},
         "on_status": {},
         "update": {},
-        "on_update": {}
+        "on_update": {},
+        "on_update_unsolicated": {}
     }
 }'
 ```

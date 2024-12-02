@@ -37,7 +37,7 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
     let contextRes: any
     if (action?.includes('_offer')) {
       // if action is search_offer, validate context with bpp & bap details
-      contextRes = validateContext(context, msgIdSet, action, constants.SEARCH)
+      contextRes = validateContext(context, msgIdSet, constants.ON_SEARCH, action)
     } else {
       // if action is search, validate context with only bap details
       contextRes = checkFISContext(data.context, action)
@@ -60,7 +60,7 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
           }, in a standard enum format as at category.descriptor`
         }
 
-        setValue(`insuranceType`, code)
+        setValue(`insurance`, code)
       } else
         errorObj['category'] = `code: ${
           insuranceFlows[flow as keyof typeof insuranceFlows]
@@ -73,32 +73,42 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
     try {
       logger.info(`Validating payments in /${action}`)
       const payment = message.intent?.payment
-      const collectedBy = payment?.collected_by
-      const allowedCollectedByValues = ['BPP', 'BAP']
-      const terms: any = [{ code: 'STATIC_TERMS', type: 'url' }]
+      if (!payment) errorObj[`payment`] = `payment is missing in ${action}`
+      else {
+        const collectedBy = payment?.collected_by
+        const allowedCollectedByValues = ['BPP', 'BAP']
+        const terms: any = [
+          { code: 'STATIC_TERMS', type: 'url' },
+          {
+            code: 'OFFLINE_CONTRACT',
+            type: 'boolean',
+          },
+        ]
 
-      if (!collectedBy) {
-        errorObj[`collected_by`] = `payment.collected_by must be present in ${action}`
-      } else if (!allowedCollectedByValues.includes(collectedBy)) {
-        errorObj['collected_by'] = `Invalid value for collected_by, should be either of ${allowedCollectedByValues}`
-      } else {
-        terms?.push({ code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' })
-        terms?.push({
-          code: 'SETTLEMENT_BASIS',
-          type: 'enum',
-          value: ['INVOICE_RECEIPT', 'Delivery', 'return_window_expiry'],
-        })
+        if (!collectedBy) {
+          errorObj[`collected_by`] = `payment.collected_by must be present in ${action}`
+        } else if (!allowedCollectedByValues.includes(collectedBy)) {
+          errorObj['collected_by'] = `Invalid value for collected_by, should be either of ${allowedCollectedByValues}`
+        } else {
+          if (collectedBy == 'BPP') terms?.push({ code: 'DELAY_INTEREST', type: 'amount' })
+          else {
+            terms?.push({ code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' })
+            terms?.push({
+              code: 'SETTLEMENT_BASIS',
+              type: 'enum',
+              value: ['INVOICE_RECEIPT', 'Delivery', 'return_window_expiry'],
+            })
+          }
 
-        if (collectedBy == 'BPP') terms?.push({ code: 'DELAY_INTEREST', type: 'amount' })
+          setValue(`collected_by`, collectedBy)
+        }
 
-        setValue(`collected_by`, collectedBy)
-      }
-
-      // Validate payment tags
-      const tagsValidation = validatePaymentTags(payment.tags, terms)
-      console.log('tagsValidation', tagsValidation)
-      if (!tagsValidation.isValid) {
-        Object.assign(errorObj, { tags: tagsValidation.errors })
+        // Validate payment tags
+        const tagsValidation = validatePaymentTags(payment.tags, terms)
+        console.log('tagsValidation', tagsValidation)
+        if (!tagsValidation.isValid) {
+          Object.assign(errorObj, { tags: tagsValidation.errors })
+        }
       }
     } catch (error: any) {
       console.log('error', error)
@@ -131,7 +141,7 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
           try {
             logger.info(`checking item array in provider /${action}`)
             if (!provider.items) {
-              errorObj.items = `items must be present & should non empty in /${action}`
+              errorObj.items = `items array must be present & should non empty in /${action}`
             } else {
               provider.items.forEach((item: any, index: number) => {
                 // Validate item id

@@ -148,7 +148,7 @@ export const searchSchema = {
                 properties: {
                   code: {
                     type: 'string',
-                    enum: ['catalog_inc', 'bap_terms'],
+                    enum: ['catalog_inc', 'bap_terms', 'bap_features'],
                   },
                   list: {
                     type: 'array',
@@ -164,6 +164,49 @@ export const searchSchema = {
                             'static_terms',
                             'effective_date',
                             'static_terms_new',
+                            '000',
+                            '001',
+                            '002',
+                            '003',
+                            '004',
+                            '005',
+                            '006',
+                            '007',
+                            '008',
+                            '0091',
+                            '0092',
+                            '0093',
+                            '0094',
+                            '0095',
+                            '0096',
+                            '0097',
+                            '0098',
+                            '0099',
+                            '009A',
+                            '009B',
+                            '009C',
+                            '009D',
+                            '009E',
+                            '00A',
+                            '00B',
+                            '00C',
+                            '00D',
+                            '00E',
+                            '00F',
+                            '010',
+                            '011',
+                            '012',
+                            '013',
+                            '014',
+                            '015',
+                            '016',
+                            '017',
+                            '018',
+                            '019',
+                            '01A',
+                            '01B',
+                            '01C',
+                            '01D',
                           ],
                         },
                         value: {
@@ -172,7 +215,114 @@ export const searchSchema = {
                       },
                       required: ['code', 'value'],
                     },
+                    minItems: 1,
                   },
+                },
+                required: ['code', 'list'],
+                anyOf: [
+                  {
+                    properties: {
+                      code: { const: 'bap_features' },
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          contains: {
+                            type: 'object',
+                            properties: {
+                              code: { const: '000' },
+                            },
+                            required: ['code'],
+                          },
+                        },
+                      },
+                    },
+                  },
+                  {
+                    properties: {
+                      code: { const: 'catalog_inc' },
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          anyOf: [
+                            {
+                              contains: {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'mode' },
+                                },
+                                required: ['code'],
+                              },
+                            },
+                            {
+                              contains: {
+                                allOf: [
+                                  {
+                                    type: 'object',
+                                    properties: {
+                                      code: { const: 'start_time' },
+                                    },
+                                    required: ['code'],
+                                  },
+                                  {
+                                    type: 'object',
+                                    properties: {
+                                      code: { const: 'end_time' },
+                                    },
+                                    required: ['code'],
+                                  },
+                                ],
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  },
+                  {
+                    properties: {
+                      code: { const: 'bap_terms' },
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          contains: {
+                            allOf: [
+                              {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'static_terms' },
+                                },
+                                required: ['code'],
+                              },
+                              {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'static_terms_new' },
+                                },
+                                required: ['code'],
+                              },
+                              {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'effective_date' },
+                                },
+                                required: ['code'],
+                              },
+                            ],
+                          },
+                        },
+                      },
+                    },
+                  },
+                ],
+              },
+              minItems: 1,
+              contains: {
+                type: 'object',
+                properties: {
+                  code: { const: 'bap_features' },
                 },
                 required: ['code', 'list'],
               },

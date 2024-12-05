@@ -215,6 +215,11 @@ export const FnBonSearchSchema = {
                   id: {
                     type: 'string',
                   },
+                  rating: {
+                    type: 'number',
+                    minimum: 1,
+                    maximum: 5,
+                  },
                   time: {
                     type: 'object',
                     properties: {
@@ -418,7 +423,7 @@ export const FnBonSearchSchema = {
                       properties: {
                         id: {
                           type: 'string',
-                          pattern:'^[a-zA-Z0-9]{1-12}$',
+                          pattern: '^[a-zA-Z0-9]{1-12}$',
                           errorMessage: 'categories.id should be alphanumeric and upto 12 characters',
                         },
                         parent_category_id: {
@@ -484,6 +489,11 @@ export const FnBonSearchSchema = {
                       properties: {
                         id: {
                           type: 'string',
+                        },
+                        rating: {
+                          type: 'number',
+                          minimum: 1,
+                          maximum: 5,
                         },
                         time: {
                           type: 'object',
@@ -581,12 +591,12 @@ export const FnBonSearchSchema = {
                             },
                             value: {
                               type: 'string',
-                              pattern: '^[-+]?[0-9]+(\.[0-9]{1,2})?$',
+                              pattern: '^[-+]?[0-9]+(.[0-9]{1,2})?$',
                               errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                             },
                             maximum_value: {
                               type: 'string',
-                              pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                              pattern: '^[0-9]+(.[0-9]{1,2})?$',
                               errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                             },
                             tags: {
@@ -609,7 +619,7 @@ export const FnBonSearchSchema = {
                                         },
                                         value: {
                                           type: 'string',
-                                          pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                                          pattern: '^[0-9]+(.[0-9]{1,2})?$',
                                           errorMessage: 'enter a valid number with exactly two decimal places.',
                                         },
                                       },
@@ -698,7 +708,7 @@ export const FnBonSearchSchema = {
                           },
                         },
                       },
-                      required: ['id', 'descriptor', 'quantity', 'price', 'category_id', 'tags'],
+                      required: ['id', 'descriptor', 'quantity', 'price', 'category_id', 'tags','rating'],
                     },
                   },
                   offers: {
@@ -1116,7 +1126,7 @@ export const FnBonSearchSchema = {
                                       then: {
                                         properties: {
                                           value: {
-                                            pattern: '^[0-9]+(?:\.[0-9]{1,2})?$',
+                                            pattern: '^[0-9]+(?:.[0-9]{1,2})?$',
                                             errorMessage: 'min_value must be number with exactly two decimal places',
                                           },
                                         },
@@ -1144,6 +1154,7 @@ export const FnBonSearchSchema = {
                   'categories',
                   'items',
                   'tags',
+                  'rating'
                 ],
               },
             },

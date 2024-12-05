@@ -120,6 +120,11 @@ export const onSearchIncSchema = {
                   id: {
                     type: 'string',
                   },
+                  rating: {
+                    type: 'number',
+                    minimum: 1,
+                    maximum: 5,
+                  },
                   time: {
                     type: 'object',
                     properties: {
@@ -380,6 +385,11 @@ export const onSearchIncSchema = {
                       properties: {
                         id: {
                           type: 'string',
+                        },
+                        rating: {
+                          type: 'number',
+                          minimum: 1,
+                          maximum: 5,
                         },
                         time: {
                           type: 'object',

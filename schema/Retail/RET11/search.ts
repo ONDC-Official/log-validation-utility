@@ -142,7 +142,7 @@ export const FnBsearchSchema = {
                 properties: {
                   code: {
                     type: 'string',
-                    enum: ['catalog_inc', 'bap_terms'],
+                    enum: ['catalog_inc', 'bap_terms', 'bap_features'],
                   },
                   list: {
                     type: 'array',
@@ -152,20 +152,138 @@ export const FnBsearchSchema = {
                         code: {
                           type: 'string',
                           enum: [
-                            'start_time',
-                            'end_time',
-                            'mode',
-                            'static_terms',
-                            'effective_date',
-                            'static_terms_new',
+                            '000',
+                            '001',
+                            '002',
+                            '003',
+                            '004',
+                            '005',
+                            '006',
+                            '007',
+                            '008',
+                            '0091',
+                            '0092',
+                            '0093',
+                            '0094',
+                            '0095',
+                            '0096',
+                            '0097',
+                            '0098',
+                            '0099',
+                            '009A',
+                            '009B',
+                            '009C',
+                            '009D',
+                            '009E',
+                            '00A',
+                            '00B',
+                            '00C',
+                            '00D',
+                            '00E',
+                            '00F',
+                            '010',
+                            '011',
+                            '012',
+                            '013',
+                            '014',
+                            '015',
+                            '016',
+                            '017',
+                            '018',
+                            '019',
+                            '01A',
+                            '01B',
+                            '01C',
+                            '01D',
                           ],
                         },
                         value: {
                           type: 'string',
+                          enum: ['yes', 'no'],
                         },
                       },
                       required: ['code', 'value'],
                     },
+                    minItems: 1,
+                    contains: {
+                      type: 'object',
+                      properties: {
+                        code: {
+                          const: '000',
+                        },
+                      },
+                      required: ['code'],
+                    },
+                  },
+                },
+                required: ['code', 'list'],
+                allOf: [
+                  {
+                    if: {
+                      properties: {
+                        code: {
+                          const: 'catalog_inc',
+                        },
+                      },
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          items: {
+                            properties: {
+                              code: {
+                                enum: [
+                                  'start_time',
+                                  'end_time',
+                                  'mode',
+                                  'static_terms',
+                                  'effective_date',
+                                  'static_terms_new',
+                                ],
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  {
+                    if: {
+                      properties: {
+                        code: {
+                          const: 'bap_terms',
+                        },
+                      },
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          items: {
+                            properties: {
+                              code: {
+                                enum: [
+                                  'start_time',
+                                  'end_time',
+                                  'mode',
+                                  'static_terms',
+                                  'effective_date',
+                                  'static_terms_new',
+                                ],
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                ],
+              },
+              minItems: 1,
+              contains: {
+                type: 'object',
+                properties: {
+                  code: {
+                    const: 'bap_features',
                   },
                 },
                 required: ['code', 'list'],

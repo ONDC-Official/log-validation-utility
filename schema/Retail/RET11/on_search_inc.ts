@@ -120,6 +120,11 @@ export const FnBonSearchIncSchema = {
                   id: {
                     type: 'string',
                   },
+                  rating: {
+                    type: 'number',
+                    minimum: 1,
+                    maximum: 5,
+                  },
                   time: {
                     type: 'object',
                     properties: {
@@ -381,6 +386,11 @@ export const FnBonSearchIncSchema = {
                         id: {
                           type: 'string',
                         },
+                        rating: {
+                          type: 'number',
+                          minimum: 1,
+                          maximum: 5,
+                        },
                         time: {
                           type: 'object',
                           properties: {
@@ -574,6 +584,7 @@ export const FnBonSearchIncSchema = {
                         '@ondc/org/time_to_ship',
                         '@ondc/org/available_on_cod',
                         '@ondc/org/contact_details_consumer_care',
+                        'rating'
                       ],
                     },
                   },

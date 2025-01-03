@@ -6,15 +6,19 @@ import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
 import {
   validateContext,
-  validatePaymentParams,
+  // validatePaymentParams,
   validateQuote,
   validateStops,
   validateCancellationTerms,
 } from './metroChecks'
 import { validatePaymentTags } from './tags'
+import { isEmpty } from 'lodash'
+import { validateParams } from './validate/helper'
 
 const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
-const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
+const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SFSJT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT', 'RJT']
+const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
+const validStatus = ['NOT-PAID', 'PAID']
 
 export const checkOnStatus = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
@@ -86,7 +90,7 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
       on_status.fulfillments.forEach((fulfillment: any, index: number) => {
         const fulfillmentKey = `fulfillments[${index}]`
 
-        if (!storedFull.includes(fulfillment.id)) {
+        if (!isEmpty(storedFull) && !storedFull.includes(fulfillment.id)) {
           errorObj[`${fulfillmentKey}.id`] =
             `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
         } else {
@@ -128,7 +132,7 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
     try {
       on_status.items &&
         on_status.items.forEach((item: any, index: number) => {
-          if (!newItemIDSValue.includes(item.id)) {
+          if (!isEmpty(newItemIDSValue) && !newItemIDSValue.includes(item.id)) {
             const key = `item[${index}].item_id`
             errorObj[key] =
               `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_STATUS}`
@@ -153,7 +157,7 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
 
           item.fulfillment_ids &&
             item.fulfillment_ids.forEach((fulfillmentId: string) => {
-              if (!storedFull.includes(fulfillmentId)) {
+              if (!isEmpty(storedFull) && !storedFull.includes(fulfillmentId)) {
                 errorObj[`invalidItemFulfillmentId_${index}`] =
                   `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_STATUS} should be mapped with the ON_INIT fulfillment id.`
               }
@@ -176,39 +180,39 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
               `payments.collected_by value sent in ${constants.ON_SEARCH} should be ${srchCollectBy} as sent in ${constants.ON_STATUS}`
         }
 
-        const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
         if (!arr?.type || !validTypes.includes(arr.type)) {
           errorObj[`payments[${i}]_type`] = `payments.params.type must be present in ${
             constants.ON_STATUS
           } & its value must be one of: ${validTypes.join(', ')}`
         }
 
-        const validStatus = ['NOT-PAID', 'PAID']
         if (!arr?.status || !validStatus.includes(arr.status)) {
           errorObj[`payments[${i}]_status`] = `payments.status must be present in ${
             constants.ON_STATUS
           } & its value must be one of: ${validStatus.join(', ')}`
         }
 
-        const params = arr.params
-        const bankCode: string | null = getValue('bank_code')
-        const bankAccountNumber: string | null = getValue('bank_account_number')
-        const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
-        // Validate bank_code
-        validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.ON_STATUS)
+        const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.ON_STATUS)
+        if (!isEmpty(validatePayementParams)) Object.assign(errorObj, validatePayementParams)
+        // const params = arr.params
+        // const bankCode: string | null = getValue('bank_code')
+        // const bankAccountNumber: string | null = getValue('bank_account_number')
+        // const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
+        // // Validate bank_code
+        // validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.ON_STATUS)
 
-        // Validate bank_account_number
-        validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.ON_STATUS)
+        // // Validate bank_account_number
+        // validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.ON_STATUS)
 
-        // Validate virtual_payment_address
-        validatePaymentParams(
-          params,
-          virtualPaymentAddress,
-          'virtual_payment_address',
-          errorObj,
-          i,
-          constants.ON_STATUS,
-        )
+        // // Validate virtual_payment_address
+        // validatePaymentParams(
+        //   params,
+        //   virtualPaymentAddress,
+        //   'virtual_payment_address',
+        //   errorObj,
+        //   i,
+        //   constants.ON_STATUS,
+        // )
 
         if (arr.time) {
           if (!arr.label || arr.label !== 'INSTALLMENT') {

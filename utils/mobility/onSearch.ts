@@ -63,7 +63,6 @@ export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
         errorObj[`provider_${i}_fulfillments`] = `Fulfillments is missing or empty for provider ${i}`
       } else {
         fulfillments.forEach((fulfillment: any, k: number) => {
-          console.log("------/>>>>>>>", fulfillment?.type)
           const key = `prvdr${i}fulfillment${k}`
           if (!fulfillment?.id) {
             errorObj[key] = `id is missing in fulfillments[${k}]`

@@ -6,7 +6,7 @@ import { getValue, setValue } from '../../shared/dao'
 import { validateContext, validateQuote, validateStops } from './metroChecks'
 import { validateRouteInfoTags } from './tags'
 
-const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
+const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SFSJT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT', 'RJT']
 // const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }) => {
   if (!data || isObjectEmpty(data)) {

@@ -5,7 +5,7 @@ import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
 import {
   validateContext,
-  validatePaymentParams,
+  // validatePaymentParams,
   validateQuote,
   validateStops,
   validateCancellationTerms,
@@ -13,8 +13,8 @@ import {
   validateDescriptor,
 } from './metroChecks'
 import { validatePaymentTags, validateRouteInfoTags, validateTags } from './tags'
-import { checkItemTime, checkProviderTime } from './validate/helper'
-import { isNil } from 'lodash'
+import { checkItemTime, checkProviderTime, validateParams } from './validate/helper'
+import { isEmpty, isNil } from 'lodash'
 
 const VALID_DESCRIPTOR_CODES = ['SJT', 'SFSJT', 'RJT', 'PASS']
 export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }) => {
@@ -279,18 +279,21 @@ export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flow
           } & its value must be one of: ${validStatus.join(', ')}`
         }
 
-        const params = arr.params
-        const bankCode: string | null = getValue('bank_code')
-        const bankAccountNumber: string | null = getValue('bank_account_number')
-        const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
-        // Validate bank_code
-        validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.ON_INIT)
+        const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.ON_INIT)
+          if (!isEmpty(validatePayementParams)) Object.assign(errorObj, validatePayementParams)
+        // const params = arr.params
+        // const bankCode: string | null = getValue('bank_code')
+        // const bankAccountNumber: string | null = getValue('bank_account_number')
+        // const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
+        // // Validate bank_code
 
-        // Validate bank_account_number
-        validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.ON_INIT)
+        // validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.ON_INIT)
 
-        // Validate virtual_payment_address
-        validatePaymentParams(params, virtualPaymentAddress, 'virtual_payment_address', errorObj, i, constants.ON_INIT)
+        // // Validate bank_account_number
+        // validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.ON_INIT)
+
+        // // Validate virtual_payment_address
+        // validatePaymentParams(params, virtualPaymentAddress, 'virtual_payment_address', errorObj, i, constants.ON_INIT)
 
         // Validate payment tags
         const tagsValidation = validatePaymentTags(arr?.tags, constants?.ON_INIT)

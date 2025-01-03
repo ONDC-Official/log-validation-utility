@@ -4,7 +4,7 @@ import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
 import { validateContext } from './metroChecks'
 import { validatePaymentTags } from './tags'
-import { checkItemsExist, checkBilling } from './validate/helper'
+import { checkItemsExist, checkBilling, validateParams } from './validate/helper'
 import _, { isEmpty, isNil } from 'lodash'
 
 export const checkInit = (data: any, msgIdSet: any) => {
@@ -41,9 +41,10 @@ export const checkInit = (data: any, msgIdSet: any) => {
       newItemIDSValue = itemIDS
     } else {
       const onSelect: any = getValue(`${metroSequence.ON_SEARCH1}_message`)
-      onSelect.order.items.map((item: { id: string }) => {
-        itemIdArray.push(item.id)
-      })
+      onSelect &&
+        onSelect.order.items.map((item: { id: string }) => {
+          itemIdArray.push(item.id)
+        })
       newItemIDSValue = itemIdArray
     }
 
@@ -87,6 +88,9 @@ export const checkInit = (data: any, msgIdSet: any) => {
             errorObj[`payemnts[${i}]_id`] = `id should not be present if collector is BPP`
 
           setValue(`collected_by`, arr?.collected_by)
+
+          const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.INIT)
+          if (!isEmpty(validatePayementParams)) Object.assign(errorObj, validatePayementParams)
         }
 
         const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
@@ -103,30 +107,8 @@ export const checkInit = (data: any, msgIdSet: any) => {
           } & its value must be one of: ${validStatus.join(', ')}`
         }
 
-        const params = arr.params
-        if (arr.collected_by === 'BPP') {
-          if (!params) errorObj[`payments[${i}]_params`] = `payments.params must be present in ${constants.INIT}`
-
-          if (!params?.bank_code) {
-            errorObj[`payments[${i}]_bank_code`] = `payments.params.bank_code must be present in ${constants.INIT}`
-          } else {
-            setValue('bank_code', params?.bank_code)
-          }
-
-          if (!params?.bank_account_number) {
-            errorObj[`payments[${i}]_bank_account_number`] =
-              `payments.params.bank_account_number must be present in ${constants.INIT}`
-          } else {
-            setValue('bank_account_number', params?.bank_account_number)
-          }
-
-          if (!params?.virtual_payment_address) {
-            errorObj[`payments[${i}]_virtual_payment_address`] =
-              `payments.params.virtual_payment_address must be present in ${constants.INIT}`
-          } else {
-            setValue('virtual_payment_address', params?.virtual_payment_address)
-          }
-        }
+        // const params = arr.params
+        // validatePaymentParams(params, errorObj, i, constants.INIT)
 
         // Validate payment tags
         const tagsValidation = validatePaymentTags(arr.tags, constants?.INIT)

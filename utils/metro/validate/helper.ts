@@ -1,8 +1,8 @@
 import { validatePaymentTags } from '../tags'
 import constants, { metroSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { setValue } from '../../../shared/dao'
-import _ from 'lodash'
+import { getValue, setValue } from '../../../shared/dao'
+import _, { isEmpty, isNil } from 'lodash'
 
 export function checkItemQuantity(quantity: { [key: string]: any }, i: number, j: number) {
   const errorObj: any = {}
@@ -163,15 +163,15 @@ export function checkBilling(billing: any, action: string) {
       }
 
       if (!billing.email) {
-        errorObj['billing.email'] = `billing.email must be present in /${action}`
+        errorObj['billing.email'] = `billing/email must be present in /${action}`
       } else if (!isValidEmail(billing.email)) {
-        errorObj['billing.email'] = `billing.email must be valid Email in /${action}`
+        errorObj['billing.email'] = `billing/email must be valid Email in /${action}`
       }
 
       if (!billing.phone) {
-        errorObj['billing.phone'] = `billing.phone must be present in /${action}`
+        errorObj['billing.phone'] = `billing/phone must be present in /${action}`
       } else if (!isValidPhoneNumber(billing.phone)) {
-        errorObj['billing.phone'] = `billing.phone must be valid Phone Number in /${action}`
+        errorObj['billing.phone'] = `billing/phone must be valid Phone Number in /${action}`
       }
     }
   } catch (error: any) {
@@ -193,21 +193,30 @@ function isValidPhoneNumber(phoneNumber: string) {
 
 export function checkProviderTime(provider: any) {
   const errorObj: any = {}
-  try {
-    //seprate the start & end else if blocks
-    if (!provider?.time) errorObj.prvdrIdTime = `Provider Time is Missing in /${constants.ON_INIT}`
-    if (provider?.time && !provider?.time?.range)
-      errorObj.prvdrTimeRange = `Provider Time Range is Missing in /${constants.ON_INIT}`
-    if (provider?.time?.range && !provider?.time?.range?.start)
-      errorObj.prvdrTimeRangeStart = `Provider Time Range Start is Missing in /${constants.ON_INIT}`
-    if (provider?.time?.range && !provider?.time?.range?.end)
-      errorObj.prvdrTimeRangeEnd = `Provider Time Range End is Missing in /${constants.ON_INIT}`
-    if (provider?.time?.range?.start && !isValidDateTime(provider?.time?.range?.start))
-      errorObj.prvdrStartFormat = `Range.start Time Format is Invalid in /${constants.ON_INIT}`
-    if (provider?.time?.range?.end && !isValidDateTime(provider?.time?.range?.end))
-      errorObj.prvdrEndFormat = `Range.end Time Format is Invalid in /${constants.ON_INIT}`
-  } catch (error: any) {
-    logger.error(`!!Error in Provider Time of /${constants.INIT}`)
+  const { time } = provider || {}
+  const { range } = time || {}
+
+  if (!time) {
+    errorObj.prvdrIdTime = `Provider Time is Missing in /${constants.ON_INIT}`
+    return errorObj
+  }
+  if (!range) {
+    errorObj.prvdrTimeRange = `Provider Time Range is Missing in /${constants.ON_INIT}`
+    return errorObj
+  }
+
+  const { start, end } = range
+
+  if (!start) {
+    errorObj.prvdrTimeRangeStart = `Provider Time Range Start is Missing in /${constants.ON_INIT}`
+  } else if (!isValidDateTime(start)) {
+    errorObj.prvdrStartFormat = `Range.start Time Format is Invalid in /${constants.ON_INIT}`
+  }
+
+  if (!end) {
+    errorObj.prvdrTimeRangeEnd = `Provider Time Range End is Missing in /${constants.ON_INIT}`
+  } else if (!isValidDateTime(end)) {
+    errorObj.prvdrEndFormat = `Range.end Time Format is Invalid in /${constants.ON_INIT}`
   }
 
   return errorObj
@@ -270,4 +279,55 @@ export function validateFarePolicyTags(tags: { [key: string]: any }[], i: number
   }
 
   return errorObj
+}
+
+export function validateParams(params: { [key: string]: any }, collected_by: string, action: string) {
+  const errorObj: any = {}
+  const requiredParams = ['bank_code', 'bank_account_number', 'virtual_payment_address']
+  const collectedBy = collected_by.toUpperCase()
+
+  try {
+    // Early return if params validation is not required
+    if (
+      (action === constants.INIT && collectedBy === 'BAP') ||
+      (action === constants.ON_INIT && collectedBy === 'BPP')
+    ) {
+      if (params && !isEmpty(params))
+        errorObj.payment_params = `params must not be present in /${action} if collector is ${collected_by}.`
+      else if (params && isEmpty(params))
+        errorObj.payment_params = `params object must not be present and non-empty in /${action} if collector is ${collected_by}`
+
+      return errorObj
+    }
+
+    // Check if params exist when required
+    if (!params || isEmpty(params)) {
+      errorObj.payment_params = `params object must be present and non-empty in /${action}`
+
+      return errorObj
+    }
+
+    // Validate required parameters
+    const requiredParmsToCheck = action?.includes(constants.INIT)
+      ? requiredParams
+      : [...requiredParams, 'amount', 'currency', 'transaction_id']
+
+    for (const param of requiredParmsToCheck) {
+      if (!(param in params)) {
+        errorObj[`payment_params_${param}`] = `params.${param} must be present in /${action}`
+
+        continue
+      }
+
+      const storedValue = getValue(`payment_${param}`)
+      if (isNil(storedValue)) setValue(`payment_${param}`, params[param])
+      else if (storedValue !== params[param])
+        errorObj[`payment_params_${param}`] = `params.${param} must be same as sent in previous call.`
+    }
+
+    return errorObj
+  } catch (error) {
+    logger.info(`Error validating params in /${action}`)
+    return errorObj
+  }
 }

@@ -4,8 +4,8 @@ import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
 import { validateContext } from './metroChecks'
 import { validatePaymentTags } from './tags'
-import { checkItemsExist, checkBilling } from './validate/helper'
-import _, { isNil } from 'lodash'
+import { checkItemsExist, checkBilling, validateParams } from './validate/helper'
+import _, { isEmpty, isNil } from 'lodash'
 
 export const checkConfirm = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
@@ -103,33 +103,49 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         if (!arr.id) errorObj[`payments[${i}]_id`] = `payments.id must be present in ${constants.CONFIRM}`
         else setValue('paymentId', arr?.id)
 
-        const { params } = arr
+        const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.CONFIRM)
+        if (!isEmpty(validatePayementParams)) Object.assign(errorObj, validatePayementParams)
+        // const { params } = arr
 
-        if (!params) {
-          errorObj[`payments[${i}]_params`] = `payments.params must be present in ${constants.CONFIRM}`
-        } else {
-          const { amount, currency, transaction_id } = params
+        // if (!params) {
+        //   errorObj[`payments[${i}]_params`] = `payments.params must be present in ${constants.CONFIRM}`
+        // } else {
+        //   const { amount, currency, transaction_id, bank_code, bank_account_number } = params
 
-          if (!amount) {
-            errorObj[`payments[${i}]_params_amount`] = `payments.params.amount must be present in ${constants.CONFIRM}`
-          } else {
-            setValue('paramsAmount', amount)
-          }
+        //   if (!amount) {
+        //     errorObj[`payments[${i}]_params_amount`] = `payments.params.amount must be present in ${constants.CONFIRM}`
+        //   } else {
+        //     setValue('paramsAmount', amount)
+        //   }
 
-          if (!currency) {
-            errorObj[`payments[${i}]_params_currency`] =
-              `payments.params.currency must be present in ${constants.CONFIRM}`
-          } else if (currency !== 'INR') {
-            errorObj[`payments[${i}]_params_currency`] = `payments.params.currency must be INR in ${constants.CONFIRM}`
-          }
+        //   if (!currency) {
+        //     errorObj[`payments[${i}]_params_currency`] =
+        //       `payments.params.currency must be present in ${constants.CONFIRM}`
+        //   } else if (currency !== 'INR') {
+        //     errorObj[`payments[${i}]_params_currency`] = `payments.params.currency must be INR in ${constants.CONFIRM}`
+        //   }
 
-          if (!transaction_id) {
-            errorObj[`payments[${i}]_params_transaction_id`] =
-              `payments.params.transaction_id must be present in ${constants.CONFIRM}`
-          } else {
-            setValue('paramsTransactionId', transaction_id)
-          }
-        }
+        //   if (!bank_code) {
+        //     errorObj[`payments[${i}]_params_bank_code`] =
+        //       `payments.params.bank_code must be present in ${constants.CONFIRM}`
+        //   } else {
+        //     setValue('paramsBankCode', bank_code)
+        //   }
+
+        //   if (!bank_account_number) {
+        //     errorObj[`payments[${i}]_params_bank_account_number`] =
+        //       `payments.params.bank_account_number must be present in ${constants.CONFIRM}`
+        //   } else {
+        //     setValue('paramsBankAccountNumber', bank_account_number)
+        //   }
+
+        //   if (!transaction_id) {
+        //     errorObj[`payments[${i}]_params_transaction_id`] =
+        //       `payments.params.transaction_id must be present in ${constants.CONFIRM}`
+        //   } else {
+        //     setValue('paramsTransactionId', transaction_id)
+        //   }
+        // }
 
         // Validate payment tags
         const tagsValidation = validatePaymentTags(arr.tags, constants?.CONFIRM)

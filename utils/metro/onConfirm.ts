@@ -6,22 +6,23 @@ import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
 import {
   validateContext,
-  validatePaymentParams,
+  // validatePaymentParams,
   validateQuote,
   validateStops,
   validateCancellationTerms,
 } from './metroChecks'
 import { validatePaymentTags, validateRouteInfoTags, validateTags } from './tags'
-import { isNil } from 'lodash'
+import { isEmpty, isNil } from 'lodash'
+import { validateParams } from './validate/helper'
 
 // const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
-const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
+const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SFSJT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT', 'RJT']
 
 export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }) => {
   const errorObj: any = {}
   const payment = getValue('paymentId')
-  const paymentAmount = getValue('paramsAmount')
-  const paymentTransactionId = getValue('paramsTransactionId')
+  // const paymentAmount = getValue('paramsAmount')
+  // const paymentTransactionId = getValue('paramsTransactionId')
   try {
     if (!data || isObjectEmpty(data)) {
       return { [metroSequence.ON_CONFIRM]: 'Json cannot be empty' }
@@ -209,56 +210,58 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
           } & its value must be one of: ${validStatus.join(', ')}`
         }
 
-        const params = arr.params
-        const bankCode: string | null = getValue('bank_code')
-        const bankAccountNumber: string | null = getValue('bank_account_number')
-        const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
+        // const params = arr.params
+        // const bankCode: string | null = getValue('bank_code')
+        // const bankAccountNumber: string | null = getValue('bank_account_number')
+        // const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
 
         //--------------------------PAYMENR PARAMS VALIDATION-------------------------------------
-        if (!params) {
-          errorObj[`payments[${i}]_params`] = `payments.params must be present in ${constants.CONFIRM}`
-        } else {
-          const { amount, currency, transaction_id } = params
+        const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.ON_CONFIRM)
+        if (!isEmpty(validatePayementParams)) Object.assign(errorObj, validatePayementParams)
+        // if (!params) {
+        //   errorObj[`payments[${i}]_params`] = `payments.params must be present in ${constants.CONFIRM}`
+        // } else {
+        //   const { amount, currency, transaction_id } = params
 
-          if (!amount) {
-            errorObj[`payments[${i}]_params_amount`] =
-              `payments.params.amount must be present in ${constants.ON_CONFIRM}`
-          } else if (amount !== paymentAmount) {
-            errorObj[`payments[${i}]_params_amount`] =
-              `payments.params.amount must match with the ${paymentAmount} in ${constants.ON_CONFIRM}`
-          }
+        //   if (!amount) {
+        //     errorObj[`payments[${i}]_params_amount`] =
+        //       `payments.params.amount must be present in ${constants.ON_CONFIRM}`
+        //   } else if (amount !== paymentAmount) {
+        //     errorObj[`payments[${i}]_params_amount`] =
+        //       `payments.params.amount must match with the ${paymentAmount} in ${constants.ON_CONFIRM}`
+        //   }
 
-          if (!currency) {
-            errorObj[`payments[${i}]_params_currency`] =
-              `payments.params.currency must be present in ${constants.CONFIRM}`
-          } else if (currency !== 'INR') {
-            errorObj[`payments[${i}]_params_currency`] =
-              `payments.params.currency must be INR in ${constants.ON_CONFIRM}`
-          }
+        //   if (!currency) {
+        //     errorObj[`payments[${i}]_params_currency`] =
+        //       `payments.params.currency must be present in ${constants.CONFIRM}`
+        //   } else if (currency !== 'INR') {
+        //     errorObj[`payments[${i}]_params_currency`] =
+        //       `payments.params.currency must be INR in ${constants.ON_CONFIRM}`
+        //   }
 
-          if (!transaction_id) {
-            errorObj[`payments[${i}]_params_transaction_id`] =
-              `payments.params.transaction_id must be present in ${constants.ON_CONFIRM}`
-          } else if (transaction_id !== paymentTransactionId) {
-            errorObj[`payments[${i}]_params_transaction_id`] =
-              `payments.params.transaction_id must match with the ${paymentTransactionId} in ${constants.ON_CONFIRM}`
-          }
-        }
-        // Validate bank_code
-        validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.ON_CONFIRM)
+        //   if (!transaction_id) {
+        //     errorObj[`payments[${i}]_params_transaction_id`] =
+        //       `payments.params.transaction_id must be present in ${constants.ON_CONFIRM}`
+        //   } else if (transaction_id !== paymentTransactionId) {
+        //     errorObj[`payments[${i}]_params_transaction_id`] =
+        //       `payments.params.transaction_id must match with the ${paymentTransactionId} in ${constants.ON_CONFIRM}`
+        //   }
+        // }
+        // // Validate bank_code
+        // validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.ON_CONFIRM)
 
-        // Validate bank_account_number
-        validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.ON_CONFIRM)
+        // // Validate bank_account_number
+        // validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.ON_CONFIRM)
 
-        // Validate virtual_payment_address
-        validatePaymentParams(
-          params,
-          virtualPaymentAddress,
-          'virtual_payment_address',
-          errorObj,
-          i,
-          constants.ON_CONFIRM,
-        )
+        // // Validate virtual_payment_address
+        // validatePaymentParams(
+        //   params,
+        //   virtualPaymentAddress,
+        //   'virtual_payment_address',
+        //   errorObj,
+        //   i,
+        //   constants.ON_CONFIRM,
+        // )
 
         if (arr.time) {
           if (!arr.label || arr.label !== 'INSTALLMENT') {

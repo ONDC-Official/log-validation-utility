@@ -16,7 +16,6 @@ const controller = {
       let result: { response?: string; success?: boolean; message?: string } = {}
       const splitPath = req.originalUrl.split('/')
       const pathUrl = splitPath[splitPath.length - 1]
-
       const normalisedDomain = helper.getEnumForDomain(pathUrl)
 
       switch (normalisedDomain) {

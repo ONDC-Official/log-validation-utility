@@ -35,8 +35,8 @@ import issueCloseSchema from '../schema/Igm/issueCloseSchema'
 import { onSearchIncSchema } from '../schema/Retail/RET/on_search_inc'
 import { onUpdateSchema } from '../schema/Retail/Update/on_update'
 import { updateSchema } from '../schema/Retail/Update/update'
-import receiverReconSchema from '../schema/RSF/receiverReconSchema'
-import onReceiverReconSchema from '../schema/RSF/onReciverReconSchema'
+import receiverReconSchema from '../schema/RSF/Rsf_v1/receiverReconSchema'
+import onReceiverReconSchema from '../schema/RSF/Rsf_v1/onReciverReconSchema'
 import { findProviderLocation } from '../utils'
 
 const ajv = new Ajv({

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { dropDB, setValue } from '../shared/dao'
 import { logger } from './logger'
-import { ApiSequence, retailDomains, IGMApiSequence, RSFapiSequence } from '../constants'
+import { ApiSequence, retailDomains, IGMApiSequence, RSFapiSequence, RSF_v2_apiSequence } from '../constants'
 import { validateSchema, isObjectEmpty } from '../utils'
 import { checkOnsearchFullCatalogRefresh } from '../utils/Retail/RET11_onSearch/onSearch'
 import { checkSelect } from '../utils/Retail/Select/select'
@@ -41,8 +41,10 @@ import { checkOnStatusDelivered } from '../utils/Retail/Status/onStatusDelivered
 import { checkOnStatusRTODelivered } from '../utils/Retail/Status/onStatusRTODelivered'
 import { checkCancel } from '../utils/Retail/Cancel/cancel'
 import { checkOnCancel } from '../utils/Retail/Cancel/onCancel'
-import checkRsfReceiverRecon from '../utils/RSF/rsfReceiverRecon'
-import checkRsfOnReceiverRecon from '../utils/RSF/rsfOnReciverRecon'
+import checkRsfReceiverRecon from '../utils/RSF/RSF_v1/rsfReceiverRecon'
+import checkRsfOnReceiverRecon from '../utils/RSF/RSF_v1/rsfOnReciverRecon'
+import checkRsfSettle from '../utils/RSF/RSF_v2/settle'
+import checkRsfOnSettle from '../utils/RSF/RSF_v2/on_settle'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
@@ -403,8 +405,9 @@ export const IGMvalidateLogs = (data: any) => {
 }
 
 export const RSFvalidateLogs = (data: any) => {
+  console.log("data of rsf",data)
   let logReport: any = {}
-
+  
   try {
     dropDB()
   } catch (error) {
@@ -433,6 +436,41 @@ export const RSFvalidateLogs = (data: any) => {
     return error.message
   }
 }
+
+export const RSFvalidateLogsV2 = (data: any) => {
+  logger.info("Processing RSF v2.0.0 data:", data)
+  let logReport: any = {}
+  
+  try {
+    dropDB()
+  } catch (error) {
+    logger.error('Error while removing LMDB', error)
+  }
+
+  try {
+
+    if (data[RSF_v2_apiSequence.SETTLE]) {
+      const receiver_recon = checkRsfSettle(data[RSF_v2_apiSequence.SETTLE])
+      if (!_.isEmpty(receiver_recon)) {
+        logReport = { ...logReport, [RSF_v2_apiSequence.SETTLE]: receiver_recon }
+      }
+    }
+    
+    if (data[RSF_v2_apiSequence.ON_SETTLE]) {
+      const on_receiver_recon = checkRsfOnSettle(data[RSFapiSequence.ON_RECEIVER_RECON])
+      if (!_.isEmpty(on_receiver_recon)) {
+        logReport = { ...logReport, [RSFapiSequence.ON_RECEIVER_RECON]: on_receiver_recon }
+      }
+    }
+
+    logger.info('RSF v2.0.0 Report Generated Successfully')
+    return logReport
+  } catch (error: any) {
+    logger.error(error.message)
+    return error.message
+  }
+}
+
 
 export const validateActionSchema = (data: any, domain: string, action: string) => {
   const errorObj: any = {}

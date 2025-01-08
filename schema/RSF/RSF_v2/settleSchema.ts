@@ -1,4 +1,4 @@
-const SettleSchema = {
+const settleSchema = {
     type: 'object',
     required: ['context', 'message'],
     properties: {
@@ -26,6 +26,7 @@ const SettleSchema = {
             properties: {
               country: {
                 type: 'object',
+                enum: ['IND'],
                 required: ['code'],
                 properties: {
                   code: { type: 'string' },
@@ -33,6 +34,7 @@ const SettleSchema = {
               },
               city: {
                 type: 'object',
+                enum: ['*'],
                 required: ['code'],
                 properties: {
                   code: { type: 'string' },
@@ -48,8 +50,8 @@ const SettleSchema = {
           bpp_uri: { type: 'string', format: 'uri' },
           transaction_id: { type: 'string' },
           message_id: { type: 'string' },
-          timestamp: { type: 'string', format: 'date-time' },
-          ttl: { type: 'string' },
+          timestamp: { type: 'string', format: 'rfc3339-date-time' },
+          ttl: { type: 'string', format: 'duration' },
         },
       },
       message: {
@@ -155,5 +157,5 @@ const SettleSchema = {
     additionalProperties: false,
   };
   
-  export default SettleSchema;
+  export default settleSchema;
   

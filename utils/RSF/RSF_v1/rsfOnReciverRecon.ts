@@ -10,7 +10,6 @@ const checkRsfOnReceiverRecon = (data: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [RSFapiSequence.ON_RECEIVER_RECON]: 'JSON cannot be empty' }
   }
-
   try {
     const issue: any = data
     logger.info(`Validating Schema for ${constants.ON_RECEIVER_RECON} API`)

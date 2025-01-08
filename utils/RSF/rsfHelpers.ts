@@ -34,3 +34,38 @@ export function CompareTimeStamps({
     logger.error(`Error occurred while checking time of creation and updation for rsf`)
   }
 }
+
+export const compareContexts = (settleContext: any, onSettleContext: any) => {
+  const errorObj: any = {}
+  
+  const fieldsToCompare = [
+    'bpp_id',
+    'bpp_uri',
+    'bap_id', 
+    'bap_uri',
+    'transaction_id',
+    'message_id'
+  ]
+
+  try {
+    fieldsToCompare.forEach(field => {
+      if (!_.isEqual(settleContext[field], onSettleContext[field])) {
+        errorObj[`context_${field}`] = `${field} mismatch between settle and on_settle context: ${settleContext[field]} != ${onSettleContext[field]}`
+      }
+    })
+
+    const settleTimestamp = new Date(settleContext.timestamp).getTime()
+    const onSettleTimestamp = new Date(onSettleContext.timestamp).getTime()
+    
+    if (!_.gte(settleTimestamp, onSettleTimestamp)) {
+      errorObj.timestamp = `settle timestamp (${settleContext.timestamp}) should be greater than or equal to on_settle timestamp (${onSettleContext.timestamp})`
+    }
+
+    logger.info('Context comparison completed between settle and on_settle')
+    return Object.keys(errorObj).length > 0 ? errorObj : {}
+
+  } catch (error: any) {
+    logger.error('Error while comparing settle and on_settle contexts:', error)
+    return { error: error.message }
+  }
+}

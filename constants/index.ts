@@ -43,6 +43,8 @@ export default Object.freeze({
   RET_ONISSUE_STATUS: 'on_issue_status',
   RECEIVER_RECON: 'receiver_recon',
   ON_RECEIVER_RECON: 'on_receiver_recon',
+  SETTLE: 'settle',
+  ON_SETTLE: 'on_settle',
 })
 
 export const ApiSequence = {

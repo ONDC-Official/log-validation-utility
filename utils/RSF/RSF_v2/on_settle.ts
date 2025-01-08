@@ -18,12 +18,6 @@ const checkRsfOnSettle = (data: any) => {
     if (vs != 'error') {
       Object.assign(rsfObj, vs)
     }
-    try {
-    } catch (error: any) {
-      logger.error(
-        `!!Error occurred while performing schema validation for /${RSF_v2_apiSequence.ON_SETTLE}, ${error.stack}`,
-      )
-    }
     return rsfObj
   } catch (err: any) {
     if (err.code === 'ENOENT') {

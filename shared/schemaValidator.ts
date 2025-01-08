@@ -37,6 +37,8 @@ import { onUpdateSchema } from '../schema/Retail/Update/on_update'
 import { updateSchema } from '../schema/Retail/Update/update'
 import receiverReconSchema from '../schema/RSF/Rsf_v1/receiverReconSchema'
 import onReceiverReconSchema from '../schema/RSF/Rsf_v1/onReciverReconSchema'
+import settleSchema from '../schema/RSF/RSF_v2/settleSchema'
+import onSettleSchema from '../schema/RSF/RSF_v2/on_settleSchema'
 import { findProviderLocation } from '../utils'
 
 const ajv = new Ajv({
@@ -87,6 +89,7 @@ const validate_schema = (data: any, schema: any) => {
 
   const validate = ajv.compile(schema)
   const valid = validate(data)
+  console.log("validation settle error ", validate.errors)
   if (findProviderLocation(data)) {
     error_list.push({
       instancePath: '/message/order',
@@ -973,6 +976,18 @@ const validate_schema_on_receiver_recon_rsf_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+const validate_schema_settle_rsf_for_json = (data: any) =>{
+  console.log("data of settle", data)
+  const error_list = validate_schema(data, settleSchema)
+  console.log("error_list of settle", formatted_error(error_list))
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_settle_rsf_for_json = (data: any) =>{
+  const error_list = validate_schema(data, onSettleSchema)
+  return formatted_error(error_list)
+}
+
 export default {
   validate_schema_search_RET11_for_json,
   validate_schema_search_RET19_for_json,
@@ -1162,6 +1177,8 @@ export default {
   validate_schema_on_track_RET10_for_json,
   validate_schema_receiver_recon_rsf_for_json,
   validate_schema_on_receiver_recon_rsf_for_json,
+  validate_schema_settle_rsf_for_json,
+  validate_schema_on_settle_rsf_for_json,
 
   validate_schema_search_AGR10_for_json, 
   validate_schema_on_search_AGR10_for_json, 

@@ -450,16 +450,16 @@ export const RSFvalidateLogsV2 = (data: any) => {
   try {
 
     if (data[RSF_v2_apiSequence.SETTLE]) {
-      const receiver_recon = checkRsfSettle(data[RSF_v2_apiSequence.SETTLE])
-      if (!_.isEmpty(receiver_recon)) {
-        logReport = { ...logReport, [RSF_v2_apiSequence.SETTLE]: receiver_recon }
+      const settle = checkRsfSettle(data[RSF_v2_apiSequence.SETTLE])
+      if (!_.isEmpty(settle)) {
+        logReport = { ...logReport, [RSF_v2_apiSequence.SETTLE]: settle }
       }
     }
     
     if (data[RSF_v2_apiSequence.ON_SETTLE]) {
-      const on_receiver_recon = checkRsfOnSettle(data[RSFapiSequence.ON_RECEIVER_RECON])
-      if (!_.isEmpty(on_receiver_recon)) {
-        logReport = { ...logReport, [RSFapiSequence.ON_RECEIVER_RECON]: on_receiver_recon }
+      const on_settle = checkRsfOnSettle(data[RSF_v2_apiSequence.ON_SETTLE])
+      if (!_.isEmpty(on_settle)) {
+        logReport = { ...logReport, [RSF_v2_apiSequence.ON_SETTLE]: on_settle }
       }
     }
 

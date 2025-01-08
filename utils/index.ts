@@ -216,6 +216,7 @@ const validate_schema_for_retail_json = (vertical: string, api: string, data: an
 
 export const validateSchema = (domain: string, api: string, data: any) => {
   try {
+    console.log('data of rsf', data)
     logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
     const errObj: any = {}
 

@@ -1,4 +1,4 @@
-const SettleSchema = {
+const settleSchema = {
     type: 'object',
     required: ['context', 'message'],
     properties: {
@@ -155,5 +155,5 @@ const SettleSchema = {
     additionalProperties: false,
   };
   
-  export default SettleSchema;
+  export default settleSchema;
   

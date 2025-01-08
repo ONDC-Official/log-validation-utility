@@ -458,6 +458,7 @@ export const RSFvalidateLogsV2 = (data: any) => {
     
     if (data[RSF_v2_apiSequence.ON_SETTLE]) {
       const on_settle = checkRsfOnSettle(data[RSF_v2_apiSequence.ON_SETTLE])
+      console.log("on_sett++++++le", data[RSF_v2_apiSequence.ON_SETTLE])
       if (!_.isEmpty(on_settle)) {
         logReport = { ...logReport, [RSF_v2_apiSequence.ON_SETTLE]: on_settle }
       }

@@ -26,6 +26,7 @@ const settleSchema = {
             properties: {
               country: {
                 type: 'object',
+                enum: ['IND'],
                 required: ['code'],
                 properties: {
                   code: { type: 'string' },
@@ -33,6 +34,7 @@ const settleSchema = {
               },
               city: {
                 type: 'object',
+                enum: ['*'],
                 required: ['code'],
                 properties: {
                   code: { type: 'string' },
@@ -48,8 +50,8 @@ const settleSchema = {
           bpp_uri: { type: 'string', format: 'uri' },
           transaction_id: { type: 'string' },
           message_id: { type: 'string' },
-          timestamp: { type: 'string', format: 'date-time' },
-          ttl: { type: 'string' },
+          timestamp: { type: 'string', format: 'rfc3339-date-time' },
+          ttl: { type: 'string', format: 'duration' },
         },
       },
       message: {

@@ -13,6 +13,7 @@ import {
   compareObjects,
   payment_status,
   compareQuoteObjects,
+  
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -422,6 +423,85 @@ export const checkOnInit = (data: any) => {
     } catch (error: any) {
       logger.error(`!!Error while checking buyer app finder fee in /${constants.ON_INIT}, ${error.stack}`)
     }
+    try {
+      logger.info(`Checking Settlement basis in /${constants.ON_INIT}`);
+      
+      const validSettlementBasis = ['delivery', 'shipment']; // Enums (as per API Contract)
+      
+      const settlementBasis = on_init.payment['@ondc/org/settlement_basis'];
+  
+      if (!validSettlementBasis.includes(settlementBasis)) {
+          onInitObj.settlementBasis = `Invalid settlement basis in /${constants.ON_INIT}. Expected one of: ${validSettlementBasis.join(', ')}`;
+          // logger.info(`Invalid settlement basis in /on_init`);
+      }
+  } catch (error: any) {
+      logger.error(`!!Error while checking settlement basis in /${constants.ON_INIT}, ${error.stack}`);
+  }
+  
+  try {
+    logger.info(`checking payment object in /${constants.ON_INIT}`)
+    if (on_init.payment['@ondc/org/settlement_details'][0]['settlement_counterparty'] != 'seller-app') {
+      onInitObj.sttlmntcntrparty = `settlement_counterparty is expected to be 'seller-app' in @ondc/org/settlement_details`
+    }
+
+    logger.info(`checking payment details in /${constants.ON_INIT}`)
+    const data = on_init.payment['@ondc/org/settlement_details'][0]
+    if (
+      data['settlement_type'] !== 'neft' &&
+      data['settlement_type'] !== 'rtgs' &&
+      data['settlement_type'] !== 'upi'
+    ) {
+      logger.error(
+        `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_detailsin /${constants.ON_INIT}`,
+      )
+      onInitObj.sttlmntcntrparty = `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_details`
+    } else if (data['settlement_type'] !== 'upi') {
+      let missingFields = []
+      if (!data.bank_name) {
+        missingFields.push('bank_name')
+      }
+      if (!data.branch_name) {
+        missingFields.push('branch_name')
+      }
+      if (!data.beneficiary_name || data.beneficiary_name.trim() === '') {
+        missingFields.push('beneficiary_name')
+      }
+      if (!data.settlement_phase) {
+        missingFields.push('settlement_phase')
+      }
+      if (!data.settlement_ifsc_code) {
+        missingFields.push('settlement_ifsc_code')
+      }
+      if (!data.settlement_counterparty) {
+        missingFields.push('settlement_counterparty')
+      }
+      if (!data.settlement_bank_account_no || data.settlement_bank_account_no.trim() === '') {
+        missingFields.push('settlement_bank_account_no')
+      }
+
+      if (missingFields.length > 0) {
+        logger.error(`Payment details are missing: ${missingFields.join(', ')} /${constants.ON_INIT}`)
+        onInitObj.paymentDetails = `Payment details are missing: ${missingFields.join(', ')}/${constants.ON_INIT}`
+      }
+    } else {
+      if (!data.upi_address || data.upi_address.trim() === '') {
+        logger.error(`Payment details are missing /${constants.ON_INIT}`)
+        onInitObj.paymentDetails = `Payment details are missing/${constants.ON_INIT}`
+      }
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while checking payment object in /${constants.ON_INIT}`)
+  }
+  try {
+    logger.info(`storing payment settlement details in /${constants.ON_INIT}`)
+    if (on_init.payment.hasOwnProperty('@ondc/org/settlement_details'))
+      setValue('sttlmntdtls', on_init.payment['@ondc/org/settlement_details'][0])
+    else {
+      onInitObj.pymntSttlmntObj = `payment settlement_details missing in /${constants.ON_INIT}`
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while storing payment settlement details in /${constants.ON_INIT}`)
+  }
 
     try {
       logger.info(`Checking Quote Object in /${constants.ON_SELECT} and /${constants.ON_INIT}`)
@@ -443,72 +523,6 @@ export const checkOnInit = (data: any) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while checking quote object in /${constants.ON_SELECT} and /${constants.ON_INIT}`)
-    }
-
-    try {
-      logger.info(`checking payment object in /${constants.ON_INIT}`)
-      if (on_init.payment['@ondc/org/settlement_details'][0]['settlement_counterparty'] != 'seller-app') {
-        onInitObj.sttlmntcntrparty = `settlement_counterparty is expected to be 'seller-app' in @ondc/org/settlement_details`
-      }
-
-      logger.info(`checking payment details in /${constants.ON_INIT}`)
-      const data = on_init.payment['@ondc/org/settlement_details'][0]
-      if (
-        data['settlement_type'] !== 'neft' &&
-        data['settlement_type'] !== 'rtgs' &&
-        data['settlement_type'] !== 'upi'
-      ) {
-        logger.error(
-          `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_detailsin /${constants.ON_INIT}`,
-        )
-        onInitObj.sttlmntcntrparty = `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_details`
-      } else if (data['settlement_type'] !== 'upi') {
-        let missingFields = []
-        if (!data.bank_name) {
-          missingFields.push('bank_name')
-        }
-        if (!data.branch_name) {
-          missingFields.push('branch_name')
-        }
-        if (!data.beneficiary_name || data.beneficiary_name.trim() === '') {
-          missingFields.push('beneficiary_name')
-        }
-        if (!data.settlement_phase) {
-          missingFields.push('settlement_phase')
-        }
-        if (!data.settlement_ifsc_code) {
-          missingFields.push('settlement_ifsc_code')
-        }
-        if (!data.settlement_counterparty) {
-          missingFields.push('settlement_counterparty')
-        }
-        if (!data.settlement_bank_account_no || data.settlement_bank_account_no.trim() === '') {
-          missingFields.push('settlement_bank_account_no')
-        }
-
-        if (missingFields.length > 0) {
-          logger.error(`Payment details are missing: ${missingFields.join(', ')} /${constants.ON_INIT}`)
-          onInitObj.paymentDetails = `Payment details are missing: ${missingFields.join(', ')}/${constants.ON_INIT}`
-        }
-      } else {
-        if (!data.upi_address || data.upi_address.trim() === '') {
-          logger.error(`Payment details are missing /${constants.ON_INIT}`)
-          onInitObj.paymentDetails = `Payment details are missing/${constants.ON_INIT}`
-        }
-      }
-    } catch (error: any) {
-      logger.error(`!!Error while checking payment object in /${constants.ON_INIT}`)
-    }
-
-    try {
-      logger.info(`storing payment settlement details in /${constants.ON_INIT}`)
-      if (on_init.payment.hasOwnProperty('@ondc/org/settlement_details'))
-        setValue('sttlmntdtls', on_init.payment['@ondc/org/settlement_details'][0])
-      else {
-        onInitObj.pymntSttlmntObj = `payment settlement_details missing in /${constants.ON_INIT}`
-      }
-    } catch (error: any) {
-      logger.error(`!!Error while storing payment settlement details in /${constants.ON_INIT}`)
     }
 
     try {
@@ -553,6 +567,25 @@ export const checkOnInit = (data: any) => {
     } catch (err: any) {
       logger.error(`Error while checking transaction is in message.order.payment`)
     }
+    try {
+      logger.info(`Checking if the amount is paid or not`)
+      const payment = on_init.payment
+      const status = payment_status(payment);
+  
+      if (status && status.message) {
+        logger.error(status.message);
+  
+        onInitObj["message/order/payment"] = status.message;
+      } else {
+        logger.info("Payment status is valid.");
+      }
+    } catch (err: any) {
+      logger.error(`Error while handling payment status: ${err.stack}`);
+  
+      onInitObj["message/order/payment"] =
+        "An unexpected error occurred while processing the payment status.";
+    }
+  
 
     try {
       logger.info(`Validating tags`)

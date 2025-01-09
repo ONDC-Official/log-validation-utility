@@ -233,17 +233,16 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
           cnfrmObj.ffId = `fulfillments[${i}].id is missing in /${constants.CONFIRM}`
         }
 
-        const ffId = confirm.fulfillments[i].id || ""
+        const ffId = confirm.fulfillments[i].id || ''
         if (getValue(`${ffId}_tracking`)) {
-          if ((confirm.fulfillments[i].tracking === false || confirm.fulfillments[i].tracking === true)) {
+          if (confirm.fulfillments[i].tracking === false || confirm.fulfillments[i].tracking === true) {
             if (getValue(`${ffId}_tracking`) != confirm.fulfillments[i].tracking) {
               logger.info(`Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`)
-              cnfrmObj["ffTracking"] = `Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`
+              cnfrmObj['ffTracking'] = `Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`
             }
-          }
-          else {
+          } else {
             logger.info(`Tracking must be present for fulfillment ID: ${ffId}`)
-            cnfrmObj["ffTracking"] = `Tracking must be present for fulfillment ID: ${ffId} in boolean form`
+            cnfrmObj['ffTracking'] = `Tracking must be present for fulfillment ID: ${ffId} in boolean form`
           }
         }
         if (!confirm.fulfillments[i].end || !confirm.fulfillments[i].end.person) {
@@ -301,12 +300,12 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       logger.info(`Comparing Quote object for /${constants.ON_SELECT} and /${constants.CONFIRM}`)
       const on_select_quote: any = getValue('quoteObj')
       const quoteErrors = compareQuoteObjects(on_select_quote, confirm.quote, constants.ON_SELECT, constants.CONFIRM)
-      const hasItemWithQuantity = _.some(confirm.quote.breakup, item => _.has(item, 'item.quantity'));
+      const hasItemWithQuantity = _.some(confirm.quote.breakup, (item) => _.has(item, 'item.quantity'))
       if (hasItemWithQuantity) {
         const key = `quantErr`
-        cnfrmObj[key] = `Extra attribute Quantity provided in quote object i.e not supposed to be provided after on_select so invalid quote object`
-      }
-      else if (quoteErrors) {
+        cnfrmObj[key] =
+          `Extra attribute Quantity provided in quote object i.e not supposed to be provided after on_select so invalid quote object`
+      } else if (quoteErrors) {
         let i = 0
         const len = quoteErrors.length
         while (i < len) {
@@ -415,14 +414,101 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     }
 
     try {
-      logger.info(`Checking if transaction_id is present in message.order.payment`)
-      const payment = confirm.payment
-      const status = payment_status(payment)
-      if (!status) {
-        cnfrmObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
+      logger.info('Checking if transaction_id is present in message.order.payment');
+      
+      const payment = confirm.payment;
+      
+      // Check if txn_id is unexpectedly present in the /confirm object (should not be there)
+      if (cnfrmObj['message/order/transaction_id']) {
+        cnfrmObj['message/order/transaction_id'] = 'Unexpected txn_id found in message/order/confirm';
+      } else {
+        // Skip the transaction_id check for 2A flow
+        if ("2A") {
+          const status = payment_status(payment);
+          if (!status) {
+            cnfrmObj['message/order/transaction_id'] = 'Transaction_id missing in message/order/payment';
+          }
+        } else {
+          logger.info('Skipping transaction_id check for 2A flow');
+        }
       }
     } catch (err: any) {
-      logger.error(`Error while checking transaction is in message.order.payment`)
+      logger.error('Error while checking transaction in message/order/payment: ' + err.message);
+    }
+    
+    //Payment details for 2A Flow
+    try {
+      if ('2A') {
+        logger.info(`checking payment object in /${constants.CONFIRM}`)
+        if (confirm.payment['@ondc/org/settlement_details'][0]['settlement_counterparty'] != 'buyer-app') {
+          cnfrmObj.sttlmntcntrparty = `settlement_counterparty is expected to be 'buyer-app' in @ondc/org/settlement_details`
+        }
+
+        logger.info(`checking payment details in /${constants.CONFIRM}`)
+        const data = confirm.payment['@ondc/org/settlement_details'][0]
+        if (
+          data['settlement_type'] !== 'neft' &&
+          data['settlement_type'] !== 'rtgs' &&
+          data['settlement_type'] !== 'upi'
+        ) {
+          logger.error(
+            `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_details in /${constants.CONFIRM}`,
+          )
+          cnfrmObj.sttlmntcntrparty = `settlement_type is expected to be 'neft/rtgs/upi' in @ondc/org/settlement_details`
+        } else if (data['settlement_type'] !== 'upi') {
+          let missingFields = []
+          if (!data.bank_name) {
+            missingFields.push('bank_name')
+          }
+          if (!data.branch_name) {
+            missingFields.push('branch_name')
+          }
+          if (!data.beneficiary_name || data.beneficiary_name.trim() === '') {
+            missingFields.push('beneficiary_name')
+          }
+          if (!data.settlement_phase) {
+            missingFields.push('settlement_phase')
+          }
+          if (!data.settlement_ifsc_code) {
+            missingFields.push('settlement_ifsc_code')
+          }
+          if (!data.settlement_counterparty) {
+            missingFields.push('settlement_counterparty')
+          }
+          if (!data.settlement_bank_account_no || data.settlement_bank_account_no.trim() === '') {
+            missingFields.push('settlement_bank_account_no')
+          }
+
+          if (missingFields.length > 0) {
+            logger.error(`Payment details are missing: ${missingFields.join(', ')} /${constants.CONFIRM}`)
+            cnfrmObj.paymentDetails = `Payment details are missing: ${missingFields.join(', ')} /${constants.CONFIRM}`
+          }
+        } else {
+          if (!data.upi_address || data.upi_address.trim() === '') {
+            logger.error(`Payment details are missing /${constants.CONFIRM}`)
+            cnfrmObj.paymentDetails = `Payment details are missing /${constants.CONFIRM}`
+          }
+        }
+      } else {
+        logger.info('Not in 2A flow, skipping payment details checks')
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking payment object in /${constants.CONFIRM}`)
+    }
+
+    try {
+      if ('2A') {
+        logger.info(`storing payment settlement details in /${constants.CONFIRM}`)
+        if (confirm.payment.hasOwnProperty('@ondc/org/settlement_details')) {
+          setValue('sttlmntdtls', confirm.payment['@ondc/org/settlement_details'][0])
+        } else {
+          cnfrmObj.pymntSttlmntObj = `payment settlement_details missing in /${constants.CONFIRM}`
+        }
+      } else {
+        logger.info('Not in 2A flow, skipping storing payment settlement details')
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while storing payment settlement details in /${constants.CONFIRM}`)
     }
 
     return cnfrmObj

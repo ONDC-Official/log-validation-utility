@@ -112,7 +112,7 @@ export const onSearchSchema = {
                 symbol: {
                   type: 'string',
                   format: 'url',
-                  errorMessage: 'descriptor/symbol should be URLs or can be empty strings as well',
+                  errorMessage: 'descriptor/symbol should be URLs or can be empty array as well',
                 },
                 short_desc: {
                   type: 'string',
@@ -238,6 +238,7 @@ export const onSearchSchema = {
                     type: 'number',
                     minimum: 1,
                     maximum: 5,
+                    default: null,
                   },
                   time: {
                     type: 'object',
@@ -433,7 +434,7 @@ export const onSearchSchema = {
                       properties: {
                         id: {
                           type: 'string',
-                          pattern:'^[a-zA-Z0-9-]{12}$'
+                          pattern:'^[a-zA-Z0-9-]{1,12}$'
                         },
                         descriptor: {
                           type: 'object',
@@ -500,6 +501,7 @@ export const onSearchSchema = {
                           type: 'number',
                           minimum: 1,
                           maximum: 5,
+                          default: null,
                         },
                         time: {
                           type: 'object',
@@ -776,7 +778,7 @@ export const onSearchSchema = {
                         '@ondc/org/time_to_ship',
                         '@ondc/org/available_on_cod',
                         '@ondc/org/contact_details_consumer_care',
-                        'tags'                     
+                        'tags',
                       ],
                     },
                   },

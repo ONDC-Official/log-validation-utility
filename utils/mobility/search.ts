@@ -29,7 +29,7 @@ export const search = (data: any, msgIdSet: any, version: any) => {
       return Object.keys(errorObj).length > 0 && errorObj
     }
 
-    const schemaValidation = validateSchema('TRV', constants.SEARCH, data)
+    const schemaValidation = validateSchema(data.context.domain.split(':')[1], constants.SEARCH, data)
     const contextRes: any = checkMobilityContext(data.context, constants.SEARCH)
     setValue(`${mobilitySequence.SEARCH}_context`, data.context)
     msgIdSet.add(data.context.message_id)
@@ -77,7 +77,12 @@ export const search = (data: any, msgIdSet: any, version: any) => {
       const allowedCollectedByValues = ['BPP', 'BAP']
       const terms: any = [
         { code: 'STATIC_TERMS', type: 'url' },
-        { code: 'DELAY_INTEREST', type: 'amount' },
+        {
+          code: 'SETTLEMENT_TYPE',
+          type: 'enum',
+          value: ['upi', 'neft', 'rtgs'],
+        },
+        { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' },
       ]
 
       if (!collectedBy) {

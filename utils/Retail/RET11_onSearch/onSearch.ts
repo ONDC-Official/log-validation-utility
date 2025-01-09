@@ -105,6 +105,45 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
       `Error while comparing transaction ids for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
     )
   }
+  try {
+    logger.info(`Checking customizations based on config.min and config.max values...`);
+
+    const items = getValue('items'); // Retrieve items from the catalog or message
+
+    _.filter(items, (item) => {
+        const customGroup = item.custom_group; // Assuming custom_group holds the configuration data
+        
+        // Check for minimum customizations
+        if (customGroup?.config?.min === 1) {
+            logger.info(`Checking min value for item id: ${item.id}`);
+            
+            const defaultCustomizations = _.filter(item.customizations, (customization) => {
+                return customization.is_default; // Check for default customizations
+            });
+
+            if (defaultCustomizations.length < 1) {
+                const key = `item${item.id}CustomGroup/min`;
+                errorObj[key] = `Item with id: ${item.id} must have at least one default customization as config.min is set to 1.`;
+            }
+        }
+
+        // Check for maximum customizations
+        if (customGroup?.config?.max === 2) {
+            logger.info(`Checking max value for item id: ${item.id}`);
+
+            const customizationsCount = item.customizations.length;
+
+            if (customizationsCount > 2) {
+                const key = `item${item.id}CustomGroup/max`;
+                errorObj[key] = `Item with id: ${item.id} can have at most 2 customizations as config.max is set to 2.`;
+            }
+        }
+    });
+
+} catch (error: any) {
+    logger.error(`Error while checking customizations for items, ${error.stack}`);
+}
+
   // removed timestamp difference check
   // try {
   //   logger.info(`Comparing timestamp of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
@@ -751,10 +790,10 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
                       errorObj[key] = `item_id: ${item.id} should contain time object in bpp/providers[${i}]`
                     }
 
-                    // if (!item.category_ids) {
-                    //   const key = `prvdr${i}item${j}ctgry_ids`
-                    //   errorObj[key] = `item_id: ${item.id} should contain category_ids in bpp/providers[${i}]`
-                    // }
+                    if (!item.category_ids) {
+                      const key = `prvdr${i}item${j}ctgry_ids`
+                      errorObj[key] = `item_id: ${item.id} should contain category_ids in bpp/providers[${i}]`
+                    }
                   }
 
                   break
@@ -1037,8 +1076,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
           onSearchCatalog['bpp/providers'][i]['items'].forEach((item: any) => {
             if (item?.category_ids) {
               item?.category_ids?.forEach((category_id: any) => {
-                let [category, sequence] = category_id.split(':')
-                sequence = Number(sequence)
+                const [category, sequence] = category_id.split(':').map(Number);
                 if (!categoryMap[category]) {
                   categoryMap[category] = [];
                 }

@@ -520,7 +520,7 @@ export const checkOnStatusRTODelivered = (data: any) => {
                             `Delivery state should be one of ['RTO-Delivered', 'RTO-Disposed'] for ${constants.ON_STATUS_RTO_DELIVERED}`
                     }
                     else {
-                        if (item.state.descriptor.code == validVal[1] || item.state.descriptor.code == validVal[2]) {
+                        if (item.state.descriptor.code == validVal[1] || item.state.descriptor.code == validVal[0]) {
                             rto_delivered_or_disposed = true
                         }
                     }

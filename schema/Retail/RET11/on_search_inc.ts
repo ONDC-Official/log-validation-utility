@@ -124,6 +124,7 @@ export const FnBonSearchIncSchema = {
                     type: 'number',
                     minimum: 1,
                     maximum: 5,
+                    default: null,
                   },
                   time: {
                     type: 'object',
@@ -390,6 +391,7 @@ export const FnBonSearchIncSchema = {
                           type: 'number',
                           minimum: 1,
                           maximum: 5,
+                          default: null,
                         },
                         time: {
                           type: 'object',
@@ -584,7 +586,6 @@ export const FnBonSearchIncSchema = {
                         '@ondc/org/time_to_ship',
                         '@ondc/org/available_on_cod',
                         '@ondc/org/contact_details_consumer_care',
-                        'rating'
                       ],
                     },
                   },

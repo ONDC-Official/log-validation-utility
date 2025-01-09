@@ -71,17 +71,17 @@ export const checkUpdate = (data: any, msgIdSet: any, flow: string) => {
       const payment: Payment | undefined = payments[0]
 
       if (!(payment?.time?.label === flowType)) {
-        errorObj[`${keyPrefix}_label`] =
-          `payments attribute must be present in order object and time.label must be ${flowType}.`
+        errorObj[
+          `${keyPrefix}_label`
+        ] = `payments attribute must be present in order object and time.label must be ${flowType}.`
       }
 
       if (paramsCheck) {
         const params: Payment['params'] | undefined = payment?.params
         if (!params?.amount || !params?.currency) {
-          errorObj[`${keyPrefix}_params`] =
-            `payments attribute must be present in order object and params.amount and params.currency must be present.`
-        } else {
-          setValue('PRE_PART_AMOUNT', params?.amount)
+          errorObj[
+            `${keyPrefix}_params`
+          ] = `payments attribute must be present in order object and params.amount and params.currency must be present.`
         }
       }
     } else {
@@ -89,16 +89,14 @@ export const checkUpdate = (data: any, msgIdSet: any, flow: string) => {
     }
   }
 
-  console.log('wnfjwnvjkernvjkernvjkernvjk    flow', flow)
-
   if (flow === fisFlows.PERSONAL && !message.order[message.update_target]?.personal_details) {
     errorObj[`${keyPrefix}_message`] = 'personal_details attribute must be present in order object.'
-  } else if (flow === fisFlows.FORECLOSURE_PERSONAL) {
-    validatePayments('FORECLOSURE')
-  } else if (flow === fisFlows.PRE_PART_PERSONAL) {
-    validatePayments('PRE_PART_PAYMENT', true)
-  } else if (flow === fisFlows.MISSED_EMI_PERSONAL) {
-    validatePayments('MISSED_EMI_PAYMENT')
+  } else if (flow === fisFlows.LOAN_FORECLOSURE) {
+    validatePayments(fisFlows.LOAN_FORECLOSURE)
+  } else if (flow === fisFlows.PRE_PART_PAYMENT) {
+    validatePayments(fisFlows.PRE_PART_PAYMENT, true)
+  } else if (flow === fisFlows.MISSED_EMI_PAYMENT) {
+    validatePayments(fisFlows.MISSED_EMI_PAYMENT)
   }
 
   return Object.keys(errorObj).length > 0 && errorObj

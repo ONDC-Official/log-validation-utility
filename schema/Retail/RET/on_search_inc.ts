@@ -82,7 +82,7 @@ export const onSearchIncSchema = {
                   },
                   type: {
                     type: 'string',
-                    enum: ['Self-Pickup','Delivery'],
+                    enum: ['Self-Pickup', 'Delivery'],
                   },
                 },
                 required: ['id', 'type'],
@@ -124,6 +124,7 @@ export const onSearchIncSchema = {
                     type: 'number',
                     minimum: 1,
                     maximum: 5,
+                    default: null,
                   },
                   time: {
                     type: 'object',
@@ -257,7 +258,7 @@ export const onSearchIncSchema = {
                               required: ['start', 'end'],
                             },
                           },
-                          required: ['label', 'timestamp','schedule'],
+                          required: ['label', 'timestamp', 'schedule'],
                         },
                         gps: {
                           type: 'string',
@@ -390,6 +391,7 @@ export const onSearchIncSchema = {
                           type: 'number',
                           minimum: 1,
                           maximum: 5,
+                          default: null,
                         },
                         time: {
                           type: 'object',
@@ -443,7 +445,7 @@ export const onSearchIncSchema = {
                                       enum: ['unit', 'dozen', 'gram', 'kilogram', 'tonne', 'litre', 'millilitre'],
                                     },
                                     value: {
-                                      pattern :"^[0-9]+(\.[0-9]+)?$",
+                                      pattern: '^[0-9]+(.[0-9]+)?$',
                                       type: 'string',
                                     },
                                   },
@@ -456,10 +458,9 @@ export const onSearchIncSchema = {
                               type: 'object',
                               properties: {
                                 count: {
-                                  type:'string',
-                                  enum: ['99','0'],
-                                  errorMessage:
-                                    'available count must be either 99 or 0 only',
+                                  type: 'string',
+                                  enum: ['99', '0'],
+                                  errorMessage: 'available count must be either 99 or 0 only',
                                 },
                               },
                               required: ['count'],
@@ -470,8 +471,7 @@ export const onSearchIncSchema = {
                                 count: {
                                   type: 'string',
                                   pattern: '^[0-9]+$',
-                                  errorMessage:
-                                    'maximum count must be in stringified number format. ',
+                                  errorMessage: 'maximum count must be in stringified number format. ',
                                 },
                               },
                               required: ['count'],
@@ -488,12 +488,13 @@ export const onSearchIncSchema = {
                             },
                             value: {
                               type: 'string',
-                              pattern : '^[-+]?[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                              pattern: '^[-+]?[0-9]+(.[0-9]{1,2})?$',
+                              errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                             },
                             maximum_value: {
                               type: 'string',
-                              pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
-
+                              pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                              errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                             },
                           },
                           required: ['currency', 'value', 'maximum_value'],

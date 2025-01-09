@@ -396,13 +396,11 @@ If you want to use this utility locally, follow these steps:
    ```shell
    git clone https://github.com/ONDC-Official/log-validation-utility.git
    ```
-
 2. Install the required dependencies:
 
    ```shell
    npm install
    ```
-
 3. Run the server in a local environment:
 
    ```shell

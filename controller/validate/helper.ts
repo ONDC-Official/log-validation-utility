@@ -11,6 +11,8 @@ import { validateLogsForFIS13 } from '../../shared/Actions/FIS13Actions'
 import { RSFvalidateLogs } from '../../shared/validateLogs'
 import { validateLogs } from '../../shared/validateLogs'
 import { RSFvalidateLogs2 } from '../../shared/validateLogs'
+import { FLOW } from '../../utils/enum'
+
 const createSignature = async ({ message }: { message: string }) => {
   const privateKey = process.env.SIGN_PRIVATE_KEY as string
 
@@ -44,7 +46,7 @@ const validateRetail = async (
   let success = false
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
 
-  if (!bap_id || !bpp_id || !flow || !/^[1-9]$/.test(flow)) {
+  if (!bap_id || !bpp_id || !flow || !Object.values(FLOW).includes(flow as FLOW)) {
     message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_PAYLOAD
     return { response, success, message }
   }

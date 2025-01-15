@@ -21,6 +21,14 @@ const checkRsfSettle = (data: any) => {
     console.log("Schema validation rsf obj",rsfObj)
   logger.info(`Schema validation result for ${RSF_v2_apiSequence.SETTLE}:`, vs)
 
+  if (message?.collector_app_id === context?.bpp_id) {
+    rsfObj.collector_app_id = 'collector_app_id should not match with bpp_id'
+  }
+
+  if (message?.receiver_app_id === context?.bpp_id) {
+    rsfObj.receiver_app_id = 'receiver_app_id should not match with bpp_id'
+  }
+
   if (vs != 'error') {
     Object.assign(rsfObj, vs)
   }

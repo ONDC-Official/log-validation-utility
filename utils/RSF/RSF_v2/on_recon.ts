@@ -9,7 +9,6 @@ const checkRsfOnRecon = (data: any) => {
   const rsfObj: any = {}
 
   const { message, context }: any = data
-  console.log("message57555555555555",context)
 
   if (!data || isObjectEmpty(data)) {
     return { [RSF_v2_apiSequence.ON_RECON]: 'JSON cannot be empty' }

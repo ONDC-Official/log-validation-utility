@@ -220,24 +220,24 @@ export const searchSchema = {
                 },
                 required: ['code', 'list'],
                 anyOf: [
-                  {
-                    properties: {
-                      code: { const: 'bap_features' },
-                    },
-                    then: {
-                      properties: {
-                        list: {
-                          contains: {
-                            type: 'object',
-                            properties: {
-                              code: { const: '000' },
-                            },
-                            required: ['code'],
-                          },
-                        },
-                      },
-                    },
-                  },
+                  // {
+                  //   properties: {
+                  //     code: { const: 'bap_features' },
+                  //   },
+                  //   then: {
+                  //     properties: {
+                  //       list: {
+                  //         contains: {
+                  //           type: 'object',
+                  //           properties: {
+                  //             code: { const: '000' },
+                  //           },
+                  //           required: ['code'],
+                  //         },
+                  //       },
+                  //     },
+                  //   },
+                  // },
                   {
                     properties: {
                       code: { const: 'catalog_inc' },

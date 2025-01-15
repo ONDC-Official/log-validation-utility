@@ -152,6 +152,12 @@ export const FnBsearchSchema = {
                         code: {
                           type: 'string',
                           enum: [
+                            'start_time',
+                            'end_time',
+                            'mode',
+                            'static_terms',
+                            'effective_date',
+                            'static_terms_new',
                             '000',
                             '001',
                             '002',
@@ -199,78 +205,106 @@ export const FnBsearchSchema = {
                         },
                         value: {
                           type: 'string',
-                          enum: ['yes', 'no'],
                         },
                       },
                       required: ['code', 'value'],
                     },
                     minItems: 1,
-                    contains: {
-                      type: 'object',
-                      properties: {
-                        code: {
-                          const: '000',
-                        },
-                      },
-                      required: ['code'],
-                    },
                   },
                 },
                 required: ['code', 'list'],
-                allOf: [
+                anyOf: [
+                  // {
+                  //   properties: {
+                  //     code: { const: 'bap_features' },
+                  //   },
+                  //   then: {
+                  //     properties: {
+                  //       list: {
+                  //         contains: {
+                  //           type: 'object',
+                  //           properties: {
+                  //             code: { const: '000' },
+                  //           },
+                  //           required: ['code'],
+                  //         },
+                  //       },
+                  //     },
+                  //   },
+                  // },
                   {
-                    if: {
-                      properties: {
-                        code: {
-                          const: 'catalog_inc',
-                        },
-                      },
+                    properties: {
+                      code: { const: 'catalog_inc' },
                     },
                     then: {
                       properties: {
                         list: {
-                          items: {
-                            properties: {
-                              code: {
-                                enum: [
-                                  'start_time',
-                                  'end_time',
-                                  'mode',
-                                  'static_terms',
-                                  'effective_date',
-                                  'static_terms_new',
+                          anyOf: [
+                            {
+                              contains: {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'mode' },
+                                },
+                                required: ['code'],
+                              },
+                            },
+                            {
+                              contains: {
+                                allOf: [
+                                  {
+                                    type: 'object',
+                                    properties: {
+                                      code: { const: 'start_time' },
+                                    },
+                                    required: ['code'],
+                                  },
+                                  {
+                                    type: 'object',
+                                    properties: {
+                                      code: { const: 'end_time' },
+                                    },
+                                    required: ['code'],
+                                  },
                                 ],
                               },
                             },
-                          },
+                          ],
                         },
                       },
                     },
                   },
                   {
-                    if: {
-                      properties: {
-                        code: {
-                          const: 'bap_terms',
-                        },
-                      },
+                    properties: {
+                      code: { const: 'bap_terms' },
                     },
                     then: {
                       properties: {
                         list: {
-                          items: {
-                            properties: {
-                              code: {
-                                enum: [
-                                  'start_time',
-                                  'end_time',
-                                  'mode',
-                                  'static_terms',
-                                  'effective_date',
-                                  'static_terms_new',
-                                ],
+                          contains: {
+                            allOf: [
+                              {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'static_terms' },
+                                },
+                                required: ['code'],
                               },
-                            },
+                              {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'static_terms_new' },
+                                },
+                                required: ['code'],
+                              },
+                              {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'effective_date' },
+                                },
+                                required: ['code'],
+                              },
+                            ],
                           },
                         },
                       },
@@ -282,9 +316,7 @@ export const FnBsearchSchema = {
               contains: {
                 type: 'object',
                 properties: {
-                  code: {
-                    const: 'bap_features',
-                  },
+                  code: { const: 'bap_features' },
                 },
                 required: ['code', 'list'],
               },

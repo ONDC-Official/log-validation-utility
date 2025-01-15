@@ -121,7 +121,7 @@ export const onSearchIncSchema = {
                     type: 'string',
                   },
                   rating: {
-                    type: 'number',
+                    type: ['number','null'],
                     minimum: 1,
                     maximum: 5,
                     default: null,
@@ -388,7 +388,7 @@ export const onSearchIncSchema = {
                           type: 'string',
                         },
                         rating: {
-                          type: 'number',
+                          type: ['number','null'],
                           minimum: 1,
                           maximum: 5,
                           default: null,

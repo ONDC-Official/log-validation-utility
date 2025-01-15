@@ -235,7 +235,7 @@ export const onSearchSchema = {
                     type: 'string',
                   },
                   rating: {
-                    type: 'number',
+                    type: ['number','null'],
                     minimum: 1,
                     maximum: 5,
                     default: null,
@@ -498,7 +498,7 @@ export const onSearchSchema = {
                           type: 'string'
                         },
                         rating: {
-                          type: 'number',
+                          type: ['number','null'],
                           minimum: 1,
                           maximum: 5,
                           default: null,

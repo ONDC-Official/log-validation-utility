@@ -496,7 +496,7 @@ export const checkOnStatusRTODelivered = (data: any) => {
 
         try {
             // Checking for igm_request inside fulfillments for /on_status_rto
-            const RTOobj = _.filter(on_status_rto.fulfillments, { type: 'RTO' })
+            const RTOobj = _.filter(on_status_rto.fulfillments, { type: 'RTO' })          
             const DELobj = _.filter(on_status_rto.fulfillments, { type: 'Delivery' })
             let rto_start_location: any = {}
             let rto_end_location: any = {}
@@ -559,11 +559,11 @@ export const checkOnStatusRTODelivered = (data: any) => {
                             }
                         }
                     }
-                    else {
-                        if ((rto_obj_end.time)) {
-                            onStatusRtoObj[`rtoFFObj/end/time`] = `fulfillment type rto end/time should be present in /${constants.ON_STATUS_RTO_DELIVERED} when state/desc/code is RTO-Initiated`
-                        }
-                    }
+                    // else {
+                    //     if ((rto_obj_end.time)) {
+                    //         onStatusRtoObj[`rtoFFObj/end/time`] = `fulfillment type rto end/time should be present in /${constants.ON_STATUS_RTO_DELIVERED} when state/desc/code is RTO-Delivered/Disposed`
+                    //     }
+                    // }
                     if (!_.isEmpty(rto_obj_end?.location)) {
                         rto_end_location = rto_obj_end.location
                     }

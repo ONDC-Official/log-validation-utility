@@ -295,7 +295,6 @@ export const onSelectSchema = {
                             },
                           },
                         },
-                        required: ['quantity'],
                       },
                     },
                     required: ['@ondc/org/item_id', 'title', '@ondc/org/title_type', 'price'],

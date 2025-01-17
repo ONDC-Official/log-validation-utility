@@ -1,6 +1,7 @@
-import { isEmpty } from 'lodash'
+import { isArray, isEmpty } from 'lodash'
 import { getValue } from '../../../shared/dao'
 import { isValidEmail, isValidPhoneNumber, isValidUrl } from '../../index'
+import { FIS13HealthSequence } from '../../../constants'
 
 interface Tag {
   display: any
@@ -516,7 +517,7 @@ export const validateGeneralInfo = (tags: any, action: string) => {
   }
 
   if (insuranceType !== 'MARINE_INSURANCE') {
-    if (action.includes('_offer')) {
+    if (action.includes('_2')) {
       let conditionalDescriptors: any = {
         BASE_PRICE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
         CONVIENCE_FEE: (value: string) => !isNaN(parseFloat(value)) && parseFloat(value) >= 0,
@@ -720,5 +721,80 @@ export const validateIdvSelected = (tags: any) => {
   return {
     isValid: errors.length === 0,
     errors: errors.length > 0 ? errors : undefined,
+  }
+}
+
+export const validateClaimTags = (tags: any, action: string) => {
+  const errors: string[] = []
+
+  if (!isArray(tags)) {
+    errors.push(`fulfillments.tags are missing or empty`)
+    return {
+      isValid: false,
+      errors,
+    }
+  }
+
+  let requiredDescriptors: any = {
+    REQUESTED_CLAIM_AMOUNT: (value: string) => /^[0-9]+(\s?[a-zA-Z]+)?$/.test(value),
+  }
+
+  if (action == FIS13HealthSequence.ON_UPDATE_2 || action.includes('on_status')) {
+    const conditionalDescriptors: any = {
+      APPROVED_CLAIM_AMOUNT: (value: string) => /^[0-9]+(\s?[a-zA-Z]+)?$/.test(value),
+    }
+
+    requiredDescriptors = { ...requiredDescriptors, ...conditionalDescriptors }
+  } else if (action == FIS13HealthSequence.ON_UPDATE_3) {
+    const conditionalDescriptors: any = {
+      APPROVED_CLAIM_AMOUNT: (value: string) => /^[0-9]+(\s?[a-zA-Z]+)?$/.test(value),
+      REF_ID: (value: string) => typeof value === 'string' && value.length > 0,
+    }
+
+    requiredDescriptors = { ...requiredDescriptors, ...conditionalDescriptors }
+  }
+
+  tags.forEach((tag: any, tagIndex: number) => {
+    if (!tag.descriptor || !tag.descriptor.code) {
+      errors.push(`descriptor.code is missing at Tag[${tagIndex}]`)
+    } else if (tag.descriptor.code !== 'INFO') {
+      errors.push(`descriptor.code should be 'INFO' at Tag[${tagIndex}]`)
+    }
+
+    if (!tag.list || !Array.isArray(tag.list)) {
+      errors.push(`Tag[${tagIndex}] has an invalid 'list' field. It should be an array.`)
+    } else {
+      tag.list.forEach((item: any, itemIndex: number) => {
+        const descriptorCode = item.descriptor?.code
+        const value = item.value
+
+        if (!descriptorCode) {
+          errors.push(`Tag[${tagIndex}] -> List[${itemIndex}] is missing descriptor code.`)
+          return
+        }
+
+        if (!(descriptorCode in requiredDescriptors)) {
+          errors.push(`Tag[${tagIndex}] -> List[${itemIndex}] has an unknown descriptor code: '${descriptorCode}'.`)
+        } else {
+          const validateValue = requiredDescriptors[descriptorCode]
+          if (!validateValue(value)) {
+            errors.push(
+              `Tag[${tagIndex}] -> List[${itemIndex}] has an invalid value '${value}' for descriptor code '${descriptorCode}'.`,
+            )
+          }
+
+          delete requiredDescriptors[descriptorCode]
+        }
+      })
+    }
+  })
+
+  if (Object.keys(requiredDescriptors)?.length > 0) {
+    errors.push(`Missing tags ${Object.keys(requiredDescriptors)} at INFO tag-group`)
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors: errors.length > 0 ? errors : [],
   }
 }

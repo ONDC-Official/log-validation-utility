@@ -142,7 +142,7 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
             try {
               logger.info(`Checking add_ons`)
               if (!isEmpty(item?.add_ons)) {
-                setValue('isAddOnPresent', 'Yes')
+                setValue('isAddOnPresent', true)
                 // errorObj[`item[${index}]_add_ons`] = `add_ons array is missing or empty in ${constants.SELECT}`
                 // else {
                 const addOnIdSet: any = getValue(`${constants.ON_SEARCH}_addOnIdSet`)
@@ -165,7 +165,7 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
                     errorObj[`${key}.code`] = 'Invalid quantity.selected count'
                   }
                 })
-              }
+              } else setValue('isAddOnPresent', false)
 
               return errorObj
             } catch (error: any) {

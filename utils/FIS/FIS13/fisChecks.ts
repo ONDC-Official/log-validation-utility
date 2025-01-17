@@ -1,9 +1,9 @@
 import { getValue, setValue } from '../../../shared/dao'
-import { insuranceFormHeadings } from '../../../constants/'
+import constants, { insuranceFormHeadings } from '../../../constants/'
 import { logger } from '../../../shared/logger'
 import { checkIdAndUri, checkFISContext } from '../../'
 import _, { isArray, isEmpty } from 'lodash'
-import { validatePaymentTags } from './tags'
+import { validateClaimTags, validatePaymentTags } from './tags'
 
 export const checkUniqueCategoryIds = (categoryIds: (string | number)[], availableCategoryIds: any): boolean => {
   console.log('categoryIds', categoryIds)
@@ -77,95 +77,100 @@ export const getCodes = (): string[] => {
 }
 
 export const validateXInput = (xinput: any, j: number, action: string, currIndex: number): any | null => {
-  const errors: any = {}
-  console.log('action------', action)
-  if (!xinput || typeof xinput !== 'object') {
-    errors[`item${j}_xinput`] = `xinput is missing or not an object in items[${j}]`
-  } else {
-    const head = xinput.head
-    const form = xinput.form
-
-    if (!head || typeof head !== 'object') {
-      errors[`item${j}_xinput_head`] = `head is missing or not an object in items[${j}].xinput`
+  try {
+    const errors: any = {}
+    console.log('action------', action)
+    if (!xinput || typeof xinput !== 'object') {
+      errors[`item${j}_xinput`] = `xinput is missing or not an object in items[${j}]`
     } else {
-      const descriptor = head.descriptor
-      const index = head.index
-      const headings = head.headings
+      const head = xinput.head
+      const form = xinput.form
 
-      if (!descriptor || typeof descriptor !== 'object' || !descriptor.name || typeof descriptor.name !== 'string') {
-        errors[`item${j}_xinput_head_descriptor`] = `descriptor is missing or invalid in items[${j}].xinput.head`
-      }
-
-      if (currIndex != index?.cur) {
-        errors[`index`] = `index should be ${currIndex} items[${j}].xinput.head`
-      }
-
-      if (
-        !index ||
-        typeof index !== 'object' ||
-        typeof index.min !== 'number' ||
-        typeof index.cur !== 'number' ||
-        typeof index.max !== 'number'
-      ) {
-        errors[`item${j}_xinput_head_index`] = `index is missing or invalid in items[${j}].xinput.head`
-      } else if (index.cur < index.min || index.cur > index.max) {
-        errors[`item${j}_xinput_head_index`] = `cur should be between min and max in items[${j}].xinput.head.index`
-      }
-
-      const insuranceType: any = getValue(`insuranceType`)
-      if (insuranceType && action) {
-        const formHeading: any = getFormHeading(action, insuranceType)
-
-        if (!headings || !Array.isArray(headings) || formHeading.length !== index.max + 1) {
-          errors[`item${j}_xinput_head_index`] = `max value should be ${
-            formHeading?.length - 1
-          } in items[${j}].xinput.head`
-        }
-      }
-    }
-
-    if (!form || typeof form !== 'object') {
-      errors[`item${j}_xinput_form`] = `form is missing or not an object in items[${j}].xinput`
-    } else {
-      const url = form.url
-      const id = form.id
-
-      if (!url || typeof url !== 'string' || !isValidUrl(url)) {
-        errors[`item${j}_xinput_form_url`] =
-          `url is missing, not a string, or not a valid URL in items[${j}].xinput.form`
-      }
-
-      if (!id || typeof id !== 'string') {
-        errors[`item${j}_xinput_form_id`] = `id is missing or not a string in items[${j}].xinput.form`
+      if (!head || typeof head !== 'object') {
+        errors[`item${j}_xinput_head`] = `head is missing or not an object in items[${j}].xinput`
       } else {
-        const formId: string[] | any = getValue('formId')
-        console.log('formId-------==============', formId, action)
-        if (Array.isArray(formId)) {
-          formId.push(id)
-          setValue('formId', formId)
-        } else if (typeof formId === 'string') {
-          const newArray: string[] = [formId, id]
-          setValue('formId', newArray)
-        } else if (formId === undefined) {
-          setValue('formId', [id])
+        const descriptor = head.descriptor
+        const index = head.index
+        const headings = head.headings
+
+        if (!descriptor || typeof descriptor !== 'object' || !descriptor.name || typeof descriptor.name !== 'string') {
+          errors[`item${j}_xinput_head_descriptor`] = `descriptor is missing or invalid in items[${j}].xinput.head`
+        }
+
+        if (currIndex != index?.cur) {
+          errors[`index`] = `index should be ${currIndex} items[${j}].xinput.head`
+        }
+
+        if (
+          !index ||
+          typeof index !== 'object' ||
+          typeof index.min !== 'number' ||
+          typeof index.cur !== 'number' ||
+          typeof index.max !== 'number'
+        ) {
+          errors[`item${j}_xinput_head_index`] = `index is missing or invalid in items[${j}].xinput.head`
+        } else if (index.cur < index.min || index.cur > index.max) {
+          errors[`item${j}_xinput_head_index`] = `cur should be between min and max in items[${j}].xinput.head.index`
+        }
+
+        const insuranceType: any = getValue(`insuranceType`)
+        if (insuranceType && action) {
+          const formHeading: any = getFormHeading(action, insuranceType)
+
+          if (!headings || !Array.isArray(headings) || formHeading.length !== index.max + 1) {
+            errors[`item${j}_xinput_head_index`] = `max value should be ${
+              formHeading?.length - 1
+            } in items[${j}].xinput.head`
+          }
         }
       }
 
-      if (!isEmpty(form?.resubmit) || typeof form?.resubmit !== 'boolean') {
-        errors.resubmit = `resubmit is missing or type is incorrect in items[${j}].xinput.form`
-      }
+      if (!form || typeof form !== 'object') {
+        errors[`item${j}_xinput_form`] = `form is missing or not an object in items[${j}].xinput`
+      } else {
+        const url = form.url
+        const id = form.id
 
-      if (typeof form?.multiple_sumbissions !== 'boolean') {
-        errors.multiple_sumbissions = `multiple_sumbissions is missing or type is incorrect in items[${j}].xinput.form`
-      }
+        if (!url || typeof url !== 'string' || !isValidUrl(url)) {
+          errors[`item${j}_xinput_form_url`] =
+            `url is missing, not a string, or not a valid URL in items[${j}].xinput.form`
+        }
 
-      if (!form?.mime_type) {
-        errors.mime_type = `mime_type is missing in items[${j}].xinput.form`
+        if (!id || typeof id !== 'string') {
+          errors[`item${j}_xinput_form_id`] = `id is missing or not a string in items[${j}].xinput.form`
+        } else {
+          const formId: string[] | any = getValue('formId')
+          console.log('formId-------==============', formId, action, id)
+          if (Array.isArray(formId)) {
+            formId.push(id)
+            setValue('formId', formId)
+          } else if (typeof formId === 'string') {
+            const newArray: string[] = [formId, id]
+            setValue('formId', newArray)
+          } else if (formId === undefined) {
+            setValue('formId', [id])
+          }
+        }
+
+        if (!isEmpty(form?.resubmit) || typeof form?.resubmit !== 'boolean') {
+          errors.resubmit = `resubmit is missing or type is incorrect in items[${j}].xinput.form`
+        }
+
+        if (typeof form?.multiple_sumbissions !== 'boolean') {
+          errors.multiple_sumbissions = `multiple_sumbissions is missing or type is incorrect in items[${j}].xinput.form`
+        }
+
+        if (!form?.mime_type) {
+          errors.mime_type = `mime_type is missing in items[${j}].xinput.form`
+        }
       }
     }
-  }
 
-  return Object.keys(errors).length > 0 ? errors : null
+    return Object.keys(errors).length > 0 ? errors : null
+  } catch (error: any) {
+    console.log(error)
+    logger.error(`!!Error while checking xinput at items/${currIndex}, ${error.stack}`)
+  }
 }
 
 const isValidUrl = (url: string): boolean => {
@@ -468,6 +473,8 @@ export const validateQuote = (quote: any) => {
       const quoteBreakup = quote?.breakup
       const insurance: any = getValue('insurance')
       const validBreakupItems = getQuoteCodes(insurance)
+      const isAddOnPresent: any = getValue('isAddOnPresent')
+      if (isAddOnPresent) validBreakupItems.push('ADD_ONS')
 
       const requiredBreakupItems = validBreakupItems.filter((item) =>
         quoteBreakup.some((breakupItem: any) => breakupItem.title.toUpperCase() === item),
@@ -483,7 +490,7 @@ export const validateQuote = (quote: any) => {
       }
 
       if (additionalBreakupItems.length > 0) {
-        errorObj.additionalBreakupItems = `Quote breakup is missing the following items: ${additionalBreakupItems.join(', ')}`
+        errorObj.additionalBreakupItems = `Quote breakup is having additional items: ${additionalBreakupItems.join(', ')}`
       }
 
       const totalBreakupValue = quoteBreakup.reduce((total: any, item: any) => {
@@ -675,156 +682,226 @@ export const validateAddOns = (addOns: any, action: string) => {
 
 export const validateFulfillmentsArray = (fulfillments: any, action: string) => {
   const errors: string[] = []
-  const fullIds: string[] = []
-  const insurance: any = getValue('insurance')
+  try {
+    const fullIds: string[] = []
+    const insurance: any = getValue('insurance')
+    const fulfillmentIds: any = getValue('fulfillmentIds')
+    const flow: any = getValue('flow')
+    let validStates = ['POLICY'] //need to clsoe at last
+    if (action == constants.ON_UPDATE || action == constants.ON_STATUS) {
+      if (flow.includes('CLAIM')) validStates.push('CLAIM')
+      else if (flow.includes('RENEW')) validStates.push('RENEWAL')
+    }
+    if (!isArray(fulfillments)) {
+      errors.push(`Fulfillments are missing or empty`)
+      return errors
+    }
+    const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    const isValidPhone = (phone: string) => /^(\+?\d{1,3}[- ]?)?\d{10}$  /.test(phone) // E.g. +91-9999999999
+    const isValidDate = (date: string) => /^\d{4}-\d{2}-\d{2}$/.test(date) && !isNaN(new Date(date).getTime())
+    const isValidGender = (gender: string) => ['male', 'female', 'other'].includes(gender)
+    const isValidGSTIN = (gstin: string) => /^[0-9A-Z]{15}$/.test(gstin) // GSTIN: 15 alphanumeric characters
+    const isBooleanString = (value: string) => value === 'true' || value === 'false'
 
-  if (!isArray(fulfillments)) {
-    errors.push(`Fulfillments are missing or empty`)
-    return errors
-  }
-  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-  const isValidPhone = (phone: string) => /^\+?\d{1,3}?[- ]?\d{10}$/.test(phone) // E.g. +91-9999999999
-  const isValidDate = (date: string) => /^\d{4}-\d{2}-\d{2}$/.test(date) && !isNaN(new Date(date).getTime())
-  const isValidGender = (gender: string) => ['male', 'female', 'other'].includes(gender)
-  const isValidGSTIN = (gstin: string) => /^[0-9A-Z]{15}$/.test(gstin) // GSTIN: 15 alphanumeric characters
-  const isBooleanString = (value: string) => value === 'true' || value === 'false'
+    fulfillments.forEach((fulfillment: any, index: number) => {
+      // Validate the customer object
+      let fulfillmentType = ''
 
-  fulfillments.forEach((fulfillment: any, index: number) => {
-    // Validate the customer object
-    if (!fulfillment.customer) {
-      errors.push(`Fulfillment[${index}] is missing the customer object.`)
-    } else {
-      const customer = fulfillment?.customer
-
-      // Validate the contact details
-      if (customer?.contact) {
-        const { email, phone } = customer.contact
-        if (!isValidEmail(email)) {
-          errors.push(`Fulfillment[${index}] has an invalid email '${email}'.`)
-        }
-        if (!isValidPhone(phone)) {
-          errors.push(`Fulfillment[${index}] has an invalid phone number '${phone}'.`)
-        }
+      if (!fulfillment?.id) {
+        errors.push(`id is missing at Fulfillment[${index}]`)
+      } else if (fulfillmentIds && !fulfillmentIds.includes(fulfillment.id)) {
+        fullIds?.push(fulfillment.id)
+        if (action == constants.ON_UPDATE && fulfillment?.type != 'POLICY') ''
+        else errors.push(`fulfillment[${index}].id mismatches with id's provided in past calls`)
       } else {
-        errors.push(`Fulfillment[${index}] is missing contact details.`)
+        fullIds?.push(fulfillment.id)
       }
 
-      if (insurance != 'HEALTH_INSURANCE') {
-        // Validate the organization address
-        if (insurance == 'MARINE_INSURANCE' && action.includes('on_')) {
-          if (
-            !customer?.organization ||
-            (typeof customer?.organization?.address === 'string' && customer?.organization?.address?.length === 0)
-          ) {
-            errors.push(`Fulfillment[${index}] has an invalid or missing organization address.`)
-          }
+      // Validate claim tags
+      const tagsValidation = validateClaimTags(fulfillment?.tags, action)
+      if (!tagsValidation.isValid) {
+        errors.push(...tagsValidation.errors)
+      }
+
+      if (!fulfillment.type) {
+        errors.push(`type is missing at Fulfillment[${index}]`)
+        // } else if (fulfillment.type !== 'POLICY') {
+        //   //CLAIM -> CLAIM
+        //   errors.push(`Fulfillment[${index}].type has an unsupported value '${fulfillment.type}'. Expected 'POLICY'.`)
+        // }
+      } else {
+        fulfillmentType = fulfillment?.type
+        if (validStates.includes(fulfillment.type)) {
+          validStates = validStates.filter((type) => type != fulfillment.type)
+        } else {
+          //CLAIM -> CLAIM
+          errors.push(
+            `Fulfillment[${index}].type has an unsupported value '${fulfillment.type}'. Expected one of ${validStates}.`,
+          )
         }
+      }
 
-        // Validate the person details
-        if (customer.person) {
-          const { dob, gender, name, tags } = customer.person
+      console.log('fulfillmentType', fulfillmentType)
 
-          if (insurance != 'MOTOR_INSURANCE') {
-            if (!isValidDate(dob)) {
-              errors.push(`Fulfillment[${index}] has an invalid or missing date of birth '${dob}'.`)
-            }
-            if (!isValidGender(gender)) {
-              errors.push(`Fulfillment[${index}] has an invalid or missing gender '${gender}'.`)
-            }
+      if (!fulfillment.customer) {
+        errors.push(`Fulfillment[${index}] is missing the customer object.`)
+      } else {
+        const customer = fulfillment?.customer
+
+        // Validate the contact details
+        if (customer?.contact) {
+          const { email, phone } = customer.contact
+          if (!isValidEmail(email)) {
+            errors.push(`Fulfillment[${index}] has an invalid email '${email}'.`)
           }
-          if (!name || typeof name !== 'string' || name.length === 0) {
-            errors.push(`Fulfillment[${index}] has an invalid or missing name '${name}'.`)
-          }
-
-          if (action.includes('confirm') && insurance == 'MARINE_INSURANCE') {
-            if (tags && Array.isArray(tags)) {
-              fulfillment.tags.forEach((tag: any, tagIndex: number) => {
-                if (!tag.descriptor || !tag.descriptor.code || !tag.descriptor.name) {
-                  errors.push(`Fulfillment[${index}] -> Tag[${tagIndex}] is missing descriptor fields.`)
-                }
-
-                // Only validate PERSON_ADDITIONAL_DETAILS
-                if (tag.descriptor.code === 'PERSON_ADDITIONAL_DETAILS') {
-                  tag.list.forEach((item: any, itemIndex: number) => {
-                    const descriptorCode = item.descriptor?.code
-                    const value = item.value
-
-                    // Validate POLITICALLY_EXPOSED_PERSON
-                    if (descriptorCode === 'POLITICALLY_EXPOSED_PERSON') {
-                      if (!isBooleanString(value)) {
-                        errors.push(
-                          `Fulfillment[${index}] -> Tag[${tagIndex}] -> List[${itemIndex}] has an invalid value for 'POLITICALLY_EXPOSED_PERSON'. Expected 'true' or 'false'.`,
-                        )
-                      }
-                    }
-
-                    // Validate GSTIN
-                    if (descriptorCode === 'GSTIN') {
-                      if (!isValidGSTIN(value)) {
-                        errors.push(
-                          `Fulfillment[${index}] -> Tag[${tagIndex}] -> List[${itemIndex}] has an invalid GSTIN '${value}'. Expected a valid 15-character alphanumeric GSTIN.`,
-                        )
-                      }
-                    }
-                  })
-                }
-              })
-            } else if (tags) {
-              errors.push(`Fulfillment[${index}] has an invalid 'tags' field. It should be an array.`)
-            } else {
-              errors.push(`tags not present at Fulfillments[${index}]`)
-            }
-
-            if (action == 'on_confirm') {
-              if (!customer?.state || !customer?.state?.descriptor || !customer?.state?.descriptor?.code) {
-                errors.push(`state.descriptor.code is missing at Fulfillment[${index}]`)
-              }
-            }
+          if (!isValidPhone(phone)) {
+            errors.push(`Fulfillment[${index}] has an invalid phone number '${phone}'.`)
           }
         } else {
-          errors.push(`Fulfillment[${index}] is missing person details.`)
+          errors.push(`Fulfillment[${index}] is missing contact details.`)
+        }
+
+        if (insurance != 'HEALTH_INSURANCE') {
+          // Validate the organization address
+          if (insurance == 'MARINE_INSURANCE' && action.includes('on_')) {
+            if (
+              !customer?.organization ||
+              (typeof customer?.organization?.address === 'string' && customer?.organization?.address?.length === 0)
+            ) {
+              errors.push(`Fulfillment[${index}] has an invalid or missing organization address.`)
+            }
+          }
+
+          // Validate the person details
+          if (customer.person) {
+            const { dob, gender, name, tags } = customer.person
+
+            if (insurance != 'MOTOR_INSURANCE') {
+              if (!isValidDate(dob)) {
+                errors.push(`Fulfillment[${index}] has an invalid or missing date of birth '${dob}'.`)
+              }
+              if (!isValidGender(gender)) {
+                errors.push(`Fulfillment[${index}] has an invalid or missing gender '${gender}'.`)
+              }
+            }
+            if (!name || typeof name !== 'string' || name.length === 0) {
+              errors.push(`Fulfillment[${index}] has an invalid or missing name '${name}'.`)
+            }
+
+            if (action.includes('confirm') && insurance == 'MARINE_INSURANCE') {
+              if (tags && Array.isArray(tags)) {
+                fulfillment.tags.forEach((tag: any, tagIndex: number) => {
+                  if (!tag.descriptor || !tag.descriptor.code || !tag.descriptor.name) {
+                    errors.push(`Fulfillment[${index}] -> Tag[${tagIndex}] is missing descriptor fields.`)
+                  }
+
+                  // Only validate PERSON_ADDITIONAL_DETAILS
+                  if (tag.descriptor.code === 'PERSON_ADDITIONAL_DETAILS') {
+                    tag.list.forEach((item: any, itemIndex: number) => {
+                      const descriptorCode = item.descriptor?.code
+                      const value = item.value
+
+                      // Validate POLITICALLY_EXPOSED_PERSON
+                      if (descriptorCode === 'POLITICALLY_EXPOSED_PERSON') {
+                        if (!isBooleanString(value)) {
+                          errors.push(
+                            `Fulfillment[${index}] -> Tag[${tagIndex}] -> List[${itemIndex}] has an invalid value for 'POLITICALLY_EXPOSED_PERSON'. Expected 'true' or 'false'.`,
+                          )
+                        }
+                      }
+
+                      // Validate GSTIN
+                      if (descriptorCode === 'GSTIN') {
+                        if (!isValidGSTIN(value)) {
+                          errors.push(
+                            `Fulfillment[${index}] -> Tag[${tagIndex}] -> List[${itemIndex}] has an invalid GSTIN '${value}'. Expected a valid 15-character alphanumeric GSTIN.`,
+                          )
+                        }
+                      }
+                    })
+                  }
+                })
+              } else if (tags) {
+                errors.push(`Fulfillment[${index}] has an invalid 'tags' field. It should be an array.`)
+              } else {
+                errors.push(`tags not present at Fulfillments[${index}]`)
+              }
+
+              if (action == 'on_confirm') {
+                if (!customer?.state || !customer?.state?.descriptor || !customer?.state?.descriptor?.code) {
+                  errors.push(`state.descriptor.code is missing at Fulfillment[${index}]`)
+                }
+              }
+            }
+          } else {
+            errors.push(`Fulfillment[${index}] is missing person details.`)
+          }
         }
       }
-    }
 
-    if (!fulfillment.id) {
-      errors.push(`id is missing at Fulfillment[${index}]`)
-    } else {
-      fullIds?.push(fulfillment.id)
-    }
+      if (!action.includes('on_init')) {
+        //CLAIM
+        //on_update_1 -> INITIATED
+        //on_update_2 -> PROCESSING
+        //on_status_1 -> PROCESSED
+        //on_update_3 -> PROCESSED
 
-    if (!fulfillment.type) {
-      errors.push(`type is missing at Fulfillment[${index}]`)
-    } else if (fulfillment.type !== 'POLICY') {
-      //CLAIM -> CLAIM
-      errors.push(`Fulfillment[${index}].type has an unsupported value '${fulfillment.type}'. Expected 'POLICY'.`)
-    }
+        //RENEW
+        //on_update_1 -> INITIATED
+        //on_status_1 -> PROCESSING
+        //on_update_2 -> GRANTED
 
-    if (!action.includes('on_init')) {
-      //CLAIM
-      //on_update_1 -> INITIATED
-      //on_update_2 -> PROCESSING
-      //on_status_1 -> PROCESSED
+        //MOTOR
+        //on_init -> INITIATED
+        //on_confirm -> GRANTED
 
-      //RENEW
-      //on_update_1 -> INITIATED
-      //on_update_2 -> PROCESSING
-
-      //MOTOR
-      //on_init -> INITIATED
-      //on_confirm -> GRANTED
-
-      if (!fulfillment?.state?.descriptor?.code) {
-        errors.push(`descriptor.code is missing at Fulfillment[${index}].state`)
-      } else if (fulfillment?.state?.descriptor?.code !== 'GRANTED') {
-        errors.push(
-          `descriptor.code at Fulfillment[${index}] has an unsupported value '${fulfillment.type}'. Expected 'GRANTED'.`,
-        )
+        if (!fulfillment?.state?.descriptor?.code) {
+          errors.push(`descriptor.code is missing at Fulfillment[${index}].state`)
+        } else {
+          const validState = getFulfillmentCodes(fulfillmentType, action)
+          if (fulfillment?.state?.descriptor?.code !== validState) {
+            errors.push(
+              `descriptor.code at Fulfillment[${index}] has an unsupported value '${fulfillment.type}'. Expected ${validState}.`,
+            )
+          }
+        }
       }
+    })
+    if (action.includes('on_init')) setValue(`fulfillmentIds`, fullIds)
+    if (!isEmpty(validStates)) errors.push(`missing fulfillment states: ${validStates}`)
+    return errors
+  } catch (error: any) {
+    logger.error(`!!Error while checking fulfillments in /${action}, ${error.stack}`)
+    return errors
+  }
+}
+
+const getFulfillmentCodes = (flow: string, action: string) => {
+  console.log('flow', flow)
+  if (flow == 'POLICY') return 'GRANTED'
+  switch (action) {
+    case 'on_update_1':
+      return 'INITIATED'
+      break
+
+    case 'on_update_2': {
+      return flow == 'CLAIM' ? 'PROCESSING' : 'GRANTED'
+      break
     }
-  })
-  if (action.includes('on_init')) setValue(`fulfillmentIds`, fullIds)
-  return errors
+
+    case 'on_update_3':
+      return 'PROCESSED'
+      break
+
+    case 'on_status': {
+      return flow == 'CLAIM' ? 'PROCESSED' : 'PROCESSING'
+      break
+    }
+
+    default:
+      return 'GRANTED'
+      break
+  }
 }
 
 export const validatePaymentObject = (payments: any, action: string): any => {
@@ -846,6 +923,7 @@ export const validatePaymentObject = (payments: any, action: string): any => {
           { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
           { code: 'STATIC_TERMS', type: 'url' },
           { code: 'COURT_JURISDICTION', type: 'string' },
+          { code: 'OFFLINE_CONTRACT', type: 'string' },
           { code: 'DELAY_INTEREST', type: 'amount' },
           {
             code: 'SETTLEMENT_TYPE',

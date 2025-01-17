@@ -115,7 +115,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
 
               if (!time?.duration) {
                 errorObj['time.duration'] = `duration is missing at items[${index}]`
-              } else if (!/^PT\d+[MH]$/.test(time?.duration)) {
+              } else if (!/^P(?:(\d+Y)?(\d+M)?(\d+W)?(\d+D)?)?(T(?:(\d+H)?(\d+M)?(\d+S)?))?$/.test(time?.duration)) {
                 errorObj['time.duration'] = `incorrect format or type for duration at items[${index}]`
               }
             }
@@ -211,6 +211,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
     try {
       logger.info(`Checking quote details in /${constants.ON_SELECT}`)
       const quoteErrors = validateQuote(onSelect?.quote)
+      console.log('quoteErrors', quoteErrors)
       Object.assign(errorObj, quoteErrors)
     } catch (error: any) {
       logger.error(`!!Error while checking quote details in /${constants.ON_SELECT}`, error.stack)

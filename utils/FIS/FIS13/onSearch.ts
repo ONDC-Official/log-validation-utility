@@ -29,7 +29,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
   }
 
   const schemaValidation = validateSchema('FIS', constants.ON_SEARCH, data)
-  const contextRes: any = validateContext(context, msgIdSet, constants.SEARCH, action)
+  const contextRes: any = validateContext(context, msgIdSet, action.replace('on_', ''), action)
 
   setValue(`${constants.ON_SEARCH}_message`, message)
   setValue(`${constants.ON_SEARCH}`, data)
@@ -243,7 +243,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
 
                 if (!time?.duration) {
                   errorObj['time.duration'] = `duration is missing at providers[${i}].items[${j}]`
-                } else if (!/^PT\d+[MH]$/.test(time?.duration)) {
+                } else if (!/^P(?:(\d+Y)?(\d+M)?(\d+W)?(\d+D)?)?(T(?:(\d+H)?(\d+M)?(\d+S)?))?$/.test(time?.duration)) {
                   errorObj['time.duration'] = `incorrect format or type for duration at providers[${i}].items[${j}]`
                 }
               }
@@ -252,9 +252,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
               try {
                 console.log('``item?.add_ons-----------``', item?.add_ons)
                 logger.info(`Checking add_ons`)
-                if (isEmpty(item?.add_ons))
-                  errorObj[`item[${j}]_add_ons`] = `add_ons array is missing or empty in ${action}`
-                else {
+                if (!isEmpty(item?.add_ons)) {
                   item?.add_ons?.forEach((addOn: any, index: number) => {
                     const key = `item[${j}]_add_ons[${index}]`
 
@@ -307,12 +305,13 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
 
                 return errorObj
               } catch (error: any) {
+                logger.info(`checked add_ons`, error)
                 logger.error(`!!Error while checking add_ons in /${action}, ${error.stack}`)
               }
             }
 
             // Validate parent_item_id & price for multi-offer calls
-            if (action?.includes('_offer')) {
+            if (action?.includes('_2')) {
               // parent_item_id check
               console.log('itemsId---------------11', item)
               if (!item?.parent_item_id)
@@ -336,7 +335,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
 
             // Validate xinput
             // either call shouldn't be of multi-offer, or parent_item_id should be present to validate xinput
-            if (!action?.includes('_offer') || insurance == 'MOTOR_INSURANCE' || item?.parent_item_id) {
+            if (!action?.includes('_2') || insurance == 'MOTOR_INSURANCE' || item?.parent_item_id) {
               const xinput = item?.xinput
               if (!xinput) errorObj['xinput'] = `xinput is missing or empty at providers[${i}].items[${j}]`
               else {
@@ -345,6 +344,9 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
                   Object.assign(errorObj, xinputValidationErrors)
                 }
               }
+
+              const formId: string[] | any = getValue('formId')
+              console.log('formId-------==============22222', formId, action)
             }
 
             // Validate Item tags
@@ -375,7 +377,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
             // }
           })
 
-          if (action?.includes('_offer') && parentItems == 0)
+          if (action?.includes('_2') && parentItems == 0)
             errorObj.parent_item_id = `child-items not found in providers[${i}]`
         }
       } catch (error: any) {

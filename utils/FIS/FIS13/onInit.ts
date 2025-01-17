@@ -116,9 +116,9 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
               errorObj['time.label'] = `label is missing or should be equal to ${label} at items[${index}]`
 
             if (insurance != 'MARINE_INSURANCE') {
-              if (time?.duration) {
+              if (!time?.duration) {
                 errorObj['time.duration'] = `duration is missing at items[${index}]`
-              } else if (!/^PT\d+([YMH])$/.test(time?.duration)) {
+              } else if (!/^P(?:(\d+Y)?(\d+M)?(\d+W)?(\d+D)?)?(T(?:(\d+H)?(\d+M)?(\d+S)?))?$/.test(time?.duration)) {
                 errorObj['time.duration'] = `incorrect format or type for duration at items[${index}]`
               }
             } else {

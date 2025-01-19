@@ -91,7 +91,7 @@ const onReportSchema = {
                             value: { type: 'string' },
                           },
                         },
-                        status: { type: 'string', enum: ['SETTLED'] },
+                        status: { type: 'string', enum: ['SETTLED', 'NOT_SETTLED'] },
                         reference_no: { type: 'string' },
                       },
                     },
@@ -111,7 +111,7 @@ const onReportSchema = {
                     },
                     provider: {
                       type: 'object',
-                      required: ['id', 'amount', 'status', 'error'],
+                      required: ['id', 'amount', 'status'],
                       properties: {
                         id: { type: 'string' },
                         amount: {
@@ -122,7 +122,7 @@ const onReportSchema = {
                             value: { type: 'string' },
                           },
                         },
-                        status: { type: 'string', enum: ['NOT-SETTLED'] },
+                        status: { type: 'string', enum: ['SETTLED', 'NOT_SETTLED'] },
                         error: {
                           type: 'object',
                           required: ['code', 'message'],
@@ -135,7 +135,7 @@ const onReportSchema = {
                     },
                     self: {
                       type: 'object',
-                      required: ['amount', 'status', 'error'],
+                      required: ['amount', 'status'],
                       properties: {
                         amount: {
                           type: 'object',
@@ -145,7 +145,7 @@ const onReportSchema = {
                             value: { type: 'string' },
                           },
                         },
-                        status: { type: 'string', enum: ['NOT-SETTLED'] },
+                        status: { type: 'string', enum: ['NOT_SETTLED', 'SETTLED'] },
                         error: {
                           type: 'object',
                           required: ['code', 'message'],

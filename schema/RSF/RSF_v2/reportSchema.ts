@@ -48,7 +48,7 @@ const reportSchema = {
           bpp_uri: { type: 'string', format: 'uri' },
           transaction_id: { type: 'string' },
           message_id: { type: 'string' },
-          timestamp: { type: 'string', format: 'date-time' },
+          timestamp: { type: 'string', format: 'rfc3339-date-time' },
           ttl: { type: 'string' },
         },
       },

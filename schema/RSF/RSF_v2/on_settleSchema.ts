@@ -1,180 +1,191 @@
 const onSettleSchema = {
-    type: 'object',
-    required: ['context', 'message'],
-    properties: {
-      context: {
-        type: 'object',
-        required: [
-          'action',
-          'bap_id',
-          'bap_uri',
-          'bpp_id',
-          'bpp_uri',
-          'domain',
-          'location',
-          'message_id',
-          'timestamp',
-          'transaction_id',
-          'ttl',
-          'version'
-        ],
-        properties: {
-          action: { type: 'string', enum: ['on_settle'] },
-          bap_id: { type: 'string' },
-          bap_uri: { type: 'string', format: 'uri' },
-          bpp_id: { type: 'string' },
-          bpp_uri: { type: 'string', format: 'uri' },
-          domain: { type: 'string', enum: ['ONDC:NTS10'] },
-          location: {
-            type: 'object',
-            required: ['city', 'country'],
-            properties: {
-              city: {
-                type: 'object',
-                required: ['code'],
-                properties: {
-                  code: { type: 'string' },
-                },
+  type: 'object',
+  required: ['context', 'message'],
+  properties: {
+    context: {
+      type: 'object',
+      required: [
+        'domain',
+        'location',
+        'version',
+        'action',
+        'bap_id',
+        'bap_uri',
+        'bpp_id',
+        'bpp_uri',
+        'transaction_id',
+        'message_id',
+        'timestamp',
+        'ttl'
+      ],
+      properties: {
+        domain: { type: 'string' },
+        location: {
+          type: 'object',
+          required: ['country', 'city'],
+          properties: {
+            country: {
+              type: 'object',
+              required: ['code'],
+              properties: {
+                code: { type: 'string' }
               },
-              country: {
-                type: 'object',
-                required: ['code'],
-                properties: {
-                  code: { type: 'string' },
-                },
-              },
+              additionalProperties: false
             },
-          },
-          message_id: { type: 'string' },
-          timestamp: { type: 'string', format: 'date-time' },
-          transaction_id: { type: 'string' },
-          ttl: { type: 'string' },
-          version: { type: 'string', enum: ['2.0.0'] },
-        },
-      },
-      message: {
-        type: 'object',
-        required: ['collector_app_id', 'receiver_app_id', 'settlement'],
-        properties: {
-          collector_app_id: { type: 'string' },
-          receiver_app_id: { type: 'string' },
-          settlement: {
-            type: 'object',
-            required: ['id', 'orders', 'type'],
-            properties: {
-              id: { type: 'string' },
-              orders: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  required: [
-                    'collector',
-                    'id',
-                    'inter_participant',
-                    'provider',
-                    'self'
-                  ],
-                  properties: {
-                    collector: {
-                      type: 'object',
-                      required: ['amount'],
-                      properties: {
-                        amount: {
-                          type: 'object',
-                          required: ['currency', 'value'],
-                          properties: {
-                            currency: { type: 'string', enum: ['INR'] },
-                            value: { type: 'string' },
-                          },
-                        },
-                      },
-                    },
-                    id: { type: 'string' },
-                    inter_participant: {
-                      type: 'object',
-                      required: ['amount', 'reference_no', 'settled_amount', 'status'],
-                      properties: {
-                        amount: {
-                          type: 'object',
-                          required: ['currency', 'value'],
-                          properties: {
-                            currency: { type: 'string', enum: ['INR'] },
-                            value: { type: 'string' },
-                          },
-                        },
-                        reference_no: { type: 'string' },
-                        settled_amount: {
-                          type: 'object',
-                          required: ['currency', 'value'],
-                          properties: {
-                            currency: { type: 'string', enum: ['INR'] },
-                            value: { type: 'string' },
-                          },
-                        },
-                        status: { type: 'string', enum: ['SETTLED', 'NOT-SETTLED'] },
-                      },
-                    },
-                    provider: {
-                      type: 'object',
-                      required: ['amount', 'id', 'reference_no', 'status'],
-                      properties: {
-                        amount: {
-                          type: 'object',
-                          required: ['currency', 'value'],
-                          properties: {
-                            currency: { type: 'string', enum: ['INR'] },
-                            value: { type: 'string' },
-                          },
-                        },
-                        error: {
-                          type: 'object',
-                          required: ['code', 'message'],
-                          properties: {
-                            code: { type: 'string' },
-                            message: { type: 'string' },
-                          },
-                        },
-                        id: { type: 'string' },
-                        reference_no: { type: 'string' },
-                        status: { type: 'string', enum: ['SETTLED', 'NOT-SETTLED'] },
-                      },
-                    },
-                    self: {
-                      type: 'object',
-                      required: ['amount', 'reference_no', 'status'],
-                      properties: {
-                        amount: {
-                          type: 'object',
-                          required: ['currency', 'value'],
-                          properties: {
-                            currency: { type: 'string', enum: ['INR'] },
-                            value: { type: 'string' },
-                          },
-                        },
-                        error: {
-                          type: 'object',
-                          required: ['code', 'message'],
-                          properties: {
-                            code: { type: 'string' },
-                            message: { type: 'string' },
-                          },
-                        },
-                        reference_no: { type: 'string' },
-                        status: { type: 'string', enum: ['SETTLED', 'NOT-SETTLED'] },
-                      },
-                    },
-                  },
-                  additionalProperties: false,
-                },
+            city: {
+              type: 'object',
+              required: ['code'],
+              properties: {
+                code: { type: 'string' }
               },
-              type: { type: 'string', enum: ['NP-NP'] },
-            },
+              additionalProperties: false
+            }
           },
+          additionalProperties: false
         },
+        version: { type: 'string' },
+        action: { type: 'string', enum: ['on_settle'] },
+        bap_id: { type: 'string' },
+        bap_uri: { type: 'string', format: 'uri' },
+        bpp_id: { type: 'string' },
+        bpp_uri: { type: 'string', format: 'uri' },
+        transaction_id: { type: 'string' },
+        message_id: { type: 'string' },
+        timestamp: { type: 'string', format: 'date-time' },
+        ttl: { type: 'string' }
       },
+      additionalProperties: false
     },
-    additionalProperties: false,
-  };
-  
-  export default onSettleSchema;
-  
+    message: {
+      type: 'object',
+      required: ['collector_app_id', 'receiver_app_id', 'settlement'],
+      properties: {
+        collector_app_id: { type: 'string' },
+        receiver_app_id: { type: 'string' },
+        settlement: {
+          type: 'object',
+          required: ['type', 'id', 'orders'],
+          properties: {
+            type: { type: 'string', enum: ['NP-NP','MISC', 'NIL'] },
+            id: { type: 'string' },
+            orders: {
+              type: 'array',
+              items: {
+                type: 'object',
+                required: ['id', 'inter_participant', 'collector', 'self'],
+                properties: {
+                  id: { type: 'string' },
+                  inter_participant: {
+                    type: 'object',
+                    required: ['settled_amount', 'amount', 'status', 'reference_no'],
+                    properties: {
+                      settled_amount: {
+                        type: 'object',
+                        required: ['currency', 'value'],
+                        properties: {
+                          currency: { type: 'string' },
+                          value: { type: 'string' , pattern: '^(0|[1-9]\\d*)(\\.\\d{1,2})?$' }
+                        },
+                        additionalProperties: false
+                      },
+                      amount: {
+                        type: 'object',
+                        required: ['currency', 'value'],
+                        properties: {
+                          currency: { type: 'string' },
+                          value: { type: 'string', pattern: '^(0|[1-9]\\d*)(\\.\\d{1,2})?$'
+ }
+                        },
+                        additionalProperties: false
+                      },
+                      status: { type: 'string', enum: ['SETTLED', 'NOT-SETTLED'] },
+                      reference_no: { type: 'string' }
+                    },
+                    additionalProperties: false
+                  },
+                  collector: {
+                    type: 'object',
+                    required: ['amount'],
+                    properties: {
+                      amount: {
+                        type: 'object',
+                        required: ['currency', 'value'],
+                        properties: {
+                          currency: { type: 'string' },
+                          value: { type: 'string', pattern: '^(0|[1-9]\\d*)(\\.\\d{1,2})?$' }
+                        },
+                        additionalProperties: false
+                      }
+                    },
+                    additionalProperties: false
+                  },
+                  provider: {
+                    type: 'object',
+                    required: ['id', 'amount', 'status', 'reference_no'],
+                    properties: {
+                      id: { type: 'string' },
+                      amount: {
+                        type: 'object',
+                        required: ['currency', 'value'],
+                        properties: {
+                          currency: { type: 'string' },
+                          value: { type: 'string' }
+                        },
+                        additionalProperties: false
+                      },
+                      status: { type: 'string', enum: ['SETTLED', 'NOT-SETTLED'] },
+                      error: {
+                        type: 'object',
+                        required: ['code', 'message'],
+                        properties: {
+                          code: { type: 'string' },
+                          message: { type: 'string' }
+                        },
+                        additionalProperties: false
+                      },
+                      reference_no: { type: 'string' }
+                    },
+                    additionalProperties: false
+                  },
+                  self: {
+                    type: 'object',
+                    required: ['amount', 'status', 'reference_no'],
+                    properties: {
+                      amount: {
+                        type: 'object',
+                        required: ['currency', 'value'],
+                        properties: {
+                          currency: { type: 'string' },
+                          value: { type: 'string', pattern: '^(0|[1-9]\\d*)(\\.\\d{1,2})?$' }
+                        },
+                        additionalProperties: false
+                      },
+                      status: { type: 'string', enum: ['SETTLED', 'NOT-SETTLED'] },
+                      reference_no: { type: 'string' },
+                      error: {
+                        type: 'object',
+                        required: ['code', 'message'],
+                        properties: {
+                          code: { type: 'string' },
+                          message: { type: 'string' }
+                        },
+                        additionalProperties: false
+                      }
+                    },
+                    additionalProperties: false
+                  }
+                },
+                additionalProperties: false
+              }
+            }
+          },
+          additionalProperties: false
+        }
+      },
+      additionalProperties: false
+    }
+  },
+  additionalProperties: false
+};
+
+export default onSettleSchema;

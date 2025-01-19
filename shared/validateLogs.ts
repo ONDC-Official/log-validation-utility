@@ -45,6 +45,10 @@ import checkRsfReceiverRecon from '../utils/RSF/RSF_v1/rsfReceiverRecon'
 import checkRsfOnReceiverRecon from '../utils/RSF/RSF_v1/rsfOnReciverRecon'
 import checkRsfSettle from '../utils/RSF/RSF_v2/settle'
 import checkRsfOnSettle from '../utils/RSF/RSF_v2/on_settle'
+import checkRsfReport from '../utils/RSF/RSF_v2/report'
+import checkRsfOnReport from '../utils/RSF/RSF_v2/on_report'
+import checkRsfRecon from '../utils/RSF/RSF_v2/recon'
+import checkRsfOnRecon from '../utils/RSF/RSF_v2/on_recon'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
@@ -458,9 +462,36 @@ export const RSFvalidateLogsV2 = (data: any) => {
     
     if (data[RSF_v2_apiSequence.ON_SETTLE]) {
       const on_settle = checkRsfOnSettle(data[RSF_v2_apiSequence.ON_SETTLE])
-      console.log("on_sett++++++le", data[RSF_v2_apiSequence.ON_SETTLE])
       if (!_.isEmpty(on_settle)) {
         logReport = { ...logReport, [RSF_v2_apiSequence.ON_SETTLE]: on_settle }
+      }
+    }
+
+    if (data[RSF_v2_apiSequence.REPORT]) {
+      const report = checkRsfReport(data[RSF_v2_apiSequence.REPORT])
+      if (!_.isEmpty(report)) {
+        logReport = { ...logReport, [RSF_v2_apiSequence.REPORT]: report }
+      }
+    }
+
+    if (data[RSF_v2_apiSequence.ON_REPORT]) {
+      const on_report = checkRsfOnReport(data[RSF_v2_apiSequence.ON_REPORT])
+      if (!_.isEmpty(on_report)) {
+        logReport = { ...logReport, [RSF_v2_apiSequence.ON_REPORT]: on_report }
+      }
+    }
+
+    if (data[RSF_v2_apiSequence.RECON]) {
+      const recon = checkRsfRecon(data[RSF_v2_apiSequence.RECON])
+      if (!_.isEmpty(recon)) {
+        logReport = { ...logReport, [RSF_v2_apiSequence.RECON]: recon }
+      }
+    }
+
+    if (data[RSF_v2_apiSequence.ON_RECON]) {
+      const on_recon = checkRsfOnRecon(data[RSF_v2_apiSequence.ON_RECON])
+      if (!_.isEmpty(on_recon)) {
+        logReport = { ...logReport, [RSF_v2_apiSequence.ON_RECON]: on_recon }
       }
     }
 

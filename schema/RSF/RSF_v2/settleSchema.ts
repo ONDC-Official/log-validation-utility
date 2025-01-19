@@ -19,7 +19,7 @@ const settleSchema = {
         'ttl'
       ],
       properties: {
-        domain: { type: 'string', enum: ['ONDC:NTS10'] },
+        domain: { type: 'string' },
         location: {
           type: 'object',
           required: ['country', 'city'],
@@ -28,149 +28,140 @@ const settleSchema = {
               type: 'object',
               required: ['code'],
               properties: {
-                code: { type: 'string', enum: ['IND'] },
+                code: { type: 'string' }
               },
+              additionalProperties: false
             },
             city: {
               type: 'object',
               required: ['code'],
               properties: {
-                code: { type: 'string', enum: ['*'] },
+                code: { type: 'string' }
               },
-            },
+              additionalProperties: false
+            }
           },
+          additionalProperties: false
         },
-        version: { type: 'string', enum: ['2.0.0'] },
-        action: { type: 'string', enum: ['settle'] },
+        version: { type: 'string' },
+        action: { type: 'string' },
         bap_id: { type: 'string' },
         bap_uri: { type: 'string', format: 'uri' },
         bpp_id: { type: 'string' },
         bpp_uri: { type: 'string', format: 'uri' },
         transaction_id: { type: 'string' },
         message_id: { type: 'string' },
-        timestamp: { type: 'string', format: 'rfc3339-date-time' },
-        ttl: { type: 'string', format: 'duration' },
+        timestamp: { type: 'string', format: 'date-time' },
+        ttl: { type: 'string' }
       },
+      additionalProperties: false
     },
     message: {
       type: 'object',
-      required: ['settlement'],
+      required: ['collector_app_id', 'receiver_app_id', 'settlement'],
       properties: {
         collector_app_id: { type: 'string' },
         receiver_app_id: { type: 'string' },
         settlement: {
           type: 'object',
-          required: ['type', 'orders'],
+          required: ['type', 'id', 'orders'],
           properties: {
-            type: { type: 'string', enum: ['NP-NP', 'MISC', 'NIL'] },
-            id: { type: ['string', 'null'] },
+            type: { type: 'string', enum: ['NP-NP','MISC', 'NIL'] },
+            id: { type: 'string' },
             orders: {
               type: 'array',
               items: {
-                oneOf: [
-                  {
-                    if: { properties: { settlementType: { const: "NIL" } } },
-                    then: {
-                      required: [],
-                      properties: {}
-                    }
-                  },
-                  {
-                    if: { properties: { settlementType: { const: "MISC" } } },
-                    then: {
-                      required: ["id"],
-                      properties: {
-                        id: { type: "string" },
-                        self: {
-                          required: ["amount"],
-                          properties: {
-                            amount: {
-                              required: ["currency", "value"],
-                              properties: {
-                                currency: { type: "string", enum: ["INR"] },
-                                value: { type: "number" }
-                              }
-                            }
-                          }
-                        }
+                type: 'object',
+                required: ['id', 'inter_participant', 'collector', 'self'],
+                properties: {
+                  id: { type: 'string' },
+                  inter_participant: {
+                    type: 'object',
+                    required: ['amount'],
+                    properties: {
+                      amount: {
+                        type: 'object',
+                        required: ['currency', 'value'],
+                        properties: {
+                          currency: { type: 'string' },
+                          value: { type: 'string', pattern: '^\\d+(\\.\\d{1,2})?$' }
+                        },
+                        additionalProperties: false
                       }
-                    }
+                    },
+                    additionalProperties: false
                   },
-                  {
-                    if: { properties: { settlementType: { const: "NP-NP" } } },
-                    then: {
-                      required: ["id", "inter_participant", "collector", "provider", "self"],
-                      properties: {
-                        id: { type: "string" },
-                        inter_participant: {
-                          required: ["amount"],
-                          properties: {
-                            amount: {
-                              required: ["currency", "value"],
-                              properties: {
-                                currency: { type: "string", enum: ["INR"] },
-                                value: { type: "number" }
-                              }
-                            }
-                          }
+                  collector: {
+                    type: 'object',
+                    required: ['amount'],
+                    properties: {
+                      amount: {
+                        type: 'object',
+                        required: ['currency', 'value'],
+                        properties: {
+                          currency: { type: 'string' },
+                          value: { type: 'string', pattern: '^\\d+(\\.\\d{1,2})?$' }
                         },
-                        collector: {
-                          required: ["amount"],
-                          properties: {
-                            amount: {
-                              required: ["currency", "value"],
-                              properties: {
-                                currency: { type: "string", enum: ["INR"] },
-                                value: { type: "number" }
-                              }
-                            }
-                          }
-                        },
-                        provider: {
-                          required: ["id", "name", "bank_details", "amount"],
-                          properties: {
-                            id: { type: "string" },
-                            name: { type: "string" },
-                            bank_details: {
-                              required: ["account_no", "ifsc_code"],
-                              properties: {
-                                account_no: { type: "string" },
-                                ifsc_code: { type: "string" }
-                              }
-                            },
-                            amount: {
-                              required: ["currency", "value"],
-                              properties: {
-                                currency: { type: "string", enum: ["INR"] },
-                                value: { type: "number" }
-                              }
-                            }
-                          }
-                        },
-                        self: {
-                          required: ["amount"],
-                          properties: {
-                            amount: {
-                              required: ["currency", "value"],
-                              properties: {
-                                currency: { type: "string", enum: ["INR"] },
-                                value: { type: "number" }
-                              }
-                            }
-                          }
-                        }
+                        additionalProperties: false
                       }
-                    }
+                    },
+                    additionalProperties: false
+                  },
+                  provider: {
+                    type: 'object',
+                    required: ['id', 'name', 'bank_details', 'amount'],
+                    properties: {
+                      id: { type: 'string' },
+                      name: { type: 'string' },
+                      bank_details: {
+                        type: 'object',
+                        required: ['account_no', 'ifsc_code'],
+                        properties: {
+                          account_no: { type: 'string', pattern: '^\\d+$' },
+                          ifsc_code: { type: 'string' }
+                        },
+                        additionalProperties: false
+                      },
+                      amount: {
+                        type: 'object',
+                        required: ['currency', 'value'],
+                        properties: {
+                          currency: { type: 'string' },
+                          value: { type: 'string', pattern: '^\\d+(\\.\\d{1,2})?$' }
+                        },
+                        additionalProperties: false
+                      }
+                    },
+                    additionalProperties: false
+                  },
+                  self: {
+                    type: 'object',
+                    required: ['amount'],
+                    properties: {
+                      amount: {
+                        type: 'object',
+                        required: ['currency', 'value'],
+                        properties: {
+                          currency: { type: 'string' },
+                          value: { type: 'string', pattern: '^\\d+(\\.\\d{1,2})?$' }
+                        },
+                        additionalProperties: false
+                      }
+                    },
+                    additionalProperties: false
                   }
-                ]
+                },
+                additionalProperties: false
               }
             }
           },
           additionalProperties: false
         }
       },
-    },
-  },  additionalProperties:false,
+      additionalProperties: false
+    }
+  },
+  additionalProperties: false
 };
 
 export default settleSchema;

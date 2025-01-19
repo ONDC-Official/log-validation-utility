@@ -49,7 +49,7 @@ const on_reconSchema = {
         transaction_id: { type: "string" },
         message_id: { type: "string" },
         timestamp: { type: "string", format: "date-time" },
-        ttl: { type: "string", pattern: "^P\\d+D$" }
+        ttl: { type: "string"}
       }
     },
     message: {
@@ -68,7 +68,7 @@ const on_reconSchema = {
                 required: ["currency", "value"],
                 properties: {
                   currency: { type: "string", const: "INR" },
-                  value: { type: "string", pattern: "^\\d+\\.\\d{2}$" }
+                  value: { type: "string", pattern: "^(0|\d+)\.\d{2}$" }
                 }
               },
               recon_accord: { type: "boolean" },

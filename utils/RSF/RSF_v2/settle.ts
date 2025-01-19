@@ -3,6 +3,7 @@ import { isObjectEmpty } from '../../index'
 import { validateSchema } from '../../index'
 import { logger } from '../../../shared/logger'
 import { setValue } from '../../../shared/dao'
+import { checkDuplicateOrderIds } from '../rsfHelpers'
 
 const checkRsfSettle = (data: any) => {
   const rsfObj: any = {}
@@ -16,10 +17,7 @@ const checkRsfSettle = (data: any) => {
   try {
     logger.info(`Validating Schema for ${RSF_v2_apiSequence.SETTLE} API`)
     const vs = validateSchema('rsf', RSF_v2_apiSequence.SETTLE, data)
-
-    console.log("Schema validation err obj",data)
-    console.log("Schema validation rsf obj",rsfObj)
-  logger.info(`Schema validation result for ${RSF_v2_apiSequence.SETTLE}:`, vs)
+    logger.info(`Schema validation result for ${RSF_v2_apiSequence.SETTLE}:`, vs)
 
   if (message?.collector_app_id === context?.bpp_id) {
     rsfObj.collector_app_id = 'collector_app_id should not match with bpp_id'
@@ -36,7 +34,49 @@ const checkRsfSettle = (data: any) => {
   setValue('settle_context', context)
   setValue('settle_message', message)
 
-    return rsfObj
+  logger.info('Validate required fields for MISC type')
+  if (message?.settlement?.type === 'MISC') {
+    if (message?.collector_app_id) {
+      rsfObj.collector_app_id = 'collector_app_id should not be present for MISC settlement type'
+    }
+    
+    if (message?.receiver_app_id) {
+      rsfObj.receiver_app_id = 'receiver_app_id should not be present for MISC settlement type'
+    }
+
+    if (!message?.settlement?.id) {
+      rsfObj.settlement_id = 'settlement id is required for MISC type'
+    }
+
+    if (!message?.settlement?.orders?.[0]?.self?.amount?.currency || 
+        !message?.settlement?.orders?.[0]?.self?.amount?.value) {
+      rsfObj.settlement_amount = 'settlement amount with currency and value is required for MISC type'
+    }
+  }
+
+  logger.info('Validate required fields for NIL type')
+  if (message?.settlement?.type === 'NIL') {
+    if (message?.collector_app_id) {
+      rsfObj.collector_app_id = 'collector_app_id should not be present for NIL settlement type'
+    }
+    
+    if (message?.receiver_app_id) {
+      rsfObj.receiver_app_id = 'receiver_app_id should not be present for NIL settlement type'
+    }
+
+    const settlementKeys = Object.keys(message.settlement)
+    if (settlementKeys.length > 1) {
+      rsfObj.settlement_fields = 'NIL settlement type should only contain type field'
+    }
+  }
+
+  logger.info('Checking duplicate order IDs')
+  const duplicateOrderId = checkDuplicateOrderIds(message?.settlement?.orders)
+  if(duplicateOrderId) {
+    rsfObj.duplicate_order_id = duplicateOrderId
+  }
+
+  return rsfObj
   } catch (err: any) {
     if (err.code === 'ENOENT') {
       logger.info(`!!File not found for /${RSF_v2_apiSequence.SETTLE} API!`)

@@ -50,22 +50,46 @@ export const compareContexts = (settleContext: any, onSettleContext: any) => {
   try {
     fieldsToCompare.forEach(field => {
       if (!_.isEqual(settleContext[field], onSettleContext[field])) {
-        errorObj[`context_${field}`] = `${field} mismatch between settle and on_settle context: ${settleContext[field]} != ${onSettleContext[field]}`
+        errorObj[`context_${field}`] = `${field} mismatch between action and on_action context: ${settleContext[field]} != ${onSettleContext[field]}`
       }
     })
 
     const settleTimestamp = new Date(settleContext.timestamp).getTime()
     const onSettleTimestamp = new Date(onSettleContext.timestamp).getTime()
     
-    if (!_.gte(settleTimestamp, onSettleTimestamp)) {
-      errorObj.timestamp = `settle timestamp (${settleContext.timestamp}) should be greater than or equal to on_settle timestamp (${onSettleContext.timestamp})`
+    if (!_.lt(settleTimestamp, onSettleTimestamp)) {
+      errorObj.timestamp = `action call timestamp (${settleContext.timestamp}) should be less than on_action call (${onSettleContext.timestamp})`
     }
 
-    logger.info('Context comparison completed between settle and on_settle')
+    logger.info('Context comparison completed between action and on_action')
     return Object.keys(errorObj).length > 0 ? errorObj : {}
 
   } catch (error: any) {
-    logger.error('Error while comparing settle and on_settle contexts:', error)
+    logger.error('Error while comparing action and on_action contexts:', error)
     return { error: error.message }
   }
+}
+
+export const checkDuplicateOrderIds = (orders: any[]): string | null => {
+  const orderIds = new Set()
+  
+  for (const order of orders) {
+    if (orderIds.has(order.id)) {
+      return `Duplicate order ID found: ${order.id}`
+    }
+    orderIds.add(order.id)
+  }
+  
+  return null
+
+}
+
+export const validateSettlementAmounts = (order: any) => {
+  const orderAmount = parseFloat(order.amount.value)
+  
+  const totalSettlementAmount = order.settlements.reduce((sum: number, settlement: any) => {
+    return sum + parseFloat(settlement.amount.value)
+  }, 0)
+
+  return Math.abs(orderAmount - totalSettlementAmount) < 0.01 
 }

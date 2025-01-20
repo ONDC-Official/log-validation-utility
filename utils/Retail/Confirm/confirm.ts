@@ -17,6 +17,7 @@ import {
   compareQuoteObjects,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
+import { FLOW_TYPES } from '../../../constants/2aflow'
 
 export const checkConfirm = (data: any, msgIdSet: any) => {
   const cnfrmObj: any = {}
@@ -414,28 +415,27 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     }
 
     try {
-      logger.info('Checking if transaction_id is present in message.order.payment');
-      
-      const payment = confirm.payment;
-      
-      // Check if txn_id is unexpectedly present in the /confirm object (should not be there)
+      logger.info('Checking if transaction_id is present in message.order.payment')
+
+      const payment = confirm.payment
+
       if (cnfrmObj['message/order/transaction_id']) {
-        cnfrmObj['message/order/transaction_id'] = 'Unexpected txn_id found in message/order/confirm';
+        cnfrmObj['message/order/transaction_id'] = 'Unexpected txn_id found in message/order/confirm'
       } else {
-        // Skip the transaction_id check for 2A flow
-        if ("2A") {
-          const status = payment_status(payment);
-          if (!status) {
-            cnfrmObj['message/order/transaction_id'] = 'Transaction_id missing in message/order/payment';
-          }
+        if (payment.FLOW_TYPES === FLOW_TYPES.FLOW2A) {
+          logger.info('Skipping transaction_id check for 2A flow')
+          // Skip the transaction_id check for 2A flow
         } else {
-          logger.info('Skipping transaction_id check for 2A flow');
+          const status = payment_status(payment)
+          if (!status) {
+            cnfrmObj['message/order/transaction_id'] = 'Transaction_id missing in message/order/payment'
+          }
         }
       }
     } catch (err: any) {
-      logger.error('Error while checking transaction in message/order/payment: ' + err.message);
+      logger.error('Error while checking transaction in message/order/payment: ' + err.message)
     }
-    
+
     //Payment details for 2A Flow
     try {
       if ('2A') {

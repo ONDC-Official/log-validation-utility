@@ -10,6 +10,7 @@ import { setValue } from '../shared/dao'
 export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
 import { groceryCategoryMappingWithStatutory } from '../constants/category'
 import { statutory_reqs } from './enum'
+import { FLOW_TYPES, PAYMENT_STATUS } from '../constants/2aflow'
 
 export const getObjValues = (obj: any) => {
   let values = ''
@@ -1010,13 +1011,13 @@ export const mapCancellationID = (cancelled_by: string, reason_id: string, error
 }
 
 export const payment_status = (payment: any) => {
-  const errorObj: any = {};
-  if (payment.flow === "2A" && payment.status === 'PAID') {
-    errorObj.message = `Cannot be ${payment.status} for 2A flow (Cash on Delivery)`;
-    return errorObj;
-  }
+  const errorObj: any = {}
 
-  if (payment.status === 'PAID') {
+  if (payment.FLOW_TYPES === FLOW_TYPES.FLOW2A && payment.status === PAYMENT_STATUS.PAID) {
+    errorObj.message = `Cannot be ${payment.status} for ${FLOW_TYPES.FLOW2A} flow (Cash on Delivery)`
+    return errorObj
+  }
+  if (payment.status === PAYMENT_STATUS.PAID) {
     if (!payment.params.transaction_id) {
       return false
     }

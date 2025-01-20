@@ -409,7 +409,6 @@ export const IGMvalidateLogs = (data: any) => {
 }
 
 export const RSFvalidateLogs = (data: any) => {
-  console.log("data of rsf",data)
   let logReport: any = {}
   
   try {

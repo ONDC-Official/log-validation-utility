@@ -10,9 +10,7 @@ import { RSF_v2_Errors } from '../../../constants/RSFv2ErrorCodes'
 
 const checkRsfOnSettle = (data: any) => {
   const rsfObj: any = {}
-  const setlMsg: any = getValue('settle_message')
   const {context, message} = data
-  console.log("msg",message)
   try {
   
   if (!data || isObjectEmpty(data)) {
@@ -20,9 +18,6 @@ const checkRsfOnSettle = (data: any) => {
   }
 
   const setlContext: any = getValue('settle_context')
-
-    console.log("setlContext",setlContext)
-    console.log("setlMsg",setlMsg)
 
     try {
       logger.info(`Validating Schema for ${RSF_v2_apiSequence.ON_SETTLE} API`)

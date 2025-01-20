@@ -91,7 +91,7 @@ const onReportSchema = {
                             value: { type: 'string' },
                           },
                         },
-                        status: { type: 'string', enum: ['SETTLED', 'NOT_SETTLED'] },
+                        status: { type: 'string', enum: ['SETTLED', 'NOT-SETTLED'] },
                         reference_no: { type: 'string' },
                       },
                     },
@@ -122,7 +122,7 @@ const onReportSchema = {
                             value: { type: 'string' },
                           },
                         },
-                        status: { type: 'string', enum: ['SETTLED', 'NOT_SETTLED'] },
+                        status: { type: 'string', enum: ['SETTLED', 'NOT-SETTLED'] },
                         error: {
                           type: 'object',
                           required: ['code', 'message'],
@@ -145,7 +145,7 @@ const onReportSchema = {
                             value: { type: 'string' },
                           },
                         },
-                        status: { type: 'string', enum: ['NOT_SETTLED', 'SETTLED'] },
+                        status: { type: 'string', enum: ['NOT-SETTLED', 'SETTLED'] },
                         error: {
                           type: 'object',
                           required: ['code', 'message'],

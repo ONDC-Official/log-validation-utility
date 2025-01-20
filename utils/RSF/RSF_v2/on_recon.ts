@@ -64,7 +64,7 @@ const checkRsfOnRecon = (data: any) => {
       message?.orders?.forEach((order: any, index: number) => {
         if (!validateSettlementAmounts(order)) {
           rsfObj[`order_${index}_amount_mismatch`] = 
-            `Order amount ${order.amount.value} does not match sum of settlement amounts`
+            `Order amount ${order.amount.value} does not match sum of settlement amounts ${getValue('totalSettlementAmount')}`
         }
       })
     }catch(err){

@@ -58,7 +58,7 @@ const settleSchema = {
     },
     message: {
       type: 'object',
-      required: ['collector_app_id', 'receiver_app_id', 'settlement'],
+      required: ['settlement'],
       properties: {
         collector_app_id: { type: 'string' },
         receiver_app_id: { type: 'string' },
@@ -72,7 +72,7 @@ const settleSchema = {
               type: 'array',
               items: {
                 type: 'object',
-                required: ['id', 'inter_participant', 'collector', 'self'],
+                required: ['self'],
                 properties: {
                   id: { type: 'string' },
                   inter_participant: {

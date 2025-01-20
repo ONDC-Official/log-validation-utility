@@ -24,7 +24,6 @@ const createSignature = async ({ message }: { message: string }) => {
   return { signature, currentDate }
 }
 const getEnumForDomain = (path: string) => {
-  console.log('path', path)
   if (path.includes('trv')) return DOMAIN.MOBILITY
   if (path.includes('fis')) return DOMAIN.FINANCE
   if (path.includes('logistics')) return DOMAIN.LOGISTICS
@@ -196,7 +195,6 @@ const validateRSF = async (payload: string, version: string) => {
   switch (version) {
     case '1.0.0':
       response = RSFvalidateLogs(payload)
-      console.log('response', response)
 
       if (_.isEmpty(response)) {
         success = true

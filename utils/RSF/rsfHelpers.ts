@@ -1,3 +1,4 @@
+import { setValue } from '../../shared/dao'
 import { logger } from '../../shared/logger'
 import _ from 'lodash'
 
@@ -86,10 +87,13 @@ export const checkDuplicateOrderIds = (orders: any[]): string | null => {
 
 export const validateSettlementAmounts = (order: any) => {
   const orderAmount = parseFloat(order.amount.value)
+  console.log('orderAmount', orderAmount)
   
   const totalSettlementAmount = order.settlements.reduce((sum: number, settlement: any) => {
     return sum + parseFloat(settlement.amount.value)
   }, 0)
+  setValue('totalSettlementAmount', totalSettlementAmount)
+  console.log('totalSettlementAmount', totalSettlementAmount)
 
   return Math.abs(orderAmount - totalSettlementAmount) < 0.01 
 }

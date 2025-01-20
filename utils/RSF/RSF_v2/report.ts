@@ -7,8 +7,6 @@ import { setValue, getValue } from '../../../shared/dao'
 const checkRsfReport = (data: any) => {
   const rsfObj: any = {}
   const { message, context }: any = data
-  console.log("message",message)
-
   if (!data || isObjectEmpty(data)) {
     return { [RSF_v2_apiSequence.REPORT]: 'JSON cannot be empty' }
   }

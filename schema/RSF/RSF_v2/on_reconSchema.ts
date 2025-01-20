@@ -68,7 +68,7 @@ const on_reconSchema = {
                 required: ["currency", "value"],
                 properties: {
                   currency: { type: "string", const: "INR" },
-                  value: { type: "string", pattern: "^(0|\d+)\.\d{2}$" }
+                  value: { type: "string" }
                 }
               },
               recon_accord: { type: "boolean" },

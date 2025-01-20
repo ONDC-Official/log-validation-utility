@@ -93,7 +93,6 @@ const validate_schema = (data: any, schema: any) => {
 
   const validate = ajv.compile(schema)
   const valid = validate(data)
-  console.log("validation settle error ", validate.errors)
   if (findProviderLocation(data)) {
     error_list.push({
       instancePath: '/message/order',

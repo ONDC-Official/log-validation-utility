@@ -58,13 +58,13 @@ const onSettleSchema = {
     },
     message: {
       type: 'object',
-      required: ['collector_app_id', 'receiver_app_id', 'settlement'],
+      required: ['settlement'],
       properties: {
         collector_app_id: { type: 'string' },
         receiver_app_id: { type: 'string' },
         settlement: {
           type: 'object',
-          required: ['type', 'id', 'orders'],
+          required: ['type', 'id'],
           properties: {
             type: { type: 'string', enum: ['NP-NP','MISC', 'NIL'] },
             id: { type: 'string' },
@@ -72,7 +72,7 @@ const onSettleSchema = {
               type: 'array',
               items: {
                 type: 'object',
-                required: ['id', 'inter_participant', 'collector', 'self'],
+                required: ['self'],
                 properties: {
                   id: { type: 'string' },
                   inter_participant: {

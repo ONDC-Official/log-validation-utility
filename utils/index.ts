@@ -10,7 +10,7 @@ import { setValue } from '../shared/dao'
 export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
 import { groceryCategoryMappingWithStatutory } from '../constants/category'
 import { statutory_reqs } from './enum'
-import { FLOW_TYPES, PAYMENT_STATUS } from '../constants/2aflow'
+import { FLOW_TYPES, PAYMENT_STATUS } from '../constants/index'
 
 export const getObjValues = (obj: any) => {
   let values = ''

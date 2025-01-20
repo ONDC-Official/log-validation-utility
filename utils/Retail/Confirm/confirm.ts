@@ -17,7 +17,7 @@ import {
   compareQuoteObjects,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
-import { FLOW_TYPES } from '../../../constants/2aflow'
+import { FLOW_TYPES } from '../../../constants/index'
 
 export const checkConfirm = (data: any, msgIdSet: any) => {
   const cnfrmObj: any = {}

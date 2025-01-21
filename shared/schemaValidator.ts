@@ -35,8 +35,14 @@ import issueCloseSchema from '../schema/Igm/issueCloseSchema'
 import { onSearchIncSchema } from '../schema/Retail/RET/on_search_inc'
 import { onUpdateSchema } from '../schema/Retail/Update/on_update'
 import { updateSchema } from '../schema/Retail/Update/update'
-import receiverReconSchema from '../schema/RSF/receiverReconSchema'
-import onReceiverReconSchema from '../schema/RSF/onReciverReconSchema'
+import receiverReconSchema from '../schema/RSF/Rsf_v1/receiverReconSchema'
+import onReceiverReconSchema from '../schema/RSF/Rsf_v1/onReciverReconSchema'
+import settleSchema from '../schema/RSF/RSF_v2/settleSchema'
+import onSettleSchema from '../schema/RSF/RSF_v2/on_settleSchema'
+import reportSchema from '../schema/RSF/RSF_v2/reportSchema'
+import onReportSchema from '../schema/RSF/RSF_v2/on_reportSchema'
+import reconSchema from '../schema/RSF/RSF_v2/reconSchema'
+import onReconSchema from '../schema/RSF/RSF_v2/on_reconSchema'
 import { findProviderLocation } from '../utils'
 
 const ajv = new Ajv({
@@ -973,6 +979,41 @@ const validate_schema_on_receiver_recon_rsf_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+const validate_schema_settle_rsf_for_json = (data: any) =>{
+  console.log("data of settle", data)
+  const error_list = validate_schema(data, settleSchema)
+  console.log("error_list of settle", formatted_error(error_list))
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_settle_rsf_for_json = (data: any) =>{
+  const error_list = validate_schema(data, onSettleSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_report_rsf_for_json = (data: any) =>{
+  console.log("data of report", data)
+  const error_list = validate_schema(data, reportSchema)
+  console.log("error_list of reporrt", formatted_error(error_list))
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_report_rsf_for_json = (data: any) =>{
+  const error_list = validate_schema(data, onReportSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_recon_rsf_for_json = (data: any) =>{
+  console.log("data of recon", data)
+  const error_list = validate_schema(data, reconSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_recon_rsf_for_json = (data: any) =>{
+  const error_list = validate_schema(data, onReconSchema)
+  return formatted_error(error_list)
+}
+
 export default {
   validate_schema_search_RET11_for_json,
   validate_schema_search_RET19_for_json,
@@ -1162,6 +1203,12 @@ export default {
   validate_schema_on_track_RET10_for_json,
   validate_schema_receiver_recon_rsf_for_json,
   validate_schema_on_receiver_recon_rsf_for_json,
+  validate_schema_settle_rsf_for_json,
+  validate_schema_on_settle_rsf_for_json,
+  validate_schema_report_rsf_for_json,
+  validate_schema_on_report_rsf_for_json,
+  validate_schema_recon_rsf_for_json,
+  validate_schema_on_recon_rsf_for_json,
 
   validate_schema_search_AGR10_for_json, 
   validate_schema_on_search_AGR10_for_json, 

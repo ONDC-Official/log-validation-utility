@@ -746,6 +746,45 @@ curl --location 'https://localhost:3006/api/validate/trv' \
 }'
 ```
 
+### For 2A FLow 
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "",
+    "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh":{},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_update_part_cancel": {},
+        "update_settlement_part_cancel": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {},
+        "update_reverse_qc":{},
+        "on_update_interim_reverse_qc":{},
+        "on_update_approval":{},
+        "on_update_picked": {},
+        "update_settlement_reverse_qc": {},
+        "on_update_delivered": {},
+        "update_liquidated":{},
+        "on_update_interim_liquidated":{},
+        "on_update_liquidated": {},
+        "update_settlement_liquidated": {}
+    },
+    "flow": "2A"
+}'
+```
 Using Postman, you can import the above `curl` command into Postman and replace the empty objects in the payload with your actual data. This allows for easy testing and validation of transaction logs on your local environment.
 
 With these instructions, you can start using the Retail Logs Validation Utility for local log validation.

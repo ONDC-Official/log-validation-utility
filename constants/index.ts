@@ -150,6 +150,8 @@ export const FIS13HealthSequence = {
   ON_SELECT_1: 'on_select_1',
   SELECT_2: 'select_2',
   ON_SELECT_2: 'on_select_2',
+  SELECT_3: 'select_3',
+  ON_SELECT_3: 'on_select_3',
   INIT: 'init',
   INIT_1: 'init_1',
   INIT_2: 'init_2',

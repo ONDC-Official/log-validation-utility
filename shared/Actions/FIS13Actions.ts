@@ -14,7 +14,14 @@ import { checkOnUpdate } from '../../utils/FIS/FIS13/onUpdate'
 import { checkOnStatus } from '../../utils/FIS/FIS13/onStatus'
 import { checkCancel } from '../../utils/FIS/FIS13/cancel'
 import { checkOnCancel } from '../../utils/FIS/FIS13/onCancel'
-import { healthSequence, marineSequence, renewSequence, claimSequence, cancelSequence } from '../../constants/fisFlows'
+import {
+  healthSequence,
+  marineSequence,
+  renewSequence,
+  claimSequence,
+  cancelSequence,
+  motorSequence,
+} from '../../constants/fisFlows'
 
 export function validateLogsForFIS13(data: any, flow: string, version: string) {
   const msgIdSet = new Set()
@@ -133,6 +140,15 @@ export function validateLogsForFIS13(data: any, flow: string, version: string) {
       case insuranceFlows.CANCEL_MARINE:
         logReport = processFIS13HealthSequence(cancelSequence, data, logReport, flow)
         break
+      case insuranceFlows.MOTOR:
+        logReport = processFIS13HealthSequence(motorSequence, data, logReport, flow)
+        break
+      case insuranceFlows.CLAIM_MOTOR:
+        logReport = processFIS13HealthSequence(claimSequence, data, logReport, flow)
+        break
+      case insuranceFlows.CANCEL_MOTOR:
+        logReport = processFIS13HealthSequence(cancelSequence, data, logReport, flow)
+        break
     }
     return logReport
   } catch (error: any) {
@@ -141,106 +157,6 @@ export function validateLogsForFIS13(data: any, flow: string, version: string) {
     return error.message
   }
 
-  // if (!(flow in insuranceFlows)) {
-  //   logReport = { ...logReport, version: `Invalid flow ${flow}` }
-  // }
-
-  // switch (flow) {
-
-  //   case 'MOTOR': {
-  //     try {
-  //       if (data[FIS13HealthSequence.SEARCH]) {
-  //         const searchResp = search(data[FIS13HealthSequence.SEARCH], msgIdSet, flow, FIS13HealthSequence.SEARCH)
-  //         if (!_.isEmpty(searchResp)) {
-  //           logReport = { ...logReport, [FIS13HealthSequence.SEARCH]: searchResp }
-  //         }
-  //       }
-
-  //       if (data[FIS13HealthSequence.ON_SEARCH]) {
-  //         const onSearchResp = checkOnSearch(
-  //           data[FIS13HealthSequence.ON_SEARCH],
-  //           msgIdSet,
-  //           flow,
-  //           FIS13HealthSequence.ON_SEARCH,
-  //         )
-  //         if (!_.isEmpty(onSearchResp)) {
-  //           logReport = { ...logReport, [FIS13HealthSequence.ON_SEARCH]: onSearchResp }
-  //         }
-  //       }
-
-  //       if (data[FIS13HealthSequence.SELECT_1]) {
-  //         const selectResp = checkSelect(data[FIS13HealthSequence.SELECT_1], msgIdSet, FIS13HealthSequence.SELECT_1)
-  //         if (!_.isEmpty(selectResp)) {
-  //           logReport = { ...logReport, [FIS13HealthSequence.SELECT_1]: selectResp }
-  //         }
-  //       }
-
-  //       if (data[FIS13HealthSequence.ON_SELECT_1]) {
-  //         const onSelectResp = checkOnSelect(
-  //           data[FIS13HealthSequence.ON_SELECT_1],
-  //           msgIdSet,
-  //           FIS13HealthSequence.ON_SELECT_1,
-  //         )
-  //         if (!_.isEmpty(onSelectResp)) {
-  //           logReport = { ...logReport, [FIS13HealthSequence.ON_SELECT_1]: onSelectResp }
-  //         }
-  //       }
-
-  //       if (data[FIS13HealthSequence.SELECT_2]) {
-  //         const selectResp = checkSelect(data[FIS13HealthSequence.SELECT_2], msgIdSet, FIS13HealthSequence.SELECT_2)
-  //         if (!_.isEmpty(selectResp)) {
-  //           logReport = { ...logReport, [FIS13HealthSequence.SELECT_2]: selectResp }
-  //         }
-  //       }
-
-  //       if (data[FIS13HealthSequence.ON_SELECT_2]) {
-  //         const onSelectResp = checkOnSelect(
-  //           data[FIS13HealthSequence.ON_SELECT_2],
-  //           msgIdSet,
-  //           FIS13HealthSequence.ON_SELECT_2,
-  //         )
-  //         if (!_.isEmpty(onSelectResp)) {
-  //           logReport = { ...logReport, [FIS13HealthSequence.ON_SELECT_2]: onSelectResp }
-  //         }
-  //       }
-
-  //       if (data[FIS13HealthSequence.INIT]) {
-  //         const init = checkInit(data[FIS13HealthSequence.INIT], msgIdSet, FIS13HealthSequence.INIT)
-  //         if (!_.isEmpty(init)) {
-  //           logReport = { ...logReport, [FIS13HealthSequence.INIT]: init }
-  //         }
-  //       }
-
-  //       if (data[FIS13HealthSequence.ON_INIT]) {
-  //         const onInit = checkOnInit(data[FIS13HealthSequence.ON_INIT], msgIdSet, FIS13HealthSequence.ON_INIT)
-  //         if (!_.isEmpty(onInit)) {
-  //           logReport = { ...logReport, [FIS13HealthSequence.ON_INIT]: onInit }
-  //         }
-  //       }
-
-  //       if (data[FIS13HealthSequence.CONFIRM]) {
-  //         const confirm = checkConfirm(data[FIS13HealthSequence.CONFIRM], msgIdSet)
-  //         if (!_.isEmpty(confirm)) {
-  //           logReport = { ...logReport, [FIS13HealthSequence.CONFIRM]: confirm }
-  //         }
-  //       }
-
-  //       if (data[FIS13HealthSequence.ON_CONFIRM]) {
-  //         const onConfirm = checkOnConfirm(data[FIS13HealthSequence.ON_CONFIRM], msgIdSet)
-  //         if (!_.isEmpty(onConfirm)) {
-  //           logReport = { ...logReport, [FIS13HealthSequence.ON_CONFIRM]: onConfirm }
-  //         }
-  //       }
-
-  //       logger.info(logReport, 'Report Generated Successfully!!')
-  //       return logReport
-  //     } catch (error: any) {
-  //       logger.error(error.message)
-  //       return error.message
-  //     }
-
-  //     break
-  //   }
 
   //   default:
   //     logReport = { ...logReport, version: `Invalid flow ${flow}` }

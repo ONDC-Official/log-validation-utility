@@ -15,7 +15,7 @@ import {
   validateQuote,
 } from './fisChecks'
 import { validateGeneralInfo } from './tags'
-import _ from 'lodash'
+import _, { isEmpty } from 'lodash'
 
 export const checkOnConfirm = (data: any, msgIdSet: any) => {
   try {
@@ -275,7 +275,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
       try {
         logger.info(`Checking cancellation terms in /${constants.ON_CONFIRM}`)
         const cancellationErrors = validateCancellationTerms(on_confirm?.cancellation_terms)
-        Object.assign(errorObj, cancellationErrors)
+        if (!isEmpty(cancellationErrors)) Object.assign(errorObj, cancellationErrors)
       } catch (error: any) {
         logger.error(`!!Error while checking cancellation_terms in /${constants.ON_CONFIRM}, ${error.stack}`)
       }

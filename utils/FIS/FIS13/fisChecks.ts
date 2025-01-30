@@ -1,7 +1,7 @@
 import { getValue, setValue } from '../../../shared/dao'
 import constants, { insuranceFormHeadings } from '../../../constants/'
 import { logger } from '../../../shared/logger'
-import { checkIdAndUri, checkFISContext } from '../../'
+import { checkIdAndUri, checkFISContext, isValidPhoneNumber } from '../../'
 import _, { isArray, isEmpty } from 'lodash'
 import { validateClaimTags, validatePaymentTags } from './tags'
 
@@ -62,13 +62,44 @@ export const getCodes = (): string[] => {
     case 'MOTOR_INSURANCE':
       return [
         'MOTOR_INSURANCE',
-        'COMPRIHENSIVE_INSURANCE',
         'FOUR_WHEELER_INSURANCE',
-        'THIRD_PARTY_INSURANCE',
         'TWO_WHEELER_INSURANCE',
-        'NEW_INSURANCE',
-        'TRANSFER_INSURANCE',
-        'OWN_DAMAGE',
+        // 'NEW_INSURANCE',
+        // 'TRANSFER_INSURANCE',
+        // 'OWN_DAMAGE',
+        'TWO_WHEELER_COMPRIHENSIVE_INSURANCE',
+        'TWO_WHEELER_THIRD_PARTY_INSURANCE',
+        'TWO_WHEELER_OWN_DAMAGE',
+        'FOUR_WHEELER_COMPRIHENSIVE_INSURANCE',
+        'FOUR_WHEELER_THIRD_PARTY_INSURANCE',
+        'FOUR_WHEELER_OWN_DAMAGE',
+      ]
+
+    default:
+      return []
+  }
+}
+
+export const getAddOns = (): string[] => {
+  const insurance = getValue('insurance')
+  switch (insurance) {
+    case 'HEALTH_INSURANCE':
+      return ['NO_CLAIM_BONUS', 'DAYCARE_COVER', 'DAILY_CASH_ALLOWANCE', 'DOMICILIARY_EXPENSES', 'HEALTH_CHECK_UPS']
+
+    case 'MARINE_INSURANCE':
+      return ['MARINE_INSURANCE']
+
+    case 'MOTOR_INSURANCE':
+      return [
+        'CONSUMABLES_COVER',
+        'DEPRECIATION_COVER',
+        'ELECTRICAL_ACCESSORIES_COVER',
+        'KEY_COVER',
+        'NON_ELECTRICAL_ACCESSORIES_COVER',
+        'TYRE_COVER',
+        'PERSONAL_BAGGAGE_COVER',
+        'RETURN_TO_INVOICE',
+        'DAILY_ALLOWANCE',
       ]
 
     default:
@@ -214,7 +245,7 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
     }
 
     if (prevContext) {
-      if (pastCall !== 'search') {
+      if (pastCall !== 'search' && pastCall !== 'search_1') {
         if (!_.isEqual(prevContext.bpp_id, context.bpp_id)) {
           errorObj.bppIdContextMismatch = `BPP Id mismatch in /${pastCall} and /${curentCall}`
         }
@@ -697,10 +728,10 @@ export const validateFulfillmentsArray = (fulfillments: any, action: string) => 
       return errors
     }
     const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-    const isValidPhone = (phone: string) => /^(\+?\d{1,3}[- ]?)?\d{10}$  /.test(phone) // E.g. +91-9999999999
+    const isValidPhone = (phone: string) => isValidPhoneNumber(phone)
     const isValidDate = (date: string) => /^\d{4}-\d{2}-\d{2}$/.test(date) && !isNaN(new Date(date).getTime())
     const isValidGender = (gender: string) => ['male', 'female', 'other'].includes(gender)
-    const isValidGSTIN = (gstin: string) => /^[0-9A-Z]{15}$/.test(gstin) // GSTIN: 15 alphanumeric characters
+    const isValidGSTIN = (gstin: string) => /^[0-9A-Z]{15}$/.test(gstin)
     const isBooleanString = (value: string) => value === 'true' || value === 'false'
 
     fulfillments.forEach((fulfillment: any, index: number) => {
@@ -718,9 +749,11 @@ export const validateFulfillmentsArray = (fulfillments: any, action: string) => 
       }
 
       // Validate claim tags
-      const tagsValidation = validateClaimTags(fulfillment?.tags, action)
-      if (!tagsValidation.isValid) {
-        errors.push(...tagsValidation.errors)
+      if (flow.includes('CLAIM') && fulfillment.type == 'CLAIM') {
+        const tagsValidation = validateClaimTags(fulfillment?.tags, action)
+        if (!tagsValidation.isValid) {
+          errors.push(...tagsValidation.errors)
+        }
       }
 
       if (!fulfillment.type) {
@@ -961,7 +994,7 @@ export const validatePaymentObject = (payments: any, action: string): any => {
         else {
           const missingParams = requiredParams.filter((param) => !Object.prototype.hasOwnProperty.call(params, param))
           if (missingParams.length > 0) {
-            errorObj.missingParams = `Required params ${missingParams.join(', ')} are missing in payments`
+            errorObj.missingParams = `params.${missingParams.join(', ')} is missing in payments`
           }
         }
 

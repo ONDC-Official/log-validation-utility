@@ -55,7 +55,8 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
       logger.info(`Validating category in /${action}`)
       const code = message.intent?.category?.descriptor?.code
       if (code) {
-        if (code != insuranceFlows[flow as keyof typeof insuranceFlows]) {
+        // if (code != insuranceFlows[flow as keyof typeof insuranceFlows]) {
+        if (!Object.values(insuranceFlows).includes(code)) {
           errorObj['category'] = `code value should be ${
             insuranceFlows[flow as keyof typeof insuranceFlows]
           }, in a standard enum format as at category.descriptor`
@@ -151,9 +152,8 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
                 } else {
                   if (itemId && !itemId.includes(item.id)) {
                     const key = `item[${index}].item_id`
-                    errorObj[
-                      key
-                    ] = `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
+                    errorObj[key] =
+                      `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
                   }
                 }
 

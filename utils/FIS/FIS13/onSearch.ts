@@ -4,17 +4,16 @@ import { logger } from '../../../shared/logger'
 import { setValue, getValue } from '../../../shared/dao'
 import constants from '../../../constants'
 import { validateSchema, isObjectEmpty } from '../../'
-import { checkUniqueCategoryIds, getCodes, validateContext, validateDescriptor, validateXInput } from './fisChecks'
+import {
+  checkUniqueCategoryIds,
+  getCodes,
+  validateContext,
+  validateDescriptor,
+  validateXInput,
+  getAddOns,
+} from './fisChecks'
 import { validatePaymentTags, validateGeneralInfo } from './tags'
 import { isEmpty } from 'lodash'
-
-const validAddOnsCodes = [
-  'NO_CLAIM_BONUS',
-  'DAYCARE_COVER',
-  'DAILY_CASH_ALLOWANCE',
-  'DOMICILIARY_EXPENSES',
-  'HEALTH_CHECK_UPS',
-]
 
 export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: string) => {
   if (!data || isObjectEmpty(data)) {
@@ -47,7 +46,6 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
   const prvdrsId = new Set()
   const prvdrLocId = new Set()
   const itemsId = new Set()
-  const addOnIdSet = new Set()
   const categoriesId = new Set()
   const insurance = getValue('insurance')
 
@@ -249,6 +247,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
               }
 
               // Validate add_ons
+              const addOnIdSet = new Set()
               try {
                 console.log('``item?.add_ons-----------``', item?.add_ons)
                 logger.info(`Checking add_ons`)
@@ -259,27 +258,29 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
                     if (!addOn?.id) {
                       errorObj[`${key}.id`] = `id is missing in add_ons[${index}]`
                     } else if (addOnIdSet.has(addOn?.id)) {
-                      errorObj[`${key}.id`] = `duplicate provider id: ${addOn?.id} in add_ons`
+                      errorObj[`${key}.id`] = `duplicate add_on.id: ${addOn?.id} in add_ons`
                     } else {
                       addOnIdSet.add(addOn?.id)
                     }
 
-                    if (!item?.price) {
+                    if (!addOn?.price) {
                       errorObj[`${key}.price`] = `price is missing at ${key}`
                     } else {
-                      if (!item?.price?.value) {
+                      if (!addOn?.price?.value) {
                         errorObj[`${key}.price.value`] = `price.value should be present at ${key}`
                       }
 
-                      if (!item?.price?.currency) {
+                      if (!addOn?.price?.currency) {
                         errorObj[`${key}.price.currency`] = `price.currency should be present at ${key}`
                       }
                     }
 
                     const code = addOn?.descriptor?.code
+                    const validAddOnsCodes = getAddOns()
                     if (!code) errorObj[`${key}.code`] = 'descriptor.code is missing'
                     else if (!validAddOnsCodes?.includes(code))
-                      errorObj[`${key}.code`] = `descriptor.code should be one of ${validAddOnsCodes}`
+                      errorObj[`${key}.code`] =
+                        `descriptor.code shouldn't be present if add_on is not one of what's defined by ONDC`
 
                     if (!addOn?.quantity?.available?.count) {
                       errorObj[`${key}.quantity.available`] = 'quantity.count is missing in add_ons'
@@ -308,6 +309,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
                 logger.info(`checked add_ons`, error)
                 logger.error(`!!Error while checking add_ons in /${action}, ${error.stack}`)
               }
+              setValue(`${constants.ON_SEARCH}_addOnIdSet_${j}`, addOnIdSet)
             }
 
             // Validate parent_item_id & price for multi-offer calls
@@ -389,7 +391,6 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
     setValue(`${constants.ON_SEARCH}prvdrLocId`, prvdrLocId)
     setValue(`${constants.ON_SEARCH}categoryId`, categoriesId)
     setValue(`${constants.ON_SEARCH}_itemsId`, Array.from(itemsId))
-    setValue(`${constants.ON_SEARCH}_addOnIdSet`, addOnIdSet)
   } catch (error: any) {
     logger.error(`!!Error while checking Providers info in /${constants.ON_SEARCH}, ${error.stack}`)
     return { error: error.message }

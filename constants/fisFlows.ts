@@ -28,6 +28,25 @@ export const marineSequence = [
   FIS13HealthSequence.ON_CONFIRM,
 ]
 
+export const motorSequence = [
+  FIS13HealthSequence.SEARCH_1,
+  FIS13HealthSequence.ON_SEARCH_1,
+  FIS13HealthSequence.SEARCH_2,
+  FIS13HealthSequence.ON_SEARCH_2,
+  FIS13HealthSequence.SELECT_1,
+  FIS13HealthSequence.ON_SELECT_1,
+  FIS13HealthSequence.SELECT_2,
+  FIS13HealthSequence.ON_SELECT_2,
+  FIS13HealthSequence.SELECT_3,
+  FIS13HealthSequence.ON_SELECT_3,
+  FIS13HealthSequence.INIT_1,
+  FIS13HealthSequence.ON_INIT_1,
+  FIS13HealthSequence.INIT_2,
+  FIS13HealthSequence.ON_INIT_2,
+  FIS13HealthSequence.CONFIRM,
+  FIS13HealthSequence.ON_CONFIRM,
+]
+
 export const renewSequence = [
   FIS13HealthSequence.ON_CONFIRM,
   FIS13HealthSequence.ON_UPDATE_1,

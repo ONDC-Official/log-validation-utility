@@ -745,6 +745,29 @@ curl --location 'https://localhost:3006/api/validate/trv' \
     }
 }'
 ```
+### For RSF V2 Sample Curl Request (Local)
+
+```shell
+curl --location 'http://localhost:3008/api/validate/rsf' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:NTS10",
+    "version": "2.0.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+
+        "settle":{},
+        "on_settle":{},
+        "report":{},
+        "on_report":{},
+        "recon":{},
+        "on_recon":{}
+                }
+        }'
+
+```
+
 
 ### For 2A FLow 
 ```shell

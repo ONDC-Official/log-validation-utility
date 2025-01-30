@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { dropDB, setValue } from '../shared/dao'
-import { logger } from '../shared/logger'
-import { ApiSequence, retailDomains, IGMApiSequence, RSFapiSequence, rsfDomains } from '../constants'
+import { logger } from './logger'
+import { ApiSequence, retailDomains, IGMApiSequence, RSFapiSequence, RSF_v2_apiSequence } from '../constants'
 import { validateSchema, isObjectEmpty } from '../utils'
 import { checkOnsearchFullCatalogRefresh } from '../utils/Retail/RET11_onSearch/onSearch'
 import { checkSelect } from '../utils/Retail/Select/select'
@@ -41,13 +41,14 @@ import { checkOnStatusDelivered } from '../utils/Retail/Status/onStatusDelivered
 import { checkOnStatusRTODelivered } from '../utils/Retail/Status/onStatusRTODelivered'
 import { checkCancel } from '../utils/Retail/Cancel/cancel'
 import { checkOnCancel } from '../utils/Retail/Cancel/onCancel'
-import checkRsfReceiverRecon from '../utils/RSF/rsfReceiverRecon'
-import checkRsfOnReceiverRecon from '../utils/RSF/rsfOnReciverRecon'
-import { checkCatalogRejection } from '../utils/Retail/Catalog_Rejection/catalogRejection'
-import checksSettleData from '../utils/RSF/Settle/settle'
-import checksonSettleData from '../utils/RSF/Settle/onsettle'
-import checksReportData from '../utils/RSF/Report/report'
-import checksOnReportData from '../utils/RSF/Report/on_report'
+import checkRsfReceiverRecon from '../utils/RSF/RSF_v1/rsfReceiverRecon'
+import checkRsfOnReceiverRecon from '../utils/RSF/RSF_v1/rsfOnReciverRecon'
+import checkRsfSettle from '../utils/RSF/RSF_v2/settle'
+import checkRsfOnSettle from '../utils/RSF/RSF_v2/on_settle'
+import checkRsfReport from '../utils/RSF/RSF_v2/report'
+import checkRsfOnReport from '../utils/RSF/RSF_v2/on_report'
+import checkRsfRecon from '../utils/RSF/RSF_v2/recon'
+import checkRsfOnRecon from '../utils/RSF/RSF_v2/on_recon'
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
   const quoteTrailItemsSet = new Set()
@@ -499,7 +500,7 @@ export const IGMvalidateLogs = (data: any) => {
 
 export const RSFvalidateLogs = (data: any) => {
   let logReport: any = {}
-
+  
   try {
     dropDB()
   } catch (error) {
@@ -528,120 +529,61 @@ export const RSFvalidateLogs = (data: any) => {
     return error.message
   }
 }
-
-export const RSFvalidateLogs2 = (data: any, domain: string, flow: string) => {
+export const RSFvalidateLogsV2 = (data: any) => {
+  logger.info("Processing RSF v2.0.0 data:", data)
   let logReport: any = {}
-  setValue('flow', flow)
-  setValue('domain', domain.split(':')[1])
+  
   try {
     dropDB()
   } catch (error) {
-    logger.error('!!Error while removing LMDB', error)
+    logger.error('Error while removing LMDB', error)
   }
 
   try {
-    setValue('domain', domain.split(':')[1])
-    const validFlows = ['1']
 
-    const flowOneSequence = [
-      RSFapiSequence.SETTLE_COLLECTOR,
-      RSFapiSequence.ON_SETTLE_COLLECTOR,
-      RSFapiSequence.SETTLE_RECIEVER,
-      RSFapiSequence.ON_SETTLE_RECIEVER,
-    ]
-
-    const processApiSequence = (apiSequence: any, data: any, logReport: any, flow: string) => {
-      if (validFlows.includes(flow)) {
-        apiSequence.forEach((apiSeq: any) => {
-          if (data[apiSeq]) {
-            const resp = getResponse(apiSeq, data[apiSeq])
-            if (!_.isEmpty(resp)) {
-              logReport = { ...logReport, [apiSeq]: resp }
-            }
-          } else {
-            logReport = { ...logReport, [apiSeq]: `Missing required data of : ${apiSeq}` }
-          }
-        })
-        logger.info(logReport, 'Report Generated Successfully!!')
-        return logReport
-      } else {
-        return { invldFlow: 'Provided flow is invalid' }
+    if (data[RSF_v2_apiSequence.SETTLE]) {
+      const settle = checkRsfSettle(data[RSF_v2_apiSequence.SETTLE])
+      if (!_.isEmpty(settle)) {
+        logReport = { ...logReport, [RSF_v2_apiSequence.SETTLE]: settle }
       }
     }
-    const getResponse = (apiSeq: any, data: any) => {
-      switch (apiSeq) {
-        case RSFapiSequence.SETTLE_COLLECTOR:
-        case RSFapiSequence.SETTLE_RECIEVER:
-          return checksSettleData(data)
-        case RSFapiSequence.ON_SETTLE_COLLECTOR:
-        case RSFapiSequence.ON_SETTLE_RECIEVER:
-          return checksonSettleData(data)
-        case RSFapiSequence.REPORT:
-          return checksReportData(data)
-        case RSFapiSequence.ON_REPORT:
-          return checksOnReportData(data)
-        default:
-          return null
+    
+    if (data[RSF_v2_apiSequence.ON_SETTLE]) {
+      const on_settle = checkRsfOnSettle(data[RSF_v2_apiSequence.ON_SETTLE])
+      if (!_.isEmpty(on_settle)) {
+        logReport = { ...logReport, [RSF_v2_apiSequence.ON_SETTLE]: on_settle }
       }
     }
-    switch (flow) {
-      case FLOW.FLOW1:
-        logReport = processApiSequence(flowOneSequence, data, logReport, flow)
-        break
+
+    if (data[RSF_v2_apiSequence.REPORT]) {
+      const report = checkRsfReport(data[RSF_v2_apiSequence.REPORT])
+      if (!_.isEmpty(report)) {
+        logReport = { ...logReport, [RSF_v2_apiSequence.REPORT]: report }
+      }
     }
 
-    if (!rsfDomains.includes(domain)) {
-      return 'Domain should be one of the 2.0.0 rsf domains'
+    if (data[RSF_v2_apiSequence.ON_REPORT]) {
+      const on_report = checkRsfOnReport(data[RSF_v2_apiSequence.ON_REPORT])
+      if (!_.isEmpty(on_report)) {
+        logReport = { ...logReport, [RSF_v2_apiSequence.ON_REPORT]: on_report }
+      }
     }
-    // Check for Settle Collector
-    // if (data[RSFapiSequence.SETTLE_COLLECTOR]) {
-    //   const settleCollector = checksSettleData(data[RSFapiSequence.SETTLE_COLLECTOR]);
-    //   if (!_.isEmpty(settleCollector)) {
-    //     logReport = { ...logReport, [RSFapiSequence.SETTLE_COLLECTOR]: settleCollector };
-    //   }
-    // }
 
-    // // Check for Settle Reciever
-    // if (data[RSFapiSequence.SETTLE_RECIEVER]) {
-    //   const settle = checksSettleData(data[RSFapiSequence.SETTLE_RECIEVER]);
-    //   if (!_.isEmpty(settle)) {
-    //     logReport = { ...logReport, [RSFapiSequence.SETTLE_RECIEVER]: settle };
-    //   }
-    // }
+    if (data[RSF_v2_apiSequence.RECON]) {
+      const recon = checkRsfRecon(data[RSF_v2_apiSequence.RECON])
+      if (!_.isEmpty(recon)) {
+        logReport = { ...logReport, [RSF_v2_apiSequence.RECON]: recon }
+      }
+    }
 
-    // // Check for On Settle
-    // if (data[RSFapiSequence.ON_SETTLE_COLLECTOR]) {
-    //   const onSettle = checksonSettleData(data[RSFapiSequence.ON_SETTLE_COLLECTOR]);
-    //   if (!_.isEmpty(onSettle)) {
-    //     logReport = { ...logReport, [RSFapiSequence.ON_SETTLE_COLLECTOR]: onSettle };
-    //   }
-    // }
+    if (data[RSF_v2_apiSequence.ON_RECON]) {
+      const on_recon = checkRsfOnRecon(data[RSF_v2_apiSequence.ON_RECON])
+      if (!_.isEmpty(on_recon)) {
+        logReport = { ...logReport, [RSF_v2_apiSequence.ON_RECON]: on_recon }
+      }
+    }
 
-    // // Check for On Settle Reciever
-    // if (data[RSFapiSequence.ON_SETTLE_RECIEVER]) {
-    //   const onSettle = checksonSettleData(data[RSFapiSequence.ON_SETTLE_RECIEVER]);
-    //   if (!_.isEmpty(onSettle)) {
-    //     logReport = { ...logReport, [RSFapiSequence.ON_SETTLE_RECIEVER]: onSettle };
-    //   }
-    // }
-
-    // // Check for report
-    // if (data[RSFapiSequence.REPORT]) {
-    //   const report = checksReportData(data[RSFapiSequence.REPORT]);
-    //   if (!_.isEmpty(report)) {
-    //     logReport = { ...logReport, [RSFapiSequence.REPORT]: report };
-    //   }
-    // }
-
-    // // Check for on_report
-    // if (data[RSFapiSequence.ON_REPORT]) {
-    //   const onReport = checksOnReportData(data[RSFapiSequence.ON_REPORT]);
-    //   if (!_.isEmpty(onReport)) {
-    //     logReport = { ...logReport, [RSFapiSequence.ON_REPORT]: onReport };
-    //   }
-    // }
-
-    logger.info(logReport, 'Settle Report Generated Successfully!!')
+    logger.info('RSF v2.0.0 Report Generated Successfully')
     return logReport
   } catch (error: any) {
     logger.error(error.message)

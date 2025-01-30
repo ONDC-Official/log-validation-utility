@@ -63,9 +63,9 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
   }
 
   try {
-    const validFlows = ['1', '2', '2A', '3', '4', '5', '6', '7', '8', '9']
+    const validFlows = ['1', '2', '2A', '3', '4', '5', '6', '7', '8', '9', ]
     if (!retailDomains.includes(domain)) {
-      return 'Domain should be one of the 1.2.0 retail domains'
+      return 'Domain should be one of the 1.2.0 or 1.2.5 retail domains'
     }
     const flowOneSequence = [
       ApiSequence.SEARCH,

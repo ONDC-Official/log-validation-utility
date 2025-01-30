@@ -1,5 +1,4 @@
 import { combinedCategory } from '../../../utils/enum'
-
 export const onSearchSchema = {
   type: 'object',
   properties: {
@@ -29,7 +28,8 @@ export const onSearchSchema = {
         },
         core_version: {
           type: 'string',
-          const: '1.2.0',
+          enum: ['1.2.0', '1.2.5'],
+          minLength: 1,
         },
         bap_id: {
           type: 'string',
@@ -482,6 +482,29 @@ export const onSearchSchema = {
                                 },
                               },
                             },
+                            if: {
+                              properties: { code: { const: 'np_fees' } }
+                            },
+                            then: {
+                              properties: {
+                                list: {
+                                  type: 'array',
+                                  items: {
+                                    type: 'object',
+                                    properties: {
+                                      code: { 'type': 'string' },
+                                      value: {
+                                        oneOf: [
+                                          { type: 'string' },
+                                          { type: 'number' }
+                                        ]
+                                      }
+                                    },
+                                    required: ['code', 'value']
+                                  },
+                                },
+                              },
+                            },
                             required: ['code', 'list'],
                           },
                         },
@@ -723,43 +746,59 @@ export const onSearchSchema = {
                                 items: {
                                   type: 'object',
                                   properties: {
-                                    code: {
-                                      type: 'string',
-                                    },
-                                    value: {
-                                      type: 'string',
-                                    },
+                                    code: { type: 'string' },
+                                    value: { type: 'string' }
                                   },
-                                  required: ['code', 'value'],
-                                },
-                              },
-                            },
-                            required: ['code', 'list'],
-                            if: {
-                              type: 'object',
-                              properties: { code: { const: 'origin' } },
-                            },
-                            then: {
-                              type: 'object',
-                              properties: {
-                                list: {
-                                  type: 'array',
-                                  items: {
-                                    type: 'object',
-                                    properties: {
-                                      value: {
-                                        type: 'string',
-                                        pattern:
-                                          '/^A(BW|FG|GO|IA|L[AB]|ND|R[EGM]|SM|T[AFG]|U[ST]|ZE)|B(DI|E[LNS]|FA|G[DR]|H[RS]|IH|L[MRZ]|MU|OL|R[ABN]|TN|VT|WA)|C(A[FN]|CK|H[ELN]|IV|MR|O[DGKLM]|PV|RI|U[BW]|XR|Y[MP]|ZE)|D(EU|JI|MA|NK|OM|ZA)|E(CU|GY|RI|S[HPT]|TH)|F(IN|JI|LK|R[AO]|SM)|G(AB|BR|EO|GY|HA|I[BN]|LP|MB|N[BQ]|R[CDL]|TM|U[FMY])|H(KG|MD|ND|RV|TI|UN)|I(DN|MN|ND|OT|R[LNQ]|S[LR]|TA)|J(AM|EY|OR|PN)|K(AZ|EN|GZ|HM|IR|NA|OR|WT)|L(AO|B[NRY]|CA|IE|KA|SO|TU|UX|VA)|M(A[CFR]|CO|D[AGV]|EX|HL|KD|L[IT]|MR|N[EGP]|OZ|RT|SR|TQ|US|WI|Y[ST])|N(AM|CL|ER|FK|GA|I[CU]|LD|OR|PL|RU|ZL)|OMN|P(A[KN]|CN|ER|HL|LW|NG|OL|R[IKTY]|SE|YF)|QAT|R(EU|OU|US|WA)|S(AU|DN|EN|G[PS]|HN|JM|L[BEV]|MR|OM|PM|RB|SD|TP|UR|V[KN]|W[EZ]|XM|Y[CR])|T(C[AD]|GO|HA|JK|K[LM]|LS|ON|TO|U[NRV]|WN|ZA)|U(GA|KR|MI|RY|SA|ZB)|V(AT|CT|EN|GB|IR|NM|UT)|W(LF|SM)|YEM|Z(AF|MB|WE)$/ix',
-                                        errorMessage:
-                                          'Country must be in ISO 3166-1 format (three-letter country code)',
-                                      },
+                                  anyOf: [
+                                    {
+                                      properties: { code: { const: 'np_fees' } },
+                                      then: {
+                                        properties: {
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              type: 'object',
+                                              properties: {
+                                                code: { 'type': 'string' },
+                                                value: {
+                                                  oneOf: [
+                                                    { type: 'string' },
+                                                    { type: 'number' }
+                                                  ]
+                                                }
+                                              },
+                                              required: ['code', 'value']
+                                            }
+                                          }
+                                        }
+                                      }
                                     },
-                                  },
-                                },
-                              },
+                                    {
+                                      properties: { code: { const: 'origin' } },
+                                      then: {
+                                        properties: {
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              type: 'object',
+                                              properties: {
+                                                value: {
+                                                  type: 'string',
+                                                  pattern: '^(A(BW|FG|GO|IA|L[AB]|ND|R[EGM]|SM|T[AFG]|U[ST]|ZE)|B(DI|E[LNS]|FA|G[DR]|H[RS]|IH|L[MRZ]|MU|OL|R[ABN]|TN|VT|WA)|C(A[FN]|CK|H[ELN]|IV|MR|O[DGKLM]|PV|RI|U[BW]|XR|Y[MP]|ZE)|D(EU|JI|MA|NK|OM|ZA)|E(CU|GY|RI|S[HPT]|TH)|F(IN|JI|LK|R[AO]|SM)|G(AB|BR|EO|GY|HA|I[BN]|LP|MB|N[BQ]|R[CDL]|TM|U[FMY])|H(KG|MD|ND|RV|TI|UN)|I(DN|MN|ND|OT|R[LNQ]|S[LR]|TA)|J(AM|EY|OR|PN)|K(AZ|EN|GZ|HM|IR|NA|OR|WT)|L(AO|B[NRY]|CA|IE|KA|SO|TU|UX|VA)|M(A[CFR]|CO|D[AGV]|EX|HL|KD|L[IT]|MR|N[EGP]|OZ|RT|SR|TQ|US|WI|Y[ST])|N(AM|CL|ER|FK|GA|I[CU]|LD|OR|PL|RU|ZL)|OMN|P(A[KN]|CN|ER|HL|LW|NG|OL|R[IKTY]|SE|YF)|QAT|R(EU|OU|US|WA)|S(AU|DN|EN|G[PS]|HN|JM|L[BEV]|MR|OM|PM|RB|SD|TP|UR|V[KN]|W[EZ]|XM|Y[CR])|T(C[AD]|GO|HA|JK|K[LM]|LS|ON|TO|U[NRV]|WN|ZA)|U(GA|KR|MI|RY|SA|ZB)|V(AT|CT|EN|GB|IR|NM|UT)|W(LF|SM)|YEM|Z(AF|MB|WE))$',
+                                                  errorMessage: 'Country must be in ISO 3166-1 format (three-letter country code)'
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
+                                }
+                              }
                             },
-                          },
+                            "required": ["code", "list"]
+                          }
                         },
                       },
                       required: [
@@ -782,6 +821,81 @@ export const onSearchSchema = {
                       ],
                     },
                   },
+                  creds: {
+                    type: "array",
+                    items: {
+                      type: "object",
+                      properties: {
+                        id: {
+                          type: "string",
+                          pattern: "^ESG-\\d{8}$",
+                          description: "Unique identifier for the credential, format: ESG-XXXXXXXX (8 digits)."
+                        },
+                        descriptor: {
+                          type: "object",
+                          properties: {
+                            code: {
+                              type: "string",
+                              pattern: "^ESG-\\d{8}$",
+                              description: "Code of the credential, format: ESG-XXXXXXXX (8 digits)."
+                            },
+                            short_desc: {
+                              type: "string",
+                              description: "Short description of the credential."
+                            },
+                            name: {
+                              type: "string",
+                              description: "Name of the credential."
+                            }
+                          },
+                          required: ["code", "short_desc", "name"],
+                          additionalProperties: false
+                        },
+                        url: {
+                          type: "string",
+                          format: "uri",
+                          description: "URL to the credential or badge image."
+                        },
+                        tags: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              code: {
+                                type: "string",
+                                description: "Code representing the tag (e.g., 'verification')."
+                              },
+                              list: {
+                                type: "array",
+                                items: {
+                                  type: "object",
+                                  properties: {
+                                    code: {
+                                      type: "string",
+                                      description: "Code representing the specific tag value (e.g., 'verify_url')."
+                                    },
+                                    value: {
+                                      type: "string",
+                                      format: "uri",
+                                      description: "URL or other values associated with the tag."
+                                    }
+                                  },
+                                  required: ["code", "value"],
+                                  additionalProperties: false
+                                },
+                                description: "List of key-value pairs for additional tag data."
+                              }
+                            },
+                            required: ["code", "list"],
+                            additionalProperties: false
+                          },
+                          description: "Tags associated with the credential, including verification details."
+                        }
+                      },
+                      required: ["id", "descriptor"],
+                      additionalProperties: false
+                    }
+                  },
                   offers: {
                     type: 'array',
                     items: {
@@ -797,7 +911,7 @@ export const onSearchSchema = {
                             code: {
                               type: 'string',
                               description: 'Type of the offer (e.g., discount, buyXgetY, freebie).',
-                              enums:['discount', 'buyXgetY', 'freebie','slab','combo','delivery','exchange','financing']
+                              enums: ['discount', 'buyXgetY', 'freebie', 'slab', 'combo', 'delivery', 'exchange', 'financing']
                             },
                             images: {
                               type: 'array',
@@ -858,6 +972,7 @@ export const onSearchSchema = {
                               code: {
                                 type: 'string',
                                 description: 'Type of the tag (e.g., qualifier, benefit, meta).',
+                                enums: ['qualifier', 'benefit', 'meta']
                               },
                               list: {
                                 type: 'array',
@@ -867,415 +982,444 @@ export const onSearchSchema = {
                                     code: {
                                       type: 'string',
                                       description: 'Code representing the specific tag property.',
+                                      enums: ['min_value', 'value_type', 'value', 'additive', 'item_count', 'item_id', 'item_value']
                                     },
                                     value: {
                                       type: 'string',
                                       description: 'Value for the tag property.',
                                     },
                                   },
-                                  required: ['code', 'value'],
+
                                 },
+                                required: ['code', 'value'],
                               },
                             },
-                            required: ['code', 'list'],
+                          },
+                          required: ['code', 'list'],
+                        },
+                      },
+                    },
+
+                    required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags',],
+
+                  },
+                },
+                tags: {
+                  type: 'array',
+                  minItems: 1,
+                  items: {
+                    allOf: [
+                      {
+                        if: {
+                          type: 'object',
+                          properties: {
+                            code: {
+                              const: 'timing',
+                            },
+                          },
+                        },
+                        then: {
+                          type: 'object',
+                          properties: {
+                            list: {
+                              type: 'array',
+                              items: {
+                                allOf: [
+                                  {
+                                    if: {
+                                      type: 'object',
+                                      properties: {
+                                        code: {
+                                          const: 'type',
+                                        },
+                                      },
+                                    },
+                                    then: {
+                                      type: 'object',
+                                      properties: {
+                                        value: {
+                                          type: 'string',
+                                          enum: ['Self-Pickup', 'Order', 'Delivery', 'All'],
+                                          errorMessage:
+                                            "timing for fulfillment type, enum - 'Order' (online order processing timings 'Delivery' (order shipment timings, will be same as delivery timings for hyperlocal), 'Self-Pickup' (self-pickup timings), All",
+                                        },
+                                      },
+                                      required: ['code', 'value'],
+                                    },
+                                  },
+                                  {
+                                    if: {
+                                      type: 'object',
+                                      properties: {
+                                        code: {
+                                          const: 'location',
+                                        },
+                                      },
+                                    },
+                                    then: {
+                                      type: 'object',
+                                      properties: {
+                                        value: {
+                                          type: 'string',
+                                        },
+                                      },
+                                      required: ['code', 'value'],
+                                    },
+                                  },
+                                  {
+                                    if: {
+                                      type: 'object',
+                                      properties: {
+                                        code: {
+                                          const: 'day_from',
+                                        },
+                                      },
+                                    },
+                                    then: {
+                                      type: 'object',
+                                      properties: {
+                                        value: {
+                                          type: 'string',
+                                          pattern: '^[0-7]+$',
+                                          errorMessage:
+                                            "Value for 'day_from' must be numeric characters only from 1 to 7",
+                                        },
+                                      },
+                                      required: ['code', 'value'],
+                                    },
+                                  },
+                                  {
+                                    if: {
+                                      type: 'object',
+                                      properties: {
+                                        code: {
+                                          const: 'day_to',
+                                        },
+                                      },
+                                    },
+                                    then: {
+                                      type: 'object',
+                                      properties: {
+                                        value: {
+                                          type: 'string',
+                                          pattern: '^[1-7]$',
+                                          errorMessage:
+                                            "Value for 'day_to' must be numeric characters only from 1 to 7",
+                                        },
+                                      },
+                                      required: ['code', 'value'],
+                                    },
+                                  },
+                                  {
+                                    if: {
+                                      type: 'object',
+                                      properties: {
+                                        code: {
+                                          const: 'time_from',
+                                        },
+                                      },
+                                    },
+                                    then: {
+                                      type: 'object',
+                                      properties: {
+                                        value: {
+                                          type: 'string',
+                                          pattern: '^([01][0-9]|2[0-3])[0-5][0-9]$',
+                                          errorMessage:
+                                            "Value for 'time_from' must be a 4-digit numeric value in HHMM format",
+                                          minLength: 4,
+                                        },
+                                      },
+                                      required: ['code', 'value'],
+                                    },
+                                  },
+                                  {
+                                    if: {
+                                      type: 'object',
+                                      properties: {
+                                        code: {
+                                          const: 'time_to',
+                                        },
+                                      },
+                                    },
+                                    then: {
+                                      type: 'object',
+                                      properties: {
+                                        value: {
+                                          type: 'string',
+                                          pattern: '^(2[0-3]|[01]?[0-9]|24)[0-5]?[0-9]$',
+                                          errorMessage:
+                                            "Value for 'time_to' must be a 4-digit numeric value in HHMM format",
+                                        },
+                                      },
+                                      required: ['code', 'value'],
+                                    },
+                                  },
+                                ],
+                              },
+                            },
                           },
                         },
                       },
-                      required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags'],
-                    },
-                  },
-                  tags: {
-                    type: 'array',
-                    minItems: 1,
-                    items: {
-                      allOf: [
-                        {
-                          if: {
-                            type: 'object',
-                            properties: {
-                              code: {
-                                const: 'timing',
-                              },
+                      {
+                        if: {
+                          type: 'object',
+                          properties: {
+                            code: {
+                              const: 'serviceability',
                             },
                           },
-                          then: {
-                            type: 'object',
-                            properties: {
-                              list: {
-                                type: 'array',
-                                items: {
-                                  allOf: [
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'type',
-                                          },
-                                        },
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            enum: ['Self-Pickup', 'Order', 'Delivery', 'All'],
-                                            errorMessage:
-                                              "timing for fulfillment type, enum - 'Order' (online order processing timings 'Delivery' (order shipment timings, will be same as delivery timings for hyperlocal), 'Self-Pickup' (self-pickup timings), All",
-                                          },
-                                        },
-                                        required: ['code', 'value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'location',
-                                          },
-                                        },
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                          },
-                                        },
-                                        required: ['code', 'value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'day_from',
-                                          },
-                                        },
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            pattern: '^[0-7]+$',
-                                            errorMessage:
-                                              "Value for 'day_from' must be numeric characters only from 1 to 7",
-                                          },
-                                        },
-                                        required: ['code', 'value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'day_to',
-                                          },
-                                        },
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            pattern: '^[1-7]$',
-                                            errorMessage:
-                                              "Value for 'day_to' must be numeric characters only from 1 to 7",
-                                          },
-                                        },
-                                        required: ['code', 'value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'time_from',
-                                          },
-                                        },
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            pattern: '^([01][0-9]|2[0-3])[0-5][0-9]$',
-                                            errorMessage:
-                                              "Value for 'time_from' must be a 4-digit numeric value in HHMM format",
-                                            minLength: 4,
-                                          },
-                                        },
-                                        required: ['code', 'value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'time_to',
-                                          },
-                                        },
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            pattern: '^(2[0-3]|[01]?[0-9]|24)[0-5]?[0-9]$',
-                                            errorMessage:
-                                              "Value for 'time_to' must be a 4-digit numeric value in HHMM format",
-                                          },
-                                        },
-                                        required: ['code', 'value'],
-                                      },
-                                    },
-                                  ],
+                        },
+                        then: {
+                          type: 'object',
+                          properties: {
+                            list: {
+                              type: 'array',
+                              items: {
+                                type: 'object',
+                                properties: {
+                                  code: {
+                                    type: 'string',
+                                    enum: ['location', 'category', 'type', 'val', 'unit'],
+                                    errorMessage:
+                                      "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit'",
+                                  },
+                                  value: {
+                                    type: 'string',
+                                  },
                                 },
+                                required: ['code', 'value'],
+                                additionalProperties: false,
+                              },
+                              minItems: 5,
+                              maxItems: 5,
+                              uniqueItems: true,
+                              errorMessage: {
+                                minItems: 'Serviceability must have minimum 5 values',
+                                maxItems: 'Serviceability must have maximum 5 values',
+                                uniqueItems: 'Serviceability must have unique items',
+                                _: "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit' and no duplicacy or other elements allowed",
                               },
                             },
                           },
                         },
-                        {
-                          if: {
-                            type: 'object',
-                            properties: {
-                              code: {
-                                const: 'serviceability',
-                              },
+                      },
+                      {
+                        if: {
+                          type: 'object',
+                          properties: {
+                            code: {
+                              const: 'catalog_link',
                             },
                           },
-                          then: {
-                            type: 'object',
-                            properties: {
-                              list: {
-                                type: 'array',
-                                items: {
-                                  type: 'object',
-                                  properties: {
-                                    code: {
-                                      type: 'string',
-                                      enum: ['location', 'category', 'type', 'val', 'unit'],
-                                      errorMessage:
-                                        "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit'",
+                        },
+                        then: {
+                          type: 'object',
+                          properties: {
+                            list: {
+                              type: 'array',
+                              items: {
+                                allOf: [
+                                  {
+                                    if: {
+                                      type: 'object',
+                                      properties: {
+                                        code: {
+                                          const: 'type_validity',
+                                        },
+                                      },
+                                      required: ['code'],
                                     },
-                                    value: {
-                                      type: 'string',
+                                    then: {
+                                      type: 'object',
+                                      properties: {
+                                        value: {
+                                          type: 'string',
+                                          format: 'duration',
+                                          errorMessage: 'Duration must be RFC3339 duration.',
+                                        },
+                                      },
+                                      required: ['value'],
                                     },
                                   },
-                                  required: ['code', 'value'],
-                                  additionalProperties: false,
-                                },
-                                minItems: 5,
-                                maxItems: 5,
-                                uniqueItems: true,
-                                errorMessage: {
-                                  minItems: 'Serviceability must have minimum 5 values',
-                                  maxItems: 'Serviceability must have maximum 5 values',
-                                  uniqueItems: 'Serviceability must have unique items',
-                                  _: "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit' and no duplicacy or other elements allowed",
-                                },
+                                  {
+                                    if: {
+                                      type: 'object',
+                                      properties: {
+                                        code: {
+                                          const: 'last_update',
+                                        },
+                                      },
+                                      required: ['code'],
+                                    },
+                                    then: {
+                                      type: 'object',
+                                      properties: {
+                                        value: {
+                                          type: 'string',
+                                          description: 'RFC3339 UTC timestamp format',
+                                          format: 'rfc3339-date-time',
+                                          errorMessage: 'Time must be RFC3339 UTC timestamp format.',
+                                        },
+                                      },
+                                      required: ['value'],
+                                    },
+                                  },
+                                  {
+                                    if: {
+                                      type: 'object',
+                                      properties: {
+                                        code: {
+                                          const: 'type_value',
+                                        },
+                                      },
+                                      required: ['code'],
+                                    },
+                                    then: {
+                                      type: 'object',
+                                      properties: {
+                                        value: {
+                                          type: 'string',
+                                          format: 'url',
+                                          errorMessage: 'Type value must be url',
+                                        },
+                                      },
+                                      required: ['value'],
+                                    },
+                                  },
+                                  {
+                                    if: {
+                                      type: 'object',
+                                      properties: {
+                                        code: {
+                                          const: 'last_update',
+                                        },
+                                      },
+                                      required: ['code'],
+                                    },
+                                    then: {
+                                      type: 'object',
+                                      properties: {
+                                        value: {
+                                          type: 'string',
+                                          description: 'RFC3339 UTC timestamp format',
+                                          format: 'rfc3339-date-time',
+                                          errorMessage: 'Time must be RFC3339 UTC timestamp format.',
+                                        },
+                                      },
+                                      required: ['value'],
+                                    },
+                                  },
+                                  {
+                                    if: {
+                                      type: 'object',
+                                      properties: {
+                                        code: {
+                                          const: 'type',
+                                        },
+                                      },
+                                      required: ['code'],
+                                    },
+                                    then: {
+                                      type: 'object',
+                                      properties: {
+                                        value: {
+                                          type: 'string',
+                                          enum: ['inline', 'link'],
+                                          errorMessage:
+                                            "Type value must be 'inline'(items array in inline response, which is the default today) or 'link'(link to zip file for items array for the provider)",
+                                        },
+                                      },
+                                      required: ['value'],
+                                    },
+                                  },
+                                ],
                               },
                             },
                           },
                         },
-                        {
-                          if: {
-                            type: 'object',
-                            properties: {
-                              code: {
-                                const: 'catalog_link',
-                              },
+                      },
+                      {
+                        if: {
+                          type: 'object',
+                          properties: {
+                            code: {
+                              const: 'order_value',
                             },
                           },
-                          then: {
-                            type: 'object',
-                            properties: {
-                              list: {
-                                type: 'array',
-                                items: {
-                                  allOf: [
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'type_validity',
-                                          },
+                        },
+                        then: {
+                          type: 'object',
+                          properties: {
+                            list: {
+                              type: 'array',
+                              items: {
+                                allOf: [
+                                  {
+                                    if: {
+                                      type: 'object',
+                                      properties: {
+                                        code: {
+                                          const: 'min_value',
                                         },
-                                        required: ['code'],
                                       },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            format: 'duration',
-                                            errorMessage: 'Duration must be RFC3339 duration.',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
+                                      required: ['code'],
                                     },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'last_update',
-                                          },
+                                    then: {
+                                      type: 'object',
+                                      properties: {
+                                        value: {
+                                          type: 'string',
+                                          pattern: '^[0-9]+(?:.[0-9]{1,2})?$',
+                                          errorMessage: 'min_value must be number with exactly two decimal places',
                                         },
-                                        required: ['code'],
                                       },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            description: 'RFC3339 UTC timestamp format',
-                                            format: 'rfc3339-date-time',
-                                            errorMessage: 'Time must be RFC3339 UTC timestamp format.',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
+                                      required: ['value'],
                                     },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'type_value',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            format: 'url',
-                                            errorMessage: 'Type value must be url',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'last_update',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            description: 'RFC3339 UTC timestamp format',
-                                            format: 'rfc3339-date-time',
-                                            errorMessage: 'Time must be RFC3339 UTC timestamp format.',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'type',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            enum: ['inline', 'link'],
-                                            errorMessage:
-                                              "Type value must be 'inline'(items array in inline response, which is the default today) or 'link'(link to zip file for items array for the provider)",
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                  ],
-                                },
+                                  },
+                                ],
                               },
                             },
                           },
                         },
-                        {
-                          if: {
+                      },
+                    ],
+                    if: {
+                      properties: { code: { const: 'np_fees' } }
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          type: 'array',
+                          items: {
                             type: 'object',
                             properties: {
-                              code: {
-                                const: 'order_value',
-                              },
+                              code: { 'type': 'string' },
+                              value: {
+                                oneOf: [
+                                  { type: 'string' },
+                                  { type: 'number' }
+                                ]
+                              }
                             },
-                          },
-                          then: {
-                            type: 'object',
-                            properties: {
-                              list: {
-                                type: 'array',
-                                items: {
-                                  allOf: [
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'min_value',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            pattern: '^[0-9]+(?:.[0-9]{1,2})?$',
-                                            errorMessage: 'min_value must be number with exactly two decimal places',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                  ],
-                                },
-                              },
-                            },
+                            required: ['code', 'value']
                           },
                         },
-                      ],
+                      },
                     },
                   },
                 },
-                required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],
               },
+              required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],
             },
           },
-          required: ['bpp/descriptor', 'bpp/providers'],
+
         },
+        required: ['bpp/descriptor', 'bpp/providers'],
       },
-      required: ['catalog'],
     },
+    required: ['catalog'],
   },
+
   required: ['context', 'message'],
 }

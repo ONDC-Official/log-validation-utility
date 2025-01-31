@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { sign, hash } from '../../shared/crypto'
 import { logger } from '../../shared/logger'
 import { DOMAIN, ERROR_MESSAGE } from '../../shared/types'
-import { IGMvalidateLogs, validateLogs, RSFvalidateLogs, RSFvalidateLogsV2 } from '../../shared/validateLogs'
+import { IGMvalidateLogs } from '../../shared/validateLogs'
 import { validateLogsForFIS12 } from '../../shared/Actions/FIS12Actions'
 import { validateLogsForMobility } from '../../shared/Actions/mobilityActions'
 import { validateLogsForMetro } from '../../shared/Actions/metroActions'
@@ -175,7 +175,6 @@ const validateIGM = async (payload: string, version: string) => {
   return { response, success, message }
 }
 const validateRSF = async (payload: string, version: string) => {
-  logger.info('Entering validateRSF function')
   let response
   let success = false
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
@@ -188,19 +187,7 @@ const validateRSF = async (payload: string, version: string) => {
         success = true
         message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
       }
-
-      break;
-
-    case '2.0.0':
-      response = RSFvalidateLogsV2(payload)
-      logger.info('RSF 2.0.0 validation response:', response)
-
-      if (_.isEmpty(response)) {
-        success = true
-        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
-      }
-      break;
-
+      break
     default:
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
       logger.warn('Invalid Version!!')

@@ -342,8 +342,8 @@ export const onSearchSchema = {
                                   type: 'array',
                                   items: {
                                     type: 'string',
-                                    format: 'date',
-                                  },
+                                    pattern: "^\d{4}-\d{2}-\d{2}$"
+                                  },  
                                 },
                                 frequency: {
                                   type: 'string',
@@ -483,7 +483,7 @@ export const onSearchSchema = {
                               },
                             },
                             if: {
-                              properties: { code: { const: 'np_fees' } }
+                              properties: { code: { const: 'np_fees' } },
                             },
                             then: {
                               properties: {
@@ -492,15 +492,12 @@ export const onSearchSchema = {
                                   items: {
                                     type: 'object',
                                     properties: {
-                                      code: { 'type': 'string' },
+                                      code: { type: 'string' },
                                       value: {
-                                        oneOf: [
-                                          { type: 'string' },
-                                          { type: 'number' }
-                                        ]
-                                      }
+                                        oneOf: [{ type: 'string' }, { type: 'number' }],
+                                      },
                                     },
-                                    required: ['code', 'value']
+                                    required: ['code', 'value'],
                                   },
                                 },
                               },
@@ -747,11 +744,13 @@ export const onSearchSchema = {
                                   type: 'object',
                                   properties: {
                                     code: { type: 'string' },
-                                    value: { type: 'string' }
+                                    value: { type: 'string' },
                                   },
                                   anyOf: [
                                     {
-                                      properties: { code: { const: 'np_fees' } },
+                                      if: {
+                                        properties: { code: { const: 'np_fees' } },
+                                      },
                                       then: {
                                         properties: {
                                           list: {
@@ -759,22 +758,21 @@ export const onSearchSchema = {
                                             items: {
                                               type: 'object',
                                               properties: {
-                                                code: { 'type': 'string' },
+                                                code: { type: 'string' },
                                                 value: {
-                                                  oneOf: [
-                                                    { type: 'string' },
-                                                    { type: 'number' }
-                                                  ]
-                                                }
+                                                  oneOf: [{ type: 'string' }, { type: 'number' }],
+                                                },
                                               },
-                                              required: ['code', 'value']
-                                            }
-                                          }
-                                        }
-                                      }
+                                              required: ['code', 'value'],
+                                            },
+                                          },
+                                        },
+                                      },
                                     },
                                     {
-                                      properties: { code: { const: 'origin' } },
+                                      if: {
+                                        properties: { code: { const: 'origin' } },
+                                      },
                                       then: {
                                         properties: {
                                           list: {
@@ -784,21 +782,23 @@ export const onSearchSchema = {
                                               properties: {
                                                 value: {
                                                   type: 'string',
-                                                  pattern: '^(A(BW|FG|GO|IA|L[AB]|ND|R[EGM]|SM|T[AFG]|U[ST]|ZE)|B(DI|E[LNS]|FA|G[DR]|H[RS]|IH|L[MRZ]|MU|OL|R[ABN]|TN|VT|WA)|C(A[FN]|CK|H[ELN]|IV|MR|O[DGKLM]|PV|RI|U[BW]|XR|Y[MP]|ZE)|D(EU|JI|MA|NK|OM|ZA)|E(CU|GY|RI|S[HPT]|TH)|F(IN|JI|LK|R[AO]|SM)|G(AB|BR|EO|GY|HA|I[BN]|LP|MB|N[BQ]|R[CDL]|TM|U[FMY])|H(KG|MD|ND|RV|TI|UN)|I(DN|MN|ND|OT|R[LNQ]|S[LR]|TA)|J(AM|EY|OR|PN)|K(AZ|EN|GZ|HM|IR|NA|OR|WT)|L(AO|B[NRY]|CA|IE|KA|SO|TU|UX|VA)|M(A[CFR]|CO|D[AGV]|EX|HL|KD|L[IT]|MR|N[EGP]|OZ|RT|SR|TQ|US|WI|Y[ST])|N(AM|CL|ER|FK|GA|I[CU]|LD|OR|PL|RU|ZL)|OMN|P(A[KN]|CN|ER|HL|LW|NG|OL|R[IKTY]|SE|YF)|QAT|R(EU|OU|US|WA)|S(AU|DN|EN|G[PS]|HN|JM|L[BEV]|MR|OM|PM|RB|SD|TP|UR|V[KN]|W[EZ]|XM|Y[CR])|T(C[AD]|GO|HA|JK|K[LM]|LS|ON|TO|U[NRV]|WN|ZA)|U(GA|KR|MI|RY|SA|ZB)|V(AT|CT|EN|GB|IR|NM|UT)|W(LF|SM)|YEM|Z(AF|MB|WE))$',
-                                                  errorMessage: 'Country must be in ISO 3166-1 format (three-letter country code)'
-                                                }
-                                              }
-                                            }
-                                          }
-                                        }
-                                      }
-                                    }
-                                  ]
-                                }
-                              }
+                                                  pattern:
+                                                    '^(A(BW|FG|GO|IA|L[AB]|ND|R[EGM]|SM|T[AFG]|U[ST]|ZE)|B(DI|E[LNS]|FA|G[DR]|H[RS]|IH|L[MRZ]|MU|OL|R[ABN]|TN|VT|WA)|C(A[FN]|CK|H[ELN]|IV|MR|O[DGKLM]|PV|RI|U[BW]|XR|Y[MP]|ZE)|D(EU|JI|MA|NK|OM|ZA)|E(CU|GY|RI|S[HPT]|TH)|F(IN|JI|LK|R[AO]|SM)|G(AB|BR|EO|GY|HA|I[BN]|LP|MB|N[BQ]|R[CDL]|TM|U[FMY])|H(KG|MD|ND|RV|TI|UN)|I(DN|MN|ND|OT|R[LNQ]|S[LR]|TA)|J(AM|EY|OR|PN)|K(AZ|EN|GZ|HM|IR|NA|OR|WT)|L(AO|B[NRY]|CA|IE|KA|SO|TU|UX|VA)|M(A[CFR]|CO|D[AGV]|EX|HL|KD|L[IT]|MR|N[EGP]|OZ|RT|SR|TQ|US|WI|Y[ST])|N(AM|CL|ER|FK|GA|I[CU]|LD|OR|PL|RU|ZL)|OMN|P(A[KN]|CN|ER|HL|LW|NG|OL|R[IKTY]|SE|YF)|QAT|R(EU|OU|US|WA)|S(AU|DN|EN|G[PS]|HN|JM|L[BEV]|MR|OM|PM|RB|SD|TP|UR|V[KN]|W[EZ]|XM|Y[CR])|T(C[AD]|GO|HA|JK|K[LM]|LS|ON|TO|U[NRV]|WN|ZA)|U(GA|KR|MI|RY|SA|ZB)|V(AT|CT|EN|GB|IR|NM|UT)|W(LF|SM)|YEM|Z(AF|MB|WE))$',
+                                                  errorMessage:
+                                                    'Country must be in ISO 3166-1 format (three-letter country code)',
+                                                },
+                                              },
+                                            },
+                                          },
+                                        },
+                                      },
+                                    },
+                                  ],
+                                },
+                              },
                             },
-                            "required": ["code", "list"]
-                          }
+                            required: ['code', 'list'],
+                          },
                         },
                       },
                       required: [
@@ -822,79 +822,77 @@ export const onSearchSchema = {
                     },
                   },
                   creds: {
-                    type: "array",
+                    type: 'array',
                     items: {
-                      type: "object",
+                      type: 'object',
                       properties: {
                         id: {
-                          type: "string",
-                          pattern: "^ESG-\\d{8}$",
-                          description: "Unique identifier for the credential, format: ESG-XXXXXXXX (8 digits)."
+                          type: 'string',
+                          description: 'Unique identifier for the credential, format: ESG-XXXXXXXX (8 digits).',
                         },
                         descriptor: {
-                          type: "object",
+                          type: 'object',
                           properties: {
                             code: {
-                              type: "string",
-                              pattern: "^ESG-\\d{8}$",
-                              description: "Code of the credential, format: ESG-XXXXXXXX (8 digits)."
+                              type: 'string',
+                              description: 'Code of the credential, format: ESG-XXXXXXXX (8 digits).',
                             },
                             short_desc: {
-                              type: "string",
-                              description: "Short description of the credential."
+                              type: 'string',
+                              description: 'Short description of the credential.',
                             },
                             name: {
-                              type: "string",
-                              description: "Name of the credential."
-                            }
+                              type: 'string',
+                              description: 'Name of the credential.',
+                            },
                           },
-                          required: ["code", "short_desc", "name"],
-                          additionalProperties: false
+                          required: ['code', 'short_desc', 'name'],
+                          additionalProperties: false,
                         },
                         url: {
-                          type: "string",
-                          format: "uri",
-                          description: "URL to the credential or badge image."
+                          type: 'string',
+                          format: 'uri',
+                          description: 'URL to the credential or badge image.',
                         },
                         tags: {
-                          type: "array",
+                          type: 'array',
                           items: {
-                            type: "object",
+                            type: 'object',
                             properties: {
                               code: {
-                                type: "string",
-                                description: "Code representing the tag (e.g., 'verification')."
+                                type: 'string',
+                                description: "Code representing the tag (e.g., 'verification').",
                               },
                               list: {
-                                type: "array",
+                                type: 'array',
                                 items: {
-                                  type: "object",
+                                  type: 'object',
                                   properties: {
                                     code: {
-                                      type: "string",
-                                      description: "Code representing the specific tag value (e.g., 'verify_url')."
+                                      type: 'string',
+                                      description: "Code representing the specific tag value (e.g., 'verify_url').",
                                     },
                                     value: {
-                                      type: "string",
-                                      format: "uri",
-                                      description: "URL or other values associated with the tag."
-                                    }
+                                      type: 'string',
+                                      format: 'uri',
+                                      description: 'URL or other values associated with the tag.',
+                                    },
                                   },
-                                  required: ["code", "value"],
-                                  additionalProperties: false
+                                  required: ['code', 'value'],
+                                  additionalProperties: false,
                                 },
-                                description: "List of key-value pairs for additional tag data."
-                              }
+                                description: 'List of key-value pairs for additional tag data.',
+                              },
                             },
-                            required: ["code", "list"],
-                            additionalProperties: false
+                            required: ['code', 'list'],
+                            additionalProperties: false,
                           },
-                          description: "Tags associated with the credential, including verification details."
-                        }
+                          description: 'Tags associated with the credential, including verification details.',
+                        },
                       },
-                      required: ["id", "descriptor"],
-                      additionalProperties: false
-                    }
+                      required: ['id', 'descriptor'],
+                      additionalProperties: false,
+                    },
                   },
                   offers: {
                     type: 'array',
@@ -911,7 +909,16 @@ export const onSearchSchema = {
                             code: {
                               type: 'string',
                               description: 'Type of the offer (e.g., discount, buyXgetY, freebie).',
-                              enums: ['discount', 'buyXgetY', 'freebie', 'slab', 'combo', 'delivery', 'exchange', 'financing']
+                              enums: [
+                                'discount',
+                                'buyXgetY',
+                                'freebie',
+                                'slab',
+                                'combo',
+                                'delivery',
+                                'exchange',
+                                'financing',
+                              ],
                             },
                             images: {
                               type: 'array',
@@ -972,7 +979,7 @@ export const onSearchSchema = {
                               code: {
                                 type: 'string',
                                 description: 'Type of the tag (e.g., qualifier, benefit, meta).',
-                                enums: ['qualifier', 'benefit', 'meta']
+                                enums: ['qualifier', 'benefit', 'meta'],
                               },
                               list: {
                                 type: 'array',
@@ -982,14 +989,21 @@ export const onSearchSchema = {
                                     code: {
                                       type: 'string',
                                       description: 'Code representing the specific tag property.',
-                                      enums: ['min_value', 'value_type', 'value', 'additive', 'item_count', 'item_id', 'item_value']
+                                      enums: [
+                                        'min_value',
+                                        'value_type',
+                                        'value',
+                                        'additive',
+                                        'item_count',
+                                        'item_id',
+                                        'item_value',
+                                      ],
                                     },
                                     value: {
                                       type: 'string',
                                       description: 'Value for the tag property.',
                                     },
                                   },
-
                                 },
                                 required: ['code', 'value'],
                               },
@@ -1000,8 +1014,7 @@ export const onSearchSchema = {
                       },
                     },
 
-                    required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags',],
-
+                    required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags'],
                   },
                 },
                 tags: {
@@ -1385,7 +1398,7 @@ export const onSearchSchema = {
                       },
                     ],
                     if: {
-                      properties: { code: { const: 'np_fees' } }
+                      properties: { code: { const: 'np_fees' } },
                     },
                     then: {
                       properties: {
@@ -1394,15 +1407,12 @@ export const onSearchSchema = {
                           items: {
                             type: 'object',
                             properties: {
-                              code: { 'type': 'string' },
+                              code: { type: 'string' },
                               value: {
-                                oneOf: [
-                                  { type: 'string' },
-                                  { type: 'number' }
-                                ]
-                              }
+                                oneOf: [{ type: 'string' }, { type: 'number' }],
+                              },
                             },
-                            required: ['code', 'value']
+                            required: ['code', 'value'],
                           },
                         },
                       },
@@ -1413,7 +1423,6 @@ export const onSearchSchema = {
               required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],
             },
           },
-
         },
         required: ['bpp/descriptor', 'bpp/providers'],
       },

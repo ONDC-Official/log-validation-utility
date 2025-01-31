@@ -216,8 +216,10 @@ export const FnBsearchSchema = {
                 required: ['code', 'list'],
                 anyOf: [
                   {
-                    properties: {
-                      code: { const: 'bnp_features' },
+                    if: {
+                      properties: {
+                        code: { const: 'bnp_features' },
+                      },
                     },
                     then: {
                       properties: {
@@ -227,9 +229,9 @@ export const FnBsearchSchema = {
                             properties: {
                               code: { const: '000' },
                               value: {
-                                type: "string",
-                                enum: ['yes', 'no']
-                              }
+                                type: 'string',
+                                enum: ['yes', 'no'],
+                              },
                             },
                             required: ['code', 'value'],
                           },
@@ -237,36 +239,39 @@ export const FnBsearchSchema = {
                       },
                     },
                   },
-                  //Did changes for catalog_full
                   {
-                    properties: {
-                      code: { const: 'catalog_full' },
+                    if: {
+                      properties: {
+                        code: { const: 'catalog_full' },
+                      },
                     },
                     then: {
                       properties: {
                         list: {
-                          type: "array",
+                          type: 'array',
                           items: {
-                            type: "object",
+                            type: 'object',
                             properties: {
                               code: {
-                                type: "string",
-                                const: "payload_type"
+                                type: 'string',
+                                const: 'payload_type',
                               },
                               value: {
-                                type: "string",
-                                enum: ['link', 'inline']
-                              }
+                                type: 'string',
+                                enum: ['link', 'inline'],
+                              },
                             },
-                            required: ["code", "value"],
-                          }
-                        }
-                      }
-                    }
+                            required: ['code', 'value'],
+                          },
+                        },
+                      },
+                    },
                   },
                   {
-                    properties: {
-                      code: { const: 'catalog_inc' },
+                    if: {
+                      properties: {
+                        code: { const: 'catalog_inc' },
+                      },
                     },
                     then: {
                       properties: {
@@ -307,8 +312,10 @@ export const FnBsearchSchema = {
                     },
                   },
                   {
-                    properties: {
-                      code: { const: 'bap_terms' },
+                    if: {
+                      properties: {
+                        code: { const: 'bap_terms' },
+                      },
                     },
                     then: {
                       properties: {
@@ -344,7 +351,6 @@ export const FnBsearchSchema = {
                   },
                 ],
               },
-              minItems: 1,
               contains: {
                 type: 'object',
                 properties: {

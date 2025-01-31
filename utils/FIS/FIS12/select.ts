@@ -29,6 +29,7 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
   }
 
   setValue(`${constants.SELECT}`, data)
+  const onSearch: any = getValue(`${FisApiSequence.ON_SEARCH}`)
 
   try {
     const select = message.order
@@ -36,7 +37,7 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
     // check provider
     try {
       logger.info(`Comparing Provider object for /${constants.ON_SEARCH} and /${constants.SELECT}`)
-      const providerIDs = getValue(`${FisApiSequence.ON_SEARCH}prvdrsId`)
+      const providerIDs = onSearch?.message?.catalog['providers']?.map((provider: { id: any }) => provider?.id)
       if (!providerIDs || providerIDs.length === 0) {
         logger.info(`Skipping Provider Ids check due to insufficient data`)
       } else {

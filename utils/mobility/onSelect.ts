@@ -9,7 +9,6 @@ import {
   validateQuote,
   validateStops,
   validatePayloadAgainstSchema,
-  validateProviderId,
 } from './mobilityChecks'
 import { validateItemsTags, validateRouteInfoTags } from './tags'
 import attributeConfig from './config/config2.0.1.json'
@@ -24,7 +23,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema('TRV', constants.ON_SELECT, data)
+  const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SELECT, data)
   const contextRes: any = validateContext(context, msgIdSet, constants.SELECT, constants.ON_SELECT)
   setValue(`${mobilitySequence.ON_SELECT}_message`, message)
   const errorObj: any = {}
@@ -44,68 +43,68 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
     const storedFull: any = getValue(`${mobilitySequence.ON_SEARCH}_storedFulfillments`)
     const fulfillmentIdsSet = new Set()
 
-    //provider id check
+    //check provider
     try {
-      logger.info(`Checking provider id in /${constants.ON_SELECT}`)
-      const providerError = validateProviderId(onSelect?.provider?.id, constants.SELECT, constants.ON_SELECT)
-      Object.assign(errorObj, providerError)
+      logger.info(`Comparing Provider Id of /${constants.SELECT} and /${constants.ON_SELECT}`)
+      const prvrdID: any = getValue('providerId')
+      const selectedProviderId = onSelect.provider.id
+
+      if (!prvrdID) {
+        logger.info(`Skipping Provider Id check due to insufficient data`)
+        setValue('providerId', selectedProviderId)
+      } else if (!_.isEqual(prvrdID, onSelect.provider.id)) {
+        errorObj.prvdrId = `Provider Id for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+      } else {
+        setValue('providerId', selectedProviderId)
+      }
     } catch (error: any) {
-      logger.error(`!!Error while checking provider id in /${constants.ON_SELECT}, ${error.stack}`)
+      logger.info(
+        `Error while comparing provider id for /${constants.SELECT} and /${constants.ON_SELECT} api, ${error.stack}`,
+      )
     }
 
     //check fulfillments
     try {
       logger.info(`Validating fulfillments object for /${constants.ON_SELECT}`)
-      if (!onSelect?.fulfillments || onSelect?.fulfillments?.length === 0) {
-        errorObj[`fulfillments`] = `Fulfillments is missing or empty`
-      } else {
-        onSelect.fulfillments?.forEach((fulfillment: any, index: number) => {
-          const fulfillmentKey = `fulfillments[${index}]`
+      onSelect.fulfillments.forEach((fulfillment: any, index: number) => {
+        const fulfillmentKey = `fulfillments[${index}]`
 
-          if (!fulfillment?.id) {
-            errorObj[fulfillmentKey] = `id is missing in fulfillments[${index}]`
-          } else if (storedFull && !storedFull.includes(fulfillment.id)) {
-            errorObj[`${fulfillmentKey}.id`] =
-              `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
-          } else {
-            fulfillmentIdsSet.add(fulfillment.id)
+        if (!fulfillment?.id) {
+          errorObj[fulfillmentKey] = `id is missing in fulfillments[${index}]`
+        } else if (storedFull && !storedFull.includes(fulfillment.id)) {
+          errorObj[
+            `${fulfillmentKey}.id`
+          ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+        } else {
+          fulfillmentIdsSet.add(fulfillment.id)
+        }
+
+        if (!ON_DEMAND_VEHICLE.includes(fulfillment.vehicle.category)) {
+          errorObj[`${fulfillmentKey}.vehicleCategory`] = `Vehicle category should be one of ${ON_DEMAND_VEHICLE}`
+        }
+
+        if (!fulfillment.type) {
+          errorObj[`${fulfillmentKey}.type`] = `Fulfillment type is missing`
+        } else if (fulfillment.type !== 'DELIVERY') {
+          errorObj[
+            `${fulfillmentKey}.type`
+          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_SELECT}`
+        }
+
+        // Check stops for START and END, or time range with valid timestamp and GPS
+        const otp = false
+        const cancel = false
+        const stopsError = validateStops(fulfillment?.stops, index, otp, cancel)
+        if (!stopsError?.valid) Object.assign(errorObj, stopsError.errors)
+
+        if (fulfillment.tags) {
+          // Validate route info tags
+          const tagsValidation = validateRouteInfoTags(fulfillment.tags)
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { tags: tagsValidation.errors })
           }
-
-          if (!fulfillment?.vehicle?.category) {
-            errorObj[`fulfillments.vehicleCategory`] = `category is missing in fulfillments.vehicle`
-          } else {
-            if (!ON_DEMAND_VEHICLE.includes(fulfillment?.vehicle?.category)) {
-              errorObj[`fulfillments.vehicleCategory`] =
-                `category should be one of ${ON_DEMAND_VEHICLE} fulfillments.vehicle`
-            }
-          }
-
-          const vehicleKeys = Object.keys(fulfillment?.vehicle)
-          if (vehicleKeys?.length > 2)
-            errorObj[`fulfillments.vehicleKeys`] = `additional keys present in fulfillments.vehicle`
-
-          if (!fulfillment.type) {
-            errorObj[`${fulfillmentKey}.type`] = `Fulfillment type is missing`
-          } else if (fulfillment.type !== 'DELIVERY') {
-            errorObj[`${fulfillmentKey}.type`] =
-              `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_SELECT}`
-          }
-
-          // Check stops for START and END, or time range with valid timestamp and GPS
-          const otp = false
-          const cancel = false
-          const stopsError = validateStops(fulfillment?.stops, index, otp, cancel)
-          if (!stopsError?.valid) Object.assign(errorObj, stopsError.errors)
-
-          if (fulfillment.tags) {
-            // Validate route info tags
-            const tagsValidation = validateRouteInfoTags(fulfillment.tags)
-            if (!tagsValidation.isValid) {
-              Object.assign(errorObj, { routeInfoTags: tagsValidation.errors })
-            }
-          }
-        })
-      }
+        }
+      })
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_SELECT},  ${error.message}`)
       return { error: error.message }
@@ -116,20 +115,19 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
       logger.info(`Validating items object for /${constants.ON_SELECT}`)
       if (!onSelect?.items) errorObj.items = `items is missing in /${constants.ON_SELECT}`
       else {
-        onSelect.items?.forEach((item: any, index: number) => {
+        onSelect.items.forEach((item: any, index: number) => {
           const itemKey = `items[${index}]`
           //id checks
           if (!item?.id) {
             errorObj[`${itemKey}.id`] = `id is missing in [${itemKey}]`
           } else if (!itemIDS.includes(item.id)) {
-            errorObj[`${itemKey}.id`] =
-              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_SELECT}`
+            errorObj[
+              `${itemKey}.id`
+            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_SELECT}`
           }
 
           //price check
           if (!item?.price?.value) errorObj[`${itemKey}.price`] = `value is missing at item.index ${index} `
-          if (!item?.price?.currency)
-            errorObj[`${itemKey}.price.currency`] = `currency is missing at item.index ${index} `
 
           //fulfillment_ids, location_ids & payment_ids checks
           const refIdsErrors = validateItemRefIds(
@@ -146,13 +144,14 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
           if (!item?.descriptor?.code)
             errorObj[`${itemKey}.code`] = `descriptor.code is missing at index: ${index} in /${constants.ON_SELECT}`
           else if (item.descriptor.code !== 'RIDE') {
-            errorObj[`${itemKey}.type`] =
-              `descriptor.code must be RIDE at item.index ${index} in /${constants.ON_SELECT}`
+            errorObj[
+              `${itemKey}.type`
+            ] = `descriptor.code must be RIDE at item.index ${index} in /${constants.ON_SELECT}`
           }
 
           // FARE_POLICY & INFO checks
           if (item.tags) {
-            const tagsValidation = validateItemsTags(item?.tags)
+            const tagsValidation = validateItemsTags(item.tags)
             if (!tagsValidation.isValid) {
               Object.assign(errorObj, { tags: tagsValidation.errors })
             }
@@ -175,11 +174,11 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
     }
 
     if (onSelect?.payments) {
-      errorObj[`payments`] = `payments is not part of /${constants.ON_SELECT}`
+      errorObj[`payments`] = `payments  is not part of /${constants.ON_SELECT}`
     }
 
     if (onSelect?.cancellation_terms) {
-      errorObj[`cancellation_terms`] = `cancellation_terms is not part of /${constants.ON_SELECT}`
+      errorObj[`cancellation_terms`] = `cancellation_terms  is not part of /${constants.ON_SELECT}`
     }
 
     if (version === '2.0.1') {

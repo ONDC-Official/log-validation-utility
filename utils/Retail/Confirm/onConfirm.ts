@@ -362,7 +362,7 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any) => {
             logger.error(
               'onCnfrmObj[`message.order.tags[0].list`] = `Pan_id is different in tax_number and provider_tax_number in message.order.tags[0].list`',
             )
-          } else if (pan_id == provider_tax_number && np_type_on_search == 'MSN') {
+          } else if (pan_id == provider_tax_number && np_type_on_search === 'MSN') {
             onCnfrmObj[`message.order.tags[0].list`] =
               `Pan_id shouldn't be same in tax_number and provider_tax_number in message.order.tags[0].list`
             logger.error(

@@ -22,7 +22,8 @@ export const searchSchema = {
         },
         core_version: {
           type: 'string',
-          const: '1.2.0',
+          enum: ['1.2.0', '1.2.5'],
+          minLength: 1,
         },
         bap_id: {
           type: 'string',
@@ -148,7 +149,7 @@ export const searchSchema = {
                 properties: {
                   code: {
                     type: 'string',
-                    enum: ['catalog_inc', 'bap_terms'],
+                    enum: ['catalog_inc', 'bap_terms', 'bnp_features', 'catalog_full'],
                   },
                   list: {
                     type: 'array',
@@ -164,6 +165,50 @@ export const searchSchema = {
                             'static_terms',
                             'effective_date',
                             'static_terms_new',
+                            'payload_type',
+                            '000',
+                            '001',
+                            '002',
+                            '003',
+                            '004',
+                            '005',
+                            '006',
+                            '007',
+                            '008',
+                            '0091',
+                            '0092',
+                            '0093',
+                            '0094',
+                            '0095',
+                            '0096',
+                            '0097',
+                            '0098',
+                            '0099',
+                            '009A',
+                            '009B',
+                            '009C',
+                            '009D',
+                            '009E',
+                            '00A',
+                            '00B',
+                            '00C',
+                            '00D',
+                            '00E',
+                            '00F',
+                            '010',
+                            '011',
+                            '012',
+                            '013',
+                            '014',
+                            '015',
+                            '016',
+                            '017',
+                            '018',
+                            '019',
+                            '01A',
+                            '01B',
+                            '01C',
+                            '01D',
                           ],
                         },
                         value: {
@@ -172,7 +217,145 @@ export const searchSchema = {
                       },
                       required: ['code', 'value'],
                     },
+                    minItems: 1,
                   },
+                },
+                required: ['code', 'list'],
+                anyOf: [
+                  {
+                    properties: {
+                      code: { const: 'bnp_features' },
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          contains: {
+                            type: 'object',
+                            properties: {
+                              code: { const: '000' },
+                              value: {
+                                type: "string",
+                                enum: ['yes', 'no']
+                              }
+                            },
+                            required: ['code', 'value'],
+                          },
+                        },
+                      },
+                    },
+                  },
+                  //Did changes for catalog_full
+                  {
+                    properties: {
+                      code: { const: 'catalog_full' },
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              code: {
+                                type: "string",
+                                const: "payload_type"
+                              },
+                              value: {
+                                type: "string",
+                                enum: ['link', 'inline']
+                              }
+                            },
+                            required: ["code", "value"],
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    properties: {
+                      code: { const: 'catalog_inc' },
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          anyOf: [
+                            {
+                              contains: {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'mode' },
+                                },
+                                required: ['code'],
+                              },
+                            },
+                            {
+                              contains: {
+                                allOf: [
+                                  {
+                                    type: 'object',
+                                    properties: {
+                                      code: { const: 'start_time' },
+                                    },
+                                    required: ['code'],
+                                  },
+                                  {
+                                    type: 'object',
+                                    properties: {
+                                      code: { const: 'end_time' },
+                                    },
+                                    required: ['code'],
+                                  },
+                                ],
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  },
+                  {
+                    properties: {
+                      code: { const: 'bap_terms' },
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          contains: {
+                            allOf: [
+                              {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'static_terms' },
+                                },
+                                required: ['code'],
+                              },
+                              {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'static_terms_new' },
+                                },
+                                required: ['code'],
+                              },
+                              {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'effective_date' },
+                                },
+                                required: ['code'],
+                              },
+                            ],
+                          },
+                        },
+                      },
+                    },
+                  },
+                ],
+              },
+              minItems: 1,
+              contains: {
+                type: 'object',
+                properties: {
+                  code: { const: 'bnp_features' },
                 },
                 required: ['code', 'list'],
               },

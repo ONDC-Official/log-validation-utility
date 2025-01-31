@@ -14,9 +14,9 @@ import {
   validatePaymentsObject,
 } from './fisChecks'
 import { getValue, setValue } from '../../../shared/dao'
-import { validateLoanInfoTags, validateLoanTags, validatePaymentTags } from './tags'
+import { validateLoanInfoTags, validatePaymentTags } from './tags'
 
-export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
+export const checkOnInit = (data: any, msgIdSet: any, sequence: string, flow: string) => {
   try {
     const errorObj: any = {}
     if (!data || isObjectEmpty(data)) {
@@ -43,7 +43,6 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
 
     const on_init = message.order
     const version: any = getValue('version')
-    const LoanType: any = getValue('LoanType')
 
     //provider checks
     try {
@@ -65,8 +64,9 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
         on_init.items.forEach((item: any, index: number) => {
           if (selectedItemId && !selectedItemId.includes(item.id)) {
             const key = `item[${index}].item_id`
-            errorObj[key] =
-              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+            errorObj[
+              key
+            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
           }
 
           // Validate parent_item_id
@@ -86,25 +86,18 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
             constants.ON_INIT,
             `items[${index}].descriptor`,
             false,
-            [],
           )
           if (descriptorError) Object.assign(errorObj, descriptorError)
 
           // Validate xinput
           const xinput = item?.xinput
-          const currIndex = parseInt(sequence.replace('on_init_', ''))
-          const xinputValidationErrors = validateXInput(xinput, index, constants.ON_INIT, currIndex ? currIndex - 1 : 0)
+          const xinputValidationErrors = validateXInput(xinput, index, constants.ON_SEARCH, 0)
           if (xinputValidationErrors) {
             Object.assign(errorObj, xinputValidationErrors)
           }
 
           // Validate Item tags
-          let tagsValidation: any = {}
-          if (LoanType == 'INVOICE_BASED_LOAN') {
-            tagsValidation = validateLoanTags(item?.tags, sequence)
-          } else {
-            tagsValidation = validateLoanInfoTags(item?.tags, LoanType)
-          }
+          const tagsValidation = validateLoanInfoTags(item?.tags, flow)
           if (!tagsValidation.isValid) {
             Object.assign(errorObj, { tags: tagsValidation.errors })
           }
@@ -132,7 +125,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
         const fulfillment = on_init.fulfillments[i]
         const fulfillmentErrors = validateFulfillments(fulfillment, i)
         if (fulfillmentErrors) {
-          errorObj[`fulfillment${i}`] = fulfillmentErrors
+          Object.assign(errorObj, fulfillmentErrors)
         }
 
         i++
@@ -165,9 +158,9 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
               { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
               { code: 'STATIC_TERMS', type: 'url' },
               { code: 'COURT_JURISDICTION', type: 'string' },
-              // { code: 'DELAY_INTEREST', type: 'amount' },
+              { code: 'DELAY_INTEREST', type: 'amount' },
               { code: 'SETTLEMENT_AMOUNT', type: 'amount' },
-              // { code: 'SETTLEMENT_TYPE', type: 'enum', value: ['upi', 'neft', 'rtgs'] },
+              { code: 'SETTLEMENT_TYPE', type: 'enum', value: ['upi', 'neft', 'rtgs'] },
               {
                 code: 'OFFLINE_CONTRACT',
                 type: 'boolean',
@@ -179,8 +172,9 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
             } else {
               const collectedBy = getValue(`collected_by`)
               if (collectedBy && collectedBy != arr?.collected_by)
-                errorObj[`payemnts[${i}]_collected_by`] =
-                  `payments.collected_by value sent in ${constants.ON_INIT} should be same as sent in past call: ${collectedBy}`
+                errorObj[
+                  `payemnts[${i}]_collected_by`
+                ] = `payments.collected_by value sent in ${constants.ON_INIT} should be same as sent in past call: ${collectedBy}`
             }
 
             // check status
@@ -190,7 +184,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
             }
 
             // check type
-            const validTypes = ['ON_ORDER', 'ON_FULFILLMENT', 'POST_FULFILLMENT']
+            const validTypes = ['ON-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
             if (!arr?.type || !validTypes.includes(arr.type)) {
               errorObj[`payments[${i}]_type`] = `payments.type must be present in ${
                 constants.ON_INIT

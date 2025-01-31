@@ -1,21 +1,20 @@
 // import _ from 'lodash'
-import constants, { mobilitySequence } from '../../constants'
+import constants, { mobilitySequence, ON_DEMAND_VEHICLE } from '../../constants'
 import { logger } from '../../shared/logger'
 import { validateSchema, isObjectEmpty } from '../'
 import { getValue, setValue } from '../../shared/dao'
 import {
   validateContext,
   validateQuote,
+  validateStops,
   validateCancellationTerms,
+  validateEntity,
   validateItemRefIds,
   validatePayloadAgainstSchema,
   validatePaymentObject,
-  validateProviderId,
-  validateFulfillments,
 } from './mobilityChecks'
-import { validateItemsTags } from './tags'
+import { validateItemsTags, validateRouteInfoTags } from './tags'
 import attributeConfig from './config/config2.0.1.json'
-import _ from 'lodash'
 
 export const checkOnInit = (data: any, msgIdSet: any, version: any) => {
   try {
@@ -29,7 +28,7 @@ export const checkOnInit = (data: any, msgIdSet: any, version: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema('TRV', constants.ON_INIT, data)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_INIT, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.INIT, constants.ON_INIT)
     setValue(`${mobilitySequence.ON_INIT}_message`, message)
 
@@ -44,27 +43,70 @@ export const checkOnInit = (data: any, msgIdSet: any, version: any) => {
     const on_init = message.order
     const itemIDS: any = getValue(`itemIds`)
     const locationIds = getValue(`locationIds`)
+    const storedFull: any = getValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`)
     const fulfillmentIdsSet = new Set()
 
-    //provider id check
     try {
-      logger.info(`Checking provider id in /${constants.ON_INIT}`)
-      const providerError = validateProviderId(on_init?.provider?.id, constants.INIT, constants.ON_INIT)
-      Object.assign(errorObj, providerError)
+      logger.info(`Checking provider Id in /${constants.ON_SEARCH} and /${constants.ON_INIT}`)
+      if (!on_init.provider || on_init.provider.id != getValue('providerId')) {
+        errorObj.prvdrId = `Provider Id mismatches in /${constants.INIT} and /${constants.ON_INIT}`
+      }
     } catch (error: any) {
-      logger.error(`!!Error while checking provider id in /${constants.ON_INIT}, ${error.stack}`)
+      logger.error(
+        `!!Error while comparing provider Id in /${constants.ON_SEARCH} and /${constants.ON_INIT}, ${error.stack}`,
+      )
     }
 
-    //fulfillments checks
-    const fulfillmentError = validateFulfillments(
-      on_init?.fulfillments,
-      fulfillmentIdsSet,
-      constants.ON_INIT,
-      false,
-      false,
-      ''
-    )
-    Object.assign(errorObj, fulfillmentError)
+    //fulfillments
+    try {
+      logger.info(`Validating fulfillments object for /${constants.ON_INIT}`)
+      on_init.fulfillments.forEach((fulfillment: any, index: number) => {
+        const fulfillmentKey = `fulfillments[${index}]`
+        fulfillmentIdsSet.add(fulfillment.id)
+        if (!fulfillment?.id) {
+          errorObj[fulfillmentKey] = `id is missing in fulfillments[${index}]`
+        } else if (!storedFull.includes(fulfillment.id)) {
+          errorObj[
+            `${fulfillmentKey}.id`
+          ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+        }
+
+        if (!ON_DEMAND_VEHICLE.includes(fulfillment.vehicle.category)) {
+          errorObj[`${fulfillmentKey}.vehicleCategory`] = `Vehicle category should be one of ${ON_DEMAND_VEHICLE}`
+        }
+
+        if (fulfillment.type !== 'DELIVERY') {
+          errorObj[
+            `${fulfillmentKey}.type`
+          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_INIT}`
+        }
+
+        if (Object.prototype.hasOwnProperty.call(fulfillment, 'agent')) {
+          errorObj[`fulfillments${index}_agent`] = `/message/order/agent is not part of /${constants.ON_INIT} call`
+        }
+
+        //customer checks
+        const customerErrors = validateEntity(fulfillment.customer, 'customer', constants.ON_INIT, index)
+        Object.assign(errorObj, customerErrors)
+
+        // Check stops for START and END, or time range with valid timestamp and GPS
+        const otp = false
+        const cancel = false
+        const stopsError = validateStops(fulfillment?.stops, index, otp, cancel)
+        if (!stopsError?.valid) Object.assign(errorObj, stopsError.errors)
+
+        if (fulfillment.tags) {
+          // Validate route info tags
+          const tagsValidation = validateRouteInfoTags(fulfillment.tags)
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { tags: tagsValidation.errors })
+          }
+        }
+      })
+    } catch (error: any) {
+      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_INIT},  ${error.message}`)
+      return { error: error.message }
+    }
 
     //items checks
     try {
@@ -77,14 +119,13 @@ export const checkOnInit = (data: any, msgIdSet: any, version: any) => {
           if (!item?.id) {
             errorObj[`${itemKey}.id`] = `id is missing in [${itemKey}]`
           } else if (!itemIDS.includes(item.id)) {
-            errorObj[`${itemKey}.id`] =
-              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_INIT}`
+            errorObj[
+              `${itemKey}.id`
+            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_INIT}`
           }
 
           //price check
           if (!item?.price?.value) errorObj[`${itemKey}.price`] = `value is missing at item.index ${index} `
-          if (!item?.price?.currency)
-            errorObj[`${itemKey}.price.currency`] = `currency is missing at item.index ${index} `
 
           //fulfillment_ids, location_ids & payment_ids checks
           const refIdsErrors = validateItemRefIds(

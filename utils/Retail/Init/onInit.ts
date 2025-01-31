@@ -85,7 +85,6 @@ export const checkOnInit = (data: any) => {
 
       setValue('tmpstmp', context.timestamp)
       setValue('onInitTmpstmp', context.timestamp)
-
     } catch (error: any) {
       logger.error(
         `!!Error while comparing timestamp for /${constants.INIT} and /${constants.ON_INIT} api, ${error.stack}`,
@@ -106,7 +105,8 @@ export const checkOnInit = (data: any) => {
     try {
       logger.info(`Comparing Message Ids of /${constants.INIT} and /${constants.ON_INIT}`)
       if (!_.isEqual(getValue(`${ApiSequence.INIT}_msgId`), context.message_id)) {
-        onInitObj[`${ApiSequence.ON_INIT}_msgId`] = `Message Ids for /${constants.INIT} and /${constants.ON_INIT} api should be same`
+        onInitObj[`${ApiSequence.ON_INIT}_msgId`] =
+          `Message Ids for /${constants.INIT} and /${constants.ON_INIT} api should be same`
       }
     } catch (error: any) {
       logger.error(`!!Error while checking message id for /${constants.ON_INIT}, ${error.stack}`)
@@ -141,7 +141,7 @@ export const checkOnInit = (data: any) => {
     try {
       logger.info(`Checking for tax_number for ${constants.ON_INIT}`)
       const bpp_terms_obj: any = message.order.tags.filter((item: any) => {
-        return item?.code == "bpp_terms"
+        return item?.code == 'bpp_terms'
       })[0]
       const tags = bpp_terms_obj.list
       const accept_bap_terms = tags.filter((item: any) => item.code === 'accept_bap_terms')
@@ -155,26 +155,26 @@ export const checkOnInit = (data: any) => {
       tags.forEach((e: any) => {
         if (e.code === 'tax_number') {
           if (!e.value) {
-            logger.error(`value must be present for tax_number in ${constants.ON_INIT}`);
-            onInitObj.taxNumberValue = `value must be present for tax_number in ${constants.ON_INIT}`;
+            logger.error(`value must be present for tax_number in ${constants.ON_INIT}`)
+            onInitObj.taxNumberValue = `value must be present for tax_number in ${constants.ON_INIT}`
           } else {
-            const taxNumberPattern = new RegExp('^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$');
+            const taxNumberPattern = new RegExp('^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$')
             if (!taxNumberPattern.test(e.value)) {
-              logger.error(`Invalid format for tax_number in ${constants.ON_INIT}`);
-              onInitObj.taxNumberValue = `Invalid format for tax_number in ${constants.ON_INIT}`;
+              logger.error(`Invalid format for tax_number in ${constants.ON_INIT}`)
+              onInitObj.taxNumberValue = `Invalid format for tax_number in ${constants.ON_INIT}`
             }
           }
           tax_number = e
         }
         if (e.code === 'provider_tax_number') {
           if (!e.value) {
-            logger.error(`value must be present for provider_tax_number in ${constants.ON_INIT}`);
-            onInitObj.provider_tax_number = `value must be present for provider_tax_number in ${constants.ON_INIT}`;
+            logger.error(`value must be present for provider_tax_number in ${constants.ON_INIT}`)
+            onInitObj.provider_tax_number = `value must be present for provider_tax_number in ${constants.ON_INIT}`
           } else {
-            const taxNumberPattern = new RegExp('^[A-Z]{5}[0-9]{4}[A-Z]{1}$');
+            const taxNumberPattern = new RegExp('^[A-Z]{5}[0-9]{4}[A-Z]{1}$')
             if (!taxNumberPattern.test(e.value)) {
-              logger.error(`Invalid format for provider_tax_number in ${constants.ON_INIT}`);
-              onInitObj.provider_tax_number = `Invalid format for provider_tax_number in ${constants.ON_INIT}`;
+              logger.error(`Invalid format for provider_tax_number in ${constants.ON_INIT}`)
+              onInitObj.provider_tax_number = `Invalid format for provider_tax_number in ${constants.ON_INIT}`
             }
           }
 
@@ -191,16 +191,18 @@ export const checkOnInit = (data: any) => {
       }
       if (tax_number.value?.length == 15 && provider_tax_number?.value?.length == 10) {
         const pan_id = tax_number?.value.slice(2, 12)
-        if (pan_id != provider_tax_number?.value && np_type_on_search == "ISN") {
+        if (pan_id != provider_tax_number?.value && np_type_on_search == 'ISN') {
           logger.error(`Pan_id is different in tax_number and provider_tax_number in ${constants.ON_INIT}`)
-          onInitObj[`message.order.tags[0].list`] = `Pan_id is different in tax_number and provider_tax_number in message.order.tags[0].list`
-        }
-        else if (pan_id == provider_tax_number && np_type_on_search == "MSN") {
-          onInitObj[`message.order.tags[0].list`] = `Pan_id shouldn't be same in tax_number and provider_tax_number in message.order.tags[0].list`
-          logger.error("onCnfrmObj[`message.order.tags[0].list`] = `Pan_id shoudn't be same in tax_number and provider_tax_number in message.order.tags[0].list`")
+          onInitObj[`message.order.tags[0].list`] =
+            `Pan_id is different in tax_number and provider_tax_number in message.order.tags[0].list`
+        } else if (pan_id == provider_tax_number && np_type_on_search == 'MSN') {
+          onInitObj[`message.order.tags[0].list`] =
+            `Pan_id shouldn't be same in tax_number and provider_tax_number in message.order.tags[0].list`
+          logger.error(
+            "onCnfrmObj[`message.order.tags[0].list`] = `Pan_id shoudn't be same in tax_number and provider_tax_number in message.order.tags[0].list`",
+          )
         }
       }
-
     } catch (error: any) {
       logger.error(`tax_number not present in tags for ${constants.ON_INIT}`)
     }
@@ -289,11 +291,11 @@ export const checkOnInit = (data: any) => {
       // Checking fulfillment.id, fulfillment.type and tracking
       logger.info('Checking fulfillment.id, fulfillment.type and tracking')
       on_init.fulfillments.forEach((ff: any) => {
-        let ffId = ""
+        let ffId = ''
 
         if (!ff.id) {
           logger.info(`Fulfillment Id must be present `)
-          onInitObj["ffId"] = `Fulfillment Id must be present`
+          onInitObj['ffId'] = `Fulfillment Id must be present`
         }
 
         ffId = ff.id
@@ -302,12 +304,11 @@ export const checkOnInit = (data: any) => {
           if (ff.tracking === false || ff.tracking === true) {
             if (getValue(`${ffId}_tracking`) != ff.tracking) {
               logger.info(`Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`)
-              onInitObj["ffTracking"] = `Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`
+              onInitObj['ffTracking'] = `Fulfillment Tracking mismatch with the ${constants.ON_SELECT} call`
             }
-          }
-          else {
+          } else {
             logger.info(`Tracking must be present for fulfillment ID: ${ff.id} in boolean form`)
-            onInitObj["ffTracking"] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
+            onInitObj['ffTracking'] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
           }
         }
       })
@@ -422,7 +423,6 @@ export const checkOnInit = (data: any) => {
     } catch (error: any) {
       logger.error(`!!Error while checking buyer app finder fee in /${constants.ON_INIT}, ${error.stack}`)
     }
-
     try {
       logger.info(`Checking Quote Object in /${constants.ON_SELECT} and /${constants.ON_INIT}`)
       const on_select_quote: any = getValue('quoteObj')
@@ -443,6 +443,36 @@ export const checkOnInit = (data: any) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while checking quote object in /${constants.ON_SELECT} and /${constants.ON_INIT}`)
+    }
+    try {
+      logger.info(`Checking Settlement basis in /${constants.ON_INIT}`)
+
+      const validSettlementBasis = ['delivery', 'shipment'] // Enums (as per API Contract)
+
+      const settlementBasis = on_init.payment['@ondc/org/settlement_basis']
+
+      if (!validSettlementBasis.includes(settlementBasis)) {
+        onInitObj.settlementBasis = `Invalid settlement basis in /${constants.ON_INIT}. Expected one of: ${validSettlementBasis.join(', ')}`
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking settlement basis in /${constants.ON_INIT}, ${error.stack}`)
+    }
+    try {
+      logger.info(`Checking Settlement Window in /${constants.ON_INIT}`)
+
+      const validSettlementWindow = {
+        code: 'SETTLEMENT_WINDOW',
+        type: 'time',
+        value: /^PT\d+[MH]$/,
+      }
+
+      const settlementWindow = on_init.payment['@ondc/org/settlement_window']
+
+      if (!validSettlementWindow.value.test(settlementWindow)) {
+        onInitObj.settlementWindow = `Invalid settlement window in /${constants.ON_INIT}. Expected format: PTd+[MH] (e.g., PT1H, PT30M).`
+      }
+    } catch (err: any) {
+      logger.error('Error while checking settlement window: ' + err.message)
     }
 
     try {
@@ -499,7 +529,6 @@ export const checkOnInit = (data: any) => {
     } catch (error: any) {
       logger.error(`!!Error while checking payment object in /${constants.ON_INIT}`)
     }
-
     try {
       logger.info(`storing payment settlement details in /${constants.ON_INIT}`)
       if (on_init.payment.hasOwnProperty('@ondc/org/settlement_details'))
@@ -509,6 +538,28 @@ export const checkOnInit = (data: any) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while storing payment settlement details in /${constants.ON_INIT}`)
+    }
+
+    try {
+      logger.info(`Checking Quote Object in /${constants.ON_SELECT} and /${constants.ON_INIT}`)
+      const on_select_quote: any = getValue('quoteObj')
+      const quoteErrors = compareQuoteObjects(on_select_quote, on_init.quote, constants.ON_SELECT, constants.ON_INIT)
+      const hasItemWithQuantity = _.some(on_init.quote.breakup, (item) => _.has(item, 'item.quantity'))
+      if (hasItemWithQuantity) {
+        const key = `quantErr`
+        onInitObj[key] =
+          `Extra attribute Quantity provided in quote object i.e not supposed to be provided after on_select so invalid quote object`
+      } else if (quoteErrors) {
+        let i = 0
+        const len = quoteErrors.length
+        while (i < len) {
+          const key = `quoteErr${i}`
+          onInitObj[key] = `${quoteErrors[i]}`
+          i++
+        }
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking quote object in /${constants.ON_SELECT} and /${constants.ON_INIT}`)
     }
 
     try {
@@ -530,17 +581,15 @@ export const checkOnInit = (data: any) => {
 
       for (const tag of tags) {
         if (tag.code === 'bap_terms') {
-          const hasStaticTerms = tag.list.some((item: { code: string }) => item.code === 'static_terms');
+          const hasStaticTerms = tag.list.some((item: { code: string }) => item.code === 'static_terms')
           if (hasStaticTerms) {
-            onInitObj['message/order/tags/bap_terms/static_terms'] = `static_terms is not required for now! in ${constants.ON_INIT}`;
+            onInitObj['message/order/tags/bap_terms/static_terms'] =
+              `static_terms is not required for now! in ${constants.ON_INIT}`
           }
         }
       }
-
     } catch (err: any) {
-      logger.error(
-        `Error while Checking bap_terms in ${constants.ON_INIT}, ${err.stack} `,
-      )
+      logger.error(`Error while Checking bap_terms in ${constants.ON_INIT}, ${err.stack} `)
     }
 
     try {
@@ -552,6 +601,23 @@ export const checkOnInit = (data: any) => {
       }
     } catch (err: any) {
       logger.error(`Error while checking transaction is in message.order.payment`)
+    }
+    try {
+      logger.info(`Checking if the amount is paid or not`)
+      const payment = on_init.payment
+      const status = payment_status(payment)
+
+      if (status && status.message) {
+        logger.error(status.message)
+
+        onInitObj['message/order/payment'] = status.message
+      } else {
+        logger.info('Payment status is valid.')
+      }
+    } catch (err: any) {
+      logger.error(`Error while handling payment status: ${err.stack}`)
+
+      onInitObj['message/order/payment'] = 'Payment status can not be paid (COD flow) '
     }
 
     try {

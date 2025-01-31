@@ -66,8 +66,9 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
           } else {
             if (itemIDS && !itemIDS.includes(item.id)) {
               const key = `item[${index}].item_id`
-              errorObj[key] =
-                `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
+              errorObj[
+                key
+              ] = `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
             }
           }
 
@@ -98,8 +99,16 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
       } else {
         const allowedStatusValues = ['NOT-PAID', 'PAID']
         payments?.forEach((arr: any, i: number) => {
-          const terms: any = [
+          const terms = [
+            { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' },
+            {
+              code: 'SETTLEMENT_BASIS',
+              type: 'enum',
+              value: ['INVOICE_RECEIPT', 'Delivery'],
+            },
+            { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
             { code: 'STATIC_TERMS', type: 'url' },
+            { code: 'COURT_JURISDICTION', type: 'string' },
             { code: 'DELAY_INTEREST', type: 'amount' },
             {
               code: 'OFFLINE_CONTRACT',
@@ -112,19 +121,13 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
           } else {
             const collectedBy = getValue(`collected_by`)
             if (collectedBy && collectedBy != arr?.collected_by)
-              errorObj[`payemnts[${i}]_collected_by`] =
-                `payments.collected_by value sent in ${constants.INIT} should be same as sent in past call: ${collectedBy}`
+              errorObj[
+                `payemnts[${i}]_collected_by`
+              ] = `payments.collected_by value sent in ${constants.INIT} should be same as sent in past call: ${collectedBy}`
 
             if (arr?.collected_by === 'BPP') {
               terms.push({ code: 'SETTLEMENT_AMOUNT', type: 'amount' })
               terms.push({ code: 'SETTLEMENT_TYPE', type: 'enum', value: ['upi', 'neft', 'rtgs'] })
-            } else {
-              terms.push({ code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' })
-              terms.push({
-                code: 'SETTLEMENT_BASIS',
-                type: 'enum',
-                value: ['INVOICE_RECEIPT', 'Delivery'],
-              })
             }
           }
 
@@ -135,7 +138,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
           }
 
           // check type
-          const validTypes = ['ON_ORDER', 'ON_FULFILLMENT', 'POST_FULFILLMENT']
+          const validTypes = ['ON-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
           if (!arr?.type || !validTypes.includes(arr.type)) {
             errorObj[`payments[${i}]_type`] = `payments.type must be present in ${
               constants.INIT

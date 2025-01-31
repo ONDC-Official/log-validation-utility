@@ -31,7 +31,6 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
 
     const schemaValidation = validateSchema('FIS', constants.ON_CANCEL, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.CANCEL, constants.ON_CANCEL)
-    const isAddOnPresent = getValue('isAddOnPresent')
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
@@ -88,15 +87,16 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
         onCancel.items.forEach((item: any, index: number) => {
           if (selectedItemId && !selectedItemId.includes(item.id)) {
             const key = `item[${index}].item_id`
-            errorObj[key] =
-              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+            errorObj[
+              key
+            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
           }
 
           // Validate parent_item_id
           if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in providers[${index}]`
           else {
             const parentItemId: any = getValue('parentItemId')
-            if (parentItemId && !parentItemId.includes(item?.parent_item_id)) {
+            if (parentItemId && !parentItemId.has(item?.parent_item_id)) {
               errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id's from past call in providers[${index}]`
             }
           }
@@ -118,7 +118,6 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
             constants.ON_SEARCH,
             `items[${index}].descriptor`,
             false,
-            [],
           )
           if (descriptorError) Object.assign(errorObj, descriptorError)
 
@@ -139,36 +138,36 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
 
           // Validate add_ons
           try {
-            if (isAddOnPresent) {
-              logger.info(`Checking add_ons`)
-              if (_.isEmpty(item?.add_ons))
-                errorObj[`item[${index}]_add_ons`] = `add_ons array is missing or empty in ${constants.SELECT}`
-              else {
-                const selectedAddOnIds: any = getValue(`selectedAddOnIds`)
-                item?.add_ons?.forEach((addOn: any, j: number) => {
-                  const key = `item[${index}]_add_ons[${j}]`
+            logger.info(`Checking add_ons`)
+            if (_.isEmpty(item?.add_ons))
+              errorObj[`item[${index}]_add_ons`] = `add_ons array is missing or empty in ${constants.SELECT}`
+            else {
+              const selectedAddOnIds: any = getValue(`selectedAddOnIds`)
+              item?.add_ons?.forEach((addOn: any, j: number) => {
+                const key = `item[${index}]_add_ons[${j}]`
 
-                  if (!addOn?.id) {
-                    errorObj[`${key}.id`] = `id is missing in add_ons[${j}]`
-                  } else {
-                    if (selectedAddOnIds && !selectedAddOnIds.has(addOn?.id)) {
-                      errorObj[`${key}.id`] = `id: ${addOn?.id} not found in previous provided add_ons`
-                    }
+                if (!addOn?.id) {
+                  errorObj[`${key}.id`] = `id is missing in add_ons[${j}]`
+                } else {
+                  if (selectedAddOnIds && !selectedAddOnIds.has(addOn?.id)) {
+                    errorObj[`${key}.id`] = `id: ${addOn?.id} not found in previous provided add_ons`
                   }
+                }
 
-                  if (!addOn?.descriptor?.code || !/^[A-Z_]+$/.test(addOn?.descriptor?.code))
-                    errorObj[`${key}.code`] = 'code should be present in a generic enum format'
+                if (!addOn?.descriptor?.code || !/^[A-Z_]+$/.test(addOn?.descriptor?.code))
+                  errorObj[`${key}.code`] = 'code should be present in a generic enum format'
 
-                  if (
-                    !addOn?.quantity.selected ||
-                    !Number.isInteger(addOn?.quantity.selected) ||
-                    addOn?.quantity.selected <= 0
-                  ) {
-                    errorObj[`${key}.code`] = 'Invalid quantity.selected count'
-                  }
-                })
-              }
+                if (
+                  !addOn?.quantity.selected ||
+                  !Number.isInteger(addOn?.quantity.selected) ||
+                  addOn?.quantity.selected <= 0
+                ) {
+                  errorObj[`${key}.code`] = 'Invalid quantity.selected count'
+                }
+              })
             }
+
+            return errorObj
           } catch (error: any) {
             logger.error(`!!Error while checking add_ons in /${constants.SELECT}, ${error.stack}`)
           }

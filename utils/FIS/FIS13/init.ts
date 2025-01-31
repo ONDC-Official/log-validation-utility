@@ -3,7 +3,8 @@ import constants from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, isValidPhoneNumber, isValidEmail } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
-import { checkUniqueCategoryIds, validateContext, validateQuote, validateXInputSubmission } from './fisChecks'
+// import { validatePaymentTags } from './tags'
+import { validateContext, validateXInputSubmission } from './fisChecks'
 import { validatePaymentTags } from './tags'
 
 export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
@@ -30,21 +31,19 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
     }
 
     const init = message.order
-    const insurance: any = getValue('insurance')
-    const isAddOnPresent = getValue('isAddOnPresent')
-    const fullIds: any = getValue('fulfillmentIds')
+    const itemIDS: any = getValue('ItmIDS')
 
     // check provider
     try {
       logger.info(`Validating provider object for /${constants.INIT}`)
-      const selectedProviderId = getValue('providerId')
+      const selectedProviderId = getValue('selectedProviderId')
       const providerId = init?.provider?.id
 
       if (!providerId) {
         errorObj.prvdrId = `provider.id is missing in /${constants.INIT}`
       } else if (selectedProviderId && !_.isEqual(selectedProviderId, providerId)) {
         errorObj.prvdrId = `provider.id: ${providerId} in /${constants.INIT} does'nt matches with the selected id ${selectedProviderId}`
-        setValue('providerId', providerId)
+        setValue('selectedProviderId', providerId)
       }
     } catch (error: any) {
       logger.error(`!!Error while checking provider object for /${constants.INIT}, ${error.stack}`)
@@ -57,32 +56,15 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
       if (!fulfillments) {
         errorObj.fulfillments = `fulfillments is missing at /${constants.INIT}`
       } else {
-        console.log('fullIds', fullIds)
         fulfillments?.map((fulfillment: any, i: number) => {
-          const key = `fulfillment[${i}]`
-          const customer = fulfillment?.customer
-          if (!customer?.person?.name)
-            errorObj[`${key}.name`] = `person.name is missing in fulfillment${i} at /${constants.INIT}`
+          if (!fulfillment?.person?.name)
+            errorObj.name = `person.name is missing in fulfillment${i} at /${constants.INIT}`
 
-          if (!customer?.contact?.email || !isValidEmail(customer?.contact?.email))
-            errorObj[`${key}.email`] =
-              `contact.email should be present with valid value in fulfillment${i} at /${constants.INIT}`
+          if (!fulfillment?.contact?.email || !isValidEmail(fulfillment?.contact?.email))
+            errorObj.email = `contact.email should be present with valid value in fulfillment${i} at /${constants.INIT}`
 
-          if (!customer?.contact?.phone || !isValidPhoneNumber(customer?.contact?.phone))
-            errorObj[`${key}.phone`] =
-              `contact.phone should be present with valid value in fulfillment${i} at /${constants.INIT}`
-
-          if (sequence == 'init_2') {
-            if (!fulfillment?.id) {
-              errorObj[`${key}.id`] = `fulfillment.id: is missing at index: ${i}`
-            } else if (!fullIds?.includes(fulfillment.id)) {
-              errorObj[`${key}.id`] = `fulfillment.id: should be of the id sent in past call, at ${i}`
-            }
-
-            if (insurance == 'HEALTH_INSURANCE' && !fulfillment?.type) {
-              errorObj[`${key}.type`] = `fulfillment.type: is missing at index: ${i}`
-            }
-          }
+          if (!fulfillment?.contact?.phone || !isValidPhoneNumber(fulfillment?.contact?.phone))
+            errorObj.phone = `contact.phone should be present with valid value in fulfillment${i} at /${constants.INIT}`
         })
       }
     } catch (error: any) {
@@ -96,108 +78,29 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
         errorObj.items = `items is missing in /${constants.INIT}`
       } else {
         const parentItemId: any = getValue('parentItemId')
-        const storedItemId: any = getValue('selectedItemId')
-        const categoriesId = getValue(`${constants.ON_SEARCH}categoryId`)
-        const itemsId = new Set()
         init.items.forEach((item: any, index: number) => {
-          const key = `item[${index}]`
-
           // Validate item id
+          const key = `item[${index}]`
           if (!item?.id) {
-            errorObj[`${key}.id`] = `item.id: is missing at index: ${index}`
+            errorObj[`item[${index}].id`] = `item.id is missing at item[${index}], /${constants.INIT}`
           } else {
-            //duplicate id check
-            if (itemsId.has(item.id)) {
-              errorObj[`${key}.duplicate_id`] = `duplicate item id: ${item.id}`
-            } else {
-              itemsId.add(item.id)
-            }
-
-            if (storedItemId && !storedItemId?.includes(item.id)) {
-              errorObj[`${key}.id`] = `id at index: ${index} should be one of the id mapped in previous call`
+            if (itemIDS && !itemIDS.includes(item.id)) {
+              errorObj[
+                key
+              ] = `/message/order/items/id in item: ${item.id} should be one of the item.id mapped from previous call`
             }
           }
 
-          // checks (parent_item_id & add_ons) for MOTOR & HEATLH, time for MARINE
-          if (insurance != 'MARINE_INSURANCE') {
-            // Validate parent_item_id
-            if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in items[${index}]`
-            else if (parentItemId && !parentItemId.includes(item?.parent_item_id)) {
-              errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id from past call in items[${index}]`
-            }
-
-            // Validate add_ons
-            try {
-              if (isAddOnPresent) {
-                logger.info(`Checking add_ons`)
-                if (_.isEmpty(item?.add_ons))
-                  errorObj[`item[${index}]_add_ons`] = `add_ons array is missing or empty in ${constants.INIT}`
-                else {
-                  const selectedAddOnIds: any = getValue(`selectedAddOnIds`)
-                  item?.add_ons?.forEach((addOn: any, j: number) => {
-                    const key = `item[${index}]_add_ons[${j}]`
-
-                    if (!addOn?.id) {
-                      errorObj[`${key}.id`] = `id is missing in add_ons[${j}]`
-                    } else {
-                      if (selectedAddOnIds && !selectedAddOnIds.has(addOn?.id)) {
-                        errorObj[`${key}.id`] = `id: ${addOn?.id} not found in previous provided add_ons`
-                      }
-                    }
-
-                    if (!addOn?.quantity?.selected?.count) {
-                      errorObj[`${key}.code`] = 'quantity.count is missing in add_ons'
-                    } else if (
-                      !Number.isInteger(addOn?.quantity.selected.count) ||
-                      addOn?.quantity.selected.count <= 0
-                    ) {
-                      errorObj[`${key}.code`] = 'Invalid quantity.selected count'
-                    }
-                  })
-                }
-              }
-            } catch (error: any) {
-              logger.error(`!!Error while checking add_ons in /${constants.INIT}, ${error.stack}`)
-            }
-          } else {
-            // Validate time
-            if (_.isEmpty(item?.time)) {
-              errorObj.time = `time is missing or empty at items[${index}]`
-            } else {
-              const time = item?.time
-              if (!time?.label || time?.label !== 'Coverage Time')
-                errorObj['time.label'] = `label is missing or should be equal to 'Coverage Time' at items[${index}]`
-
-              if (!time?.range?.start) errorObj['time.range.start'] = `start is missing at items[${index}].range`
-              if (!time?.range?.end) errorObj['time.range.end'] = `end is missing at items[${index}].range`
-            }
+          // Validate parent_item_id
+          if (!item?.parent_item_id) errorObj.parent_item_id = `sub-parent_item_id not found in providers[${index}]`
+          else if (!_.isEqual(item.parent_item_id, parentItemId)) {
+            setValue('parentItemId', item.parent_item_id)
+            errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id from past call in providers[${index}]`
           }
 
           //validate xInput form
           const xinputErrors = validateXInputSubmission(item?.xinput, index, sequence)
           Object.assign(errorObj, xinputErrors)
-
-          if (insurance == 'MOTOR_INSURANCE') {
-            // Validate category_ids
-            if (_.isEmpty(item?.category_ids)) {
-              errorObj.category_ids = `category_ids is missing or empty at items[${index}]`
-            } else {
-              const areCategoryIdsUnique = checkUniqueCategoryIds(item?.category_ids, categoriesId)
-              if (!areCategoryIdsUnique) {
-                const key = `item${index}_category_ids`
-                errorObj[key] =
-                  `category_ids value in items[${index}] should match with id provided in categories on on_search`
-              }
-            }
-
-            // Validate fulfillment_ids
-            if (!item?.fulfillment_ids) {
-              errorObj[`${key}.fulfillment_ids`] = `item.fulfillment_ids: is missing at index: ${index}`
-            } else if (fullIds && !fullIds.includes(item?.fulfillment_ids)) {
-              errorObj[`${key}.fulfillment_ids`] =
-                `item.fulfillment_ids: at index: ${index}, should match with id's provided in fulfillment`
-            }
-          }
         })
       }
     } catch (error: any) {
@@ -221,10 +124,9 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
               type: 'enum',
               value: ['INVOICE_RECEIPT', 'Delivery'],
             },
-            // { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
-            { code: 'OFFLINE_CONTRACT', type: 'boolean' },
+            { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
             { code: 'STATIC_TERMS', type: 'url' },
-            // { code: 'COURT_JURISDICTION', type: 'string' },
+            { code: 'COURT_JURISDICTION', type: 'string' },
             { code: 'DELAY_INTEREST', type: 'amount' },
           ]
 
@@ -233,8 +135,9 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
           } else {
             const collectedBy = getValue(`collected_by`)
             if (collectedBy && collectedBy != arr?.collected_by)
-              errorObj[`payemnts[${i}]_collected_by`] =
-                `payments.collected_by value sent in ${constants.INIT} should be same as sent in past call: ${collectedBy}`
+              errorObj[
+                `payemnts[${i}]_collected_by`
+              ] = `payments.collected_by value sent in ${constants.INIT} should be same as sent in past call: ${collectedBy}`
 
             if (arr?.collected_by === 'BPP') {
               terms.push({ code: 'SETTLEMENT_AMOUNT', type: 'amount' })
@@ -253,7 +156,7 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
           // check type
           const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
           if (!arr?.type || !validTypes.includes(arr.type)) {
-            errorObj[`payments[${i}]_type`] = `payments.type is missing in ${
+            errorObj[`payments[${i}]_type`] = `payments.type must be present in ${
               constants.INIT
             } & its value must be one of: ${validTypes.join(', ')}`
           }
@@ -277,17 +180,6 @@ export const checkInit = (data: any, msgIdSet: any, sequence: string) => {
       }
     } catch (error: any) {
       logger.error(`!!Errors while checking payments in /${constants.INIT}, ${error.stack}`)
-    }
-
-    //check quote
-    if (insurance == 'MARINE_INSURANCE') {
-      try {
-        logger.info(`Checking quote details in /${constants.INIT}`)
-        const quoteErrors = validateQuote(init?.quote)
-        Object.assign(errorObj, quoteErrors)
-      } catch (error: any) {
-        logger.error(`!!Error while checking quote details in /${constants.INIT}`, error.stack)
-      }
     }
 
     return errorObj

@@ -98,7 +98,8 @@ export const checkOnSelect_OOS = (data: any) => {
   try {
     logger.info(`Comparing Message Ids of /${constants.SELECT_OUT_OF_STOCK} and /${constants.ON_SELECT_OUT_OF_STOCK}`)
     if (!_.isEqual(getValue(`${ApiSequence.SELECT_OUT_OF_STOCK}_msgId`), context.message_id)) {
-      errorObj[`${ApiSequence.ON_SELECT_OUT_OF_STOCK}_msgId`] = `Message Ids for /${constants.SELECT_OUT_OF_STOCK} and /${constants.ON_SELECT_OUT_OF_STOCK} api should be same`
+      errorObj[`${ApiSequence.ON_SELECT_OUT_OF_STOCK}_msgId`] =
+        `Message Ids for /${constants.SELECT_OUT_OF_STOCK} and /${constants.ON_SELECT_OUT_OF_STOCK} api should be same`
     }
   } catch (error: any) {
     logger.error(`!!Error while checking message id for /${constants.ON_SELECT_OUT_OF_STOCK}, ${error.stack}`)
@@ -109,7 +110,7 @@ export const checkOnSelect_OOS = (data: any) => {
     logger.info(`Checking domain-error in /${constants.ON_SELECT}`)
     if (!data.hasOwnProperty('error')) {
       ON_SELECT_OUT_OF_STOCK_error = data.error
-      errorObj[`${ApiSequence.ON_SELECT_OUT_OF_STOCK}_error`]='error object missing'
+      errorObj[`${ApiSequence.ON_SELECT_OUT_OF_STOCK}_error`] = 'error object missing'
     }
   } catch (error: any) {
     logger.info(`Error while checking domain-error in /${constants.ON_SELECT}, ${error.stack}`)
@@ -174,19 +175,28 @@ export const checkOnSelect_OOS = (data: any) => {
     const tts: any = getValue('timeToShip')
     ON_SELECT_OUT_OF_STOCK.fulfillments.forEach((ff: { [x: string]: any }, indx: any) => {
       const tat = isoDurToSec(ff['@ondc/org/TAT'])
+      const isTakeawayOrKerbside =
+        ff['@ondc/org/category'] === 'Takeaway' || ff['@ondc/org/category'] === 'Kerbside'
 
-      if (tat < tts) {
-        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be less than @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
-      }
+      if (isTakeawayOrKerbside) {
+        // O2D (TAT) equals O2S and S2D will not apply (time to ship) for takeaway and kerbside
+        if (tat !== tts) {
+          errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} must be equal to @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH} for takeaway or kerbside`
+        }
+      } else {
+        if (tat < tts) {
+          errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be less than @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
+        }
 
-      if (tat === tts) {
-        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be equal to @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
+        if (tat === tts) {
+          errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be equal to @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
+        }
       }
 
       logger.info(tat, 'asdfasdf', tts)
     })
   } catch (error: any) {
-    logger.error(`!!Error while checking TAT and TTS in /${constants.ON_SELECT}`)
+    logger.error(`!!Error while checking TAT and TTS in /${constants.ON_SELECT}: ${error.message}`)
   }
 
   try {
@@ -244,7 +254,6 @@ export const checkOnSelect_OOS = (data: any) => {
     logger.error(`!!Error while checking fulfillments' state in /${constants.ON_SELECT}, ${error.stack}`)
   }
 
-
   try {
     logger.info(`Checking fulfillments' state in ${constants.ON_SELECT}`)
     ON_SELECT_OUT_OF_STOCK.fulfillments.forEach((ff: any, idx: number) => {
@@ -252,25 +261,22 @@ export const checkOnSelect_OOS = (data: any) => {
         const ffDesc = ff.state.descriptor
 
         function checkFFOrgCategory(selfPickupOrDelivery: number) {
-          if (!ff["@ondc/org/category"] || !ffCategory[selfPickupOrDelivery].includes(ff["@ondc/org/category"])) {
+          if (!ff['@ondc/org/category'] || !ffCategory[selfPickupOrDelivery].includes(ff['@ondc/org/category'])) {
             const key = `fulfillment${idx}/@ondc/org/category`
             errorObj[key] =
               `In Fulfillment${idx}, @ondc/org/category is not a valid value in ${constants.ON_SELECT} and should have one of these values ${[ffCategory[selfPickupOrDelivery]]}`
           }
         }
-        if (ffDesc.code === 'Serviceable' && ff.type == "Delivery") {
+        if (ffDesc.code === 'Serviceable' && ff.type == 'Delivery') {
           checkFFOrgCategory(0)
-        }
-        else if (ff.type == "Self-Pickup") {
+        } else if (ff.type == 'Self-Pickup') {
           checkFFOrgCategory(1)
         }
-      }
-      else {
+      } else {
         const key = `fulfillment${idx}/descCode`
-        errorObj[key] =
-          `In Fulfillment${idx}, descriptor code is mandatory in ${constants.ON_SELECT}`
+        errorObj[key] = `In Fulfillment${idx}, descriptor code is mandatory in ${constants.ON_SELECT}`
       }
-    });
+    })
   } catch (error: any) {
     logger.error(`!!Error while checking fulfillments @ondc/org/category in /${constants.ON_SELECT}, ${error.stack}`)
   }
@@ -327,85 +333,91 @@ export const checkOnSelect_OOS = (data: any) => {
     const msg_err_code: string = error.code
     const itemsIdList: any = getValue('itemsIdList')
 
-    logger.info(`Checking for Valid error.message and Item Id and error.message.item_id Mapping in /ON_SELECT_OUT_OF_STOCK`)
+    logger.info(
+      `Checking for Valid error.message and Item Id and error.message.item_id Mapping in /ON_SELECT_OUT_OF_STOCK`,
+    )
 
-    if (msg_err_code === "40002") {
+    if (msg_err_code === '40002') {
       // Only checking for the item_ids which are not having customization :
-      let errorArray: any = ""
+      let errorArray: any = ''
       try {
-        errorArray = JSON.parse(msg_err);
+        errorArray = JSON.parse(msg_err)
       } catch (error: any) {
         logger.error(`!!Error while Checking for Valid error.message and paring it ${error.message} ${error.stack}`)
       }
       if (!Array.isArray(errorArray)) {
         const key = `error.message`
-        errorObj[key] = `The error.message provided in the ${ApiSequence.ON_SELECT_OUT_OF_STOCK} should be in the form of an array with proper error_code and item_id. For Example: [{\"item_id\":\"I1\",\"error\":\"40002\"},{\"item_id\":\"I2\",\"error\":\"40002\"},{\"item_id\":\"I3\",\"error\":\"40002\"}]`;
-      }
-      else {
+        errorObj[key] =
+          `The error.message provided in the ${ApiSequence.ON_SELECT_OUT_OF_STOCK} should be in the form of an array with proper error_code and item_id. For Example: [{\"item_id\":\"I1\",\"error\":\"40002\"},{\"item_id\":\"I2\",\"error\":\"40002\"},{\"item_id\":\"I3\",\"error\":\"40002\"}]`
+      } else {
         function isValidErrorItem(obj: any): boolean {
-          return typeof obj.item_id === 'string' && typeof obj.error === 'string' && obj.error === "40002"
+          return typeof obj.item_id === 'string' && typeof obj.error === 'string' && obj.error === '40002'
         }
 
-        function validateErrorArray(items: any[]): boolean {          
-          return items.every(isValidErrorItem);
+        function validateErrorArray(items: any[]): boolean {
+          return items.every(isValidErrorItem)
         }
 
         if (validateErrorArray(errorArray)) {
           let i = 0
 
-          const parent_item_ids = _.map(breakup_msg,'item.parent_item_id')
+          const parent_item_ids = _.map(breakup_msg, 'item.parent_item_id')
           const dynamic_item_ids = _.map(errorArray, 'dynamic_item_id')
 
-
-
-          _.difference(dynamic_item_ids,parent_item_ids).forEach((diff)=>{
+          _.difference(dynamic_item_ids, parent_item_ids).forEach((diff) => {
             errorObj.parent_item_ids_mismatch = `Dynamic_item_id: ${diff} doesn't exists in any quote.breakup.item.parent_item_ids`
           })
 
-          const itemsReduced = breakup_msg.filter(
-            (item: any) => {
-             return item['@ondc/org/item_quantity'] &&
+          const itemsReduced = breakup_msg.filter((item: any) => {
+            return (
+              item['@ondc/org/item_quantity'] &&
               item['@ondc/org/item_quantity'].count < itemsIdList[item['@ondc/org/item_id']]
-            })
+            )
+          })
 
-            _.difference(_.map(itemsReduced,'item.parent_item_id'),dynamic_item_ids).forEach((diff)=>{
-              errorObj.dynamic_item_id_mismatch = `Dynamic_item_id: ${diff} is missing from error payload and should be provided in the correct form with proper error_code and item_id,dynamic_item_id,etc. For Example: if base item "I1" for dynamic item "DI1" and customization "C15" for dynamic item "DI2" are both out of stock, error.message would be encoded as: "[{\"dynamic_item_id\":\"DI1\",\"item_id\":\"I1\",\"error\":\"40002\"}, {\"dynamic_item_id\":\"DI2\",\"customization_id\":\"C15\",\"customization_group_id\":\"CG3\",\"error\":\"40002\"}]"`
-            })
+          _.difference(_.map(itemsReduced, 'item.parent_item_id'), dynamic_item_ids).forEach((diff) => {
+            errorObj.dynamic_item_id_mismatch = `Dynamic_item_id: ${diff} is missing from error payload and should be provided in the correct form with proper error_code and item_id,dynamic_item_id,etc. For Example: if base item "I1" for dynamic item "DI1" and customization "C15" for dynamic item "DI2" are both out of stock, error.message would be encoded as: "[{\"dynamic_item_id\":\"DI1\",\"item_id\":\"I1\",\"error\":\"40002\"}, {\"dynamic_item_id\":\"DI2\",\"customization_id\":\"C15\",\"customization_group_id\":\"CG3\",\"error\":\"40002\"}]"`
+          })
 
           errorArray.forEach((errorItem: any) => {
             const isPresent = itemsReduced.some((item: any) => item['@ondc/org/item_id'] === errorItem.item_id)
             if (!isPresent) {
               const key = `msg/err/items_id${i}`
-              errorObj[key] = `Item isn't reduced ${errorItem.item_id} in ${msg_err} is not present in fullfillments/items `;
+              errorObj[key] =
+                `Item isn't reduced ${errorItem.item_id} in ${msg_err} is not present in fullfillments/items `
               i++
             }
           })
 
           itemsReduced.forEach((item: any) => {
-            const isPresentForward = errorArray.some((errorItem: any) => errorItem.item_id === item['@ondc/org/item_id'])
+            const isPresentForward = errorArray.some(
+              (errorItem: any) => errorItem.item_id === item['@ondc/org/item_id'],
+            )
             if (!isPresentForward) {
               const key = `msg/err/items_id${i}`
               errorObj[key] = `message/order/items for item ${item['@ondc/org/item_id']} does not match in ${msg_err} `
               i++
             }
           })
-        }
-        else {
-          let isCustomizationThere = false;
+        } else {
+          let isCustomizationThere = false
           errorArray.forEach((obj: any) => {
-            if (Object.keys(obj).includes("dynamic_item_id")) {
+            if (Object.keys(obj).includes('dynamic_item_id')) {
               isCustomizationThere = true
             }
           })
           if (!isCustomizationThere) {
             const key = `error.message`
-            errorObj[key] = `The error.message provided in the ${ApiSequence.ON_SELECT_OUT_OF_STOCK} should be provided in the correct form with proper error_code and item_id. For Example: [{\"item_id\":\"I1\",\"error\":\"40002\"},{\"item_id\":\"I2\",\"error\":\"40002\"},{\"item_id\":\"I3\",\"error\":\"40002\"}]`;
+            errorObj[key] =
+              `The error.message provided in the ${ApiSequence.ON_SELECT_OUT_OF_STOCK} should be provided in the correct form with proper error_code and item_id. For Example: [{\"item_id\":\"I1\",\"error\":\"40002\"},{\"item_id\":\"I2\",\"error\":\"40002\"},{\"item_id\":\"I3\",\"error\":\"40002\"}]`
           }
         }
       }
     }
   } catch (error: any) {
-    logger.error(`!!Error while Checking for Valid error.message and Item Id and error.message.item_id Mapping in ${error.message} ${error.stack}`)
+    logger.error(
+      `!!Error while Checking for Valid error.message and Item Id and error.message.item_id Mapping in ${error.message} ${error.stack}`,
+    )
   }
 
   try {
@@ -549,8 +561,9 @@ export const checkOnSelect_OOS = (data: any) => {
         item['@ondc/org/title_type'] !== 'item' &&
         retailPymntTtl[item.title.toLowerCase().trim()] !== item['@ondc/org/title_type']
       ) {
-        errorObj.pymntttlmap = `Quote breakup Payment title "${item.title}" comes under the title type "${retailPymntTtl[item.title.toLowerCase().trim()]
-          }"`
+        errorObj.pymntttlmap = `Quote breakup Payment title "${item.title}" comes under the title type "${
+          retailPymntTtl[item.title.toLowerCase().trim()]
+        }"`
       }
     })
   } catch (error: any) {

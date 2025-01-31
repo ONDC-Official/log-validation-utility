@@ -25,7 +25,7 @@ const controller = {
               domain,
               payload,
               version,
-              flow,
+              flow.toString(),
               bap_id,
               bpp_id,
             )
@@ -58,6 +58,10 @@ const controller = {
           break
         case DOMAIN.RSF:
           {
+            if (version === "2.0.0") {
+              const { response, success, message } = await helper.validateRSF2(domain, payload, version, flow)
+              result = { response, success, message }
+            }
             const { response, success, message } = await helper.validateRSF(payload, version)
             result = { response, success, message }
           }
@@ -144,6 +148,7 @@ const controller = {
       const payload = req.body
       switch (core_version) {
         case '1.2.0':
+        case '1.2.5':
           error = validateActionSchema(payload, domain, action)
           break
         default:
@@ -154,26 +159,6 @@ const controller = {
 
       if (!_.isEmpty(error)) res.status(400).send({ success: false, error })
       else return res.status(200).send({ success: true, error })
-    } catch (error) {
-      logger.error(error)
-      return res.status(500).send({ success: false, error: error })
-    }
-  },
-  getValidationFormat: async (req: Request, res: Response): Promise<Response | void> => {
-    try {
-      const upperDomain = req.params.dom
-      const { domain, version } = req.query
-      if (!domain || !version) return res.status(400).send({ success: false, error: 'domain, version are required' })
-
-      const domainEnum = helper.getEnumForDomain(upperDomain)
-
-      switch (domainEnum) {
-        case DOMAIN.FINANCE:
-          const format = helper.getFinanceValidationFormat(domain as string, version as string)
-          return res.status(200).send({ success: true, response: format })
-        default:
-          return res.status(400).send({ success: false, error: 'Domain not supported yet' })
-      }
     } catch (error) {
       logger.error(error)
       return res.status(500).send({ success: false, error: error })

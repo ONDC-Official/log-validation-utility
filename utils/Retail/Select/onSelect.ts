@@ -19,6 +19,7 @@ const retailPymntTtl: { [key: string]: string } = {
   tax: 'tax',
   discount: 'discount',
   'convenience fee': 'misc',
+  offer: 'offer'
 }
 export const checkOnSelect = (data: any) => {
   if (!data || isObjectEmpty(data)) {
@@ -30,7 +31,6 @@ export const checkOnSelect = (data: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
   const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_SELECT, data)
-
   const contextRes: any = checkContext(context, constants.ON_SELECT)
 
   const errorObj: any = {}
@@ -310,6 +310,13 @@ export const checkOnSelect = (data: any) => {
             errorObj[key] =
               `In Fulfillment${idx}, @ondc/org/category is not a valid value in ${constants.ON_SELECT} and should have one of these values ${[ffCategory[selfPickupOrDelivery]]}`
           }
+          const domain = data.context.domain.split(':')[1]
+          if(ff.type === "Delivery" && domain === "RET11" && ff["@ondc/org/category"] !== "Immediate Delivery")
+            {
+              const key = `fulfillment${idx}/@ondc/org/category`
+              errorObj[key] =
+              `In Fulfillment${idx}, @ondc/org/category should be "Immediate Delivery" for F&B in ${constants.ON_SELECT}`
+            }
         }
         if (ffDesc.code === 'Serviceable' && ff.type == "Delivery") {
           checkFFOrgCategory(0)

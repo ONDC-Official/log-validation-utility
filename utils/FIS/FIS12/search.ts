@@ -1,12 +1,10 @@
 import { logger } from '../../../shared/logger'
-import { getValue, setValue } from '../../../shared/dao'
-import constants from '../../../constants'
+import { setValue } from '../../../shared/dao'
+import constants, { fisFlows } from '../../../constants'
 import { validateSchema, isObjectEmpty, checkFISContext } from '../../../utils'
 import { validatePaymentTags } from './tags'
-import { isEmpty } from 'lodash'
-import { validateXInputSubmission } from './fisChecks'
 
-export const search = (data: any, msgIdSet: any, flow: string, sequence: string) => {
+export const search = (data: any, msgIdSet: any, flow: string) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -26,8 +24,7 @@ export const search = (data: any, msgIdSet: any, flow: string, sequence: string)
 
     const schemaValidation = validateSchema('FIS', constants.SEARCH, data)
     const contextRes: any = checkFISContext(data.context, constants.SEARCH)
-    const code = data.message.intent?.category?.descriptor?.code
-    const LoanType = getValue(`LoanType`)
+
     setValue(`${constants.SEARCH}_context`, data.context)
     msgIdSet.add(data.context.message_id)
 
@@ -41,15 +38,17 @@ export const search = (data: any, msgIdSet: any, flow: string, sequence: string)
 
     try {
       logger.info(`Validating category in /${constants.SEARCH}`)
-      const descriptorCode = flow.includes('PERSONAL') ? 'PERSONAL_LOAN' : 'INVOICE_BASED_LOAN'
+      const code = data.message.intent?.category?.descriptor?.code
       if (code) {
-        if (code != descriptorCode) {
-          errorObj['category'] =
-            `invalid code, must be in a standard enum format as PERSONAL_LOAN or INVOICE_BASED_LOAN at category.descriptor`
+        if (code != fisFlows[flow as keyof typeof fisFlows]) {
+          errorObj[
+            'category'
+          ] = `code must be in a standard enum format as PERSONAL_LOAN or INVOICE_BASED_LOAN at category.descriptor`
         }
 
-        if (!LoanType) setValue(`LoanType`, code)
-      } else errorObj['category'] = `code: ${descriptorCode} is missing at category.descriptor`
+        setValue(`LoanType`, code)
+      } else
+        errorObj['category'] = `code: ${fisFlows[flow as keyof typeof fisFlows]} must be present at category.descriptor`
     } catch (error: any) {
       logger.error(`!!Error occcurred while validating category in /${constants.SEARCH},  ${error.message}`)
     }
@@ -69,7 +68,7 @@ export const search = (data: any, msgIdSet: any, flow: string, sequence: string)
       ]
 
       if (!collectedBy) {
-        errorObj[`collected_by`] = `payment.collected_by is missing in ${constants.SEARCH}`
+        errorObj[`collected_by`] = `payment.collected_by must be present in ${constants.SEARCH}`
       } else if (!allowedCollectedByValues.includes(collectedBy)) {
         errorObj['collected_by'] = `Invalid value for collected_by, should be either of ${allowedCollectedByValues}`
       } else {
@@ -93,59 +92,6 @@ export const search = (data: any, msgIdSet: any, flow: string, sequence: string)
       }
     } catch (error: any) {
       logger.error(`!!Error occcurred while validating payments in /${constants.SEARCH},  ${error.message}`)
-    }
-
-    // checking providers
-    try {
-      // validate providers if type sequence is search_offer
-      if (code == 'INVOICE_BASED_LOAN' && sequence !== 'search') {
-        logger.info(`Validating providers in /${sequence}`)
-        const provider = data?.message.intent?.provider
-
-        if (isEmpty(provider)) {
-          errorObj.prvdr = `provider is missing in /${sequence}`
-        } else {
-          const providerId = getValue(`${constants.ON_SEARCH}prvdrsId`)
-          const itemId = getValue(`${constants.ON_SEARCH}_itemsId`)
-
-          console.log('providerId', providerId, providerId?.includes(provider?.id))
-
-          if (!provider?.id) {
-            errorObj.prvdrId = `provider.id is missing in /${sequence}`
-          } else if (providerId && !providerId?.includes(provider?.id)) {
-            errorObj.prvdrId = `provider.id: ${provider?.id} in /${sequence} does'nt exist in /${constants.ON_SEARCH}`
-          }
-
-          //check items
-          try {
-            logger.info(`checking item array in provider /${sequence}`)
-            if (!provider.items) {
-              errorObj.items = `items array must be present & should non empty in /${sequence}`
-            } else {
-              provider.items.forEach((item: any, index: number) => {
-                // Validate item id
-                if (!item?.id) {
-                  errorObj[`item[${index}].id`] = `id should be present at item[${index}] /${sequence}`
-                } else {
-                  if (itemId && !itemId.includes(item.id)) {
-                    const key = `item[${index}].item_id`
-                    errorObj[key] =
-                      `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
-                  }
-                }
-
-                //validate xInput form
-                const xinputErrors = validateXInputSubmission(item?.xinput, index, sequence)
-                Object.assign(errorObj, xinputErrors)
-              })
-            }
-          } catch (error: any) {
-            logger.error(`!!Error while checking item in /${sequence}`)
-          }
-        }
-      }
-    } catch (error: any) {
-      logger.error(`!!Error occcurred while validating providers in /${sequence},  ${error.message}`)
     }
 
     return Object.keys(errorObj).length > 0 && errorObj

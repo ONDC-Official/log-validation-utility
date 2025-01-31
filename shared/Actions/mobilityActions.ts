@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { dropDB, setValue } from '../dao'
+import { dropDB } from '../dao'
 import { logger } from '../logger'
 import { mobilitySequence, onDemandFlows } from '../../constants'
 import { search } from '../../utils/mobility/search'
@@ -26,13 +26,13 @@ export function validateLogsForMobility(data: any, flow: string, version: string
     logger.error('!!Error while removing LMDB', error)
   }
 
-  if (!_.isEqual(version, '2.0.0') || !_.isEqual(version, '2.0.1')) {
+  if (!_.isEqual(version, '2.0.0')) {
     logReport = { ...logReport, version: `Invalid version ${version}` }
   }
 
   if (!(flow in onDemandFlows)) {
     logReport = { ...logReport, version: `Invalid flow ${flow}` }
-  } else setValue('flow', flow)
+  }
 
   try {
     if (data[mobilitySequence.SEARCH]) {
@@ -99,7 +99,7 @@ export function validateLogsForMobility(data: any, flow: string, version: string
     }
 
     if (data[mobilitySequence.ON_UPDATE]) {
-      const errors = checkOnUpdate(data[mobilitySequence.ON_UPDATE], msgIdSet, version)
+      const errors = checkOnUpdate(data[mobilitySequence.ON_UPDATE], version)
       if (!_.isEmpty(errors)) {
         logReport = { ...logReport, [mobilitySequence.ON_UPDATE]: errors }
       }

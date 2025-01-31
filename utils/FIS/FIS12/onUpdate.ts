@@ -1,7 +1,7 @@
 /* eslint-disable no-prototype-builtins */
 import constants, { FisApiSequence, fisFlows } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty } from '../../'
+import { validateSchema, isObjectEmpty, isValidUrl } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
 import {
   validateCancellationTerms,
@@ -9,13 +9,12 @@ import {
   validateDescriptor,
   validateDocuments,
   validateFulfillments,
-  validatePaymentsObject,
   // validatePayments,
   validateProvider,
   validateQuote,
 } from './fisChecks'
-import { validateLoanInfoTags, validateLoanTags, validateProviderTags } from './tags'
-import _, { isEmpty } from 'lodash'
+import { validateLoanInfoTags, validateProviderTags } from './tags'
+import _ from 'lodash'
 
 export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: string) => {
   const errorObj: any = {}
@@ -29,8 +28,8 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema('FIS12', constants.ON_UPDATE, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.UPDATE, action)
+    const schemaValidation = validateSchema('FIS', constants.ON_UPDATE, data)
+    const contextRes: any = validateContext(context, msgIdSet, constants.UPDATE, constants.ON_UPDATE)
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
@@ -42,7 +41,6 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
 
     const on_update = message.order
     const version = getValue('version')
-    const LoanType: any = getValue('LoanType')
 
     //check order.id
     try {
@@ -50,9 +48,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
       if (!on_update?.id) {
         errorObj.id = `Id in message object must be present/${constants.ON_UPDATE}`
       } else {
-        const orderId = getValue('orderId')
-        if (orderId != on_update?.id)
-          errorObj.id = `order.id:${on_update?.id} mismatches with order id:${orderId} sent in ${constants.ON_CONFIRM}`
+        setValue('orderId', on_update?.id)
       }
     } catch (error: any) {
       logger.error(`!!Error while checking id in message object  /${constants.ON_UPDATE}, ${error.stack}`)
@@ -84,8 +80,9 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
         on_update.items.forEach((item: any, index: number) => {
           if (selectedItemId && !selectedItemId.includes(item.id)) {
             const key = `item[${index}].item_id`
-            errorObj[key] =
-              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+            errorObj[
+              key
+            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
           }
 
           // Validate parent_item_id
@@ -105,17 +102,11 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
             constants.ON_UPDATE,
             `items[${index}].descriptor`,
             false,
-            [],
           )
           if (descriptorError) Object.assign(errorObj, descriptorError)
 
           // Validate Item tags
-          let tagsValidation: any = {}
-          if (LoanType == 'INVOICE_BASED_LOAN') {
-            tagsValidation = validateLoanTags(item?.tags, constants.ON_CONFIRM)
-          } else {
-            tagsValidation = validateLoanInfoTags(item?.tags, LoanType)
-          }
+          const tagsValidation = validateLoanInfoTags(item?.tags, flow)
           if (!tagsValidation.isValid) {
             Object.assign(errorObj, { tags: tagsValidation.errors })
           }
@@ -132,14 +123,18 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
       const len = on_update.fulfillments.length
       while (i < len) {
         const fulfillment = on_update.fulfillments[i]
-        let fulfillmentCode = 'DISBURSED'
-        if (flow == fisFlows.FORECLOSURE_PERSONAL && action == FisApiSequence.ON_UPDATE_UNSOLICATED) {
-          fulfillmentCode = 'COMPLETED'
+        const fulfillmentErrors = validateFulfillments(fulfillment, i, on_update.documents)
+        if (
+          flow == fisFlows.LOAN_FORECLOSURE &&
+          action == FisApiSequence.ON_UPDATE_UNSOLICATED &&
+          fulfillment?.state?.descriptor?.code &&
+          fulfillment.state.descriptor.code !== 'COMPLETED'
+        ) {
+          errorObj.fulfillmentState = `Fulfillment[${i}] state descriptor code should be 'COMPLETED'`
         }
 
-        const fulfillmentErrors = validateFulfillments(fulfillment, i, on_update.documents, fulfillmentCode)
         if (fulfillmentErrors) {
-          errorObj[`fulfillment${i}`] = fulfillmentErrors
+          Object.assign(errorObj, fulfillmentErrors)
         }
 
         i++
@@ -162,51 +157,6 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
 
       const payments = on_update.payments
 
-      let label = ''
-      if (flow === fisFlows.FORECLOSURE_PERSONAL) {
-        label = 'FORECLOSURE'
-      } else if (flow === fisFlows.PRE_PART_PERSONAL) {
-        label = 'PRE_PART_PAYMENT'
-      } else if (flow === fisFlows.MISSED_EMI_PERSONAL) {
-        label = 'MISSED_EMI_PAYMENT'
-      }
-
-      const paymentWithTags = payments.find((payment: any) => !!payment.tags)
-      const newPaymentObj = payments.find((payment: any) => payment?.time?.label == label)
-      // const labelPayments = payments.filter((payment: any) => !!payment.label)
-
-      console.log('newPaymentObj-----', newPaymentObj)
-      const paymentError = validatePaymentsObject([paymentWithTags], constants.ON_UPDATE)
-      if (paymentError) {
-        errorObj.payments = paymentError
-      }
-
-      if (flow != fisFlows.PERSONAL || flow != fisFlows.INVOICE) {
-        const key = `payment_${label}`
-        if (isEmpty(newPaymentObj)) {
-          errorObj[key] = `payment object with label ${label} is missing`
-        } else {
-          if (!action.includes('unsolicated'))
-            if (!newPaymentObj?.url) errorObj[`${key}.url`] = `url is missing for payment object with label ${label}`
-            else if (newPaymentObj?.url)
-              errorObj[`${key}.url`] =
-                `url shouldn't be present for payment object with label ${label} for ${FisApiSequence.ON_UPDATE_UNSOLICATED}`
-          // if (!newPaymentObj?.id) errorObj[`${key}.id`] = `id is missing for payment object with label ${label}`
-          // if (!newPaymentObj?.status)
-          //   errorObj[`${key}.status`] = `status is missing for payment object with label ${label}`
-        }
-      }
-
-
-      console.log('errorObj', errorObj)
-
-      // labelPayments?.map((payment: any, index: ) => {
-      //   const key = `payment_${label}`
-      //   if (payment?.time?.label !== 'INSTALLMENT' || payment?.time?.label != label) {
-      //   }
-      //   if (!newPaymentObj?.id) errorObj[`${key}.id`] = `id is missing for payment object with label ${label}`
-      // })
-
       const totalPaymentsAmount = payments
         .filter((payment: any) => payment.params && payment.params.amount)
         .reduce((total: any, payment: any) => total + parseFloat(payment.params.amount), 0)
@@ -222,65 +172,37 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
 
       for (let i = 0; i < payments.length; i++) {
         const payment = payments[i]
-        const key = `payment_${i}`
 
-        if (!isEmpty(payment?.tags)) continue
-
-        if (payment?.time && payment?.time?.label == 'INSTALLMENT') {
-          if (payment?.time?.range) {
-            const { start, end } = payment.time.range
-            const startTime = new Date(start).getTime()
-            const endTime = new Date(end).getTime()
-
-            if (isNaN(startTime) || isNaN(endTime) || startTime > endTime) {
-              errorObj[`${key}.invalidTimeRange`] = `Invalid time range for payments[${i}]`
-            }
-
-            if (i > 0) {
-              const prevEndTime = new Date(payments[i - 1].time?.range?.end).getTime()
-              if (startTime <= prevEndTime) {
-                errorObj[`${key}.timeRangeOrderError`] = `Time range order error for payments[${i}]`
-              }
-            }
-          } else {
-            errorObj[`${key}.missingTimeRange`] = `Missing time.range for payments[${i}]`
+        if (i == 0 && flow != fisFlows?.PERSONAL && payment?.time?.label) {
+          if (payment?.time?.label != flow) {
+            errorObj['label'] = `label should be present & it's value should be ${
+              fisFlows[flow as keyof typeof fisFlows]
+            }`
           }
-        }
 
-        if (!payment?.id) errorObj[`${key}.id`] = `id is missing for payments[${i}]`
-        if (!payment?.type) errorObj[`${key}.type`] = `type is missing for payments[${i}]`
-        if (!payment?.params?.amount) errorObj[`${key}.params.amount`] = `params.amount is missing for payments[${i}]`
-        if (!payment?.params?.currency)
-          errorObj[`${key}.params.currency`] = `params.currency is missing for payments[${i}]`
-
-        if (!payment?.time?.label) errorObj[`${key}.time.label`] = `time.label is missing for payments[${i}]`
-        else if (payment?.time?.label !== 'INSTALLMENT' && i != 0)
-          errorObj[`${key}.time.label`] = `time.label should be 'INSTALLMENT' at payments[${i}]`
-
-        if (i == 0 && (flow != fisFlows?.PERSONAL || flow != fisFlows?.INVOICE) && payment?.time?.label == label) {
           if (action == FisApiSequence.ON_UPDATE_UNSOLICATED) {
             if (payment?.status !== 'PAID') {
-              errorObj[`${key}.invalidPaymentStatus`] = `payment status should be PAID at index ${i}`
+              errorObj.invalidPaymentStatus = `payment status should be PAID at index ${i}`
             }
 
             if (payment?.url) {
-              errorObj[`${key}.url`] = `payment.url should not be present at index ${i}`
+              errorObj['payment.url'] = `payment.url should not be present at index ${i}`
             }
           } else {
             if (!payment?.url) {
-              errorObj[`${key}.url`] = `payment.url should be present at index ${i}`
+              errorObj['payment.url'] = `payment.url should be present at index ${i}`
             }
           }
 
           continue
         }
 
-        if (flow === fisFlows.FORECLOSURE_PERSONAL && payment?.status) {
+        if (flow === fisFlows.LOAN_FORECLOSURE && payment?.status) {
           if (payment?.status == 'NOT-PAID') unPaidInstallments++
           if (action == FisApiSequence.ON_UPDATE_UNSOLICATED && payment?.status == 'DEFERRED') defferedInstallments++
         }
 
-        if (flow === fisFlows.MISSED_EMI_PERSONAL && payment?.status) {
+        if (flow === fisFlows.MISSED_EMI_PAYMENT && payment?.status) {
           if (action == FisApiSequence.ON_UPDATE_UNSOLICATED && payment?.status == 'DEFERRED') defferedInstallments++
           if (action == FisApiSequence.ON_UPDATE && payment?.status == 'DELAYED') delayedInstallments++
         }
@@ -289,23 +211,43 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
         // !personal -> UNCOLICATED : count of DEFFERED
         // count of NOT-PAID == count of DEFFERED
 
-        // if (payment.url) {
-        //   if (!isValidUrl(payment.url)) {
-        //     errorObj['invalidPaymentUrl'] = `Invalid payment url (${payment.url}) at index ${i}`
-        //   } else {
-        //     const updateValue = getValue(`updatePayment`)
-        //     if (payment?.params?.amount !== updateValue)
-        //       errorObj['invalidPaymentAmount'] =
-        //         `Invalid payment amount (${payment.url}) at index ${i}, should be the same as sent in update call`
-        //   }
-        // }
+        if (payment.url) {
+          if (!isValidUrl(payment.url)) {
+            errorObj['invalidPaymentUrl'] = `Invalid payment url (${payment.url}) at index ${i}`
+          } else {
+            const updateValue = getValue(`updatePayment`)
+            if (payment?.params?.amount !== updateValue)
+              errorObj[
+                'invalidPaymentAmount'
+              ] = `Invalid payment amount (${payment.url}) at index ${i}, should be the same as sent in update call`
+          }
+        }
 
-        if (!payment.status) {
-          errorObj[`${key}.invalidPaymentStatus`] = `missing payment.status at index ${i}`
+        if (payment.status !== 'PAID' && payment.status !== 'NOT-PAID') {
+          errorObj.invalidPaymentStatus = `Invalid payment status (${payment.status}) at index ${i}`
+        }
+
+        if (payment?.time && payment?.time?.range) {
+          const { start, end } = payment.time.range
+          const startTime = new Date(start).getTime()
+          const endTime = new Date(end).getTime()
+
+          if (isNaN(startTime) || isNaN(endTime) || startTime > endTime) {
+            errorObj.invalidTimeRange = `Invalid time range for payment at index ${i}`
+          }
+
+          if (i > 0) {
+            const prevEndTime = new Date(payments[i - 1].time?.range?.end).getTime()
+            if (startTime <= prevEndTime) {
+              errorObj.timeRangeOrderError = `Time range order error for payment at index ${i}`
+            }
+          }
+        } else {
+          errorObj.missingTimeRange = `Missing time range for payment at index ${i}`
         }
       }
 
-      if (flow == fisFlows.FORECLOSURE_PERSONAL) {
+      if (flow == fisFlows.LOAN_FORECLOSURE) {
         if (action == FisApiSequence.ON_UPDATE) {
           setValue('unPaidInstallments', unPaidInstallments)
         } else {
@@ -315,7 +257,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
         }
       }
 
-      if (flow == fisFlows.MISSED_EMI_PERSONAL) {
+      if (flow == fisFlows.MISSED_EMI_PAYMENT) {
         if (action == FisApiSequence.ON_UPDATE) {
           setValue('delayedInstallments', delayedInstallments)
         } else {
@@ -360,8 +302,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, flow: string, action: st
         }
       }
     } catch (error: any) {
-      console.log('error', error)
-      logger.error(`!!Error while checking payments details in /${constants.ON_UPDATE}`, error)
+      logger.error(`!!Error while checking payments details in /${constants.ON_UPDATE}`, error.stack)
     }
 
     //checks cancellation_terms

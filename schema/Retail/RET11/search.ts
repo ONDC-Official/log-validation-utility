@@ -351,13 +351,6 @@ export const FnBsearchSchema = {
                   },
                 ],
               },
-              contains: {
-                type: 'object',
-                properties: {
-                  code: { const: 'bnp_features' },
-                },
-                required: ['code', 'list'],
-              },
             },
           },
           required: ['payment'],

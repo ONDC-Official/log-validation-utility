@@ -56,7 +56,18 @@ const controller = {
           const { response, success, message } = await helper.validateIGM(payload, version)
           result = { response, success, message }
           break
-        case DOMAIN.RSF:
+        case DOMAIN.IGM2:
+            // eslint-disable-next-line no-case-declarations
+            const { response, success, message } = await helper.validateIGM2(payload, version)
+            result = { response, success, message }
+            break       
+       
+       
+       
+       
+       
+       
+          case DOMAIN.RSF:
           {
             const { response, success, message } = await helper.validateRSF(payload, version)
             result = { response, success, message }

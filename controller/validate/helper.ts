@@ -181,10 +181,40 @@ const validateIGM = async (payload: string, version: string) => {
       }
 
       break
+
     default:
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
       logger.warn('Invalid Version!!')
   }
+
+ 
+
+  return { response, success, message }
+}
+
+
+const validateIGM2 = async (payload: string, version: string) => 
+  let response
+  let success = false
+  let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
+
+  switch (version) {
+    case '2.0.0':
+      response = IGM2validateLogs(payload)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+
+      break
+
+    default:
+      message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
+      logger.warn('Invalid Version!!')
+  }
+
+ 
 
   return { response, success, message }
 }

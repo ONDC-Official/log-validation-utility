@@ -365,6 +365,16 @@ export const IGMApiSequence = {
   LSP_ON_ISSUE_STATUS: 'lsp_on_issue_status',
 }
 
+export const IGM2Flows ={
+  FLOW_1: 'FLOW_1',
+  FLOW_2: 'FLOW_2',
+  FLOW_3: 'FLOW_3',
+}
+export const IGM2apiSequence = {
+    // ISSUE_1: 
+}
+
+
 export const RSFapiSequence = {
   RECEIVER_RECON: 'receiver_recon',
   ON_RECEIVER_RECON: 'on_receiver_recon',

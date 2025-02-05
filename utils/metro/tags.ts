@@ -1,7 +1,7 @@
 /* eslint-disable no-prototype-builtins */
 import { getValue, setValue } from '../../shared/dao'
 import { isValidEmail, isValidPhoneNumber, isValidUrl } from '..'
-
+import constants from '../../constants'
 interface Tag {
   display: boolean
   descriptor: {
@@ -184,13 +184,18 @@ export const validatePaymentTags = (tags: Tag[], action: string): ValidationResu
 
               break
             case 'SETTLEMENT_TYPE':
-              if (!settlementTypes?.includes(item.value?.toLowerCase())) {
+              const value = item.value?.toLowerCase() || ''
+              if (!settlementTypes?.includes(value)) {
                 errors.push(
-                  `SETTLEMENT_TERMS_[${index}],SETTLEMENT_TYPE must be either if ${settlementTypes} at item[${itemIndex}]`,
+                  `SETTLEMENT_TERMS_[${index}]: SETTLEMENT_TYPE must be one of ${settlementTypes.join(', ')} at item[${itemIndex}]`,
                 )
               }
 
+              if (action === constants?.INIT) {
+                setValue('INIT_PAYMENT_TYPE', item.value?.toUpperCase() || '')
+              }
               break
+
             case 'COURT_JURISDICTION':
               if (typeof item.value !== 'string') {
                 errors.push(`SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] type should be string`)

@@ -130,7 +130,7 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
     }
 
     try {
-      on_status.items &&
+      on_status?.items &&
         on_status.items.forEach((item: any, index: number) => {
           if (!isEmpty(newItemIDSValue) && !newItemIDSValue.includes(item.id)) {
             const key = `item[${index}].item_id`
@@ -192,7 +192,9 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
           } & its value must be one of: ${validStatus.join(', ')}`
         }
 
-        const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.ON_STATUS)
+        const payment_type = getValue('INIT_PAYMENT_TYPE') ?? 'NEFT'
+
+        const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.ON_STATUS, payment_type)
         if (!isEmpty(validatePayementParams)) Object.assign(errorObj, validatePayementParams)
         // const params = arr.params
         // const bankCode: string | null = getValue('bank_code')

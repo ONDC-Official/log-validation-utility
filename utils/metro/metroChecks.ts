@@ -399,11 +399,11 @@ export const validateDescriptor = (
       errorObj.descriptor = `descriptor is missing at ${path}.`
     } else {
       if (checkCode) {
-        if (!descriptor?.code.trim()) {
+        if (!descriptor?.code) {
           errorObj.code = `descriptor.code is missing at ${path}.`
         } else if (descriptor.code?.trim() !== descriptor.code?.trim()?.toUpperCase()) {
           errorObj.code = `descriptor.code must be in uppercase at ${path}., ${descriptor.code}`
-        } else if (codes && !codes?.includes(descriptor?.code))
+        } else if (descriptor?.code && !codes?.includes(descriptor?.code))
           errorObj.code = `descriptor.code should be one of ${codes}`
       }
 

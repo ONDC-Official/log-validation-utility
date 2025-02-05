@@ -42,7 +42,7 @@ export const checkInit = (data: any, msgIdSet: any) => {
     } else {
       const onSelect: any = getValue(`${metroSequence.ON_SEARCH1}_message`)
       onSelect &&
-        onSelect.order.items.map((item: { id: string }) => {
+        onSelect?.order?.items.map((item: { id: string }) => {
           itemIdArray.push(item.id)
         })
       newItemIDSValue = itemIdArray
@@ -70,7 +70,7 @@ export const checkInit = (data: any, msgIdSet: any) => {
     }
 
     //check items
-    const getItemError = checkItemsExist(init, newItemIDSValue, 'Init')
+    const getItemError = checkItemsExist(init?.items, newItemIDSValue, constants.INIT)
     if (Object.keys(getItemError)?.length) Object.assign(errorObj, getItemError)
 
     try {
@@ -88,9 +88,6 @@ export const checkInit = (data: any, msgIdSet: any) => {
             errorObj[`payemnts[${i}]_id`] = `id should not be present if collector is BPP`
 
           setValue(`collected_by`, arr?.collected_by)
-
-          const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.INIT)
-          if (!isEmpty(validatePayementParams)) Object.assign(errorObj, validatePayementParams)
         }
 
         const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
@@ -115,6 +112,10 @@ export const checkInit = (data: any, msgIdSet: any) => {
         if (!tagsValidation.isValid) {
           Object.assign(errorObj, { tags: tagsValidation.errors })
         }
+
+        const payment_type = getValue('INIT_PAYMENT_TYPE') ?? 'NEFT'
+        const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.INIT, payment_type)
+        if (!isEmpty(validatePayementParams)) Object.assign(errorObj, validatePayementParams)
       })
     } catch (error: any) {
       logger.error(`!!Errors while checking payments in /${constants.INIT}, ${error.stack}`)

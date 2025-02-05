@@ -13,11 +13,11 @@ import {
   validateDescriptor,
 } from './metroChecks'
 import { validatePaymentTags, validateRouteInfoTags, validateTags } from './tags'
-import { checkItemTime, checkProviderTime, validateParams } from './validate/helper'
+import { checkItemTime, checkProviderTime, validateFulfillmentV2_0, validateParams } from './validate/helper'
 import { isEmpty, isNil } from 'lodash'
 
 const VALID_DESCRIPTOR_CODES = ['SJT', 'SFSJT', 'RJT', 'PASS']
-export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }) => {
+export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }, version: string) => {
   try {
     const errorObj: any = {}
     let FULFILLMENT: string[] = []
@@ -113,50 +113,53 @@ export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flow
       if (!on_init?.fulfillments) errorObj.fulfillments = `Fulfillments missing in /${constants.ON_INIT}`
       // wrap below conditions in an else block
       else {
-        on_init.fulfillments.forEach((fulfillment: any, index: number) => {
-          const fulfillmentKey = `fulfillments[${index}]`
+        version === '2.0.0'
+          ? on_init.fulfillments.forEach((fulfillment: any, index: number) => {
+              const fulfillmentKey = `fulfillments[${index}]`
 
-          if (fulfillment?.id) {
-            fulfillmentIdsSet.add(fulfillment?.id)
-            FULFILLMENT = [...FULFILLMENT, fulfillment?.id as string]
-            setValue(`${metroSequence.ON_INIT}_storedFulfillments`, FULFILLMENT)
-            // if (!storedFull.includes(fulfillment?.id)) {
-            //   errorObj[`${fulfillmentKey}.id`] =
-            //     `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
-            // }
-          } else {
-            errorObj[`Fulfillment[${index}].id`] = `fulfillment.id missing in /${constants.ON_INIT}`
-          }
-
-          if (fulfillment?.vehicle?.category !== (String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO')) {
-            errorObj[`${fulfillmentKey}.vehicleCategory`] =
-              `Vehicle category should be ${String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO'} in Fulfillment.`
-          }
-
-          if (fulfillment.type !== 'TRIP') {
-            errorObj[`${fulfillmentKey}.type`] =
-              `Fulfillment type must be TRIP at index ${index} in /${constants.ON_INIT}`
-          }
-
-          const otp = false
-          const cancel = false
-          const getStopsError = validateStops(fulfillment?.stops, index, otp, cancel, constants.ON_INIT)
-          const errorValue = Object.values(getStopsError)[0] || []
-          if (Object.keys(getStopsError).length > 0 && Object.keys(errorValue)?.length)
-            Object.assign(errorObj, getStopsError)
-
-          if (String(flow?.flow).toUpperCase() !== 'METRO') {
-            if (!fulfillment?.tags)
-              errorObj[`ulfillment_${index}_tags`] = `Tags should be present in Fulfillment in case of Intracity.`
-            else {
-              // Validate route info tags
-              const tagsValidation = validateRouteInfoTags(fulfillment?.tags)
-              if (!tagsValidation.isValid) {
-                Object.assign(errorObj, { tags: tagsValidation.errors })
+              if (fulfillment?.id) {
+                fulfillmentIdsSet.add(fulfillment?.id)
+                FULFILLMENT = [...FULFILLMENT, fulfillment?.id as string]
+                setValue(`${metroSequence.ON_INIT}_storedFulfillments`, FULFILLMENT)
+                // if (!storedFull.includes(fulfillment?.id)) {
+                //   errorObj[`${fulfillmentKey}.id`] =
+                //     `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+                // }
+              } else {
+                errorObj[`Fulfillment[${index}].id`] = `fulfillment.id missing in /${constants.ON_INIT}`
               }
-            }
-          }
-        })
+
+              if (fulfillment?.vehicle?.category !== (String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO')) {
+                errorObj[`${fulfillmentKey}.vehicleCategory`] =
+                  `Vehicle category should be ${String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO'} in Fulfillment.`
+              }
+
+              if (fulfillment.type !== 'TRIP') {
+                errorObj[`${fulfillmentKey}.type`] =
+                  `Fulfillment type must be TRIP at index ${index} in /${constants.ON_INIT}`
+              }
+
+              const otp = false
+              const cancel = false
+              const getStopsError = validateStops(fulfillment?.stops, index, otp, cancel, constants.ON_INIT)
+              const errorValue = Object.values(getStopsError)[0] || []
+              if (Object.keys(getStopsError).length > 0 && Object.keys(errorValue)?.length)
+                Object.assign(errorObj, getStopsError)
+
+              if (String(flow?.flow).toUpperCase() !== 'METRO') {
+                if (!fulfillment?.tags)
+                  errorObj[`ulfillment_${index}_tags`] = `Tags should be present in Fulfillment in case of Intracity.`
+                else {
+                  // Validate route info tags
+                  const tagsValidation = validateRouteInfoTags(fulfillment?.tags)
+                  if (!tagsValidation.isValid) {
+                    Object.assign(errorObj, { tags: tagsValidation.errors })
+                  }
+                }
+              }
+            })
+          : on_init?.fulfillments &&
+            validateFulfillmentV2_0(on_init?.fulfillments ?? [], errorObj, constants.ON_INIT, flow)
 
         setValue(`storedFulfillments`, fulfillmentIdsSet)
       }
@@ -223,7 +226,7 @@ export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flow
           else {
             item?.fulfillment_ids.forEach((fulfillmentId: string) => {
               if (!fulfillmentIdsSet.has(fulfillmentId)) {
-                errorObj[`invalidFulfillmentId_${index}`] =
+                errorObj[`invalidItemFulfillmentId_${index}`] =
                   `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_INIT} is not valid`
               }
             })
@@ -279,8 +282,10 @@ export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flow
           } & its value must be one of: ${validStatus.join(', ')}`
         }
 
-        const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.ON_INIT)
-          if (!isEmpty(validatePayementParams)) Object.assign(errorObj, validatePayementParams)
+        const payment_type = getValue('INIT_PAYMENT_TYPE') ?? 'NEFT'
+
+        const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.ON_INIT, payment_type)
+        if (!isEmpty(validatePayementParams)) Object.assign(errorObj, validatePayementParams)
         // const params = arr.params
         // const bankCode: string | null = getValue('bank_code')
         // const bankAccountNumber: string | null = getValue('bank_account_number')

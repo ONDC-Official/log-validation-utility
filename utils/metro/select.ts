@@ -53,7 +53,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     try {
       logger.info(`Comparing Items object for /${constants.ON_SEARCH} and /${constants.SELECT}`)
 
-      select.items.forEach((item: any, index: number) => {
+      select?.items?.forEach((item: any, index: number) => {
         if (storedItemIDS && !storedItemIDS.includes(item.id)) {
           const key = `item[${index}].item_id`
           errorObj[
@@ -61,6 +61,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
           ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
         } else {
           setValue('itemId', item.id)
+          setValue(`qunatity_count`, item?.quantity?.count || 0)
         }
       })
     } catch (error: any) {

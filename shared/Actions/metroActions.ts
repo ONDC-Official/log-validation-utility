@@ -15,7 +15,7 @@ import { checkOnStatus } from '../../utils/metro/onStatus'
 import { checkCancelPayload } from '../../utils/metro/cancel'
 import { checkOnCancelPayload } from '../../utils/metro/onCancel'
 
-export function validateLogsForMetro(data: any, flowName: string) {
+export function validateLogsForMetro(data: any, flowName: string, version: string) {
   const msgIdSet = new Set()
   let logReport: any = {}
   const [first, ...rest] = flowName.split('_')
@@ -63,7 +63,7 @@ export function validateLogsForMetro(data: any, flowName: string) {
     }
 
     if (data[metroSequence.ON_SELECT]) {
-      const searchResp = checkOnSelect(data[metroSequence.ON_SELECT], msgIdSet, flow)
+      const searchResp = checkOnSelect(data[metroSequence.ON_SELECT], msgIdSet, flow, version)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [metroSequence.ON_SELECT]: searchResp }
       }
@@ -77,7 +77,7 @@ export function validateLogsForMetro(data: any, flowName: string) {
     }
 
     if (data[metroSequence.ON_INIT]) {
-      const searchResp = checkOnInit(data[metroSequence.ON_INIT], msgIdSet, flow)
+      const searchResp = checkOnInit(data[metroSequence.ON_INIT], msgIdSet, flow, version)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [metroSequence.ON_INIT]: searchResp }
       }
@@ -91,7 +91,7 @@ export function validateLogsForMetro(data: any, flowName: string) {
     }
 
     if (data[metroSequence.ON_CONFIRM]) {
-      const searchResp = checkOnConfirm(data[metroSequence.ON_CONFIRM], msgIdSet, flow)
+      const searchResp = checkOnConfirm(data[metroSequence.ON_CONFIRM], msgIdSet, flow, version)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [metroSequence.ON_CONFIRM]: searchResp }
       }

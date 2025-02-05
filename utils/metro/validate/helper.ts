@@ -119,16 +119,19 @@ export function checkPayment(payments: any, i: number, action: string) {
   return errorObj
 }
 
-export function checkItemsExist(init: any, newItemIDSValue: any, action: string) {
+export function checkItemsExist(items: any, newItemIDSValue: any, action: string) {
   const errorObj: any = {}
   try {
-    if (!init?.items || init?.items?.length === 0) {
+    if (!items || items?.length === 0) {
       errorObj['items'] = `/message/order/items is missing in ${action}`
     } else {
       logger.info(`Comparing item in /${action}`)
-      init.items.forEach((item: any, index: number) => {
+      items?.forEach((item: any, index: number) => {
         if (!item?.id) errorObj['itemId'] = `/message/order/items/id in ${index}: Item Id is Missing in ${action}`
         else {
+          const getItemCount = getValue(`quantity_count`)
+          if (isNil(getItemCount)) setValue(`quantity_count`, getItemCount)
+
           if (item?.id && !newItemIDSValue.includes(item.id)) {
             const key = `item[${index}].item_id`
             errorObj[key] =
@@ -152,30 +155,48 @@ export function checkItemsExist(init: any, newItemIDSValue: any, action: string)
   return errorObj
 }
 
-export function checkBilling(billing: any, action: string) {
-  const errorObj: { [key: string]: any } = {}
+interface BillingValidationResult {
+  [key: string]: string
+}
+
+interface BillingInfo {
+  name?: string
+  email?: string
+  phone?: string
+}
+
+export function checkBilling(billing: BillingInfo, action: string): BillingValidationResult {
+  const errorObj: BillingValidationResult = {}
+
+  if (!billing) {
+    return errorObj
+  }
+
   try {
-    if (billing) {
-      if (!billing.name) {
-        errorObj['billing.name'] = `billing name must be present in /${action}`
-      } else {
-        setValue('billingName', billing.name)
-      }
-
-      if (!billing.email) {
-        errorObj['billing.email'] = `billing/email must be present in /${action}`
-      } else if (!isValidEmail(billing.email)) {
-        errorObj['billing.email'] = `billing/email must be valid Email in /${action}`
-      }
-
-      if (!billing.phone) {
-        errorObj['billing.phone'] = `billing/phone must be present in /${action}`
-      } else if (!isValidPhoneNumber(billing.phone)) {
-        errorObj['billing.phone'] = `billing/phone must be valid Phone Number in /${action}`
-      }
+    // Validate name
+    if (!billing.name?.trim()) {
+      errorObj['billing.name'] = `billing name must be present in /${action}`
+    } else {
+      setValue('billingName', billing.name)
     }
-  } catch (error: any) {
-    logger.error(`!!Error in billing of /${action}`)
+
+    // Validate email
+    if (!billing.email?.trim()) {
+      errorObj['billing.email'] = `billing/email must be present in /${action}`
+    } else if (!isValidEmail(billing.email)) {
+      errorObj['billing.email'] = `billing/email must be valid Email in /${action}`
+    }
+
+    // Validate phone
+    if (!billing.phone?.trim()) {
+      errorObj['billing.phone'] = `billing/phone must be present in /${action}`
+    } else if (!isValidPhoneNumber(billing.phone)) {
+      errorObj['billing.phone'] = `billing/phone must be valid Phone Number in /${action}`
+    }
+  } catch (error) {
+    logger.error(
+      `Error validating billing info for /${action}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    )
   }
 
   return errorObj
@@ -281,9 +302,14 @@ export function validateFarePolicyTags(tags: { [key: string]: any }[], i: number
   return errorObj
 }
 
-export function validateParams(params: { [key: string]: any }, collected_by: string, action: string) {
+export function validateParams(
+  params: { [key: string]: any },
+  collected_by: string,
+  action: string,
+  payment_type: string = 'UPI',
+) {
   const errorObj: any = {}
-  const requiredParams = ['bank_code', 'bank_account_number', 'virtual_payment_address']
+  const requiredParams = ['bank_code', 'bank_account_number']
   const collectedBy = collected_by.toUpperCase()
 
   try {
@@ -308,9 +334,12 @@ export function validateParams(params: { [key: string]: any }, collected_by: str
     }
 
     // Validate required parameters
-    const requiredParmsToCheck = action?.includes(constants.INIT)
+    let requiredParmsToCheck = action?.includes(constants.INIT)
       ? requiredParams
       : [...requiredParams, 'amount', 'currency', 'transaction_id']
+
+    requiredParmsToCheck =
+      payment_type === 'UPI' ? [...requiredParmsToCheck, 'virtual_payment_address'] : requiredParmsToCheck
 
     for (const param of requiredParmsToCheck) {
       if (!(param in params)) {
@@ -328,6 +357,28 @@ export function validateParams(params: { [key: string]: any }, collected_by: str
     return errorObj
   } catch (error) {
     logger.info(`Error validating params in /${action}`)
+    return errorObj
+  }
+}
+
+export function validateFulfillmentV2_0(
+  fulfillment: any,
+  errorObj: any,
+  action: string,
+  flow: { flow: string; flowSet: string },
+) {
+  try {
+    console.log(flow)
+    const getItemCount = getValue(`quantity_count`) ?? 0
+    if (fulfillment?.length !== Number(getItemCount) + 1)
+      errorObj.fulfillment = `fulfillment length must be count ${Number(getItemCount) + 1} in /${action}`
+    else {
+      fulfillment.forEach((item: any, index: number) => {
+        if (!item?.id) errorObj.fulfillment = `fulfillment[${index}] must have id in /${action}`
+      })
+    }
+  } catch (error) {
+    logger.info(`Error validating fulfillment in /${action}`)
     return errorObj
   }
 }

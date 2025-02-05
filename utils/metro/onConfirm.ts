@@ -13,12 +13,12 @@ import {
 } from './metroChecks'
 import { validatePaymentTags, validateRouteInfoTags, validateTags } from './tags'
 import { isEmpty, isNil } from 'lodash'
-import { validateParams } from './validate/helper'
+import { validateFulfillmentV2_0, validateParams } from './validate/helper'
 
 // const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SFSJT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT', 'RJT']
 
-export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }) => {
+export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }, version: string) => {
   const errorObj: any = {}
   const payment = getValue('paymentId')
   // const paymentAmount = getValue('paramsAmount')
@@ -90,49 +90,52 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
     try {
       logger.info(`Validating fulfillments object for /${constants.ON_CONFIRM}`)
       let FULFILLMENT: string[] = []
-      on_confirm.fulfillments.forEach((fulfillment: any, index: number) => {
-        FULFILLMENT = [...FULFILLMENT, fulfillment?.id]
-        const fulfillmentKey = `fulfillments[${index}]`
+      version === '2.0.0'
+        ? on_confirm.fulfillments?.forEach((fulfillment: any, index: number) => {
+            FULFILLMENT = [...FULFILLMENT, fulfillment?.id]
+            const fulfillmentKey = `fulfillments[${index}]`
 
-        if (!storedFull.includes(fulfillment?.id)) {
-          errorObj[`${fulfillmentKey}.id`] =
-            `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in ${constants.ON_INIT}`
-        } else {
-          fulfillmentIdsSet.add(fulfillment?.id)
-        }
-
-        if (!fulfillment?.vehicle) {
-          errorObj['Vehicle'] = 'Vehicle Object Is Missing'
-        } else if (
-          fulfillment?.vehicle?.category !== (String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO')
-        ) {
-          errorObj[`${fulfillmentKey}.vehicleCategory`] =
-            `Vehicle category should be ${String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO'} in Fulfillment.`
-        }
-
-        if (fulfillment.type !== 'TRIP') {
-          errorObj[`${fulfillmentKey}.type`] =
-            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_CONFIRM}`
-        }
-
-        // Check stops for START and END, or time range with valid timestamp and GPS
-        const getStopsError = validateStops(fulfillment?.stops, index, true, false, constants.ON_CONFIRM)
-        const errorValue = Object.values(getStopsError)[0] || []
-        if (Object.keys(getStopsError).length > 0 && Object.keys(errorValue)?.length)
-          Object.assign(errorObj, getStopsError)
-
-        if (String(flow?.flow).toUpperCase() !== 'METRO') {
-          if (!fulfillment?.tags)
-            errorObj[`ulfillment_${index}_tags`] = `Tags should be present in Fulfillment in case of Intracity.`
-          else {
-            // Validate route info tags
-            const tagsValidation = validateRouteInfoTags(fulfillment?.tags)
-            if (!tagsValidation.isValid) {
-              Object.assign(errorObj, { tags: tagsValidation.errors })
+            if (!storedFull.includes(fulfillment?.id)) {
+              errorObj[`${fulfillmentKey}.id`] =
+                `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in ${constants.ON_INIT}`
+            } else {
+              fulfillmentIdsSet.add(fulfillment?.id)
             }
-          }
-        }
-      })
+
+            if (!fulfillment?.vehicle) {
+              errorObj['Vehicle'] = 'Vehicle Object Is Missing'
+            } else if (
+              fulfillment?.vehicle?.category !== (String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO')
+            ) {
+              errorObj[`${fulfillmentKey}.vehicleCategory`] =
+                `Vehicle category should be ${String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO'} in Fulfillment.`
+            }
+
+            if (fulfillment.type !== 'TRIP') {
+              errorObj[`${fulfillmentKey}.type`] =
+                `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_CONFIRM}`
+            }
+
+            // Check stops for START and END, or time range with valid timestamp and GPS
+            const getStopsError = validateStops(fulfillment?.stops, index, true, false, constants.ON_CONFIRM)
+            const errorValue = Object.values(getStopsError)[0] || []
+            if (Object.keys(getStopsError).length > 0 && Object.keys(errorValue)?.length)
+              Object.assign(errorObj, getStopsError)
+
+            if (String(flow?.flow).toUpperCase() !== 'METRO') {
+              if (!fulfillment?.tags)
+                errorObj[`ulfillment_${index}_tags`] = `Tags should be present in Fulfillment in case of Intracity.`
+              else {
+                // Validate route info tags
+                const tagsValidation = validateRouteInfoTags(fulfillment?.tags)
+                if (!tagsValidation.isValid) {
+                  Object.assign(errorObj, { tags: tagsValidation.errors })
+                }
+              }
+            }
+          })
+        : on_confirm?.fulfillments &&
+          validateFulfillmentV2_0(on_confirm?.fulfillments ?? [], errorObj, constants.ON_CONFIRM, flow)
 
       setValue(`${metroSequence.ON_CONFIRM}_storedFulfillments`, FULFILLMENT || [])
     } catch (error: any) {
@@ -216,7 +219,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
         // const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
 
         //--------------------------PAYMENR PARAMS VALIDATION-------------------------------------
-        const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.ON_CONFIRM)
+        const payment_type = getValue('INIT_PAYMENT_TYPE') ?? 'NEFT'
+        const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.ON_CONFIRM, payment_type)
         if (!isEmpty(validatePayementParams)) Object.assign(errorObj, validatePayementParams)
         // if (!params) {
         //   errorObj[`payments[${i}]_params`] = `payments.params must be present in ${constants.CONFIRM}`
@@ -306,7 +310,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
 
     try {
       logger.info(`Checking status in message object  /${constants.ON_CONFIRM}`)
-      if (!message.order.status || !['COMPLETE', 'ACTIVE'].includes(message.order.status)) {
+      if (!message?.order?.status || !['COMPLETE', 'ACTIVE'].includes(message.order.status)) {
         errorObj.status =
           'Invalid or missing"` status in the message.order object. It must be one of: COMPLETE or ACTIVE'
       }

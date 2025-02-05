@@ -5,10 +5,11 @@ import _ from 'lodash'
 import { getValue, setValue } from '../../shared/dao'
 import { validateContext, validateQuote, validateStops } from './metroChecks'
 import { validateRouteInfoTags } from './tags'
+import { validateFulfillmentV2_0 } from './validate/helper'
 
 const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SFSJT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT', 'RJT']
 // const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
-export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }) => {
+export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }, version: string) => {
   if (!data || isObjectEmpty(data)) {
     return { [metroSequence.ON_SELECT]: 'Json cannot be empty' }
   }
@@ -35,7 +36,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
   const select: any = getValue(`${metroSequence.SELECT}`)
 
   try {
-    const onSelect = message.order
+    const onSelect = message?.order
     const itemIDS: any = getValue(`${metroSequence.ON_SEARCH1}_itemsId`)
     const itemIdArray: any[] = []
     const storedFull: any = getValue(`${metroSequence.ON_SEARCH1}_storedFulfillments`)
@@ -63,44 +64,46 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
 
     try {
       logger.info(`Validating fulfillments object for /${constants.ON_SELECT}`)
-      onSelect.fulfillments.forEach((fulfillment: any, index: number) => {
-        const fulfillmentKey = `fulfillments[${index}]`
+      version === '2.0.0'
+        ? onSelect?.fulfillments.forEach((fulfillment: any, index: number) => {
+            const fulfillmentKey = `fulfillments[${index}]`
 
-        // if (storedFull && !storedFull.includes(fulfillment.id)) {
-        //   errorObj[`${fulfillmentKey}.id`] =
-        //     `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
-        // } else {
-        //   fulfillmentIdsSet.add(fulfillment.id)
-        // }
+            // if (storedFull && !storedFull.includes(fulfillment.id)) {
+            //   errorObj[`${fulfillmentKey}.id`] =
+            //     `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+            // } else {
+            //   fulfillmentIdsSet.add(fulfillment.id)
+            // }
 
-        if (fulfillment?.vehicle?.category !== (String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO')) {
-          errorObj['vehicle'] =
-            `vehicle.category should be ${String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO'} in Fulfillment`
-        }
+            if (fulfillment?.vehicle?.category !== (String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO')) {
+              errorObj['vehicle'] =
+                `vehicle.category should be ${String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO'} in Fulfillment`
+            }
 
-        if (!fulfillment.type) {
-          errorObj[`${fulfillmentKey}.type`] = `Fulfillment type is missing`
-        } else if (fulfillment.type !== 'TRIP') {
-          errorObj[`${fulfillmentKey}.type`] =
-            `Fulfillment type must be TRIP at index ${index} in /${constants.ON_SELECT}`
-        }
+            if (!fulfillment.type) {
+              errorObj[`${fulfillmentKey}.type`] = `Fulfillment type is missing`
+            } else if (fulfillment.type !== 'TRIP') {
+              errorObj[`${fulfillmentKey}.type`] =
+                `Fulfillment type must be TRIP at index ${index} in /${constants.ON_SELECT}`
+            }
 
-        // Check stops for START and END, or time range with valid timestamp and GPS
-        const otp = false
-        const cancel = false
-        const getStopsError = validateStops(fulfillment?.stops, index, otp, cancel, constants.ON_SELECT)
-        const errorValue = Object.values(getStopsError)[0] || []
-        if (Object.keys(getStopsError).length > 0 && Object.keys(errorValue)?.length)
-          Object.assign(errorObj, getStopsError)
+            // Check stops for START and END, or time range with valid timestamp and GPS
+            const otp = false
+            const cancel = false
+            const getStopsError = validateStops(fulfillment?.stops, index, otp, cancel, constants.ON_SELECT)
+            const errorValue = Object.values(getStopsError)[0] || []
+            if (Object.keys(getStopsError).length > 0 && Object.keys(errorValue)?.length)
+              Object.assign(errorObj, getStopsError)
 
-        if (fulfillment.tags && String(flow?.flow).toUpperCase() !== 'METRO') {
-          // Validate route info tags
-          const tagsValidation = validateRouteInfoTags(fulfillment?.tags)
-          if (!tagsValidation.isValid) {
-            Object.assign(errorObj, { tags: tagsValidation.errors })
-          }
-        }
-      })
+            if (fulfillment.tags && String(flow?.flow).toUpperCase() !== 'METRO') {
+              // Validate route info tags
+              const tagsValidation = validateRouteInfoTags(fulfillment?.tags)
+              if (!tagsValidation.isValid) {
+                Object.assign(errorObj, { tags: tagsValidation.errors })
+              }
+            }
+          })
+        : onSelect?.fulfillments && validateFulfillmentV2_0(onSelect?.fulfillments ?? [], errorObj, constants.ON_SELECT, flow)
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_SELECT},  ${error.message}`)
       return { error: error.message }
@@ -112,7 +115,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
     if (itemIDS && itemIDS.length > 0) {
       newItemIDSValue = itemIDS
     } else {
-      select.message.order.items.map((item: { id: string }) => {
+      select?.message?.order?.items.map((item: { id: string }) => {
         itemIdArray.push(item.id)
       })
       newItemIDSValue = itemIdArray

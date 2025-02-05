@@ -26,7 +26,6 @@ export const checkOnCancelPayload = (
 ) => {
   const errorObj: any = {}
   const payment = getValue('paymentId')
-  console.log('payment-------->>>>>>>>>>>>>>>>>>', payment)
   try {
     if (!data || isObjectEmpty(data)) {
       return { [constants.ON_CANCEL]: 'Json cannot be empty' }
@@ -222,7 +221,8 @@ export const checkOnCancelPayload = (
         // const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
 
         //---------------------------PAYMENT PARAMS-----------------------------
-        const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.ON_CANCEL)
+        const payment_type = getValue('INIT_PAYMENT_TYPE') ?? 'NEFT'
+        const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.ON_CANCEL, payment_type)
         if (!isEmpty(validatePayementParams)) Object.assign(errorObj, validatePayementParams)
         // if (!params) {
         //   errorObj[`payments[${i}]_params`] = `payments.params must be present in ${constants.CONFIRM}`

@@ -41,7 +41,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       newItemIDSValue = itemIDS
     } else {
       const onSelect: any = getValue(`${metroSequence.ON_SEARCH1}_message`)
-      onSelect.order.items.map((item: { id: string }) => {
+      onSelect?.order?.items.map((item: { id: string }) => {
         itemIdArray.push(item.id)
       })
       newItemIDSValue = itemIdArray
@@ -66,7 +66,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     }
 
     //check items
-    const getItemError = checkItemsExist(confirm, newItemIDSValue, 'CONFIRM')
+    const getItemError = checkItemsExist(confirm?.items, newItemIDSValue, constants.CONFIRM)
     if (Object.keys(getItemError)?.length) Object.assign(errorObj, getItemError)
 
     try {
@@ -103,7 +103,8 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         if (!arr.id) errorObj[`payments[${i}]_id`] = `payments.id must be present in ${constants.CONFIRM}`
         else setValue('paymentId', arr?.id)
 
-        const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.CONFIRM)
+        const payment_type = getValue('INIT_PAYMENT_TYPE') ?? 'NEFT'
+        const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.CONFIRM, payment_type)
         if (!isEmpty(validatePayementParams)) Object.assign(errorObj, validatePayementParams)
         // const { params } = arr
 

@@ -22,7 +22,8 @@ export const searchSchema = {
         },
         core_version: {
           type: 'string',
-          const: '1.2.0',
+          enum: ['1.2.0', '1.2.5'],
+          minLength: 1,
         },
         bap_id: {
           type: 'string',
@@ -148,7 +149,7 @@ export const searchSchema = {
                 properties: {
                   code: {
                     type: 'string',
-                    enum: ['catalog_inc', 'bap_terms', 'bap_features'],
+                    enum: ['catalog_inc', 'bap_terms', 'bnp_features', 'catalog_full'],
                   },
                   list: {
                     type: 'array',
@@ -164,6 +165,7 @@ export const searchSchema = {
                             'static_terms',
                             'effective_date',
                             'static_terms_new',
+                            'payload_type',
                             '000',
                             '001',
                             '002',
@@ -220,24 +222,55 @@ export const searchSchema = {
                 },
                 required: ['code', 'list'],
                 anyOf: [
-                  // {
-                  //   properties: {
-                  //     code: { const: 'bap_features' },
-                  //   },
-                  //   then: {
-                  //     properties: {
-                  //       list: {
-                  //         contains: {
-                  //           type: 'object',
-                  //           properties: {
-                  //             code: { const: '000' },
-                  //           },
-                  //           required: ['code'],
-                  //         },
-                  //       },
-                  //     },
-                  //   },
-                  // },
+                  {
+                    properties: {
+                      code: { const: 'bnp_features' },
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          contains: {
+                            type: 'object',
+                            properties: {
+                              code: { const: '000' },
+                              value: {
+                                type: "string",
+                                enum: ['yes', 'no']
+                              }
+                            },
+                            required: ['code', 'value'],
+                          },
+                        },
+                      },
+                    },
+                  },
+                  // Did changes for catalog_full
+                  {
+                    properties: {
+                      code: { const: 'catalog_full' },
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              code: {
+                                type: "string",
+                                const: "payload_type"
+                              },
+                              value: {
+                                type: "string",
+                                enum: ['link', 'inline']
+                              }
+                            },
+                            required: ["code", "value"],
+                          }
+                        }
+                      }
+                    }
+                  },
                   {
                     properties: {
                       code: { const: 'catalog_inc' },
@@ -322,7 +355,7 @@ export const searchSchema = {
               contains: {
                 type: 'object',
                 properties: {
-                  code: { const: 'bap_features' },
+                  code: { enum: ['bnp_features', 'catalog_full', 'catalog_inc'] },
                 },
                 required: ['code', 'list'],
               },

@@ -53,6 +53,7 @@ const validateRetail = async (
 
   switch (version) {
     case '1.2.0':
+    case '1.2.5':
       response = await validateLogs(payload, domain, flow)
 
       if (_.isEmpty(response)) {

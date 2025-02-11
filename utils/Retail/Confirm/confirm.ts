@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import _, { isArray } from 'lodash'
-import constants, { ApiSequence } from '../../../constants'
+import constants, { ApiSequence, PAYMENT_STATUS } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import {
   validateSchema,
@@ -17,9 +17,9 @@ import {
   compareQuoteObjects,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
-import { FLOW_TYPES } from '../../../constants/2aflow'
+import { FLOW } from '../../../utils/enum' 
 
-export const checkConfirm = (data: any, msgIdSet: any) => {
+export const checkConfirm = (data: any, msgIdSet: any, flow :string) => {
   const cnfrmObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -178,7 +178,33 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
         `!!Error while comparing Item and Fulfillment Id in /${constants.ON_SELECT} and /${constants.CONFIRM}, ${error.stack}`,
       )
     }
+    logger.info(`Checking vehicle registration for fulfillments in /${constants.CONFIRM}`);
 
+const fulfillments = confirm.fulfillments;
+
+//Vehicle registeration for (Self-Pickup) Kerbside
+if (Array.isArray(fulfillments)) {
+    fulfillments.forEach((fulfillment, index) => {
+        const type = fulfillment.type;
+        const category = fulfillment['@ondc/org/category'];
+        const vehicle = fulfillment.vehicle;
+        const SELF_PICKUP = 'Self-Pickup'
+        const KERBSIDE = 'Kerbside'
+
+        if (type === SELF_PICKUP && category === KERBSIDE) {
+            if (!vehicle) {
+                cnfrmObj[`fulfillment${index}_vehicle`] =
+                    `Vehicle is required for fulfillment ${index} with type ${SELF_PICKUP} and category ${KERBSIDE} in /${constants.CONFIRM}`;
+            } else if (!vehicle.registration) {
+                cnfrmObj[`fulfillment${index}_vehicle_registration`] =
+                    `Vehicle registration is required for fulfillment ${index} with type ${SELF_PICKUP} and category ${KERBSIDE} in /${constants.CONFIRM}`;
+            }
+        } else if (vehicle) {
+            cnfrmObj[`fulfillment${index}_vehicle`] =
+                `Vehicle should not be present in fulfillment ${index} with type ${type} and category ${category} in /${constants.CONFIRM}`;
+        }
+    });
+}
     try {
       logger.info(`Checking for number of digits in tax number in message.order.tags[0].list`)
       if (message.order.tags && isArray(message.order.tags)) {
@@ -356,20 +382,20 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     }
 
     try {
-      logger.info(`Comparing order price value in /${constants.ON_SELECT} and /${constants.CONFIRM}`)
-      const onSelectPrice: any = getValue('onSelectPrice')
+      logger.info(`Comparing order price value in /${constants.ON_INIT} and /${constants.CONFIRM}`)
+      const oninitQuotePrice: any = getValue('initQuotePrice')
       const confirmQuotePrice = parseFloat(confirm.quote.price.value)
 
-      if (onSelectPrice != confirmQuotePrice) {
+      logger.info(`Comparing quote prices of /${constants.ON_INIT} and /${constants.CONFIRM}`)
+      if (oninitQuotePrice != confirmQuotePrice ) {
         logger.info(
-          `order quote price in /${constants.CONFIRM} is not equal to the quoted price in /${constants.ON_SELECT}`,
+          `order quote price in /${constants.CONFIRM} is not equal to the quoted price in /${constants.ON_INIT}`,
         )
-        cnfrmObj.quoteErr = `Quoted Price in /${constants.CONFIRM} INR ${confirmQuotePrice} does not match with the quoted price in /${constants.ON_SELECT} INR ${onSelectPrice}`
+        cnfrmObj.quoteErr = `Quoted Price in /${constants.CONFIRM} INR ${confirmQuotePrice} does not match with the quoted price in /${constants.ON_INIT} INR ${oninitQuotePrice}`
       }
-
       setValue('quotePrice', confirmQuotePrice)
     } catch (error: any) {
-      logger.error(`!!Error while comparing order price value in /${constants.ON_SELECT} and /${constants.CONFIRM}`)
+      logger.error(`!!Error while comparing order price value in /${constants.ON_INIT} and /${constants.CONFIRM}`)
     }
 
     try {
@@ -422,11 +448,11 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       if (cnfrmObj['message/order/transaction_id']) {
         cnfrmObj['message/order/transaction_id'] = 'Unexpected txn_id found in message/order/confirm'
       } else {
-        if (payment.FLOW_TYPES === FLOW_TYPES.FLOW2A) {
+        if (flow === FLOW.FLOW2A ) {
           logger.info('Skipping transaction_id check for 2A flow')
           // Skip the transaction_id check for 2A flow
         } else {
-          const status = payment_status(payment)
+          const status = payment_status(payment,flow)
           if (!status) {
             cnfrmObj['message/order/transaction_id'] = 'Transaction_id missing in message/order/payment'
           }
@@ -435,15 +461,26 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     } catch (err: any) {
       logger.error('Error while checking transaction in message/order/payment: ' + err.message)
     }
-
+    try {
+      if (flow === FLOW.FLOW2A){
+      logger.info('Payment status check in confirm call')
+      const payment = confirm.payment
+      if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
+        logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`);
+        cnfrmObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
+      } 
+    }
+    } catch (err: any) {
+      logger.error('Error while checking payment in message/order/payment: ' + err.message);
+    }
+  
     //Payment details for 2A Flow
     try {
-      if ('2A') {
+      if (flow === FLOW.FLOW2A) {
         logger.info(`checking payment object in /${constants.CONFIRM}`)
         if (confirm.payment['@ondc/org/settlement_details'][0]['settlement_counterparty'] != 'buyer-app') {
           cnfrmObj.sttlmntcntrparty = `settlement_counterparty is expected to be 'buyer-app' in @ondc/org/settlement_details`
         }
-
         logger.info(`checking payment details in /${constants.CONFIRM}`)
         const data = confirm.payment['@ondc/org/settlement_details'][0]
         if (
@@ -497,7 +534,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     }
 
     try {
-      if ('2A') {
+      if (FLOW.FLOW2A === flow) {
         logger.info(`storing payment settlement details in /${constants.CONFIRM}`)
         if (confirm.payment.hasOwnProperty('@ondc/org/settlement_details')) {
           setValue('sttlmntdtls', confirm.payment['@ondc/org/settlement_details'][0])

@@ -14,7 +14,8 @@ export const onConfirmSchema = {
         },
         core_version: {
           type: 'string',
-          const: '1.2.0',
+          enum: ['1.2.0', '1.2.5'],
+          minLength: 1,
         },
         bap_id: {
           type: 'string',

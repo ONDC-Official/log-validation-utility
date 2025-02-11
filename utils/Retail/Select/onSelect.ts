@@ -229,21 +229,18 @@ export const checkOnSelect = (data: any) => {
     const tts: any = getValue('timeToShip')
     on_select.fulfillments.forEach((ff: { [x: string]: any }, indx: any) => {
       const tat = isoDurToSec(ff['@ondc/org/TAT'])
-      const isTakeawayOrKerbside = ff['@ondc/org/category'] === 'Takeaway' || ff['@ondc/org/category'] === 'Kerbside'
-
-      if (isTakeawayOrKerbside) {
-        // O2D (TAT) equals O2S and S2D will not apply (time to ship) for takeaway and kerbside
+      if (ff['@ondc/org/category'] === 'Takeaway' || ff['@ondc/org/category'] === 'Kerbside'){
         if (tat !== tts) {
           errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} must be equal to @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH} for takeaway or kerbside`
         }
-      } else {
-        if (tat < tts) {
-          errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be less than @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
-        }
+      }
 
-        if (tat === tts) {
-          errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be equal to @ondc/org/time_ship (O2S) in /${constants.ON_SEARCH}`
-        }
+      if (tat < tts) {
+        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be less than @ondc/org/time_to_ship (O2S) in /${constants.ON_SEARCH}`
+      }
+
+      if (tat === tts) {
+        errorObj.ttstat = `/fulfillments[${indx}]/@ondc/org/TAT (O2D) in /${constants.ON_SELECT} can't be equal to @ondc/org/time_to_ship (O2S) in /${constants.ON_SEARCH}`
       }
     })
   } catch (error: any) {

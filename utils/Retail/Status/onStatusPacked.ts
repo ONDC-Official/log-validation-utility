@@ -1,9 +1,10 @@
 /* eslint-disable no-prototype-builtins */
 import _ from 'lodash'
-import constants, { ApiSequence } from '../../../constants'
+import constants, { ApiSequence, PAYMENT_STATUS } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges, compareFulfillmentObject } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
+import { FLOW } from '../../../utils/enum'
 
 export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, fulfillmentsItemsSet: any) => {
   const onStatusObj: any = {}
@@ -195,6 +196,18 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
       logger.error(
         `!!Error occurred while comparing order updated at for /${constants.ON_STATUS}_${state}, ${error.stack}`,
       )
+    }
+    try {
+      if (flow === FLOW.FLOW2A) {
+        logger.info('Payment status check in on status packed call')
+        const payment = on_status.payment
+        if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
+          logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`);
+          onStatusObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
+        }
+      }
+    } catch (err: any) {
+      logger.error('Error while checking payment in message/order/payment: ' + err.message);
     }
 
     try {

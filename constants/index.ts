@@ -382,3 +382,8 @@ export const MOB_FULL_STATE = [
 ]
 
 export const ffCategory = [["Immediate Delivery", "Standard Delivery", "Express Delivery"], ["Takeaway", "Kerbside"]]
+
+export const PAYMENT_STATUS = {
+  PAID: 'PAID',
+  NOT_PAID: 'NOT-PAID',
+}

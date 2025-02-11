@@ -149,6 +149,7 @@ const controller = {
       const payload = req.body
       switch (core_version) {
         case '1.2.0':
+        case '1.2.5':
           error = validateActionSchema(payload, domain, action)
           break
         default:

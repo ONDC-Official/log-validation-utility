@@ -370,10 +370,20 @@ export const IGM2Flows ={
   FLOW_2: 'FLOW_2',
   FLOW_3: 'FLOW_3',
 }
-export const IGM2apiSequence = {
-    // ISSUE_1: 
+export const IGM2Sequence = {
+  "ISSUE_1": "issue_1",
+  "ON_ISSUE_1": "on_issue_1",
+  "ON_ISSUE_2": "on_issue_2",
+  "ISSUE_2": "issue_2",
+  "ON_ISSUE_3": "on_issue_3",
+  "ON_ISSUE_4": "on_issue_4",
+  "ISSUE_3": "issue_3",
+  "ON_ISSUE_5": "on_issue_5",
+  "ON_ISSUE_6": "on_issue_6",
+  "ISSUE_4": "issue_4",
+  "ON_ISSUE_7": "on_issue_7",
+  "ISSUE_5": "issue_5",
 }
-
 
 export const RSFapiSequence = {
   RECEIVER_RECON: 'receiver_recon',

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { dropDB, setValue } from '../shared/dao'
 import { logger } from './logger'
-import { ApiSequence, retailDomains, IGMApiSequence, RSFapiSequence, RSF_v2_apiSequence } from '../constants'
+import { ApiSequence, retailDomains, IGMApiSequence,IGM2Sequence, RSFapiSequence, RSF_v2_apiSequence } from '../constants'
 import { validateSchema, isObjectEmpty } from '../utils'
 import { checkOnsearchFullCatalogRefresh } from '../utils/Retail/RET11_onSearch/onSearch'
 import { checkSelect } from '../utils/Retail/Select/select'
@@ -49,6 +49,8 @@ import checkRsfReport from '../utils/RSF/RSF_v2/report'
 import checkRsfOnReport from '../utils/RSF/RSF_v2/on_report'
 import checkRsfRecon from '../utils/RSF/RSF_v2/recon'
 import checkRsfOnRecon from '../utils/RSF/RSF_v2/on_recon'
+import checkIssueV2 from 'utils/igm/igm2/issue'
+import checkOnIssueV2 from 'utils/igm/igm2/on_issue'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
@@ -397,6 +399,89 @@ export const IGMvalidateLogs = (data: any) => {
 
       if (!_.isEmpty(lsp_on_issue)) {
         logReport = { ...logReport, [IGMApiSequence.LSP_ON_ISSUE_STATUS]: lsp_on_issue }
+      }
+    }
+
+    logger.info(logReport, 'Report Generated Successfully!!')
+    return logReport
+  } catch (error: any) {
+    logger.error(error.message)
+    return error.message
+  }
+}
+
+export const IGMvalidateLogs2 = (data: any) => {
+  let logReport: any = {}
+
+
+  try {
+    dropDB()
+  } catch (error) {
+    logger.error('!!Error while removing LMDB', error)
+  }
+
+  try {
+    if (data[IGM2Sequence.ISSUE_1]) {
+      const issue_1 = checkIssueV2(data[IGM2Sequence.ISSUE_1])
+
+      if (!_.isEmpty(issue_1)) {
+        logReport = { ...logReport, [IGM2Sequence.ISSUE_1]: issue_1 }
+      }
+    }
+
+    if (data[IGM2Sequence.ON_ISSUE_1]) {
+      const on_issue_1 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_1],IGM2Sequence.ON_ISSUE_1)
+
+      if (!_.isEmpty(on_issue_1)) {
+        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_1]: on_issue_1 }
+      }
+    }
+
+    if(data[IGM2Sequence.ON_ISSUE_2]){
+      const on_issue_2 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_2],IGM2Sequence.ON_ISSUE_2  )
+
+      if (!_.isEmpty(on_issue_2)) {
+        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_1]: on_issue_2 }
+      }
+    }
+
+    if(data[IGM2Sequence.ISSUE_2]){
+      const on_issue_2 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_2],IGM2Sequence.ISSUE_2  )
+
+      if (!_.isEmpty(on_issue_2)) {
+        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_1]: on_issue_2 }
+      }
+    }
+
+    if (data[IGM2Sequence.ON_ISSUE_3]) {
+      const on_issue_3 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_3],IGM2Sequence.ON_ISSUE_3)
+
+      if (!_.isEmpty(on_issue_3)) {
+        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_3]: on_issue_3 }
+      }
+    }
+
+    if(data[IGM2Sequence.ON_ISSUE_4]){
+      const ON_ISSUE_4 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_4],IGM2Sequence.ISSUE_4  )
+
+      if (!_.isEmpty(ON_ISSUE_4)) {
+        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_4]: ON_ISSUE_4}
+      }
+    }
+
+    if(data[IGM2Sequence.ISSUE_3]){
+      const ISSUE_3 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_3],IGM2Sequence.ISSUE_3  )
+
+      if (!_.isEmpty(ISSUE_3)) {
+        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_1]: ISSUE_3 }
+      }
+    }
+
+    if(data[IGM2Sequence.ON_ISSUE_5]){
+      const on_issue_5 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_5],IGM2Sequence.ON_ISSUE_5  )
+
+      if (!_.isEmpty(on_issue_5)) {
+        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_5]: on_issue_5 }
       }
     }
 

@@ -3,7 +3,7 @@ import { logger } from './shared/logger'
 import createServer from './app'
 
 dotenv.config()
-const port = process.env.PORT || 3008
+const port = process.env.PORT
 
 const app = createServer()
 

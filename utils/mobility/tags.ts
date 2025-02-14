@@ -1,4 +1,5 @@
 /* eslint-disable no-prototype-builtins */
+import { isEmpty } from 'lodash'
 import { isValidEmail, isValidPhoneNumber, isValidUrl } from '../'
 
 interface Tag {
@@ -48,15 +49,22 @@ export const validateRouteInfoTags = (tags: RouteInfoTag[]): ValidationResult =>
   }
 
   tags.forEach((tag, index) => {
-    if (tag.descriptor.code === 'ROUTE_INFO') {
+    if (tag?.descriptor?.code === 'ROUTE_INFO') {
       if (tag.display !== undefined && typeof tag.display !== 'boolean') {
         errors.push(`route.tag[${index}] has an invalid value for the 'display' property. It should be a boolean.`)
       }
 
-      tag.list.forEach((item, itemIndex) => {
-        const descriptorCode = item.descriptor.code
+      const polyLineTag = tag?.list.find((item) => item?.descriptor?.code === 'ENCODED_POLYLINE')
+      const waypointsTag = tag?.list.find((item) => item?.descriptor?.code === 'WAYPOINTS')
+      if (!polyLineTag) errors.push(`tag ENCODED_POLYLINE is missing in ROUTE_INFO tag-group`)
+      if (!waypointsTag) errors.push(`tag WAYPOINTS is missing in ROUTE_INFO tag-group`)
 
-        if (descriptorCode !== descriptorCode.toUpperCase()) {
+      tag?.list.forEach((item, itemIndex) => {
+        const descriptorCode = item?.descriptor?.code
+
+        if (!descriptorCode) {
+          errors.push(`descriptor.code is missing at route.tag[${index}], List item[${itemIndex}].`)
+        } else if (descriptorCode !== descriptorCode.toUpperCase()) {
           errors.push(`code should be in uppercase at route.tag[${index}], List item[${itemIndex}].`)
         }
 
@@ -117,13 +125,13 @@ export const validatePaymentTags = (tags: Tag[], terms: any): ValidationResult =
         errors.push(`Tag[${index}] is missing or has an invalid type, should be a boolean`)
       }
 
-      switch (tag.descriptor.code) {
+      switch (tag?.descriptor?.code) {
         case 'BUYER_FINDER_FEES': {
-          if (!tag?.list) {
+          if (!tag?.list || isEmpty(tag?.list)) {
             errors.push(`BUYER_FINDER_FEES tag.list is missing or empty`)
           } else {
             const expectedDescriptorCodes = ['BUYER_FINDER_FEES_PERCENTAGE']
-            const actualDescriptorCodes = tag.list.map((item: any) => item.descriptor.code)
+            const actualDescriptorCodes = tag.list.map((item: any) => item?.descriptor?.code)
             const invalidDescriptorCodes = actualDescriptorCodes.filter(
               (code) => !expectedDescriptorCodes.includes(code),
             )
@@ -133,11 +141,13 @@ export const validatePaymentTags = (tags: Tag[], terms: any): ValidationResult =
             }
 
             if (invalidDescriptorCodes.length > 0) {
-              errors.push(`Tag[${index}] has unexpected descriptor codes: ${invalidDescriptorCodes.join(', ')}`)
+              errors.push(
+                `Tag[${index}] has unexpected or missing descriptor codes: ${invalidDescriptorCodes.join(', ')}`,
+              )
             }
 
             const buyerFinderFeesPercentage = tag?.list.find(
-              (item) => item.descriptor.code === 'BUYER_FINDER_FEES_PERCENTAGE',
+              (item) => item?.descriptor?.code === 'BUYER_FINDER_FEES_PERCENTAGE',
             )
 
             if (buyerFinderFeesPercentage && !/^[+-]?\d+(\.\d+)?$/.test(buyerFinderFeesPercentage.value)) {
@@ -162,9 +172,9 @@ export const validatePaymentTags = (tags: Tag[], terms: any): ValidationResult =
             })
 
             tag?.list?.forEach((item: any, itemIndex) => {
-              switch (item.descriptor.code) {
-                case terms.find((term: any) => term.code === item.descriptor.code)?.code: {
-                  const termDefinition: any = terms.find((term: any) => term.code === item.descriptor.code)
+              switch (item?.descriptor?.code) {
+                case terms.find((term: any) => term.code === item?.descriptor?.code)?.code: {
+                  const termDefinition: any = terms.find((term: any) => term.code === item?.descriptor?.code)
 
                   switch (termDefinition?.type) {
                     case 'time':
@@ -370,14 +380,21 @@ export const validateProviderTags = (tags: Tag[]): ValidationResult => {
 
 export const validateItemsTags = (tags: Tag[]): ValidationResult => {
   const errors: string[] = []
-
   if (!tags) {
     errors.push('Tags are required for validation in items')
     return {
       isValid: false,
       errors,
     }
+  } else if (typeof tags == 'object' && !Array.isArray(tags)) {
+    errors.push('item.tags must be an array of object')
+    return {
+      isValid: false,
+      errors,
+    }
   }
+
+  console.log('tags', tags)
 
   tags.forEach((tag, index) => {
     switch (tag.descriptor.code) {

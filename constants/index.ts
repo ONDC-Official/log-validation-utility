@@ -11,7 +11,6 @@ export default Object.freeze({
   INC_SEARCH: 'inc_search',
   ON_SEARCH: 'on_search',
   ON_SEARCHINC: 'on_search_inc',
-  CATALOG_REJECTION: 'catalog_rejection',
   SELECT: 'select',
   ON_SELECT: 'on_select',
   SELECT_OUT_OF_STOCK: 'select_out_of_stock',
@@ -57,7 +56,6 @@ export const ApiSequence = {
   ON_SEARCH: 'on_search_full_catalog_refresh',
   INC_SEARCH: 'search_inc_refresh',
   INC_ONSEARCH: 'on_search_inc_refresh',
-  CATALOG_REJECTION: 'catalog_rejection',
   SELECT: 'select',
   ON_SELECT: 'on_select',
   INIT: 'init',
@@ -122,9 +120,11 @@ export const FisApiSequence = {
   ON_CANCEL: 'on_cancel',
   STATUS: 'status',
   ON_STATUS: 'on_status',
-  ON_STATUS_KYC: 'on_status_kyc',
-  ON_STATUS_EMANDATE: 'on_status_emandate',
-  ON_STATUS_LOAN: 'on_status_loan',
+  ON_STATUS_EKYC: 'on_status_ekyc',
+  ON_STATUS_ENACH: 'on_status_enach',
+  ON_STATUS_ESIGN: 'on_status_esign',
+  // ON_STATUS_EMANDATE: 'on_status_emandate',
+  // ON_STATUS_LOAN: 'on_status_loan',
   UPDATE: 'update',
   ON_UPDATE: 'on_update',
   ON_UPDATE_UNSOLICATED: 'on_update_unsolicated',
@@ -152,9 +152,15 @@ export const FIS13HealthSequence = {
   ON_SEARCH_OFFER: 'on_search_offer',
   SELECT: 'select',
   ON_SELECT: 'on_select',
+  SELECT_1: 'select_1',
+  ON_SELECT_1: 'on_select_1',
+  SELECT_2: 'select_2',
+  ON_SELECT_2: 'on_select_2',
+  INIT: 'init',
   INIT_1: 'init_1',
   INIT_2: 'init_2',
   INIT_3: 'init_3',
+  ON_INIT: 'on_init',
   ON_INIT_1: 'on_init_1',
   ON_INIT_2: 'on_init_2',
   ON_INIT_3: 'on_init_3',
@@ -171,8 +177,31 @@ export const FIS13HealthSequence = {
   ON_UPDATE_UNCOLICATED: 'on_update_uncolicated',
 }
 
+export const FIS14ApiSequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SELECT: 'select',
+  ON_SELECT: 'on_select',
+  SELECT_1: 'select_1',
+  ON_SELECT_1: 'on_select_1',
+  SELECT_2: 'select_2',
+  ON_SELECT_2: 'on_select_2',
+  SELECT_3: 'select_3',
+  ON_SELECT_3: 'on_select_3',
+  INIT: 'init',
+  ON_INIT: 'on_init',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  ON_STATUS: 'on_status',
+  UPDATE: 'update',
+  ON_UPDATE: 'on_update',
+  ON_UPDATE_1: 'on_update_1',
+}
+
 export const mobilitySequence = {
   SEARCH: 'search',
+  SEARCH_INC: 'search_inc',
+  SEARCH_TIME: 'search_time',
   ON_SEARCH: 'on_search',
   SELECT: 'select',
   ON_SELECT: 'on_select',
@@ -220,8 +249,8 @@ export const mobilityFlow: any = {
 export const formHeadingsFis: any = {
   INVOICE_BASED_LOAN: {
     on_search: ['Organization Information'],
-    on_select: ['Set Loan Amount', 'Know your Customer'],
-    on_init: 'Account details based loan form',
+    on_select: ['Set Loan Amount', 'Individual KYC'],
+    on_init: ['Entity KYC', 'Account Information', 'E-mandate', 'Loan Agreement'],
   },
   PERSONAL_LOAN: {
     on_search: ['Personal Information'],
@@ -239,8 +268,13 @@ export const insuranceFormHeadings: any = {
   },
   MARINE_INSURANCE: {
     on_search: ['Individual Information'],
-    on_select: ['EKYC'],
+    on_select: ['additional information form', 'Aadhar/kyc form'],
     on_init: ['Buyer Details', 'Manual Review', 'Nominee Details'],
+  },
+  MOTOR_INSURANCE: {
+    on_search: ['Vehicle Details'],
+    on_select: ['Manual Review', 'PAN & DOB', 'Know your Customer'],
+    on_init: ['Vehicle & Nominee Details', 'Personal Info'],
   },
 }
 
@@ -249,20 +283,63 @@ export const fisFlows = {
   PERSONAL: 'PERSONAL_LOAN',
   PRE_INVOICE: 'PERSONAL_LOAN',
   PRE_PERSONAL: 'INVOICE_BASED_LOAN',
-  LOAN_FORECLOSURE: 'FORECLOSURE',
-  PRE_PART_PAYMENT: 'PRE_PART_PAYMENT',
-  MISSED_EMI_PAYMENT: 'MISSED_EMI_PAYMENT',
+  FORECLOSURE_PERSONAL: 'FORECLOSURE_PERSONAL',
+  PRE_PART_PERSONAL: 'PRE_PART_PERSONAL',
+  MISSED_EMI_PERSONAL: 'MISSED_EMI_PERSONAL',
 }
 
 export const insuranceFlows = {
   HEALTH: 'HEALTH_INSURANCE',
   MARINE: 'MARINE_INSURANCE',
+  MOTOR: 'MOTOR_INSURANCE',
   CLAIM_HEALTH: 'CLAIM_HEALTH_INSURANCE',
   RENEW_HEALTH: 'RENEW_HEALTH_INSURANCE',
+  CANCEL_HEALTH: 'CANCEL_HEALTH_INSURANCE',
+  CLAIM_MARINE: 'CLAIM_MARINE_INSURANCE',
+  CANCEL_MARINE: 'CANCEL_MARINE_INSURANCE',
+  CLAIM_MOTOR: 'CLAIM_MOTOR_INSURANCE',
+  CANCEL_MOTOR: 'CANCEL_MOTOR_INSURANCE',
+}
+
+export const fis14Flows = {
+  SEARCH_FULL_PULL: 'SEARCH_FULL_PULL',
+  SEARCH_INCREMENT: 'SEARCH_INCREMENT',
+  SIP_NEW_FOLIO_WITH_KYC: 'SIP_NEW_FOLIO_WITH_KYC',
+  SIP_INSTALLEMENT_SUCCESS: 'SIP_INSTALLEMENT_SUCCESS',
+  SIP_INSTALLEMENT_FAILURE: 'SIP_INSTALLEMENT_FAILURE',
+  LUMPSUM_EXISTING_FOLIO: 'LUMPSUM_EXISTING_FOLIO',
+  LUMPSUM_PAYMENT_RETRY: 'LUMPSUM_PAYMENT_RETRY',
+  REDEMPTION: 'REDEMPTION',
+}
+
+export const fis14FlowSequence = {
+  SEARCH_FULL_PULL: ['SEARCH', 'ON_SEARCH'],
+  SEACH_INCREMENT: ['SEARCH', 'ON_SEARCH'],
+  SIP_NEW_FOLIO_WITH_KYC: [
+    'SELECT',
+    'ON_SELECT',
+    'SELECT_1',
+    'ON_SELECT_1',
+    'SELECT_2',
+    'ON_SELECT_2',
+    'SELECT_3',
+    'ON_SELECT_3',
+    'INIT',
+    'ON_INIT',
+    'CONFIRM',
+    'ON_CONFIRM',
+    'ON_STATUS',
+  ],
+  SIP_INSTALLEMENT_SUCCESS: ['ON_UPDATE', 'ON_CONFIRM', 'ON_STATUS', 'ON_UPDATE_1'],
+  SIP_INSTALLEMENT_FAILURE: ['ON_UPDATE', 'ON_CONFIRM', 'ON_UPDATE_1'],
+  LUMPSUM_EXISTING_FOLIO: ['SELECT', 'ON_SELECT', 'INIT', 'ON_INIT', 'CONFIRM', 'ON_CONFIRM', 'ON_STATUS', 'ON_UPDATE'],
+  LUMPSUM_PAYMENT_RETRY: ['SELECT', 'ON_SELECT', 'INIT', 'ON_INIT', 'CONFIRM', 'ON_UPDATE', 'UPDATE', 'ON_UPDATE_1'],
+  REDEMPTION: ['SELECT', 'ON_SELECT', 'INIT', 'ON_INIT', 'CONFIRM', 'ON_CONFIRM', 'ON_UPDATE'],
 }
 
 export const onDemandFlows = {
-  HAPPY_FLOW: 'HAPPY_FLOW',
+  DRIVER_ON_CONFIRM: 'DRIVER_ON_CONFIRM',
+  DRIVER_POST_CONFIRM: 'DRIVER_POST_CONFIRM',
   RIDER_CANCEL: 'RIDER_CANCEL',
   DRIVER_CANCEL: 'DRIVER_CANCEL',
   PRICE_UPDATE: 'PRICE_UPDATE',
@@ -291,12 +368,6 @@ export const IGMApiSequence = {
 export const RSFapiSequence = {
   RECEIVER_RECON: 'receiver_recon',
   ON_RECEIVER_RECON: 'on_receiver_recon',
-  SETTLE_COLLECTOR: 'settle_collector',
-  ON_SETTLE_COLLECTOR: 'on_settle_collector',
-  SETTLE_RECIEVER: 'settle_receiver',
-  ON_SETTLE_RECIEVER: 'on_settle_receiver',
-  REPORT: 'report',
-  ON_REPORT: 'on_report',
 }
 
 export const RSF_v2_apiSequence = {
@@ -369,13 +440,8 @@ export const retailDomains = [
   'ONDC:RET18',
   'ONDC:RET19',
   'ONDC:AGR10',
-  'ONDC:RET1A'
+  'ONDC:RET1A',
 ]
-
-export const rsfDomains = [
-  'ONDC:NTS10'
-]
-
 export const ROUTING_ENUMS = ['P2P', 'P2H2P']
 export const MOB_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 export const ON_DEMAND_VEHICLE = ['AUTO_RICKSHAW', 'CAB']
@@ -389,8 +455,10 @@ export const MOB_FULL_STATE = [
   'RIDE_ARRIVED_PICKUP',
 ]
 
-export const ffCategory = [["Immediate Delivery", "Standard Delivery", "Express Delivery"], ["Takeaway", "Kerbside"]]
-
+export const ffCategory = [
+  ['Immediate Delivery', 'Standard Delivery', 'Express Delivery'],
+  ['Takeaway', 'Kerbside'],
+]
 export const PAYMENT_STATUS = {
   PAID: 'PAID',
   NOT_PAID: 'NOT-PAID',

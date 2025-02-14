@@ -8,10 +8,8 @@ import { validateLogsForMobility } from '../../shared/Actions/mobilityActions'
 import { validateLogsForMetro } from '../../shared/Actions/metroActions'
 import { validateLogsForFIS10 } from '../../shared/Actions/FIS10Actions'
 import { validateLogsForFIS13 } from '../../shared/Actions/FIS13Actions'
-import { RSFvalidateLogs } from '../../shared/validateLogs'
-import { validateLogs } from '../../shared/validateLogs'
-import { RSFvalidateLogs2 } from '../../shared/validateLogs'
-import { FLOW } from '../../utils/enum'
+import { validateLogsForTRV13 } from '../../shared/Actions/TRV13Actions'
+import { getFis14Format, validateLogsForFIS14 } from '../../shared/Actions/FIS14Actions'
 
 const createSignature = async ({ message }: { message: string }) => {
   const privateKey = process.env.SIGN_PRIVATE_KEY as string
@@ -46,14 +44,13 @@ const validateRetail = async (
   let success = false
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
 
-  if (!bap_id || !bpp_id || !flow || !Object.values(FLOW).includes(flow as FLOW)) {
+  if (!bap_id || !bpp_id || !flow) {
     message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_PAYLOAD
     return { response, success, message }
   }
 
   switch (version) {
     case '1.2.0':
-    case '1.2.5':
       response = await validateLogs(payload, domain, flow)
 
       if (_.isEmpty(response)) {
@@ -106,6 +103,17 @@ const validateFinance = async (domain: string, payload: string, version: string,
       }
 
       break
+
+    case 'ONDC:FIS14':
+      console.log('flow hello', flow)
+      response = validateLogsForFIS14(payload, flow, version)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+
+      break
     default:
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
       logger.warn('Invalid Version!!')
@@ -119,15 +127,10 @@ const validateMobility = async (domain: string, payload: string, version: string
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
 
   if (!flow) throw new Error('Flow not defined')
-  if (version !== '2.0.0') {
-    logger.warn('Invalid Version!!')
-    message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
-    return { response, success, message }
-  }
 
   switch (domain) {
     case 'ONDC:TRV10':
-      response = validateLogsForMobility(payload, domain, flow)
+      response = validateLogsForMobility(payload, flow, version)
 
       if (_.isEmpty(response)) {
         success = true
@@ -145,6 +148,16 @@ const validateMobility = async (domain: string, payload: string, version: string
       }
 
       break
+
+      case 'ONDC:TRV13':
+        response = validateLogsForTRV13(payload, domain, flow)
+  
+        if (_.isEmpty(response)) {
+          success = true
+          message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+        }
+  
+        break
     default:
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_DOMAIN
       logger.warn('Invalid Domain!!')
@@ -181,7 +194,6 @@ const validateRSF = async (payload: string, version: string) => {
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
   switch (version) {
     case '1.0.0':
-    case '2.0.0':
       response = RSFvalidateLogs(payload)
 
       if (_.isEmpty(response)) {
@@ -208,45 +220,14 @@ const validateRSF = async (payload: string, version: string) => {
   return { response, success, message }
 }
 
-const validateRSF2 = async (
-  domain: string,
-  payload: string,
-  _version: string,
-  flow: string
-) => {
-  let response: any;
-  let success = false;
-  let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL;
-
-
-  if (!flow) {
-    message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_PAYLOAD_RSF;
-    return { response, success, message };
+const getFinanceValidationFormat = (domain: string, version: string) => {
+  switch (domain) {
+    case 'ONDC:FIS14':
+      return getFis14Format(version)
+    default:
+      throw new Error('Domain not supported yet')
   }
-
-  // Validate flow for version 2.0.0
-  if (_version === "2.0.0") {
-    if (flow !== "expected-flow-for-2.0.0") {
-      message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION;
-      logger.warn("Invalid flow for version 2.0.0!!");
-      return { response, success, message };
-    }
-  }
-
-
-  response = RSFvalidateLogs2(payload, domain, flow);
-
-  if (_.isEmpty(response)) {
-    success = true;
-    message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL;
-  } else {
-    message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION;
-    logger.warn("Invalid Version!!");
-  }
-
-  return { response, success, message };
-};
-
+}
 
 export default {
   validateFinance,
@@ -254,7 +235,7 @@ export default {
   validateMobility,
   validateRetail,
   validateRSF,
-  validateRSF2,
+  getFinanceValidationFormat,
   getEnumForDomain,
   createSignature,
 }

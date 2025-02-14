@@ -11,12 +11,7 @@
                 }
               }
             }
-          ],
-          "tags": {
-            "required": true,
-            "type": "tag",
-            "name": "LOCATION"
-          }
+          ]
         }
       }
     }
@@ -30,8 +25,11 @@
               {
                 "stops": [
                   {
-                    "location": {
-                      "address": {
+                    "instructions": {
+                      "long_desc": {
+                        "required": true
+                      },
+                      "short_desc": {
                         "required": true
                       }
                     }
@@ -56,13 +54,21 @@
           {
             "stops": [
               {
-                "location": {
-                  "address": {
+                "instructions": {
+                  "long_desc": {
+                    "required": true
+                  },
+                  "short_desc": {
                     "required": true
                   }
                 }
               }
-            ]
+            ],
+            "vehicle": {
+              "variant": {
+                "required": true
+              }
+            }
           }
         ]
       }
@@ -75,18 +81,13 @@
           {
             "stops": [
               {
-                "location": {
-                  "address": {
+                "vehicle": {
+                  "variant": {
                     "required": true
                   }
                 }
               }
-            ],
-            "tags": {
-              "required": true,
-              "type": "tag",
-              "name": "LOCATION"
-            }
+            ]
           }
         ]
       }
@@ -99,13 +100,21 @@
           {
             "stops": [
               {
-                "location": {
-                  "address": {
+                "instructions": {
+                  "long_desc": {
+                    "required": true
+                  },
+                  "short_desc": {
                     "required": true
                   }
                 }
               }
-            ]
+            ],
+            "vehicle": {
+              "variant": {
+                "required": true
+              }
+            }
           }
         ]
       }
@@ -118,18 +127,13 @@
           {
             "stops": [
               {
-                "location": {
-                  "address": {
+                "vehicle": {
+                  "variant": {
                     "required": true
                   }
                 }
               }
-            ],
-            "tags": {
-              "required": true,
-              "type": "tag",
-              "name": "LOCATION"
-            }
+            ]
           }
         ]
       }
@@ -142,17 +146,28 @@
           {
             "stops": [
               {
-                "location": {
-                  "address": {
+                "authorization": {
+                  "status": {
+                    "required": true
+                  },
+                  "valid_to": {
+                    "required": true
+                  }
+                },
+                "instructions": {
+                  "long_desc": {
+                    "required": true
+                  },
+                  "short_desc": {
                     "required": true
                   }
                 }
               }
             ],
-            "tags": {
-              "required": true,
-              "type": "tag",
-              "name": "LOCATION"
+            "vehicle": {
+              "variant": {
+                "required": true
+              }
             }
           }
         ]
@@ -166,17 +181,28 @@
           {
             "stops": [
               {
-                "location": {
-                  "address": {
+                "authorization": {
+                  "status": {
+                    "required": true
+                  },
+                  "valid_to": {
+                    "required": true
+                  }
+                },
+                "instructions": {
+                  "long_desc": {
+                    "required": true
+                  },
+                  "short_desc": {
                     "required": true
                   }
                 }
               }
             ],
-            "tags": {
-              "required": true,
-              "type": "tag",
-              "name": "LOCATION"
+            "vehicle": {
+              "variant": {
+                "required": true
+              }
             }
           }
         ]
@@ -190,17 +216,28 @@
           {
             "stops": [
               {
-                "location": {
-                  "address": {
+                "authorization": {
+                  "status": {
+                    "required": true
+                  },
+                  "valid_to": {
+                    "required": true
+                  }
+                },
+                "instructions": {
+                  "long_desc": {
+                    "required": true
+                  },
+                  "short_desc": {
                     "required": true
                   }
                 }
               }
             ],
-            "tags": {
-              "required": true,
-              "type": "tag",
-              "name": "LOCATION"
+            "vehicle": {
+              "variant": {
+                "required": true
+              }
             }
           }
         ]
@@ -214,17 +251,28 @@
           {
             "stops": [
               {
-                "location": {
-                  "address": {
+                "authorization": {
+                  "status": {
+                    "required": true
+                  },
+                  "valid_to": {
+                    "required": true
+                  }
+                },
+                "instructions": {
+                  "long_desc": {
+                    "required": true
+                  },
+                  "short_desc": {
                     "required": true
                   }
                 }
               }
             ],
-            "tags": {
-              "required": true,
-              "type": "tag",
-              "name": "LOCATION"
+            "vehicle": {
+              "variant": {
+                "required": true
+              }
             }
           }
         ]

@@ -381,6 +381,7 @@ if (Array.isArray(fulfillments)) {
       logger.error(`!!Error while storing order created and updated timestamps in /${constants.CONFIRM}`)
     }
 
+
     try {
       logger.info(`Comparing order price value in /${constants.ON_INIT} and /${constants.CONFIRM}`)
       const oninitQuotePrice: any = getValue('initQuotePrice')
@@ -481,6 +482,7 @@ if (Array.isArray(fulfillments)) {
         if (confirm.payment['@ondc/org/settlement_details'][0]['settlement_counterparty'] != 'buyer-app') {
           cnfrmObj.sttlmntcntrparty = `settlement_counterparty is expected to be 'buyer-app' in @ondc/org/settlement_details`
         }
+        
         logger.info(`checking payment details in /${constants.CONFIRM}`)
         const data = confirm.payment['@ondc/org/settlement_details'][0]
         if (

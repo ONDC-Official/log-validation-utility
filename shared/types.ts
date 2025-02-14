@@ -5,7 +5,6 @@ export enum DOMAIN {
   FINANCE = 'FINANCE',
   MOBILITY = 'MOBILITY',
   RSF = 'RSF',
-  RSF2 = 'RSF2',
 }
 
 export enum ERROR_MESSAGE {
@@ -13,7 +12,6 @@ export enum ERROR_MESSAGE {
   LOG_VERIFICATION_SUCCESSFUL = 'Logs were verified successfully',
   LOG_VERIFICATION_INVALID_VERSION = 'Invalid Version! Please enter a valid version',
   LOG_VERIFICATION_INVALID_PAYLOAD = 'Invalid Payload! Please enter a valid payload (bap_id, bpp_id, flow should be provided)',
-  LOG_VERIFICATION_INVALID_PAYLOAD_RSF = 'Invalid Payload! Please enter a valid payload (flow should be provided)',
   LOG_VERIFICATION_INVALID_DOMAIN = 'Invalid Domain! Please enter a valid domain',
 }
 

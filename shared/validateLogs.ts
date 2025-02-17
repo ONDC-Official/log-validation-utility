@@ -65,9 +65,9 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
   }
 
   try {
-    const validFlows = ['1', '2', '3', '4', '5', '6']
+    const validFlows = ['1', '2', '2A', '3', '4', '5', '6', '7', '8', '9', ]
     if (!retailDomains.includes(domain)) {
-      return 'Domain should be one of the 1.2.0 retail domains'
+      return 'Domain should be one of the 1.2.0 or 1.2.5 retail domains'
     }
     const flowOneSequence = [
       ApiSequence.SEARCH,
@@ -168,7 +168,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       if (validFlows.includes(flow)) {
         apiSequence.forEach((apiSeq: any) => {
           if (data[apiSeq]) {
-            const resp = getResponse(apiSeq, data[apiSeq], msgIdSet)
+            const resp = getResponse(apiSeq, data[apiSeq], msgIdSet, flow)
             if (!_.isEmpty(resp)) {
               logReport = { ...logReport, [apiSeq]: resp }
             }
@@ -182,7 +182,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         return { invldFlow: 'Provided flow is invalid' }
       }
     }
-    const getResponse = (apiSeq: any, data: any, msgIdSet: any) => {
+    const getResponse = (apiSeq: any, data: any, msgIdSet: any, flow: string) => {
       switch (apiSeq) {
         case ApiSequence.SEARCH:
           return checkSearch(data, msgIdSet)

@@ -1769,7 +1769,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
             min: min,
             max: max,
             numberOfDefaults: 0,
-            numberOfElements: 0 
+            numberOfElements: 0
           };
         }
       });

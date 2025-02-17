@@ -455,10 +455,8 @@ export const MOB_FULL_STATE = [
   'RIDE_ARRIVED_PICKUP',
 ]
 
-export const ffCategory = [
-  ['Immediate Delivery', 'Standard Delivery', 'Express Delivery'],
-  ['Takeaway', 'Kerbside'],
-]
+export const ffCategory = [["Immediate Delivery", "Standard Delivery", "Express Delivery"], ["Takeaway", "Kerbside"]]
+
 export const PAYMENT_STATUS = {
   PAID: 'PAID',
   NOT_PAID: 'NOT-PAID',

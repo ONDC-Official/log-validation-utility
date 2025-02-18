@@ -209,17 +209,57 @@ export const checkMetroContext = (
 }
 
 const validate_schema_for_retail_json = (vertical: string, api: string, data: any) => {
+  console.log(`validate_schema_${api}_${vertical}_for_json`)
   const res = (schemaValidator as any)[`validate_schema_${api}_${vertical}_for_json`](data)
+  
+  // validate_schema_search_trv14_for_json
+  // validate_schema_on_search_1_trv14_for_json
+  // validate_schema_on_search_2_trv14_for_json
+  // validate_schema_select_1_trv14_for_json
+  // validate_schema_on_select_1_trv14_for_json
+  // validate_schema_select_2_trv14_for_json
+  // validate_schema_on_select_2_trv14_for_json
+  // validate_schema_init_trv14_for_json
+  // validate_schema_on_init_trv14_for_json
+  // validate_schema_confirm_trv14_for_json
+  // validate_schema_on_confirm_trv14_for_json
+  // validate_schema_status_trv14_for_json
+  // validate_schema_on_status_trv14_for_json
+  // validate_schema_cancel_1_trv14_for_json
+  // validate_schema_on_cancel_1_trv14_for_json
+  // validate_schema_cancel_2_trv14_for_json
+  // validate_schema_on_cancel_2_trv14_for_json
+  // validate_schema_update_trv14_for_json
+  // validate_schema_on_update_trv14_for_json
+  // validate_schema_search_srv19_for_json
+  // validate_schema_on_search_srv19_for_json
+  // validate_schema_select_srv19_for_json
+  // validate_schema_on_select_srv19_for_json
+  // validate_schema_init_srv19_for_json
+  // validate_schema_on_init_srv19_for_json
+  // validate_schema_confirm_srv19_for_json
+  // validate_schema_on_confirm_srv19_for_json
+  // validate_schema_status_srv19_for_json
+  // validate_schema_on_status_srv19_for_json
+  // validate_schema_cancel_srv19_for_json
+  // validate_schema_on_cancel_srv19_for_json
+  // validate_schema_update_srv19_for_json
+  // validate_schema_on_update_srv19_for_json
+  // 
+
+  
 
   return res
 }
 
 export const validateSchema = (domain: string, api: string, data: any) => {
   try {
+   
     logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
     const errObj: any = {}
-
+    
     const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
+
 
     const datavld = schmaVldtr
     if (datavld.status === 'fail') {
@@ -231,7 +271,7 @@ export const validateSchema = (domain: string, api: string, data: any) => {
         errObj[key] = `${res[i].details} ${res[i].message}`
         i++
       }
-
+      
       return errObj
     } else return 'error'
   } catch (e: any) {

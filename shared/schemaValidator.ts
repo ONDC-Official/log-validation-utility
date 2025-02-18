@@ -44,6 +44,39 @@ import onReportSchema from '../schema/RSF/RSF_v2/on_reportSchema'
 import reconSchema from '../schema/RSF/RSF_v2/reconSchema'
 import onReconSchema from '../schema/RSF/RSF_v2/on_reconSchema'
 import { findProviderLocation } from '../utils'
+import searchSchemaTRV14 from '../schema/TRV-14/search'
+import select1SchemaTRV14 from '../schema/TRV-14/select1'
+import onSelect1SchemaTRV14 from '../schema/TRV-14/onSelect1'
+import select2SchemaTRV14 from '../schema/TRV-14/select2'
+import onSelect2SchemaTRV14 from '../schema/TRV-14/onSelect2'
+import initSchemaTRV14 from '../schema/TRV-14/init'
+import onInitSchemaTRV14 from '../schema/TRV-14/onInit'
+import confirmSchemaTRV14 from '../schema/TRV-14/confirm'
+import onConfirmSchemaTRV14 from '../schema/TRV-14/onConfirm'
+import statusSchemaTRV14 from '../schema/TRV-14/status'
+import onStatusSchemaTRV14 from '../schema/TRV-14/onStatus'
+
+import cancel1SchemaTRV14 from '../schema/TRV-14/cancel1'
+import onCancel1SchemaTRV14 from '../schema/TRV-14/onCancel1'
+import cancel2SchemaTRV14 from '../schema/TRV-14/cancel2'
+import onCancel2SchemaTRV14 from '../schema/TRV-14/onCancel2'
+import updateSchemaTRV14 from '../schema/TRV-14/update'
+import onUpdateSchemaTRV14 from '../schema/TRV-14/onUpdate'
+import onSearch1SchemaTRV14 from '../schema/TRV-14/onSearch1'
+import onSearch2SchemaTRV14 from '../schema/TRV-14/onSearch2'
+import { searchSchemaSRV19 } from '../schema/SRV19/search'
+import { onSearchSchemaSRV19 } from '../schema/SRV19/onSearch'
+import { selectSchemaSRV19 } from '../schema/SRV19/select'
+import { onSelectSchemaSRV19 } from '../schema/SRV19/onSelect'
+import { initSchemaSRV19 } from '../schema/SRV19/init'
+import { onInitSchemaSRV19 } from '../schema/SRV19/onInit'
+import { confirmSchemaSRV19 } from '../schema/SRV19/confirm'
+import { onConfirmSchemaSRV19 } from '../schema/SRV19/onConfirm'
+import { statusSchemaSRV19 } from '../schema/SRV19/status'
+import { onStatusSchemaSRV19 } from '../schema/SRV19/onStatus'
+import { cancelSchemaSRV19 } from '../schema/SRV19/cancel'
+import { updateSchemaSRV19 } from '../schema/SRV19/update'
+import { onUpdateSchemaSRV19 } from '../schema/SRV19/onUpdate'
 
 const ajv = new Ajv({
   allErrors: true,
@@ -51,22 +84,22 @@ const ajv = new Ajv({
 })
 addFormats(ajv)
 require('ajv-errors')(ajv)
-ajv.addFormat('rfc3339-date-time', function(dateTimeString) {
+ajv.addFormat('rfc3339-date-time', function (dateTimeString) {
   // Parse the date-time string
-  const date = new Date(dateTimeString);
- 
+  const date = new Date(dateTimeString)
+
   // Check if the date is valid and if it matches the RFC3339 format
   if (isNaN(date.getTime())) {
-     return false; // Invalid date
+    return false // Invalid date
   }
- 
+
   // Convert the date to an RFC3339 string
-  const rfc3339String = date.toISOString();
- 
+  const rfc3339String = date.toISOString()
+
   // Compare the original string with the RFC3339 string
   // This ensures the string is in the correct format and represents a valid date
-  return rfc3339String === dateTimeString;
- });
+  return rfc3339String === dateTimeString
+})
 
 const formatted_error = (errors: any) => {
   const error_list: any = []
@@ -92,6 +125,7 @@ const validate_schema = (data: any, schema: any) => {
   let error_list: any = []
 
   const validate = ajv.compile(schema)
+
   const valid = validate(data)
   if (findProviderLocation(data)) {
     error_list.push({
@@ -105,7 +139,6 @@ const validate_schema = (data: any, schema: any) => {
   if (!valid) {
     error_list = validate.errors
   }
-
   return error_list
 }
 
@@ -205,7 +238,29 @@ const validate_schema_inc_search_RET1A_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+const validate_schema_search_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchSchemaTRV14)
+  return formatted_error(error_list)
+}
+const validate_schema_search_srv19_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchSchemaSRV19)
+
+  return formatted_error(error_list)
+}
 // On search
+const validate_schema_on_search_srv19_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSearchSchemaSRV19)
+  return formatted_error(error_list)
+}
+const validate_schema_on_search_1_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSearch1SchemaTRV14)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_search_2_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSearch2SchemaTRV14)
+  return formatted_error(error_list)
+}
 
 const validate_schema_on_search_RET10_for_json = (data: any) => {
   const error_list = validate_schema(data, onSearchSchema)
@@ -318,6 +373,18 @@ const validate_schema_on_search_inc_52110_for_json = (data: any) => {
 }
 
 // select
+const validate_schema_select_srv19_for_json = (data: any) => {
+  const error_list = validate_schema(data, selectSchemaSRV19)
+  return formatted_error(error_list)
+}
+const validate_schema_select_1_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, select1SchemaTRV14)
+  return formatted_error(error_list)
+}
+const validate_schema_select_2_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, select2SchemaTRV14)
+  return formatted_error(error_list)
+}
 const validate_schema_select_RET10_for_json = (data: any) => {
   const error_list = validate_schema(data, selectSchema)
   return formatted_error(error_list)
@@ -372,6 +439,19 @@ const validate_schema_select_52110_for_json = (data: any) => {
 }
 
 // On select
+const validate_schema_on_select_srv19_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSelectSchemaSRV19)
+  return formatted_error(error_list)
+}
+const validate_schema_on_select_1_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSelect1SchemaTRV14)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_select_2_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSelect2SchemaTRV14)
+  return formatted_error(error_list)
+}
 const validate_schema_on_select_RET10_for_json = (data: any) => {
   const error_list = validate_schema(data, onSelectSchema)
   return formatted_error(error_list)
@@ -426,6 +506,14 @@ const validate_schema_on_select_52110_for_json = (data: any) => {
 }
 
 // init
+const validate_schema_init_srv19_for_json = (data: any) => {
+  const error_list = validate_schema(data, initSchemaSRV19)
+  return formatted_error(error_list)
+}
+const validate_schema_init_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, initSchemaTRV14)
+  return formatted_error(error_list)
+}
 const validate_schema_init_RET11_for_json = (data: any) => {
   const error_list = validate_schema(data, FnBinitSchema)
   return formatted_error(error_list)
@@ -480,7 +568,14 @@ const validate_schema_init_52110_for_json = (data: any) => {
 }
 
 // On init
-
+const validate_schema_on_init_srv19_for_json = (data: any) => {
+  const error_list = validate_schema(data, onInitSchemaSRV19)
+  return formatted_error(error_list)
+}
+const validate_schema_on_init_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onInitSchemaTRV14)
+  return formatted_error(error_list)
+}
 const validate_schema_on_init_RET11_for_json = (data: any) => {
   const error_list = validate_schema(data, FnBonInitSchema)
   return formatted_error(error_list)
@@ -535,7 +630,14 @@ const validate_schema_on_init_52110_for_json = (data: any) => {
 }
 
 // confirm
-
+const validate_schema_confirm_srv19_for_json = (data: any) => {
+  const error_list = validate_schema(data, confirmSchemaSRV19)
+  return formatted_error(error_list)
+}
+const validate_schema_confirm_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, confirmSchemaTRV14)
+  return formatted_error(error_list)
+}
 const validate_schema_confirm_RET11_for_json = (data: any) => {
   const error_list = validate_schema(data, FnBconfirmSchema)
   return formatted_error(error_list)
@@ -592,7 +694,14 @@ const validate_schema_confirm_52110_for_json = (data: any) => {
 }
 
 // On confirm
-
+const validate_schema_on_confirm_srv19_for_json = (data: any) => {
+  const error_list = validate_schema(data, onConfirmSchemaSRV19)
+  return formatted_error(error_list)
+}
+const validate_schema_on_confirm_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onConfirmSchemaTRV14)
+  return formatted_error(error_list)
+}
 const validate_schema_on_confirm_RET11_for_json = (data: any) => {
   const error_list = validate_schema(data, FnBonConfirmSchema)
   return formatted_error(error_list)
@@ -645,7 +754,19 @@ const validate_schema_on_confirm_52110_for_json = (data: any) => {
   const error_list = validate_schema(data, onConfirmSchema)
   return formatted_error(error_list)
 }
-
+// Cancel
+const validate_schema_cancel_srv19_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancelSchemaSRV19)
+  return formatted_error(error_list)
+}
+const validate_schema_cancel_1_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancel1SchemaTRV14)
+  return formatted_error(error_list)
+}
+const validate_schema_cancel_2_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancel2SchemaTRV14)
+  return formatted_error(error_list)
+}
 const validate_schema_cancel_RET10_for_json = (data: any) => {
   const error_list = validate_schema(data, cancelSchema)
   return formatted_error(error_list)
@@ -656,6 +777,22 @@ const validate_schema_cancel_RET11_for_json = (data: any) => {
 }
 const validate_schema_cancel_RET19_for_json = (data: any) => {
   const error_list = validate_schema(data, cancelSchema)
+  return formatted_error(error_list)
+}
+
+// ON_CANCEL
+
+const validate_schema_on_cancel_srv19_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusSchemaSRV19)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_1_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onCancel1SchemaTRV14)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_cancel_2_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onCancel2SchemaTRV14)
   return formatted_error(error_list)
 }
 const validate_schema_on_cancel_RET11_for_json = (data: any) => {
@@ -759,6 +896,16 @@ const validate_schema_on_track_RET11_for_json = (data: any) => {
   const error_list = validate_schema(data, onTrackSchema)
   return formatted_error(error_list)
 }
+
+// Status
+const validate_schema_status_srv19_for_json = (data: any) => {
+  const error_list = validate_schema(data, statusSchemaSRV19)
+  return formatted_error(error_list)
+}
+const validate_schema_status_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, statusSchemaTRV14)
+  return formatted_error(error_list)
+}
 const validate_schema_status_RET10_for_json = (data: any) => {
   const error_list = validate_schema(data, statusSchema)
   return formatted_error(error_list)
@@ -772,7 +919,15 @@ export const validate_schema_status_RET19_for_json = (data: any) => {
   const error_list = validate_schema(data, statusSchema)
   return formatted_error(error_list)
 }
-
+// ON_STATUS
+const validate_schema_on_status_srv19_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusSchemaSRV19)
+  return formatted_error(error_list)
+}
+const validate_schema_on_status_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusSchemaTRV14)
+  return formatted_error(error_list)
+}
 const validate_schema_on_status_RET10_for_json = (data: any) => {
   const error_list = validate_schema(data, onStatusSchema)
   return formatted_error(error_list)
@@ -823,6 +978,14 @@ const validate_schema_on_status_RET1A_for_json = (data: any) => {
 }
 
 // Update
+const validate_schema_update_srv19_for_json = (data: any) => {
+  const error_list = validate_schema(data, updateSchemaSRV19)
+  return formatted_error(error_list)
+}
+const validate_schema_update_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, updateSchemaTRV14)
+  return formatted_error(error_list)
+}
 
 const validate_schema_update_RET10_for_json = (data: any) => {
   const error_list = validate_schema(data, updateSchema)
@@ -868,6 +1031,18 @@ const validate_schema_update_RET15_for_json = (data: any) => {
   const error_list = validate_schema(data, updateSchema)
   return formatted_error(error_list)
 }
+
+// ON UPDATE
+const validate_schema_on_update_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateSchemaTRV14)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_update_srv19_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateSchemaSRV19)
+  return formatted_error(error_list)
+}
+
 const validate_schema_on_update_RET15_for_json = (data: any) => {
   const error_list = validate_schema(data, onUpdateSchema)
   return formatted_error(error_list)
@@ -941,7 +1116,8 @@ const FISValidator = {
   validate_schema_on_confirm_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_confirm.yaml'),
   validate_schema_update_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/update.yaml'),
   validate_schema_on_update_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_update.yaml'),
-  validate_schema_on_update_FIS12_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/FIS12/on_update.yaml'),
+  validate_schema_on_update_FIS12_for_json: (data: any) =>
+    validate_schema_for_json(data, 'schema/FIS/FIS12/on_update.yaml'),
   validate_schema_status_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/status.yaml'),
   validate_schema_on_status_FIS_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_status.yaml'),
 }
@@ -954,8 +1130,7 @@ const TRVValidator = {
   validate_schema_init_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/init.yaml'),
   validate_schema_on_init_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_init.yaml'),
   validate_schema_confirm_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/confirm.yaml'),
-  validate_schema_on_confirm_TRV_for_json: (data: any) =>
-    validate_schema_for_json(data, 'schema/FIS/on_confirm.yaml'),
+  validate_schema_on_confirm_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_confirm.yaml'),
   validate_schema_update_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/update.yaml'),
   validate_schema_on_update_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_update.yaml'),
   validate_schema_status_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/status.yaml'),
@@ -979,42 +1154,75 @@ const validate_schema_on_receiver_recon_rsf_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
-const validate_schema_settle_rsf_for_json = (data: any) =>{
-  console.log("data of settle", data)
+const validate_schema_settle_rsf_for_json = (data: any) => {
+  console.log('data of settle', data)
   const error_list = validate_schema(data, settleSchema)
-  console.log("error_list of settle", formatted_error(error_list))
+  console.log('error_list of settle', formatted_error(error_list))
   return formatted_error(error_list)
 }
 
-const validate_schema_on_settle_rsf_for_json = (data: any) =>{
+const validate_schema_on_settle_rsf_for_json = (data: any) => {
   const error_list = validate_schema(data, onSettleSchema)
   return formatted_error(error_list)
 }
 
-const validate_schema_report_rsf_for_json = (data: any) =>{
-  console.log("data of report", data)
+const validate_schema_report_rsf_for_json = (data: any) => {
+  console.log('data of report', data)
   const error_list = validate_schema(data, reportSchema)
-  console.log("error_list of reporrt", formatted_error(error_list))
+  console.log('error_list of reporrt', formatted_error(error_list))
   return formatted_error(error_list)
 }
 
-const validate_schema_on_report_rsf_for_json = (data: any) =>{
+const validate_schema_on_report_rsf_for_json = (data: any) => {
   const error_list = validate_schema(data, onReportSchema)
   return formatted_error(error_list)
 }
 
-const validate_schema_recon_rsf_for_json = (data: any) =>{
-  console.log("data of recon", data)
+const validate_schema_recon_rsf_for_json = (data: any) => {
+  console.log('data of recon', data)
   const error_list = validate_schema(data, reconSchema)
   return formatted_error(error_list)
 }
 
-const validate_schema_on_recon_rsf_for_json = (data: any) =>{
+const validate_schema_on_recon_rsf_for_json = (data: any) => {
   const error_list = validate_schema(data, onReconSchema)
   return formatted_error(error_list)
 }
 
 export default {
+  validate_schema_search_trv14_for_json,
+  validate_schema_on_search_1_trv14_for_json,
+  validate_schema_on_search_2_trv14_for_json,
+  validate_schema_select_1_trv14_for_json,
+  validate_schema_on_select_1_trv14_for_json,
+  validate_schema_select_2_trv14_for_json,
+  validate_schema_on_select_2_trv14_for_json,
+  validate_schema_init_trv14_for_json,
+  validate_schema_on_init_trv14_for_json,
+  validate_schema_confirm_trv14_for_json,
+  validate_schema_on_confirm_trv14_for_json,
+  validate_schema_status_trv14_for_json,
+  validate_schema_on_status_trv14_for_json,
+  validate_schema_cancel_1_trv14_for_json,
+  validate_schema_on_cancel_1_trv14_for_json,
+  validate_schema_cancel_2_trv14_for_json,
+  validate_schema_on_cancel_2_trv14_for_json,
+  validate_schema_update_trv14_for_json,
+  validate_schema_on_update_trv14_for_json,
+  validate_schema_search_srv19_for_json,
+  validate_schema_on_search_srv19_for_json,
+  validate_schema_select_srv19_for_json,
+  validate_schema_on_select_srv19_for_json,
+  validate_schema_init_srv19_for_json,
+  validate_schema_on_init_srv19_for_json,
+  validate_schema_confirm_srv19_for_json,
+  validate_schema_on_confirm_srv19_for_json,
+  validate_schema_status_srv19_for_json,
+  validate_schema_on_status_srv19_for_json,
+  validate_schema_cancel_srv19_for_json,
+  validate_schema_on_cancel_srv19_for_json,
+  validate_schema_update_srv19_for_json,
+  validate_schema_on_update_srv19_for_json,
   validate_schema_search_RET11_for_json,
   validate_schema_search_RET19_for_json,
   validate_schema_select_RET11_for_json,
@@ -1210,15 +1418,15 @@ export default {
   validate_schema_recon_rsf_for_json,
   validate_schema_on_recon_rsf_for_json,
 
-  validate_schema_search_AGR10_for_json, 
-  validate_schema_on_search_AGR10_for_json, 
+  validate_schema_search_AGR10_for_json,
+  validate_schema_on_search_AGR10_for_json,
   validate_schema_inc_search_AGR10_for_json,
   validate_schema_on_search_inc_AGR10_for_json,
-  validate_schema_search_RET1A_for_json, 
-  validate_schema_on_search_RET1A_for_json, 
+  validate_schema_search_RET1A_for_json,
+  validate_schema_on_search_RET1A_for_json,
   validate_schema_inc_search_RET1A_for_json,
   validate_schema_on_search_inc_RET1A_for_json,
-  
+
   ...TRVValidator,
   ...FISValidator,
 }

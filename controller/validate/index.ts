@@ -7,6 +7,7 @@ import { actionsArray } from '../../constants'
 import helper from './helper'
 
 import { verify, hash } from '../../shared/crypto'
+// import { Color } from 'colors'
 
 const controller = {
   validate: async (req: Request, res: Response): Promise<Response | void> => {
@@ -46,7 +47,9 @@ const controller = {
           break
         case DOMAIN.MOBILITY:
           {
+
             const { response, success, message } = await helper.validateMobility(domain, payload, version, flow)
+
             result = { response, success, message }
           }
 
@@ -61,6 +64,15 @@ const controller = {
             const { response, success, message } = await helper.validateRSF(payload, version)
             result = { response, success, message }
           }
+          break;
+        case DOMAIN.SRV:
+          {
+            
+            const { response, success, message } = await helper.validateService(domain, payload, version, flow)
+            result = { response, success, message }
+
+          }
+
 
           break
         default:

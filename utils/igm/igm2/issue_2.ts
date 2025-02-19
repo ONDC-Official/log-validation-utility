@@ -3,13 +3,6 @@ import { checkContext, isObjectEmpty } from '../../../utils/index'
 import constants from '../../../constants/index'
 import { validateSchema } from '../../../utils/index'
 import { logger } from '../../../shared/logger'
-import issue_subcategory from '../../issue_subcategories'
-import {
-  checkOrganizationNameandDomain,
-  compareContextTimeStampAndUpdatedAt,
-  compareCreatedAtAndUpdationTime,
-  compareUpdatedAtAndContextTimeStamp,
-} from '../igmHelpers'
 
 const validateIssuePayload = (data: any) => {
   const issueObj: any = {}
@@ -23,8 +16,8 @@ const validateIssuePayload = (data: any) => {
     const issue: any = data
 
     try {
-      logger.info(`Validating Schema for ${constants.RET_ISSUE} API`)
-      const vs = validateSchema('igm', constants.RET_ISSUE, issue)
+      logger.info(`Validating Schema for ${constants.ISSUE_1} API`)
+      const vs = validateSchema('igm', constants.ISSUE_1, issue)
       if (vs !== 'error') {
         Object.assign(issueObj, vs)
       }
@@ -33,8 +26,8 @@ const validateIssuePayload = (data: any) => {
     }
 
     try {
-      logger.info(`Checking context for ${constants.RET_ISSUE} API`)
-      res = checkContext(issue.context, constants.RET_ISSUE)
+      logger.info(`Checking context for ${constants.ISSUE_1} API`)
+      res = checkContext(issue.context, constants.ISSUE_1)
       if (!res.valid) {
         Object.assign(issueObj, res.ERRORS)
       }

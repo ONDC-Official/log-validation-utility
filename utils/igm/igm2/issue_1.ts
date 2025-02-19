@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import { setValue } from '../../../shared/dao'
 import { checkContext, isObjectEmpty } from '../../../utils/index'
-import constants, { IGMApiSequence } from '../../../constants/index'
+import constants, { IGM2Sequence } from '../../../constants/index'
 import { validateSchema } from '../../../utils/index'
 import { logger } from '../../../shared/logger'
 import issue_subcategory from '../../issue_subcategories'
@@ -14,39 +14,39 @@ import {
   compareUpdatedAtAndContextTimeStamp,
 } from '../igmHelpers'
 
-const checkIssue = (data: any) => {
+const checkIssueV2 = (data: any) => {
   const issueObj: any = {}
   let res: any = {}
 
   if (!data || isObjectEmpty(data)) {
-    return { [IGMApiSequence.RET_ISSUE]: 'JSON cannot be empty' }
+    return { [IGM2Sequence.ISSUE_1]: 'JSON cannot be empty' }
   }
 
   try {
     const issue: any = data
 
     try {
-      logger.info(`Validating Schema for ${constants.RET_ISSUE} API`)
-      const vs = validateSchema('igm', constants.RET_ISSUE, issue)
+      logger.info(`Validating Schema for ${constants.ISSUE_1} API`)
+      const vs = validateSchema('igm', constants.ISSUE_1, issue)
       if (vs != 'error') {
         Object.assign(issueObj, vs)
       }
     } catch (error: any) {
-      logger.error(`!!Error occurred while performing schema validation for /${constants.RET_ISSUE}, ${error.stack}`)
+      logger.error(`!!Error occurred while performing schema validation for /${constants.ISSUE_1}, ${error.stack}`)
     }
     try {
-      logger.info(`Checking context for ${constants.RET_ISSUE} API`) //checking context
-      res = checkContext(issue.context, constants.RET_ISSUE)
+      logger.info(`Checking context for ${constants.ISSUE_1} API`) //checking context
+      res = checkContext(issue.context, constants.ISSUE_1)
       if (!res.valid) {
         Object.assign(issueObj, res.ERRORS)
       }
     } catch (error: any) {
-      logger.error(`Some error occurred while checking /${constants.RET_ISSUE} context, ${error.stack}`)
+      logger.error(`Some error occurred while checking /${constants.ISSUE_1} context, ${error.stack}`)
     }
 
     try {
       logger.info(
-        `Storing igmTxnID igmTmpstmp igmType igmCoreVersion igmDomain igmIssueMesgId in /${constants.RET_ISSUE}`,
+        `Storing igmTxnID igmTmpstmp igmType igmCoreVersion igmDomain igmIssueMesgId in /${constants.ISSUE_1}`,
       ) //storing IgmTxnId IgmTmpstmp igmType igmCoreVersion igmDomain
       setValue('igmTxnId', issue.context.transaction_id)
       setValue('igmTmpstmp', issue.context.timestamp)
@@ -64,11 +64,11 @@ const checkIssue = (data: any) => {
         Object.assign(issueObj, res.ERRORS)
       }
     } catch (error: any) {
-      logger.error(`!!Some error occurred while checking /${constants.RET_ISSUE} context, ${error.stack}`)
+      logger.error(`!!Some error occurred while checking /${constants.ISSUE_1} context, ${error.stack}`)
     }
 
     try {
-      logger.info(`Validating category and subcategory in /${constants.RET_ISSUE}`)
+      logger.info(`Validating category and subcategory in /${constants.ISSUE_1}`)
 
       if (
         (issue.message.category === 'ITEM' &&
@@ -90,13 +90,13 @@ const checkIssue = (data: any) => {
         }
       }
     } catch (error: any) {
-      logger.error(`!!Error while validating category and subcategory in /${constants.RET_ISSUE}, ${error.stack}`)
+      logger.error(`!!Error while validating category and subcategory in /${constants.ISSUE_1}, ${error.stack}`)
     }
 
     const complainant_actions = issue.message.issue.issue_actions.complainant_actions
 
     checkOrganizationNameandDomain({
-      endpoint: constants.RET_ISSUE,
+      endpoint: constants.ISSUE_1,
       actionPayload: complainant_actions,
       contextSubscriberId: issue.context.bap_id,
       contextDomain: issue.context.domain,
@@ -105,14 +105,14 @@ const checkIssue = (data: any) => {
     })
 
     compareUpdatedAtAndContextTimeStamp({
-      endpoint: constants.RET_ISSUE,
+      endpoint: constants.ISSUE_1,
       actionPayload: complainant_actions,
       messageUpdatedAt: issue.message.issue.updated_at,
       issueReportObj: issueObj,
     })
 
     compareCreatedAtAndUpdationTime({
-      endpoint: constants.RET_ISSUE,
+      endpoint: constants.ISSUE_1,
       created_at: issue.message.issue.created_at,
       contextTimeStamp: issue.context.timestamp,
       messageUpdatedAt: issue.message.issue.updated_at,
@@ -121,7 +121,7 @@ const checkIssue = (data: any) => {
     })
 
     compareContextTimeStampAndUpdatedAt({
-      endpoint: constants.RET_ISSUE,
+      endpoint: constants.ISSUE_1,
       contextTimeStamp: issue.context.timestamp,
       issue_updated_at: issue.message.issue.updated_at,
       issueReportObj: issueObj,
@@ -140,14 +140,14 @@ const checkIssue = (data: any) => {
     }
 
     try {
-      logger.info(`Phone Number Check for /${constants.RET_ISSUE}`)
+      logger.info(`Phone Number Check for /${constants.ISSUE_1}`)
       // on_issue.message.issue.issue_actions.respondent_actions[0].updated_by.contact.phone
       if (!_.inRange(issue.message.issue.complainant_info.contact.phone, 1000000000, 99999999999)) {
-        issueObj.Phn = `Phone Number for /${constants.RET_ISSUE} api is not in the valid Range`
+        issueObj.Phn = `Phone Number for /${constants.ISSUE_1} api is not in the valid Range`
       }
       setValue('igmPhn', issue.message.issue.complainant_info.contact.phone)
     } catch (error: any) {
-      logger.error(`Error while checking phone number for /${constants.RET_ISSUE} api, ${error.stack}`)
+      logger.error(`Error while checking phone number for /${constants.ISSUE_1} api, ${error.stack}`)
     }
 
     setValue('igmCreatedAt', issue.message.issue.created_at)
@@ -156,11 +156,11 @@ const checkIssue = (data: any) => {
     return issueObj
   } catch (err: any) {
     if (err.code === 'ENOENT') {
-      logger.info(`!!File not found for /${constants.RET_ISSUE} API!`)
+      logger.info(`!!File not found for /${constants.ISSUE_1} API!`)
     } else {
-      logger.error(`!!Some error occurred while checking /${constants.RET_ISSUE} API`, err)
+      logger.error(`!!Some error occurred while checking /${constants.ISSUE_1} API`, err)
     }
   }
 }
 
-export default checkIssue
+export default checkIssueV2

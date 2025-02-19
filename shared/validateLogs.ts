@@ -49,8 +49,8 @@ import checkRsfReport from '../utils/RSF/RSF_v2/report'
 import checkRsfOnReport from '../utils/RSF/RSF_v2/on_report'
 import checkRsfRecon from '../utils/RSF/RSF_v2/recon'
 import checkRsfOnRecon from '../utils/RSF/RSF_v2/on_recon'
-import checkIssueV2 from 'utils/igm/igm2/issue'
-import checkOnIssueV2 from 'utils/igm/igm2/on_issue_1'
+import checkOnIssueV2 from '../utils/igm/igm2/on_issue_1'
+import checkIssueV2 from '../utils/igm/igm2/issue_1'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()

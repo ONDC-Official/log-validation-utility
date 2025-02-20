@@ -1,4 +1,4 @@
-const onIssueSchema = {
+const newOnIssueSchema = {
   type: 'object',
   properties: {
     context: {
@@ -303,4 +303,4 @@ const onIssueSchema = {
   required: ['context', 'message'],
 }
 
-export default onIssueSchema
+export default newOnIssueSchema

@@ -103,12 +103,29 @@ const newIssueSchema = {
     message: {
       type: 'object',
       properties: {
+        updated_target: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              path: { type: 'string' },
+              action: { type: 'string', enum: ['APPENDED'] },
+            },
+            required: ['path', 'action'],
+          },
+        },
         issue: {
           type: 'object',
           properties: {
             id: { type: 'string' },
-            status: { type: 'string', enum: ['OPEN', 'PROCESSING', 'RESOLVED', 'CLOSED'] },
-            level: { type: 'string', enum: ['ISSUE', 'GRIEVANCE', 'DISPUTE'] },
+            status: {
+              type: 'string',
+              enum: ['OPEN', 'PROCESSING', 'RESOLVED', 'CLOSED'],
+            },
+            level: {
+              type: 'string',
+              enum: ['ISSUE', 'GRIEVANCE', 'DISPUTE'],
+            },
             created_at: { type: 'string', format: 'date-time' },
             updated_at: { type: 'string', format: 'date-time' },
             expected_response_time: {
@@ -193,17 +210,15 @@ const newIssueSchema = {
                   type: {
                     type: 'string',
                     enum: [
-                      'OPEN',
-                      'PROCESSING',
-                      'RESOLVED',
-                      'CLOSED',
-                      'INFO_REQUESTED',
-                      'INFO_PROVIDED',
-                      'INFO_NOT_AVAILABLE',
-                      'RESOLUTION_PROPOSED',
-                      'RESOLUTION_ACCEPTED',
-                      'RESOLUTION_REJECTED',
-                      'RESOLUTION_CASCADED',
+                      'CONSUMER',
+                      'INTERFACING_NP',
+                      'COUNTERPARTY_NP',
+                      'PROVIDER',
+                      'AGENT',
+                      'INTERFACING_NP_GRO',
+                      'COUNTERPARTY_NP_GRO',
+                      'CASCADED_NP_GRO',
+                      'CASCADED_NP',
                     ],
                   },
                   info: {
@@ -240,6 +255,10 @@ const newIssueSchema = {
             },
             source_id: { type: 'string' },
             complainant_id: { type: 'string' },
+            respondent_ids: {
+              type: 'array',
+              items: { type: 'string' },
+            },
             description: {
               type: 'object',
               properties: {
@@ -259,7 +278,7 @@ const newIssueSchema = {
                   items: { type: 'string', format: 'uri' },
                 },
               },
-              required: ['code', 'short_desc'],
+              required: ['code', 'short_desc', 'long_desc'],
             },
             last_action_id: { type: 'string' },
             actions: {
@@ -271,7 +290,22 @@ const newIssueSchema = {
                   description: {
                     type: 'object',
                     properties: {
-                      code: { type: 'string' },
+                      code: {
+                        type: 'string',
+                        enum: [
+                          'OPEN',
+                          'PROCESSING',
+                          'RESOLVED',
+                          'CLOSED',
+                          'INFO_REQUESTED',
+                          'INFO_PROVIDED',
+                          'INFO_NOT_AVAILABLE',
+                          'RESOLUTION_PROPOSED',
+                          'RESOLUTION_ACCEPTED',
+                          'RESOLUTION_REJECTED',
+                          'RESOLUTION_CASCADED',
+                        ],
+                      },
                       short_desc: { type: 'string' },
                     },
                     required: ['code', 'short_desc'],
@@ -303,6 +337,7 @@ const newIssueSchema = {
             'source_id',
             'complainant_id',
             'description',
+            'last_action_id',
             'actions',
           ],
         },

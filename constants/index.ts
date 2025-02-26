@@ -215,13 +215,12 @@ export const TRV14ApiSequence = {
   SOFT_ON_CANCEL: 'soft_on_cancel',
   CANCEL: 'cancel',
   ON_CANCEL: 'on_cancel',
-  UPDATE : 'update',
-  ON_UPDATE : 'on_update'
+  UPDATE: 'update',
+  ON_UPDATE: 'on_update',
 }
 export const MEC11APISequence = {
   SEARCH: 'search',
   ON_SEARCH: 'on_search',
-
 }
 export const SRV19APISequence = {
   SEARCH: 'search',
@@ -238,7 +237,6 @@ export const SRV19APISequence = {
   ON_CANCEL: 'on_cancel',
   UPDATE: 'update',
   ON_UPDATE: 'on_update',
-  
 }
 
 export const mobilitySequence = {
@@ -406,6 +404,26 @@ export const IGMApiSequence = {
   LSP_ON_ISSUE: 'lsp_on_issue',
   LSP_ISSUE_STATUS: 'lsp_issue_status',
   LSP_ON_ISSUE_STATUS: 'lsp_on_issue_status',
+}
+
+export const IGM2Flows = {
+  FLOW_1: 'FLOW_1',
+  FLOW_2: 'FLOW_2',
+  FLOW_3: 'FLOW_3',
+}
+export const IGM2Sequence = {
+  ISSUE_1: 'issue_1',
+  ON_ISSUE_1: 'on_issue_1',
+  ON_ISSUE_2: 'on_issue_2',
+  ISSUE_2: 'issue_2',
+  ON_ISSUE_3: 'on_issue_3',
+  ON_ISSUE_4: 'on_issue_4',
+  ISSUE_3: 'issue_3',
+  ON_ISSUE_5: 'on_issue_5',
+  ON_ISSUE_6: 'on_issue_6',
+  ISSUE_4: 'issue_4',
+  ON_ISSUE_7: 'on_issue_7',
+  ISSUE_5: 'issue_5',
 }
 
 export const RSFapiSequence = {

@@ -2,7 +2,13 @@ import _ from 'lodash'
 import { sign, hash } from '../../shared/crypto'
 import { logger } from '../../shared/logger'
 import { DOMAIN, ERROR_MESSAGE } from '../../shared/types'
-import { IGMvalidateLogs, validateLogs, RSFvalidateLogs, RSFvalidateLogsV2 } from '../../shared/validateLogs'
+import {
+  IGMvalidateLogs,
+  validateLogs,
+  RSFvalidateLogs,
+  RSFvalidateLogsV2,
+  IGMvalidateLogs2,
+} from '../../shared/validateLogs'
 import { validateLogsForFIS12 } from '../../shared/Actions/FIS12Actions'
 import { validateLogsForMobility } from '../../shared/Actions/mobilityActions'
 import { validateLogsForMetro } from '../../shared/Actions/metroActions'
@@ -12,7 +18,6 @@ import { validateLogsForTRV13 } from '../../shared/Actions/TRV13Actions'
 import { getFis14Format, validateLogsForFIS14 } from '../../shared/Actions/FIS14Actions'
 import { validateLogsForTRV14 } from '../../shared/Actions/TRV14Actions'
 import { validateLogsForSRV19 } from '../../shared/Actions/SRV19Actions'
-import { validateLogsForMEC11 } from '../../shared/Actions/MEC11Actions'
 
 const createSignature = async ({ message }: { message: string }) => {
   const privateKey = process.env.SIGN_PRIVATE_KEY as string
@@ -35,7 +40,7 @@ const getEnumForDomain = (path: string) => {
   if (path.includes('rsf')) return DOMAIN.RSF
   if (path.includes('srv')) return DOMAIN.SRV
   if (path.includes('mec')) return DOMAIN.MEC
-  
+
   throw new Error('Domain could not be detected')
 }
 const validateRetail = async (
@@ -132,7 +137,6 @@ const validateMobility = async (domain: string, payload: string, version: string
   let success = false
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
 
-
   if (!flow) throw new Error('Flow not defined')
 
   switch (domain) {
@@ -156,22 +160,22 @@ const validateMobility = async (domain: string, payload: string, version: string
 
       break
 
-      case 'ONDC:TRV13':
-        response = validateLogsForTRV13(payload, domain, flow)
-  
-        if (_.isEmpty(response)) {
-          success = true
-          message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
-        }
-        break
-      case 'ONDC:TRV14':
-        response = validateLogsForTRV14(payload, flow, version)
-  
-        if (_.isEmpty(response)) {
-          success = true
-          message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
-        }
-        break
+    case 'ONDC:TRV13':
+      response = validateLogsForTRV13(payload, domain, flow)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+      break
+    case 'ONDC:TRV14':
+      response = validateLogsForTRV14(payload, flow, version)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+      break
 
     default:
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_DOMAIN
@@ -195,6 +199,16 @@ const validateIGM = async (payload: string, version: string) => {
       }
 
       break
+    case '2.0.0':
+      response = IGMvalidateLogs2(payload)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+
+      break
+
     default:
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
       logger.warn('Invalid Version!!')
@@ -202,6 +216,7 @@ const validateIGM = async (payload: string, version: string) => {
 
   return { response, success, message }
 }
+
 const validateRSF = async (payload: string, version: string) => {
   logger.info('Entering validateRSF function')
   let response
@@ -215,7 +230,7 @@ const validateRSF = async (payload: string, version: string) => {
         success = true
         message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
       }
-      break;
+      break
 
     case '2.0.0':
       response = RSFvalidateLogsV2(payload)
@@ -225,7 +240,7 @@ const validateRSF = async (payload: string, version: string) => {
         success = true
         message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
       }
-      break;
+      break
 
     default:
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
@@ -244,7 +259,7 @@ const getFinanceValidationFormat = (domain: string, version: string) => {
   }
 }
 
-const validateService =  async (domain: string, payload: string, version: string, flow?: string) => {
+const validateService = async (domain: string, payload: string, version: string, flow?: string) => {
   let response
   let success = false
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
@@ -262,14 +277,6 @@ const validateService =  async (domain: string, payload: string, version: string
       }
 
       break
-    case 'ONDC:MEC11':
-      response = validateLogsForMEC11(payload, flow, version)
-
-      if (_.isEmpty(response)) {
-        success = true
-        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
-      }
-      break;
     default:
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_DOMAIN
       logger.warn('Invalid Domain!!')

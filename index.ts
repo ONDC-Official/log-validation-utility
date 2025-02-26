@@ -1,13 +1,11 @@
 import dotenv from 'dotenv'
 import { logger } from './shared/logger'
 import createServer from './app'
-import chalk from 'chalk';
+import chalk from 'chalk'
 
-export { chalk };
+export { chalk }
 dotenv.config()
-const port = process.env.PORT 
-
-
+const port = process.env.PORT
 
 const app = createServer()
 

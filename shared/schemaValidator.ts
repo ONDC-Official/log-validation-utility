@@ -986,6 +986,7 @@ const validate_schema_on_status_RET1A_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+
 // Update
 const validate_schema_update_srv19_for_json = (data: any) => {
   const error_list = validate_schema(data, updateSchemaSRV19)

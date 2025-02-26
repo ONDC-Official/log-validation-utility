@@ -5,8 +5,10 @@ export enum DOMAIN {
   FINANCE = 'FINANCE',
   MOBILITY = 'MOBILITY',
   RSF = 'RSF',
-  SRV = 'SRV'
+  SRV = 'SRV',
+  MEC = 'MEC',
 }
+
 
 export enum ERROR_MESSAGE {
   LOG_VERIFICATION_UNSUCCESSFUL = 'Logs were not verified successfully',

@@ -132,9 +132,6 @@ export function validateLogsForSRV19(data: any, _flow: string, version: string) 
       }
     }
 
-
-
-
     logger.info(logReport, 'Report Generated Successfully!!')
     return logReport
   } catch (error: any) {

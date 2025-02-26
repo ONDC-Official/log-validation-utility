@@ -126,7 +126,57 @@ export const checkFISContext = (
     return result
   }
 }
+export const checkSRVContext = (
+  data: {
+    transaction_id: string
+    message_id: string
+    action: string
+    ttl?: string
+    timestamp: string
+    bppUri: string
+    bppId: string
+    bapId: string
+    bapUri: string
+  },
+  path: any,
+) => {
+  if (!data) return
+  const errObj: any = {}
 
+  if (data.transaction_id === data.message_id) {
+    errObj.id_err = "transaction_id and message_id can't be the same"
+  }
+
+  if (data.action !== path.replace('_unsolicited', '')) {
+    errObj.action_err = `context.action should be ${path}`
+  }
+
+  if (!data.action.startsWith("on_")) {
+    if (!data.ttl) {
+      errObj.ttl_err = "ttl is required in the context";
+    } else {
+      const ttlRegex = /^P(?:(\d+D)(T)?|T)?(?:(\d+H)?(\d+M)?(\d+S)?)$/;
+      if (!ttlRegex.test(data.ttl)) {
+        errObj.ttl_err =
+          "Invalid TTL format. Should be in the format PT10M, PT1H30M, PT30S, P30S, P1DT2H, etc.";
+      }
+    }
+  }
+  
+  
+
+  if (data.timestamp) {
+    const date = data.timestamp
+    const result = timestampCheck(date)
+    if (result?.err === 'FORMAT_ERR') {
+      errObj.timestamp_err = 'Timestamp not in RFC 3339 (YYYY-MM-DDTHH:MN:SS.MSSZ) format'
+    } else if (result?.err === 'INVLD_DT') {
+      errObj.timestamp_err = 'Timestamp should be in date-time format'
+    }
+  }
+
+  return _.isEmpty(errObj) ? { valid: true, SUCCESS: 'Context Valid' } : { valid: false, ERRORS: errObj }
+}
 export const checkMobilityContext = (
   data: { transaction_id: string; message_id: string; action: string; ttl: string; timestamp: string },
   path: any,
@@ -245,7 +295,7 @@ const validate_schema_for_retail_json = (vertical: string, api: string, data: an
   // validate_schema_on_cancel_srv19_for_json
   // validate_schema_update_srv19_for_json
   // validate_schema_on_update_srv19_for_json
-  // 
+  // validate_schema_search_mec11_for_json
 
   
 
@@ -798,6 +848,7 @@ export const checkIdAndUri = (id: string, uri: string, type: string) => {
     const errors: string[] = []
 
     if (!id) {
+      
       errors.push(`${type}_id is not present`)
     }
 

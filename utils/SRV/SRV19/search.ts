@@ -1,7 +1,7 @@
 import { SRV19APISequence } from "../../../constants"
 import { setValue } from "../../../shared/dao"
 import { logger } from "../../../shared/logger"
-import { isObjectEmpty, validateSchema } from "../../../utils"
+import { checkSRVContext, isObjectEmpty, validateSchema } from "../../../utils"
 // @ts-ignore
 export const checkSearch = (data: any, msgIdSet: any, version: any, sequence: string) => {
     const rsfObj: any = {}
@@ -20,9 +20,21 @@ export const checkSearch = (data: any, msgIdSet: any, version: any, sequence: st
       if (vs != 'error') {
         Object.assign(rsfObj, vs)
       }
+      let errors: any = {}
+       // validate context
+       let contextRes: any
+       contextRes = checkSRVContext(data.context, 'search')
+ 
+       if (!contextRes?.valid) {
+         Object.assign(errors, contextRes.ERRORS)
+       }
       
       setValue('search_context', context)
       setValue('search_message', message)
+
+      if (Object.keys(errors).length > 0) {
+        return { validation_errors: errors }
+    }
   
       return rsfObj
     } catch (err: any) {

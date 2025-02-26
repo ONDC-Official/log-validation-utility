@@ -218,7 +218,11 @@ export const TRV14ApiSequence = {
   UPDATE : 'update',
   ON_UPDATE : 'on_update'
 }
+export const MEC11APISequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
 
+}
 export const SRV19APISequence = {
   SEARCH: 'search',
   ON_SEARCH: 'on_search',
@@ -233,7 +237,8 @@ export const SRV19APISequence = {
   CANCEL: 'cancel',
   ON_CANCEL: 'on_cancel',
   UPDATE: 'update',
-  ON_UPDATE: 'on_update'
+  ON_UPDATE: 'on_update',
+  
 }
 
 export const mobilitySequence = {

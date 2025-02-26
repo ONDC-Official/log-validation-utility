@@ -64,19 +64,20 @@ import updateSchemaTRV14 from '../schema/TRV-14/update'
 import onUpdateSchemaTRV14 from '../schema/TRV-14/onUpdate'
 import onSearch1SchemaTRV14 from '../schema/TRV-14/onSearch1'
 import onSearch2SchemaTRV14 from '../schema/TRV-14/onSearch2'
-import { searchSchemaSRV19 } from '../schema/SRV19/search'
-import { onSearchSchemaSRV19 } from '../schema/SRV19/onSearch'
-import { selectSchemaSRV19 } from '../schema/SRV19/select'
-import { onSelectSchemaSRV19 } from '../schema/SRV19/onSelect'
-import { initSchemaSRV19 } from '../schema/SRV19/init'
-import { onInitSchemaSRV19 } from '../schema/SRV19/onInit'
-import { confirmSchemaSRV19 } from '../schema/SRV19/confirm'
-import { onConfirmSchemaSRV19 } from '../schema/SRV19/onConfirm'
-import { statusSchemaSRV19 } from '../schema/SRV19/status'
-import { onStatusSchemaSRV19 } from '../schema/SRV19/onStatus'
-import { cancelSchemaSRV19 } from '../schema/SRV19/cancel'
-import { updateSchemaSRV19 } from '../schema/SRV19/update'
-import { onUpdateSchemaSRV19 } from '../schema/SRV19/onUpdate'
+import { searchSchemaSRV19 } from '../schema/SRV-19/search'
+import { onSearchSchemaSRV19 } from '../schema/SRV-19/onSearch'
+import { selectSchemaSRV19 } from '../schema/SRV-19/select'
+import { onSelectSchemaSRV19 } from '../schema/SRV-19/onSelect'
+import { initSchemaSRV19 } from '../schema/SRV-19/init'
+import { onInitSchemaSRV19 } from '../schema/SRV-19/onInit'
+import { confirmSchemaSRV19 } from '../schema/SRV-19/confirm'
+import { onConfirmSchemaSRV19 } from '../schema/SRV-19/onConfirm'
+import { statusSchemaSRV19 } from '../schema/SRV-19/status'
+import { onStatusSchemaSRV19 } from '../schema/SRV-19/onStatus'
+import { cancelSchemaSRV19 } from '../schema/SRV-19/cancel'
+import { updateSchemaSRV19 } from '../schema/SRV-19/update'
+import { onUpdateSchemaSRV19 } from '../schema/SRV-19/onUpdate'
+import { searchSchemaMEC11 } from '../schema/MEC-11/search'
 
 const ajv = new Ajv({
   allErrors: true,
@@ -136,6 +137,7 @@ const validate_schema = (data: any, schema: any) => {
       params: {},
     })
   }
+  
   if (!valid) {
     error_list = validate.errors
   }
@@ -244,6 +246,13 @@ const validate_schema_search_trv14_for_json = (data: any) => {
 }
 const validate_schema_search_srv19_for_json = (data: any) => {
   const error_list = validate_schema(data, searchSchemaSRV19)
+
+  return formatted_error(error_list)
+}
+
+const validate_schema_search_mec11_for_json = (data: any) => {
+  
+  const error_list = validate_schema(data, searchSchemaMEC11)
 
   return formatted_error(error_list)
 }
@@ -1223,6 +1232,7 @@ export default {
   validate_schema_on_cancel_srv19_for_json,
   validate_schema_update_srv19_for_json,
   validate_schema_on_update_srv19_for_json,
+  validate_schema_search_mec11_for_json,
   validate_schema_search_RET11_for_json,
   validate_schema_search_RET19_for_json,
   validate_schema_select_RET11_for_json,

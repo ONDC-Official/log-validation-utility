@@ -2,6 +2,7 @@ import { logger } from "../../../shared/logger"
 import { SRV19APISequence } from "../../../constants"
 import { isObjectEmpty, validateSchema } from "../.."
 import { setValue } from "../../../shared/dao"
+import { validateContext } from "./srvChecks"
 
 // @ts-ignore
 export const checkOnCancel = (data: any, msgIdSet: any, version: any) => {
@@ -20,9 +21,17 @@ export const checkOnCancel = (data: any, msgIdSet: any, version: any) => {
           if (vs != 'error') {
             Object.assign(rsfObj, vs)
           }
-      
-          setValue('onCancel_context', context)
-          setValue('onCancel_message', message)
+          
+          setValue('on_cancel_context', context)
+          setValue('on_cancel_message', message)
+          let errors: any = {}
+                   const contextRes: any = validateContext(context, msgIdSet, SRV19APISequence.ON_INIT, context.action)
+                   if (!contextRes?.valid) {
+                       Object.assign(errors, contextRes.ERRORS)
+                   }
+                   if (Object.keys(errors).length > 0) {
+                    return { validation_errors: errors }
+                  }
       
           return rsfObj
         } catch (err: any) {

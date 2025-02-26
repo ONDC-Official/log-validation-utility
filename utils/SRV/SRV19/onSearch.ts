@@ -1,7 +1,8 @@
 import { logger } from "../../../shared/logger"
 import { SRV19APISequence } from "../../../constants"
 import { isObjectEmpty, validateSchema } from "../.."
-import { setValue } from "../../../shared/dao"
+import {  setValue } from "../../../shared/dao"
+import { validateContext } from "./srvChecks"
 
 // @ts-ignore
 export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
@@ -21,9 +22,20 @@ export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
           if (vs != 'error') {
             Object.assign(rsfObj, vs)
           }
-      
-          setValue('onSearch_context', context)
-          setValue('onSearch_message', message)
+
+          let errors: any = {}
+
+          const contextRes: any = validateContext(context, msgIdSet, SRV19APISequence.SEARCH, context.action)
+          if (!contextRes?.valid) {
+            Object.assign(errors, contextRes.ERRORS)
+          }
+       
+     setValue('on_search_context', context)
+     setValue('on_search_message', message)
+     
+     if (Object.keys(errors).length > 0) {
+       return { validation_errors: errors }
+   }
       
           return rsfObj
         } catch (err: any) {

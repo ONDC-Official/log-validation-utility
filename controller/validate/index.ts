@@ -70,14 +70,20 @@ const controller = {
             
             const { response, success, message } = await helper.validateService(domain, payload, version, flow)
             result = { response, success, message }
-
           }
-
-
-          break
+          break;
+        case DOMAIN.MEC: 
+        {
+          const { response, success, message } = await helper.validateService(domain, payload, version, flow)
+    
+          result = { response, success, message }
+        }
+        break;
         default:
           throw new Error('Internal server error')
       }
+      
+      
 
       const { response, success, message } = result
 

@@ -12,6 +12,7 @@ import { validateLogsForTRV13 } from '../../shared/Actions/TRV13Actions'
 import { getFis14Format, validateLogsForFIS14 } from '../../shared/Actions/FIS14Actions'
 import { validateLogsForTRV14 } from '../../shared/Actions/TRV14Actions'
 import { validateLogsForSRV19 } from '../../shared/Actions/SRV19Actions'
+import { validateLogsForMEC11 } from '../../shared/Actions/MEC11Actions'
 
 const createSignature = async ({ message }: { message: string }) => {
   const privateKey = process.env.SIGN_PRIVATE_KEY as string
@@ -33,6 +34,8 @@ const getEnumForDomain = (path: string) => {
   if (path.includes('igm')) return DOMAIN.IGM
   if (path.includes('rsf')) return DOMAIN.RSF
   if (path.includes('srv')) return DOMAIN.SRV
+  if (path.includes('mec')) return DOMAIN.MEC
+  
   throw new Error('Domain could not be detected')
 }
 const validateRetail = async (
@@ -259,6 +262,14 @@ const validateService =  async (domain: string, payload: string, version: string
       }
 
       break
+    case 'ONDC:MEC11':
+      response = validateLogsForMEC11(payload, flow, version)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+      break;
     default:
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_DOMAIN
       logger.warn('Invalid Domain!!')

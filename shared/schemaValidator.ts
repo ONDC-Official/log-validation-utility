@@ -77,7 +77,6 @@ import { onStatusSchemaSRV19 } from '../schema/SRV-19/onStatus'
 import { cancelSchemaSRV19 } from '../schema/SRV-19/cancel'
 import { updateSchemaSRV19 } from '../schema/SRV-19/update'
 import { onUpdateSchemaSRV19 } from '../schema/SRV-19/onUpdate'
-import { searchSchemaMEC11 } from '../schema/MEC-11/search'
 
 const ajv = new Ajv({
   allErrors: true,
@@ -137,7 +136,7 @@ const validate_schema = (data: any, schema: any) => {
       params: {},
     })
   }
-  
+
   if (!valid) {
     error_list = validate.errors
   }
@@ -250,12 +249,6 @@ const validate_schema_search_srv19_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
-const validate_schema_search_mec11_for_json = (data: any) => {
-  
-  const error_list = validate_schema(data, searchSchemaMEC11)
-
-  return formatted_error(error_list)
-}
 // On search
 const validate_schema_on_search_srv19_for_json = (data: any) => {
   const error_list = validate_schema(data, onSearchSchemaSRV19)
@@ -986,7 +979,6 @@ const validate_schema_on_status_RET1A_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
-
 // Update
 const validate_schema_update_srv19_for_json = (data: any) => {
   const error_list = validate_schema(data, updateSchemaSRV19)
@@ -1233,7 +1225,6 @@ export default {
   validate_schema_on_cancel_srv19_for_json,
   validate_schema_update_srv19_for_json,
   validate_schema_on_update_srv19_for_json,
-  validate_schema_search_mec11_for_json,
   validate_schema_search_RET11_for_json,
   validate_schema_search_RET19_for_json,
   validate_schema_select_RET11_for_json,

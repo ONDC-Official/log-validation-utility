@@ -91,6 +91,12 @@ export const checkOnUpdate = (data: any, msgIdSet: any) => {
       logger.error(`!!Error while checking provider id /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
+    //check fulfillments
+    const fulfillmentValidation: string[] = validateFulfillmentsArray(on_update?.fulfillments, 'on_update')
+    if (fulfillmentValidation.length > 0) {
+      errorObj.fulfillments = fulfillmentValidation
+    }
+
     //checks items
     try {
       logger.info(`Comparing item in /${constants.ON_UPDATE}`)
@@ -159,9 +165,9 @@ export const checkOnUpdate = (data: any, msgIdSet: any) => {
               errorObj['time.label'] = `label is missing or should be equal to  ${label} at items[${index}]`
 
             if (insurance != 'MARINE_INSURANCE') {
-              if (time?.duration) {
+              if (!time?.duration) {
                 errorObj['time.duration'] = `duration is missing at items[${index}]`
-              } else if (!/^PT\d+([YMH])$/.test(time?.duration)) {
+              } else if (!/^P(?:(\d+Y)?(\d+M)?(\d+W)?(\d+D)?)?(T(?:(\d+H)?(\d+M)?(\d+S)?))?$/.test(time?.duration)) {
                 errorObj['time.duration'] = `incorrect format or type for duration at items[${index}]`
               }
             } else {
@@ -243,12 +249,6 @@ export const checkOnUpdate = (data: any, msgIdSet: any) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while checking items object in /${constants.ON_UPDATE}, ${error.stack}`)
-    }
-
-    //check fulfillments
-    const fulfillmentValidation: string[] = validateFulfillmentsArray(on_update?.fulfillments, 'on_update')
-    if (fulfillmentValidation.length > 0) {
-      errorObj.fulfillments = fulfillmentValidation
     }
 
     //check quote

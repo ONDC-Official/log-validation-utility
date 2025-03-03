@@ -34,7 +34,7 @@ const checkIssueV2 = (data: any) => {
     // Context validation
     try {
       logger.info(`Checking context for ${constants.ISSUE_1} API`)
-      const res = checkContext(issue.context, data?.context?.action)
+      const res:any = checkContext(issue.context, data?.context?.action)
       if (!res?.valid) {
         Object.assign(issueObj, res.ERRORS)
       }

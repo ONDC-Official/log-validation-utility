@@ -422,7 +422,7 @@ export const IGMvalidateLogs2 = (data: any) => {
 
   try {
     if (data[IGM2Sequence.ISSUE_1]) {
-      const issue_1 = checkIssueV2(data[IGM2Sequence.ISSUE_1])
+      const issue_1 = checkIssueV2(data[IGM2Sequence.ISSUE_1], IGM2Sequence.ISSUE_1)
 
       if (!_.isEmpty(issue_1)) {
         logReport = { ...logReport, [IGM2Sequence.ISSUE_1]: issue_1 }

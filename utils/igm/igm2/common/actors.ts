@@ -20,7 +20,17 @@ export const validateActors = (actors: any[]) => {
         errors[`actor_${index}_type`] = 'actor type is required'
       }
 
-      const validTypes = ['CONSUMER', 'INTERFACING_NP']
+      const validTypes = [
+        'CONSUMER',
+        'INTERFACING_NP',
+        'COUNTERPARTY_NP',
+        'PROVIDER',
+        'AGENT',
+        'INTERFACING_NP_GRO',
+        'COUNTERPARTY_NP_GRO',
+        'CASCADED_NP_GRO',
+        'CASCADED_NP',
+      ]
       if (!validTypes.includes(actor.type)) {
         errors[`actor_${index}_type`] = `Invalid actor type. Must be one of: ${validTypes.join(', ')}`
       }

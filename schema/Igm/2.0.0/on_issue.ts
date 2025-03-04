@@ -333,7 +333,7 @@ const newOnIssueSchema = {
             'expected_response_time',
             'expected_resolution_time',
             'refs',
-            'actor_info',
+            'actors',
             'source_id',
             'complainant_id',
             'respondent_ids',

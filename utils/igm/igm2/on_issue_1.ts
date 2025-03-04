@@ -164,7 +164,7 @@ const storeValues = (message: any, context: any, apiSequence: string) => {
  * @param apiSequence The API sequence identifier
  * @returns Validation errors object
  */
-const checkOnIssueV2 = (data: any, apiSequence = IGM2Sequence.ON_ISSUE_1) => {
+const checkOnIssueV2 = (data: any, apiSequence:string) => {
   const onIssueObj: any = {}
 
   if (!data || isObjectEmpty(data)) {

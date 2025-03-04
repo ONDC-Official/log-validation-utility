@@ -8,120 +8,13 @@ import { validateRefs } from './common/refs'
 import { validateActions } from './common/actions'
 import { validateActors } from './common/actors'
 
-/**
- * Validates transaction and issue ID consistency across API calls
- * @param context Current API context
- * @param message Current API message
- * @param issueObj Error object to update
- * @param apiSequence API sequence identifier
- */
-const validateConsistency = (context: any, message: any, issueObj: any, apiSequence: string) => {
-  // Skip consistency validation for ISSUE_1 as it's the first in sequence
-  if (apiSequence === IGM2Sequence.ISSUE_1) return
-
-  const storedTxnId = getValue('igmTxnId')
-  if (storedTxnId && context.transaction_id !== storedTxnId) {
-    issueObj.transaction_id = `Transaction ID ${context.transaction_id} should match with stored ID: ${storedTxnId}`
-  }
-  
-  const storedIssueId = getValue('issueId')
-  if (storedIssueId && message.issue.id !== storedIssueId) {
-    issueObj.issue_id = `Issue ID ${message.issue.id} should match with previously stored ID: ${storedIssueId}`
-  }
-}
-
-/**
- * Validates timestamp-related constraints
- */
-const validateTimestamps = (message: any, issueObj: any, apiSequence: string) => {
-  // Timestamp validation - created_at should not be after updated_at
-  if (new Date(message.issue.created_at) > new Date(message.issue.updated_at)) {
-    issueObj.timestamp = 'created_at cannot be greater than updated_at'
-  }
-
-  // For ISSUE_1: updated_at should equal created_at
-  if (apiSequence === IGM2Sequence.ISSUE_1 && message.issue.updated_at !== message.issue.created_at) {
-    issueObj.updated_at_mismatch = `In ${apiSequence}, updated_at should be equal to created_at`
-  }
-}
-
-/**
- * Validates status field based on API sequence
- */
-const validateStatus = (message: any, issueObj: any, apiSequence: string) => {
-  const allowedStatuses = ['OPEN', 'PROCESSING', 'RESOLVED', 'CLOSED']
-  if (!allowedStatuses.includes(message.issue.status)) {
-    issueObj.status = `Issue status must be one of: ${allowedStatuses.join(', ')}, found: ${message.issue.status}`
-  }
-
-  // For ISSUE_1: status should be OPEN
-  if (apiSequence === IGM2Sequence.ISSUE_1 && message.issue.status !== 'OPEN') {
-    issueObj.status_issue_1 = `For ${apiSequence}, status should be OPEN, found: ${message.issue.status}`
-  }
-}
-
-/**
- * Validates actors and their relationships with issue fields
- */
-const validateActorRelationships = (message: any, issueObj: any) => {
-  if (!message.issue.actors || message.issue.actors.length === 0) return
-  
-  const interfacingNpActor = message.issue.actors.find((actor: any) => actor.type === 'INTERFACING_NP')
-  const consumerActor = message.issue.actors.find((actor: any) => actor.type === 'CONSUMER')
-  
-  // complainant_id should match INTERFACING_NP actor id
-  if (interfacingNpActor && message.issue.complainant_id !== interfacingNpActor.id) {
-    issueObj.complainant_id = `complainant_id (${message.issue.complainant_id}) should match the id of the INTERFACING_NP actor (${interfacingNpActor.id})`
-  }
-  
-  // source_id should match CONSUMER actor id
-  if (consumerActor && message.issue.source_id !== consumerActor.id) {
-    issueObj.source_id = `source_id (${message.issue.source_id}) should match the id of the CONSUMER actor (${consumerActor.id})`
-  }
-}
-
-/**
- * Validates description object
- */
-const validateDescription = (message: any, issueObj: any) => {
-  if (!message.issue.description) return
-  
-  if (!message.issue.description.code || !message.issue.description.short_desc) {
-    issueObj.description = 'description must contain code and short_desc'
-  }
-  
-  if (message.issue.description.images && !Array.isArray(message.issue.description.images)) {
-    issueObj.images = 'images must be an array'
-  }
-}
-
-/**
- * Stores important values from the API call for future validations
- */
-const storeValues = (issue: any, message: any, apiSequence: string) => {
-  setValue('igmTxnId', issue.context.transaction_id)
-  setValue('igmTmpstmp', issue.context.timestamp)
-  setValue('igmCoreVersion', issue.context.core_version)
-  setValue('igmDomain', issue.context.domain)
-  setValue('igmIssueMsgId', issue.context.message_id)
-  setValue('seller_bpp_id', issue.context.bpp_id)
-  setValue('seller_bpp_uri', issue.context.bpp_uri)
-  setValue('issueId', message.issue.id)
-  setValue('issueStatus', message.issue.status)
-  setValue('issueLastActionId', message.issue.last_action_id)
-  setValue(`${apiSequence}_timestamp`, issue.context.timestamp)
-}
-
-/**
- * Main validator function for ISSUE API sequences
- */
-const checkIssueV2 = (data: any, apiSequence = IGM2Sequence.ISSUE_1) => {
+const checkIssueV2 = (data: any, apiSequence:string) => {
   const issueObj: any = {}
 
   if (!data || isObjectEmpty(data)) {
     return { [apiSequence]: 'JSON cannot be empty' }
   }
-
+  console.log('+++++++ apisequence', apiSequence)
   try {
     const issue: any = data
 
@@ -139,7 +32,7 @@ const checkIssueV2 = (data: any, apiSequence = IGM2Sequence.ISSUE_1) => {
     // Context validation
     try {
       logger.info(`Checking context for ${apiSequence} API`)
-      const res: any = checkContext(issue.context, data?.context?.action)
+      const res:any = checkContext(issue.context, data?.context?.action)
       if (!res?.valid) {
         Object.assign(issueObj, res.ERRORS)
       }
@@ -151,28 +44,59 @@ const checkIssueV2 = (data: any, apiSequence = IGM2Sequence.ISSUE_1) => {
     try {
       const { message, context } = issue
       
-      // Common validations
-      validateTimestamps(message, issueObj, apiSequence)
-      validateStatus(message, issueObj, apiSequence)
-      validateConsistency(context, message, issueObj, apiSequence)
-      
-      // For ISSUE_1, validate actor relationships
-      if (apiSequence === IGM2Sequence.ISSUE_1) {
-        validateActorRelationships(message, issueObj)
+      // Timestamp validation
+      if (new Date(message.issue.created_at) > new Date(message.issue.updated_at)) {
+        issueObj.timestamp = 'created_at cannot be greater than updated_at'
       }
       
-      // Sequence-specific validations
+      // Sequence-specific validations based on apiSequence
       switch(apiSequence) {
         case IGM2Sequence.ISSUE_1:
-          // ISSUE_1-specific validations handled by common functions
-          break
+          // For ISSUE_1: updated_at should equal created_at
+          if (message.issue.updated_at !== message.issue.created_at) {
+            issueObj.updated_at_mismatch = `In ${apiSequence}, updated_at should be equal to created_at`
+          }
+          
+          // For ISSUE_1: status should be OPEN
+          if (message.issue.status !== 'OPEN') {
+            issueObj.status_issue_1 = `For ${apiSequence}, status should be OPEN, found: ${message.issue.status}`
+          }
+          
+          // Validate actors relationships for ISSUE_1
+          if (message.issue.actors && message.issue.actors.length > 0) {
+            const interfacingNpActor = message.issue.actors.find((actor: any) => actor.type === 'INTERFACING_NP')          
+            const consumerActor = message.issue.actors.find((actor: any) => actor.type === 'CONSUMER')
+            
+            // complainant_id should match INTERFACING_NP actor id
+            if (interfacingNpActor && message.issue.complainant_id !== interfacingNpActor.id) {
+              issueObj.complainant_id = `complainant_id (${message.issue.complainant_id}) should match the id of the INTERFACING_NP actor (${interfacingNpActor.id})`
+            }
+            
+            // source_id should match CONSUMER actor id
+            if (consumerActor && message.issue.source_id !== consumerActor.id) {
+              issueObj.source_id = `source_id (${message.issue.source_id}) should match the id of the CONSUMER actor (${consumerActor.id})`
+            }
+          }
+          break;
           
         case IGM2Sequence.ISSUE_2:
           // For ISSUE_2: Status validation might be different
           if (message.issue.status === 'OPEN') {
+            // It's okay if status is still OPEN, but we might expect progress
             logger.info(`${apiSequence}: Status is still OPEN, which is valid but issue may not be progressing`)
           }
-          break
+          
+          // Transaction and issue ID should be consistent with previous calls
+          const storedTxnId = getValue('igmTxnId')
+          if (storedTxnId && context.transaction_id !== storedTxnId) {
+            issueObj.transaction_id = `Transaction ID ${context.transaction_id} should match with stored ID: ${storedTxnId}`
+          }
+          
+          const storedIssueId = getValue('issueId')
+          if (storedIssueId && message.issue.id !== storedIssueId) {
+            issueObj.issue_id = `Issue ID ${message.issue.id} should match with previously stored ID: ${storedIssueId}`
+          }
+          break;
           
         case IGM2Sequence.ISSUE_3:
           // For ISSUE_3: We might expect actions to be recorded
@@ -184,35 +108,62 @@ const checkIssueV2 = (data: any, apiSequence = IGM2Sequence.ISSUE_1) => {
           if (message.issue.status === 'OPEN' && message.issue.actions && message.issue.actions.length > 2) {
             issueObj.status_progress = `With ${message.issue.actions.length} actions recorded, status might be expected to progress beyond OPEN`
           }
-          break
+          break;
           
         case IGM2Sequence.ISSUE_4:
           // For ISSUE_4: Status validation for later stage
           if (message.issue.status === 'OPEN' && !message.issue.escalation_level) {
             issueObj.escalation = `By ${apiSequence}, if status is still OPEN, we might expect escalation_level to be defined`
           }
-          break
+          break;
           
         case IGM2Sequence.ISSUE_5:
           // For ISSUE_5: This might be approaching resolution
           if (message.issue.status === 'RESOLVED' && !message.issue.resolution) {
             issueObj.missing_resolution = `When status is RESOLVED in ${apiSequence}, resolution details must be provided`
           }
-          break
+          break;
           
         default:
           logger.warn(`Unknown API sequence: ${apiSequence}. No specific validations applied.`)
-          break
+          break;
       }
 
-      // Common validations using reusable functions
-      Object.assign(issueObj, validateRefs(message.issue.refs))
-      Object.assign(issueObj, validateActions(message.issue.actions))
-      Object.assign(issueObj, validateActors(message.issue.actors))
-      validateDescription(message, issueObj)
+      // Refs validation using common function
+      const refsErrors = validateRefs(message.issue.refs)
+      Object.assign(issueObj, refsErrors)
+
+      // Actions validation using common function
+      const actionsErrors = validateActions(message.issue.actions)
+      Object.assign(issueObj, actionsErrors)
+
+      // Actors validation using common function
+      const actorsErrors = validateActors(message.issue.actors)
+      Object.assign(issueObj, actorsErrors)
+
+      // Validate description
+      if (message.issue.description) {
+        if (!message.issue.description.code || !message.issue.description.short_desc) {
+          issueObj.description = 'description must contain code and short_desc'
+        }
+        
+        if (message.issue.description.images && !Array.isArray(message.issue.description.images)) {
+          issueObj.images = 'images must be an array'
+        }
+      }
 
       // Store important values
-      storeValues(issue, message, apiSequence)
+      setValue('igmTxnId', issue.context.transaction_id)
+      setValue('igmTmpstmp', issue.context.timestamp)
+      setValue('igmCoreVersion', issue.context.core_version)
+      setValue('igmDomain', issue.context.domain)
+      setValue('igmIssueMsgId', issue.context.message_id)
+      setValue('seller_bpp_id', issue.context.bpp_id)
+      setValue('seller_bpp_uri', issue.context.bpp_uri)
+      setValue('issueId', message.issue.id)
+      setValue('issueStatus', message.issue.status)
+      setValue('issueLastActionId', message.issue.last_action_id)
+      setValue(`${apiSequence}_timestamp`, context.timestamp)
 
     } catch (error: any) {
       logger.error(`Error in issue validation for ${apiSequence}: ${error.stack}`)

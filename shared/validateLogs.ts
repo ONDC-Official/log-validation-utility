@@ -485,6 +485,40 @@ export const IGMvalidateLogs2 = (data: any) => {
       }
     }
 
+    if(data[IGM2Sequence.ISSUE_4]){
+      const ISSUE_4 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_4],IGM2Sequence.ISSUE_4  )
+
+      if (!_.isEmpty(ISSUE_4)) {
+        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_1]: ISSUE_4 }
+      }
+    }
+
+    if(data[IGM2Sequence.ISSUE_5]){
+      const ISSUE_5 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_5],IGM2Sequence.ISSUE_5  )
+
+      if (!_.isEmpty(ISSUE_5)) {
+        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_1]: ISSUE_5 }
+      }
+    }
+
+    if(data[IGM2Sequence.ON_ISSUE_6]){
+      const on_issue_6 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_6],IGM2Sequence.ON_ISSUE_6  )
+
+      if (!_.isEmpty(on_issue_6)) {
+        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_6]: on_issue_6 }
+      }
+    }
+
+    if(data[IGM2Sequence.ON_ISSUE_7]){
+      const on_issue_7 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_7],IGM2Sequence.ON_ISSUE_7  )
+
+      if (!_.isEmpty(on_issue_7)) {
+        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_6]: on_issue_7 }
+      }
+    }
+
+    
+
     logger.info(logReport, 'Report Generated Successfully!!')
     return logReport
   } catch (error: any) {

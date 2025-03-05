@@ -209,7 +209,27 @@ export const FIS14ApiSequence = {
   ON_UPDATE: 'on_update',
   ON_UPDATE_1: 'on_update_1',
 }
-
+export const TRV14ApiSequence = {
+  SEARCH: 'search',
+  ON_SEARCH1: 'on_search_1',
+  ON_SEARCH2: 'on_search_2',
+  SELECT1: 'select_1',
+  ON_SELECT1: 'on_select_1',
+  SELECT2: 'select_2',
+  ON_SELECT2: 'on_select_2',
+  INIT: 'init',
+  ON_INIT: 'on_init',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  STATUS: 'status',
+  ON_STATUS: 'on_status',
+  SOFT_CANCEL: 'soft_cancel',
+  SOFT_ON_CANCEL: 'soft_on_cancel',
+  CANCEL: 'cancel',
+  ON_CANCEL: 'on_cancel',
+  UPDATE: 'update',
+  ON_UPDATE: 'on_update',
+}
 export const mobilitySequence = {
   SEARCH: 'search',
   SEARCH_INC: 'search_inc',

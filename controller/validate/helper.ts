@@ -10,6 +10,7 @@ import { validateLogsForFIS10 } from '../../shared/Actions/FIS10Actions'
 import { validateLogsForFIS13 } from '../../shared/Actions/FIS13Actions'
 import { validateLogsForTRV13 } from '../../shared/Actions/TRV13Actions'
 import { getFis14Format, validateLogsForFIS14 } from '../../shared/Actions/FIS14Actions'
+import { validateLogsForTRV14 } from '../../shared/Actions/TRV14Actions'
 
 const createSignature = async ({ message }: { message: string }) => {
   const privateKey = process.env.SIGN_PRIVATE_KEY as string
@@ -126,6 +127,7 @@ const validateMobility = async (domain: string, payload: string, version: string
   let success = false
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
 
+
   if (!flow) throw new Error('Flow not defined')
 
   switch (domain) {
@@ -156,8 +158,16 @@ const validateMobility = async (domain: string, payload: string, version: string
           success = true
           message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
         }
-  
         break
+      case 'ONDC:TRV14':
+        response = validateLogsForTRV14(payload, flow, version)
+  
+        if (_.isEmpty(response)) {
+          success = true
+          message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+        }
+        break
+
     default:
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_DOMAIN
       logger.warn('Invalid Domain!!')

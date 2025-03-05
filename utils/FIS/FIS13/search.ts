@@ -9,6 +9,7 @@ import { isEmpty, isEqual } from 'lodash'
 export const search = (data: any, msgIdSet: any, flow: string, action: string) => {
   const errorObj: any = {}
   try {
+    console.log('data', data)
     if (!data || isObjectEmpty(data)) {
       return { [action]: 'JSON cannot be empty' }
     }
@@ -35,8 +36,8 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
 
     // validate context
     let contextRes: any
-    if (action?.includes('_offer')) {
-      // if action is search_offer, validate context with bpp & bap details
+    if (action?.includes('_2')) {
+      // if action is search_2, validate context with bpp & bap details
       contextRes = validateContext(context, msgIdSet, constants.ON_SEARCH, action)
     } else {
       // if action is search, validate context with only bap details
@@ -54,7 +55,8 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
       logger.info(`Validating category in /${action}`)
       const code = message.intent?.category?.descriptor?.code
       if (code) {
-        if (code != insuranceFlows[flow as keyof typeof insuranceFlows]) {
+        // if (code != insuranceFlows[flow as keyof typeof insuranceFlows]) {
+        if (!Object.values(insuranceFlows).includes(code)) {
           errorObj['category'] = `code value should be ${
             insuranceFlows[flow as keyof typeof insuranceFlows]
           }, in a standard enum format as at category.descriptor`
@@ -117,9 +119,9 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
 
     // checking providers
     try {
-      // validate providers if type action is search_offer
+      // validate providers if type action is search_2
       console.log('action', action)
-      if (isEqual(action, 'search_offer')) {
+      if (isEqual(action, 'search_2')) {
         logger.info(`Validating providers in /${action}`)
         const provider = message.intent?.provider
 
@@ -150,9 +152,8 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
                 } else {
                   if (itemId && !itemId.includes(item.id)) {
                     const key = `item[${index}].item_id`
-                    errorObj[
-                      key
-                    ] = `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
+                    errorObj[key] =
+                      `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
                   }
                 }
 

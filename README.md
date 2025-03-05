@@ -711,6 +711,34 @@ curl --location 'http://localhost:3008/api/validate/rsf' \
 
 ```
 
+### For IGM 2.0.0 Sample Curl Request (Local)
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/igm' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "",
+    "version": "2.0.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "issue_1": {},
+        "on_issue_1": {},
+        "on_issue_2": {},
+        "issue_2": {},
+        "on_issue_3": {},
+        "on_issue_4": {},
+        "issue_3": {},
+        "on_issue_5": {},
+        "on_issue_6": {},
+        "issue_4": {},
+        "on_issue_7": {}, 
+        "issue_5": {}
+    }
+}'
+
+```
+
 
 Using Postman, you can import the above `curl` command into Postman and replace the empty objects in the payload with your actual data. This allows for easy testing and validation of transaction logs on your local environment.
 

@@ -2,7 +2,7 @@ import _ from 'lodash'
 import { sign, hash } from '../../shared/crypto'
 import { logger } from '../../shared/logger'
 import { DOMAIN, ERROR_MESSAGE } from '../../shared/types'
-import { IGMvalidateLogs, validateLogs, RSFvalidateLogs, RSFvalidateLogsV2 } from '../../shared/validateLogs'
+import { IGMvalidateLogs, validateLogs, RSFvalidateLogs, RSFvalidateLogsV2, IGMvalidateLogs2 } from '../../shared/validateLogs'
 import { validateLogsForFIS12 } from '../../shared/Actions/FIS12Actions'
 import { validateLogsForMobility } from '../../shared/Actions/mobilityActions'
 import { validateLogsForMetro } from '../../shared/Actions/metroActions'
@@ -190,13 +190,29 @@ const validateIGM = async (payload: string, version: string) => {
       }
 
       break
+      case '2.0.0':
+      response = IGMvalidateLogs2(payload)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+
+      break
+
     default:
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
       logger.warn('Invalid Version!!')
   }
 
+ 
+
   return { response, success, message }
 }
+
+
+
+
 const validateRSF = async (payload: string, version: string) => {
   logger.info('Entering validateRSF function')
   let response

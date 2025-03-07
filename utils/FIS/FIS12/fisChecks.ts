@@ -539,6 +539,7 @@ export const validateXInput = (xinput: any, j: number, action: string, currIndex
       const headings = head?.headings
       const loanType: any = getValue(`LoanType`)
       const formHeading: any = getFormHeading(action, loanType)
+      console.log('formHeading', formHeading)
 
       console.log('formHeadingjqwdjwqnfjewnfjewn', formHeading, loanType, currIndex, formHeading[currIndex])
 
@@ -546,9 +547,12 @@ export const validateXInput = (xinput: any, j: number, action: string, currIndex
         errors[`item${j}_xinput_head_descriptor`] = `descriptor is missing at items[${j}].xinput.head`
       } else if (!descriptor?.name) {
         errors[`item${j}_xinput_head_descriptor`] = `descriptor.name is missing at items[${j}].xinput.head`
-      } else if (formHeading?.length && formHeading[currIndex] && descriptor?.name != formHeading[currIndex])
-        errors[`item${j}_xinput_head_descriptor`] =
-          `descriptor.name should be ${formHeading[currIndex]} at items[${j}].xinput.head`
+      }
+      // } else if (formHeading?.length && formHeading[currIndex] )
+      // {
+      //   errors[`item${j}_xinput_head_descriptor`] =
+      //     `descriptor.name should be ${formHeading[currIndex]} at items[${j}].xinput.head form heading ${formHeading} ${formHeading?.length} ${formHeading[currIndex]} ${descriptor?.name} != ${formHeading[currIndex]}`
+      // }
 
       console.log('currIndex', currIndex)
 

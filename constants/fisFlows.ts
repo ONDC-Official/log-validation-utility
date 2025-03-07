@@ -1,4 +1,4 @@
-import { FIS13HealthSequence } from './index'
+import { FIS13HealthSequence, FisApiSequence } from './index'
 
 export const healthSequence = [
   FIS13HealthSequence.SEARCH_1,
@@ -67,4 +67,95 @@ export const cancelSequence = [
   FIS13HealthSequence.CANCEL,
   FIS13HealthSequence.ON_CANCEL,
   FIS13HealthSequence.ON_UPDATE,
+]
+
+export const personalSequence = [
+  FisApiSequence.SEARCH,
+  FisApiSequence.ON_SEARCH,
+  FisApiSequence.SELECT_1,
+  FisApiSequence.ON_SELECT_1,
+  FisApiSequence.SELECT_2,
+  FisApiSequence.ON_SELECT_2,
+  FisApiSequence.ON_STATUS_EKYC,
+  FisApiSequence.SELECT_3,
+  FisApiSequence.ON_SELECT_3,
+  FisApiSequence.INIT_1,
+  FisApiSequence.ON_INIT_1,
+  FisApiSequence.INIT_2,
+  FisApiSequence.ON_INIT_2,
+  FisApiSequence.ON_STATUS_ENACH,
+  FisApiSequence.INIT_3,
+  FisApiSequence.ON_INIT_3,
+  FisApiSequence.ON_STATUS_ESIGN,
+  FisApiSequence.CONFIRM,
+  FisApiSequence.ON_CONFIRM,
+  FisApiSequence.ON_UPDATE_UNSOLICATED,
+  FisApiSequence.UPDATE,
+  FisApiSequence.ON_UPDATE,
+]
+
+export const personalWithoutMonitoringSequence = [
+  FisApiSequence.SEARCH,
+  FisApiSequence.ON_SEARCH,
+  FisApiSequence.SELECT_1,
+  FisApiSequence.ON_SELECT_1,
+  FisApiSequence.SELECT_2,
+  FisApiSequence.ON_SELECT_2,
+  FisApiSequence.ON_STATUS_EKYC,
+  FisApiSequence.SELECT_3,
+  FisApiSequence.ON_SELECT_3,
+  FisApiSequence.INIT_1,
+  FisApiSequence.ON_INIT_1,
+  FisApiSequence.INIT_2,
+  FisApiSequence.ON_INIT_2,
+  FisApiSequence.ON_STATUS_ENACH,
+  FisApiSequence.INIT_3,
+  FisApiSequence.ON_INIT_3,
+  FisApiSequence.ON_STATUS_ESIGN,
+  FisApiSequence.CONFIRM,
+  FisApiSequence.ON_CONFIRM,
+]
+
+export const personalWithoutMonitoringAndAggregatorSequence = [
+  FisApiSequence.SEARCH,
+  FisApiSequence.ON_SEARCH,
+  FisApiSequence.SELECT_1,
+  FisApiSequence.ON_SELECT_1,
+  FisApiSequence.SELECT_2,
+  FisApiSequence.ON_SELECT_2,
+  FisApiSequence.ON_STATUS_EKYC,
+  FisApiSequence.INIT_1,
+  FisApiSequence.ON_INIT_1,
+  FisApiSequence.INIT_2,
+  FisApiSequence.ON_INIT_2,
+  FisApiSequence.ON_STATUS_ENACH,
+  FisApiSequence.INIT_3,
+  FisApiSequence.ON_INIT_3,
+  FisApiSequence.ON_STATUS_ESIGN,
+  FisApiSequence.CONFIRM,
+  FisApiSequence.ON_CONFIRM,
+]
+
+export const personalForclosureSequence = [
+  FisApiSequence.CONFIRM,
+  FisApiSequence.ON_CONFIRM,
+  FisApiSequence.UPDATE,
+  FisApiSequence.ON_UPDATE,
+  FisApiSequence.ON_UPDATE_UNSOLICATED,
+]
+
+export const personalPrePartSequence = [
+  FisApiSequence.CONFIRM,
+  FisApiSequence.ON_CONFIRM,
+  FisApiSequence.UPDATE,
+  FisApiSequence.ON_UPDATE,
+  FisApiSequence.ON_UPDATE_UNSOLICATED,
+]
+
+export const personalMissedEmiSequence = [
+  FisApiSequence.CONFIRM,
+  FisApiSequence.ON_CONFIRM,
+  FisApiSequence.UPDATE,
+  FisApiSequence.ON_UPDATE,
+  FisApiSequence.ON_UPDATE_UNSOLICATED,
 ]

@@ -16,7 +16,7 @@ import {
 } from './fisChecks'
 import { getValue } from '../../../shared/dao'
 import { validateGeneralInfo } from './tags'
-import _ from 'lodash'
+import _, { isEmpty } from 'lodash'
 
 export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
   try {
@@ -116,9 +116,9 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
               errorObj['time.label'] = `label is missing or should be equal to ${label} at items[${index}]`
 
             if (insurance != 'MARINE_INSURANCE') {
-              if (time?.duration) {
+              if (!time?.duration) {
                 errorObj['time.duration'] = `duration is missing at items[${index}]`
-              } else if (!/^PT\d+([YMH])$/.test(time?.duration)) {
+              } else if (!/^P(?:(\d+Y)?(\d+M)?(\d+W)?(\d+D)?)?(T(?:(\d+H)?(\d+M)?(\d+S)?))?$/.test(time?.duration)) {
                 errorObj['time.duration'] = `incorrect format or type for duration at items[${index}]`
               }
             } else {
@@ -185,7 +185,8 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
 
             // Validate xinput
             const xinput = item?.xinput
-            const xinputValidationErrors = validateXInput(xinput, index, constants.INIT, 0)
+            const currIndex = parseInt(sequence.replace('on_init_', ''))
+            const xinputValidationErrors = validateXInput(xinput, index, constants.INIT, currIndex ? currIndex - 1 : 0)
             if (xinputValidationErrors) {
               Object.assign(errorObj, xinputValidationErrors)
             }
@@ -248,7 +249,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
       try {
         logger.info(`Checking cancellation terms in /${constants.ON_INIT}`)
         const cancellationErrors = validateCancellationTerms(on_init?.cancellation_terms)
-        errorObj.cancellation_terms = cancellationErrors
+        if (!isEmpty(cancellationErrors)) errorObj.cancellation_terms = cancellationErrors
       } catch (error: any) {
         logger.error(`!!Error while checking cancellation_terms in /${constants.ON_INIT}, ${error.stack}`)
       }

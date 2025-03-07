@@ -505,8 +505,106 @@ export const validateItemsTags = (tags: Tag[]): ValidationResult => {
   }
 }
 
+export const validateGeneralInfoTags = (tags: any[]): ValidationResult => {
+  const errors: string[] = [];
+  
+  if (!tags || !Array.isArray(tags) || tags.length === 0) {
+    errors.push('Tags array is missing or empty');
+    return { isValid: false, errors };
+  }
+  
+  const expectedListCodes = [
+    'MIN_INTEREST_RATE',
+    'MAX_INTEREST_RATE', 
+    'MIN_TENURE',
+    'MAX_TENURE',
+    'MIN_LOAN_AMOUNT',
+    'MAX_LOAN_AMOUNT'
+  ];
+  
+  try {
+    tags.forEach((tag, tagIndex) => {
+      if (!tag.descriptor || !tag.descriptor.code) {
+        errors.push(`Tag[${tagIndex}] is missing descriptor.code`);
+      } else if (tag.descriptor.code !== 'INFO') {
+        errors.push(`Tag[${tagIndex}] has invalid descriptor.code: ${tag.descriptor.code}. Expected: INFO`);
+      }
+      
+      if (tag.display === undefined) {
+        errors.push(`Tag[${tagIndex}] is missing 'display' property`);
+      } else if (typeof tag.display !== 'boolean') {
+        errors.push(`Tag[${tagIndex}] has invalid 'display' property. Expected boolean, got: ${typeof tag.display}`);
+      }
+      
+      if (!tag.list || !Array.isArray(tag.list) || tag.list.length === 0) {
+        errors.push(`Tag[${tagIndex}] is missing 'list' array or list is empty`);
+      } else {
+        const foundCodes = new Set<string>();
+
+        tag.list.forEach((item: any, itemIndex:any) => {
+          if (!item.descriptor || !item.descriptor.code) {
+            errors.push(`Tag[${tagIndex}].list[${itemIndex}] is missing descriptor.code`);
+          } else {
+            const code = item.descriptor.code;
+            
+            if (!expectedListCodes.includes(code)) {
+              errors.push(`Tag[${tagIndex}].list[${itemIndex}] has invalid descriptor.code: ${code}`);              // Check if code is in expected list
+            } else {
+
+              if (foundCodes.has(code)) {
+                errors.push(`Tag[${tagIndex}].list contains duplicate descriptor.code: ${code}`);
+              }
+              foundCodes.add(code);
+            }
+            
+            if (!item.value) {
+              errors.push(`Tag[${tagIndex}].list[${itemIndex}] is missing 'value'`);
+            } else {
+              switch (code) {
+                case 'MIN_INTEREST_RATE':
+                case 'MAX_INTEREST_RATE':
+                  if (!/^\d+(\.\d+)?\s*%$/.test(item.value)) {
+                    errors.push(`Tag[${tagIndex}].list[${itemIndex}] (${code}) has invalid rate format: ${item.value}. Expected format: "10 %"`);
+                  }
+                  break;
+                case 'MIN_TENURE':
+                case 'MAX_TENURE':
+                  if (!/^PT\d+[YM]$/.test(item.value)) {
+                    errors.push(`Tag[${tagIndex}].list[${itemIndex}] (${code}) has invalid tenure format: ${item.value}. Expected format: "PT5Y" or "PT6M"`);
+                  }
+                  break;
+                case 'MIN_LOAN_AMOUNT':
+                case 'MAX_LOAN_AMOUNT':
+                  if (!/^\d+\s*INR$/.test(item.value)) {
+                    errors.push(`Tag[${tagIndex}].list[${itemIndex}] (${code}) has invalid amount format: ${item.value}. Expected format: "50000 INR"`);
+                  }
+                  break;
+              }
+            }
+          }
+        });
+        
+        const missingCodes = expectedListCodes.filter(code => !foundCodes.has(code));
+        if (missingCodes.length > 0) {
+          errors.push(`Tag[${tagIndex}].list is missing required descriptor codes: ${missingCodes.join(', ')}`);
+        }
+      }
+    });
+  } catch (error: any) {
+    logger.error(`!!Error while validating general info tags: ${error.stack}`);
+    errors.push(`Unexpected error during validation: ${error.message}`);
+  }
+  
+  return { 
+    isValid: errors.length === 0, 
+    errors 
+  };
+};
+
 export const validateLoanInfoTags = (tags: Tag[], flag: string): ValidationResult => {
   const errors: string[] = []
+  const searchContext = getValue(`search_context`)
+  const version = searchContext?.version || ''
 
   if (!tags || tags.length === 0) {
     errors.push('Tags array must have a minimum length of 1')
@@ -548,6 +646,10 @@ export const validateLoanInfoTags = (tags: Tag[], flag: string): ValidationResul
       ])
     }
 
+    if (version === '2.0.1') {
+      validListCodes.push('KFS_LINK')
+    }
+
     tag.list.forEach((item, itemIndex) => {
       if (!item.descriptor.code || !item.value) {
         errors.push(`List item at index ${itemIndex} within tag ${index} is missing descriptor or value`)
@@ -573,6 +675,11 @@ export const validateLoanInfoTags = (tags: Tag[], flag: string): ValidationResul
           }
 
           break
+        case 'KFS_LINK':
+            if (!isValidUrl(item.value)) {
+              errors.push(`Value for 'KFS_LINK' at index ${itemIndex} within tag ${index} must be a valid URL`)
+            }
+            break;
         case 'TERM':
         case 'APPLICATION_FEE':
         case 'INSTALLMENT_AMOUNT':
@@ -583,6 +690,7 @@ export const validateLoanInfoTags = (tags: Tag[], flag: string): ValidationResul
               `Value for '${item.descriptor.code}' at index ${itemIndex} within tag ${index} must be a positive number`,
             )
           }
+        
 
           break
 
@@ -674,7 +782,6 @@ export const validateLoanTags = (tags: any, sequence: any) => {
   } else loanDescriptors = childItemDescriptor
 
   const descriptorCodesSet = new Set(tags.flatMap((tag: any) => tag.list?.map((item: any) => item.descriptor?.code)))
-
   Object.keys(loanDescriptors).forEach((requiredCode) => {
     if (!descriptorCodesSet.has(requiredCode)) {
       errors.push(`Missing required descriptor code: '${requiredCode}'.`)

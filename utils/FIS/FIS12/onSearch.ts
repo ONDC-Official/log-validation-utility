@@ -13,8 +13,9 @@ import {
 } from './fisChecks'
 import {
   validatePaymentTags,
-  validateLoanTags,
+  // validateLoanTags,
 } from './tags'
+import { validateGeneralInfoTags } from '../FIS12/tags';
 import { isEmpty } from 'lodash'
 
 export const checkOnSearch = (data: any, msgIdSet: any, sequence: string, flow: string) => {
@@ -286,7 +287,13 @@ export const checkOnSearch = (data: any, msgIdSet: any, sequence: string, flow: 
           // Validate Item tags
           let tagsValidation: any = {}
           if (true) {
-            tagsValidation = validateLoanTags(item?.tags, sequence)
+            // tagsValidation = validateLoanTags(item?.tags, sequence)
+            // console.log('tagsValidation', tagsValidation)
+            const tagsValidation = validateGeneralInfoTags(item?.tags);
+            console.log('tagsValidation-->', item?.tags)
+            if (!tagsValidation.isValid) {
+              errorObj.tagErrors = tagsValidation.errors;
+  }
           } else {
             // tagsValidation = validateItemsTags(item?.tags)
           }

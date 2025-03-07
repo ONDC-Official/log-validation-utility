@@ -135,7 +135,6 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
     } catch (error: any) {
       logger.error(`!!Error while checking items object in /${constants.ON_SELECT}, ${error.stack}`)
     }
-
     //quote checks
     if (!(version == '2.0.0' && sequence == 'on_select_1')) {
       try {

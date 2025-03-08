@@ -53,7 +53,7 @@ const controller = {
           break
         case DOMAIN.IGM:
           // eslint-disable-next-line no-case-declarations
-          const { response, success, message } = await helper.validateIGM(payload, version)
+          const { response, success, message } = await helper.validateIGM(payload, version, flow)
           result = { response, success, message }
           break
         case DOMAIN.RSF:

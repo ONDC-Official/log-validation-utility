@@ -8,13 +8,13 @@ import { validateRefs } from './common/refs'
 import { validateActions } from './common/actions'
 import { validateActors } from './common/actors'
 
-const checkIssueV2 = (data: any, apiSequence:string) => {
+const checkIssueV2 = (data: any, apiSequence:string, flow: any) => {
   const issueObj: any = {}
-
+  console.log("flow", flow)
   if (!data || isObjectEmpty(data)) {
     return { [apiSequence]: 'JSON cannot be empty' }
   }
-  console.log('+++++++ apisequence', apiSequence)
+
   try {
     const issue: any = data
 
@@ -130,7 +130,7 @@ const checkIssueV2 = (data: any, apiSequence:string) => {
       }
 
       // Refs validation using common function
-      const refsErrors = validateRefs(message.issue.refs)
+      const refsErrors = validateRefs(message.issue.refs, flow)
       Object.assign(issueObj, refsErrors)
 
       // Actions validation using common function
@@ -138,7 +138,7 @@ const checkIssueV2 = (data: any, apiSequence:string) => {
       Object.assign(issueObj, actionsErrors)
 
       // Actors validation using common function
-      const actorsErrors = validateActors(message.issue.actors)
+      const actorsErrors = validateActors(message.issue.actors, flow)
       Object.assign(issueObj, actorsErrors)
 
       // Validate description

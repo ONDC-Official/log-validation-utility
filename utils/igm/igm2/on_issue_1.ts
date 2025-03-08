@@ -164,9 +164,9 @@ const storeValues = (message: any, context: any, apiSequence: string) => {
  * @param apiSequence The API sequence identifier
  * @returns Validation errors object
  */
-const checkOnIssueV2 = (data: any, apiSequence:string) => {
+const checkOnIssueV2 = (data: any, apiSequence:string, flow: any) => {
   const onIssueObj: any = {}
-
+  console.log("flow", flow)
   if (!data || isObjectEmpty(data)) {
     return { [apiSequence]: 'JSON cannot be empty' }
   }
@@ -209,9 +209,9 @@ const checkOnIssueV2 = (data: any, apiSequence:string) => {
       validateRespondentIds(message, onIssueObj)
       
       // Reuse common validation functions for complex objects
-      Object.assign(onIssueObj, validateRefs(message.issue.refs))
-      Object.assign(onIssueObj, validateActions(message.issue.actions))
-      Object.assign(onIssueObj, validateActors(message.issue.actors))
+      Object.assign(onIssueObj, validateRefs(message.issue.refs, flow))
+      Object.assign(onIssueObj, validateActions(message.issue.actions,))
+      Object.assign(onIssueObj, validateActors(message.issue.actors, flow))
       validateDescription(message, onIssueObj)
       validateResolution(message, onIssueObj)
 

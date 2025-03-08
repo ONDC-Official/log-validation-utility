@@ -410,7 +410,7 @@ export const IGMvalidateLogs = (data: any) => {
   }
 }
 
-export const IGMvalidateLogs2 = (data: any) => {
+export const IGMvalidateLogs2 = (data: any, flow?: any) => {
   let logReport: any = {}
 
 
@@ -422,7 +422,7 @@ export const IGMvalidateLogs2 = (data: any) => {
 
   try {
     if (data[IGM2Sequence.ISSUE_1]) {
-      const issue_1 = checkIssueV2(data[IGM2Sequence.ISSUE_1], IGM2Sequence.ISSUE_1)
+      const issue_1 = checkIssueV2(data[IGM2Sequence.ISSUE_1], IGM2Sequence.ISSUE_1, flow)
 
       if (!_.isEmpty(issue_1)) {
         logReport = { ...logReport, [IGM2Sequence.ISSUE_1]: issue_1 }
@@ -430,7 +430,7 @@ export const IGMvalidateLogs2 = (data: any) => {
     }
 
     if (data[IGM2Sequence.ON_ISSUE_1]) {
-      const on_issue_1 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_1],IGM2Sequence.ON_ISSUE_1)
+      const on_issue_1 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_1],IGM2Sequence.ON_ISSUE_1, flow)
 
       if (!_.isEmpty(on_issue_1)) {
         logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_1]: on_issue_1 }
@@ -438,7 +438,7 @@ export const IGMvalidateLogs2 = (data: any) => {
     }
 
     if(data[IGM2Sequence.ON_ISSUE_2]){
-      const on_issue_2 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_2],IGM2Sequence.ON_ISSUE_2  )
+      const on_issue_2 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_2],IGM2Sequence.ON_ISSUE_2,flow )
 
       if (!_.isEmpty(on_issue_2)) {
         logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_2]: on_issue_2 }
@@ -446,7 +446,7 @@ export const IGMvalidateLogs2 = (data: any) => {
     }
 
     if(data[IGM2Sequence.ISSUE_2]){
-      const on_issue_2 = checkIssueV2(data[IGM2Sequence.ISSUE_2],IGM2Sequence.ISSUE_2  )
+      const on_issue_2 = checkIssueV2(data[IGM2Sequence.ISSUE_2],IGM2Sequence.ISSUE_2, flow)
 
       if (!_.isEmpty(on_issue_2)) {
         logReport = { ...logReport, [IGM2Sequence.ISSUE_2]: on_issue_2 }
@@ -454,7 +454,7 @@ export const IGMvalidateLogs2 = (data: any) => {
     }
 
     if (data[IGM2Sequence.ON_ISSUE_3]) {
-      const on_issue_3 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_3],IGM2Sequence.ON_ISSUE_3)
+      const on_issue_3 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_3],IGM2Sequence.ON_ISSUE_3, flow)
 
       if (!_.isEmpty(on_issue_3)) {
         logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_3]: on_issue_3 }
@@ -462,7 +462,7 @@ export const IGMvalidateLogs2 = (data: any) => {
     }
 
     if(data[IGM2Sequence.ON_ISSUE_4]){
-      const ON_ISSUE_4 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_4],IGM2Sequence.ISSUE_4  )
+      const ON_ISSUE_4 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_4],IGM2Sequence.ISSUE_4, flow )
 
       if (!_.isEmpty(ON_ISSUE_4)) {
         logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_4]: ON_ISSUE_4}
@@ -470,7 +470,7 @@ export const IGMvalidateLogs2 = (data: any) => {
     }
 
     if(data[IGM2Sequence.ISSUE_3]){
-      const ISSUE_3 = checkIssueV2(data[IGM2Sequence.ISSUE_3],IGM2Sequence.ISSUE_3  )
+      const ISSUE_3 = checkIssueV2(data[IGM2Sequence.ISSUE_3],IGM2Sequence.ISSUE_3, flow )
 
       if (!_.isEmpty(ISSUE_3)) {
         logReport = { ...logReport, [IGM2Sequence.ISSUE_3]: ISSUE_3 }
@@ -478,7 +478,7 @@ export const IGMvalidateLogs2 = (data: any) => {
     }
 
     if(data[IGM2Sequence.ON_ISSUE_5]){
-      const on_issue_5 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_5],IGM2Sequence.ON_ISSUE_5  )
+      const on_issue_5 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_5],IGM2Sequence.ON_ISSUE_5, flow )
 
       if (!_.isEmpty(on_issue_5)) {
         logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_5]: on_issue_5 }
@@ -486,7 +486,7 @@ export const IGMvalidateLogs2 = (data: any) => {
     }
 
     if(data[IGM2Sequence.ON_ISSUE_6]){
-      const on_issue_6 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_6],IGM2Sequence.ON_ISSUE_6  )
+      const on_issue_6 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_6],IGM2Sequence.ON_ISSUE_6, flow )
 
       if (!_.isEmpty(on_issue_6)) {
         logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_6]: on_issue_6 }
@@ -494,7 +494,7 @@ export const IGMvalidateLogs2 = (data: any) => {
     }
 
     if(data[IGM2Sequence.ISSUE_4]){
-      const ISSUE_4 = checkIssueV2(data[IGM2Sequence.ISSUE_4],IGM2Sequence.ISSUE_4  )
+      const ISSUE_4 = checkIssueV2(data[IGM2Sequence.ISSUE_4],IGM2Sequence.ISSUE_4, flow )
 
       if (!_.isEmpty(ISSUE_4)) {
         logReport = { ...logReport, [IGM2Sequence.ISSUE_4]: ISSUE_4 }
@@ -502,7 +502,7 @@ export const IGMvalidateLogs2 = (data: any) => {
     }
 
     if(data[IGM2Sequence.ON_ISSUE_7]){
-      const on_issue_7 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_7],IGM2Sequence.ON_ISSUE_7  )
+      const on_issue_7 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_7],IGM2Sequence.ON_ISSUE_7, flow )
 
       if (!_.isEmpty(on_issue_7)) {
         logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_7]: on_issue_7 }
@@ -510,7 +510,7 @@ export const IGMvalidateLogs2 = (data: any) => {
     }
 
     if(data[IGM2Sequence.ISSUE_5]){
-      const ISSUE_5 = checkIssueV2(data[IGM2Sequence.ISSUE_5],IGM2Sequence.ISSUE_5  )
+      const ISSUE_5 = checkIssueV2(data[IGM2Sequence.ISSUE_5],IGM2Sequence.ISSUE_5, flow )
 
       if (!_.isEmpty(ISSUE_5)) {
         logReport = { ...logReport, [IGM2Sequence.ISSUE_5]: ISSUE_5 }

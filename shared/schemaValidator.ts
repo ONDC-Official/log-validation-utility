@@ -64,6 +64,8 @@ import updateSchemaTRV14 from '../schema/TRV-14/update'
 import onUpdateSchemaTRV14 from '../schema/TRV-14/onUpdate'
 import onSearch1SchemaTRV14 from '../schema/TRV-14/onSearch1'
 import onSearch2SchemaTRV14 from '../schema/TRV-14/onSearch2'
+import newIssueSchema from '../schema/Igm/2.0.0/issue'
+import newOnIssueSchema from '../schema/Igm/2.0.0/on_issue'
 
 const ajv = new Ajv({
   allErrors: true,
@@ -1003,6 +1005,19 @@ const validate_schema_on_update_RET18_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+// IGM 2.0.0
+
+const validate_schema_issue_igm2_for_json = (data: any) => {
+  console.log("inside new issue schema")
+  const error_list = validate_schema(data, newIssueSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_issue_igm2_for_json = (data: any) => {
+  const error_list = validate_schema(data, newOnIssueSchema)
+  return formatted_error(error_list)
+}
+
 //IGM
 
 const validate_schema_issue_igm_for_json = (data: any) => {
@@ -1351,7 +1366,11 @@ export default {
   validate_schema_on_search_RET1A_for_json, 
   validate_schema_inc_search_RET1A_for_json,
   validate_schema_on_search_inc_RET1A_for_json,
-  
+
+  // IGM 2.0.0
+  validate_schema_issue_igm2_for_json, 
+  validate_schema_on_issue_igm2_for_json, 
+
   ...TRVValidator,
   ...FISValidator,
 }

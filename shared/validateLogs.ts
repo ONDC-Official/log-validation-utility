@@ -49,8 +49,8 @@ import checkRsfReport from '../utils/RSF/RSF_v2/report'
 import checkRsfOnReport from '../utils/RSF/RSF_v2/on_report'
 import checkRsfRecon from '../utils/RSF/RSF_v2/recon'
 import checkRsfOnRecon from '../utils/RSF/RSF_v2/on_recon'
-import checkIssueV2 from 'utils/igm/igm2/issue'
-import checkOnIssueV2 from 'utils/igm/igm2/on_issue'
+import checkOnIssueV2 from '../utils/igm/igm2/on_issue_1'
+import checkIssueV2 from '../utils/igm/igm2/issue_1'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
@@ -422,7 +422,7 @@ export const IGMvalidateLogs2 = (data: any) => {
 
   try {
     if (data[IGM2Sequence.ISSUE_1]) {
-      const issue_1 = checkIssueV2(data[IGM2Sequence.ISSUE_1])
+      const issue_1 = checkIssueV2(data[IGM2Sequence.ISSUE_1], IGM2Sequence.ISSUE_1)
 
       if (!_.isEmpty(issue_1)) {
         logReport = { ...logReport, [IGM2Sequence.ISSUE_1]: issue_1 }
@@ -441,15 +441,15 @@ export const IGMvalidateLogs2 = (data: any) => {
       const on_issue_2 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_2],IGM2Sequence.ON_ISSUE_2  )
 
       if (!_.isEmpty(on_issue_2)) {
-        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_1]: on_issue_2 }
+        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_2]: on_issue_2 }
       }
     }
 
     if(data[IGM2Sequence.ISSUE_2]){
-      const on_issue_2 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_2],IGM2Sequence.ISSUE_2  )
+      const on_issue_2 = checkIssueV2(data[IGM2Sequence.ISSUE_2],IGM2Sequence.ISSUE_2  )
 
       if (!_.isEmpty(on_issue_2)) {
-        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_1]: on_issue_2 }
+        logReport = { ...logReport, [IGM2Sequence.ISSUE_2]: on_issue_2 }
       }
     }
 
@@ -470,10 +470,10 @@ export const IGMvalidateLogs2 = (data: any) => {
     }
 
     if(data[IGM2Sequence.ISSUE_3]){
-      const ISSUE_3 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_3],IGM2Sequence.ISSUE_3  )
+      const ISSUE_3 = checkIssueV2(data[IGM2Sequence.ISSUE_3],IGM2Sequence.ISSUE_3  )
 
       if (!_.isEmpty(ISSUE_3)) {
-        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_1]: ISSUE_3 }
+        logReport = { ...logReport, [IGM2Sequence.ISSUE_3]: ISSUE_3 }
       }
     }
 
@@ -482,6 +482,38 @@ export const IGMvalidateLogs2 = (data: any) => {
 
       if (!_.isEmpty(on_issue_5)) {
         logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_5]: on_issue_5 }
+      }
+    }
+
+    if(data[IGM2Sequence.ON_ISSUE_6]){
+      const on_issue_6 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_6],IGM2Sequence.ON_ISSUE_6  )
+
+      if (!_.isEmpty(on_issue_6)) {
+        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_6]: on_issue_6 }
+      }
+    }
+
+    if(data[IGM2Sequence.ISSUE_4]){
+      const ISSUE_4 = checkIssueV2(data[IGM2Sequence.ISSUE_4],IGM2Sequence.ISSUE_4  )
+
+      if (!_.isEmpty(ISSUE_4)) {
+        logReport = { ...logReport, [IGM2Sequence.ISSUE_4]: ISSUE_4 }
+      }
+    }
+
+    if(data[IGM2Sequence.ON_ISSUE_7]){
+      const on_issue_7 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_7],IGM2Sequence.ON_ISSUE_7  )
+
+      if (!_.isEmpty(on_issue_7)) {
+        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_7]: on_issue_7 }
+      }
+    }
+
+    if(data[IGM2Sequence.ISSUE_5]){
+      const ISSUE_5 = checkIssueV2(data[IGM2Sequence.ISSUE_5],IGM2Sequence.ISSUE_5  )
+
+      if (!_.isEmpty(ISSUE_5)) {
+        logReport = { ...logReport, [IGM2Sequence.ISSUE_5]: ISSUE_5 }
       }
     }
 

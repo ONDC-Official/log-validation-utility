@@ -420,9 +420,10 @@ export const IGM2Sequence = {
 export const IGM2FlowSequence = {
   FLOW_1: {
     ISSUE_OPEN: "issue_open",
-    ON_ISSUE_PROCESSING: "on_issue_processing",
+    ON_ISSUE_PROCESSING_1: "on_issue_processing_1",
     ON_ISSUE_INFO_REQUIRED: "on_issue_info_required",
     ISSUE_INFO_PROVIDED: "issue_info_provided",
+    ON_ISSUE_PROCESSING_2: "on_issue_processing_2",
     ON_ISSUE_RESOLUTION_PROPOSED: "on_issue_resolution_proposed",
     ISSUE_RESOLUTION_ACCEPTED: "issue_resolution_accepted",
     ON_ISSUE_RESOLVED: "on_issue_resolved",

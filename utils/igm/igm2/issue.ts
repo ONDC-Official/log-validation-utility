@@ -49,6 +49,29 @@ const checkIssueV2 = (data: any, apiSequence:string, flow: any) => {
         issueObj.timestamp = 'created_at cannot be greater than updated_at'
       }
       
+      // Validation #2: updated_at should be equal or greater than context/timestamp
+      if (new Date(message.issue.updated_at) < new Date(context.timestamp)) {
+        issueObj.timestamp_validation = 'Issue updated_at should be equal to or greater than context timestamp'
+      }
+      
+      // Validation #3 & #4: Check last_action_id and updated_at with actions array
+      if (message.issue.actions && message.issue.actions.length > 0) {
+        const lastAction = message.issue.actions[message.issue.actions.length - 1]
+        
+        // updated_at should be equal or less than last action's updated_at
+        if (new Date(message.issue.updated_at) > new Date(lastAction.updated_at)) {
+          issueObj.updated_at_sequence = 'Issue updated_at should be equal to or less than the last action\'s updated_at'
+        }
+        
+        // last_action_id should match the last action's id
+        if (message.issue.last_action_id !== lastAction.id) {
+          issueObj.last_action_id = `last_action_id (${message.issue.last_action_id}) should match the id of the last action (${lastAction.id})`
+        }
+      }
+      
+      // Add this after the timestamp validations but before the switch statement
+      validateUpdatedTarget(message, apiSequence, issueObj);
+
       // Sequence-specific validations based on apiSequence
       switch(apiSequence) {
         case IGM2FlowSequence.FLOW_1.ISSUE_OPEN:
@@ -127,7 +150,7 @@ const checkIssueV2 = (data: any, apiSequence:string, flow: any) => {
       Object.assign(issueObj, refsErrors)
 
       // Actions validation using common function
-      const actionsErrors = validateActions(message.issue.actions)
+      const actionsErrors = validateActions(message.issue.actions, message)
       Object.assign(issueObj, actionsErrors)
 
       // Actors validation using common function
@@ -171,4 +194,39 @@ const checkIssueV2 = (data: any, apiSequence:string, flow: any) => {
   }
 }
 
-export default checkIssueV2
+/**
+ * Validates updated_target if present
+ */
+const validateUpdatedTarget = (message: any, apiSequence: string, errorObj: any) => {
+  // Skip validation for ISSUE_OPEN
+  if (apiSequence === IGM2FlowSequence.FLOW_1.ISSUE_OPEN) return;
+  
+  if (!message.issue.updated_target) return;
+  
+  // Validate updated_target array
+  if (!Array.isArray(message.issue.updated_target)) {
+    errorObj.updated_target = 'updated_target must be an array';
+    return;
+  }
+
+  message.issue.updated_target.forEach((target: any, index: number) => {
+    // Check if target has required fields
+    if (!target.path || !target.action) {
+      errorObj[`updated_target_${index}`] = 'Each updated_target must have path and action fields';
+      return;
+    }
+
+    // Validate action type
+    const validActions = ['APPENDED', 'REMOVED', 'MODIFIED'];
+    if (!validActions.includes(target.action)) {
+      errorObj[`updated_target_${index}_action`] = `action must be one of: ${validActions.join(', ')}`;
+    }
+
+    // Validate path format (should be dot-notation path to a field)
+    if (typeof target.path !== 'string' || !target.path.startsWith('issue.')) {
+      errorObj[`updated_target_${index}_path`] = 'path must be a string starting with "issue."';
+    }
+  });
+};
+
+export default checkIssueV2 

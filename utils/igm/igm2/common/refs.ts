@@ -1,6 +1,13 @@
 import _ from 'lodash'
 import { logger } from '../../../../shared/logger'
 
+// Define mandatory ref types for each flow
+const MANDATORY_REF_TYPES = {
+  FLOW_1: ['ORDER', 'PROVIDER', 'FULFILMENT', 'ITEM'], // ITEM flow
+  FLOW_2: ['TRANSACTION', 'PROVIDER'], // SELLER flow
+  FLOW_3: ['ORDER', 'PROVIDER', 'FULFILMENT'] // FULFILLMENT flow
+}
+
 export const validateRefs = (refs: any[], flow: any) => {
   const errors: any = {}
   console.log("flow", flow)
@@ -11,7 +18,31 @@ export const validateRefs = (refs: any[], flow: any) => {
       return { refs: 'refs must be an array' }
     }
 
+    // Check for mandatory ref types based on flow
+    if (flow) {
+      const flowKey = `${flow}` as keyof typeof MANDATORY_REF_TYPES;
+      if (MANDATORY_REF_TYPES[flowKey]) {
+        const mandatoryTypes = MANDATORY_REF_TYPES[flowKey];
+        // Check both 'type' and 'ref_type' properties
+        const existingTypes = refs.map(ref => ref.type || ref.ref_type);
+        
+        // Check if all mandatory types exist
+        const missingTypes = mandatoryTypes.filter(type => !existingTypes.includes(type));
+        if (missingTypes.length > 0) {
+          // Create specific error messages for each missing type
+          missingTypes.forEach(missingType => {
+            errors[`missing_ref_${missingType.toLowerCase()}`] = 
+              `Reference type '${missingType}' is mandatory for ${flowKey} but is missing`;
+          });
+        }
+      }
+    }
+
     refs.forEach((ref, index) => {
+      // Validate ref type (check both 'type' and 'ref_type')
+      if (!ref.type && !ref.ref_type) {
+        errors[`ref_${index}_type`] = 'ref type is required';
+      }
 
       if (ref.tags) {
         if (!Array.isArray(ref.tags)) {

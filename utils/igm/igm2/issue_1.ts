@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { getValue, setValue } from '../../../shared/dao'
 import { checkContext, isObjectEmpty } from '../../../utils/index'
-import { IGM2Sequence } from '../../../constants/index'
+import { IGM2FlowSequence } from '../../../constants/index'
 import { validateSchema } from '../../../utils/index'
 import { logger } from '../../../shared/logger'
 import { validateRefs } from './common/refs'
@@ -51,7 +51,7 @@ const checkIssueV2 = (data: any, apiSequence:string, flow: any) => {
       
       // Sequence-specific validations based on apiSequence
       switch(apiSequence) {
-        case IGM2Sequence.ISSUE_1:
+        case IGM2FlowSequence.FLOW_1.ISSUE_OPEN:
           // For ISSUE_1: updated_at should equal created_at
           if (message.issue.updated_at !== message.issue.created_at) {
             issueObj.updated_at_mismatch = `In ${apiSequence}, updated_at should be equal to created_at`
@@ -79,7 +79,7 @@ const checkIssueV2 = (data: any, apiSequence:string, flow: any) => {
           }
           break;
           
-        case IGM2Sequence.ISSUE_2:
+        case IGM2FlowSequence.FLOW_1.ISSUE_INFO_PROVIDED:
           // For ISSUE_2: Status validation might be different
           if (message.issue.status === 'OPEN') {
             // It's okay if status is still OPEN, but we might expect progress
@@ -98,7 +98,7 @@ const checkIssueV2 = (data: any, apiSequence:string, flow: any) => {
           }
           break;
           
-        case IGM2Sequence.ISSUE_3:
+        case IGM2FlowSequence.FLOW_1.ISSUE_RESOLUTION_ACCEPTED:
           // For ISSUE_3: We might expect actions to be recorded
           if (!message.issue.actions || message.issue.actions.length === 0) {
             issueObj.no_actions = `By ${apiSequence}, we would typically expect some actions to be recorded`
@@ -110,14 +110,7 @@ const checkIssueV2 = (data: any, apiSequence:string, flow: any) => {
           }
           break;
           
-        case IGM2Sequence.ISSUE_4:
-          // For ISSUE_4: Status validation for later stage
-          if (message.issue.status === 'OPEN' && !message.issue.escalation_level) {
-            issueObj.escalation = `By ${apiSequence}, if status is still OPEN, we might expect escalation_level to be defined`
-          }
-          break;
-          
-        case IGM2Sequence.ISSUE_5:
+        case IGM2FlowSequence.FLOW_1.ISSUE_CLOSED:
           // For ISSUE_5: This might be approaching resolution
           if (message.issue.status === 'RESOLVED' && !message.issue.resolution) {
             issueObj.missing_resolution = `When status is RESOLVED in ${apiSequence}, resolution details must be provided`
@@ -138,7 +131,7 @@ const checkIssueV2 = (data: any, apiSequence:string, flow: any) => {
       Object.assign(issueObj, actionsErrors)
 
       // Actors validation using common function
-      const actorsErrors = validateActors(message.issue.actors, flow)
+      const actorsErrors = validateActors(message.issue.actors, context, flow)
       Object.assign(issueObj, actorsErrors)
 
       // Validate description

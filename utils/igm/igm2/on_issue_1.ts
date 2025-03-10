@@ -211,7 +211,7 @@ const checkOnIssueV2 = (data: any, apiSequence:string, flow: any) => {
       // Reuse common validation functions for complex objects
       Object.assign(onIssueObj, validateRefs(message.issue.refs, flow))
       Object.assign(onIssueObj, validateActions(message.issue.actions,))
-      Object.assign(onIssueObj, validateActors(message.issue.actors, flow))
+      Object.assign(onIssueObj, validateActors(message.issue.actors, context, flow))
       validateDescription(message, onIssueObj)
       validateResolution(message, onIssueObj)
 
@@ -219,8 +219,8 @@ const checkOnIssueV2 = (data: any, apiSequence:string, flow: any) => {
       switch(apiSequence) {
         case IGM2Sequence.ON_ISSUE_1:
           // For ON_ISSUE_1: updated_at should equal created_at
-          if (message.issue.updated_at !== message.issue.created_at) {
-            onIssueObj.updated_at_mismatch = `In ${apiSequence}, updated_at should be equal to created_at`
+          if (message.issue.updated_at <= message.issue.created_at) {
+            onIssueObj.updated_at_mismatch = 'updated_at must be greater than created_at'
           }
           break
           

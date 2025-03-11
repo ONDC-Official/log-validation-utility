@@ -3,7 +3,7 @@ import { logger } from '../../../shared/logger'
 import constants, { ApiSequence, buyerReturnId } from '../../../constants'
 import { validateSchema, isObjectEmpty, checkBppIdOrBapId, checkContext, isValidUrl, timeDiff } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
-import { condition_id } from 'constants/reasonCode'
+import { condition_id } from '../../../constants/reasonCode'
 
 export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDetatilSet: any, flow: any) => {
   const updtObj: any = {}

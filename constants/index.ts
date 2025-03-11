@@ -158,16 +158,18 @@ export const Fis10ApiSequence = {
 }
 
 export const FIS13HealthSequence = {
-  SEARCH: 'search',
-  ON_SEARCH: 'on_search',
-  SEARCH_OFFER: 'search_offer',
-  ON_SEARCH_OFFER: 'on_search_offer',
+  SEARCH_1: 'search_1',
+  ON_SEARCH_1: 'on_search_1',
+  SEARCH_2: 'search_2',
+  ON_SEARCH_2: 'on_search_2',
   SELECT: 'select',
   ON_SELECT: 'on_select',
   SELECT_1: 'select_1',
   ON_SELECT_1: 'on_select_1',
   SELECT_2: 'select_2',
   ON_SELECT_2: 'on_select_2',
+  SELECT_3: 'select_3',
+  ON_SELECT_3: 'on_select_3',
   INIT: 'init',
   INIT_1: 'init_1',
   INIT_2: 'init_2',
@@ -186,6 +188,9 @@ export const FIS13HealthSequence = {
   ON_SATUS_2: 'on_status_2',
   UPDATE: 'update',
   ON_UPDATE: 'on_update',
+  ON_UPDATE_1: 'on_update_1',
+  ON_UPDATE_2: 'on_update_2',
+  ON_UPDATE_3: 'on_update_3',
   ON_UPDATE_UNCOLICATED: 'on_update_uncolicated',
 }
 
@@ -313,6 +318,8 @@ export const insuranceFormHeadings: any = {
 export const fisFlows = {
   INVOICE: 'INVOICE_BASED_LOAN',
   PERSONAL: 'PERSONAL_LOAN',
+  PERSONAL_WITHOUT_AGGREGATOR: 'PERSONAL_LOAN_WITHOUT_AGGREGATOR',
+  PERSONAL_WITHOUT_AGGREGATOR_AND_MONITORING: 'PERSONAL_LOAN_WITHOUT_AGGREGATOR_AND_MONITORING',
   PRE_INVOICE: 'PERSONAL_LOAN',
   PRE_PERSONAL: 'INVOICE_BASED_LOAN',
   FORECLOSURE_PERSONAL: 'FORECLOSURE_PERSONAL',

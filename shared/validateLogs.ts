@@ -412,7 +412,6 @@ export const IGMvalidateLogs = (data: any) => {
 
 export const IGMvalidateLogs2 = (data: any, flow?: any) => {
   let logReport: any = {}
-  console.log("++++ data", data)
 
   try {
     dropDB()
@@ -434,13 +433,6 @@ export const IGMvalidateLogs2 = (data: any, flow?: any) => {
   }
 }
 
-/**
- * Process validations for a specific flow
- * @param flowSequence The sequence of steps in the flow
- * @param data The data to validate
- * @param flow The current flow
- * @param logReport The report to update with validation results
- */
 function processFlowValidations(flowSequence: any, data: any, flow: any, logReport: any) {
   // Iterate through each step in the flow sequence
   Object.entries(flowSequence).forEach(([stepKey, stepValue]) => {

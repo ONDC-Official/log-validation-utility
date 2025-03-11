@@ -9,12 +9,7 @@ export enum ActionDescriptionCodes {
   CLOSE = 'CLOSE',
 }
 
-/**
- * Validates the actions array according to IGM2 specifications
- * @param actions - Array of action objects to validate
- * @param message - The message object containing issue data
- * @returns Object containing validation errors, if any
- */
+
 export const validateActions = (actions: any[], message: any) => {
   const errors: Record<string, string> = {}
 

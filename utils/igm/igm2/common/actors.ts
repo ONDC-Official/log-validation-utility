@@ -1,14 +1,9 @@
 import _ from 'lodash'
 import { logger } from '../../../../shared/logger'
-import { IGM2Flows } from '../../../../utils/constants/index'
+import { IGM2Flows } from '../../../../constants'
 
-/**
- * Validates the actors array according to IGM2 specifications
- * @param actors - Array of actor objects to validate
- * @param context - Context object containing domain, bap_id, bpp_id
- * @param flow - The IGM2 flow type (FLOW_1, FLOW_2, FLOW_3)
- * @returns Object containing validation errors, if any
- */
+
+
 export const validateActors = (actors: any[], context: any, flow: any) => {
   const errors: Record<string, string> = {}
   try {

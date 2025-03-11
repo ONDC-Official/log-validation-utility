@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { dropDB, setValue } from '../shared/dao'
 import { logger } from './logger'
-import { ApiSequence, retailDomains, IGMApiSequence, RSFapiSequence, RSF_v2_apiSequence } from '../constants'
+import { ApiSequence, retailDomains, IGMApiSequence, RSFapiSequence, RSF_v2_apiSequence, IGM2FlowSequence } from '../constants'
 import { validateSchema, isObjectEmpty } from '../utils'
 import { checkOnsearchFullCatalogRefresh } from '../utils/Retail/RET11_onSearch/onSearch'
 import { checkSelect } from '../utils/Retail/Select/select'
@@ -49,6 +49,8 @@ import checkRsfReport from '../utils/RSF/RSF_v2/report'
 import checkRsfOnReport from '../utils/RSF/RSF_v2/on_report'
 import checkRsfRecon from '../utils/RSF/RSF_v2/recon'
 import checkRsfOnRecon from '../utils/RSF/RSF_v2/on_recon'
+import checkOnIssueV2 from '../utils/igm/igm2/on_issue'
+import checkIssueV2 from '../utils/igm/igm2/issue'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
@@ -406,6 +408,49 @@ export const IGMvalidateLogs = (data: any) => {
     logger.error(error.message)
     return error.message
   }
+}
+
+export const IGMvalidateLogs2 = (data: any, flow?: any) => {
+  let logReport: any = {}
+
+  try {
+    dropDB()
+  } catch (error) {
+    logger.error('!!Error while removing LMDB', error)
+  }
+
+  try {
+    // Process each flow's validation steps
+    processFlowValidations(IGM2FlowSequence.FLOW_1, data, flow, logReport);
+    processFlowValidations(IGM2FlowSequence.FLOW_2, data, flow, logReport);
+    processFlowValidations(IGM2FlowSequence.FLOW_3, data, flow, logReport);
+
+    logger.info(logReport, 'Report Generated Successfully!!')
+    return logReport
+  } catch (error: any) {
+    logger.error(error.message)
+    return error.message
+  }
+}
+
+function processFlowValidations(flowSequence: any, data: any, flow: any, logReport: any) {
+  // Iterate through each step in the flow sequence
+  Object.entries(flowSequence).forEach(([stepKey, stepValue]) => {
+    const stepData = data[stepValue as string];
+    if (!stepData) return;
+
+    // Determine if this is an issue or on_issue step
+    const isIssueStep = stepKey.startsWith('ISSUE');
+    const validationFunction = isIssueStep ? checkIssueV2 : checkOnIssueV2;
+    
+    // Validate the step data
+    const validationResult = validationFunction(stepData, stepValue as string, flow);
+    
+    // Add validation results to the report if there are any
+    if (!_.isEmpty(validationResult)) {
+      logReport[stepValue as string] = validationResult;
+    }
+  });
 }
 
 export const RSFvalidateLogs = (data: any) => {

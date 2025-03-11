@@ -210,6 +210,7 @@ export const checkMetroContext = (
 }
 
 const validate_schema_for_retail_json = (vertical: string, api: string, data: any) => {
+  console.log(`+++++++++ validate_schema_${api}_${vertical}_for_json`)
   const res = (schemaValidator as any)[`validate_schema_${api}_${vertical}_for_json`](data)
 
   return res

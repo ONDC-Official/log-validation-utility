@@ -183,3 +183,4 @@ export const reasonCodes: ReasonCodes = {
 export const return_request_reasonCodes =['001', '002', '003', '004', '005'];
 export const partcancel_return_reasonCodes =['002','012'];
 export const return_rejected_request_reasonCodes =['001', '002', '003', '004', '005','007','008'];
+export const condition_id=["001", "002", "003"] // "001" (proper working condition without damages), "002" (proper working condition with damages), "003" (not working);

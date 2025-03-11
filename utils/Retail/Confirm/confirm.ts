@@ -327,7 +327,7 @@ if (Array.isArray(fulfillments)) {
       logger.info(`Comparing Quote object for /${constants.ON_SELECT} and /${constants.CONFIRM}`)
       const on_select_quote: any = getValue('quoteObj')
       const quoteErrors = compareQuoteObjects(on_select_quote, confirm.quote, constants.ON_SELECT, constants.CONFIRM)
-      const hasItemWithQuantity = _.some(confirm.quote.breakup, (item) => _.has(item, 'item.quantity'))
+      const hasItemWithQuantity = _.some(confirm.quote.breakup, (item:any) => _.has(item, 'item.quantity'))
       if (hasItemWithQuantity) {
         const key = `quantErr`
         cnfrmObj[key] =

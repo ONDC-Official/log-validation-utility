@@ -98,7 +98,7 @@ export const onSearchSchema = {
                   },
                   type: {
                     type: 'string',
-                    enum: ['Delivery', 'Self-Pickup'],
+                    enum: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
                   },
                 },
                 required: ['id', 'type'],
@@ -467,9 +467,9 @@ export const onSearchSchema = {
                                 if: {
                                   properties: {
                                     code: {
-                                      const: 'np_fees',
-                                    },
-                                  },
+                                      const: 'np_fees'
+                                    }
+                                  }
                                 },
                                 then: {
                                   properties: {
@@ -480,16 +480,17 @@ export const onSearchSchema = {
                                         properties: {
                                           code: {
                                             type: 'string',
-                                            enum: ['channel_margin_type', 'channel_margin_value'],
+                                            enum: ['channel_margin_type', 'channel_margin_value']
                                           },
                                           value: {
-                                            type: 'string',
-                                          },
+                                            type: 'string'
+                                          }
                                         },
-                                      },
-                                    },
+                                      }
+                                    }
                                   },
-                                },
+
+                                }
                               },
                               {
                                 type: 'object',
@@ -497,10 +498,10 @@ export const onSearchSchema = {
                                   not: {
                                     properties: {
                                       code: {
-                                        const: 'np_fees',
-                                      },
-                                    },
-                                  },
+                                        const: 'np_fees'
+                                      }
+                                    }
+                                  }
                                 },
                                 then: {
                                   properties: {
@@ -510,22 +511,22 @@ export const onSearchSchema = {
                                         type: 'object',
                                         properties: {
                                           code: {
-                                            type: 'string',
+                                            type: 'string'
                                           },
                                           value: {
-                                            type: 'string',
-                                          },
+                                            type: 'string'
+                                          }
                                         },
-                                      },
-                                    },
+                                      }
+                                    }
                                   },
-                                },
-                              },
-                            ],
-                          },
-                        },
+                                }
+                              }
+                            ]
+                          }
+                        }
                       },
-                    },
+                    }
                   },
                   items: {
                     type: 'array',
@@ -545,18 +546,19 @@ export const onSearchSchema = {
                                 properties: {
                                   duration: {
                                     type: 'string',
-                                    pattern: '^P(\\d+D|\\d+W|\\d+M|\\d+Y)$',
-                                  },
+                                    pattern: "^P(\\d+D|\\d+W|\\d+M|\\d+Y)$",
+                                  }
                                 },
-                                required: ['duration'],
-                              },
+                                required: ['duration']
+                              }
                             },
-                            required: ['replace_within'],
+                            required: ['replace_within']
                           },
-                          optional: true,
+                          optional: true
                         },
                         rating: {
                           type: ['number', 'null'],
+                          
                           minimum: 1,
                           maximum: 5,
                           default: null,
@@ -928,16 +930,7 @@ export const onSearchSchema = {
                             code: {
                               type: 'string',
                               description: 'Type of the offer (e.g., discount, buyXgetY, freebie).',
-                              enums: [
-                                'discount',
-                                'buyXgetY',
-                                'freebie',
-                                'slab',
-                                'combo',
-                                'delivery',
-                                'exchange',
-                                'financing',
-                              ],
+                              enums: ['discount', 'buyXgetY', 'freebie', 'slab', 'combo', 'delivery', 'exchange', 'financing']
                             },
                             images: {
                               type: 'array',
@@ -998,7 +991,7 @@ export const onSearchSchema = {
                               code: {
                                 type: 'string',
                                 description: 'Type of the tag (e.g., qualifier, benefit, meta).',
-                                enums: ['qualifier', 'benefit', 'meta'],
+                                enums: ['qualifier', 'benefit', 'meta']
                               },
                               list: {
                                 type: 'array',
@@ -1008,15 +1001,7 @@ export const onSearchSchema = {
                                     code: {
                                       type: 'string',
                                       description: 'Code representing the specific tag property.',
-                                      enums: [
-                                        'min_value',
-                                        'value_type',
-                                        'value',
-                                        'additive',
-                                        'item_count',
-                                        'item_id',
-                                        'item_value',
-                                      ],
+                                      enums: ['min_value', 'value_type', 'value', 'additive', 'item_count', 'item_id', 'item_value']
                                     },
                                     value: {
                                       type: 'string',
@@ -1428,5 +1413,5 @@ export const onSearchSchema = {
       required: ['catalog'],
     },
     required: ['context', 'message'],
-  },
+  }
 }

@@ -3,6 +3,7 @@ import { logger } from '../../../shared/logger'
 import constants, { ApiSequence, buyerReturnId } from '../../../constants'
 import { validateSchema, isObjectEmpty, checkBppIdOrBapId, checkContext, isValidUrl, timeDiff } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
+import { condition_id } from 'constants/reasonCode'
 
 export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDetatilSet: any, flow: any) => {
   const updtObj: any = {}
@@ -62,85 +63,67 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
                 let exchangeValue = "";
                 if (exchangeArr.length > 0 && exchangeArr[0]?.value) {
                   exchangeValue = exchangeArr[0]?.value;
-            
-                  if (exchangeValue === "yes") {
-                    logger.info(`Exchange is requested for /${apiSeq}. Proceeding with additional checks...`);
-            
-                    // Validate exchange-related fields
-                    const brandArr = _.filter(returnFulifillmentTagsList, { code: "brand" });
-                    const modelArr = _.filter(returnFulifillmentTagsList, { code: "model" });
-                    const ramUnitArr = _.filter(returnFulifillmentTagsList, { code: "ram_unit" });
-                    const ramArr = _.filter(returnFulifillmentTagsList, { code: "ram" });
-                    const storageUnitArr = _.filter(returnFulifillmentTagsList, { code: "storage_unit" });
-                    const storageArr = _.filter(returnFulifillmentTagsList, { code: "storage" });
-                    const conditionIdArr = _.filter(returnFulifillmentTagsList, { code: "condition_id" });
-                    const conditionDescArr = _.filter(returnFulifillmentTagsList, { code: "condition_desc" });
-            
-                    if (brandArr.length === 0 || !brandArr[0]?.value) {
-                      updtObj['returnFulfillment/code/brand'] = `Brand value is missing for /${apiSeq}`;
-                    }
-            
-                    if (modelArr.length === 0 || !modelArr[0]?.value) {
-                      updtObj['returnFulfillment/code/model'] = `Model value is missing for /${apiSeq}`;
-                    }
-            
-                    if (ramUnitArr.length > 0 && ramUnitArr[0]?.value) {
-                      const ramUnitValue = ramUnitArr[0]?.value;
-                      if (ramUnitValue !== "GB" && ramUnitValue !== "MB") {
-                        updtObj['returnFulfillment/code/ram_unit'] = `Invalid RAM unit: ${ramUnitValue} (valid: 'GB' or 'MB')`;
+
+                  // Validate exchange value
+                  if (exchangeArr.length > 0 && exchangeArr[0]?.value) {
+                    exchangeValue = exchangeArr[0]?.value;
+
+                    if (exchangeValue === "yes" || exchangeValue === "no") {
+                      logger.info(`Exchange value is ${exchangeValue} for /${apiSeq}`);
+
+                      if (exchangeValue === "yes") {
+                        logger.info(`Exchange is requested for /${apiSeq}. Proceeding with additional checks...`);
+
+                        // Validate condition_id
+                        const conditionIdArr = _.filter(returnFulifillmentTagsList, { code: "condition_id" });
+                        if (conditionIdArr.length === 0 || !conditionIdArr[0]?.value) {
+                          updtObj['returnFulfillment/code/condition_id'] = `condition_id is missing for /${apiSeq}`;
+                        } else if (!condition_id.includes(conditionIdArr[0]?.value)) {
+                          updtObj['returnFulfillment/code/condition_id'] = `Invalid condition_id: ${conditionIdArr[0]?.value} in ${apiSeq}. Only 001, 002, or 003 are allowed.`;
+                        }
+
+                        // Validate condition_desc
+                        const conditionDescArr = _.filter(returnFulifillmentTagsList, { code: "condition_desc" });
+                        if (conditionDescArr.length === 0 || !conditionDescArr[0]?.value) {
+                          updtObj['returnFulfillment/code/condition_desc'] = `condition_desc is missing for /${apiSeq}`;
+                        }
                       }
                     } else {
-                      updtObj['returnFulfillment/code/ram_unit'] = `RAM unit is missing for /${apiSeq}`;
+                      updtObj['returnFulfillment/code/exchange'] = `Invalid exchange value: ${exchangeValue} in ${apiSeq}. Only "yes" or "no" are allowed.`;
                     }
-            
-                    if (ramArr.length > 0 && ramArr[0]?.value) {
-                      const ramValue = ramArr[0]?.value;
-                      if (isNaN(ramValue) || parseInt(ramValue) <= 0) {
-                        updtObj['returnFulfillment/code/ram'] = `Invalid RAM value: ${ramValue} (must be a positive number)`;
-                      }
-                    } else {
-                      updtObj['returnFulfillment/code/ram'] = `RAM value is missing for /${apiSeq}`;
-                    }
-            
-                    if (storageUnitArr.length > 0 && storageUnitArr[0]?.value) {
-                      const storageUnitValue = storageUnitArr[0]?.value;
-                      if (storageUnitValue !== "GB" && storageUnitValue !== "TB") {
-                        updtObj['returnFulfillment/code/storage_unit'] = `Invalid storage unit: ${storageUnitValue} (valid: 'GB' or 'TB')`;
-                      }
-                    } else {
-                      updtObj['returnFulfillment/code/storage_unit'] = `Storage unit is missing for /${apiSeq}`;
-                    }
-            
-                    if (storageArr.length > 0 && storageArr[0]?.value) {
-                      const storageValue = storageArr[0]?.value;
-                      if (isNaN(storageValue) || parseInt(storageValue) <= 0) {
-                        updtObj['returnFulfillment/code/storage'] = `Invalid storage value: ${storageValue} (must be a positive number)`;
-                      }
-                    } else {
-                      updtObj['returnFulfillment/code/storage'] = `Storage value is missing for /${apiSeq}`;
-                    }
-            
-                    if (conditionIdArr.length === 0 || !conditionIdArr[0]?.value) {
-                      updtObj['returnFulfillment/code/condition_id'] = `condition_id is missing for /${apiSeq}`;
-                    }
-            
-                    if (conditionDescArr.length === 0 || !conditionDescArr[0]?.value) {
-                      updtObj['returnFulfillment/code/condition_desc'] = `condition_desc is missing for /${apiSeq}`;
-                    }
-            
-                  } else if (exchangeValue === "no") {
-                    logger.info(`Exchange is not requested for /${apiSeq}`);
                   } else {
-                    updtObj['returnFulfillment/code/exchange'] = `Invalid exchange value: ${exchangeValue} in ${apiSeq}`;
+                    updtObj['returnFulfillment/code/exchange'] = `Return fulfillment/tags/list/code/exchange is missing in ${apiSeq}`;
                   }
+
+                  // Validate ffId
+                  if (ffIdArr.length > 0 && ffIdArr[0]?.value) {
+                    ffId = ffIdArr[0]?.value;
+                  } else {
+                    updtObj['returnFulfillment/code/id'] = `Return fulfillment/tags/list/code/id is missing in ${apiSeq}`;
+                  }
+
+                  // Validate replace value
+                  if (replaceArr.length > 0 && replaceArr[0]?.value) {
+                    replaceValue = replaceArr[0]?.value;
+
+                    if (replaceValue === "yes" || replaceValue === "no") {
+                      logger.info(`Valid replace value: ${replaceValue} for /${apiSeq}`);
+                    } else {
+                      updtObj['returnFulfillment/code/replace'] = `Invalid replace value: ${replaceValue} in ${apiSeq}. Only "yes" or "no" are allowed.`;
+                    }
+                  } else {
+                    updtObj['returnFulfillment/code/replace'] = `Return fulfillment/tags/list/code/replace is missing in ${apiSeq}`;
+                  }
+
+                  // Validate item_quantity
+                  if (itemQuantityArr.length > 0 && itemQuantityArr[0]?.value) {
+                    itemQuantity = itemQuantityArr[0]?.value;
+                  } else {
+                    updtObj['returnFulfillment/code/item_quantity'] = `Return fulfillment/tags/list/code/item_quantity is missing in ${apiSeq}`;
+                  }
+                  return { ffId: ffId, itemQuantity: itemQuantity };
                 } else {
-                  updtObj['returnFulfillment/code/exchange'] = `Return fulfillment/tags/list/code/exchange is missing in ${apiSeq}`;
-                }
-                if (ffIdArr.length > 0 && ffIdArr[0]?.value) {
-                  ffId = ffIdArr[0]?.value
-                }
-                else {
-                  updtObj['returnFulfillment/code/id'] = `Return fulfillment/tags/list/code/id is missing in ${apiSeq}`
+                  updtObj[`returnFulfillment`] = `Return fulfillment/tags/list is missing in ${apiSeq}`;
                 }
                 if (replaceArr.length > 0 && replaceArr[0]?.value) {
                   replaceValue = replaceArr[0]?.value;
@@ -342,13 +325,13 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
                 }
 
                 if (item.code === 'id') {
-                  if (Object.values(itemFlfllmnts).includes(item.value)) {
-                    updtObj.nonUniqueReturnFulfillment = `${item.value} is not a unique fulfillment`;
+                  const valuesArray = Object.values((itemFlfllmnts as { values: any }).values);
+                  if (valuesArray.includes(item.value)) {
+                      updtObj.nonUniqueReturnFulfillment = `${item.value} is not a unique fulfillment`;
                   } else {
                     updateReturnId.push(item.value);
                   }
                 }
-
                 if (item.code === 'replace') {
                   logger.info(`Checking for valid replace value for /${apiSeq}`);
                   let replaceValue = item.value;
@@ -386,7 +369,7 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
                 }
               });
             }
-            
+
           })
         })
         setValue('updateReturnId', updateReturnId)

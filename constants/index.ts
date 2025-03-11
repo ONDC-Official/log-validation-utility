@@ -397,7 +397,7 @@ export const IGMApiSequence = {
   LSP_ON_ISSUE_STATUS: 'lsp_on_issue_status',
 }
 
-export const IGM2Flows ={
+export const IGM2Flows = {
   FLOW_1: 'FLOW_1',
   FLOW_2: 'FLOW_2',
   FLOW_3: 'FLOW_3',
@@ -415,6 +415,53 @@ export const IGM2Sequence = {
   "ISSUE_4": "issue_4",
   "ON_ISSUE_7": "on_issue_7",
   "ISSUE_5": "issue_5",
+}
+
+export const IGM2FlowSequence = {
+  FLOW_1: {
+    ISSUE_OPEN: "issue_open",
+    ON_ISSUE_PROCESSING_1: "on_issue_processing_1",
+    ON_ISSUE_INFO_REQUIRED: "on_issue_info_required",
+    ISSUE_INFO_PROVIDED: "issue_info_provided",
+    ON_ISSUE_PROCESSING_2: "on_issue_processing_2",
+    ON_ISSUE_RESOLUTION_PROPOSED: "on_issue_resolution_proposed",
+    ISSUE_RESOLUTION_ACCEPTED: "issue_resolution_accepted",
+    ON_ISSUE_RESOLVED: "on_issue_resolved",
+    ISSUE_CLOSED: "issue_closed"
+  },
+  
+  FLOW_2: {
+    ISSUE_OPEN: "issue_open",
+    ON_ISSUE_PROCESSING: "on_issue_processing",
+    ON_ISSUE_RESOLUTION_PROPOSED: "on_issue_resolution_proposed",
+    ISSUE_RESOLUTION_ACCEPTED: "issue_resolution_accepted",
+    ON_ISSUE_RESOLVED: "on_issue_resolved",
+    ISSUE_ESCLATED: "issue_esclated",
+    ON_ISSUE_GRO_PROCESSING: "on_issue_gro_processing",
+    ON_ISSUE_GRO_RESOLUTION_PROPOSED: "on_issue_gro_resolution_proposed",
+    ISSUE_GRO_RESOLUTION_ACCEPTED: "issue_gro_resolution_accepted",
+    ON_ISSUE_GRO_RESOLVED: "on_issue_gro_resolved",
+    ISSUE_GRO_CLOSE: "issue_gro_close"
+  },
+  
+  FLOW_3: {
+    ISSUE_OPEN: "issue_open",
+    ON_ISSUE_PROCESSING: "on_issue_processing",
+    ISSUE_LSP_OPEN: "issue_lsp_open",
+    ON_ISSUE_LSP_PROCESSING: "on_issue_lsp_processing",
+    ON_ISSUE_LSP_INFO_REQUIRED: "on_issue_lsp_info_required",
+    ON_ISSUE_INFO_REQUIRED: "on_issue_info_required",
+    ISSUE_INFO_PROVIDED: "issue_info_provided",
+    ISSUE_INFO_LSP_INFO_PROVIDED: "issue_info_lsp_info_provided",
+    ON_ISSUE_LSP_RESOLUTION_PROPOSED: "on_issue_lsp_resolution_proposed",
+    ON_ISSUE_RESOLUTION_PROPOSED: "on_issue_resolution_proposed",
+    ISSUE_RESOLUTION_ACCEPTED: "issue_resolution_accepted",
+    ISSUE_LSP_RESOLUTION_ACCEPTED: "issue_lsp_resolution_accepted",
+    ON_ISSUE_LSP_RESOLVED: "on_issue_lsp_resolved",
+    ON_ISSUE_RESOLVED: "on_issue_resolved",
+    ISSUE_CLOSE: "issue_close",
+    ISSUE_LSP_CLOSE: "issue_lsp_close"
+  }
 }
 
 export const RSFapiSequence = {

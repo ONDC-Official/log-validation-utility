@@ -96,8 +96,7 @@ const newOnIssueSchema = {
         'bpp_uri',
         'transaction_id',
         'message_id',
-        'timestamp',
-        'ttl',
+        'timestamp'
       ],
     },
     message: {
@@ -156,7 +155,7 @@ const newOnIssueSchema = {
                       'FULFILMENT',
                       'ITEM',
                       'AGENT',
-                      'TRANSACTION_ID',
+                      'TRANSACTION',
                       'MESSAGE_ID',
                       'COMPLAINT',
                       'CUSTOMER',
@@ -219,6 +218,7 @@ const newOnIssueSchema = {
                       'COUNTERPARTY_NP_GRO',
                       'CASCADED_NP_GRO',
                       'CASCADED_NP',
+                      'SELLER'
                     ],
                   },
                   info: {

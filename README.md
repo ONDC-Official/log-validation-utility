@@ -713,7 +713,7 @@ curl --location 'http://localhost:3008/api/validate/rsf' \
 
 ### For IGM 2.0.0 Sample Curl Request (Local)
 
-# For FLOW_1
+### For FLOW_1
 
 ```shell
 curl --location 'https://log-validation.ondc.org/api/validate/igm' \
@@ -739,7 +739,7 @@ curl --location 'https://log-validation.ondc.org/api/validate/igm' \
 
 ```
 
-# For FLOW_2
+### For FLOW_2
 
 ```shell
 curl --location 'https://log-validation.ondc.org/api/validate/igm' \
@@ -766,7 +766,7 @@ curl --location 'https://log-validation.ondc.org/api/validate/igm' \
 
 ```
 
-# For FLOW_3
+### For FLOW_3
 
 ```shell
 curl --location 'https://log-validation.ondc.org/api/validate/igm' \

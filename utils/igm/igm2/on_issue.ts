@@ -209,12 +209,6 @@ const validateUpdatedTarget = (message: any, errorObj: any) => {
   });
 };
 
-/**
- * Consolidated validator for all on_issue sequences (on_issue_1 to on_issue_7)
- * @param data The API payload to validate
- * @param apiSequence The API sequence identifier
- * @returns Validation errors object
- */
 const checkOnIssueV2 = (data: any, apiSequence:string, flow: any) => {
   const onIssueObj: any = {}
   console.log("flow", flow)

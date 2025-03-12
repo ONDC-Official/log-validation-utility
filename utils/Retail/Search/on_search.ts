@@ -955,6 +955,20 @@ export const checkOnsearch = (data: any) => {
           try {
             category.tags.map((tag: { code: any; list: any[] }, index: number) => {
               switch (tag.code) {
+                case 'attr':
+                  const attrList = tag.list.find((item) => item.code === 'name');
+                  if (attrList) {
+                    const isValid =
+                      attrList.value === 'item.quantity.unitized.measure' ||
+                      attrList.value.startsWith('item.quantity.tags.');
+
+                    if (!isValid) {
+                      const key = `prvdr${i}category${j}tags${index}`;
+                      errorObj[key] =
+                        `list.code == attr then name should be 'item.quantity.unitized.measure' or 'item.quantity.tags.{object.keys}' in bpp/providers[${i}]`;
+                    }
+                  }
+                  break;
                 case 'type':
                   const codeList = tag.list.find((item) => item.code === 'type')
                   if (

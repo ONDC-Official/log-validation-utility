@@ -27,6 +27,7 @@ import { initSchema } from '../schema/Retail/RET/init'
 import { onInitSchema } from '../schema/Retail/RET/on_init'
 import { confirmSchema } from '../schema/Retail/RET/confirm'
 import { onConfirmSchema } from '../schema/Retail/RET/on_confirm'
+import { catalogRejectionSchema } from '../schema/Retail/CatalogRejection/catalogRejection'
 import issueSchema from '../schema/Igm/issueSchema'
 import onIssueSchema from '../schema/Igm/onIssueSchema'
 import issueStatusSchema from '../schema/Igm/issueStatusSchema'
@@ -130,6 +131,53 @@ const validate_schema = (data: any, schema: any) => {
 
   return error_list
 }
+// catalog_rejection
+const validate_schema_catalog_rejection_RET10_for_json= (data: any) => {
+  const error_list = validate_schema(data, catalogRejectionSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_catalog_rejection_RET11_for_json= (data: any) => {
+  const error_list = validate_schema(data, catalogRejectionSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_catalog_rejection_RET12_for_json= (data: any) => {
+  const error_list = validate_schema(data, catalogRejectionSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_catalog_rejection_RET13_for_json= (data: any) => {
+  const error_list = validate_schema(data, catalogRejectionSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_catalog_rejection_RET14_for_json= (data: any) => {
+  const error_list = validate_schema(data, catalogRejectionSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_catalog_rejection_RET15_for_json= (data: any) => {
+  const error_list = validate_schema(data, catalogRejectionSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_catalog_rejection_RET16_for_json= (data: any) => {
+  const error_list = validate_schema(data, catalogRejectionSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_catalog_rejection_RET17_for_json= (data: any) => {
+  const error_list = validate_schema(data, catalogRejectionSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_catalog_rejection_RET18_for_json= (data: any) => {
+  const error_list = validate_schema(data, catalogRejectionSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_catalog_rejection_AGR10_for_json= (data: any) => {
+  const error_list = validate_schema(data, catalogRejectionSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_catalog_rejection_RET1A_for_json= (data: any) => {
+  const error_list = validate_schema(data, catalogRejectionSchema)
+  return formatted_error(error_list)
+}
+
 
 // search
 const validate_schema_search_RET11_for_json = (data: any) => {
@@ -1144,6 +1192,17 @@ const validate_schema_on_recon_rsf_for_json = (data: any) =>{
 }
 
 export default {
+  validate_schema_catalog_rejection_RET10_for_json,
+  validate_schema_catalog_rejection_RET11_for_json,
+  validate_schema_catalog_rejection_RET12_for_json,
+  validate_schema_catalog_rejection_RET13_for_json,
+  validate_schema_catalog_rejection_RET14_for_json,
+  validate_schema_catalog_rejection_RET15_for_json,
+  validate_schema_catalog_rejection_RET16_for_json,
+  validate_schema_catalog_rejection_RET17_for_json,
+  validate_schema_catalog_rejection_RET18_for_json,
+  validate_schema_catalog_rejection_AGR10_for_json,
+  validate_schema_catalog_rejection_RET1A_for_json,
   validate_schema_search_trv14_for_json,
   validate_schema_on_search_1_trv14_for_json,
   validate_schema_on_search_2_trv14_for_json,

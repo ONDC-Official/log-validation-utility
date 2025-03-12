@@ -51,6 +51,7 @@ import checkRsfRecon from '../utils/RSF/RSF_v2/recon'
 import checkRsfOnRecon from '../utils/RSF/RSF_v2/on_recon'
 import checkOnIssueV2 from '../utils/igm/igm2/on_issue'
 import checkIssueV2 from '../utils/igm/igm2/issue'
+import {checkCatalogRejection} from '../utils/Retail/Catalog_Rejection/catalogRejection'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
@@ -165,6 +166,20 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       ApiSequence.ON_UPDATE_LIQUIDATED,
       ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED,
     ]
+    const flowSevenSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.CATALOG_REJECTION
+    ]
+    const flowEightSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+    ]
+    const flowNineSequence = [
+      ApiSequence.INC_SEARCH,
+      ApiSequence.INC_ONSEARCH,
+      ApiSequence.CATALOG_REJECTION
+    ]
 
     const processApiSequence = (apiSequence: any, data: any, logReport: any, msgIdSet: any, flow: string) => {
       if (validFlows.includes(flow)) {
@@ -264,6 +279,8 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
           return checkTrack(data)
         case ApiSequence.ON_TRACK:
           return checkOnTrack(data)
+        case ApiSequence.CATALOG_REJECTION:
+          return checkCatalogRejection(data)
         default:
           return null
       }
@@ -286,6 +303,15 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         break
       case FLOW.FLOW6:
         logReport = processApiSequence(flowSixSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW7:
+        logReport= processApiSequence(flowSevenSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW8:
+        logReport = processApiSequence(flowEightSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW9: 
+        logReport = processApiSequence(flowNineSequence, data, logReport, msgIdSet, flow)
         break
     }
   } catch (error: any) {

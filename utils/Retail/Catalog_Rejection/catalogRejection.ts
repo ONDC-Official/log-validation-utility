@@ -28,7 +28,10 @@ export const checkCatalogRejection = (data: any) => {
         if (!errors || !context || Object.entries(errors).length == 0) {
             return { missingFields: '/context, /errors is missing or empty' }
         }
-        const schemaValidation = validateSchema('RET', constants.CATALOG_REJECTION, data)
+        if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+            errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+          }
+        const schemaValidation = validateSchema(context.domain.split(':')[1], constants.CATALOG_REJECTION, data)
         const contextRes: any = checkContext(context, constants.CATALOG_REJECTION)
 
         errors.map((error: CatalogError, index: number) => {
@@ -39,7 +42,6 @@ export const checkCatalogRejection = (data: any) => {
                     catalogError = catalogRejectionErrors[code];
                 }
             }
-            console.log("Hello", catalogError, index)
             if (error.message != catalogError?.message) {
                 errorObj[`error.message${index}`] = `Catalog rejection error message doesn't matches with the provided error.message code: ${errorCode}`
             }

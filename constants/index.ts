@@ -49,6 +49,7 @@ export default Object.freeze({
   ON_REPORT: 'on_report',
   RECON: 'recon',
   ON_RECON: 'on_recon',
+  CATALOG_REJECTION:'catalog_rejection',
   "ISSUE_1": "issue_1",
   "ON_ISSUE_1": "on_issue_1",
   "ON_ISSUE_2": "on_issue_2",
@@ -103,6 +104,7 @@ export const ApiSequence = {
   ON_UPDATE_LIQUIDATED: 'on_update_liquidated',
   SELECT_OUT_OF_STOCK: 'select_out_of_stock',
   ON_SELECT_OUT_OF_STOCK: 'on_select_out_of_stock',
+  CATALOG_REJECTION:'catalog_rejection'
 }
 
 export const FisApiSequence = {

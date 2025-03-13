@@ -1412,6 +1412,6 @@ export const onSearchSchema = {
       },
       required: ['catalog'],
     },
-    required: ['context', 'message'],
-  }
+  },
+  required: ['context', 'message'],
 }

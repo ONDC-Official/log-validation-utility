@@ -348,40 +348,24 @@ export const onSelectSchema = {
                             },
                             required: ["tags"]
                           }
-                        },
-                        required: ["@ondc/org/item_id", "title", "@ondc/org/title_type", "price", "item"]
-                      },
+                        },                      },
                       ttl: {
                         type: 'string',
                         format: 'duration',
                       },
                     },
-                    required: ['price', 'breakup', 'ttl'],
+                    required: ['@ondc/org/item_id', 'title', '@ondc/org/title_type', 'price'],
                   },
                 },
-                required: ['provider', 'items', 'fulfillments', 'quote'],
               },
+              required: ['price', 'breakup'],
             },
-            required: ['order'],
           },
-          error: {
-            type: 'object',
-            properties: {
-              type: {
-                type: 'string',
-              },
-              code: {
-                type: 'string',
-              },
-              message: {
-                type: 'string',
-              },
-            },
-            required: ['type', 'code', 'message'],
-          },
+          required: ['provider', 'items', 'fulfillments', 'quote'],
         },
-        required: ['context', 'message'],
-      }
+      },
+      required: ['order'],
     }
-  }
+  },
+  required: ['context', 'message'],
 }

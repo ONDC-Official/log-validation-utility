@@ -960,12 +960,12 @@ export const checkOnsearch = (data: any) => {
                   if (attrList) {
                     const isValid =
                       attrList.value === 'item.quantity.unitized.measure' ||
-                      attrList.value.startsWith('item.quantity.tags.');
+                      attrList.value.startsWith('item.tags.attribute');
 
                     if (!isValid) {
                       const key = `prvdr${i}category${j}tags${index}`;
                       errorObj[key] =
-                        `list.code == attr then name should be 'item.quantity.unitized.measure' or 'item.quantity.tags.{object.keys}' in bpp/providers[${i}]`;
+                        `list.code == attr then name should be 'item.quantity.unitized.measure' or 'item.tags.attribute.{object.keys}' in bpp/providers[${i}]`;
                     }
                   }
                   break;

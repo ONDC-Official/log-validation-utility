@@ -727,7 +727,7 @@ export const FnBonSearchSchema = {
                           properties: {
                             code: {
                               type: 'string',
-                              enum: ['disc_pct', 'disc_amt', 'buyXgetY', 'freebie'],
+                              enum: ['discount', 'buyXgetY', 'freebie', 'slab', 'combo', 'delivery']
                             },
                             images: {
                               type: 'array',

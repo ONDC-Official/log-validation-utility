@@ -14,6 +14,11 @@ const checkRsfSettle = (data: any) => {
     return { [RSF_v2_apiSequence.SETTLE]: 'JSON cannot be empty' }
   }
 
+  setValue('settle_context', context)
+  setValue('settle_message', message)
+  setValue('settle_message_settlement_id', message.settlement.id)
+
+  console.log('settle_message_settlement_id', message.settlement.id)
   try {
     logger.info(`Validating Schema for ${RSF_v2_apiSequence.SETTLE} API`)
     const vs = validateSchema('rsf', RSF_v2_apiSequence.SETTLE, data)
@@ -26,13 +31,9 @@ const checkRsfSettle = (data: any) => {
   if (message?.receiver_app_id === context?.bpp_id) {
     rsfObj.receiver_app_id = 'receiver_app_id should not match with bpp_id'
   }
-
   if (vs != 'error') {
     Object.assign(rsfObj, vs)
   }
-
-  setValue('settle_context', context)
-  setValue('settle_message', message)
 
   logger.info('Validate required fields for MISC type')
   if (message?.settlement?.type === 'MISC') {

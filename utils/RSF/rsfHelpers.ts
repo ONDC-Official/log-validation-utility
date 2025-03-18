@@ -97,3 +97,24 @@ export const validateSettlementAmounts = (order: any) => {
 
   return Math.abs(orderAmount - totalSettlementAmount) < 0.01 
 }
+
+export const  getAllSettlementIds = (orders: any[]): string[] => {
+  
+  if (!orders || !Array.isArray(orders)) {
+    return [];
+  }
+  
+  const settlementIds: string[] = [];
+  
+  for (const order of orders) {
+    if (order.settlements && Array.isArray(order.settlements)) {
+      for (const settlement of order.settlements) {
+        if (settlement.id) {
+          settlementIds.push(settlement.id);
+        }
+      }
+    }
+  }
+  
+  return settlementIds;
+}

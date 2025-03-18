@@ -40,6 +40,15 @@ const checkRsfOnSettle = (data: any) => {
       logger.error(`!!Error while comparing context for /${constants.SETTLE} and /${constants.ON_SETTLE} api, ${error.stack}`)
     }
 
+    logger.info('Comparing settlement_id from previous settle and on_settle')
+    const settle_id = getValue('settle_message_settlement_id')
+    console.log("settle_id", settle_id)
+    console.log("on_Settle_id", message.settlement)
+    if (settle_id !== message.settlement.id) {
+      rsfObj.settlement_id = 'settlement_id in on_settle should match with settlement_id in settle'
+    }
+
+
     logger.info('Validate required fields for MISC type for on_settle')
 
     console.log("msg on_settle", message)

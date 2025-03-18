@@ -5,7 +5,7 @@ import { validateSchema } from '../../index'
 import { logger } from '../../../shared/logger'
 import { setValue, getValue } from '../../../shared/dao'
 import constants from '../../../constants/index'
-import { compareContexts, validateSettlementAmounts } from '../rsfHelpers'
+import { compareContexts,   validateSettlementAmounts, getAllSettlementIds} from '../rsfHelpers'
 
 const checkRsfOnRecon = (data: any) => {
   const rsfObj: any = {}
@@ -39,6 +39,43 @@ const checkRsfOnRecon = (data: any) => {
       logger.error(`!!Error while comparing context for /${constants.RECON} and /${constants.ON_RECON} api, ${error.stack}`)
     }
 
+    try {
+      logger.info('Extracting settlement IDs from orders')
+      const settlementIds = getAllSettlementIds(message?.orders || [])
+      logger.info(`Found ${settlementIds.length} settlement IDs: ${JSON.stringify(settlementIds)}`)
+      setValue('on_recon_settlement_ids', settlementIds)
+      const settleId = getValue('settle_message_settlement_id')
+      if (settleId) {
+        logger.info(`Checking if settle ID ${settleId} is present in recon settlement IDs`)
+        if (!settlementIds.includes(settleId)) {
+          rsfObj.settlement_id_mismatch = `Settlement ID ${settleId} from /settle API is not present in the settlement IDs from /on_recon API`
+          logger.error(`Settlement ID ${settleId} from /settle API is not present in the settlement IDs from /on_recon API`)
+        } else {
+          logger.info(`Settlement ID ${settleId} from /settle API is present in the settlement IDs from /on_recon API`)
+        }
+      } else {
+        logger.warn('No settle_message_settlement_id found to compare with recon settlement IDs')
+      }
+    } catch (err) {
+      logger.error('Error occurred while extracting and validating settlement IDs', err)
+    }
+
+    try{
+      const reconAccordStatus = message?.orders?.every((order: any) => 
+         order?.recon_accord === true)
+
+      console.log(`reconAccordStatus ${reconAccordStatus}`)
+
+      if(reconAccordStatus === true){
+        if(!message.orders.due_date){
+          rsfObj.due_date = 'If on_recon is true than due_date should be present'
+        }
+      }
+    }catch(error:any){
+      logger.error(`Error while validating recon_accord`, error)
+    }
+
+    //amount validation
     try {
       logger.info('validating recon_accord is false')
       if (message.orders.recon_accord === false) {

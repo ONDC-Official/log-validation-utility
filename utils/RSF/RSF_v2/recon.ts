@@ -2,8 +2,8 @@ import { RSF_v2_apiSequence } from '../../../constants/index'
 import { isObjectEmpty } from '../../index'
 import { validateSchema } from '../../index'
 import { logger } from '../../../shared/logger'
-import { setValue } from '../../../shared/dao'
-import { validateSettlementAmounts } from '../rsfHelpers'
+import { setValue , getValue} from '../../../shared/dao'
+import { validateSettlementAmounts, getAllSettlementIds,} from '../rsfHelpers'
 
 const checkRsfRecon = (data: any) => {
   const rsfObj: any = {}
@@ -23,6 +23,28 @@ const checkRsfRecon = (data: any) => {
     setValue('recon_context', context)
     setValue('recon_message', message)
 
+    try {
+      logger.info('Extracting settlement IDs from orders')
+      const settlementIds = getAllSettlementIds(message?.orders || [])
+      logger.info(`Found ${settlementIds.length} settlement IDs: ${JSON.stringify(settlementIds)}`)
+      setValue('recon_settlement_ids', settlementIds)
+      
+      const settleId = getValue('settle_message_settlement_id')
+      if (settleId) {
+        logger.info(`Checking if settle ID ${settleId} is present in recon settlement IDs`)
+        if (!settlementIds.includes(settleId)) {
+          rsfObj.settlement_id_mismatch = `Settlement ID ${settleId} from /settle API is not present in the settlement IDs from /recon API`
+          logger.error(`Settlement ID ${settleId} from /settle API is not present in the settlement IDs from /recon API`)
+        } else {
+          logger.info(`Settlement ID ${settleId} from /settle API is present in the settlement IDs from /recon API`)
+        }
+      } else {
+        logger.warn('No settlement_id found to compare with recon settlement IDs')
+      }
+    } catch (err) {
+      logger.error('Error occurred while extracting and validating settlement IDs', err)
+    }
+    
   try{  
     logger.info('Validating reconcile orders')
     message?.orders?.forEach((order: any, orderIndex: number) => {
@@ -40,6 +62,7 @@ const checkRsfRecon = (data: any) => {
     logger.error('Error occurred while validating reconcile orders', err)
   }
 
+  //amount validation
   try{
     logger.info('Validating reconcile amounts')
     message?.orders?.forEach((order: any, index: number) => {

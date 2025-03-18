@@ -594,6 +594,7 @@ export const retailPymntTtl = {
   tax: 'tax',
   discount: 'discount',
   'convenience fee': 'misc',
+  offer: 'offer'
 }
 
 export const taxNotInlcusive = [...fnbCategories]
@@ -694,10 +695,14 @@ export enum DOMAIN {
 export enum FLOW {
   FLOW1 = '1',
   FLOW2 = '2',
+  FLOW2A = '2A',
   FLOW3 = '3',
   FLOW4 = '4',
   FLOW5 = '5',
   FLOW6 = '6',
+  FLOW7 = '7',
+  FLOW8 = '8',
+  FLOW9 = '9'
 }
 
 export enum statutory_reqs {

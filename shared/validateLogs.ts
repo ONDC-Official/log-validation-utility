@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { dropDB, setValue } from '../shared/dao'
 import { logger } from './logger'
-import { ApiSequence, retailDomains, IGMApiSequence,IGM2Sequence, RSFapiSequence, RSF_v2_apiSequence } from '../constants'
+import { ApiSequence, retailDomains, IGMApiSequence, RSFapiSequence, RSF_v2_apiSequence, IGM2FlowSequence } from '../constants'
 import { validateSchema, isObjectEmpty } from '../utils'
 import { checkOnsearchFullCatalogRefresh } from '../utils/Retail/RET11_onSearch/onSearch'
 import { checkSelect } from '../utils/Retail/Select/select'
@@ -49,8 +49,9 @@ import checkRsfReport from '../utils/RSF/RSF_v2/report'
 import checkRsfOnReport from '../utils/RSF/RSF_v2/on_report'
 import checkRsfRecon from '../utils/RSF/RSF_v2/recon'
 import checkRsfOnRecon from '../utils/RSF/RSF_v2/on_recon'
-import checkOnIssueV2 from '../utils/igm/igm2/on_issue_1'
-import checkIssueV2 from '../utils/igm/igm2/issue_1'
+import checkOnIssueV2 from '../utils/igm/igm2/on_issue'
+import checkIssueV2 from '../utils/igm/igm2/issue'
+import {checkCatalogRejection} from '../utils/Retail/Catalog_Rejection/catalogRejection'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
@@ -67,9 +68,9 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
   }
 
   try {
-    const validFlows = ['1', '2', '3', '4', '5', '6']
+    const validFlows = ['1', '2', '2A', '3', '4', '5', '6', '7', '8', '9', ]
     if (!retailDomains.includes(domain)) {
-      return 'Domain should be one of the 1.2.0 retail domains'
+      return 'Domain should be one of the 1.2.0 or 1.2.5 retail domains'
     }
     const flowOneSequence = [
       ApiSequence.SEARCH,
@@ -165,12 +166,26 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       ApiSequence.ON_UPDATE_LIQUIDATED,
       ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED,
     ]
+    const flowSevenSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.CATALOG_REJECTION
+    ]
+    const flowEightSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+    ]
+    const flowNineSequence = [
+      ApiSequence.INC_SEARCH,
+      ApiSequence.INC_ONSEARCH,
+      ApiSequence.CATALOG_REJECTION
+    ]
 
     const processApiSequence = (apiSequence: any, data: any, logReport: any, msgIdSet: any, flow: string) => {
       if (validFlows.includes(flow)) {
         apiSequence.forEach((apiSeq: any) => {
           if (data[apiSeq]) {
-            const resp = getResponse(apiSeq, data[apiSeq], msgIdSet)
+            const resp = getResponse(apiSeq, data[apiSeq], msgIdSet, flow)
             if (!_.isEmpty(resp)) {
               logReport = { ...logReport, [apiSeq]: resp }
             }
@@ -184,7 +199,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         return { invldFlow: 'Provided flow is invalid' }
       }
     }
-    const getResponse = (apiSeq: any, data: any, msgIdSet: any) => {
+    const getResponse = (apiSeq: any, data: any, msgIdSet: any, flow: string) => {
       switch (apiSeq) {
         case ApiSequence.SEARCH:
           return checkSearch(data, msgIdSet)
@@ -213,11 +228,11 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         case ApiSequence.INIT:
           return checkInit(data, msgIdSet)
         case ApiSequence.ON_INIT:
-          return checkOnInit(data)
+          return checkOnInit(data, flow)
         case ApiSequence.CONFIRM:
-          return checkConfirm(data, msgIdSet)
+          return checkConfirm(data, msgIdSet, flow)
         case ApiSequence.ON_CONFIRM:
-          return checkOnConfirm(data, fulfillmentsItemsSet)
+          return checkOnConfirm(data, fulfillmentsItemsSet, flow)
         case ApiSequence.CANCEL:
           return checkCancel(data, msgIdSet)
         case ApiSequence.ON_CANCEL:
@@ -264,6 +279,8 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
           return checkTrack(data)
         case ApiSequence.ON_TRACK:
           return checkOnTrack(data)
+        case ApiSequence.CATALOG_REJECTION:
+          return checkCatalogRejection(data)
         default:
           return null
       }
@@ -286,6 +303,15 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         break
       case FLOW.FLOW6:
         logReport = processApiSequence(flowSixSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW7:
+        logReport= processApiSequence(flowSevenSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW8:
+        logReport = processApiSequence(flowEightSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW9: 
+        logReport = processApiSequence(flowNineSequence, data, logReport, msgIdSet, flow)
         break
     }
   } catch (error: any) {
@@ -410,9 +436,8 @@ export const IGMvalidateLogs = (data: any) => {
   }
 }
 
-export const IGMvalidateLogs2 = (data: any) => {
+export const IGMvalidateLogs2 = (data: any, flow?: any) => {
   let logReport: any = {}
-
 
   try {
     dropDB()
@@ -421,101 +446,10 @@ export const IGMvalidateLogs2 = (data: any) => {
   }
 
   try {
-    if (data[IGM2Sequence.ISSUE_1]) {
-      const issue_1 = checkIssueV2(data[IGM2Sequence.ISSUE_1], IGM2Sequence.ISSUE_1)
-
-      if (!_.isEmpty(issue_1)) {
-        logReport = { ...logReport, [IGM2Sequence.ISSUE_1]: issue_1 }
-      }
-    }
-
-    if (data[IGM2Sequence.ON_ISSUE_1]) {
-      const on_issue_1 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_1],IGM2Sequence.ON_ISSUE_1)
-
-      if (!_.isEmpty(on_issue_1)) {
-        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_1]: on_issue_1 }
-      }
-    }
-
-    if(data[IGM2Sequence.ON_ISSUE_2]){
-      const on_issue_2 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_2],IGM2Sequence.ON_ISSUE_2  )
-
-      if (!_.isEmpty(on_issue_2)) {
-        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_2]: on_issue_2 }
-      }
-    }
-
-    if(data[IGM2Sequence.ISSUE_2]){
-      const on_issue_2 = checkIssueV2(data[IGM2Sequence.ISSUE_2],IGM2Sequence.ISSUE_2  )
-
-      if (!_.isEmpty(on_issue_2)) {
-        logReport = { ...logReport, [IGM2Sequence.ISSUE_2]: on_issue_2 }
-      }
-    }
-
-    if (data[IGM2Sequence.ON_ISSUE_3]) {
-      const on_issue_3 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_3],IGM2Sequence.ON_ISSUE_3)
-
-      if (!_.isEmpty(on_issue_3)) {
-        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_3]: on_issue_3 }
-      }
-    }
-
-    if(data[IGM2Sequence.ON_ISSUE_4]){
-      const ON_ISSUE_4 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_4],IGM2Sequence.ISSUE_4  )
-
-      if (!_.isEmpty(ON_ISSUE_4)) {
-        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_4]: ON_ISSUE_4}
-      }
-    }
-
-    if(data[IGM2Sequence.ISSUE_3]){
-      const ISSUE_3 = checkIssueV2(data[IGM2Sequence.ISSUE_3],IGM2Sequence.ISSUE_3  )
-
-      if (!_.isEmpty(ISSUE_3)) {
-        logReport = { ...logReport, [IGM2Sequence.ISSUE_3]: ISSUE_3 }
-      }
-    }
-
-    if(data[IGM2Sequence.ON_ISSUE_5]){
-      const on_issue_5 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_5],IGM2Sequence.ON_ISSUE_5  )
-
-      if (!_.isEmpty(on_issue_5)) {
-        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_5]: on_issue_5 }
-      }
-    }
-
-    if(data[IGM2Sequence.ON_ISSUE_6]){
-      const on_issue_6 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_6],IGM2Sequence.ON_ISSUE_6  )
-
-      if (!_.isEmpty(on_issue_6)) {
-        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_6]: on_issue_6 }
-      }
-    }
-
-    if(data[IGM2Sequence.ISSUE_4]){
-      const ISSUE_4 = checkIssueV2(data[IGM2Sequence.ISSUE_4],IGM2Sequence.ISSUE_4  )
-
-      if (!_.isEmpty(ISSUE_4)) {
-        logReport = { ...logReport, [IGM2Sequence.ISSUE_4]: ISSUE_4 }
-      }
-    }
-
-    if(data[IGM2Sequence.ON_ISSUE_7]){
-      const on_issue_7 = checkOnIssueV2(data[IGM2Sequence.ON_ISSUE_7],IGM2Sequence.ON_ISSUE_7  )
-
-      if (!_.isEmpty(on_issue_7)) {
-        logReport = { ...logReport, [IGM2Sequence.ON_ISSUE_7]: on_issue_7 }
-      }
-    }
-
-    if(data[IGM2Sequence.ISSUE_5]){
-      const ISSUE_5 = checkIssueV2(data[IGM2Sequence.ISSUE_5],IGM2Sequence.ISSUE_5  )
-
-      if (!_.isEmpty(ISSUE_5)) {
-        logReport = { ...logReport, [IGM2Sequence.ISSUE_5]: ISSUE_5 }
-      }
-    }
+    // Process each flow's validation steps
+    processFlowValidations(IGM2FlowSequence.FLOW_1, data, flow, logReport);
+    processFlowValidations(IGM2FlowSequence.FLOW_2, data, flow, logReport);
+    processFlowValidations(IGM2FlowSequence.FLOW_3, data, flow, logReport);
 
     logger.info(logReport, 'Report Generated Successfully!!')
     return logReport
@@ -523,6 +457,26 @@ export const IGMvalidateLogs2 = (data: any) => {
     logger.error(error.message)
     return error.message
   }
+}
+
+function processFlowValidations(flowSequence: any, data: any, flow: any, logReport: any) {
+  // Iterate through each step in the flow sequence
+  Object.entries(flowSequence).forEach(([stepKey, stepValue]) => {
+    const stepData = data[stepValue as string];
+    if (!stepData) return;
+
+    // Determine if this is an issue or on_issue step
+    const isIssueStep = stepKey.startsWith('ISSUE');
+    const validationFunction = isIssueStep ? checkIssueV2 : checkOnIssueV2;
+    
+    // Validate the step data
+    const validationResult = validationFunction(stepData, stepValue as string, flow);
+    
+    // Add validation results to the report if there are any
+    if (!_.isEmpty(validationResult)) {
+      logReport[stepValue as string] = validationResult;
+    }
+  });
 }
 
 export const RSFvalidateLogs = (data: any) => {

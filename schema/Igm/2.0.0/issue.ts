@@ -156,12 +156,13 @@ const newIssueSchema = {
                       'FULFILMENT',
                       'ITEM',
                       'AGENT',
-                      'TRANSACTION_ID',
+                      'TRANSACTION',
                       'MESSAGE_ID',
                       'COMPLAINT',
                       'CUSTOMER',
                       'PAYMENT',
                       'ACTION',
+            
                     ],
                   },
                   tags: {
@@ -219,6 +220,7 @@ const newIssueSchema = {
                       'COUNTERPARTY_NP_GRO',
                       'CASCADED_NP_GRO',
                       'CASCADED_NP',
+                      'SELLER'
                     ],
                   },
                   info: {

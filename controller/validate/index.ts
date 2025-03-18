@@ -25,7 +25,7 @@ const controller = {
               domain,
               payload,
               version,
-              flow,
+              flow.toString(),
               bap_id,
               bpp_id,
             )
@@ -53,7 +53,7 @@ const controller = {
           break
         case DOMAIN.IGM:
           // eslint-disable-next-line no-case-declarations
-          const { response, success, message } = await helper.validateIGM(payload, version)
+          const { response, success, message } = await helper.validateIGM(payload, version, flow)
           result = { response, success, message }
           break
         case DOMAIN.RSF:
@@ -144,6 +144,7 @@ const controller = {
       const payload = req.body
       switch (core_version) {
         case '1.2.0':
+        case '1.2.5':
           error = validateActionSchema(payload, domain, action)
           break
         default:

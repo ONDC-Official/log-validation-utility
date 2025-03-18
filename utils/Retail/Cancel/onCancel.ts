@@ -532,7 +532,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
     try {
       logger.info(`Checking if transaction_id is present in message.order.payment`)
       const payment = on_cancel.payment
-      const status = payment_status(payment)
+      const status = payment_status(payment, flow)
       if (!status) {
         onCnclObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
       }

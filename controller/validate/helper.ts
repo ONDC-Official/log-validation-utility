@@ -52,6 +52,7 @@ const validateRetail = async (
 
   switch (version) {
     case '1.2.0':
+    case '1.2.5':
       response = await validateLogs(payload, domain, flow)
 
       if (_.isEmpty(response)) {
@@ -175,7 +176,7 @@ const validateMobility = async (domain: string, payload: string, version: string
 
   return { response, success, message }
 }
-const validateIGM = async (payload: string, version: string) => {
+const validateIGM = async (payload: string, version: string, flow?: string) => {
   let response
   let success = false
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
@@ -191,7 +192,7 @@ const validateIGM = async (payload: string, version: string) => {
 
       break
       case '2.0.0':
-      response = IGMvalidateLogs2(payload)
+      response = IGMvalidateLogs2(payload, flow)
 
       if (_.isEmpty(response)) {
         success = true

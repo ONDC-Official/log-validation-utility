@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { getValue, setValue } from '../../../shared/dao'
 import { checkContext, isObjectEmpty } from '../../../utils/index'
-import { IGM2Sequence } from '../../../constants/index'
+import { IGM2Sequence, IGM2FlowSequence } from '../../../constants/index'
 import { validateSchema } from '../../../utils/index'
 import { logger } from '../../../shared/logger'
 import { validateRefs } from './common/refs'
@@ -159,14 +159,59 @@ const storeValues = (message: any, context: any, apiSequence: string) => {
 }
 
 /**
- * Consolidated validator for all on_issue sequences (on_issue_1 to on_issue_7)
- * @param data The API payload to validate
- * @param apiSequence The API sequence identifier
- * @returns Validation errors object
+ * Validates actor relationships (complainant_id, customer_id)
  */
-const checkOnIssueV2 = (data: any, apiSequence:string) => {
-  const onIssueObj: any = {}
+const validateActorRelationships = (message: any, errorObj: any) => {
+  if (!message.issue.actors || message.issue.actors.length === 0) return;
+  
+  // Check complainant_id matches INTERFACING_NP actor id
+  const interfacingNpActor = message.issue.actors.find((actor: any) => actor.type === 'INTERFACING_NP');
+  if (interfacingNpActor && message.issue.complainant_id !== interfacingNpActor.id) {
+    errorObj.complainant_id = `complainant_id (${message.issue.complainant_id}) should match the id of the INTERFACING_NP actor (${interfacingNpActor.id})`;
+  }
+  
+  // Check customer_id matches CONSUMER actor id
+  const consumerActor = message.issue.actors.find((actor: any) => actor.type === 'CONSUMER');
+  if (consumerActor && message.issue.customer_id !== consumerActor.id) {
+    errorObj.customer_id = `customer_id (${message.issue.customer_id}) should match the id of the CONSUMER actor (${consumerActor.id})`;
+  }
+};
 
+/**
+ * Validates updated_target if present
+ */
+const validateUpdatedTarget = (message: any, errorObj: any) => {
+  if (!message.issue.updated_target) return;
+  
+  // Validate updated_target array
+  if (!Array.isArray(message.issue.updated_target)) {
+    errorObj.updated_target = 'updated_target must be an array';
+    return;
+  }
+
+  message.issue.updated_target.forEach((target: any, index: number) => {
+    // Check if target has required fields
+    if (!target.path || !target.action) {
+      errorObj[`updated_target_${index}`] = 'Each updated_target must have path and action fields';
+      return;
+    }
+
+    // Validate action type
+    const validActions = ['APPENDED', 'REMOVED', 'MODIFIED'];
+    if (!validActions.includes(target.action)) {
+      errorObj[`updated_target_${index}_action`] = `action must be one of: ${validActions.join(', ')}`;
+    }
+
+    // Validate path format (should be dot-notation path to a field)
+    if (typeof target.path !== 'string' || !target.path.startsWith('issue.')) {
+      errorObj[`updated_target_${index}_path`] = 'path must be a string starting with "issue."';
+    }
+  });
+};
+
+const checkOnIssueV2 = (data: any, apiSequence:string, flow: any) => {
+  const onIssueObj: any = {}
+  console.log("flow", flow)
   if (!data || isObjectEmpty(data)) {
     return { [apiSequence]: 'JSON cannot be empty' }
   }
@@ -208,64 +253,51 @@ const checkOnIssueV2 = (data: any, apiSequence:string) => {
       validateLastAction(message, onIssueObj)
       validateRespondentIds(message, onIssueObj)
       
+      // Add new validations
+      validateActorRelationships(message, onIssueObj)
+      validateUpdatedTarget(message, onIssueObj)
+      
+      // For specific API sequences, add status validation
+      if (apiSequence === IGM2Sequence.ON_ISSUE_1) {
+        if (message.issue.status !== 'PROCESSING') {
+          onIssueObj.status_on_issue_1 = `For ${apiSequence}, status should typically be PROCESSING, found: ${message.issue.status}`;
+        }
+      }
+      
       // Reuse common validation functions for complex objects
-      Object.assign(onIssueObj, validateRefs(message.issue.refs))
-      Object.assign(onIssueObj, validateActions(message.issue.actions))
-      Object.assign(onIssueObj, validateActors(message.issue.actors))
+      Object.assign(onIssueObj, validateRefs(message.issue.refs, flow))
+      Object.assign(onIssueObj, validateActions(message.issue.actions, message))
+      Object.assign(onIssueObj, validateActors(message.issue.actors, context, flow))
       validateDescription(message, onIssueObj)
       validateResolution(message, onIssueObj)
 
+      if (message.issue.updated_at <= message.issue.created_at) {
+        onIssueObj.updated_at_mismatch = 'updated_at must be greater than created_at'
+      }
+
       // Sequence-specific validations
       switch(apiSequence) {
-        case IGM2Sequence.ON_ISSUE_1:
+        case IGM2FlowSequence.FLOW_1.ON_ISSUE_PROCESSING_1:
           // For ON_ISSUE_1: updated_at should equal created_at
-          if (message.issue.updated_at !== message.issue.created_at) {
-            onIssueObj.updated_at_mismatch = `In ${apiSequence}, updated_at should be equal to created_at`
-          }
           break
           
         case IGM2Sequence.ON_ISSUE_2:
-          // For ON_ISSUE_2: Validate respondent actions
-          if (message.issue.actions && message.issue.actions.length > 0) {
-            const respondentActions = message.issue.actions.filter((action: any) => 
-              action.type === 'RESPONDENT_ACTION' && action.updated_by === 'RESPONDENT')
-            
-            if (respondentActions.length === 0) {
-              onIssueObj.respondent_actions = `${apiSequence} should include at least one respondent action`
-            }
-          }
+          
           break
           
         case IGM2Sequence.ON_ISSUE_3:
-          // For ON_ISSUE_3: Additional validations specific to this stage
-          if (message.issue.status !== 'PROCESSING' && message.issue.status !== 'RESOLVED') {
-            onIssueObj.status_validation = `${apiSequence} typically expects status to be PROCESSING or RESOLVED, found: ${message.issue.status}`
-          }
+        
           break
           
         case IGM2Sequence.ON_ISSUE_4:
-          // For ON_ISSUE_4: Validate resolution progress
-          if (message.issue.status === 'RESOLVED' && !message.issue.resolution) {
-            onIssueObj.missing_resolution = `When status is RESOLVED in ${apiSequence}, resolution details must be provided`
-          }
           break
           
         case IGM2Sequence.ON_ISSUE_5:
         case IGM2Sequence.ON_ISSUE_6:
         case IGM2Sequence.ON_ISSUE_7:
-          // Check escalation sequence - these usually come later in workflows
-          if (message.issue.escalation_level && 
-              (typeof message.issue.escalation_level !== 'number' || 
-               message.issue.escalation_level < 1)) {
-            onIssueObj.escalation_level = 'escalation_level must be a positive number'
-          }
+        
           
-          // For later stages, status should typically move toward resolution
-          if (apiSequence === IGM2Sequence.ON_ISSUE_7 && 
-              message.issue.status !== 'RESOLVED' && 
-              message.issue.status !== 'CLOSED') {
-            onIssueObj.final_status = `By ${apiSequence}, issue status should typically be RESOLVED or CLOSED, found: ${message.issue.status}`
-          }
+         
           break
           
         default:
@@ -289,4 +321,4 @@ const checkOnIssueV2 = (data: any, apiSequence:string) => {
   }
 }
 
-export default checkOnIssueV2
+export default checkOnIssueV2 

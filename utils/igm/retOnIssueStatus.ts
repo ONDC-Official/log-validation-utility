@@ -13,7 +13,7 @@ import {
 } from './igmHelpers'
 
 const checkOnIssueStatus = (data: any) => {
-  const onIssueStatusObj: any = {}
+  const errObj: any = { onIssueStatusObj: {} }
   let res: any = {}
   try {
     const onIssueStatus: any = data
@@ -21,7 +21,7 @@ const checkOnIssueStatus = (data: any) => {
       logger.info(`Validating Schema for ${constants.RET_ONISSUE_STATUS} API`)
       const vs = validateSchema('igm', constants.RET_ONISSUE_STATUS, onIssueStatus)
       if (vs != 'error') {
-        Object.assign(onIssueStatusObj, vs)
+        Object.assign(errObj.onIssueStatusObj, vs)
       }
     } catch (error: any) {
       logger.error(
@@ -33,7 +33,7 @@ const checkOnIssueStatus = (data: any) => {
       logger.info(`Checking context for /${constants.RET_ONISSUE_STATUS} API`) //checking context
       res = checkContext(onIssueStatus.context, constants.RET_ONISSUE_STATUS)
       if (!res.valid) {
-        Object.assign(onIssueStatusObj, res.ERRORS)
+        Object.assign(errObj.onIssueStatusObj, res.ERRORS)
       }
     } catch (error: any) {
       logger.error(`!!Some error occurred while checking /${constants.RET_ONISSUE_STATUS} context, ${error.stack}`)
@@ -49,7 +49,7 @@ const checkOnIssueStatus = (data: any) => {
           99999999999,
         )
       ) {
-        onIssueStatusObj.Phn = `Phone Number for /${constants.RET_ONISSUE_STATUS} api is not in the valid Range`
+        errObj.onIssueStatusObj.Phn = `Phone Number for /${constants.RET_ONISSUE_STATUS} api is not in the valid Range`
       }
     } catch (error: any) {
       logger.error(`Error while checking phone number for /${constants.RET_ONISSUE_STATUS} api, ${error.stack}`)
@@ -58,7 +58,7 @@ const checkOnIssueStatus = (data: any) => {
     try {
       logger.info(`Comparing transaction ID of /${constants.RET_ISSUE} and /${constants.RET_ONISSUE_STATUS}`)
       if (!_.isEqual(getValue('igmTxnId'), onIssueStatus.context.transaction_id)) {
-        onIssueStatusObj.igmTxnId = `transaction ID mismatch in /${constants.RET_ISSUE} and /${constants.RET_ONISSUE_STATUS}`
+        errObj.onIssueStatusObj.igmTxnId = `transaction ID mismatch in /${constants.RET_ISSUE} and /${constants.RET_ONISSUE_STATUS}`
       }
     } catch (error: any) {
       logger.error(
@@ -69,7 +69,7 @@ const checkOnIssueStatus = (data: any) => {
     try {
       logger.info(`Comparing MESSAGE ID of /${constants.RET_ISSUE_STATUS} and /${constants.RET_ONISSUE_STATUS}`)
       if (!_.isEqual(getValue('igmIssueStatMsgId'), onIssueStatus.context.message_id)) {
-        onIssueStatusObj.igmIssueMsgId = `Message  ID mismatch in /${constants.RET_ISSUE_STATUS} and /${constants.RET_ONISSUE_STATUS}`
+        errObj.onIssueStatusObj.igmIssueMsgId = `Message  ID mismatch in /${constants.RET_ISSUE_STATUS} and /${constants.RET_ONISSUE_STATUS}`
       }
     } catch (error: any) {
       logger.error(
@@ -83,7 +83,7 @@ const checkOnIssueStatus = (data: any) => {
         onIssueStatus?.message?.issue?.resolution?.refund_amount &&
         onIssueStatus?.message?.issue.resolution.action_triggered != 'REFUND'
       ) {
-        onIssueStatusObj.refund_amt = `Refund Amount for /${constants.RET_ONISSUE_STATUS} should only be when action type is REFUND `
+        errObj.onIssueStatusObj.refund_amt = `Refund Amount for /${constants.RET_ONISSUE_STATUS} should only be when action type is REFUND `
       }
     } catch (error: any) {
       logger.error(`Error while checking refund amount for /${constants.RET_ONISSUE_STATUS} api, ${error.stack}`)
@@ -92,7 +92,7 @@ const checkOnIssueStatus = (data: any) => {
     try {
       logger.info(`Comparing Domain of /${constants.RET_ISSUE} and /${constants.RET_ONISSUE_STATUS}`)
       if (!_.isEqual(getValue('igmDomain'), onIssueStatus.context.domain)) {
-        onIssueStatusObj.igmDomain = `Domain for /${constants.RET_ISSUE} api should be equal to /${constants.RET_ONISSUE_STATUS} api`
+        errObj.onIssueStatusObj.igmDomain = `Domain for /${constants.RET_ISSUE} api should be equal to /${constants.RET_ONISSUE_STATUS} api`
       }
     } catch (error: any) {
       logger.error(
@@ -110,7 +110,7 @@ const checkOnIssueStatus = (data: any) => {
           99999999999,
         )
       ) {
-        onIssueStatusObj.Phn = `Phone Number for /${constants.RET_ONISSUE_STATUS} api is not in the valid Range`
+        errObj.onIssueStatusObj.Phn = `Phone Number for /${constants.RET_ONISSUE_STATUS} api is not in the valid Range`
       }
     } catch (error: any) {
       logger.error(`Error while checking phone number for /${constants.RET_ONISSUE_STATUS} api, ${error.stack}`)
@@ -123,7 +123,7 @@ const checkOnIssueStatus = (data: any) => {
       actionPayload: respondent_actions,
       contextSubscriberId: onIssueStatus.context.bpp_id,
       contextDomain: onIssueStatus.context.domain,
-      issueReportObj: onIssueStatusObj,
+      issueReportObj: errObj.onIssueStatusObj,
       IdType: 'BPP',
     })
 
@@ -131,32 +131,34 @@ const checkOnIssueStatus = (data: any) => {
       endpoint: constants.RET_ONISSUE_STATUS,
       actionPayload: respondent_actions,
       messageUpdatedAt: onIssueStatus.message.issue.updated_at,
-      issueReportObj: onIssueStatusObj,
+      issueReportObj: errObj.onIssueStatusObj,
     })
 
     checkCreatedAtInAll({
       endpoint: constants.RET_ONISSUE_STATUS,
       created_at: onIssueStatus.message.issue.created_at,
-      issueReportObj: onIssueStatusObj,
+      issueReportObj: errObj.onIssueStatusObj,
     })
 
     checkDomainInAll({
       endpoint: constants.RET_ONISSUE_STATUS,
       domain: onIssueStatus.context.domain,
-      issueReportObj: onIssueStatusObj,
+      issueReportObj: errObj.onIssueStatusObj,
     })
 
     compareContextTimeStampAndUpdatedAt({
       endpoint: constants.RET_ONISSUE_STATUS,
       contextTimeStamp: onIssueStatus.context.timestamp,
       issue_updated_at: onIssueStatus.message.issue.updated_at,
-      issueReportObj: onIssueStatusObj,
+      issueReportObj: errObj.onIssueStatusObj,
     })
 
-    setValue('onIssueStatusObj', onIssueStatusObj)
-
-    // setValue("onIssueStatusObj", onIssueStatusObj);
-    return onIssueStatusObj
+    setValue('onIssueStatusObj', errObj.onIssueStatusObj)
+    
+    // setValue("onIssueStatusObj", errObj.onIssueStatusObj);
+    
+    errObj.isResolved = _.some(respondent_actions, { respondent_action: 'RESOLVED' });
+    return errObj
   } catch (err: any) {
     if (err.code === 'ENOENT') {
       logger.error(`!!File not found for /${constants.RET_ONISSUE_STATUS} API!`)

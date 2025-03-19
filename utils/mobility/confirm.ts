@@ -8,6 +8,7 @@ import {
   validateStops,
   validatePayloadAgainstSchema,
   validatePaymentObject,
+  validateProviderId,
 } from './mobilityChecks'
 import attributeConfig from './config/config2.0.1.json'
 
@@ -45,14 +46,11 @@ export const checkConfirm = (data: any, msgIdSet: any, version: any) => {
 
     //provider id check
     try {
-      logger.info(`Comparing provider object in /${constants.ON_INIT} and /${constants.CONFIRM}`)
-      if (getValue('providerId') != confirm.provider['id']) {
-        errorObj.prvdId = `Provider Id mismatches in /${constants.ON_INIT} and /${constants.CONFIRM}`
-      }
+      logger.info(`Checking provider id in /${constants.CONFIRM}`)
+      const providerError = validateProviderId(confirm?.provider?.id, constants.ON_INIT, constants.CONFIRM)
+      Object.assign(errorObj, providerError)
     } catch (error: any) {
-      logger.error(
-        `!!Error while checking provider object in /${constants.ON_INIT} and /${constants.CONFIRM}, ${error.stack}`,
-      )
+      logger.error(`!!Error while checking provider id in /${constants.CONFIRM}, ${error.stack}`)
     }
 
     //items check
@@ -115,7 +113,9 @@ export const checkConfirm = (data: any, msgIdSet: any, version: any) => {
     }
 
     if ('billing' in confirm && confirm?.billing?.name) {
-      setValue('billingName', confirm?.billing?.name)
+      const billingName = getValue('billingName')
+      if (billingName && billingName != confirm?.billing?.name)
+        errorObj['billing'] = `billing must be same as sent in past call`
     } else {
       errorObj['billing'] = `billing must be part of /${constants.CONFIRM}`
     }

@@ -16,21 +16,21 @@ export const onSearchSchema = {
         },
         country: {
           type: 'string',
-          pattern: '^[A-Z]{3}$',
-          errorMessage: 'Country must be in ISO 3166-1 format (three-letter country code)',
-          minLength: 1,
+          const: 'IND',
         },
         city: {
           type: 'string',
           minLength: 1,
           not: {
+            type: 'string',
             pattern: '\\*',
           },
           errorMessage: `City Code can't be * for on_search request`,
         },
         core_version: {
           type: 'string',
-          const: '1.2.0',
+          enum: ['1.2.0', '1.2.5'],
+          minLength: 1,
         },
         bap_id: {
           type: 'string',
@@ -98,7 +98,7 @@ export const onSearchSchema = {
                   },
                   type: {
                     type: 'string',
-                    enum: ['Delivery', 'Self-Pickup', 'Delivery and Self-Pickup'],
+                    enum: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
                   },
                 },
                 required: ['id', 'type'],
@@ -113,7 +113,7 @@ export const onSearchSchema = {
                 symbol: {
                   type: 'string',
                   format: 'url',
-                  errorMessage: 'descriptor/symbol should be URLs or can be empty strings as well',
+                  errorMessage: 'descriptor/symbol should be URLs or can be empty array as well',
                 },
                 short_desc: {
                   type: 'string',
@@ -144,6 +144,7 @@ export const onSearchSchema = {
                           oneOf: [
                             {
                               if: {
+                                type: 'object',
                                 properties: {
                                   code: { const: 'np_type' },
                                 },
@@ -153,7 +154,7 @@ export const onSearchSchema = {
                                 properties: {
                                   code: {
                                     type: 'string',
-                                    enum: ['np_type'],
+                                    const: 'np_type',
                                   },
                                   value: {
                                     type: 'string',
@@ -166,9 +167,13 @@ export const onSearchSchema = {
                             },
                             {
                               if: {
+                                type: 'object',
                                 properties: {
-                                  code: { const: 'accept_bap_terms' },
+                                  code: {
+                                    const: 'accept_bap_terms',
+                                  },
                                 },
+                                required: ['code'],
                               },
                               then: {
                                 type: 'object',
@@ -188,6 +193,7 @@ export const onSearchSchema = {
                             },
                             {
                               if: {
+                                type: 'object',
                                 properties: {
                                   code: { const: 'collect_payment' },
                                 },
@@ -228,6 +234,12 @@ export const onSearchSchema = {
                 properties: {
                   id: {
                     type: 'string',
+                  },
+                  rating: {
+                    type: ['number', 'null'],
+                    minimum: 1,
+                    maximum: 5,
+                    default: null,
                   },
                   time: {
                     type: 'object',
@@ -299,6 +311,8 @@ export const onSearchSchema = {
                   },
                   ttl: {
                     type: 'string',
+                    format: 'duration',
+                    errorMessage: 'Duration must be RFC3339 duration.',
                   },
                   locations: {
                     type: 'array',
@@ -360,7 +374,7 @@ export const onSearchSchema = {
                               required: ['start', 'end'],
                             },
                           },
-                          required: ['label', 'timestamp','schedule'],
+                          required: ['label', 'timestamp', 'schedule'],
                         },
                         gps: {
                           type: 'string',
@@ -387,6 +401,7 @@ export const onSearchSchema = {
                             },
                           },
                           required: ['locality', 'street', 'city', 'area_code', 'state'],
+                          additionalProperties: false,
                         },
                         circle: {
                           type: 'object',
@@ -420,6 +435,7 @@ export const onSearchSchema = {
                       properties: {
                         id: {
                           type: 'string',
+                          pattern: '^[a-zA-Z0-9-]{1,12}$',
                         },
                         descriptor: {
                           type: 'object',
@@ -441,38 +457,76 @@ export const onSearchSchema = {
                               },
                             },
                           },
-                          required: ['name'],
                         },
                         tags: {
                           type: 'array',
                           items: {
-                            type: 'object',
-                            properties: {
-                              code: {
-                                type: 'string',
-                              },
-                              list: {
-                                type: 'array',
-                                items: {
-                                  type: 'object',
+                            oneOf: [
+                              {
+                                type: 'object',
+                                if: {
                                   properties: {
                                     code: {
-                                      type: 'string',
-                                    },
-                                    value: {
-                                      type: 'string',
-                                    },
-                                  },
-                                  required: ['code', 'value'],
+                                      const: 'np_fees'
+                                    }
+                                  }
                                 },
+                                then: {
+                                  properties: {
+                                    list: {
+                                      type: 'array',
+                                      items: {
+                                        type: 'object',
+                                        properties: {
+                                          code: {
+                                            type: 'string',
+                                            enum: ['channel_margin_type', 'channel_margin_value']
+                                          },
+                                          value: {
+                                            type: 'string'
+                                          }
+                                        },
+                                      }
+                                    }
+                                  },
+
+                                }
                               },
-                            },
-                            required: ['code', 'list'],
-                          },
-                        },
+                              {
+                                type: 'object',
+                                if: {
+                                  not: {
+                                    properties: {
+                                      code: {
+                                        const: 'np_fees'
+                                      }
+                                    }
+                                  }
+                                },
+                                then: {
+                                  properties: {
+                                    list: {
+                                      type: 'array',
+                                      items: {
+                                        type: 'object',
+                                        properties: {
+                                          code: {
+                                            type: 'string'
+                                          },
+                                          value: {
+                                            type: 'string'
+                                          }
+                                        },
+                                      }
+                                    }
+                                  },
+                                }
+                              }
+                            ]
+                          }
+                        }
                       },
-                      required: ['id', 'descriptor', 'tags'],
-                    },
+                    }
                   },
                   items: {
                     type: 'array',
@@ -481,6 +535,33 @@ export const onSearchSchema = {
                       properties: {
                         id: {
                           type: 'string',
+                        },
+                        replacement_terms: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              replace_within: {
+                                type: 'object',
+                                properties: {
+                                  duration: {
+                                    type: 'string',
+                                    pattern: "^P(\\d+D|\\d+W|\\d+M|\\d+Y)$",
+                                  }
+                                },
+                                required: ['duration']
+                              }
+                            },
+                            required: ['replace_within']
+                          },
+                          optional: true
+                        },
+                        rating: {
+                          type: ['number', 'null'],
+                          
+                          minimum: 1,
+                          maximum: 5,
+                          default: null,
                         },
                         time: {
                           type: 'object',
@@ -507,9 +588,23 @@ export const onSearchSchema = {
                             },
                             code: {
                               type: 'string',
-                              pattern: '^(1|2|3|4|5):[a-zA-Z0-9]+$',
-                              errorMessage:
-                                'item/descriptor/code should be in this format - "type:code" where type is 1 - EAN, 2 - ISBN, 3 - GTIN, 4 - HSN, 5 - others',
+                              oneOf: [
+                                {
+                                  type: 'string',
+                                  pattern: '^(1|2|3|4|5):[a-zA-Z0-9]+$',
+                                  errorMessage:
+                                    'item/descriptor/code should be in this format - "type:code" where type is 1 - EAN, 2 - ISBN, 3 - GTIN, 4 - HSN, 5 - others',
+                                },
+                                {
+                                  if: {
+                                    type: 'object',
+                                    properties: { domain: { enum: ['ONDC:RET1A', 'ONDC:AGR10'] } },
+                                  },
+                                  then: {
+                                    type: 'string',
+                                  },
+                                },
+                              ],
                             },
                             symbol: {
                               type: 'string',
@@ -544,8 +639,8 @@ export const onSearchSchema = {
                                     },
                                     value: {
                                       type: 'string',
-                                      pattern: '^[0-9]+(\.[0-9]+)?$',
-                                      errorMessage: 'enter a valid number',
+                                      pattern: '^[0-9]+(.[0-9]+)?$',
+                                      errorMessage: 'value should be stringified number',
                                     },
                                   },
                                   required: ['unit', 'value'],
@@ -558,9 +653,8 @@ export const onSearchSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
-                                  pattern: '^[0-9]+$',
-                                  errorMessage:
-                                    'available count must be numbers only',
+                                  enum: ['99', '0'],
+                                  errorMessage: 'available count must be either 99 or 0 only',
                                 },
                               },
                               required: ['count'],
@@ -571,8 +665,7 @@ export const onSearchSchema = {
                                 count: {
                                   type: 'string',
                                   pattern: '^[0-9]+$',
-                                  errorMessage:
-                                    'maximum count must be numbers only ',
+                                  errorMessage: 'maximum count must be in stringified number format. ',
                                 },
                               },
                               required: ['count'],
@@ -588,7 +681,8 @@ export const onSearchSchema = {
                             },
                             value: {
                               type: 'string',
-                              pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                              pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                              errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                             },
                             maximum_value: {
                               type: 'string',
@@ -614,13 +708,15 @@ export const onSearchSchema = {
                           type: 'boolean',
                         },
                         '@ondc/org/return_window': {
-                          type: 'string',
+                          type: ['string', 'null'],
+                          format: 'duration',
                         },
                         '@ondc/org/seller_pickup_return': {
                           type: 'boolean',
                         },
                         '@ondc/org/time_to_ship': {
                           type: 'string',
+                          format: 'duration',
                         },
                         '@ondc/org/available_on_cod': {
                           type: 'boolean',
@@ -684,23 +780,45 @@ export const onSearchSchema = {
                               },
                               list: {
                                 type: 'array',
-                                items: [
-                                  {
-                                    type: 'object',
-                                    properties: {
-                                      code: {
-                                        type: 'string',
-                                      },
-                                      value: {
-                                        type: 'string',
-                                      },
+                                items: {
+                                  type: 'object',
+                                  properties: {
+                                    code: {
+                                      type: 'string',
                                     },
-                                    required: ['code', 'value'],
+                                    value: {
+                                      type: 'string',
+                                    },
                                   },
-                                ],
+                                  required: ['code', 'value'],
+                                },
                               },
                             },
                             required: ['code', 'list'],
+                            if: {
+                              type: 'object',
+                              properties: { code: { const: 'origin' } },
+                            },
+                            then: {
+                              type: 'object',
+                              properties: {
+                                list: {
+                                  type: 'array',
+                                  items: {
+                                    type: 'object',
+                                    properties: {
+                                      value: {
+                                        type: 'string',
+                                        pattern:
+                                          '/^A(BW|FG|GO|IA|L[AB]|ND|R[EGM]|SM|T[AFG]|U[ST]|ZE)|B(DI|E[LNS]|FA|G[DR]|H[RS]|IH|L[MRZ]|MU|OL|R[ABN]|TN|VT|WA)|C(A[FN]|CK|H[ELN]|IV|MR|O[DGKLM]|PV|RI|U[BW]|XR|Y[MP]|ZE)|D(EU|JI|MA|NK|OM|ZA)|E(CU|GY|RI|S[HPT]|TH)|F(IN|JI|LK|R[AO]|SM)|G(AB|BR|EO|GY|HA|I[BN]|LP|MB|N[BQ]|R[CDL]|TM|U[FMY])|H(KG|MD|ND|RV|TI|UN)|I(DN|MN|ND|OT|R[LNQ]|S[LR]|TA)|J(AM|EY|OR|PN)|K(AZ|EN|GZ|HM|IR|NA|OR|WT)|L(AO|B[NRY]|CA|IE|KA|SO|TU|UX|VA)|M(A[CFR]|CO|D[AGV]|EX|HL|KD|L[IT]|MR|N[EGP]|OZ|RT|SR|TQ|US|WI|Y[ST])|N(AM|CL|ER|FK|GA|I[CU]|LD|OR|PL|RU|ZL)|OMN|P(A[KN]|CN|ER|HL|LW|NG|OL|R[IKTY]|SE|YF)|QAT|R(EU|OU|US|WA)|S(AU|DN|EN|G[PS]|HN|JM|L[BEV]|MR|OM|PM|RB|SD|TP|UR|V[KN]|W[EZ]|XM|Y[CR])|T(C[AD]|GO|HA|JK|K[LM]|LS|ON|TO|U[NRV]|WN|ZA)|U(GA|KR|MI|RY|SA|ZB)|V(AT|CT|EN|GB|IR|NM|UT)|W(LF|SM)|YEM|Z(AF|MB|WE)$/ix',
+                                        errorMessage:
+                                          'Country must be in ISO 3166-1 format (three-letter country code)',
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
                           },
                         },
                       },
@@ -724,12 +842,192 @@ export const onSearchSchema = {
                       ],
                     },
                   },
+                  creds: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        id: {
+                          type: 'string',
+                          description: 'Unique identifier for the credential, format: ESG-XXXXXXXX (8 digits).',
+                        },
+                        descriptor: {
+                          type: 'object',
+                          properties: {
+                            code: {
+                              type: 'string',
+                              description: 'Code of the credential, format: ESG-XXXXXXXX (8 digits).',
+                            },
+                            short_desc: {
+                              type: 'string',
+                              description: 'Short description of the credential.',
+                            },
+                            name: {
+                              type: 'string',
+                              description: 'Name of the credential.',
+                            },
+                          },
+                          required: ['code', 'short_desc', 'name'],
+                          additionalProperties: false,
+                        },
+                        url: {
+                          type: 'string',
+                          format: 'uri',
+                          description: 'URL to the credential or badge image.',
+                        },
+                        tags: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                                description: "Code representing the tag (e.g., 'verification').",
+                              },
+                              list: {
+                                type: 'array',
+                                items: {
+                                  type: 'object',
+                                  properties: {
+                                    code: {
+                                      type: 'string',
+                                      description: "Code representing the specific tag value (e.g., 'verify_url').",
+                                    },
+                                    value: {
+                                      type: 'string',
+                                      format: 'uri',
+                                      description: 'URL or other values associated with the tag.',
+                                    },
+                                  },
+                                  required: ['code', 'value'],
+                                  additionalProperties: false,
+                                },
+                                description: 'List of key-value pairs for additional tag data.',
+                              },
+                            },
+                            required: ['code', 'list'],
+                            additionalProperties: false,
+                          },
+                          description: 'Tags associated with the credential, including verification details.',
+                        },
+                      },
+                      required: ['id', 'descriptor'],
+                      additionalProperties: false,
+                    },
+                  },
+                  offers: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        id: {
+                          type: 'string',
+                          description: 'Unique identifier for the offer.',
+                        },
+                        descriptor: {
+                          type: 'object',
+                          properties: {
+                            code: {
+                              type: 'string',
+                              description: 'Type of the offer (e.g., discount, buyXgetY, freebie).',
+                              enums: ['discount', 'buyXgetY', 'freebie', 'slab', 'combo', 'delivery', 'exchange', 'financing']
+                            },
+                            images: {
+                              type: 'array',
+                              items: {
+                                type: 'string',
+                                format: 'uri',
+                                description: 'URL to images related to the offer.',
+                              },
+                            },
+                          },
+                          required: ['code', 'images'],
+                        },
+                        location_ids: {
+                          type: 'array',
+                          items: {
+                            type: 'string',
+                            description: 'List of location identifiers where the offer is valid.',
+                          },
+                        },
+                        item_ids: {
+                          type: 'array',
+                          items: {
+                            type: 'string',
+                            description: 'List of item identifiers applicable for the offer.',
+                          },
+                        },
+                        time: {
+                          type: 'object',
+                          properties: {
+                            label: {
+                              type: 'string',
+                              description: 'Label for the time validity of the offer (e.g., valid).',
+                            },
+                            range: {
+                              type: 'object',
+                              properties: {
+                                start: {
+                                  type: 'string',
+                                  format: 'date-time',
+                                  description: 'Start date and time for the offer.',
+                                },
+                                end: {
+                                  type: 'string',
+                                  format: 'date-time',
+                                  description: 'End date and time for the offer.',
+                                },
+                              },
+                              required: ['start', 'end'],
+                            },
+                          },
+                          required: ['label', 'range'],
+                        },
+                        tags: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                                description: 'Type of the tag (e.g., qualifier, benefit, meta).',
+                                enums: ['qualifier', 'benefit', 'meta']
+                              },
+                              list: {
+                                type: 'array',
+                                items: {
+                                  type: 'object',
+                                  properties: {
+                                    code: {
+                                      type: 'string',
+                                      description: 'Code representing the specific tag property.',
+                                      enums: ['min_value', 'value_type', 'value', 'additive', 'item_count', 'item_id', 'item_value']
+                                    },
+                                    value: {
+                                      type: 'string',
+                                      description: 'Value for the tag property.',
+                                    },
+                                  },
+                                },
+                                required: ['code', 'value'],
+                              },
+                            },
+                          },
+                          required: ['code', 'list'],
+                        },
+                      },
+                    },
+
+                    required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags'],
+                  },
                   tags: {
                     type: 'array',
+                    minItems: 1,
                     items: {
                       allOf: [
                         {
                           if: {
+                            type: 'object',
                             properties: {
                               code: {
                                 const: 'timing',
@@ -737,6 +1035,7 @@ export const onSearchSchema = {
                             },
                           },
                           then: {
+                            type: 'object',
                             properties: {
                               list: {
                                 type: 'array',
@@ -744,6 +1043,7 @@ export const onSearchSchema = {
                                   allOf: [
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'type',
@@ -751,17 +1051,21 @@ export const onSearchSchema = {
                                         },
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
                                             type: 'string',
-                                            enum: ['Self-Pickup','Order','Delivery', 'All'],
-                                            errorMessage: "timing for fulfillment type, enum - 'Order' (online order processing timings 'Delivery' (order shipment timings, will be same as delivery timings for hyperlocal), 'Self-Pickup' (self-pickup timings), All",},
+                                            enum: ['Self-Pickup', 'Order', 'Delivery', 'All'],
+                                            errorMessage:
+                                              "timing for fulfillment type, enum - 'Order' (online order processing timings 'Delivery' (order shipment timings, will be same as delivery timings for hyperlocal), 'Self-Pickup' (self-pickup timings), All",
+                                          },
                                         },
                                         required: ['code', 'value'],
                                       },
                                     },
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'location',
@@ -769,6 +1073,7 @@ export const onSearchSchema = {
                                         },
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
                                             type: 'string',
@@ -779,6 +1084,7 @@ export const onSearchSchema = {
                                     },
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'day_from',
@@ -786,11 +1092,13 @@ export const onSearchSchema = {
                                         },
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
                                             type: 'string',
                                             pattern: '^[0-7]+$',
-                                            errorMessage: "Value for 'day_from' must be numeric characters only from 1 to 7",
+                                            errorMessage:
+                                              "Value for 'day_from' must be numeric characters only from 1 to 7",
                                           },
                                         },
                                         required: ['code', 'value'],
@@ -798,6 +1106,7 @@ export const onSearchSchema = {
                                     },
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'day_to',
@@ -805,11 +1114,13 @@ export const onSearchSchema = {
                                         },
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
                                             type: 'string',
                                             pattern: '^[1-7]$',
-                                            errorMessage: "Value for 'day_to' must be numeric characters only from 1 to 7",
+                                            errorMessage:
+                                              "Value for 'day_to' must be numeric characters only from 1 to 7",
                                           },
                                         },
                                         required: ['code', 'value'],
@@ -817,6 +1128,7 @@ export const onSearchSchema = {
                                     },
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'time_from',
@@ -824,11 +1136,14 @@ export const onSearchSchema = {
                                         },
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
                                             type: 'string',
-                                            pattern: '^(2[0-3]|[01]?[0-9]|24)[0-5]?[0-9]$',
-                                            errorMessage: "Value for 'time_from' must be a 4-digit numeric value in HHMM format",
+                                            pattern: '^([01][0-9]|2[0-3])[0-5][0-9]$',
+                                            errorMessage:
+                                              "Value for 'time_from' must be a 4-digit numeric value in HHMM format",
+                                            minLength: 4,
                                           },
                                         },
                                         required: ['code', 'value'],
@@ -836,6 +1151,7 @@ export const onSearchSchema = {
                                     },
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'time_to',
@@ -843,11 +1159,13 @@ export const onSearchSchema = {
                                         },
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
                                             type: 'string',
                                             pattern: '^(2[0-3]|[01]?[0-9]|24)[0-5]?[0-9]$',
-                                            errorMessage: "Value for 'time_to' must be a 4-digit numeric value in HHMM format",
+                                            errorMessage:
+                                              "Value for 'time_to' must be a 4-digit numeric value in HHMM format",
                                           },
                                         },
                                         required: ['code', 'value'],
@@ -861,6 +1179,7 @@ export const onSearchSchema = {
                         },
                         {
                           if: {
+                            type: 'object',
                             properties: {
                               code: {
                                 const: 'serviceability',
@@ -868,105 +1187,34 @@ export const onSearchSchema = {
                             },
                           },
                           then: {
+                            type: 'object',
                             properties: {
                               list: {
                                 type: 'array',
                                 items: {
-                                  allOf: [
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'location',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
+                                  type: 'object',
+                                  properties: {
+                                    code: {
+                                      type: 'string',
+                                      enum: ['location', 'category', 'type', 'val', 'unit'],
+                                      errorMessage:
+                                        "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit'",
                                     },
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'category',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
+                                    value: {
+                                      type: 'string',
                                     },
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'type',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            enum: ['10', '11', '12', '13'],
-                                            errorMessage:
-                                              "Value for 'type' must be enum - '10' (hyperlocal), '11' (intercity), '12' (pan-India), '13' (polygon) only",
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'val',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'unit',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                  ],
+                                  },
+                                  required: ['code', 'value'],
+                                  additionalProperties: false,
+                                },
+                                minItems: 5,
+                                maxItems: 5,
+                                uniqueItems: true,
+                                errorMessage: {
+                                  minItems: 'Serviceability must have minimum 5 values',
+                                  maxItems: 'Serviceability must have maximum 5 values',
+                                  uniqueItems: 'Serviceability must have unique items',
+                                  _: "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit' and no duplicacy or other elements allowed",
                                 },
                               },
                             },
@@ -974,6 +1222,7 @@ export const onSearchSchema = {
                         },
                         {
                           if: {
+                            type: 'object',
                             properties: {
                               code: {
                                 const: 'catalog_link',
@@ -981,6 +1230,7 @@ export const onSearchSchema = {
                             },
                           },
                           then: {
+                            type: 'object',
                             properties: {
                               list: {
                                 type: 'array',
@@ -988,6 +1238,7 @@ export const onSearchSchema = {
                                   allOf: [
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'type_validity',
@@ -996,8 +1247,10 @@ export const onSearchSchema = {
                                         required: ['code'],
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
+                                            type: 'string',
                                             format: 'duration',
                                             errorMessage: 'Duration must be RFC3339 duration.',
                                           },
@@ -1007,6 +1260,7 @@ export const onSearchSchema = {
                                     },
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'last_update',
@@ -1015,8 +1269,10 @@ export const onSearchSchema = {
                                         required: ['code'],
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
+                                            type: 'string',
                                             description: 'RFC3339 UTC timestamp format',
                                             format: 'rfc3339-date-time',
                                             errorMessage: 'Time must be RFC3339 UTC timestamp format.',
@@ -1027,6 +1283,7 @@ export const onSearchSchema = {
                                     },
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'type_value',
@@ -1035,8 +1292,10 @@ export const onSearchSchema = {
                                         required: ['code'],
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
+                                            type: 'string',
                                             format: 'url',
                                             errorMessage: 'Type value must be url',
                                           },
@@ -1046,6 +1305,7 @@ export const onSearchSchema = {
                                     },
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'last_update',
@@ -1054,8 +1314,10 @@ export const onSearchSchema = {
                                         required: ['code'],
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
+                                            type: 'string',
                                             description: 'RFC3339 UTC timestamp format',
                                             format: 'rfc3339-date-time',
                                             errorMessage: 'Time must be RFC3339 UTC timestamp format.',
@@ -1066,6 +1328,7 @@ export const onSearchSchema = {
                                     },
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'type',
@@ -1074,8 +1337,10 @@ export const onSearchSchema = {
                                         required: ['code'],
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
+                                            type: 'string',
                                             enum: ['inline', 'link'],
                                             errorMessage:
                                               "Type value must be 'inline'(items array in inline response, which is the default today) or 'link'(link to zip file for items array for the provider)",
@@ -1092,6 +1357,7 @@ export const onSearchSchema = {
                         },
                         {
                           if: {
+                            type: 'object',
                             properties: {
                               code: {
                                 const: 'order_value',
@@ -1099,6 +1365,7 @@ export const onSearchSchema = {
                             },
                           },
                           then: {
+                            type: 'object',
                             properties: {
                               list: {
                                 type: 'array',
@@ -1106,6 +1373,7 @@ export const onSearchSchema = {
                                   allOf: [
                                     {
                                       if: {
+                                        type: 'object',
                                         properties: {
                                           code: {
                                             const: 'min_value',
@@ -1114,9 +1382,11 @@ export const onSearchSchema = {
                                         required: ['code'],
                                       },
                                       then: {
+                                        type: 'object',
                                         properties: {
                                           value: {
-                                            pattern: '^[0-9]+(\.[0-9]{2})?$',
+                                            type: 'string',
+                                            pattern: '^[0-9]+(?:.[0-9]{1,2})?$',
                                             errorMessage: 'min_value must be number with exactly two decimal places',
                                           },
                                         },
@@ -1132,12 +1402,12 @@ export const onSearchSchema = {
                       ],
                     },
                   },
+                  required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],
                 },
-                required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],
               },
             },
+            required: ['bpp/descriptor', 'bpp/providers'],
           },
-          required: ['bpp/fulfillments', 'bpp/descriptor', 'bpp/providers'],
         },
       },
       required: ['catalog'],

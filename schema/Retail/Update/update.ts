@@ -22,7 +22,8 @@ export const updateSchema = {
         },
         core_version: {
           type: 'string',
-          const: '1.2.0',
+          enum: ['1.2.0', '1.2.5'],
+          minLength: 1,
         },
         bap_id: {
           type: 'string',
@@ -120,7 +121,7 @@ export const updateSchema = {
                     properties: {
                       settlement_counterparty: { type: 'string' },
                       settlement_phase: { type: 'string' },
-                      settlement_type: { type: 'string' },
+                      settlement_type: { type: 'string', enum: ['upi', 'neft', 'rtgs', 'wallet', 'netbanking', 'paylater', 'card'] },
                       settlement_amount: { type: 'string' },
                       settlement_timestamp: { type: 'string', format: 'rfc3339-date-time' },
                     },

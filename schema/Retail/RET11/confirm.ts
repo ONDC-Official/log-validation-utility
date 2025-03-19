@@ -15,8 +15,8 @@ export const FnBconfirmSchema = {
         },
         core_version: {
           type: 'string',
+          enum: ['1.2.0', '1.2.5'],
           minLength: 1,
-          const: '1.2.0',
         },
         bap_id: {
           type: 'string',
@@ -343,7 +343,7 @@ export const FnBconfirmSchema = {
                     },
                     value: {
                       type: 'string',
-                      pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                      pattern: '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                     },
                   },
                   required: ['currency', 'value'],
@@ -404,7 +404,7 @@ export const FnBconfirmSchema = {
                               value: {
                                 type: 'string',
                                 minLength: 1,
-                                pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                                pattern: '^[-+]?[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
                               },
                             },
                             required: ['currency', 'value'],

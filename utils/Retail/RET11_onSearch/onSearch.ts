@@ -7,20 +7,21 @@ import {
   validateSchema,
   isObjectEmpty,
   checkContext,
+  // timeDiff as timeDifference,
   checkGpsPrecision,
   emailRegex,
   checkBppIdOrBapId,
   checkServiceabilityType,
   validateLocations,
-  isSequenceValid,
+  // isSequenceValid,
   isValidPhoneNumber,
   compareSTDwithArea,
   areTimestampsLessThanOrEqualTo,
-  checkDuplicateParentIdItems,
-  checkForDuplicates,
   validateObjectString,
+  validateBapUri,
+  validateBppUri,
 } from '../..'
-import _ from 'lodash'
+import _, { isEmpty } from 'lodash'
 
 export const checkOnsearchFullCatalogRefresh = (data: any) => {
   if (!data || isObjectEmpty(data)) {
@@ -65,6 +66,13 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
     Object.assign(errorObj, contextRes.ERRORS)
   }
 
+  validateBapUri(context.bap_uri, context.bap_id, errorObj);
+  validateBppUri(context.bpp_uri, context.bpp_id, errorObj);
+
+  if (context.transaction_id == context.message_id) {
+    errorObj['on_search_full_catalog_refresh'] = `Context transaction_id (${context.transaction_id}) and message_id (${context.message_id}) can't be the same.`;
+  }
+
   setValue(`${ApiSequence.ON_SEARCH}`, data)
 
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
@@ -97,6 +105,63 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
       `Error while comparing transaction ids for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
     )
   }
+  try {
+    logger.info(`Checking customizations based on config.min and config.max values...`);
+
+    const items = getValue('items'); // Retrieve items from the catalog or message
+
+    _.filter(items, (item) => {
+      const customGroup = item.custom_group; // Assuming custom_group holds the configuration data
+
+      // Check for minimum customizations
+      if (customGroup?.config?.min === 1) {
+        logger.info(`Checking min value for item id: ${item.id}`);
+
+        const defaultCustomizations = _.filter(item.customizations, (customization) => {
+          return customization.is_default; // Check for default customizations
+        });
+
+        if (defaultCustomizations.length < 1) {
+          const key = `item${item.id}CustomGroup/min`;
+          errorObj[key] = `Item with id: ${item.id} must have at least one default customization as config.min is set to 1.`;
+        }
+      }
+
+      // Check for maximum customizations
+      if (customGroup?.config?.max === 2) {
+        logger.info(`Checking max value for item id: ${item.id}`);
+
+        const customizationsCount = item.customizations.length;
+
+        if (customizationsCount > 2) {
+          const key = `item${item.id}CustomGroup/max`;
+          errorObj[key] = `Item with id: ${item.id} can have at most 2 customizations as config.max is set to 2.`;
+        }
+      }
+    });
+
+  } catch (error: any) {
+    logger.error(`Error while checking customizations for items, ${error.stack}`);
+  }
+
+  // removed timestamp difference check
+  // try {
+  //   logger.info(`Comparing timestamp of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
+  //   const tmpstmp = searchContext?.timestamp
+  //   if (_.gte(tmpstmp, context.timestamp)) {
+  //     errorObj.tmpstmp = `Timestamp for /${constants.SEARCH} api cannot be greater than or equal to /${constants.ON_SEARCH} api`
+  //   } else {
+  //     const timeDiff = timeDifference(context.timestamp, tmpstmp)
+  //     logger.info(timeDiff)
+  //     if (timeDiff > 5000) {
+  //       errorObj.tmpstmp = `context/timestamp difference between /${constants.ON_SEARCH} and /${constants.SEARCH} should be less than 5 sec`
+  //     }
+  //   }
+  // } catch (error: any) {
+  //   logger.info(
+  //     `Error while comparing timestamp for /${constants.SEARCH} and /${constants.ON_SEARCH} api, ${error.stack}`,
+  //   )
+  // }
 
   try {
     logger.info(`Comparing Message Ids of /${constants.SEARCH} and /${constants.ON_SEARCH}`)
@@ -110,24 +175,32 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
   }
 
   const onSearchCatalog: any = message.catalog
-  const onSearchFFIds = new Set()
+  const onSearchFFIdsArray: any = []
   const prvdrsId = new Set()
   const prvdrLocId = new Set()
+  const onSearchFFTypeSet = new Set()
   const itemsId = new Set()
-
+  let customMenuIds: any = []
+  let customMenu = false
+  // Storing static fulfillment ids in onSearchFFIdsArray, OnSearchFFTypeSet
   try {
     logger.info(`Saving static fulfillment ids in /${constants.ON_SEARCH}`)
 
-    let i = 0
-    const bppFF = onSearchCatalog['bpp/fulfillments']
-    const len = bppFF.length
+    onSearchCatalog['bpp/providers'].forEach((provider: any) => {
+      const onSearchFFIds = new Set()
+      const bppFF = provider.fulfillments
+      const len = bppFF.length
 
-    while (i < len) {
-      onSearchFFIds.add(bppFF[i].id)
-      i++
-    }
+      let i = 0
+      while (i < len) {
+        onSearchFFTypeSet.add(bppFF[i].type)
+        onSearchFFIds.add(bppFF[i].id)
+        i++
+      }
+      onSearchFFIdsArray.push(onSearchFFIds)
+    })
 
-    setValue('onSearchFFIds', onSearchFFIds)
+    setValue('onSearchFFIdsArray', onSearchFFIdsArray)
   } catch (error: any) {
     logger.info(`Error while saving static fulfillment ids in /${constants.ON_SEARCH}, ${error.stack}`)
   }
@@ -239,6 +312,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
       const seqSet = new Set()
       const itemCategory_id = new Set()
       const categoryRankSet = new Set()
+      const prvdrLocationIds = new Set()
 
       logger.info(`Validating uniqueness for provider id in bpp/providers[${i}]...`)
       const prvdr = bppPrvdrs[i]
@@ -308,22 +382,19 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
                 tag.list.forEach((item: { code: string; value: string }) => {
                   if (item.code === 'type') {
                     if ((category.parent_category_id == "" || category.parent_category_id) && item.value == 'custom_group') {
-                      if(category.parent_category_id)
-                        {
-                          errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] = `parent_category_id should not value any value while type is ${item.value}`
-                        }
+                      if (category.parent_category_id) {
+                        errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] = `parent_category_id should not have any value while type is ${item.value}`
+                      }
                       errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] = `parent_category_id should not be present while type is ${item.value}`
                     }
-                    else if ((category.parent_category_id != "") && (item.value == 'custom_menu' || item.value == 'variant_group')){
-                      if(category.parent_category_id)
-                      {
+                    else if ((category.parent_category_id != "") && (item.value == 'custom_menu' || item.value == 'variant_group')) {
+                      if (category.parent_category_id) {
                         errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] = `parent_category_id should be empty string while type is ${item.value}`
                       }
                       errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] = `parent_category_id should be present while type is ${item.value}`
                     }
-                    else if ((category.parent_category_id) && (item.value == 'custom_menu' || item.value == 'variant_group')){
-                      if(category.parent_category_id)
-                      {
+                    else if ((category.parent_category_id) && (item.value == 'custom_menu' || item.value == 'variant_group')) {
+                      if (category.parent_category_id) {
                         errorObj[`categories[${category.id}].tags[${index}].list[${item.code}]`] = `parent_category_id should be empty string while type is ${item.value}`
                       }
                     }
@@ -373,7 +444,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
         } else {
           prvdrLocId.add(loc.id)
         }
-
+        prvdrLocationIds.add(loc?.id)
         logger.info('Checking store days...')
         const days = loc.time.days.split(',')
         days.forEach((day: any) => {
@@ -426,6 +497,10 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
         logger.info(`Checking categories for provider (${prvdr.id}) in bpp/providers[${i}]`)
         let j = 0
         const categories = onSearchCatalog['bpp/providers'][i]['categories']
+        if (!categories || !categories.length) {
+          const key = `prvdr${i}categories`
+          errorObj[key] = `Support for variants is mandatory, categories must be present in bpp/providers[${i}]`
+        }
         const iLen = categories.length
         while (j < iLen) {
           logger.info(`Validating uniqueness for categories id in bpp/providers[${i}].items[${j}]...`)
@@ -588,26 +663,28 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
 
           if ('category_ids' in item) {
             item[`category_ids`].map((category: string, index: number) => {
-               const categoryId = category.split(':')[0];
-               const seq = category.split(':')[1];
-           
-               // Check if seq exists in category_ids
-               const seqExists = item[`category_ids`].some((cat: any) => cat.seq === seq);
-           
-               if (seqExists) {
-                 const key = `prvdr${i}item${j}ctgryseq${index}`;
-                 errorObj[key] = `duplicate seq : ${seq} in category_ids in prvdr${i}item${j}`;
-               } else {
-                 seqSet.add(seq);
-               }
-           
-               if (!categoriesId.has(categoryId)) {
-                 const key = `prvdr${i}item${j}ctgryId${index}`;
-                 errorObj[key] = `item${j} should have category_ids one of the Catalog/categories/id`;
-               }
-            });
-           }
+              const categoryId = category.split(':')[0];
+              const seq = category.split(':')[1];
 
+              // Check if seq exists in category_ids
+              const seqExists = item[`category_ids`].some((cat: any) => cat.seq === seq);
+
+              if (seqExists) {
+                const key = `prvdr${i}item${j}ctgryseq${index}`;
+                errorObj[key] = `duplicate seq : ${seq} in category_ids in prvdr${i}item${j}`;
+              } else {
+                seqSet.add(seq);
+              }
+
+              if (!categoriesId.has(categoryId)) {
+                const key = `prvdr${i}item${j}ctgryId${index}`;
+                errorObj[key] = `item${j} should have category_ids one of the Catalog/categories/id`;
+              }
+            });
+          }
+
+          let lower_and_upper_not_present: boolean = true
+          let default_selection_not_present: boolean = true
           try {
             logger.info(`Checking selling price and maximum price for item id: ${item.id}`)
 
@@ -618,8 +695,16 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
               const lower = parseFloat(item.price?.tags?.[0].list[0]?.value)
               const upper = parseFloat(item.price?.tags?.[0].list[1]?.value)
 
+              if (lower >= 0 && upper >= 0) {
+                lower_and_upper_not_present = false
+              }
+
               const default_selection_value = parseFloat(item.price?.tags?.[1].list[0]?.value)
               const default_selection_max_value = parseFloat(item.price?.tags?.[1].list[1]?.value)
+
+              if (default_selection_value >= 0 && default_selection_max_value >= 0) {
+                default_selection_not_present = false
+              }
 
               if (sPrice > maxPrice) {
                 const key = `prvdr${i}item${j}Price`
@@ -627,13 +712,13 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
                   `selling price of item /price/value with id: (${item.id}) can't be greater than the maximum price /price/maximum_value in /bpp/providers[${i}]/items[${j}]/`
               }
 
-              if (upper <= lower) {
+              if (upper < lower) {
                 const key = `prvdr${i}item${j}price/tags/`
                 errorObj[key] =
                   `selling lower range: ${lower} of code: range with id: (${item.id}) can't be greater than the upper range : ${upper} `
               }
 
-              if (default_selection_max_value <= default_selection_value) {
+              if (default_selection_max_value < default_selection_value) {
                 const key = `prvdr${i}item${j}Price/tags`
                 errorObj[key] =
                   `value : ${default_selection_value} of code: default_selection with id: (${item.id}) can't be greater than the maximum_value : ${default_selection_max_value} `
@@ -645,11 +730,10 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
 
           try {
             logger.info(`Checking fulfillment_id for item id: ${item.id}`)
-
-            if (item.fulfillment_id && !onSearchFFIds.has(item.fulfillment_id)) {
+            if (item.fulfillment_id && !onSearchFFIdsArray[i].has(item.fulfillment_id)) {
               const key = `prvdr${i}item${j}ff`
               errorObj[key] =
-                `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/fulfillments`
+                `fulfillment_id in /bpp/providers[${i}]/items[${j}] should map to one of the fulfillments id in bpp/prvdr${i}/fulfillments `
             }
           } catch (e: any) {
             logger.error(`Error while checking fulfillment_id for item id: ${item.id}, ${e.stack}`)
@@ -820,7 +904,200 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
           } catch (e: any) {
             logger.error(`Error while checking tags for item id: ${item.id}, ${e.stack}`)
           }
+          //Validating Offers
+          try {
+            logger.info(`Checking offers.tags under bpp/providers`);
 
+            // Iterate through bpp/providers
+            for (let i in onSearchCatalog['bpp/providers']) {
+              const offers = onSearchCatalog['bpp/providers'][i]?.offers ?? null;
+              if (!offers) {
+                offers.forEach((offer: any, offerIndex: number) => {
+                  const tags = offer.tags;
+
+                  // Ensure tags exist
+                  if (!tags || !Array.isArray(tags)) {
+                    const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags`;
+                    errorObj[key] = `Tags must be provided for offers[${offerIndex}] with descriptor code '${offer.descriptor?.code}'`;
+                    logger.error(`Tags must be provided for offers[${offerIndex}] with descriptor code '${offer.descriptor?.code}'`);
+                    return;
+                  }
+
+                  // Validate based on offer type
+                  switch (offer.descriptor?.code) {
+                    case 'discount':
+                      // Validate 'qualifier'
+                      const qualifierDiscount = tags.find((tag: any) => tag.code === 'qualifier');
+                      if (!qualifierDiscount || !qualifierDiscount.list.some((item: any) => item.code === 'min_value')) {
+                        const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`;
+                        errorObj[key] = `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
+                        logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`);
+                      }
+
+                      // Validate 'benefit'
+                      const benefitDiscount = tags.find((tag: any) => tag.code === 'benefit');
+                      if (
+                        !benefitDiscount ||
+                        !benefitDiscount.list.some((item: any) => item.code === 'value') ||
+                        !benefitDiscount.list.some((item: any) => item.code === 'value_type')
+                      ) {
+                        const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`;
+                        errorObj[key] = `'benefit' tag must include both 'value' and 'value_type' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
+                        logger.error(`'benefit' tag must include both 'value' and 'value_type' for offers[${offerIndex}]`);
+                      }
+                      break;
+
+                    case 'buyXgetY':
+                      // Validate 'qualifier'
+                      const qualifierBuyXgetY = tags.find((tag: any) => tag.code === 'qualifier');
+                      if (
+                        !qualifierBuyXgetY ||
+                        !qualifierBuyXgetY.list.some((item: any) => item.code === 'min_value') ||
+                        !qualifierBuyXgetY.list.some((item: any) => item.code === 'item_count')
+                      ) {
+                        const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`;
+                        errorObj[key] = `'qualifier' tag must include 'min_value' and 'item_count' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
+                        logger.error(`'qualifier' tag must include 'min_value' and 'item_count' for offers[${offerIndex}]`);
+                      }
+
+                      // Validate 'benefit'
+                      const benefitBuyXgetY = tags.find((tag: any) => tag.code === 'benefit');
+                      if (!benefitBuyXgetY || !benefitBuyXgetY.list.some((item: any) => item.code === 'item_count')) {
+                        const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`;
+                        errorObj[key] = `'benefit' tag must include 'item_count' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
+                        logger.error(`'benefit' tag must include 'item_count' for offers[${offerIndex}]`);
+                      }
+                      break;
+
+                    case 'freebie':
+                      // Validate 'qualifier'
+                      const qualifierFreebie = tags.find((tag: any) => tag.code === 'qualifier');
+                      if (!qualifierFreebie || !qualifierFreebie.list.some((item: any) => item.code === 'min_value')) {
+                        const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`;
+                        errorObj[key] = `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
+                        logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`);
+                      }
+
+                      // Validate 'benefit'
+                      const benefitFreebie = tags.find((tag: any) => tag.code === 'benefit');
+                      if (
+                        !benefitFreebie ||
+                        !benefitFreebie.list.some((item: any) => item.code === 'item_count') ||
+                        !benefitFreebie.list.some((item: any) => item.code === 'item_id') ||
+                        !benefitFreebie.list.some((item: any) => item.code === 'item_value')
+                      ) {
+                        const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`;
+                        errorObj[key] = `'benefit' tag must include 'item_count', 'item_id', and 'item_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
+                        logger.error(`'benefit' tag must include 'item_count', 'item_id', and 'item_value' for offers[${offerIndex}]`);
+                      }
+                      break;
+
+                    case 'slab':
+                      // Validate 'qualifier'
+                      const qualifierSlab = tags.find((tag: any) => tag.code === 'qualifier');
+                      if (!qualifierSlab || !qualifierSlab.list.some((item: any) => item.code === 'min_value')) {
+                        const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`;
+                        errorObj[key] = `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
+                        logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`);
+                      }
+
+                      // Validate 'benefit'
+                      const benefitSlab = tags.find((tag: any) => tag.code === 'benefit');
+                      if (
+                        !benefitSlab ||
+                        !benefitSlab.list.some((item: any) => item.code === 'value') ||
+                        !benefitSlab.list.some((item: any) => item.code === 'value_type') ||
+                        !benefitSlab.list.some((item: any) => item.code === 'value_cap')
+                      ) {
+                        const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`;
+                        errorObj[key] = `'benefit' tag must include 'value', 'value_type', and 'value_cap' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
+                        logger.error(`'benefit' tag must include 'value', 'value_type', and 'value_cap' for offers[${offerIndex}]`);
+                      }
+                      break;
+
+                    case 'combo':
+                      // Validate 'qualifier'
+                      const qualifierCombo = tags.find((tag: any) => tag.code === 'qualifier');
+                      if (
+                        !qualifierCombo ||
+                        !qualifierCombo.list.some((item: any) => item.code === 'min_value') ||
+                        !qualifierCombo.list.some((item: any) => item.code === 'item_id')
+                      ) {
+                        const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`;
+                        errorObj[key] = `'qualifier' tag must include 'min_value' and 'item_id' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
+                        logger.error(`'qualifier' tag must include 'min_value' and 'item_id' for offers[${offerIndex}]`);
+                      }
+
+                      // Validate 'benefit'
+                      const benefitCombo = tags.find((tag: any) => tag.code === 'benefit');
+                      if (
+                        !benefitCombo ||
+                        !benefitCombo.list.some((item: any) => item.code === 'value') ||
+                        !benefitCombo.list.some((item: any) => item.code === 'value_type') ||
+                        !benefitCombo.list.some((item: any) => item.code === 'value_cap')
+                      ) {
+                        const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`;
+                        errorObj[key] = `'benefit' tag must include 'value', 'value_type', and 'value_cap' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
+                        logger.error(`'benefit' tag must include 'value', 'value_type', and 'value_cap' for offers[${offerIndex}]`);
+                      }
+                      break;
+
+                    case 'delivery':
+                      // Validate 'qualifier'
+                      const qualifierDelivery = tags.find((tag: any) => tag.code === 'qualifier');
+                      if (!qualifierDelivery || !qualifierDelivery.list.some((item: any) => item.code === 'min_value')) {
+                        const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`;
+                        errorObj[key] = `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
+                        logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`);
+                      }
+
+                      // Validate 'benefit'
+                      const benefitDelivery = tags.find((tag: any) => tag.code === 'benefit');
+                      if (
+                        !benefitDelivery ||
+                        !benefitDelivery.list.some((item: any) => item.code === 'value') ||
+                        !benefitDelivery.list.some((item: any) => item.code === 'value_type') ||
+                        !benefitDelivery.list.some((item: any) => item.code === 'value_cap')
+                      ) {
+                        const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`;
+                        errorObj[key] = `'benefit' tag must include 'value', 'value_type', and 'value_cap' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
+                        logger.error(`'benefit' tag must include 'value', 'value_type', and 'value_cap' for offers[${offerIndex}]`);
+                      }
+                      break;
+
+                    // case 'exchange':
+                    // case 'financing':
+                    //   // Validate 'qualifier'
+                    //   const qualifierExchangeFinancing = tags.find((tag: any) => tag.code === 'qualifier');
+                    //   if (!qualifierExchangeFinancing || !qualifierExchangeFinancing.list.some((item: any) => item.code === 'min_value')) {
+                    //     const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`;
+                    //     errorObj[key] = `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
+                    //     logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`);
+                    //   }
+
+                      // Validate that benefits should not exist or should be empty
+                      // const benefitExchangeFinancing = tags.find((tag: any) => tag.code === 'benefit');
+                      // if (benefitExchangeFinancing && benefitExchangeFinancing.list.length > 0) {
+                      //   const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`;
+                      //   errorObj[key] = `'benefit' tag must not include any values for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
+                      //   logger.error(`'benefit' tag must not include any values for offers[${offerIndex}]`);
+                      // }
+                      // break;
+
+                      // No validation for benefits as it is not required
+                      // break;
+
+                    default:
+                      logger.info(`No specific validation required for offer type: ${offer.descriptor?.code}`);
+                  }
+                });
+              }
+            }
+          } catch (error: any) {
+            logger.error(`Error while checking offers.tags under bpp/providers: ${error.stack}`);
+          }
+
+          // false error coming from here
           try {
             logger.info(`Validating item tags`)
             const itemTypeTag = item.tags.find((tag: { code: string }) => tag.code === 'type')
@@ -834,8 +1111,14 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
               itemTypeTag.list[0].value === 'item' &&
               customGroupTag
             ) {
-              errorObj[`items[${item.id}]`] =
-                `/message/catalog/bpp/providers/items must have default_selection price and lower/upper range for customizable items`
+              if (default_selection_not_present) {
+                errorObj[`items[${item.id}]/price/tags/default_selection`] =
+                  `/message/catalog/bpp/providers/items must have default_selection price for customizable items`
+              }
+              if (lower_and_upper_not_present) {
+                errorObj[`items[${item.id}]/price/tags/lower_and_upper_range`] =
+                  `/message/catalog/bpp/providers/items must have lower/upper range for customizable items`
+              }
             }
           } catch (error: any) {
             logger.error(`Error while validating item, ${error.stack}`)
@@ -940,14 +1223,92 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
       }
 
       try {
-        logger.info(`checking rank in bpp/providers[${i}].category.tags`)
-        const rankSeq = isSequenceValid(seqSet)
-        if (rankSeq === false) {
-          const key = `prvdr${i}ctgry_tags`
-          errorObj[key] = `rank should be in sequence provided in bpp/providers[${i}]/categories/tags/display`
+        let customMenus = [];
+        customMenus = categories.filter((category: any) =>
+          category.tags.some((tag: any) => tag.code === 'type' && tag.list.some((type: any) => type.value === 'custom_menu'))
+        );
+
+        if (customMenus.length > 0) {
+          customMenu = true;
+
+          const ranks = customMenus.map((cstmMenu: any) =>
+            parseInt(cstmMenu.tags.find((tag: any) => tag.code === 'display').list.find((display: any) => display.code === 'rank').value)
+          );
+
+          // Check for duplicates and missing ranks
+          const hasDuplicates = ranks.length !== new Set(ranks).size;
+          const missingRanks = [...Array(Math.max(...ranks)).keys()].map(i => i + 1).filter(rank => !ranks.includes(rank));
+
+          if (hasDuplicates) {
+            const key = `message/catalog/bpp/providers${i}/categories/ranks`;
+            errorObj[key] = `Duplicate ranks found, ${ranks} in providers${i}/categories`;
+            logger.error(`Duplicate ranks found, ${ranks} in providers${i}/categories`);
+          } else if (missingRanks.length > 0) {
+            const key = `message/catalog/bpp/providers${i}/categories/ranks`;
+            errorObj[key] = `Missing ranks:, ${missingRanks} in providers${i}/categories`;
+            logger.error(`Missing ranks:, ${missingRanks} in providers${i}/categories`);
+          } else {
+            // Sort customMenus by rank
+            const sortedCustomMenus = customMenus.sort((a: any, b: any) => {
+              const rankA = parseInt(a.tags.find((tag: any) => tag.code === 'display').list.find((display: any) => display.code === 'rank').value);
+              const rankB = parseInt(b.tags.find((tag: any) => tag.code === 'display').list.find((display: any) => display.code === 'rank').value);
+              return rankA - rankB;
+            });
+
+            // Extract IDs
+            customMenuIds = sortedCustomMenus.map((item: any) => item.id);
+          }
         }
       } catch (error: any) {
-        logger.error(`!!Errors while checking rank in bpp/providers[${i}].category.tags, ${error.stack}`)
+        logger.error(`!!Errors while checking rank in bpp/providers[${i}].category.tags, ${error.stack}`);
+      }
+      if (customMenu) {
+        try {
+          const categoryMap: Record<string, number[]> = {};
+          onSearchCatalog['bpp/providers'][i]['items'].forEach((item: any) => {
+            if (item?.category_ids) {
+              item?.category_ids?.forEach((category_id: any) => {
+                const [category, sequence] = category_id.split(':').map(Number);
+                if (!categoryMap[category]) {
+                  categoryMap[category] = [];
+                }
+                categoryMap[category].push(sequence);
+              });
+
+              // Sort the sequences for each category
+              Object.keys(categoryMap).forEach(category => {
+                categoryMap[category].sort((a, b) => a - b);
+              });
+            }
+          });
+          let countSeq = 0;
+
+          customMenuIds.map((category_id: any) => {
+            const categoryArray = categoryMap[`${category_id}`]
+            if (!categoryArray) {
+              const key = `message/catalog/bpp/providers${i}/categories/items`
+              errorObj[key] = `No items are mapped with the given category_id ${category_id} in providers${i}/items`
+              logger.error(`No items are mapped with the given category_id ${category_id} in providers${i}/items`)
+            }
+            else {
+              let i = 0
+              while (i < categoryArray.length) {
+                countSeq++;
+                const exist = categoryArray.includes(countSeq);
+                if (!exist) {
+                  const key = `providers${i}/categories/items/${countSeq}`
+                  errorObj[key] = `The given sequence ${countSeq} doesn't exist with with the given category_id ${category_id} in providers${i}/items according to the rank`
+                  logger.error(`The given sequence ${countSeq} doesn't exist with with the given category_id ${category_id} in providers${i}/items according to the rank`)
+                }
+                i++;
+              }
+            }
+          })
+        } catch (error: any) {
+          logger.error(
+            `!!Errors while category_ids in the items, ${error.stack}`,
+          )
+        }
       }
 
       // Checking image array for bpp/providers/[]/categories/[]/descriptor/images[]
@@ -970,33 +1331,37 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
       }
 
       // Checking for same parent_item_id
-      try {
-        logger.info(`Checking for duplicate varient in bpp/providers/items for on_search`)
-        for (let i in onSearchCatalog['bpp/providers']) {
-          const items = onSearchCatalog['bpp/providers'][i].items
-          const map = checkDuplicateParentIdItems(items)
-          for (let key in map) {
-            if (map[key].length > 1) {
-              const measures = map[key].map((item: any) => {
-                const unit = item.quantity.unitized.measure.unit
-                const value = parseInt(item.quantity.unitized.measure.value)
-                return { unit, value }
-              })
-              checkForDuplicates(measures, errorObj)
-            }
-          }
-        }
-      } catch (error: any) {
-        logger.error(
-          `!!Errors while checking parent_item_id in bpp/providers/[]/items/[]/parent_item_id/, ${error.stack}`,
-        )
-      }
+      // try {
+      //   logger.info(`Checking for duplicate varient in bpp/providers/items for on_search`)
+      //   for (let i in onSearchCatalog['bpp/providers']) {
+      //     const items = onSearchCatalog['bpp/providers'][i].items
+      //     const map = checkDuplicateParentIdItems(items)
+      //     for (let key in map) {
+      //       if (map[key].length > 1) {
+      //         const measures = map[key].map((item: any) => {
+      //           const unit = item.quantity.unitized.measure.unit
+      //           const value = parseInt(item.quantity.unitized.measure.value)
+      //           return { unit, value }
+      //         })
+      //         checkForDuplicates(measures, errorObj)
+      //       }
+      //     }
+      //   }
+      // } catch (error: any) {
+      //   logger.error(
+      //     `!!Errors while checking parent_item_id in bpp/providers/[]/items/[]/parent_item_id/, ${error.stack}`,
+      //   )
+      // }
 
       // servicability Construct
       try {
         logger.info(`Checking serviceability construct for bpp/providers[${i}]`)
 
         const tags = onSearchCatalog['bpp/providers'][i]['tags']
+        if (!tags || !tags.length) {
+          const key = `prvdr${i}tags`
+          errorObj[key] = `tags must be present in bpp/providers[${i}]`
+        }
         if (tags) {
           const circleRequired = checkServiceabilityType(tags)
           if (circleRequired) {
@@ -1005,9 +1370,18 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
           }
         }
 
-        //checking for each serviceability construct
+        //checking for each serviceability construct and matching serviceability constructs with the previous ones
+        const serviceabilitySet = new Set()
+        const timingSet = new Set()
         tags.forEach((sc: any, t: any) => {
           if (sc.code === 'serviceability') {
+            if (serviceabilitySet.has(JSON.stringify(sc))) {
+              const key = `prvdr${i}tags${t}`
+              errorObj[key] =
+                `serviceability construct /bpp/providers[${i}]/tags[${t}] should not be same with the previous serviceability constructs`
+            }
+
+            serviceabilitySet.add(JSON.stringify(sc))
             if ('list' in sc) {
               if (sc.list.length != 5) {
                 const key = `prvdr${i}tags${t}`
@@ -1184,6 +1558,13 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
             }
           }
           if (sc.code === 'timing') {
+            if (timingSet.has(JSON.stringify(sc))) {
+              const key = `prvdr${i}tags${t}`
+              errorObj[key] =
+                `timing construct /bpp/providers[${i}]/tags[${t}] should not be same with the previous timing constructs`
+            }
+
+            timingSet.add(JSON.stringify(sc))
             const fulfillments = prvdr['fulfillments']
             const fulfillmentTypes = fulfillments.map((fulfillment: any) => fulfillment.type)
 
@@ -1209,6 +1590,119 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
             }
           }
         })
+        if (isEmpty(serviceabilitySet)) {
+          const key = `prvdr${i}tags/serviceability`
+          errorObj[key] =
+            `serviceability construct is mandatory in /bpp/providers[${i}]/tags`
+        } else if (serviceabilitySet.size != itemCategory_id.size) {
+          const key = `prvdr${i}/serviceability`
+          errorObj[key] =
+            `The number of unique category_id should be equal to count of serviceability in /bpp/providers[${i}]`
+        }
+        if (isEmpty(timingSet)) {
+          const key = `prvdr${i}tags/timing`
+          errorObj[key] =
+            `timing construct is mandatory in /bpp/providers[${i}]/tags`
+        }
+        else {
+          const timingsPayloadArr = new Array(...timingSet).map((item: any) => JSON.parse(item))
+          const timingsAll = _.chain(timingsPayloadArr)
+            .filter(payload => _.some(payload.list, { code: 'type', value: 'All' }))
+            .value()
+
+          // Getting timings object for 'Delivery', 'Self-Pickup' and 'Order'
+          const timingsOther = _.chain(timingsPayloadArr)
+            .filter(payload => _.some(payload.list, { code: 'type', value: 'Order' }) ||
+              _.some(payload.list, { code: 'type', value: 'Delivery' }) ||
+              _.some(payload.list, { code: 'type', value: 'Self-Pickup' }))
+            .value();
+
+          if (timingsAll.length > 0 && timingsOther.length > 0) {
+            errorObj[`prvdr${i}tags/timing`] = `If the timings of type 'All' is provided then timings construct for 'Order'/'Delivery'/'Self-Pickup' is not required`
+          }
+
+          const arrTimingTypes = new Set()
+
+          function checkTimingTag(tag: any) {
+            const typeObject = tag.list.find((item: { code: string }) => item.code === 'type');
+            const typeValue = typeObject ? typeObject.value : null;
+            arrTimingTypes.add(typeValue)
+            for (const item of tag.list) {
+              switch (item.code) {
+                case 'day_from':
+                case 'day_to':
+                  const dayValue = parseInt(item.value)
+                  if (isNaN(dayValue) || dayValue < 1 || dayValue > 7 || !/^-?\d+(\.\d+)?$/.test(item.value)) {
+                    errorObj[`prvdr${i}/day_to$/${typeValue}`] = `Invalid value for '${item.code}': ${item.value}`
+                  }
+
+                  break
+                case 'time_from':
+                case 'time_to':
+                  if (!/^([01]\d|2[0-3])[0-5]\d$/.test(item.value)) {
+                    errorObj[`prvdr${i}/tags/time_to/${typeValue}`] = `Invalid time format for '${item.code}': ${item.value}`
+                  }
+                  break
+                case 'location':
+                  if (!prvdrLocationIds.has(item.value)) {
+                    errorObj[`prvdr${i}/tags/location/${typeValue}`] = `Invalid location value as it's unavailable in location/ids`
+                  }
+                  break
+                case 'type':
+                  break
+                default:
+                  errorObj[`prvdr${i}/tags/tag_timings/${typeValue}`] = `Invalid list.code for 'timing': ${item.code}`
+              }
+            }
+
+            const dayFromItem = tag.list.find((item: any) => item.code === 'day_from')
+            const dayToItem = tag.list.find((item: any) => item.code === 'day_to')
+            const timeFromItem = tag.list.find((item: any) => item.code === 'time_from')
+            const timeToItem = tag.list.find((item: any) => item.code === 'time_to')
+
+            if (dayFromItem && dayToItem && timeFromItem && timeToItem) {
+              const dayFrom = parseInt(dayFromItem.value, 10)
+              const dayTo = parseInt(dayToItem.value, 10)
+              const timeFrom = parseInt(timeFromItem.value, 10)
+              const timeTo = parseInt(timeToItem.value, 10)
+
+              if (dayTo < dayFrom) {
+                errorObj[`prvdr${i}/tags/day_from/${typeValue}`] = "'day_to' must be greater than or equal to 'day_from'"
+              }
+
+              if (timeTo <= timeFrom) {
+                errorObj[`prvdr${i}/tags/time_from/${typeValue}`] = "'time_to' must be greater than 'time_from'"
+              }
+            }
+          }
+
+          if (timingsAll.length > 0) {
+            if (timingsAll.length > 1) {
+              errorObj[`prvdr${i}tags/timing/All`] = `The timings object for 'All' should be provided once!`
+            }
+            checkTimingTag(timingsAll[0])
+          }
+
+          if (timingsOther.length > 0) {
+            timingsOther.forEach((tagTimings: any) => {
+              checkTimingTag(tagTimings)
+            })
+            onSearchFFTypeSet.forEach((type: any) => {
+              if (!arrTimingTypes.has(type)) {
+                errorObj[`prvdr${i}/tags/timing/${type}`] = `The timings object must be present for ${type} in the tags`
+              }
+              arrTimingTypes.forEach((type: any) => {
+                if (type != 'Order' && type != 'All' && !onSearchFFTypeSet.has(type)) {
+                  errorObj[`prvdr${i}/tags/timing/${type}`] = `The timings object ${type} is not present in the onSearch fulfillments`
+                }
+              })
+              if (!arrTimingTypes.has('Order')) {
+                errorObj[`prvdr${i}/tags/timing/order`] = `The timings object must be present for Order in the tags`
+              }
+            })
+          }
+
+        }
       } catch (error: any) {
         logger.error(
           `!!Error while checking serviceability and timing construct for bpp/providers[${i}], ${error.stack}`,
@@ -1251,6 +1745,96 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
     setValue(`${ApiSequence.ON_SEARCH}itemsId`, itemsId)
   } catch (error: any) {
     logger.error(`!!Error while checking Providers info in /${constants.ON_SEARCH}, ${error.stack}`)
+  }
+  try {
+    logger.info(`Checking for errors in default flow in /${constants.ON_SEARCH}`);
+    const providers = data.message.catalog['bpp/providers'];
+
+    providers.forEach((provider: any) => {
+      let customGroupDetails: any = {};
+
+      provider?.categories.forEach((category: any) => {
+        const id: string = category?.id;
+        const customGroupTag = category.tags.find((tag: any) => tag.code === "type" && tag.list.some((item: any) => item.value === "custom_group"));
+
+        if (customGroupTag) {
+          const configTag = category.tags.find((tag: any) => tag.code === "config");
+          const min = configTag ? parseInt(configTag.list.find((item: any) => item.code === "min")?.value, 10) : 0;
+          const max = configTag ? parseInt(configTag.list.find((item: any) => item.code === "max")?.value, 10) : 0;
+
+          if (min > max) {
+            errorObj[`${provider.id}/categories/${id}`] = `The "min" is more than "max"`
+          }
+          customGroupDetails[id] = {
+            min: min,
+            max: max,
+            numberOfDefaults: 0,
+            numberOfElements: 0
+          };
+        }
+      });
+
+      let combinedIds: any = [];
+
+      provider?.items.forEach((item: any) => {
+        const typeTag = item.tags.find((tag: any) => tag.code === "type");
+        const typeValue = typeTag ? typeTag.list.find((listItem: any) => listItem.code === "type")?.value : null;
+
+        if (typeValue === "item") {
+          const customGroupTags = item.tags.filter((tag: any) => tag.code === "custom_group");
+          combinedIds = customGroupTags.flatMap((tag: any) => tag.list.map((listItem: any) => listItem.value));
+
+        } else if (typeValue === "customization") {
+          const parentTag = item.tags.find((tag: any) => tag.code === "parent");
+          const customizationGroupId = parentTag?.list.find((listItem: any) => listItem.code === "id")?.value;
+
+          if (customizationGroupId && customGroupDetails[customizationGroupId]) {
+            customGroupDetails[customizationGroupId].numberOfElements += 1;
+
+            const defaultParent = parentTag?.list.find((listItem: any) => listItem.code === "default" && listItem.value === "yes");
+            if (defaultParent) {
+              customGroupDetails[customizationGroupId].numberOfDefaults += 1;
+
+              const childTag = item.tags.find((tag: any) => tag.code === "child");
+              if (childTag) {
+                const childIds = childTag.list.map((listItem: any) => listItem.value);
+                combinedIds = [...combinedIds, ...childIds];
+              }
+            }
+          }
+        }
+      });
+
+      combinedIds.forEach((id: any) => {
+        if (customGroupDetails[id]) {
+          const group = customGroupDetails[id];
+          const min = group.min
+          const max = group.max
+
+          if (group.numberOfElements <= max) {
+            errorObj[`${provider.id}/categories/${id}/number_of_elements`] = "The number of elements in this customization group is less than the maximum that can be selected.";
+          }
+
+          if (min > 0 && group.numberOfDefaults < min) {
+            errorObj[`${provider.id}/categories/${id}/number_of_defaults`] = "The number of defaults of this customization group is less than the minimum that can be selected.";
+          }
+        }
+      });
+
+      const customGroupIds = Object.keys(customGroupDetails);
+      customGroupIds.forEach(id => {
+        const group = customGroupDetails[id];
+        const max = group.max
+
+        if (group.numberOfElements < max) {
+          errorObj[`${provider.id}/categories/${id}/number_of_defaults`] = "The number of elements in this customization group is less than the maximum that can be selected.";
+        }
+      });
+    });
+  } catch (error: any) {
+    logger.error(
+      `Error while storing items of bpp/providers in itemsArray for /${constants.ON_SEARCH}, ${error.stack}`
+    );
   }
 
   return Object.keys(errorObj).length > 0 && errorObj

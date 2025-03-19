@@ -1,4 +1,6 @@
-interface ICategoryJSON {
+import { statutory_reqs } from "../utils/enum"
+import { cattle_feed_Obj, fertilizer_Obj, organic_crop_nutrition_Obj, organic_crop_protection_Obj, pesticide_Obj, seed_Obj, tools_and_machinery_Obj } from "./agriculture"
+export interface ICategoryJSON {
   [key: string]: {
     [key: string]: boolean | String[]
   }
@@ -6,7 +8,7 @@ interface ICategoryJSON {
 
 const groceryObj: ICategoryJSON = {
   brand: {
-    mandatory: false,
+    mandatory: true,
     value: [],
   },
 }
@@ -16,10 +18,9 @@ export const groceryJSON: { [key: string]: ICategoryJSON } = {
   'Masala & Seasoning': groceryObj,
   'Falseil & Ghee': groceryObj,
   'Eggs, Meat & Fish': groceryObj,
-  'Cleaning & Household': groceryObj,
+  'Detergents and Dishwash': groceryObj,
   'Bakery, Cakes & Dairy': groceryObj,
   'Pet Care': groceryObj,
-  Stationery: groceryObj,
   'Dairy and Cheese': groceryObj,
   'Snacks, Dry Fruits, Nuts': groceryObj,
   'Pasta, Soup and Noodles': groceryObj,
@@ -45,16 +46,26 @@ export const groceryJSON: { [key: string]: ICategoryJSON } = {
   'Gift Voucher': groceryObj,
 }
 
+export const agriJSON: { [key: string]: ICategoryJSON } = {
+  'Seed': seed_Obj,
+  'Pesticide': pesticide_Obj,
+  'Fertilizer': fertilizer_Obj,
+  'Organic Crop Protection': organic_crop_protection_Obj,
+  'Organic Crop Nutrition':organic_crop_nutrition_Obj,
+  'Tools and Machinery': tools_and_machinery_Obj,
+  'Cattle Feed': cattle_feed_Obj,
+}
+
 const healthObj: ICategoryJSON = {
-  Brand: {
+  brand: {
     mandatory: true,
     value: [],
   },
-  Prescription_Required: {
+  prescription_required: {
     mandatory: true,
     value: [],
   },
-  Usage_Instruction: {
+  usage_instruction: {
     mandatory: false,
     value: [],
   },
@@ -101,62 +112,116 @@ export const healthJSON: { [key: string]: ICategoryJSON } = {
   'Gift Voucher': healthObj,
 }
 
-const homeObj: ICategoryJSON = {
-  Brand: {
+const homeObj = {
+  brand: {
     mandatory: true,
     value: [],
   },
-  Colour: {
+  colour: {
+    mandatory: true,
+    value: "/^#([a-fA-F0-9]{6})/",
+  },
+  colour_name: {
     mandatory: true,
     value: [],
   },
-  Colour_Name: {
-    mandatory: false,
-    value: [],
-  },
-  Material: {
+  material: {
     mandatory: true,
     value: [],
   },
-  Size: {
+  size: {
     mandatory: false,
     value: [],
   },
-  Weight: {
+  weight: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+  },
+  length: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+  },
+  breadth: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+  },
+  height: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+  },
+  model: {
     mandatory: false,
     value: [],
   },
-  Length: {
+  assembly_required: {
     mandatory: false,
     value: [],
   },
-  Breadth: {
+  care_instructions: {
     mandatory: false,
     value: [],
   },
-  Height: {
+  special_features: {
     mandatory: false,
     value: [],
   },
-  Model: {
+}
+const homeObj_colour_not_mandatory = {
+  brand: {
+    mandatory: true,
+    value: [],
+  },
+  colour: {
+    mandatory: false,
+    value: "/^#([a-fA-F0-9]{6})/",
+  },
+  colour_name: {
     mandatory: false,
     value: [],
   },
-  Assembly_Required: {
+  material: {
+    mandatory: true,
+    value: [],
+  },
+  size: {
     mandatory: false,
     value: [],
   },
-  Care_Instructions: {
+  weight: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+  },
+  length: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+  },
+  breadth: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+  },
+  height: {
+    mandatory: false,
+    value: "/^[0-9]+(\.[0-9]{1,2})?$/",
+  },
+  model: {
     mandatory: false,
     value: [],
   },
-  Special_Features: {
+  assembly_required: {
+    mandatory: false,
+    value: [],
+  },
+  care_instructions: {
+    mandatory: false,
+    value: [],
+  },
+  special_features: {
     mandatory: false,
     value: [],
   },
 }
 
-export const homeJSON: { [key: string]: ICategoryJSON } = {
+export const homeJSON = {
   'Home Decor': homeObj,
   Furniture: homeObj,
   'Home Furnishing - Bedding and Linen': homeObj,
@@ -173,46 +238,54 @@ export const homeJSON: { [key: string]: ICategoryJSON } = {
   'Toys and Games': homeObj,
   Stationery: homeObj,
   'Gift Voucher': {},
+  'Disposables and Garbage Bags':homeObj,
+  'Fresheners and Repellents':homeObj_colour_not_mandatory,
+  'Mops, Brushes and Scrubs':homeObj_colour_not_mandatory,
+  'Party and Festive Needs':homeObj_colour_not_mandatory,
+  'Flowers':homeObj,
+  'Pooja Needs':homeObj_colour_not_mandatory,
+  'Car and Shoe Care':homeObj_colour_not_mandatory,
+
 }
 
 const BPCObj: ICategoryJSON = {
-  Brand: {
+  brand: {
     mandatory: true,
     value: [],
   },
-  Colour: {
+  colour: {
     mandatory: false,
     value: [],
   },
-  Colour_Name: {
+  colour_Name: {
     mandatory: false,
     value: [],
   },
-  Gender: {
+  gender: {
     mandatory: false,
     value: [],
   },
-  Concern: {
+  concern: {
     mandatory: false,
     value: [],
   },
-  Ingredient: {
+  ingredient: {
     mandatory: false,
     value: [],
   },
-  Conscious: {
+  conscious: {
     mandatory: false,
     value: [],
   },
-  Preference: {
+  preference: {
     mandatory: false,
     value: [],
   },
-  Formulation: {
+  formulation: {
     mandatory: false,
     value: [],
   },
-  Skin_Type: {
+  skin_type: {
     mandatory: false,
     value: [],
   },
@@ -244,4 +317,43 @@ export const BPCJSON: { [key: string]: ICategoryJSON } = {
   'Hair Care - Shampoo, Oils, Conditioners': BPCObj,
   'Skin Care - Lotions, Moisturisers, and Creams': BPCObj,
   'Skin Care - Oils and Serums': BPCObj,
+  'Trimmer':BPCObj,
+  'Shaver':BPCObj,
+  'Epilator':BPCObj,
+  'Hair Straightener':BPCObj,
+  'Hair Dryer':BPCObj,
+  'Hair Curler':BPCObj,
+  'Hair Crimper':BPCObj
 }
+
+export const groceryCategoryMappingWithStatutory: { [key: string]: statutory_reqs } = {
+  "Bakery, Cakes & Dairy": statutory_reqs.PrepackagedFood,
+  "Dairy and Cheese": statutory_reqs.PrepackagedFood,
+  "Snacks, Dry Fruits, Nuts": statutory_reqs.PrepackagedFood,
+  "Cereals and Breakfast": statutory_reqs.PrepackagedFood,
+  "Sauces, Spreads and Dips": statutory_reqs.PrepackagedFood,
+  "Chocolates and Biscuits": statutory_reqs.PrepackagedFood,
+  "Tinned and Processed Food": statutory_reqs.PrepackagedFood,
+  "Energy and Soft Drinks": statutory_reqs.PrepackagedFood,
+  "Fruit Juices and Fruit Drinks": statutory_reqs.PrepackagedFood,
+  "Snacks and Namkeen": statutory_reqs.PrepackagedFood,
+  "Ready to Cook and Eat": statutory_reqs.PrepackagedFood,
+  "Pickles and Chutney": statutory_reqs.PrepackagedFood,
+  "Indian Sweets": statutory_reqs.PrepackagedFood,
+  "Frozen Snacks": statutory_reqs.PrepackagedFood,
+  "Masala & Seasoning": statutory_reqs.PackagedCommodities,
+  "Oil & Ghee": statutory_reqs.PackagedCommodities,
+  "Eggs, Meat & Fish": statutory_reqs.PackagedCommodities,
+  "Pet Care": statutory_reqs.PackagedCommodities,
+  "Pasta, Soup and Noodles": statutory_reqs.PackagedCommodities,
+  "Cooking and Baking Needs": statutory_reqs.PackagedCommodities,
+  "Atta, Flours and Sooji": statutory_reqs.PackagedCommodities,
+  "Rice and Rice Products": statutory_reqs.PackagedCommodities,
+  "Dals and Pulses": statutory_reqs.PackagedCommodities,
+  "Salt, Sugar and Jaggery": statutory_reqs.PackagedCommodities,
+  "Tea and Coffee": statutory_reqs.PackagedCommodities,
+  "Fruits and Vegetables": statutory_reqs.None,
+  "Water": statutory_reqs.None,
+  "Frozen Vegetables": statutory_reqs.None,
+  "Gift Voucher": statutory_reqs.None
+};

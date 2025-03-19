@@ -1,4 +1,4 @@
-export const cancel_RTO_Schema = {
+export const status_cancel_RTO_Schema = {
   type: 'object',
   properties: {
     context: {
@@ -18,11 +18,12 @@ export const cancel_RTO_Schema = {
         },
         action: {
           type: 'string',
-          const: 'on_cancel',
+          enum: ["on_cancel", "on_status"]
         },
         core_version: {
           type: 'string',
-          const: '1.2.0',
+          enum: ['1.2.0', '1.2.5'],
+          minLength: 1,
         },
         bap_id: {
           type: 'string',
@@ -196,7 +197,7 @@ export const cancel_RTO_Schema = {
                 updated_at: {
                   type: 'string',
                   format: 'rfc3339-date-time',
-                },
+                }
               },
               required: ['name', 'address', 'phone', 'created_at', 'updated_at'],
             },
@@ -303,7 +304,7 @@ export const cancel_RTO_Schema = {
                             required: ['locality', 'city', 'area_code', 'state'],
                           },
                         },
-                        required: ['id', 'descriptor', 'gps', 'address'],
+                        required: ['gps', 'address'],
                       },
                       time: {
                         type: 'object',
@@ -340,6 +341,7 @@ export const cancel_RTO_Schema = {
                         required: ['phone'],
                       },
                     },
+                    required: ['location', 'time']
                   },
                   end: {
                     type: 'object',
@@ -383,7 +385,7 @@ export const cancel_RTO_Schema = {
                                 minLength: 1,
                               },
                             },
-                            required: ['name', 'building', 'locality', 'city', 'state', 'country', 'area_code'],
+                            required: ['locality', 'city', 'state', 'area_code'],
                           },
                         },
                         required: ['gps', 'address'],
@@ -406,7 +408,6 @@ export const cancel_RTO_Schema = {
                             required: ['start', 'end'],
                           },
                         },
-                        required: ['range'],
                       },
                       person: {
                         type: 'object',
@@ -434,7 +435,7 @@ export const cancel_RTO_Schema = {
                         required: ['phone'],
                       },
                     },
-                    required: ['location', 'time', 'person', 'contact'],
+                    required: ['location',],//],
                   },
                   tags: {
                     type: 'array',
@@ -443,7 +444,7 @@ export const cancel_RTO_Schema = {
                       properties: {
                         code: {
                           type: 'string',
-                          enum: ['cancel_request', 'igm_request', 'precancel_state', 'quote_trail'],
+                          enum: ['cancel_request', 'igm_request', 'precancel_state', 'quote_trail', 'routing', 'tracking'],
                         },
                         list: {
                           type: 'array',
@@ -463,6 +464,10 @@ export const cancel_RTO_Schema = {
                                   'currency',
                                   'value',
                                   'type',
+                                  'gps_enabled',
+                                  'url_enabled',
+                                  'url',
+                                  'subtype'
                                 ],
                               },
                               value: {
@@ -492,8 +497,9 @@ export const cancel_RTO_Schema = {
                     },
                     value: {
                       type: 'string',
-                      pattern: '^[0-9]+(.[0-9]{1,2})?$',
-                      errorMessage: 'Price value should be a number in string with upto 2 decimal places'                    },
+                      pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                      errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                    },
                   },
                   required: ['currency', 'value'],
                 },
@@ -528,8 +534,9 @@ export const cancel_RTO_Schema = {
                           },
                           value: {
                             type: 'string',
-                            pattern: '^[0-9]+(.[0-9]{1,2})?$',
-                            errorMessage: 'Price value should be a number in string with upto 2 decimal places'                          },
+                            pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                            errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                          },
                         },
                         required: ['currency', 'value'],
                       },
@@ -544,8 +551,9 @@ export const cancel_RTO_Schema = {
                               },
                               value: {
                                 type: 'string',
-                                pattern: '^[0-9]+(.[0-9]{1,2})?$',
-                                errorMessage: 'Price value should be a number in string with upto 2 decimal places'                              },
+                                pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                                errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                              },
                             },
                             required: ['currency', 'value'],
                           },

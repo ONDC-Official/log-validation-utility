@@ -8,6 +8,7 @@ import {
   validateStops,
   validatePayloadAgainstSchema,
   validatePaymentObject,
+  validateProviderId,
 } from './mobilityChecks'
 import _ from 'lodash'
 import attributeConfig from './config/config2.0.1.json'
@@ -24,7 +25,7 @@ export const checkInit = (data: any, msgIdSet: any, version: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.INIT, data)
+    const schemaValidation = validateSchema('TRV', constants.INIT, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.ON_SELECT, constants.INIT)
     setValue(`${mobilitySequence.INIT}_message`, message)
 
@@ -37,27 +38,16 @@ export const checkInit = (data: any, msgIdSet: any, version: any) => {
     }
 
     const init = message.order
-
     const itemIDS: any = getValue('itemIds')
     const storedFull: any = getValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`)
 
+    //provider id check
     try {
-      logger.info(`Comparing Provider Id of /${constants.ON_SELECT} and /${constants.INIT}`)
-      const prvrdID: any = getValue('providerId')
-      const selectedProviderId = init.provider.id
-
-      if (!prvrdID) {
-        logger.info(`Skipping Provider Id check due to insufficient data`)
-        setValue('providerId', selectedProviderId)
-      } else if (!_.isEqual(prvrdID, init.provider.id)) {
-        errorObj.prvdrId = `Provider Id for /${constants.ON_SELECT} and /${constants.INIT} api should be same`
-      } else {
-        setValue('providerId', selectedProviderId)
-      }
+      logger.info(`Checking provider id in /${constants.INIT}`)
+      const providerError = validateProviderId(init?.provider?.id, constants.ON_SELECT, constants.INIT)
+      Object.assign(errorObj, providerError)
     } catch (error: any) {
-      logger.info(
-        `Error while comparing provider id for /${constants.ON_SELECT} and /${constants.INIT} api, ${error.stack}`,
-      )
+      logger.error(`!!Error while checking provider id in /${constants.INIT}, ${error.stack}`)
     }
 
     //items check

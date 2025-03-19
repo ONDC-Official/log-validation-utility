@@ -15,7 +15,8 @@ export const FnBonInitSchema = {
         },
         core_version: {
           type: 'string',
-          const: '1.2.0',
+          enum: ['1.2.0', '1.2.5'],
+          minLength: 1,
         },
         bap_id: {
           type: 'string',
@@ -309,7 +310,8 @@ export const FnBonInitSchema = {
                     value: {
                       type: 'string',
                       minLength: 1,
-                      pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                      pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                      errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                     },
                   },
                   required: ['currency', 'value'],
@@ -349,7 +351,8 @@ export const FnBonInitSchema = {
                           value: {
                             type: 'string',
                             minLength: 1,
-                            pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                            pattern: '^[-+]?[0-9]+(\.[0-9]{1,2})?$',
+                            errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                           },
                         },
                         required: ['currency', 'value'],
@@ -370,6 +373,8 @@ export const FnBonInitSchema = {
                                   count: {
                                     type: 'string',
                                     minLength: 1,
+                                    enum: ['99', '0'],
+                                    errorMessage: 'available count must be either 99 or 0 only',
                                   },
                                 },
                                 required: ['count'],
@@ -397,7 +402,8 @@ export const FnBonInitSchema = {
                               value: {
                                 type: 'string',
                                 minLength: 1,
-                                pattern : '^[0-9]+(\.[0-9]{1,2})?$', errorMessage: 'Price value should be a number in string with upto 2 decimal places'
+                                pattern: '^[-+]?[0-9]+(\.[0-9]{1,2})?$',
+                                errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                               },
                             },
                             required: ['currency', 'value'],
@@ -533,7 +539,113 @@ export const FnBonInitSchema = {
                 '@ondc/org/settlement_details',
               ],
             },
+            offers: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  id: {
+                    type: 'string',
+                    description: 'Unique identifier for the offer.',
+                  },
+                  descriptor: {
+                    type: 'object',
+                    properties: {
+                      code: {
+                        type: 'string',
+                        description: 'Type of the offer (e.g., discount, buyXgetY, freebie).',
+                        enums: ['discount', 'buyXgetY', 'freebie', 'slab', 'combo', 'delivery', 'exchange', 'financing']
+                      },
+                      images: {
+                        type: 'array',
+                        items: {
+                          type: 'string',
+                          format: 'uri',
+                          description: 'URL to images related to the offer.',
+                        },
+                      },
+                    },
+                    required: ['code', 'images'],
+                  },
+                  location_ids: {
+                    type: 'array',
+                    items: {
+                      type: 'string',
+                      description: 'List of location identifiers where the offer is valid.',
+                    },
+                  },
+                  item_ids: {
+                    type: 'array',
+                    items: {
+                      type: 'string',
+                      description: 'List of item identifiers applicable for the offer.',
+                    },
+                  },
+                  time: {
+                    type: 'object',
+                    properties: {
+                      label: {
+                        type: 'string',
+                        description: 'Label for the time validity of the offer (e.g., valid).',
+                      },
+                      range: {
+                        type: 'object',
+                        properties: {
+                          start: {
+                            type: 'string',
+                            format: 'date-time',
+                            description: 'Start date and time for the offer.',
+                          },
+                          end: {
+                            type: 'string',
+                            format: 'date-time',
+                            description: 'End date and time for the offer.',
+                          },
+                        },
+                        required: ['start', 'end'],
+                      },
+                    },
+                    required: ['label', 'range'],
+                  },
+                  tags: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        code: {
+                          type: 'string',
+                          description: 'Type of the tag (e.g., qualifier, benefit, meta).',
+                          enums: ['qualifier', 'benefit', 'meta']
+                        },
+                        list: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                                description: 'Code representing the specific tag property.',
+                                enums: ['min_value', 'value_type', 'value', 'additive', 'item_count', 'item_id', 'item_value']
+                              },
+                              value: {
+                                type: 'string',
+                                description: 'Value for the tag property.',
+                              },
+                            },
 
+                          },
+                          required: ['code', 'value'],
+                        },
+                      },
+                    },
+                    required: ['code', 'list'],
+                  },
+                },
+              },
+
+              required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags',],
+
+            },
             tags: {
               type: 'array',
               items: {
@@ -649,8 +761,9 @@ export const FnBonInitSchema = {
                             properties: {
                               value: {
                                 type: 'string',
-                                pattern: '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$',
-                                errorMessage: 'Value for tax_number must be a valid tax number i.e alphanumeric with 15 characters ',
+                                pattern: '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$|^GSTIN[0-9]{10}$',
+                                errorMessage:
+                                  'Value for tax_number must be a valid tax number i.e alphanumeric with 15 characters ',
                               },
                             },
                             required: ['code', 'value'],
@@ -677,7 +790,6 @@ export const FnBonInitSchema = {
                       ],
                     },
                   },
-                  
                 },
               },
             },

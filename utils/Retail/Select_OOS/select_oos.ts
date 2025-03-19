@@ -213,7 +213,17 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
     let onSearchItems = allOnSearchItems.flat()
     select_oos.items.forEach((item: any, index: number) => {
       onSearchItems.forEach((it: any) => {
-        if (it.id === item.id && it.location_id !== item.location_id) {
+        const tagsTypeArr = _.filter(it?.tags, { code: 'type' })
+        let isNotCustomization = true;
+        if (tagsTypeArr.length > 0) {
+          const tagsType = _.filter(tagsTypeArr[0]?.list, { code: 'type' })
+          if (tagsType.length > 0) {
+            if (tagsType[0]?.value == "customization") {
+              isNotCustomization = false;
+            }
+          }
+        }
+        if (it.id === item.id && it.location_id !== item.location_id && isNotCustomization) {
           errorObj[`location_id[${index}]`] = `location_id should be same for the item ${item.id} as in on_search`
         }
       })

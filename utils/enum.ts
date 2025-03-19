@@ -432,6 +432,14 @@ export const homeCategories = [
   'Stationery',
   'Gift Voucher',
   'Home & Kitchen',
+  'Bins and Bathroom',
+  'Disposables and Garbage Bags',
+  'Fresheners and Repellents',
+  'Mops, Brushes and Scrubs',
+  'Party and Festive Needs',
+  'Flowers',
+  'Pooja Needs',
+  'Car and Shoe Care',
 ]
 
 export const healthCategories = [
@@ -475,7 +483,97 @@ export const healthCategories = [
   'Gift Voucher',
   'Health & Wellness',
 ]
-
+export const agriCategories = [
+  'Seed',
+  'Pesticide',
+  'Fertilizer',
+  'Organic Crop Protection',
+  'Organic Crop Nutrition',
+  'Tools and Machinery',
+  'Cattle Feed',
+]
+export const automobileCategories = [
+  'Gaskets & Valves',
+  'Automotive Belts & Pulleys',
+  'Radiators, Pumps & Elbow Components',
+  'Filters',
+  'Bearings',
+  'Clutches',
+  'Engine Cooling',
+  'Oils & Lubricants',
+  'Mounting',
+  'AC & Components',
+  'Kit & Engine Components',
+  'Suspension Parts & Rubber Kits',
+  'Steering Parts & Components',
+  'Brake Parts',
+  'Tyres, Rims & Alloys',
+  'Interior Accessories & Care',
+  'Exterior Accessories & Care',
+  'Paintwork, Tools & Accessories',
+  'Styling Comforts',
+  'Vehicle Storage',
+  'Vehicle Tools',
+  'Security & Cameras',
+  'Electric Parts & Components',
+  'Plugs, Switches & Ignitions',
+  'Lights',
+  'Sensors',
+  'Navigation Devices',
+  'Vehicle Electronics & Accessories',
+  'Battery & Accessories',
+  'Exhaust Systems',
+  'Auto Body Parts & Mirrors',
+  'Windscreen',
+  'Bike Safety & Accessories',
+  'Helmets',
+  'Special Apparel',
+  'Glasses & Eyewear',
+  'Gloves',
+  'T-shirts & Tops',
+  'Jackets',
+  'Protective Wear & Guards',
+  'Eyewear',
+  'Gifts & Merchandise',
+  'Backpacks & Bags',
+  'Badges & Emblems',
+  'Gift Sets',
+  'Key Rings',
+  'Lighters',
+  'Patches',
+  'Model Vehicles',
+  'Signs',
+  'Service, Labour Charges',
+  'Cycle',
+  'Scooter',
+  'Motorcycle',
+  'Electric Bikes',
+  'Electric Scooters',
+  'Electric Cycle',
+  'Scooty',
+  'Mopeds',
+  'Three Wheeler',
+  'Sedan',
+  'Convertible',
+  'Coupe',
+  'Station Wagon',
+  'Hatchback',
+  'Crossover',
+  'Van',
+  'MUV',
+  'SUV',
+  'Truck',
+  'Luxury SUV',
+  'Luxury Hatchback',
+  'Luxury Sedan',
+  'Sports Vehicle',
+  'Golf Cart',
+  'Carriage',
+  'Bus',
+  'Agricultural Vehicles',
+  'Motorhomes',
+  'Vehicle Rental'
+];
 export const combinedCategory = [
   ...new Set([
     ...beautyCategories,
@@ -485,6 +583,8 @@ export const combinedCategory = [
     ...groceryCategories,
     ...homeCategories,
     ...healthCategories,
+    ...agriCategories,
+    ...automobileCategories
   ]),
 ]
 
@@ -494,6 +594,7 @@ export const retailPymntTtl = {
   tax: 'tax',
   discount: 'discount',
   'convenience fee': 'misc',
+  offer: 'offer'
 }
 
 export const taxNotInlcusive = [...fnbCategories]
@@ -587,16 +688,25 @@ export enum DOMAIN {
   RET17 = 'RET17',
   RET18 = 'RET18',
   RET19 = 'RET19',
-  RET20 = 'RET20',
+  AGR10 = 'AGR10',
+  RET1A = 'RET1A'
 }
 
 export enum FLOW {
   FLOW1 = '1',
   FLOW2 = '2',
+  FLOW2A = '2A',
   FLOW3 = '3',
   FLOW4 = '4',
   FLOW5 = '5',
-  FLOW6A = '6-a',
-  FLOW6B = '6-b',
-  FLOW6C = '6-c',
+  FLOW6 = '6',
+  FLOW7 = '7',
+  FLOW8 = '8',
+  FLOW9 = '9'
+}
+
+export enum statutory_reqs {
+  PrepackagedFood = '@ondc/org/statutory_reqs_prepackaged_food',
+  PackagedCommodities = '@ondc/org/statutory_reqs_packaged_commodities',
+  None = 'None'
 }

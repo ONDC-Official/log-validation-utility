@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { dropDB, setValue } from '../shared/dao'
 import { logger } from './logger'
-import { ApiSequence, retailDomains, IGMApiSequence, RSFapiSequence } from '../constants'
+import { ApiSequence, retailDomains, IGMApiSequence, RSFapiSequence, RSF_v2_apiSequence, IGM2FlowSequence } from '../constants'
 import { validateSchema, isObjectEmpty } from '../utils'
 import { checkOnsearchFullCatalogRefresh } from '../utils/Retail/RET11_onSearch/onSearch'
 import { checkSelect } from '../utils/Retail/Select/select'
@@ -38,13 +38,26 @@ import { checkOnStatusPacked } from '../utils/Retail/Status/onStatusPacked'
 import { checkOnStatusPicked } from '../utils/Retail/Status/onStatusPicked'
 import { checkOnStatusOutForDelivery } from '../utils/Retail/Status/onStatusOutForDelivery'
 import { checkOnStatusDelivered } from '../utils/Retail/Status/onStatusDelivered'
+import { checkOnStatusRTODelivered } from '../utils/Retail/Status/onStatusRTODelivered'
 import { checkCancel } from '../utils/Retail/Cancel/cancel'
 import { checkOnCancel } from '../utils/Retail/Cancel/onCancel'
-import checkRsfReceiverRecon from '../utils/RSF/rsfReceiverRecon'
-import checkRsfOnReceiverRecon from '../utils/RSF/rsfOnReciverRecon'
+import checkRsfReceiverRecon from '../utils/RSF/RSF_v1/rsfReceiverRecon'
+import checkRsfOnReceiverRecon from '../utils/RSF/RSF_v1/rsfOnReciverRecon'
+import checkRsfSettle from '../utils/RSF/RSF_v2/settle'
+import checkRsfOnSettle from '../utils/RSF/RSF_v2/on_settle'
+import checkRsfReport from '../utils/RSF/RSF_v2/report'
+import checkRsfOnReport from '../utils/RSF/RSF_v2/on_report'
+import checkRsfRecon from '../utils/RSF/RSF_v2/recon'
+import checkRsfOnRecon from '../utils/RSF/RSF_v2/on_recon'
+import checkOnIssueV2 from '../utils/igm/igm2/on_issue'
+import checkIssueV2 from '../utils/igm/igm2/issue'
+import {checkCatalogRejection} from '../utils/Retail/Catalog_Rejection/catalogRejection'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
+  const quoteTrailItemsSet = new Set()
+  const settlementDetatilSet = new Set()
+  const fulfillmentsItemsSet = new Set()
   let logReport: any = {}
   setValue('flow', flow)
   setValue('domain', domain.split(':')[1])
@@ -55,9 +68,9 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
   }
 
   try {
-    const validFlows = ['1', '2', '3', '4', '5', '6-a', '6-b', '6-c']
+    const validFlows = ['1', '2', '2A', '3', '4', '5', '6', '7', '8', '9', ]
     if (!retailDomains.includes(domain)) {
-      return 'Domain should be one of the 1.2.0 retail domains'
+      return 'Domain should be one of the 1.2.0 or 1.2.5 retail domains'
     }
     const flowOneSequence = [
       ApiSequence.SEARCH,
@@ -123,8 +136,10 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       ApiSequence.ON_STATUS_PICKED,
       ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
       ApiSequence.ON_CANCEL,
+      ApiSequence.ON_STATUS_RTO_DELIVERED
     ]
-    const flowSixASequence = [
+
+    const flowSixSequence = [
       ApiSequence.SEARCH,
       ApiSequence.ON_SEARCH,
       ApiSequence.SELECT,
@@ -133,44 +148,44 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       ApiSequence.ON_INIT,
       ApiSequence.CONFIRM,
       ApiSequence.ON_CONFIRM,
-      ApiSequence.ON_UPDATE,
-      ApiSequence.UPDATE,
-    ]
-    const flowSixBSequence = [
-      ApiSequence.SEARCH,
-      ApiSequence.ON_SEARCH,
-      ApiSequence.SELECT,
-      ApiSequence.ON_SELECT,
-      ApiSequence.INIT,
-      ApiSequence.ON_INIT,
-      ApiSequence.CONFIRM,
-      ApiSequence.ON_CONFIRM,
-      ApiSequence.UPDATE,
-      ApiSequence.ON_UPDATE_INTERIM,
+      ApiSequence.ON_UPDATE_PART_CANCEL,
+      ApiSequence.UPDATE_SETTLEMENT_PART_CANCEL,
+      ApiSequence.ON_STATUS_PENDING,
+      ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
+      ApiSequence.ON_STATUS_DELIVERED,
+      ApiSequence.UPDATE_REVERSE_QC,
+      ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC,
       ApiSequence.ON_UPDATE_APPROVAL,
       ApiSequence.ON_UPDATE_PICKED,
-      ApiSequence.UPDATE_SETTLEMENT,
+      ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC,
       ApiSequence.ON_UPDATE_DELIVERED,
+      ApiSequence.UPDATE_LIQUIDATED,
+      ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED,
+      ApiSequence.ON_UPDATE_LIQUIDATED,
+      ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED,
     ]
-    const flowSixCSequence = [
+    const flowSevenSequence = [
       ApiSequence.SEARCH,
       ApiSequence.ON_SEARCH,
-      ApiSequence.SELECT,
-      ApiSequence.ON_SELECT,
-      ApiSequence.INIT,
-      ApiSequence.ON_INIT,
-      ApiSequence.CONFIRM,
-      ApiSequence.ON_CONFIRM,
-      ApiSequence.UPDATE,
-      ApiSequence.ON_UPDATE_INTERIM,
-      ApiSequence.ON_UPDATE_LIQUIDATED,
-      ApiSequence.UPDATE_SETTLEMENT,
+      ApiSequence.CATALOG_REJECTION
     ]
+    const flowEightSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+    ]
+    const flowNineSequence = [
+      ApiSequence.INC_SEARCH,
+      ApiSequence.INC_ONSEARCH,
+      ApiSequence.CATALOG_REJECTION
+    ]
+
     const processApiSequence = (apiSequence: any, data: any, logReport: any, msgIdSet: any, flow: string) => {
       if (validFlows.includes(flow)) {
         apiSequence.forEach((apiSeq: any) => {
           if (data[apiSeq]) {
-            const resp = getResponse(apiSeq, data[apiSeq], msgIdSet)
+            const resp = getResponse(apiSeq, data[apiSeq], msgIdSet, flow)
             if (!_.isEmpty(resp)) {
               logReport = { ...logReport, [apiSeq]: resp }
             }
@@ -184,7 +199,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         return { invldFlow: 'Provided flow is invalid' }
       }
     }
-    const getResponse = (apiSeq: any, data: any, msgIdSet: any) => {
+    const getResponse = (apiSeq: any, data: any, msgIdSet: any, flow: string) => {
       switch (apiSeq) {
         case ApiSequence.SEARCH:
           return checkSearch(data, msgIdSet)
@@ -213,47 +228,59 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         case ApiSequence.INIT:
           return checkInit(data, msgIdSet)
         case ApiSequence.ON_INIT:
-          return checkOnInit(data)
+          return checkOnInit(data, flow)
         case ApiSequence.CONFIRM:
-          return checkConfirm(data, msgIdSet)
+          return checkConfirm(data, msgIdSet, flow)
         case ApiSequence.ON_CONFIRM:
-          return checkOnConfirm(data)
+          return checkOnConfirm(data, fulfillmentsItemsSet, flow)
         case ApiSequence.CANCEL:
           return checkCancel(data, msgIdSet)
         case ApiSequence.ON_CANCEL:
           return checkOnCancel(data, msgIdSet)
+        case ApiSequence.ON_STATUS_RTO_DELIVERED:
+          return checkOnStatusRTODelivered(data)
         case ApiSequence.STATUS:
           return checkStatus(data)
         case ApiSequence.ON_STATUS_PENDING:
-          return checkOnStatusPending(data, 'pending', msgIdSet)
+          return checkOnStatusPending(data, 'pending', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.ON_STATUS_PACKED:
-          return checkOnStatusPacked(data, 'packed', msgIdSet)
+          return checkOnStatusPacked(data, 'packed', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.ON_STATUS_PICKED:
-          return checkOnStatusPicked(data, 'picked', msgIdSet)
+          return checkOnStatusPicked(data, 'picked', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.ON_STATUS_OUT_FOR_DELIVERY:
-          return checkOnStatusOutForDelivery(data, 'out-for-delivery', msgIdSet)
+          return checkOnStatusOutForDelivery(data, 'out-for-delivery', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.ON_STATUS_DELIVERED:
-          return checkOnStatusDelivered(data, 'delivered', msgIdSet)
-        case ApiSequence.UPDATE:
-          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE)
-        case ApiSequence.UPDATE_SETTLEMENT:
-          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT)
-        case ApiSequence.ON_UPDATE:
-          return checkOnUpdate(data, msgIdSet,ApiSequence.ON_UPDATE)
-        case ApiSequence.ON_UPDATE_INTERIM:
-          return checkOnUpdate(data, msgIdSet,ApiSequence.ON_UPDATE_INTERIM)
+          return checkOnStatusDelivered(data, 'delivered', msgIdSet, fulfillmentsItemsSet)
+        case ApiSequence.ON_UPDATE_PART_CANCEL:
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_PART_CANCEL, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-a")
+        case ApiSequence.UPDATE_SETTLEMENT_PART_CANCEL:
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_PART_CANCEL, settlementDetatilSet, '6-a')
+        case ApiSequence.UPDATE_REVERSE_QC:
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_REVERSE_QC, settlementDetatilSet, '6-b')
+        case ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC:
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, '6-b')
         case ApiSequence.ON_UPDATE_APPROVAL:
-          return checkOnUpdate(data, msgIdSet,ApiSequence.ON_UPDATE_APPROVAL)
-        case ApiSequence.ON_UPDATE_DELIVERED:
-          return checkOnUpdate(data, msgIdSet,ApiSequence.ON_UPDATE_APPROVAL)
-        case ApiSequence.ON_UPDATE_LIQUIDATED:
-          return checkOnUpdate(data, msgIdSet,ApiSequence.ON_UPDATE_LIQUIDATED)
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_APPROVAL, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-b")
         case ApiSequence.ON_UPDATE_PICKED:
-          return checkOnUpdate(data, msgIdSet,ApiSequence.ON_UPDATE_PICKED)
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_PICKED, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-b")
+        case ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC:
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC, settlementDetatilSet, '6-b')
+        case ApiSequence.ON_UPDATE_DELIVERED:
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_DELIVERED, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-b")
+        case ApiSequence.UPDATE_LIQUIDATED:
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_LIQUIDATED, settlementDetatilSet, '6-c')
+        case ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED:
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-c")
+        case ApiSequence.ON_UPDATE_LIQUIDATED:
+          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_LIQUIDATED, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-c")
+        case ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED:
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED, settlementDetatilSet, '6-c')
         case ApiSequence.TRACK:
           return checkTrack(data)
         case ApiSequence.ON_TRACK:
           return checkOnTrack(data)
+        case ApiSequence.CATALOG_REJECTION:
+          return checkCatalogRejection(data)
         default:
           return null
       }
@@ -274,14 +301,17 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       case FLOW.FLOW5:
         logReport = processApiSequence(flowFiveSeqeence, data, logReport, msgIdSet, flow)
         break
-      case FLOW.FLOW6A:
-        logReport = processApiSequence(flowSixASequence, data, logReport, msgIdSet, flow)
+      case FLOW.FLOW6:
+        logReport = processApiSequence(flowSixSequence, data, logReport, msgIdSet, flow)
         break
-      case FLOW.FLOW6B:
-        logReport = processApiSequence(flowSixBSequence, data, logReport, msgIdSet, flow)
+      case FLOW.FLOW7:
+        logReport= processApiSequence(flowSevenSequence, data, logReport, msgIdSet, flow)
         break
-      case FLOW.FLOW6C:
-        logReport = processApiSequence(flowSixCSequence, data, logReport, msgIdSet, flow)
+      case FLOW.FLOW8:
+        logReport = processApiSequence(flowEightSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW9: 
+        logReport = processApiSequence(flowNineSequence, data, logReport, msgIdSet, flow)
         break
     }
   } catch (error: any) {
@@ -294,6 +324,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
 
 export const IGMvalidateLogs = (data: any) => {
   let logReport: any = {}
+  let retIsResolved = false
 
   try {
     dropDB()
@@ -335,18 +366,25 @@ export const IGMvalidateLogs = (data: any) => {
     }
 
     if (data[IGMApiSequence.RET_ON_ISSUE_STATUS]) {
-      const ret_onissue_status = checkOnIssueStatus(data[IGMApiSequence.RET_ON_ISSUE_STATUS])
-
-      if (!_.isEmpty(ret_onissue_status)) {
-        logReport = { ...logReport, [IGMApiSequence.RET_ON_ISSUE_STATUS]: ret_onissue_status }
+      const { onIssueStatusObj, isResolved } = checkOnIssueStatus(data[IGMApiSequence.RET_ON_ISSUE_STATUS])
+      retIsResolved = isResolved
+      if (!_.isEmpty(onIssueStatusObj)) {
+        logReport = { ...logReport, [IGMApiSequence.RET_ON_ISSUE_STATUS]: onIssueStatusObj }
       }
     }
 
     if (data[IGMApiSequence.RET_ON_ISSUE_STATUS_UNSOLICITED]) {
-      const ret_onissue_status_un = checkOnIssueStatusUnsolicited(data[IGMApiSequence.RET_ON_ISSUE_STATUS_UNSOLICITED])
+      const { onIssueStatusObj, isResolved } = checkOnIssueStatusUnsolicited(
+        data[IGMApiSequence.RET_ON_ISSUE_STATUS_UNSOLICITED],
+        retIsResolved,
+      )
+      retIsResolved = isResolved
 
-      if (!_.isEmpty(ret_onissue_status_un)) {
-        logReport = { ...logReport, [IGMApiSequence.RET_ON_ISSUE_STATUS_UNSOLICITED]: ret_onissue_status_un }
+      if (!retIsResolved) {
+        onIssueStatusObj.respondentActions = `At least one action with respondent_action 'Resolved' exists in /on_issue_status(unsolicited) or /on_issue_status.`
+      }
+      if (!_.isEmpty(onIssueStatusObj)) {
+        logReport = { ...logReport, [IGMApiSequence.RET_ON_ISSUE_STATUS_UNSOLICITED]: onIssueStatusObj }
       }
     }
 
@@ -398,9 +436,52 @@ export const IGMvalidateLogs = (data: any) => {
   }
 }
 
-export const RSFvalidateLogs = (data: any) => {
+export const IGMvalidateLogs2 = (data: any, flow?: any) => {
   let logReport: any = {}
 
+  try {
+    dropDB()
+  } catch (error) {
+    logger.error('!!Error while removing LMDB', error)
+  }
+
+  try {
+    // Process each flow's validation steps
+    processFlowValidations(IGM2FlowSequence.FLOW_1, data, flow, logReport);
+    processFlowValidations(IGM2FlowSequence.FLOW_2, data, flow, logReport);
+    processFlowValidations(IGM2FlowSequence.FLOW_3, data, flow, logReport);
+
+    logger.info(logReport, 'Report Generated Successfully!!')
+    return logReport
+  } catch (error: any) {
+    logger.error(error.message)
+    return error.message
+  }
+}
+
+function processFlowValidations(flowSequence: any, data: any, flow: any, logReport: any) {
+  // Iterate through each step in the flow sequence
+  Object.entries(flowSequence).forEach(([stepKey, stepValue]) => {
+    const stepData = data[stepValue as string];
+    if (!stepData) return;
+
+    // Determine if this is an issue or on_issue step
+    const isIssueStep = stepKey.startsWith('ISSUE');
+    const validationFunction = isIssueStep ? checkIssueV2 : checkOnIssueV2;
+    
+    // Validate the step data
+    const validationResult = validationFunction(stepData, stepValue as string, flow);
+    
+    // Add validation results to the report if there are any
+    if (!_.isEmpty(validationResult)) {
+      logReport[stepValue as string] = validationResult;
+    }
+  });
+}
+
+export const RSFvalidateLogs = (data: any) => {
+  let logReport: any = {}
+  
   try {
     dropDB()
   } catch (error) {
@@ -429,6 +510,69 @@ export const RSFvalidateLogs = (data: any) => {
     return error.message
   }
 }
+
+export const RSFvalidateLogsV2 = (data: any) => {
+  logger.info("Processing RSF v2.0.0 data:", data)
+  let logReport: any = {}
+  
+  try {
+    dropDB()
+  } catch (error) {
+    logger.error('Error while removing LMDB', error)
+  }
+
+  try {
+
+    if (data[RSF_v2_apiSequence.SETTLE]) {
+      const settle = checkRsfSettle(data[RSF_v2_apiSequence.SETTLE])
+      if (!_.isEmpty(settle)) {
+        logReport = { ...logReport, [RSF_v2_apiSequence.SETTLE]: settle }
+      }
+    }
+    
+    if (data[RSF_v2_apiSequence.ON_SETTLE]) {
+      const on_settle = checkRsfOnSettle(data[RSF_v2_apiSequence.ON_SETTLE])
+      if (!_.isEmpty(on_settle)) {
+        logReport = { ...logReport, [RSF_v2_apiSequence.ON_SETTLE]: on_settle }
+      }
+    }
+
+    if (data[RSF_v2_apiSequence.REPORT]) {
+      const report = checkRsfReport(data[RSF_v2_apiSequence.REPORT])
+      if (!_.isEmpty(report)) {
+        logReport = { ...logReport, [RSF_v2_apiSequence.REPORT]: report }
+      }
+    }
+
+    if (data[RSF_v2_apiSequence.ON_REPORT]) {
+      const on_report = checkRsfOnReport(data[RSF_v2_apiSequence.ON_REPORT])
+      if (!_.isEmpty(on_report)) {
+        logReport = { ...logReport, [RSF_v2_apiSequence.ON_REPORT]: on_report }
+      }
+    }
+
+    if (data[RSF_v2_apiSequence.RECON]) {
+      const recon = checkRsfRecon(data[RSF_v2_apiSequence.RECON])
+      if (!_.isEmpty(recon)) {
+        logReport = { ...logReport, [RSF_v2_apiSequence.RECON]: recon }
+      }
+    }
+
+    if (data[RSF_v2_apiSequence.ON_RECON]) {
+      const on_recon = checkRsfOnRecon(data[RSF_v2_apiSequence.ON_RECON])
+      if (!_.isEmpty(on_recon)) {
+        logReport = { ...logReport, [RSF_v2_apiSequence.ON_RECON]: on_recon }
+      }
+    }
+
+    logger.info('RSF v2.0.0 Report Generated Successfully')
+    return logReport
+  } catch (error: any) {
+    logger.error(error.message)
+    return error.message
+  }
+}
+
 
 export const validateActionSchema = (data: any, domain: string, action: string) => {
   const errorObj: any = {}

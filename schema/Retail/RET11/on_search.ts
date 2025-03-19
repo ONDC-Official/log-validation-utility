@@ -28,7 +28,8 @@ export const FnBonSearchSchema = {
         },
         core_version: {
           type: 'string',
-          const: '1.2.0',
+          enum: ['1.2.0', '1.2.5'],
+          minLength: 1,
         },
         bap_id: {
           type: 'string',
@@ -44,7 +45,7 @@ export const FnBonSearchSchema = {
           type: 'string',
         },
         timestamp: {
-          format: 'rfc3339-date-time'
+          format: 'rfc3339-date-time',
         },
         ttl: {
           type: 'string',
@@ -89,7 +90,7 @@ export const FnBonSearchSchema = {
                   },
                   type: {
                     type: 'string',
-                    enum: ['Delivery', 'Self-Pickup', 'Delivery and Self-Pickup'],
+                    enum: ['Delivery', 'Self-Pickup'],
                   },
                 },
                 required: ['id', 'type'],
@@ -215,6 +216,12 @@ export const FnBonSearchSchema = {
                   id: {
                     type: 'string',
                   },
+                  rating: {
+                    type: ['number','null'],
+                    minimum: 1,
+                    maximum: 5,
+                    default: null,
+                  },
                   time: {
                     type: 'object',
                     properties: {
@@ -238,7 +245,7 @@ export const FnBonSearchSchema = {
                         },
                         type: {
                           type: 'string',
-                          enum: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
+                          enum: ['Delivery', 'Self-Pickup'],
                         },
                         contact: {
                           type: 'object',
@@ -327,7 +334,6 @@ export const FnBonSearchSchema = {
                                 },
                                 frequency: {
                                   type: 'string',
-                                  format: 'duration',
                                 },
                                 times: {
                                   type: 'array',
@@ -354,7 +360,7 @@ export const FnBonSearchSchema = {
                               required: ['start', 'end'],
                             },
                           },
-                          required: ['label', 'timestamp', 'days','schedule'],
+                          required: ['label', 'timestamp', 'days', 'schedule'],
                         },
                         gps: {
                           type: 'string',
@@ -381,6 +387,7 @@ export const FnBonSearchSchema = {
                             },
                           },
                           required: ['locality', 'street', 'city', 'area_code', 'state'],
+                          additionalProperties: false,
                         },
                         circle: {
                           type: 'object',
@@ -418,6 +425,8 @@ export const FnBonSearchSchema = {
                       properties: {
                         id: {
                           type: 'string',
+                          pattern:'^[a-zA-Z0-9-]{1,12}$',
+                          errorMessage: 'categories.id should be alphanumeric and upto 12 characters',
                         },
                         parent_category_id: {
                           type: 'string',
@@ -482,6 +491,12 @@ export const FnBonSearchSchema = {
                       properties: {
                         id: {
                           type: 'string',
+                        },
+                        rating: {
+                          type: ['number','null'],
+                          minimum: 1,
+                          maximum: 5,
+                          default: null,
                         },
                         time: {
                           type: 'object',
@@ -550,8 +565,8 @@ export const FnBonSearchSchema = {
                               properties: {
                                 count: {
                                   type: 'string',
-                                  pattern: '^[0-9]+$',
-                                  errorMessage: 'available count must be numbers only',
+                                  enum: ['99', '0'],
+                                  errorMessage: 'available count must be either 99 or 0 only',
                                 },
                               },
                               required: ['count'],
@@ -562,7 +577,7 @@ export const FnBonSearchSchema = {
                                 count: {
                                   type: 'string',
                                   pattern: '^[0-9]+$',
-                                  errorMessage: 'maximum count must be numbers only ',
+                                  errorMessage: 'maximum count must be in stringified number format. ',
                                 },
                               },
                               required: ['count'],
@@ -579,12 +594,12 @@ export const FnBonSearchSchema = {
                             },
                             value: {
                               type: 'string',
-                              pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                              pattern: '^[-+]?[0-9]+(\.[0-9]{1,2})?$',
                               errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                             },
                             maximum_value: {
                               type: 'string',
-                              pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                              pattern: '^[0-9]+(\.[0-9]{1,2})?$',
                               errorMessage: 'Price value should be a number in string with upto 2 decimal places',
                             },
                             tags: {
@@ -607,7 +622,7 @@ export const FnBonSearchSchema = {
                                         },
                                         value: {
                                           type: 'string',
-                                          pattern: '^\\d+(\\.\\d{2})?$',
+                                          pattern: '^[0-9]+(\.[0-9]{1,2})?$',
                                           errorMessage: 'enter a valid number with exactly two decimal places.',
                                         },
                                       },
@@ -651,7 +666,8 @@ export const FnBonSearchSchema = {
                           type: 'boolean',
                         },
                         '@ondc/org/return_window': {
-                          type: 'string',
+                          type: ['string', 'null'],
+                          format: 'duration',
                         },
                         '@ondc/org/seller_pickup_return': {
                           type: 'boolean',
@@ -711,7 +727,7 @@ export const FnBonSearchSchema = {
                           properties: {
                             code: {
                               type: 'string',
-                              enum: ['disc_pct', 'disc_amt', 'buyXgetY', 'freebie'],
+                              enum: ['discount', 'buyXgetY', 'freebie', 'slab', 'combo', 'delivery']
                             },
                             images: {
                               type: 'array',
@@ -894,7 +910,7 @@ export const FnBonSearchSchema = {
                                         properties: {
                                           value: {
                                             type: 'string',
-                                            pattern: '^(2[0-3]|[01]?[0-9]|24)[0-5]?[0-9]$',
+                                            pattern: '^([01][0-9]|2[0-3])[0-5][0-9]$',
                                             errorMessage:
                                               "Value for 'time_from' must be a 4-digit numeric value in HHMM format",
                                           },
@@ -941,103 +957,29 @@ export const FnBonSearchSchema = {
                               list: {
                                 type: 'array',
                                 items: {
-                                  allOf: [
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'location',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
+                                  type: 'object',
+                                  properties: {
+                                    code: {
+                                      type: 'string',
+                                      enum: ['location', 'category', 'type', 'val', 'unit'],
+                                      errorMessage:
+                                        "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit'",
                                     },
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'category',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
+                                    value: {
+                                      type: 'string',
                                     },
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'type',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            enum: ['10','13'],
-                                            errorMessage:
-                                              "Value for 'type' must be enum for FnB - '10' (hyperlocal),'13' (polygon) only",
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'val',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            pattern: '^[0-9]+$',
-                                            errorMessage: "Value for 'val' must be numeric characters only",
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        properties: {
-                                          code: {
-                                            const: 'unit',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                  ],
+                                  },
+                                  required: ['code', 'value'],
+                                  additionalProperties: false,
+                                },
+                                minItems: 5,
+                                maxItems: 5,
+                                uniqueItems: true,
+                                errorMessage: {
+                                  minItems: 'Serviceability must have minimum 5 values',
+                                  maxItems: 'Serviceability must have maximum 5 values',
+                                  uniqueItems: 'Serviceability must have unique items',
+                                  _: "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit' and no duplicacy or other elements allowed",
                                 },
                               },
                             },
@@ -1187,7 +1129,7 @@ export const FnBonSearchSchema = {
                                       then: {
                                         properties: {
                                           value: {
-                                            pattern: '^[0-9]+(.[0-9]{2})?$',
+                                            pattern: '^[0-9]+(?:\.[0-9]{1,2})?$',
                                             errorMessage: 'min_value must be number with exactly two decimal places',
                                           },
                                         },
@@ -1219,7 +1161,7 @@ export const FnBonSearchSchema = {
               },
             },
           },
-          required: ['bpp/providers', 'bpp/fulfillments', 'bpp/descriptor'],
+          required: ['bpp/providers', 'bpp/descriptor'],
         },
       },
       required: ['catalog'],

@@ -29,7 +29,8 @@ export const onSearchSchema = {
         },
         core_version: {
           type: 'string',
-          const: '1.2.0',
+          enum: ['1.2.0', '1.2.5'],
+          minLength: 1,
         },
         bap_id: {
           type: 'string',
@@ -97,7 +98,7 @@ export const onSearchSchema = {
                   },
                   type: {
                     type: 'string',
-                    enum: ['Delivery', 'Self-Pickup'],
+                    enum: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
                   },
                 },
                 required: ['id', 'type'],
@@ -112,7 +113,7 @@ export const onSearchSchema = {
                 symbol: {
                   type: 'string',
                   format: 'url',
-                  errorMessage: 'descriptor/symbol should be URLs or can be empty strings as well',
+                  errorMessage: 'descriptor/symbol should be URLs or can be empty array as well',
                 },
                 short_desc: {
                   type: 'string',
@@ -153,7 +154,7 @@ export const onSearchSchema = {
                                 properties: {
                                   code: {
                                     type: 'string',
-                                    enum: ['np_type'],
+                                    const: 'np_type',
                                   },
                                   value: {
                                     type: 'string',
@@ -233,6 +234,12 @@ export const onSearchSchema = {
                 properties: {
                   id: {
                     type: 'string',
+                  },
+                  rating: {
+                    type: ['number', 'null'],
+                    minimum: 1,
+                    maximum: 5,
+                    default: null,
                   },
                   time: {
                     type: 'object',
@@ -428,7 +435,7 @@ export const onSearchSchema = {
                       properties: {
                         id: {
                           type: 'string',
-                          pattern:'^[a-zA-Z0-9-]{12}$'
+                          pattern: '^[a-zA-Z0-9-]{1,12}$',
                         },
                         descriptor: {
                           type: 'object',
@@ -450,38 +457,76 @@ export const onSearchSchema = {
                               },
                             },
                           },
-                          required: ['name'],
                         },
                         tags: {
                           type: 'array',
                           items: {
-                            type: 'object',
-                            properties: {
-                              code: {
-                                type: 'string',
-                              },
-                              list: {
-                                type: 'array',
-                                items: {
-                                  type: 'object',
+                            oneOf: [
+                              {
+                                type: 'object',
+                                if: {
                                   properties: {
                                     code: {
-                                      type: 'string',
-                                    },
-                                    value: {
-                                      type: 'string',
-                                    },
-                                  },
-                                  required: ['code', 'value'],
+                                      const: 'np_fees'
+                                    }
+                                  }
                                 },
+                                then: {
+                                  properties: {
+                                    list: {
+                                      type: 'array',
+                                      items: {
+                                        type: 'object',
+                                        properties: {
+                                          code: {
+                                            type: 'string',
+                                            enum: ['channel_margin_type', 'channel_margin_value']
+                                          },
+                                          value: {
+                                            type: 'string'
+                                          }
+                                        },
+                                      }
+                                    }
+                                  },
+
+                                }
                               },
-                            },
-                            required: ['code', 'list'],
-                          },
-                        },
+                              {
+                                type: 'object',
+                                if: {
+                                  not: {
+                                    properties: {
+                                      code: {
+                                        const: 'np_fees'
+                                      }
+                                    }
+                                  }
+                                },
+                                then: {
+                                  properties: {
+                                    list: {
+                                      type: 'array',
+                                      items: {
+                                        type: 'object',
+                                        properties: {
+                                          code: {
+                                            type: 'string'
+                                          },
+                                          value: {
+                                            type: 'string'
+                                          }
+                                        },
+                                      }
+                                    }
+                                  },
+                                }
+                              }
+                            ]
+                          }
+                        }
                       },
-                      required: ['id', 'descriptor', 'tags'],
-                    },
+                    }
                   },
                   items: {
                     type: 'array',
@@ -489,7 +534,34 @@ export const onSearchSchema = {
                       type: 'object',
                       properties: {
                         id: {
-                          type: 'string'
+                          type: 'string',
+                        },
+                        replacement_terms: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              replace_within: {
+                                type: 'object',
+                                properties: {
+                                  duration: {
+                                    type: 'string',
+                                    pattern: "^P(\\d+D|\\d+W|\\d+M|\\d+Y)$",
+                                  }
+                                },
+                                required: ['duration']
+                              }
+                            },
+                            required: ['replace_within']
+                          },
+                          optional: true
+                        },
+                        rating: {
+                          type: ['number', 'null'],
+                          
+                          minimum: 1,
+                          maximum: 5,
+                          default: null,
                         },
                         time: {
                           type: 'object',
@@ -769,6 +841,184 @@ export const onSearchSchema = {
                         'tags',
                       ],
                     },
+                  },
+                  creds: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        id: {
+                          type: 'string',
+                          description: 'Unique identifier for the credential, format: ESG-XXXXXXXX (8 digits).',
+                        },
+                        descriptor: {
+                          type: 'object',
+                          properties: {
+                            code: {
+                              type: 'string',
+                              description: 'Code of the credential, format: ESG-XXXXXXXX (8 digits).',
+                            },
+                            short_desc: {
+                              type: 'string',
+                              description: 'Short description of the credential.',
+                            },
+                            name: {
+                              type: 'string',
+                              description: 'Name of the credential.',
+                            },
+                          },
+                          required: ['code', 'short_desc', 'name'],
+                          additionalProperties: false,
+                        },
+                        url: {
+                          type: 'string',
+                          format: 'uri',
+                          description: 'URL to the credential or badge image.',
+                        },
+                        tags: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                                description: "Code representing the tag (e.g., 'verification').",
+                              },
+                              list: {
+                                type: 'array',
+                                items: {
+                                  type: 'object',
+                                  properties: {
+                                    code: {
+                                      type: 'string',
+                                      description: "Code representing the specific tag value (e.g., 'verify_url').",
+                                    },
+                                    value: {
+                                      type: 'string',
+                                      format: 'uri',
+                                      description: 'URL or other values associated with the tag.',
+                                    },
+                                  },
+                                  required: ['code', 'value'],
+                                  additionalProperties: false,
+                                },
+                                description: 'List of key-value pairs for additional tag data.',
+                              },
+                            },
+                            required: ['code', 'list'],
+                            additionalProperties: false,
+                          },
+                          description: 'Tags associated with the credential, including verification details.',
+                        },
+                      },
+                      required: ['id', 'descriptor'],
+                      additionalProperties: false,
+                    },
+                  },
+                  offers: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        id: {
+                          type: 'string',
+                          description: 'Unique identifier for the offer.',
+                        },
+                        descriptor: {
+                          type: 'object',
+                          properties: {
+                            code: {
+                              type: 'string',
+                              description: 'Type of the offer (e.g., discount, buyXgetY, freebie).',
+                              enums: ['discount', 'buyXgetY', 'freebie', 'slab', 'combo', 'delivery', 'exchange', 'financing']
+                            },
+                            images: {
+                              type: 'array',
+                              items: {
+                                type: 'string',
+                                format: 'uri',
+                                description: 'URL to images related to the offer.',
+                              },
+                            },
+                          },
+                          required: ['code', 'images'],
+                        },
+                        location_ids: {
+                          type: 'array',
+                          items: {
+                            type: 'string',
+                            description: 'List of location identifiers where the offer is valid.',
+                          },
+                        },
+                        item_ids: {
+                          type: 'array',
+                          items: {
+                            type: 'string',
+                            description: 'List of item identifiers applicable for the offer.',
+                          },
+                        },
+                        time: {
+                          type: 'object',
+                          properties: {
+                            label: {
+                              type: 'string',
+                              description: 'Label for the time validity of the offer (e.g., valid).',
+                            },
+                            range: {
+                              type: 'object',
+                              properties: {
+                                start: {
+                                  type: 'string',
+                                  format: 'date-time',
+                                  description: 'Start date and time for the offer.',
+                                },
+                                end: {
+                                  type: 'string',
+                                  format: 'date-time',
+                                  description: 'End date and time for the offer.',
+                                },
+                              },
+                              required: ['start', 'end'],
+                            },
+                          },
+                          required: ['label', 'range'],
+                        },
+                        tags: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                                description: 'Type of the tag (e.g., qualifier, benefit, meta).',
+                                enums: ['qualifier', 'benefit', 'meta']
+                              },
+                              list: {
+                                type: 'array',
+                                items: {
+                                  type: 'object',
+                                  properties: {
+                                    code: {
+                                      type: 'string',
+                                      description: 'Code representing the specific tag property.',
+                                      enums: ['min_value', 'value_type', 'value', 'additive', 'item_count', 'item_id', 'item_value']
+                                    },
+                                    value: {
+                                      type: 'string',
+                                      description: 'Value for the tag property.',
+                                    },
+                                  },
+                                },
+                                required: ['code', 'value'],
+                              },
+                            },
+                          },
+                          required: ['code', 'list'],
+                        },
+                      },
+                    },
+
+                    required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags'],
                   },
                   tags: {
                     type: 'array',
@@ -1152,12 +1402,12 @@ export const onSearchSchema = {
                       ],
                     },
                   },
+                  required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],
                 },
-                required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],
               },
             },
+            required: ['bpp/descriptor', 'bpp/providers'],
           },
-          required: ['bpp/descriptor', 'bpp/providers'],
         },
       },
       required: ['catalog'],

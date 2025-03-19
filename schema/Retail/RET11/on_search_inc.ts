@@ -20,7 +20,8 @@ export const FnBonSearchIncSchema = {
         },
         core_version: {
           type: 'string',
-          const: '1.2.0',
+          enum: ['1.2.0', '1.2.5'],
+          minLength: 1,
         },
         bap_id: {
           type: 'string',
@@ -119,6 +120,12 @@ export const FnBonSearchIncSchema = {
                 properties: {
                   id: {
                     type: 'string',
+                  },
+                  rating: {
+                    type: 'number',
+                    minimum: 1,
+                    maximum: 5,
+                    default: null,
                   },
                   time: {
                     type: 'object',
@@ -381,6 +388,12 @@ export const FnBonSearchIncSchema = {
                         id: {
                           type: 'string',
                         },
+                        rating: {
+                          type: 'number',
+                          minimum: 1,
+                          maximum: 5,
+                          default: null,
+                        },
                         time: {
                           type: 'object',
                           properties: {
@@ -567,13 +580,6 @@ export const FnBonSearchIncSchema = {
                         'price',
                         'category_id',
                         'tags',
-                        '@ondc/org/returnable',
-                        '@ondc/org/cancellable',
-                        '@ondc/org/return_window',
-                        '@ondc/org/seller_pickup_return',
-                        '@ondc/org/time_to_ship',
-                        '@ondc/org/available_on_cod',
-                        '@ondc/org/contact_details_consumer_care',
                       ],
                     },
                   },

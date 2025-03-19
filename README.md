@@ -688,6 +688,116 @@ curl --location 'https://localhost:3006/api/validate/trv' \
     }
 }'
 ```
+### For RSF V2 Sample Curl Request (Local)
+
+```shell
+curl --location 'http://localhost:3008/api/validate/rsf' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:NTS10",
+    "version": "2.0.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+
+        "settle":{},
+        "on_settle":{},
+        "report":{},
+        "on_report":{},
+        "recon":{},
+        "on_recon":{}
+                }
+        }'
+
+```
+
+### For IGM 2.0.0 Sample Curl Request (Local)
+
+### For FLOW_1
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/igm' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "",
+    "version": "2.0.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "flow": "FLOW_1",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "issue_open": {},
+        "on_issue_processing_1":{},
+        "on_issue_info_required": {},
+        "issue_info_provided": {},
+        "on_issue_processing_2": {},
+        "on_issue_resolution_proposed": {},
+        "issue_resolution_accepted": {},
+        "on_issue_resolved": {},
+        "issue_closed": {}
+    }
+}'
+
+```
+
+### For FLOW_2
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/igm' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "",
+    "version": "2.0.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "flow": "FLOW_2",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "issue_open": {},
+        "on_issue_processing": {},
+        "on_issue_resolution_proposed": {},
+        "issue_resolution_accepted": {},
+        "on_issue_resolved": {},
+        "issue_esclated": {},
+        "on_issue_gro_processing": {},
+        "on_issue_gro_resolution_proposed": {},
+        "on_issue_gro_resolved": {},
+        "issue_close": {}
+    }
+}'
+
+```
+
+### For FLOW_3
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/igm' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "",
+    "version": "2.0.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "flow": "FLOW_3",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "issue_open": {},
+        "on_issue_processing": {},
+        "issue_lsp_open": {},
+        "on_issue_lsp_processing": {},
+        "on_issue_lsp_info_required": {},
+        "on_issue_info_required": {},
+        "issue_info_provided": {},
+        "issue_info_lsp_info_provided": {},
+        "on_issue_lsp_resolution_proposed": {},
+        "on_issue_resolution_proposed": {},
+        "issue_resolution_accepted": {},
+        "issue_lsp_resolution_accepted": {},
+        "on_issue_lsp_resolved": {},
+        "on_issue_resolved": {},
+        "issue_close": {},
+        "issue_lsp_close": {}
+    }
+}'
+
+```
 
 Using Postman, you can import the above `curl` command into Postman and replace the empty objects in the payload with your actual data. This allows for easy testing and validation of transaction logs on your local environment.
 

@@ -43,6 +43,25 @@ export default Object.freeze({
   RET_ONISSUE_STATUS: 'on_issue_status',
   RECEIVER_RECON: 'receiver_recon',
   ON_RECEIVER_RECON: 'on_receiver_recon',
+  SETTLE: 'settle',
+  ON_SETTLE: 'on_settle',
+  REPORT: 'report',
+  ON_REPORT: 'on_report',
+  RECON: 'recon',
+  ON_RECON: 'on_recon',
+  CATALOG_REJECTION:'catalog_rejection',
+  "ISSUE_1": "issue_1",
+  "ON_ISSUE_1": "on_issue_1",
+  "ON_ISSUE_2": "on_issue_2",
+  "ISSUE_2": "issue_2",
+  "ON_ISSUE_3": "on_issue_3",
+  "ON_ISSUE_4": "on_issue_4",
+  "ISSUE_3": "issue_3",
+  "ON_ISSUE_5": "on_issue_5",
+  "ON_ISSUE_6": "on_issue_6",
+  "ISSUE_4": "issue_4",
+  "ON_ISSUE_7": "on_issue_7",
+  "ISSUE_5": "issue_5",
 })
 
 export const ApiSequence = {
@@ -85,6 +104,7 @@ export const ApiSequence = {
   ON_UPDATE_LIQUIDATED: 'on_update_liquidated',
   SELECT_OUT_OF_STOCK: 'select_out_of_stock',
   ON_SELECT_OUT_OF_STOCK: 'on_select_out_of_stock',
+  CATALOG_REJECTION:'catalog_rejection'
 }
 
 export const FisApiSequence = {
@@ -196,7 +216,27 @@ export const FIS14ApiSequence = {
   ON_UPDATE: 'on_update',
   ON_UPDATE_1: 'on_update_1',
 }
-
+export const TRV14ApiSequence = {
+  SEARCH: 'search',
+  ON_SEARCH1: 'on_search_1',
+  ON_SEARCH2: 'on_search_2',
+  SELECT1: 'select_1',
+  ON_SELECT1: 'on_select_1',
+  SELECT2: 'select_2',
+  ON_SELECT2: 'on_select_2',
+  INIT: 'init',
+  ON_INIT: 'on_init',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  STATUS: 'status',
+  ON_STATUS: 'on_status',
+  SOFT_CANCEL: 'soft_cancel',
+  SOFT_ON_CANCEL: 'soft_on_cancel',
+  CANCEL: 'cancel',
+  ON_CANCEL: 'on_cancel',
+  UPDATE: 'update',
+  ON_UPDATE: 'on_update',
+}
 export const mobilitySequence = {
   SEARCH: 'search',
   SEARCH_INC: 'search_inc',
@@ -366,11 +406,86 @@ export const IGMApiSequence = {
   LSP_ON_ISSUE_STATUS: 'lsp_on_issue_status',
 }
 
+export const IGM2Flows = {
+  FLOW_1: 'FLOW_1',
+  FLOW_2: 'FLOW_2',
+  FLOW_3: 'FLOW_3',
+}
+export const IGM2Sequence = {
+  "ISSUE_1": "issue_1",
+  "ON_ISSUE_1": "on_issue_1",
+  "ON_ISSUE_2": "on_issue_2",
+  "ISSUE_2": "issue_2",
+  "ON_ISSUE_3": "on_issue_3",
+  "ON_ISSUE_4": "on_issue_4",
+  "ISSUE_3": "issue_3",
+  "ON_ISSUE_5": "on_issue_5",
+  "ON_ISSUE_6": "on_issue_6",
+  "ISSUE_4": "issue_4",
+  "ON_ISSUE_7": "on_issue_7",
+  "ISSUE_5": "issue_5",
+}
+
+export const IGM2FlowSequence = {
+  FLOW_1: {
+    ISSUE_OPEN: "issue_open",
+    ON_ISSUE_PROCESSING_1: "on_issue_processing_1",
+    ON_ISSUE_INFO_REQUIRED: "on_issue_info_required",
+    ISSUE_INFO_PROVIDED: "issue_info_provided",
+    ON_ISSUE_PROCESSING_2: "on_issue_processing_2",
+    ON_ISSUE_RESOLUTION_PROPOSED: "on_issue_resolution_proposed",
+    ISSUE_RESOLUTION_ACCEPTED: "issue_resolution_accepted",
+    ON_ISSUE_RESOLVED: "on_issue_resolved",
+    ISSUE_CLOSED: "issue_closed"
+  },
+  
+  FLOW_2: {
+    ISSUE_OPEN: "issue_open",
+    ON_ISSUE_PROCESSING: "on_issue_processing",
+    ON_ISSUE_RESOLUTION_PROPOSED: "on_issue_resolution_proposed",
+    ISSUE_RESOLUTION_ACCEPTED: "issue_resolution_accepted",
+    ON_ISSUE_RESOLVED: "on_issue_resolved",
+    ISSUE_ESCLATED: "issue_esclated",
+    ON_ISSUE_GRO_PROCESSING: "on_issue_gro_processing",
+    ON_ISSUE_GRO_RESOLUTION_PROPOSED: "on_issue_gro_resolution_proposed",
+    ISSUE_GRO_RESOLUTION_ACCEPTED: "issue_gro_resolution_accepted",
+    ON_ISSUE_GRO_RESOLVED: "on_issue_gro_resolved",
+    ISSUE_GRO_CLOSE: "issue_gro_close"
+  },
+  
+  FLOW_3: {
+    ISSUE_OPEN: "issue_open",
+    ON_ISSUE_PROCESSING: "on_issue_processing",
+    ISSUE_LSP_OPEN: "issue_lsp_open",
+    ON_ISSUE_LSP_PROCESSING: "on_issue_lsp_processing",
+    ON_ISSUE_LSP_INFO_REQUIRED: "on_issue_lsp_info_required",
+    ON_ISSUE_INFO_REQUIRED: "on_issue_info_required",
+    ISSUE_INFO_PROVIDED: "issue_info_provided",
+    ISSUE_INFO_LSP_INFO_PROVIDED: "issue_info_lsp_info_provided",
+    ON_ISSUE_LSP_RESOLUTION_PROPOSED: "on_issue_lsp_resolution_proposed",
+    ON_ISSUE_RESOLUTION_PROPOSED: "on_issue_resolution_proposed",
+    ISSUE_RESOLUTION_ACCEPTED: "issue_resolution_accepted",
+    ISSUE_LSP_RESOLUTION_ACCEPTED: "issue_lsp_resolution_accepted",
+    ON_ISSUE_LSP_RESOLVED: "on_issue_lsp_resolved",
+    ON_ISSUE_RESOLVED: "on_issue_resolved",
+    ISSUE_CLOSE: "issue_close",
+    ISSUE_LSP_CLOSE: "issue_lsp_close"
+  }
+}
+
 export const RSFapiSequence = {
   RECEIVER_RECON: 'receiver_recon',
   ON_RECEIVER_RECON: 'on_receiver_recon',
 }
 
+export const RSF_v2_apiSequence = {
+  SETTLE: 'settle',
+  ON_SETTLE: 'on_settle',
+  REPORT: 'report',
+  ON_REPORT: 'on_report',
+  RECON: 'recon',
+  ON_RECON: 'on_recon',
+}
 export const actionsArray = [
   'search',
   'on_search',
@@ -448,7 +563,9 @@ export const MOB_FULL_STATE = [
   'RIDE_ARRIVED_PICKUP',
 ]
 
-export const ffCategory = [
-  ['Immediate Delivery', 'Standard Delivery', 'Express Delivery'],
-  ['Takeaway', 'Kerbside'],
-]
+export const ffCategory = [["Immediate Delivery", "Standard Delivery", "Express Delivery"], ["Takeaway", "Kerbside"]]
+
+export const PAYMENT_STATUS = {
+  PAID: 'PAID',
+  NOT_PAID: 'NOT-PAID',
+}

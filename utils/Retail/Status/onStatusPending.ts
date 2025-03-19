@@ -1,7 +1,8 @@
 /* eslint-disable no-prototype-builtins */
 import _ from 'lodash'
-import constants, { ApiSequence } from '../../../constants'
+import constants, { ApiSequence, PAYMENT_STATUS } from '../../../constants'
 import { logger } from '../../../shared/logger'
+import { FLOW } from '../../../utils/enum'
 import {
   validateSchema,
   isObjectEmpty,
@@ -201,20 +202,29 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
         `!!Error occurred while comparing order updated at for /${constants.ON_STATUS}_${state}, ${error.stack}`,
       )
     }
-
     try {
       logger.info(`Checking if transaction_id is present in message.order.payment`)
       const payment = on_status.payment
-      const status = payment_status(payment)
+      const status = payment_status(payment, flow)
       if (!status) {
         onStatusObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
       }
     } catch (err: any) {
       logger.error(`Error while checking transaction is in message.order.payment`)
     }
-
-    if (flow === '6' || flow === '2' || flow === '3' || flow === '5') 
-    {
+    try {
+      if (flow === FLOW.FLOW2A) {
+        logger.info('Payment status check in on status pending call')
+        const payment = on_status.payment
+        if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
+          logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`);
+          onStatusObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
+        }
+      }
+    } catch (err: any) {
+      logger.error('Error while checking payment in message/order/payment: ' + err.message);
+    }
+    if (flow === '6' || flow === '2' || flow === '3' || flow === '5') {
       try {
         // For Delivery Object
         const fulfillments = on_status.fulfillments

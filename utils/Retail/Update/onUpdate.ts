@@ -128,7 +128,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
         try {
             logger.info(`Checking if payment status is Paid or Unpaid and availability of transaction_id`)
             const payment = on_update.payment
-            const status = payment_status(payment)
+            const status = payment_status(payment, flow)
             if (!status) {
                 onupdtObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
             }
@@ -528,6 +528,18 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                         const returnFulifllmentTags = returnFulfillment?.tags[0]
                         if (!_.isEmpty(returnFulifllmentTags?.list)) {
                             const returnFulifillmentTagsList = returnFulifllmentTags.list
+                            const replaceObj = _.find(returnFulifillmentTagsList, { code: "replace" });
+                            if (replaceObj && replaceObj.value) {
+                                let replaceValue = replaceObj.value;
+
+                                if (replaceValue === "yes" || replaceValue === "no") {
+                                    logger.info(`Valid replace value: ${replaceValue} for /${apiSeq}`);
+                                } else {
+                                    onupdtObj["returnFulfillment/code/replace"] = `Invalid replace value: ${replaceValue} in ${apiSeq} (valid: 'yes' or 'no')`;
+                                }
+                            } else {
+                                onupdtObj["returnFulfillment/code/replace"] = `Replace value is missing in ${apiSeq}`;
+                            }
 
                             const itemQuantityArr = _.filter(returnFulifillmentTagsList, { code: "item_quantity" })
 

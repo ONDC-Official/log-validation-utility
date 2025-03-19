@@ -10,7 +10,8 @@ import { setValue } from '../shared/dao'
 export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
 import { groceryCategoryMappingWithStatutory } from '../constants/category'
 import { statutory_reqs } from './enum'
-
+import {  PAYMENT_STATUS } from '../constants/index'
+import { FLOW } from '../utils/enum'
 export const getObjValues = (obj: any) => {
   let values = ''
   Object.values(obj).forEach((value) => {
@@ -209,6 +210,7 @@ export const checkMetroContext = (
 }
 
 const validate_schema_for_retail_json = (vertical: string, api: string, data: any) => {
+  console.log(`+++++++++ validate_schema_${api}_${vertical}_for_json`)
   const res = (schemaValidator as any)[`validate_schema_${api}_${vertical}_for_json`](data)
 
   return res
@@ -541,6 +543,14 @@ export function validateLocations(locations: any[], tags: any[]) {
 
     if (radius && (radius?.unit !== 'km' || !validNumberRegex.test(radius.value))) {
       Object.assign(errorObj, { locationRadiusErr: `Invalid radius in location with ID ${location.id}` })
+      if (typeof radius !== 'number') {
+        Object.assign(errorObj, { radiusErr: `Radius entered should be a number` })
+      }
+    }
+    if (typeof radius === 'number' && radius > 500) {
+      Object.assign(errorObj, {
+        radiusLimitErr: 'Circle radius should not exceed 500 km for serviceability, even if it is PAN India.',
+      })
     }
 
     for (let i = 0; i < tags.length; i++) {
@@ -727,14 +737,19 @@ export function validateStatusOrderAndTimestamp(set: any) {
   }
 }
 
-export const isValidEmail = (email: string) => {
-  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-  return emailRegex.test(email)
+export const isValidEmail = (value: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  return emailRegex.test(value)
 }
 
-export const isValidPhoneNumber = (phoneNumber: string): boolean => {
-  const phoneRegex = /^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/
-  return phoneRegex.test(phoneNumber)
+export const isValidPhoneNumber = (value: string): boolean => {
+  const phoneRegex = /^(\d{10}|\d{11})$/
+  if (value.startsWith('0')) {
+    value = value.substring(1)
+  }
+
+  const val = value?.replace(/[^\d]/g, '')
+  return phoneRegex.test(val)
 }
 
 export const isValidUrl = (url: string) => {
@@ -817,7 +832,6 @@ export const compareSTDwithArea = (pincode: number, std: string): boolean => {
 }
 
 export const checkMandatoryTags = (i: string, items: any, errorObj: any, categoryJSON: any, categoryName: string) => {
-  
   items.forEach((item: any, index: number) => {
     let attributeTag = null
     let originTag = null
@@ -845,7 +859,7 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
 
       if (categoryJSON.hasOwnProperty(ctgrID)) {
         logger.info(`Checking for item tags for ${categoryName} item[${index}]`)
-        const mandatoryTags = categoryJSON[ctgrID] 
+        const mandatoryTags = categoryJSON[ctgrID]
         const missingMandatoryTags: any[] = []
         tags.forEach((tag: { code: string }) => {
           const tagCode = tag.code
@@ -856,7 +870,7 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
 
         if (missingMandatoryTags.length > 0) {
           const key = `invalid_attribute[${i}][${index}]`
-          errorObj[key] =`Invalid attribute for item with category id: ${missingMandatoryTags.join(', ')}`
+          errorObj[key] = `Invalid attribute for item with category id: ${missingMandatoryTags.join(', ')}`
         } else {
           console.log(`All tag codes have corresponding valid attributes.`)
         }
@@ -867,12 +881,11 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
             if (isTagMandatory) {
               let tagValue: any = null
               let originalTag: any = null
-              const tagFound = tags.some((tag: any) :any=> {
+              const tagFound = tags.some((tag: any): any => {
                 const res = tag.code === tagName.toLowerCase()
                 if (res) {
                   tagValue = tag.value
                   originalTag = tag.value
-                  
                 }
                 return res
               })
@@ -998,8 +1011,14 @@ export const mapCancellationID = (cancelled_by: string, reason_id: string, error
   }
 }
 
-export const payment_status = (payment: any) => {
-  if (payment.status == 'PAID') {
+export const payment_status = (payment: any, flow: string) => {
+  const errorObj: any = {}
+  logger.info(`Checking payment status for flow: ${flow}`)
+  if ( (flow === FLOW.FLOW2A) && payment.status === PAYMENT_STATUS.PAID) {
+    errorObj.message = `Cannot be ${payment.status} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
+    return errorObj
+  }
+  if (payment.status === PAYMENT_STATUS.PAID) {
     if (!payment.params.transaction_id) {
       return false
     }
@@ -1021,18 +1040,16 @@ export const checkQuoteTrailSum = (
     const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
     for (const item of quoteTrailItems) {
       for (const val of item.list) {
-        if(val.code === 'type')
-        {
-          if(!arrType.includes(val.value))
-          {
-            errorObj[`invalidQuoteTrailType${apiSeq}`] = `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax' or 'item'`
+        if (val.code === 'type') {
+          if (!arrType.includes(val.value)) {
+            errorObj[`invalidQuoteTrailType${apiSeq}`] =
+              `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax' or 'item'`
           }
         }
-        if(val.code === 'type')
-        {
-          if(!arrType.includes(val.value))
-          {
-            errorObj[`invalidQuoteTrailType${apiSeq}`] = `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax' or 'item'`
+        if (val.code === 'type') {
+          if (!arrType.includes(val.value)) {
+            errorObj[`invalidQuoteTrailType${apiSeq}`] =
+              `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax' or 'item'`
           }
         }
         if (val.code === 'value') {

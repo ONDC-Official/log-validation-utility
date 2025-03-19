@@ -633,7 +633,7 @@ properties:
                                             A Jcard object as per
                                             draft-ietf-jcardcal-jcard-03
                                             specification
-                                                                    creds:
+                                            creds:
                                         type: array
                                         items:
                                           description: >-

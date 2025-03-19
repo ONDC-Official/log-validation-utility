@@ -84,7 +84,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
           }
 
           if (fulfillment.type !== 'DELIVERY') {
-            errorObj[`${key}.type`] = `Fulfillment type must be DELIVERY at index ${i} in /${constants.ON_SEARCH}`
+            errorObj[`${key}.type`] = `Fulfillment type must be DELIVERY at index ${k} in /${constants.ON_SEARCH}`
           }
 
           // Check stops for START and END, or time range with valid timestamp and GPS

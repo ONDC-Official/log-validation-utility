@@ -2,13 +2,13 @@
 import _ from 'lodash'
 import constants, { mobilitySequence } from '../../constants'
 import { logger } from '../../shared/logger'
-import { validateSchema, isObjectEmpty } from '../'
+import { validateSchema, isObjectEmpty, checkMobilityContext, checkBppIdOrBapId } from '../'
 import { getValue } from '../../shared/dao'
 import {
   validateCancellationTerms,
   validateQuote,
   validatePayloadAgainstSchema,
-  validateContext,
+  // validateContext,
   validateItems,
   validateProviderId,
   validatePaymentObject,
@@ -16,7 +16,7 @@ import {
 } from './mobilityChecks'
 import attributeConfig from './config/config2.0.1.json'
 
-export const checkOnUpdate = (data: any, msgIdSet: any, version: any) => {
+export const checkOnUpdate = (data: any, _msgIdSet: any, version: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -28,8 +28,26 @@ export const checkOnUpdate = (data: any, msgIdSet: any, version: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
+    // const searchContext: any = getValue(`${mobilitySequence.SEARCH}_context`)
+    // const parentItemIdSet: any = getValue(`parentItemIdSet`)
+
     const schemaValidation = validateSchema('TRV', constants.ON_UPDATE, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.UPDATE, constants.ON_UPDATE)
+
+    const contextRes: any = checkMobilityContext(context, constants.ON_UPDATE)
+
+    if (!context.bap_id) {
+      errorObj['bap_id'] = 'context/bap_id is required'
+    } else {
+      const checkBap = checkBppIdOrBapId(context.bap_id)
+      if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
+    }
+
+    if (!context.bpp_id) {
+      errorObj['bpp_id'] = 'context/bpp_id is required'
+    } else {
+      const checkBpp = checkBppIdOrBapId(context.bpp_id)
+      if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
+    }
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)

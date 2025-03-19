@@ -56,10 +56,11 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
     //check fulfillments
     try {
       logger.info(`Validating fulfillments object for /${constants.ON_SELECT}`)
-      if (!onSelect?.fulfillments || onSelect?.fulfillments?.length === 0) {
+
+      if (!onSelect?.fulfillments || onSelect.fulfillments.length === 0) {
         errorObj[`fulfillments`] = `Fulfillments is missing or empty`
       } else {
-        onSelect.fulfillments?.forEach((fulfillment: any, index: number) => {
+        onSelect.fulfillments.forEach((fulfillment: any, index: number) => {
           const fulfillmentKey = `fulfillments[${index}]`
 
           if (!fulfillment?.id) {
@@ -72,17 +73,10 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
           }
 
           if (!fulfillment?.vehicle?.category) {
-            errorObj[`fulfillments.vehicleCategory`] = `category is missing in fulfillments.vehicle`
-          } else {
-            if (!ON_DEMAND_VEHICLE.includes(fulfillment?.vehicle?.category)) {
-              errorObj[`fulfillments.vehicleCategory`] =
-                `category should be one of ${ON_DEMAND_VEHICLE} fulfillments.vehicle`
-            }
+            errorObj[`${fulfillmentKey}.vehicleCategory`] = `category is missing in fulfillments.vehicle`
+          } else if (!ON_DEMAND_VEHICLE.includes(fulfillment.vehicle.category)) {
+            errorObj[`${fulfillmentKey}.vehicleCategory`] = `Vehicle category should be one of ${ON_DEMAND_VEHICLE}`
           }
-
-          const vehicleKeys = Object.keys(fulfillment?.vehicle)
-          if (vehicleKeys?.length > 2)
-            errorObj[`fulfillments.vehicleKeys`] = `additional keys present in fulfillments.vehicle`
 
           if (!fulfillment.type) {
             errorObj[`${fulfillmentKey}.type`] = `Fulfillment type is missing`
@@ -104,10 +98,15 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
               Object.assign(errorObj, { routeInfoTags: tagsValidation.errors })
             }
           }
+
+          const vehicleKeys = Object.keys(fulfillment?.vehicle || {})
+          if (vehicleKeys.length > 2) {
+            errorObj[`${fulfillmentKey}.vehicleKeys`] = `additional keys present in fulfillments.vehicle`
+          }
         })
       }
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_SELECT},  ${error.message}`)
+      logger.error(`!!Error occurred while checking fulfillments info in /${constants.ON_SELECT}, ${error.message}`)
       return { error: error.message }
     }
 
@@ -151,8 +150,8 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
           }
 
           // FARE_POLICY & INFO checks
-          if (item.tags) {
-            const tagsValidation = validateItemsTags(item?.tags)
+          if (item.tags && Array.isArray(item?.tags)) {
+            const tagsValidation = validateItemsTags(item.tags)
             if (!tagsValidation.isValid) {
               Object.assign(errorObj, { tags: tagsValidation.errors })
             }
@@ -188,7 +187,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
     }
 
     setValue(`${mobilitySequence.ON_SELECT}`, data)
-    setValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`, Array.from(storedFull))
+    setValue(`${mobilitySequence.ON_SELECT}_storedFulfillments`, Array.from(storedFull ?? []))
   } catch (error: any) {
     logger.error(`!!Error occcurred while checking order info in /${constants.ON_SELECT},  ${error.message}`)
     return { error: error.message }

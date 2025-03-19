@@ -10,10 +10,16 @@ import { checkInit } from '../../utils/metro/init'
 import { checkOnInit } from '../../utils/metro/onInit'
 import { checkConfirm } from '../../utils/metro/confirm'
 import { checkOnConfirm } from '../../utils/metro/onConfirm'
+import { checkStatus } from '../../utils/metro/status'
+import { checkOnStatus } from '../../utils/metro/onStatus'
+import { checkCancelPayload } from '../../utils/metro/cancel'
+import { checkOnCancelPayload } from '../../utils/metro/onCancel'
 
-export function validateLogsForMetro(data: any) {
+export function validateLogsForMetro(data: any, flowName: string, version: string) {
   const msgIdSet = new Set()
   let logReport: any = {}
+  const [first, ...rest] = flowName.split('_')
+  const flow = { flow: first, flowSet: rest.join('_') }
   try {
     dropDB()
   } catch (error) {
@@ -21,17 +27,31 @@ export function validateLogsForMetro(data: any) {
   }
 
   try {
-    if (data[metroSequence.SEARCH]) {
-      const searchResp = search(data[metroSequence.SEARCH], msgIdSet)
+    if (data[metroSequence.SEARCH1]) {
+      const searchResp = search(data[metroSequence.SEARCH1], msgIdSet, false, flow)
       if (!_.isEmpty(searchResp)) {
-        logReport = { ...logReport, [metroSequence.SEARCH]: searchResp }
+        logReport = { ...logReport, [metroSequence.SEARCH1]: searchResp }
       }
     }
 
-    if (data[metroSequence.ON_SEARCH]) {
-      const searchResp = checkOnSearch(data[metroSequence.ON_SEARCH], msgIdSet)
+    if (data[metroSequence.ON_SEARCH1]) {
+      const searchResp = checkOnSearch(data[metroSequence.ON_SEARCH1], msgIdSet, false, flow)
       if (!_.isEmpty(searchResp)) {
-        logReport = { ...logReport, [metroSequence.ON_SEARCH]: searchResp }
+        logReport = { ...logReport, [metroSequence.ON_SEARCH1]: searchResp }
+      }
+    }
+
+    if (data[metroSequence.SEARCH2]) {
+      const searchResp = search(data[metroSequence.SEARCH2], msgIdSet, true, flow)
+      if (!_.isEmpty(searchResp)) {
+        logReport = { ...logReport, [metroSequence.SEARCH2]: searchResp }
+      }
+    }
+
+    if (data[metroSequence.ON_SEARCH2]) {
+      const searchResp = checkOnSearch(data[metroSequence.ON_SEARCH2], msgIdSet, true, flow)
+      if (!_.isEmpty(searchResp)) {
+        logReport = { ...logReport, [metroSequence.ON_SEARCH2]: searchResp }
       }
     }
 
@@ -43,7 +63,7 @@ export function validateLogsForMetro(data: any) {
     }
 
     if (data[metroSequence.ON_SELECT]) {
-      const searchResp = checkOnSelect(data[metroSequence.ON_SELECT], msgIdSet)
+      const searchResp = checkOnSelect(data[metroSequence.ON_SELECT], msgIdSet, flow, version)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [metroSequence.ON_SELECT]: searchResp }
       }
@@ -57,7 +77,7 @@ export function validateLogsForMetro(data: any) {
     }
 
     if (data[metroSequence.ON_INIT]) {
-      const searchResp = checkOnInit(data[metroSequence.ON_INIT], msgIdSet)
+      const searchResp = checkOnInit(data[metroSequence.ON_INIT], msgIdSet, flow, version)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [metroSequence.ON_INIT]: searchResp }
       }
@@ -71,9 +91,51 @@ export function validateLogsForMetro(data: any) {
     }
 
     if (data[metroSequence.ON_CONFIRM]) {
-      const searchResp = checkOnConfirm(data[metroSequence.ON_CONFIRM], msgIdSet)
+      const searchResp = checkOnConfirm(data[metroSequence.ON_CONFIRM], msgIdSet, flow, version)
       if (!_.isEmpty(searchResp)) {
         logReport = { ...logReport, [metroSequence.ON_CONFIRM]: searchResp }
+      }
+    }
+
+    if (data[metroSequence.STATUS]) {
+      const searchResp = checkStatus(data[metroSequence.STATUS], msgIdSet)
+      if (!_.isEmpty(searchResp)) {
+        logReport = { ...logReport, [metroSequence.STATUS]: searchResp }
+      }
+    }
+
+    if (data[metroSequence.ON_STATUS]) {
+      const searchResp = checkOnStatus(data[metroSequence.ON_STATUS], msgIdSet)
+      if (!_.isEmpty(searchResp)) {
+        logReport = { ...logReport, [metroSequence.ON_STATUS]: searchResp }
+      }
+    }
+
+    if (data[metroSequence.SOFT_CANCEL]) {
+      const searchResp = checkCancelPayload(data[metroSequence.SOFT_CANCEL], msgIdSet, false)
+      if (!_.isEmpty(searchResp)) {
+        logReport = { ...logReport, [metroSequence.SOFT_CANCEL]: searchResp }
+      }
+    }
+
+    if (data[metroSequence.CONFIRM_CANCEL]) {
+      const searchResp = checkCancelPayload(data[metroSequence.CONFIRM_CANCEL], msgIdSet, true)
+      if (!_.isEmpty(searchResp)) {
+        logReport = { ...logReport, [metroSequence.CONFIRM_CANCEL]: searchResp }
+      }
+    }
+
+    if (data[metroSequence.SOFT_ON_CANCEL]) {
+      const searchResp = checkOnCancelPayload(data[metroSequence.SOFT_ON_CANCEL], msgIdSet, flow, false)
+      if (!_.isEmpty(searchResp)) {
+        logReport = { ...logReport, [metroSequence.SOFT_ON_CANCEL]: searchResp }
+      }
+    }
+
+    if (data[metroSequence.CONFIRM_ON_CANCEL]) {
+      const searchResp = checkOnCancelPayload(data[metroSequence.CONFIRM_ON_CANCEL], msgIdSet, flow, true)
+      if (!_.isEmpty(searchResp)) {
+        logReport = { ...logReport, [metroSequence.CONFIRM_ON_CANCEL]: searchResp }
       }
     }
 

@@ -180,7 +180,10 @@ export const checkMetroContext = (
     errObj.id_err = "transaction_id and message id can't be same"
   }
 
-  if (data.action != path) {
+  let action = path
+  if (action === 'soft_cancel' || action === 'confirm_cancel') action = 'cancel'
+  else if (action === 'soft_on_cancel' || action === 'confirm_on_cancel') action = 'on_cancel'
+  if (data.action != action) {
     errObj.action_err = `context.action should be ${path}`
   }
 
@@ -258,9 +261,7 @@ export const checkGpsPrecision = (coordinates: string) => {
     const longPrecision = getDecimalPrecision(long)
     const decimalPrecision = constants.DECIMAL_PRECISION
 
-    if (latPrecision >= decimalPrecision && longPrecision >= decimalPrecision) {
-      return 1
-    } else return 0
+    return latPrecision === decimalPrecision && longPrecision === decimalPrecision ? 1 : { latPrecision, longPrecision }
   } catch (error) {
     logger.error(error)
     return error
@@ -771,7 +772,7 @@ export const isValidISO8601Duration = (duration: string): boolean => {
 export const checkIdAndUri = (id: string, uri: string, type: string) => {
   try {
     const errors: string[] = []
-
+    checkIdAndUri
     if (!id) {
       errors.push(`${type}_id is not present`)
     }
@@ -912,7 +913,6 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
                     const regex = new RegExp(regexPattern)
                     isValidValue = regex.test(originalTag) || regex.test(tagValue)
                   }
-
                   if (!isValidValue) {
                     logger.error(`The item value can only be one of the possible values or match the regex pattern.`)
                     const key = `InvldValueforItem[${i}][${index}] : ${tagName}`

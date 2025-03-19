@@ -1,6 +1,7 @@
 /* eslint-disable no-prototype-builtins */
+import { getValue, setValue } from '../../shared/dao'
 import { isValidEmail, isValidPhoneNumber, isValidUrl } from '..'
-
+import constants from '../../constants'
 interface Tag {
   display: boolean
   descriptor: {
@@ -47,44 +48,51 @@ export const validateRouteInfoTags = (tags: RouteInfoTag[]): ValidationResult =>
     }
   }
 
-  tags.forEach((tag, index) => {
-    if (tag.descriptor.code === 'ROUTE_INFO') {
-      if (tag.display !== undefined && typeof tag.display !== 'boolean') {
-        errors.push(`route.tag[${index}] has an invalid value for the 'display' property. It should be a boolean.`)
+  tags &&
+    tags?.forEach((tag, index) => {
+      if (tag.descriptor.code === 'ROUTE_INFO') {
+        let hasRouteId = false
+        let hasRouteDirection = false
+
+        tag.list.forEach((item, itemIndex) => {
+          const descriptorCode = item.descriptor.code
+
+          // Check if descriptor code is not in uppercase
+          if (descriptorCode !== descriptorCode.toUpperCase()) {
+            errors.push(`Code should be in uppercase at route.tag[${index}], List item[${itemIndex}].`)
+          }
+
+          // Validate known descriptor codes
+          if (descriptorCode?.toUpperCase() === 'ROUTE_ID') {
+            hasRouteId = true // Mark ROUTE_ID as found
+            if (typeof item.value !== 'string') {
+              errors.push(
+                `route.tag[${index}], List item[${itemIndex}] has an invalid value for ROUTE_ID. It should be a string.`,
+              )
+            }
+          }
+          if (descriptorCode?.toUpperCase() === 'ROUTE_DIRECTION') {
+            hasRouteDirection = true // Mark ROUTE_DIRECTION as found
+            if (!['UP', 'DOWN'].includes(item.value)) {
+              errors.push(
+                `route.tag[${index}], List item[${itemIndex}] has an invalid value for ROUTE_DIRECTION. It should be UP or DOWN.`,
+              )
+            }
+          }
+        })
+
+        // Check if both ROUTE_ID and ROUTE_DIRECTION are present
+        if (!hasRouteId) {
+          errors.push(`route.tag[${index}] is missing ROUTE_ID.`)
+        }
+
+        if (!hasRouteDirection) {
+          errors.push(`route.tag[${index}] is missing ROUTE_DIRECTION.`)
+        }
+      } else {
+        errors.push(`route.tag[${index}] ROUTE_INFO tag is missing.`)
       }
-
-      tag.list.forEach((item, itemIndex) => {
-        const descriptorCode = item.descriptor.code
-
-        if (descriptorCode !== descriptorCode.toUpperCase()) {
-          errors.push(`code should be in uppercase at route.tag[${index}], List item[${itemIndex}].`)
-        }
-
-        switch (descriptorCode.toUpperCase()) {
-          case 'ENCODED_POLYLINE':
-            if (typeof item.value !== 'string') {
-              errors.push(
-                `route.tag[${index}], List item[${itemIndex}] has an invalid value for ENCODED_POLYLINE. It should be a string.`,
-              )
-            }
-
-            break
-
-          case 'WAYPOINTS':
-            if (typeof item.value !== 'string') {
-              errors.push(
-                `route.tag[${index}], List item[${itemIndex}] has an invalid value for WAYPOINTS. It should be a string.`,
-              )
-            }
-
-            break
-
-          default:
-            errors.push(`route.tag[${index}], List item[${itemIndex}] has an unexpected descriptor code`)
-        }
-      })
-    }
-  })
+    })
 
   return {
     isValid: errors.length === 0,
@@ -92,12 +100,12 @@ export const validateRouteInfoTags = (tags: RouteInfoTag[]): ValidationResult =>
   }
 }
 
-export const validatePaymentTags = (tags: Tag[]): ValidationResult => {
+export const validatePaymentTags = (tags: Tag[], action: string): ValidationResult => {
   const errors: string[] = []
 
-  const validDescriptorCodes = ['BUYER_FINDER_FEES', 'SETTLEMENT_TERMS']
+  const validDescriptorCodes = ['BUYER_FINDER_FEES', 'SETTLEMENT_TERMS', 'SETTLEMENT_DETAILS']
   const settlementTypes = ['upi', 'neft', 'rtgs']
-  const settlementBasis = ['Delivery', 'INVOICE_RECEIPT']
+  const settlementBasis = ['INVOICE_RECEIPT', 'DELIVERY']
 
   tags.forEach((tag, index) => {
     if (!validDescriptorCodes.includes(tag.descriptor.code)) {
@@ -111,14 +119,35 @@ export const validatePaymentTags = (tags: Tag[]): ValidationResult => {
 
     switch (tag.descriptor.code) {
       case 'BUYER_FINDER_FEES': {
-        const expectedDescriptorCodes = ['BUYER_FINDER_FEES_PERCENTAGE', 'BUYER_FINDER_FEES_TYPE']
-
-        const actualDescriptorCodes = tag.list.map((item: any) => item.descriptor.code)
-
-        const invalidDescriptorCodes = actualDescriptorCodes.filter((code) => !expectedDescriptorCodes.includes(code))
-        if (invalidDescriptorCodes.length > 0) {
-          errors.push(`payment.tag[${index}] has unexpected descriptor codes: ${invalidDescriptorCodes.join(', ')}`)
+        if (!tag?.list) {
+          errors.push(`list is missing in [${index}] of tags,`)
+          break
         }
+
+        // const expectedDescriptorCodes = ['BUYER_FINDER_FEES_PERCENTAGE', 'BUYER_FINDER_FEES_TYPE']
+        const checkFeePercent = tag?.list?.some(
+          (item: { descriptor: { code: string } }) => item?.descriptor?.code === 'BUYER_FINDER_FEES_PERCENTAGE',
+        )
+        const checkFeeType = tag?.list?.some(
+          (item: { descriptor: { code: string } }) => item?.descriptor?.code === 'BUYER_FINDER_FEES_TYPE',
+        )
+        if (!checkFeePercent && !checkFeeType) {
+          errors.push(
+            `list has missing property BUYER_FINDER_FEES_PERCENTAGE and BUYER_FINDER_FEES_TYPE in [${index}] of tags,`,
+          )
+        }
+
+        if (!checkFeePercent)
+          errors.push(`list has missing property BUYER_FINDER_FEES_PERCENTAGE in [${index}] of tags,`)
+
+        if (!checkFeeType) errors.push(`list has missing property BUYER_FINDER_FEES_TYPE in [${index}] of tags,`)
+
+        // const actualDescriptorCodes = tag.list.map((item: any) => item.descriptor.code)
+
+        // const invalidDescriptorCodes = actualDescriptorCodes.filter((code) => !expectedDescriptorCodes.includes(code))
+        // if (invalidDescriptorCodes.length > 0) {
+        //   errors.push(`payment.tag[${index}] has unexpected descriptor codes: ${invalidDescriptorCodes.join(', ')}`)
+        // }
 
         // const buyerFinderFeesType: any = tag.list.find((item: any) => item.descriptor.code === 'BUYER_FINDER_FEES_TYPE')
         const buyerFinderFeesPercentage = tag.list.find(
@@ -133,30 +162,40 @@ export const validatePaymentTags = (tags: Tag[]): ValidationResult => {
       }
 
       case 'SETTLEMENT_TERMS': {
-        tag.list.forEach((item: any, itemIndex) => {
+        if (!tag?.list) {
+          errors.push(`list is missing in [${index}] of tags,`)
+          break
+        }
+
+        tag?.list?.forEach((item: any, itemIndex) => {
           switch (item.descriptor.code) {
             case 'SETTLEMENT_WINDOW':
-              if (!/^PT(\d+H)?(\d+M)?(\d+S)?$/.test(item.value)) {
-                errors.push(`SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid duration value`)
+              if (!/^(P(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?)$/.test(item.value)) {
+                errors.push(`SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid duration value.`)
               }
 
               break
             case 'SETTLEMENT_BASIS':
-              if (!settlementBasis?.includes(item.value)) {
+              if (!settlementBasis?.includes(item.value.toUpperCase())) {
                 errors.push(
-                  `SETTLEMENT_TERMS_[${index}],SETTLEMENT_BASIS must be either if ${settlementBasis} at item[${itemIndex}]`,
+                  `SETTLEMENT_TERMS_[${index}],SETTLEMENT_BASIS must be either ${settlementBasis} at item[${itemIndex}]`,
                 )
               }
 
               break
             case 'SETTLEMENT_TYPE':
-              if (!settlementTypes?.includes(item.value?.toLowerCase())) {
+              const value = item.value?.toLowerCase() || ''
+              if (!settlementTypes?.includes(value)) {
                 errors.push(
-                  `SETTLEMENT_TERMS_[${index}],SETTLEMENT_TYPE must be either if ${settlementTypes} at item[${itemIndex}]`,
+                  `SETTLEMENT_TERMS_[${index}]: SETTLEMENT_TYPE must be one of ${settlementTypes.join(', ')} at item[${itemIndex}]`,
                 )
               }
 
+              if (action === constants?.INIT) {
+                setValue('INIT_PAYMENT_TYPE', item.value?.toUpperCase() || '')
+              }
               break
+
             case 'COURT_JURISDICTION':
               if (typeof item.value !== 'string') {
                 errors.push(`SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] type should be string`)
@@ -183,12 +222,20 @@ export const validatePaymentTags = (tags: Tag[]): ValidationResult => {
                 errors.push(
                   `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid value for DELAY_INTEREST`,
                 )
+              } else if (action === 'search') {
+                setValue(`DELAY_INTEREST`, item.value)
+              } else {
+                const delayInterest = getValue('DELAY_INTEREST')
+                if (delayInterest && delayInterest !== item?.value)
+                  errors.push(
+                    `SETTLEMENT_TERMS_[${index}], DELAY_INTEREST must be similar to /search value ${delayInterest} instead of ${item?.value} at item[${itemIndex}] in ${action}`,
+                  )
               }
 
               break
 
             default:
-              errors.push(`SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid descriptor code`)
+              return
           }
         })
 
@@ -429,4 +476,54 @@ export function validateCancellationTerm(term: any, index: number) {
   }
 
   return errors
+}
+
+export function validateTags(tags: { [key: string]: any }[], index: number) {
+  const errors: any = {}
+
+  if (tags && tags?.length === 0) {
+    errors[`Tags`] = `Tags should have property descriptor and list in ${index} index`
+    return errors
+  }
+
+  for (const tag of tags) {
+    if (!tag?.descriptor) {
+      errors[`Tags_descriptor`] = `Tags descriptor is missing`
+      return errors
+    }
+
+    if (tag?.descriptor?.code !== 'SCHEDULED_INFO' || tag?.descriptor?.code === '') {
+      errors[`Tags_descriptor_code`] = `Descriptor code is missing or incorrect`
+      return errors
+    }
+
+    if (!tag?.list) {
+      errors[`Tags_List`] = `List is missing inside Tags`
+      return errors
+    }
+
+    if (tag?.list && tag?.list?.length === 0) {
+      errors[`List`] = `List should have property descriptor and value in ${index} index`
+      return errors
+    }
+
+    for (const [index, list] of tag?.list.entries()) {
+      if (!list.descriptor) {
+        errors[`List_descriptor_${index}`] = `List descriptor is missing in ${index} index`
+        return errors
+      }
+
+      if (!list.descriptor?.code || list.descriptor.code !== 'GTFS') {
+        errors[`List_descriptor_code_${index}`] = `Descriptor code is missing or incorrect in ${index} index`
+        return errors
+      }
+
+      if (!list.value || list.value === '') {
+        errors[`List_value_${index}`] = `List value is missing or incorrect in ${index} index`
+        return errors
+      }
+    }
+  }
+
+  return Object.keys(errors).length ? errors : null
 }

@@ -8,7 +8,7 @@ import {
   validateCancellationTerms,
   validateQuote,
   validatePayloadAgainstSchema,
-  validateContext,
+  // validateContext,
   validateItems,
   validateProviderId,
   validatePaymentObject,
@@ -16,7 +16,7 @@ import {
 } from './mobilityChecks'
 import attributeConfig from './config/config2.0.1.json'
 
-export const checkOnUpdate = (data: any, msgIdSet: any, version: any) => {
+export const checkOnUpdate = (data: any, _msgIdSet: any, version: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -28,7 +28,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, version: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const searchContext: any = getValue(`${mobilitySequence.SEARCH}_context`)
+    // const searchContext: any = getValue(`${mobilitySequence.SEARCH}_context`)
     // const parentItemIdSet: any = getValue(`parentItemIdSet`)
 
     const schemaValidation = validateSchema('TRV', constants.ON_UPDATE, data)

@@ -4,8 +4,9 @@ import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
 import { validateContext } from './metroChecks'
 import { validatePaymentTags } from './tags'
-import { checkItemsExist, checkBilling, validateParams } from './validate/helper'
+import { checkItemsExist, checkBilling, validateParams, validateDomain } from './validate/helper'
 import _, { isEmpty, isNil } from 'lodash'
+import { METRODOMAIN } from './validate/functions/constant'
 
 export const checkInit = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
@@ -20,7 +21,10 @@ export const checkInit = (data: any, msgIdSet: any) => {
     }
 
     const schemaValidation = validateSchema('TRV', constants.INIT, data)
-    
+    const validateDomainName = validateDomain(context?.domain || 'ONDC:TRV11')
+        if (!validateDomainName)
+          errorObj['domain'] =
+            `context.domain should be ${METRODOMAIN.METRO} instead of ${context?.domain} in ${metroSequence.ON_CONFIRM}`
     const contextRes: any = validateContext(context, msgIdSet, constants.ON_SEARCH, constants.INIT)
     setValue(`${metroSequence.INIT}_message`, message)
 

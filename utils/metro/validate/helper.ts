@@ -3,6 +3,7 @@ import constants, { metroSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { getValue, setValue } from '../../../shared/dao'
 import _, { isEmpty, isNil } from 'lodash'
+import { METRODOMAIN } from './functions/constant'
 
 export function checkItemQuantity(quantity: { [key: string]: any }, i: number, j: number) {
   const errorObj: any = {}
@@ -382,3 +383,8 @@ export function validateFulfillmentV2_0(
     return errorObj
   }
 }
+
+export function validateDomain(domainName: string) {
+  return domainName === METRODOMAIN.METRO ? true : false
+}
+ 

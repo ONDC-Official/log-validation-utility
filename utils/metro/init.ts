@@ -20,6 +20,7 @@ export const checkInit = (data: any, msgIdSet: any) => {
     }
 
     const schemaValidation = validateSchema('TRV', constants.INIT, data)
+    
     const contextRes: any = validateContext(context, msgIdSet, constants.ON_SEARCH, constants.INIT)
     setValue(`${metroSequence.INIT}_message`, message)
 

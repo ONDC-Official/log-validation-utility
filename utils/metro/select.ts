@@ -3,11 +3,14 @@ import { getValue, setValue } from '../../shared/dao'
 import constants, { metroSequence } from '../../constants'
 import { validateSchema, isObjectEmpty, checkGpsPrecision } from '..'
 import { validateContext } from './metroChecks'
+import { validateDomain } from './validate/helper'
+import { METRODOMAIN } from './validate/functions/constant'
 
 export const checkSelect = (data: any, msgIdSet: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [metroSequence.SELECT]: 'Json cannot be empty' }
   }
+  const errorObj: any = {}
 
   const { message, context } = data
   if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
@@ -15,9 +18,12 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   }
 
   const schemaValidation = validateSchema('TRV', constants.SELECT, data)
+  const validateDomainName = validateDomain(context?.domain || 'ONDC:TRV11')
+  if (!validateDomainName)
+    errorObj['domain'] =
+      `context.domain should be ${METRODOMAIN.METRO} instead of ${context?.domain} in ${metroSequence.SELECT}`
   const contextRes: any = validateContext(context, msgIdSet, constants.ON_SEARCH, constants.SELECT)
   setValue(`${metroSequence.SELECT}_message`, message)
-  const errorObj: any = {}
 
   if (schemaValidation !== 'error') {
     Object.assign(errorObj, schemaValidation)
@@ -56,9 +62,8 @@ export const checkSelect = (data: any, msgIdSet: any) => {
       select?.items?.forEach((item: any, index: number) => {
         if (storedItemIDS && !storedItemIDS.includes(item.id)) {
           const key = `item[${index}].item_id`
-          errorObj[
-            key
-          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+          errorObj[key] =
+            `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
         } else {
           setValue('itemId', item.id)
           setValue(`qunatity_count`, item?.quantity?.count || 0)

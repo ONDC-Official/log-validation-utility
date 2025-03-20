@@ -3,6 +3,8 @@ import { logger } from '../../shared/logger'
 import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
 import { validateContext } from './metroChecks'
+import { validateDomain } from './validate/helper'
+import { METRODOMAIN } from './validate/functions/constant'
 
 export const checkCancelPayload = (data: any, msgIdSet: any, cancelType: boolean) => {
   const errorObj: any = {}
@@ -18,6 +20,10 @@ export const checkCancelPayload = (data: any, msgIdSet: any, cancelType: boolean
     }
 
     const schemaValidation = validateSchema('TRV', constants.CANCEL, data)
+    const validateDomainName = validateDomain(context?.domain || 'ONDC:TRV11')
+        if (!validateDomainName)
+          errorObj['domain'] =
+            `context.domain should be ${METRODOMAIN.METRO} instead of ${context?.domain} in ${cancelType ? metroSequence?.CONFIRM_CANCEL : metroSequence?.SOFT_CANCEL}`
     const contextRes: any = validateContext(
       context,
       msgIdSet,

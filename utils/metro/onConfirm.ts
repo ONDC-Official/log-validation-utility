@@ -13,7 +13,8 @@ import {
 } from './metroChecks'
 import { validatePaymentTags, validateRouteInfoTags, validateTags } from './tags'
 import { isEmpty, isNil } from 'lodash'
-import { validateFulfillmentV2_0, validateParams } from './validate/helper'
+import { validateDomain, validateFulfillmentV2_0, validateParams } from './validate/helper'
+import { METRODOMAIN } from './validate/functions/constant'
 
 // const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SFSJT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT', 'RJT']
@@ -34,6 +35,10 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
     }
 
     const schemaValidation = validateSchema('TRV', constants.ON_CONFIRM, data)
+    const validateDomainName = validateDomain(context?.domain || 'ONDC:TRV11')
+    if (!validateDomainName)
+      errorObj['domain'] =
+        `context.domain should be ${METRODOMAIN.METRO} instead of ${context?.domain} in ${metroSequence.ON_CONFIRM}`
     const contextRes: any = validateContext(context, msgIdSet, constants.CONFIRM, constants.ON_CONFIRM)
     setValue(`${metroSequence.ON_CONFIRM}_message`, message)
 

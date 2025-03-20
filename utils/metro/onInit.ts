@@ -13,8 +13,9 @@ import {
   validateDescriptor,
 } from './metroChecks'
 import { validatePaymentTags, validateRouteInfoTags, validateTags } from './tags'
-import { checkItemTime, checkProviderTime, validateFulfillmentV2_0, validateParams } from './validate/helper'
+import { checkItemTime, checkProviderTime, validateDomain, validateFulfillmentV2_0, validateParams } from './validate/helper'
 import { isEmpty, isNil } from 'lodash'
+import { METRODOMAIN } from './validate/functions/constant'
 
 const VALID_DESCRIPTOR_CODES = ['SJT', 'SFSJT', 'RJT', 'PASS']
 export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }, version: string) => {
@@ -31,6 +32,10 @@ export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flow
     }
 
     const schemaValidation = validateSchema('TRV', constants.ON_INIT, data)
+    const validateDomainName = validateDomain(context?.domain || 'ONDC:TRV11')
+        if (!validateDomainName)
+          errorObj['domain'] =
+            `context.domain should be ${METRODOMAIN.METRO} instead of ${context?.domain} in ${metroSequence.ON_INIT}`
     const contextRes: any = validateContext(context, msgIdSet, constants.INIT, constants.ON_INIT)
 
     if (schemaValidation !== 'error') {

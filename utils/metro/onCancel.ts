@@ -11,7 +11,8 @@ import {
 } from './metroChecks'
 import { validatePaymentTags, validateRouteInfoTags } from './tags'
 import { isEmpty } from 'lodash'
-import { validateParams } from './validate/helper'
+import { validateDomain, validateParams } from './validate/helper'
+import { METRODOMAIN } from './validate/functions/constant'
 
 const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SFSJT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT', 'RJT']
@@ -37,6 +38,10 @@ export const checkOnCancelPayload = (
     }
 
     const schemaValidation = validateSchema('TRV', constants.ON_CANCEL, data)
+    const validateDomainName = validateDomain(context?.domain || 'ONDC:TRV11')
+    if (!validateDomainName)
+      errorObj['domain'] =
+        `context.domain should be ${METRODOMAIN.METRO} instead of ${context?.domain} in ${cancelType ? metroSequence?.CONFIRM_ON_CANCEL : metroSequence?.SOFT_ON_CANCEL}`
     const contextRes: any = validateContext(
       context,
       msgIdSet,

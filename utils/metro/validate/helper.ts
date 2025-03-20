@@ -209,7 +209,7 @@ function isValidEmail(email: string) {
 }
 
 function isValidPhoneNumber(phoneNumber: string) {
-  const phoneRegex = /^\+91-\d{10}$/
+  const phoneRegex = /^(?:\+91-)?\d{10}$/
   return phoneRegex.test(phoneNumber)
 }
 

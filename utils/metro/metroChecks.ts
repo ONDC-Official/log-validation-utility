@@ -217,10 +217,6 @@ export const validateStops = (stops: any, index: number, otp: boolean, _cancel: 
         else if (stop.type == 'INTERMEDIATE_STOP') intermediateType++
         else if (stop.type == 'TRANSIT_STOP') transitStop++
         else errorObj[`stops[${index}].type`] = `invalid type: ${stop.type} at stop[${index}]`
-
-        //check parent_stop_id
-        if (!stop?.parent_stop_id)
-          errorObj[`stops[${index}].parent_stop_id`] = `parent_stop_id is missing at stop[${index}]`
       }
     }
 

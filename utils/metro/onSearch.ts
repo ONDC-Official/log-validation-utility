@@ -18,9 +18,11 @@ import {
   checkItemTime,
   checkPayment,
   checkRefIds,
+  validateDomain,
   validateFarePolicyTags,
 } from './validate/helper'
 import { VALID_DESCRIPTOR_CODES } from './enum'
+import { METRODOMAIN } from './validate/functions/constant'
 
 export const checkOnSearch = (
   data: any,
@@ -33,6 +35,7 @@ export const checkOnSearch = (
       ? { [metroSequence.ON_SEARCH2]: 'Json cannot be empty' }
       : { [metroSequence.ON_SEARCH1]: 'Json cannot be empty' }
   }
+  const errorObj: any = {}
 
   const { message, context } = data
   if (!message || !context || !message.catalog || isObjectEmpty(message) || isObjectEmpty(message.catalog)) {
@@ -40,9 +43,12 @@ export const checkOnSearch = (
   }
 
   const contextRes: any = validateContext(context, msgIdSet, constants.SEARCH, constants.ON_SEARCH)
+  const validateDomainName = validateDomain(context?.domain || 'ONDC:TRV11')
+  if (!validateDomainName)
+    errorObj['domain'] =
+      `context.domain should be ${METRODOMAIN.METRO} instead of ${context?.domain} in ${secondOnSearch ? metroSequence.ON_SEARCH2 : metroSequence.ON_SEARCH1}`
   const schemaValidation = validateSchema('TRV', constants.ON_SEARCH, data)
   setValue(`${metroSequence.ON_SEARCH1}_message`, message)
-  const errorObj: any = {}
 
   if (schemaValidation !== 'error') {
     Object.assign(errorObj, schemaValidation)

@@ -52,7 +52,7 @@ const settleSchema = {
         transaction_id: { type: 'string' },
         message_id: { type: 'string' },
         timestamp: { type: 'string', format: 'date-time' },
-        ttl: { type: 'string' }
+        ttl: { type: 'string', format: 'duration' }
       },
       additionalProperties: false
     },

@@ -60,21 +60,34 @@ const checkRsfOnRecon = (data: any) => {
       logger.error('Error occurred while extracting and validating settlement IDs', err)
     }
 
-    try{
-      const reconAccordStatus = message?.orders?.every((order: any) => 
-         order?.recon_accord === true)
+    try {
+      const reconAccordStatus = message?.orders?.every((order: any) => order?.recon_accord === true)
 
-      console.log(`reconAccordStatus ${reconAccordStatus}`)
+      if (reconAccordStatus === true) {
+        const allRequiredDueDatesPresent = message?.orders?.every((order: any) => {
+          if (!order.settlements || !Array.isArray(order.settlements)) {
+            return false
+          }
+          
+          return order.settlements.every((settlement: any) => {
+            if (['PENDING', 'TO_BE_INITIATED'].includes(settlement.status)) {
+              return !!settlement.due_date
+            }
 
-      if(reconAccordStatus === true){
-        if(!message.orders.due_date){
-          rsfObj.due_date = 'If on_recon is true than due_date should be present'
+            else if (settlement.status === 'SETTLED') {
+              return !!settlement.settlement_ref_no
+            }
+            return true
+          })
+        })
+        
+        if (!allRequiredDueDatesPresent) {
+          rsfObj.due_date_missing = 'When recon_accord is true, all PENDING or TO_BE_INITIATED settlements must have due_date'
         }
       }
-    }catch(error:any){
+    } catch (error: any) {
       logger.error(`Error while validating recon_accord`, error)
     }
-
     //amount validation
     try {
       logger.info('validating recon_accord is false')

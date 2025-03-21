@@ -49,7 +49,7 @@ const onReportSchema = {
           transaction_id: { type: 'string' },
           message_id: { type: 'string' },
           timestamp: { type: 'string', format: 'date-time' },
-          ttl: { type: 'string' },
+          ttl: { type: 'string', format: 'duration' },
         },
       },
       message: {
@@ -68,7 +68,7 @@ const onReportSchema = {
                 type: 'array',
                 items: {
                   type: 'object',
-                  required: ['id', 'inter_participant', 'collector', 'provider', 'self'],
+                  required: ['id', 'inter_participant', 'collector', 'self'],
                   properties: {
                     id: { type: 'string' },
                     inter_participant: {
@@ -91,7 +91,7 @@ const onReportSchema = {
                             value: { type: 'string' },
                           },
                         },
-                        status: { type: 'string', enum: ['SETTLED', 'NOT-SETTLED'] },
+                        status: { type: 'string', enum: ['SETTLED', 'NOT_SETTLED'] },
                         reference_no: { type: 'string' },
                       },
                     },
@@ -122,7 +122,7 @@ const onReportSchema = {
                             value: { type: 'string' },
                           },
                         },
-                        status: { type: 'string', enum: ['SETTLED', 'NOT-SETTLED'] },
+                        status: { type: 'string', enum: ['SETTLED', 'NOT_SETTLED'] },
                         error: {
                           type: 'object',
                           required: ['code', 'message'],
@@ -145,7 +145,7 @@ const onReportSchema = {
                             value: { type: 'string' },
                           },
                         },
-                        status: { type: 'string', enum: ['NOT-SETTLED', 'SETTLED'] },
+                        status: { type: 'string', enum: ['NOT_SETTLED', 'SETTLED'] },
                         error: {
                           type: 'object',
                           required: ['code', 'message'],

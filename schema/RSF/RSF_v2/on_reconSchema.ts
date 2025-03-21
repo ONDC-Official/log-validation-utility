@@ -49,7 +49,7 @@ const on_reconSchema = {
         transaction_id: { type: "string" },
         message_id: { type: "string" },
         timestamp: { type: "string", format: "date-time" },
-        ttl: { type: "string"}
+        ttl: { type: "string", format: 'duration'}
       }
     },
     message: {
@@ -80,7 +80,7 @@ const on_reconSchema = {
                   properties: {
                     id: { type: "string" },
                     payment_id: { type: "string" },
-                    status: { type: "string", enum: ["PENDING", "SETTLED", "TO-BE-INITIATED"] },
+                    status: { type: "string", enum: ["PENDING", "SETTLED", "TO_BE_INITIATED"] },
                     settlement_ref_no: { type: "string" },
                     amount: {
                       type: "object",

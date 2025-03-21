@@ -77,6 +77,10 @@ const checkRsfOnSettle = (data: any) => {
           !message?.settlement?.orders?.[0]?.self?.amount?.value) {
         rsfObj.settlement_amount = 'settlement amount with currency and value is required for MISC type'
       }
+
+      if (!message?.inter_participant) {
+        rsfObj.inter_participant = 'inter_participant is not required for MISC type'
+      }
     }
   
     logger.info('Validate required fields for NIL type')

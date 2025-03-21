@@ -1,9 +1,11 @@
 import { setValue } from '../../shared/dao'
-import constants, { mobilitySequence } from '../../constants'
+import constants, { metroSequence, mobilitySequence } from '../../constants'
 import { validateSchema, isObjectEmpty } from '..'
 // import { logger } from '../../shared/logger'
 import { validateContext } from './mobilityChecks'
 import _ from 'lodash'
+import { validateDomain } from './validate/helper'
+import { METRODOMAIN } from './validate/functions/constant'
 
 export const checkStatus = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
@@ -18,6 +20,10 @@ export const checkStatus = (data: any, msgIdSet: any) => {
   }
 
   const schemaValidation = validateSchema('TRV', constants.STATUS, data)
+  const validateDomainName = validateDomain(context?.domain || 'ONDC:TRV11')
+  if (!validateDomainName)
+    errorObj['domain'] =
+      `context.domain should be ${METRODOMAIN.METRO} instead of ${context?.domain} in ${metroSequence.STATUS}`
   const contextRes: any = validateContext(context, msgIdSet, constants.ON_INIT, constants.STATUS)
   setValue(`${mobilitySequence.STATUS}_message`, message)
 

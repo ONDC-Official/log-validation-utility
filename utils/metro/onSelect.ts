@@ -5,7 +5,8 @@ import _ from 'lodash'
 import { getValue, setValue } from '../../shared/dao'
 import { validateContext, validateQuote, validateStops } from './metroChecks'
 import { validateRouteInfoTags } from './tags'
-import { validateFulfillmentV2_0 } from './validate/helper'
+import { validateDomain, validateFulfillmentV2_0 } from './validate/helper'
+import { METRODOMAIN } from './validate/functions/constant'
 
 const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SFSJT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT', 'RJT']
 // const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
@@ -14,15 +15,19 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
     return { [metroSequence.ON_SELECT]: 'Json cannot be empty' }
   }
 
+  const errorObj: any = {}
   const { message, context } = data
   if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
   const schemaValidation = validateSchema('TRV', constants.ON_SELECT, data)
+  const validateDomainName = validateDomain(context?.domain || 'ONDC:TRV11')
+      if (!validateDomainName)
+        errorObj['domain'] =
+          `context.domain should be ${METRODOMAIN.METRO} instead of ${context?.domain} in ${metroSequence.ON_SELECT}`
   const contextRes: any = validateContext(context, msgIdSet, constants.SELECT, constants.ON_SELECT)
   setValue(`${metroSequence.ON_SELECT}_message`, message)
-  const errorObj: any = {}
 
   if (schemaValidation !== 'error') {
     Object.assign(errorObj, schemaValidation)

@@ -4,6 +4,8 @@ import { validateContext } from './mobilityChecks'
 import constants, { metroSequence } from '../../constants'
 import { validateSchema, isObjectEmpty } from '..'
 import { validatePaymentTags } from './tags'
+import { validateDomain } from './validate/helper'
+import { METRODOMAIN } from './validate/functions/constant'
 
 export const search = (data: any, msgIdSet: any, secondSearch: boolean, flow: { flow: string; flowSet: string }) => {
   const errorObj: any = {}
@@ -25,6 +27,11 @@ export const search = (data: any, msgIdSet: any, secondSearch: boolean, flow: { 
     }
 
     const schemaValidation = validateSchema('TRV', constants.SEARCH, data)
+    const validateDomainName = validateDomain(context?.domain || 'ONDC:TRV11')
+    if (!validateDomainName)
+      errorObj['domain'] =
+        `context.domain should be ${METRODOMAIN.METRO} instead of ${context?.domain} in ${secondSearch ? metroSequence.SEARCH2 : metroSequence.SEARCH1}`
+
     const contextRes: any = validateContext(
       context,
       msgIdSet,

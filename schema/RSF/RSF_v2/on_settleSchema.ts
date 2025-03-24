@@ -52,7 +52,7 @@ const onSettleSchema = {
         transaction_id: { type: 'string' },
         message_id: { type: 'string' },
         timestamp: { type: 'string', format: 'date-time' },
-        ttl: { type: 'string' }
+        ttl: { type: 'string' ,format: 'duration'}
       },
       additionalProperties: false
     },
@@ -64,7 +64,7 @@ const onSettleSchema = {
         receiver_app_id: { type: 'string' },
         settlement: {
           type: 'object',
-          required: ['type', 'id'],
+          required: ['type'],
           properties: {
             type: { type: 'string', enum: ['NP-NP','MISC', 'NIL'] },
             id: { type: 'string' },
@@ -98,7 +98,7 @@ const onSettleSchema = {
                         },
                         additionalProperties: false
                       },
-                      status: { type: 'string', enum: ['SETTLED', 'NOT-SETTLED'] },
+                      status: { type: 'string', enum: ['SETTLED', 'NOT_SETTLED'] },
                       reference_no: { type: 'string' }
                     },
                     additionalProperties: false
@@ -133,7 +133,7 @@ const onSettleSchema = {
                         },
                         additionalProperties: false
                       },
-                      status: { type: 'string', enum: ['SETTLED', 'NOT-SETTLED'] },
+                      status: { type: 'string', enum: ['SETTLED', 'NOT_SETTLED'] },
                       error: {
                         type: 'object',
                         required: ['code', 'message'],
@@ -160,7 +160,7 @@ const onSettleSchema = {
                         },
                         additionalProperties: false
                       },
-                      status: { type: 'string', enum: ['SETTLED', 'NOT-SETTLED'] },
+                      status: { type: 'string', enum: ['SETTLED', 'NOT_SETTLED'] },
                       reference_no: { type: 'string' },
                       error: {
                         type: 'object',

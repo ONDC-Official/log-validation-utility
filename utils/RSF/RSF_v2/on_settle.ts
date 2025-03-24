@@ -53,6 +53,13 @@ const checkRsfOnSettle = (data: any) => {
 
     console.log("msg on_settle", message)
 
+    if (message?.settlement?.type === 'NIL') {
+      console.log("in NIL type", message?.settlement?.type)
+      if (message.settlement.id) {
+        rsfObj.settlement_id = 'Settlement id is provided but not required when type is NIL';
+      }
+    } 
+
     if (message?.settlement?.type === 'MISC') {
       if (message?.collector_app_id) {
         rsfObj.collector_app_id = 'collector_app_id should not be present for MISC settlement type'
@@ -69,6 +76,10 @@ const checkRsfOnSettle = (data: any) => {
       if (!message?.settlement?.orders?.[0]?.self?.amount?.currency || 
           !message?.settlement?.orders?.[0]?.self?.amount?.value) {
         rsfObj.settlement_amount = 'settlement amount with currency and value is required for MISC type'
+      }
+
+      if (!message?.inter_participant) {
+        rsfObj.inter_participant = 'inter_participant is not required for MISC type'
       }
     }
   

@@ -11,6 +11,7 @@ import { validateLogsForFIS13 } from '../../shared/Actions/FIS13Actions'
 import { validateLogsForTRV13 } from '../../shared/Actions/TRV13Actions'
 import { getFis14Format, validateLogsForFIS14 } from '../../shared/Actions/FIS14Actions'
 import { validateLogsForTRV14 } from '../../shared/Actions/TRV14Actions'
+import { validateLogsForAirline } from '../../shared/Actions/TRV12Action'
 
 const createSignature = async ({ message }: { message: string }) => {
   const privateKey = process.env.SIGN_PRIVATE_KEY as string
@@ -149,6 +150,16 @@ const validateMobility = async (domain: string, payload: string, version: string
 
     case 'ONDC:TRV11':
       response = validateLogsForMetro(payload, flow, version)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+
+      break
+
+      case 'ONDC:TRV12':
+      response = validateLogsForAirline(payload, flow, version)
 
       if (_.isEmpty(response)) {
         success = true

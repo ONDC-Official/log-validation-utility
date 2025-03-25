@@ -275,6 +275,21 @@ export const metroSequence = {
   ON_STATUS: 'on_status',
 }
 
+export const airlinesSequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SELECT1: 'select1',
+  ON_SELECT1: 'on_select1',
+  SELECT2: 'select2',
+  ON_SELECT2: 'on_select2',
+  INIT: 'init',
+  ON_INIT: 'on_init',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  CANCEL: 'cancel',
+  ON_CANCEL: 'on_cancel',
+}
+
 export const mobilityFlow: any = {
   AIRLINES: 'airlines',
   METRO: 'metro',

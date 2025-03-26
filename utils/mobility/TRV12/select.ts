@@ -1,14 +1,7 @@
 import { logger } from '../../../shared/logger'
 import { getValue, setValue } from '../../../shared/dao'
 import constants, { airlinesSequence } from '../../../constants'
-import {
-  validateSchema,
-  isObjectEmpty,
-  checkGpsPrecision,
-  // checkMetroContext,
-  // checkBppIdOrBapId,
-  // timeDiff,
-} from '../../'
+import { validateSchema, isObjectEmpty } from '../../'
 import { validateContext } from '../../metro/metroChecks'
 
 export const checkSelect = (data: any, msgIdSet: any, secondSelect: boolean) => {
@@ -18,6 +11,7 @@ export const checkSelect = (data: any, msgIdSet: any, secondSelect: boolean) => 
       : { [airlinesSequence.SELECT1]: 'Json cannot be empty' }
   }
   const errorObj: any = {}
+  let selectItemId: string[] = []
 
   const { message, context } = data
   if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
@@ -46,7 +40,7 @@ export const checkSelect = (data: any, msgIdSet: any, secondSelect: boolean) => 
   }
 
   try {
-    const storedItemIDS: any = getValue(`${airlinesSequence.ON_SEARCH}_itemsId`)
+    const storedItemIDS: any = getValue(`${airlinesSequence.ON_SEARCH}_itemsId`) || []
     const select = message.order
     const onSearch: any = getValue(`${airlinesSequence.ON_SEARCH}_message`)
 
@@ -72,13 +66,18 @@ export const checkSelect = (data: any, msgIdSet: any, secondSelect: boolean) => 
       logger.info(`Comparing Items object for /${constants.ON_SEARCH} and /${constants.SELECT}`)
 
       select?.items?.forEach((item: any, index: number) => {
-        if (storedItemIDS && !storedItemIDS.includes(item.id)) {
+        if (item?.id && storedItemIDS && !storedItemIDS.includes(item.id)) {
           const key = `item[${index}].item_id`
           errorObj[key] =
             `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
         } else {
+          selectItemId.push(item.id)
           setValue('itemId', item.id)
           setValue(`qunatity_count`, item?.quantity?.count || 0)
+        }
+
+        if (item?.parent_item_id && !selectItemId?.includes(item?.parent_item_id)) {
+          errorObj[`item[${index}].parent_item_id`] = `parent_item_id should be linked with item_id`
         }
       })
     } catch (error: any) {
@@ -97,21 +96,19 @@ export const checkSelect = (data: any, msgIdSet: any, secondSelect: boolean) => 
           fulfillmentErrors[`${fulfillmentKey}.id`] = `${fulfillmentKey}/id is required`
         }
 
-        if (fulfillment.type && fulfillment.type !== 'DELIVERY') {
-          fulfillmentErrors[`${fulfillmentKey}.type`] = `Fulfillment type should be 'DELIVERY' in provoider}`
+        if (fulfillment?.vehicle) {
+          if (fulfillment?.vehicle?.category !== 'AIRLINE') {
+            fulfillmentErrors[`fulfillment_${index}.vehicle.category`] =
+              `${fulfillmentKey}/vehicle/category should be AIRLINE in index ${index}`
+          }
         }
 
-        if ('stops' in fulfillment && Array.isArray(fulfillment.stops)) {
+        if ('stops' in fulfillment && Array.isArray(fulfillment?.stops)) {
           fulfillment.stops.forEach((stop: any, stopIndex: number) => {
             const stopKey = `${fulfillmentKey}.stops[${stopIndex}]`
 
-            if (!stop.type) {
-              fulfillmentErrors[`${stopKey}.type`] = `${stopKey}/type is required`
-            }
-
-            if (checkGpsPrecision(stop?.location?.gps)) {
-              fulfillmentErrors[`${stopKey}.gps`] =
-                'gps must be specified with at least six decimal places of precision.'
+            if (!stop.id) {
+              fulfillmentErrors[`${stopKey}.id`] = `${stopKey}/id is required`
             }
           })
         }

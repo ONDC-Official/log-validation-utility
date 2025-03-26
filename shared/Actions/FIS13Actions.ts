@@ -21,6 +21,8 @@ import {
   claimSequence,
   cancelSequence,
   motorSequence,
+  lifeSequenceWithMedical,
+  lifeSequenceWithoutMedical,
 } from '../../constants/fisFlows'
 
 export function validateLogsForFIS13(data: any, flow: string, version: string) {
@@ -69,6 +71,10 @@ export function validateLogsForFIS13(data: any, flow: string, version: string) {
           return search(data[FIS13HealthSequence.SEARCH_2], msgIdSet, flow, FIS13HealthSequence.SEARCH_2)
         case FIS13HealthSequence.ON_SEARCH_2:
           return checkOnSearch(data[FIS13HealthSequence.ON_SEARCH_2], msgIdSet, flow, FIS13HealthSequence.ON_SEARCH_2)
+        case FIS13HealthSequence.SEARCH_3:
+          return search(data[FIS13HealthSequence.SEARCH_3], msgIdSet, flow, FIS13HealthSequence.SEARCH_3)
+        case FIS13HealthSequence.ON_SEARCH_3:
+          return checkOnSearch(data[FIS13HealthSequence.ON_SEARCH_3], msgIdSet, flow, FIS13HealthSequence.ON_SEARCH_3)
 
         case FIS13HealthSequence.SELECT:
           return checkSelect(data[FIS13HealthSequence.SELECT], msgIdSet, FIS13HealthSequence.SELECT)
@@ -95,6 +101,14 @@ export function validateLogsForFIS13(data: any, flow: string, version: string) {
           return checkInit(data[FIS13HealthSequence.INIT_2], msgIdSet, FIS13HealthSequence.INIT_2)
         case FIS13HealthSequence.ON_INIT_2:
           return checkOnInit(data[FIS13HealthSequence.ON_INIT_2], msgIdSet, FIS13HealthSequence.ON_INIT_2)
+        case FIS13HealthSequence.INIT_3:
+          return checkInit(data[FIS13HealthSequence.INIT_3], msgIdSet, FIS13HealthSequence.INIT_3)
+        case FIS13HealthSequence.ON_INIT_3:
+          return checkOnInit(data[FIS13HealthSequence.ON_INIT_3], msgIdSet, FIS13HealthSequence.ON_INIT_3)
+        case FIS13HealthSequence.INIT_4:
+          return checkInit(data[FIS13HealthSequence.INIT_4], msgIdSet, FIS13HealthSequence.INIT_4)
+        case FIS13HealthSequence.ON_INIT_4:
+          return checkOnInit(data[FIS13HealthSequence.ON_INIT_4], msgIdSet, FIS13HealthSequence.ON_INIT_4)
 
         case FIS13HealthSequence.CONFIRM:
           return checkConfirm(data[FIS13HealthSequence.CONFIRM], msgIdSet)
@@ -149,6 +163,12 @@ export function validateLogsForFIS13(data: any, flow: string, version: string) {
       case insuranceFlows.CANCEL_MOTOR:
         logReport = processFIS13HealthSequence(cancelSequence, data, logReport, flow)
         break
+      case insuranceFlows.LIFE_WITH_MEDICAL:
+        logReport = processFIS13HealthSequence(lifeSequenceWithMedical, data, logReport, flow)
+        break
+      case insuranceFlows.LIFE_WITHOUT_MEDICAL:
+        logReport = processFIS13HealthSequence(lifeSequenceWithoutMedical, data, logReport, flow)
+        break
     }
     return logReport
   } catch (error: any) {
@@ -156,7 +176,6 @@ export function validateLogsForFIS13(data: any, flow: string, version: string) {
     console.log(error)
     return error.message
   }
-
 
   //   default:
   //     logReport = { ...logReport, version: `Invalid flow ${flow}` }

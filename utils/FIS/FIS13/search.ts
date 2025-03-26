@@ -105,11 +105,13 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
           setValue(`collected_by`, collectedBy)
         }
 
-        // Validate payment tags
-        const tagsValidation = validatePaymentTags(payment.tags, terms)
-        console.log('tagsValidation', tagsValidation)
-        if (!tagsValidation.isValid) {
-          Object.assign(errorObj, { tags: tagsValidation.errors })
+        if (flow != 'LIFE_INSURANCE') {
+          // Validate payment tags
+          const tagsValidation = validatePaymentTags(payment.tags, terms)
+          console.log('tagsValidation', tagsValidation)
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { tags: tagsValidation.errors })
+          }
         }
       }
     } catch (error: any) {
@@ -119,9 +121,9 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
 
     // checking providers
     try {
-      // validate providers if type action is search_2
+      // validate providers if type action is not search || search_1
       console.log('action', action)
-      if (isEqual(action, 'search_2')) {
+      if (!isEqual(action, 'search') && !isEqual(action, 'search_1')) {
         logger.info(`Validating providers in /${action}`)
         const provider = message.intent?.provider
 
@@ -158,8 +160,10 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
                 }
 
                 //validate xInput form
-                const xinputErrors = validateXInputSubmission(item?.xinput, index, action)
-                Object.assign(errorObj, xinputErrors)
+                if (!isEqual(action, 'search_3')) {
+                  const xinputErrors = validateXInputSubmission(item?.xinput, index, action)
+                  Object.assign(errorObj, xinputErrors)
+                }
               })
             }
           } catch (error: any) {

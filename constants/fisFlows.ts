@@ -47,6 +47,48 @@ export const motorSequence = [
   FIS13HealthSequence.ON_CONFIRM,
 ]
 
+export const lifeSequenceWithMedical = [
+  FIS13HealthSequence.SEARCH_1,
+  FIS13HealthSequence.ON_SEARCH_1,
+  FIS13HealthSequence.SEARCH_2,
+  FIS13HealthSequence.ON_SEARCH_2,
+  FIS13HealthSequence.SEARCH_3,
+  FIS13HealthSequence.ON_SEARCH_3,
+  FIS13HealthSequence.SELECT,
+  FIS13HealthSequence.ON_SELECT,
+  FIS13HealthSequence.INIT_1,
+  FIS13HealthSequence.ON_INIT_1,
+  FIS13HealthSequence.INIT_2,
+  FIS13HealthSequence.ON_INIT_2,
+  FIS13HealthSequence.INIT_3,
+  FIS13HealthSequence.ON_INIT_3,
+  FIS13HealthSequence.INIT_4,
+  FIS13HealthSequence.ON_INIT_4,
+  FIS13HealthSequence.CONFIRM,
+  FIS13HealthSequence.ON_CONFIRM,
+]
+
+export const lifeSequenceWithoutMedical = [
+  FIS13HealthSequence.SEARCH_1,
+  FIS13HealthSequence.ON_SEARCH_1,
+  FIS13HealthSequence.SEARCH_2,
+  FIS13HealthSequence.ON_SEARCH_2,
+  FIS13HealthSequence.SEARCH_3,
+  FIS13HealthSequence.ON_SEARCH_3,
+  FIS13HealthSequence.SELECT,
+  FIS13HealthSequence.ON_SELECT,
+  FIS13HealthSequence.INIT_1,
+  FIS13HealthSequence.ON_INIT_1,
+  FIS13HealthSequence.INIT_2,
+  FIS13HealthSequence.ON_INIT_2,
+  FIS13HealthSequence.INIT_3,
+  FIS13HealthSequence.ON_INIT_3,
+  FIS13HealthSequence.INIT_4,
+  FIS13HealthSequence.ON_INIT_4,
+  FIS13HealthSequence.CONFIRM,
+  FIS13HealthSequence.ON_CONFIRM,
+]
+
 export const renewSequence = [
   FIS13HealthSequence.ON_CONFIRM,
   FIS13HealthSequence.ON_UPDATE_1,

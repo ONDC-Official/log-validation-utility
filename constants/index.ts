@@ -164,6 +164,8 @@ export const FIS13HealthSequence = {
   ON_SEARCH_1: 'on_search_1',
   SEARCH_2: 'search_2',
   ON_SEARCH_2: 'on_search_2',
+  SEARCH_3: 'search_3',
+  ON_SEARCH_3: 'on_search_3',
   SELECT: 'select',
   ON_SELECT: 'on_select',
   SELECT_1: 'select_1',
@@ -176,10 +178,12 @@ export const FIS13HealthSequence = {
   INIT_1: 'init_1',
   INIT_2: 'init_2',
   INIT_3: 'init_3',
+  INIT_4: 'init_4',
   ON_INIT: 'on_init',
   ON_INIT_1: 'on_init_1',
   ON_INIT_2: 'on_init_2',
   ON_INIT_3: 'on_init_3',
+  ON_INIT_4: 'on_init_4',
   CONFIRM: 'confirm',
   ON_CONFIRM: 'on_confirm',
   CANCEL: 'cancel',
@@ -315,6 +319,11 @@ export const insuranceFormHeadings: any = {
     on_select: ['Manual Review', 'PAN & DOB', 'Know your Customer'],
     on_init: ['Vehicle & Nominee Details', 'Personal Info'],
   },
+  LIFE_INSURANCE: {
+    on_search: ['BASIC_DETAILS'],
+    on_select: ['Manual Review', 'PAN & DOB', 'Know your Customer'],
+    on_init: ['Vehicle & Nominee Details', 'Personal Info'],
+  },
 }
 
 export const fisFlows = {
@@ -340,6 +349,8 @@ export const insuranceFlows = {
   CANCEL_MARINE: 'CANCEL_MARINE_INSURANCE',
   CLAIM_MOTOR: 'CLAIM_MOTOR_INSURANCE',
   CANCEL_MOTOR: 'CANCEL_MOTOR_INSURANCE',
+  LIFE_WITH_MEDICAL: 'LIFE_INSURANCE',
+  LIFE_WITHOUT_MEDICAL: 'LIFE_INSURANCE',
 }
 
 export const fis14Flows = {

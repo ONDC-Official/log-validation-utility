@@ -133,51 +133,53 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
       }
 
       // check provider payments
-      try {
-        logger.info(`Checking payments in providers[${i}]`)
-        const payments = prvdr?.payments
-        if (isEmpty(payments)) {
-          errorObj.payments = `payments array is missing or empty`
-        } else {
-          payments?.forEach((arr: any, i: number) => {
-            const terms = [
-              { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' },
-              {
-                code: 'SETTLEMENT_BASIS',
-                type: 'enum',
-                value: ['INVOICE_RECEIPT', 'Delivery'],
-              },
-              { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
-              { code: 'STATIC_TERMS', type: 'url' },
-              { code: 'COURT_JURISDICTION', type: 'string' },
-              { code: 'DELAY_INTEREST', type: 'amount' },
-              {
-                code: 'OFFLINE_CONTRACT',
-                type: 'boolean',
-              },
-            ]
+      if (insurance != 'LIFE_INSURANCE') {
+        try {
+          logger.info(`Checking payments in providers[${i}]`)
+          const payments = prvdr?.payments
+          if (isEmpty(payments)) {
+            errorObj.payments = `payments array is missing or empty`
+          } else {
+            payments?.forEach((arr: any, i: number) => {
+              const terms = [
+                { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' },
+                {
+                  code: 'SETTLEMENT_BASIS',
+                  type: 'enum',
+                  value: ['INVOICE_RECEIPT', 'Delivery'],
+                },
+                { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
+                { code: 'STATIC_TERMS', type: 'url' },
+                { code: 'COURT_JURISDICTION', type: 'string' },
+                { code: 'DELAY_INTEREST', type: 'amount' },
+                {
+                  code: 'OFFLINE_CONTRACT',
+                  type: 'boolean',
+                },
+              ]
 
-            if (!arr?.collected_by) {
-              errorObj[`payemnts[${i}]_collected_by`] =
-                `payments.collected_by must be present in ${constants.ON_SEARCH}`
-            } else {
-              const srchCollectBy = getValue(`collected_by`)
-              if (srchCollectBy != arr?.collected_by) {
-                setValue(`collected_by`, arr?.collected_by)
+              if (!arr?.collected_by) {
                 errorObj[`payemnts[${i}]_collected_by`] =
-                  `payments.collected_by mismatch with what was sent in /${constants.ON_SEARCH}`
+                  `payments.collected_by must be present in ${constants.ON_SEARCH}`
+              } else {
+                const srchCollectBy = getValue(`collected_by`)
+                if (srchCollectBy != arr?.collected_by) {
+                  setValue(`collected_by`, arr?.collected_by)
+                  errorObj[`payemnts[${i}]_collected_by`] =
+                    `payments.collected_by mismatch with what was sent in /${constants.ON_SEARCH}`
+                }
               }
-            }
 
-            // Validate payment tags
-            const tagsValidation = validatePaymentTags(arr.tags, terms)
-            if (!tagsValidation.isValid) {
-              Object.assign(errorObj, { tags: tagsValidation.errors })
-            }
-          })
+              // Validate payment tags
+              const tagsValidation = validatePaymentTags(arr.tags, terms)
+              if (!tagsValidation.isValid) {
+                Object.assign(errorObj, { tags: tagsValidation.errors })
+              }
+            })
+          }
+        } catch (error: any) {
+          logger.error(`!!Errors while checking payments in providers[${i}], ${error.stack}`)
         }
-      } catch (error: any) {
-        logger.error(`!!Errors while checking payments in providers[${i}], ${error.stack}`)
       }
 
       // check provider items
@@ -230,6 +232,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
               }
 
               // Validate time
+              // if (insurance != 'LIFE_INSURANCE') {
               if (isEmpty(item?.time)) {
                 errorObj.time = `time is missing or empty at providers[${i}].items[${j}]`
               } else {
@@ -245,6 +248,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
                   errorObj['time.duration'] = `incorrect format or type for duration at providers[${i}].items[${j}]`
                 }
               }
+              // }
 
               // Validate add_ons
               const addOnIdSet = new Set()
@@ -313,16 +317,21 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
             }
 
             // Validate parent_item_id & price for multi-offer calls
-            if (action?.includes('_2')) {
+            if (!action?.includes('_1')) {
               // parent_item_id check
               console.log('itemsId---------------11', item)
-              if (!item?.parent_item_id)
-                errorObj['parent_item_id'] = `parent_item_id is missing at providers[${i}].items[${j}]`
-              else {
-                parentItems++
-                console.log('itemsId---------------', itemsId, item.parent_item_id)
-                if (!itemsId.has(item.parent_item_id)) {
-                  errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id}  doesn't match with previous item.id in providers[${i}]`
+              if (
+                (action?.includes('_3') && insurance == 'LIFE_INSURANCE') ||
+                (action?.includes('_2') && insurance != 'LIFE_INSURANCE')
+              ) {
+                if (!item?.parent_item_id)
+                  errorObj['parent_item_id'] = `parent_item_id is missing at providers[${i}].items[${j}]`
+                else {
+                  parentItems++
+                  console.log('itemsId---------------', itemsId, item.parent_item_id)
+                  if (!itemsId.has(item.parent_item_id)) {
+                    errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id}  doesn't match with previous item.id in providers[${i}]`
+                  }
                 }
               }
 
@@ -337,7 +346,11 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
 
             // Validate xinput
             // either call shouldn't be of multi-offer, or parent_item_id should be present to validate xinput
-            if (!action?.includes('_2') || insurance == 'MOTOR_INSURANCE' || item?.parent_item_id) {
+            if (
+              !action?.includes('_2') ||
+              insurance == 'MOTOR_INSURANCE' ||
+              (item?.parent_item_id && insurance == 'LIFE_INSURANCE')
+            ) {
               const xinput = item?.xinput
               if (!xinput) errorObj['xinput'] = `xinput is missing or empty at providers[${i}].items[${j}]`
               else {

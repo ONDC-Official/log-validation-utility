@@ -862,3 +862,78 @@ export const validateClaimTags = (tags: any, action: string) => {
     errors: errors.length > 0 ? errors : [],
   }
 }
+
+export const validateContactAndLspInfo = (tags: any) => {
+  const errors: string[] = []
+
+  const contactInfoDescriptors: any = {
+    GRO_NAME: (value: string) => typeof value === 'string' && value.trim().length > 0,
+    GRO_EMAIL: (value: string) => typeof value === 'string' && value.includes('@'),
+    GRO_CONTACT_NUMBER: (value: string) => typeof value === 'string' && /^\d{10,15}$/.test(value),
+    CUSTOMER_SUPPORT_LINK: (value: string) => typeof value === 'string' && value.startsWith('http'),
+    CUSTOMER_SUPPORT_CONTACT_NUMBER: (value: string) => typeof value === 'string' && /^\d{10,15}$/.test(value),
+    CUSTOMER_SUPPORT_EMAIL: (value: string) => typeof value === 'string' && value.includes('@'),
+  }
+
+  const lspInfoDescriptors: any = {
+    LSP_NAME: (value: string) => typeof value === 'string' && value.trim().length > 0,
+    LSP_EMAIL: (value: string) => typeof value === 'string' && value.includes('@'),
+    LSP_CONTACT_NUMBER: (value: string) => typeof value === 'string' && /^\d{10,15}$/.test(value),
+    LSP_ADDRESS: (value: string) => typeof value === 'string' && value.trim().length > 0,
+  }
+
+  if (!Array.isArray(tags) || tags.length === 0) {
+    throw new Error('Tags array is missing or empty.')
+  }
+
+  tags.forEach((tag: any, index: number) => {
+    if (!tag.descriptor || !tag.descriptor.code) {
+      throw new Error(`Tag[${index}] is missing descriptor or code.`)
+    }
+
+    const tagCode = tag.descriptor.code
+    const tagName = `Tag[${index}] (${tagCode})`
+    const list = tag.list
+
+    if (!Array.isArray(list) || list.length === 0) {
+      throw new Error(`${tagName} has a missing or empty list.`)
+    }
+
+    let requiredDescriptors
+    if (tagCode === 'CONTACT_INFO') {
+      requiredDescriptors = contactInfoDescriptors
+    } else if (tagCode === 'LSP_INFO') {
+      requiredDescriptors = lspInfoDescriptors
+    } else {
+      throw new Error(`${tagName} has an unrecognized descriptor code.`)
+    }
+
+    list.forEach((item, itemIndex) => {
+      const descriptorCode = item.descriptor?.code
+      const value = item.value
+
+      if (!descriptorCode) {
+        throw new Error(`${tagName} -> List[${itemIndex}] is missing a descriptor code.`)
+      }
+
+      if (!requiredDescriptors[descriptorCode]) {
+        throw new Error(`${tagName} -> List[${itemIndex}] has an unknown descriptor code: '${descriptorCode}'.`)
+      }
+
+      if (!value) {
+        throw new Error(`${tagName} -> List[${itemIndex}] is missing a value for descriptor code '${descriptorCode}'.`)
+      }
+
+      if (!requiredDescriptors[descriptorCode](value)) {
+        throw new Error(
+          `${tagName} -> List[${itemIndex}] has an invalid value '${value}' for descriptor code '${descriptorCode}'.`,
+        )
+      }
+    })
+  })
+
+  return {
+    isValid: errors.length === 0,
+    errors: errors.length > 0 ? errors : [],
+  }
+}

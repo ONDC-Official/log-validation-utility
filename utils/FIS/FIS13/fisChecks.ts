@@ -3,7 +3,7 @@ import constants, { insuranceFormHeadings } from '../../../constants/'
 import { logger } from '../../../shared/logger'
 import { checkIdAndUri, checkFISContext, isValidPhoneNumber } from '../../'
 import _, { isArray, isEmpty } from 'lodash'
-import { validateClaimTags, validatePaymentTags } from './tags'
+import { validateClaimTags, validateContactAndLspInfo, validatePaymentTags } from './tags'
 
 export const checkUniqueCategoryIds = (categoryIds: (string | number)[], availableCategoryIds: any): boolean => {
   console.log('categoryIds', categoryIds)
@@ -44,6 +44,10 @@ const getQuoteCodes = (flow: string): string[] => {
       return ['BASE_PRICE', 'CONVIENCE_FEE', 'TAX', 'PROCESSING_FEE']
       break
 
+    case 'LIFE_INSURANCE':
+      return ['BASE_PRICE', 'CONVIENCE_FEE', 'TAX', 'PROCESSING_FEE', 'OFFER', 'ADD_ONS']
+      break
+
     default:
       return []
       break
@@ -75,6 +79,9 @@ export const getCodes = (): string[] => {
         'FOUR_WHEELER_OWN_DAMAGE',
       ]
 
+    case 'LIFE_INSURANCE':
+      return ['LIFE_INSURANCE', 'ENDOWMENT_POLICY']
+
     default:
       return []
   }
@@ -101,6 +108,9 @@ export const getAddOns = (): string[] => {
         'RETURN_TO_INVOICE',
         'DAILY_ALLOWANCE',
       ]
+
+    case 'LIFE_INSURANCE':
+      return ['NO_CLAIM_BONUS']
 
     default:
       return []
@@ -578,6 +588,7 @@ export const validateQuote = (quote: any) => {
 export const validateProvider = (provider: any, action: string) => {
   try {
     const providerErrors: any = {}
+    const insurance = getValue('insurance')
     if (!provider) {
       providerErrors.provider = 'Provider details are missing or invalid.'
       return providerErrors
@@ -596,6 +607,13 @@ export const validateProvider = (provider: any, action: string) => {
     // send true as last argument in case if code validation is needed
     const descriptorError = validateDescriptor(provider?.descriptor, action, `provider.descriptor`, false, [])
     if (descriptorError) Object.assign(providerErrors, descriptorError)
+
+    if (insurance == 'LIFE_INSURANCE') {
+      const tagsValidation = validateContactAndLspInfo(provider?.tags)
+      if (!tagsValidation.isValid) {
+        descriptorError.tags = tagsValidation.errors
+      }
+    }
     return providerErrors
   } catch (error: any) {
     logger.info(`Error while checking provider object in /${action} api, ${error.stack}`)
@@ -1016,5 +1034,39 @@ export const validatePaymentObject = (payments: any, action: string): any => {
     return errorObj
   } catch (error) {
     logger.error(`!!Some error occurred while checking payment object /${action} API`, error)
+  }
+}
+
+export const validateSimplePaymentObject = (payments: any, action: any) => {
+  try {
+    const errorObj: any = {}
+    if (!Array.isArray(payments) || payments.length === 0) {
+      errorObj.payments = `payments array is missing or is empty`
+      return errorObj
+    }
+
+    const allowedStatusValues = ['NOT-PAID', 'PAID']
+    const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT', 'PRE-FULFILLMENT']
+
+    payments.forEach((payment, i) => {
+      if (!payment.collected_by) {
+        errorObj[`payments[${i}]_collected_by`] = `payments.collected_by must be present in ${action}`
+      }
+
+      if (!payment.status) {
+        errorObj[`payments[${i}]_status`] = `payments.status is missing`
+      } else if (!allowedStatusValues.includes(payment.status)) {
+        errorObj[`payments[${i}]_status`] = `Invalid status, should be either ${allowedStatusValues.join(', ')}`
+      }
+
+      if (!payment.type || !validTypes.includes(payment.type)) {
+        errorObj[`payments[${i}]_type`] = `Invalid payment type, must be one of: ${validTypes.join(', ')}`
+      }
+    })
+
+    return errorObj
+  } catch (error) {
+    logger.error(`Error occurred while validating payment object in ${action} API`, error)
+    return { error: 'Unexpected error occurred while validating payments' }
   }
 }

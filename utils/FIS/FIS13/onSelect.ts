@@ -10,6 +10,7 @@ import {
   validateDescriptor,
   validateProvider,
   validateQuote,
+  validateSimplePaymentObject,
   validateXInput,
 } from './fisChecks'
 import { validateGeneralInfo } from './tags'
@@ -181,12 +182,13 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
           }
 
           // Validate xinput
-          const xinput = item?.xinput
-          const xinputValidationErrors = validateXInput(xinput, index, constants.ON_SELECT, 0)
-          if (xinputValidationErrors) {
-            Object.assign(errorObj, xinputValidationErrors)
+          if (insurance != 'LIFE_INSURANCE') {
+            const xinput = item?.xinput
+            const xinputValidationErrors = validateXInput(xinput, index, constants.ON_SELECT, 0)
+            if (xinputValidationErrors) {
+              Object.assign(errorObj, xinputValidationErrors)
+            }
           }
-
           // Validate Item tags
           // let tagsValidation: any = {}
           // if (insurance == 'MARINE_INSURANCE') {
@@ -205,6 +207,17 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
       logger.error(
         `!!Error while Comparing and Mapping Items in /${constants.ON_SELECT} and /${constants.SELECT}, ${error.stack}`,
       )
+    }
+
+    //check payments
+    if (insurance == 'LIFE_INSURANCE') {
+      try {
+        logger.info(`Checking payments details in /${constants.ON_SELECT}`)
+        const paymentErrors = validateSimplePaymentObject(onSelect?.payments, constants.ON_SELECT)
+        Object.assign(errorObj, paymentErrors)
+      } catch (error: any) {
+        logger.error(`!!Error while checking payments details in /${constants.ON_SELECT}`, error.stack)
+      }
     }
 
     //check quote

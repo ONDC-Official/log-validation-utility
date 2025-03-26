@@ -2,19 +2,12 @@ import { logger } from '../../../shared/logger'
 import { setValue } from '../../../shared/dao'
 import { validateRouteInfoTags, validateTags } from '../../metro/tags'
 import constants, { airlinesSequence } from '../../../constants'
-import { validateDescriptor, validateStops } from '../../metro/metroChecks'
+import { validateStops } from '../../metro/metroChecks'
 import { validateSchema, isObjectEmpty } from '../../'
 import { validateContext } from '../../metro/metroChecks'
 import { isNil } from 'lodash'
-import {
-  checkItemPrice,
-  checkItemQuantity,
-  checkItemTime,
-  checkPayment,
-  checkRefIds,
-  validateFarePolicyTags,
-} from '../../metro/validate/helper'
-import { VALID_DESCRIPTOR_CODES } from '../../metro/enum'
+import { checkItemPrice, checkPayment, checkRefIds } from '../../metro/validate/helper'
+import { checkItemQuantity, checkItemTime, validateDescriptor } from './functions/helper'
 
 export const checkOnSearch = (
   data: any,
@@ -80,51 +73,31 @@ export const checkOnSearch = (
       }
       // }
 
-      if (String(flow.flow)?.toUpperCase() === 'METRO') {
-        const providerTime = onSearchCatalog['providers'][i]?.time
-
-        if (providerTime) {
-          const timeRange = providerTime?.range
-
-          if (!timeRange) errorObj[`provider_${i}_time_range`] = `time range is missing for provider ${i}`
-          else {
-            if (!timeRange?.start)
-              errorObj[`provider_${i}_time_range_start`] = `time range start is missing for provider ${i}`
-
-            if (!timeRange?.end)
-              errorObj[`provider_${i}_time_range_end`] = `time range end is missing for provider ${i}`
-          }
-        } else errorObj[`provider_${i}_time`] = `time Object is missing for provider ${i}`
-      }
-
       const categoriesIds: string[] = []
-      if (String(flow?.flow)?.toUpperCase() === 'METRO') {
-        if (categories) {
-          onSearchCatalog['providers'][i]?.categories?.map(
-            (item: { id: string; descriptor: { code: string } }, index: number) => {
-              if (item?.id) {
-                if (categoriesIds?.includes(item?.id)) {
-                  errorObj[`provider_${i}_categoriesId`] =
-                    `ID should be unique, it shouldn't match with other categories ID.`
-                } else categoriesIds.push(item?.id)
-              } else {
+      if (categories) {
+        onSearchCatalog['providers'][i]?.categories?.map(
+          (item: { id: string; descriptor: { code: string } }, index: number) => {
+            if (item?.id) {
+              if (categoriesIds?.includes(item?.id)) {
                 errorObj[`provider_${i}_categoriesId`] =
-                  `Category id should be present in categories of ${index} index.`
-              }
+                  `ID should be unique, it shouldn't match with other categories ID.`
+              } else categoriesIds.push(item?.id)
+            } else {
+              errorObj[`provider_${i}_categoriesId`] = `Category id should be present in categories of ${index} index.`
+            }
 
-              const descriptorError = validateDescriptor(
-                item?.descriptor,
-                constants.ON_SEARCH,
-                `providers${[i]}.categories${[i]}.desscriptor`,
-                true,
-                ['TICKET', 'PASS'],
-              )
-              if (descriptorError) Object.assign(errorObj, descriptorError)
-            },
-          )
-        } else {
-          errorObj[`provider_${i}_categories`] = `Categories are missing for provider ${i}`
-        }
+            const descriptorError = validateDescriptor(
+              item?.descriptor,
+              constants.ON_SEARCH,
+              `providers${[i]}.categories${[i]}.desscriptor`,
+              true,
+              ['PREMIUM_ECONOMY', 'ECONOMY', 'BUSINESS', 'FIRST_CLASS'],
+            )
+            if (descriptorError) Object.assign(errorObj, descriptorError)
+          },
+        )
+      } else {
+        errorObj[`provider_${i}_categories`] = `Categories are missing for provider ${i}`
       }
 
       //validate fulfillments
@@ -196,77 +169,65 @@ export const checkOnSearch = (
 
       //validate items
       try {
-        if (secondOnSearch) {
-          const items = onSearchCatalog['providers'][i]['items']
-          if (items && items?.length) {
-            items?.map((item: any, j: number) => {
-              //check id
-              const key = `prvdr${i}item${j}_id`
-              if (!item?.id) {
-                errorObj[key] = `Item ID is missing in /providers[${i}]/items[${j}]`
-              } else if (itemsId.has(item.id)) {
-                errorObj[key] = `Duplicate item ID: ${item.id} in providers[${i}]`
-              } else {
-                itemsId.add(item.id)
-              }
+        const items = onSearchCatalog['providers'][i]['items']
+        if (items && items?.length) {
+          items?.map((item: any, j: number) => {
+            //check id
+            const key = `prvdr${i}item${j}_id`
+            if (!item?.id) {
+              errorObj[key] = `Item ID is missing in /providers[${i}]/items[${j}]`
+            } else if (itemsId.has(item.id)) {
+              errorObj[key] = `Duplicate item ID: ${item.id} in providers[${i}]`
+            } else {
+              itemsId.add(item.id)
+            }
 
-              //check quantity
-              if (item?.quantity) {
-                const itemQuantityError = checkItemQuantity(item?.quantity, i, j)
-                if (!isNil(itemQuantityError)) Object.assign(errorObj, itemQuantityError)
-              }
+            //check quantity
+            if (item?.quantity) {
+              const itemQuantityError = checkItemQuantity(item?.quantity, i, j)
+              if (!isNil(itemQuantityError)) Object.assign(errorObj, itemQuantityError)
+            }
 
-              //check descriptor
-              const descriptorError = validateDescriptor(
-                item?.descriptor,
-                constants.ON_SEARCH,
-                `items${j}.descriptor`,
-                true,
-                VALID_DESCRIPTOR_CODES,
-              )
-              if (descriptorError) Object.assign(errorObj, descriptorError)
+            //check descriptor
+            const descriptorError = validateDescriptor(
+              item?.descriptor,
+              constants.ON_SEARCH,
+              `items${j}.descriptor`,
+              true,
+              ['CHILD_TICKET', 'ADULT_TICKET'],
+            )
+            if (descriptorError) Object.assign(errorObj, descriptorError)
 
-              //check time
-              if (item?.time) {
-                const itemTimeError = checkItemTime(item?.time, i, j)
-                if (!isNil(itemTimeError)) Object.assign(errorObj, itemTimeError)
-              }
+            //check time
+            if (item?.time) {
+              const itemTimeError = checkItemTime(item?.time, i, j)
+              if (!isNil(itemTimeError)) Object.assign(errorObj, itemTimeError)
+            }
 
-              //check price
-              if (item?.price) {
-                const priceError = checkItemPrice(item?.price, i, j)
-                if (!isNil(priceError)) Object.assign(errorObj, priceError)
-              }
+            //check price
+            if (item?.price) {
+              const priceError = checkItemPrice(item?.price, i, j)
+              if (!isNil(priceError)) Object.assign(errorObj, priceError)
+            }
 
-              if (String(flow?.flow).toUpperCase() !== 'METRO' && item?.descriptor?.code === 'SFSJT') {
-                if (!item?.tags)
-                  errorObj[`items${j}.tags`] =
-                    `tags is missing in /providers[${i}]/items[${j}]. It should be present when descriptor code is SFSJT.`
-                else {
-                  const polictTagsError = validateFarePolicyTags(item?.tags, i, j, context?.action || '')
-                  if (!isNil(polictTagsError)) Object.assign(errorObj, polictTagsError)
-                }
-              }
+            //check category_ids
+            if (String(flow?.flow).toUpperCase() === 'METRO') {
+              const categoryIdsError = checkRefIds(item?.category_ids, i, j, categoriesIds, 'category')
+              if (!isNil(categoryIdsError)) Object.assign(errorObj, categoryIdsError)
+            }
 
-              //check category_ids
-              if (String(flow?.flow).toUpperCase() === 'METRO') {
-                const categoryIdsError = checkRefIds(item?.category_ids, i, j, categoriesIds, 'category')
-                if (!isNil(categoryIdsError)) Object.assign(errorObj, categoryIdsError)
-              }
-
-              //check fulfillment_ids
-              const fulfillmentIdsError = checkRefIds(
-                item?.fulfillment_ids,
-                i,
-                j,
-                Array.from(storedFulfillments),
-                'fulfillment',
-              )
-              if (!isNil(fulfillmentIdsError)) Object.assign(errorObj, fulfillmentIdsError)
-            })
-          } else {
-            errorObj[`items`] = `items array is missing or is empty at providers${i}.`
-          }
+            //check fulfillment_ids
+            const fulfillmentIdsError = checkRefIds(
+              item?.fulfillment_ids,
+              i,
+              j,
+              Array.from(storedFulfillments),
+              'fulfillment',
+            )
+            if (!isNil(fulfillmentIdsError)) Object.assign(errorObj, fulfillmentIdsError)
+          })
+        } else {
+          errorObj[`items`] = `items array is missing or is empty at providers${i}.`
         }
       } catch (error: any) {
         logger.error(`!!Errors while checking items in providers[${i}], ${error.stack}`)

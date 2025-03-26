@@ -69,7 +69,7 @@ export const onSearchSchemaTRV_12 = {
                   type: 'array',
                   items: {
                     type: 'object',
-                    required: ['url', 'size_type'],
+                    required: ['url'],
                     properties: {
                       url: { type: 'string', format: 'uri' },
                       size_type: { type: 'string', enum: ['xs'] },

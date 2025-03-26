@@ -47,16 +47,31 @@ export function validateLogsForAirline(data: any, flowName: string, version: str
     }
 
     if (data[airlinesSequence.SELECT1]) {
-      const onSelectResp = checkSelect(data[airlinesSequence.SELECT1], msgIdSet)
+      const onSelectResp = checkSelect(data[airlinesSequence.SELECT1], msgIdSet, false)
       if (!_.isEmpty(onSelectResp)) {
         logReport = { ...logReport, [airlinesSequence.SELECT1]: onSelectResp }
       }
     }
+    
 
     if (data[airlinesSequence.ON_SELECT1]) {
-      const onSelectResp = checkOnSelect(data[airlinesSequence.ON_SELECT1], msgIdSet, flow, version)
+      const onSelectResp = checkOnSelect(data[airlinesSequence.ON_SELECT1], msgIdSet, flow, version, false)
       if (!_.isEmpty(onSelectResp)) {
         logReport = { ...logReport, [airlinesSequence.ON_SELECT1]: onSelectResp }
+      }
+    }
+
+    if (data[airlinesSequence.SELECT2]) {
+      const onSelectResp = checkSelect(data[airlinesSequence.SELECT2], msgIdSet, true)
+      if (!_.isEmpty(onSelectResp)) {
+        logReport = { ...logReport, [airlinesSequence.SELECT2]: onSelectResp }
+      }
+    }
+
+    if (data[airlinesSequence.ON_SELECT2]) {
+      const onSelectResp = checkOnSelect(data[airlinesSequence.ON_SELECT2], msgIdSet, flow, version, true)
+      if (!_.isEmpty(onSelectResp)) {
+        logReport = { ...logReport, [airlinesSequence.ON_SELECT2]: onSelectResp }
       }
     }
 

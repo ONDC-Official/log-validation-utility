@@ -69,8 +69,10 @@ import newIssueSchema from '../schema/Igm/2.0.0/issue'
 import newOnIssueSchema from '../schema/Igm/2.0.0/on_issue'
 import { searchSchemaTRV_12 } from '../schema/TRV-12/search'
 import { onSearchSchemaTRV_12 } from '../schema/TRV-12/on_search'
-import { onSelectSchemaTRV_12 } from '../schema/TRV-12/on_select'
-import { selectSchemaTRV_12 } from '../schema/TRV-12/select'
+import { onSelect1SchemaTRV_12 } from '../schema/TRV-12/on_select1'
+import { select1SchemaTRV_12 } from '../schema/TRV-12/select1'
+import { onSelect2SchemaTRV_12 } from '../schema/TRV-12/on_select2'
+import { select2SchemaTRV_12 } from '../schema/TRV-12/select2'
 import { initSchemaTRV_12 } from '../schema/TRV-12/init'
 import { onInitSchemaTRV_12 } from '../schema/TRV-12/on_init'
 import { confirmSchemaTRV_12 } from '../schema/TRV-12/confirm'
@@ -1105,13 +1107,23 @@ const validate_schema_on_search_TRV12_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
-const validate_schema_select_TRV12_for_json = (data: any) => {
-  const error_list = validate_schema(data, selectSchemaTRV_12)
+const validate_schema_select1_TRV12_for_json = (data: any) => {
+  const error_list = validate_schema(data, select1SchemaTRV_12)
   return formatted_error(error_list)
 }
 
-const validate_schema_on_select_TRV12_for_json = (data: any) => {
-  const error_list = validate_schema(data, onSelectSchemaTRV_12)
+const validate_schema_select2_TRV12_for_json = (data: any) => {
+  const error_list = validate_schema(data, select2SchemaTRV_12)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_select1_TRV12_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSelect1SchemaTRV_12)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_select2_TRV12_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSelect2SchemaTRV_12)
   return formatted_error(error_list)
 }
 
@@ -1492,8 +1504,10 @@ export default {
   // TRV12-Airline
   validate_schema_search_TRV12_for_json,
   validate_schema_on_search_TRV12_for_json,
-  validate_schema_select_TRV12_for_json,
-  validate_schema_on_select_TRV12_for_json,
+  validate_schema_select1_TRV12_for_json,
+  validate_schema_select2_TRV12_for_json,
+  validate_schema_on_select1_TRV12_for_json,
+  validate_schema_on_select2_TRV12_for_json,
   validate_schema_init_TRV12_for_json,
   validate_schema_on_init_TRV12_for_json,
   validate_schema_confirm_TRV12_for_json,

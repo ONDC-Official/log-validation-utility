@@ -1,4 +1,4 @@
-export const selectSchemaTRV_12 = {
+export const select1SchemaTRV_12 = {
   type: 'object',
   required: ['context', 'message'],
   properties: {

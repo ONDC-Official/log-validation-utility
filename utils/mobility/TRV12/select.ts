@@ -1,6 +1,6 @@
 import { logger } from '../../../shared/logger'
 import { getValue, setValue } from '../../../shared/dao'
-import constants, { metroSequence } from '../../../constants'
+import constants, { airlinesSequence } from '../../../constants'
 import {
   validateSchema,
   isObjectEmpty,
@@ -11,9 +11,11 @@ import {
 } from '../../'
 import { validateContext } from '../../metro/metroChecks'
 
-export const checkSelect = (data: any, msgIdSet: any) => {
+export const checkSelect = (data: any, msgIdSet: any, secondSelect: boolean) => {
   if (!data || isObjectEmpty(data)) {
-    return { [metroSequence.SELECT]: 'Json cannot be empty' }
+    return secondSelect
+      ? { [airlinesSequence.SELECT2]: 'Json cannot be empty' }
+      : { [airlinesSequence.SELECT1]: 'Json cannot be empty' }
   }
   const errorObj: any = {}
 
@@ -22,9 +24,18 @@ export const checkSelect = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema('TRV12', constants.SELECT, data)
-  const contextRes: any = validateContext(context, msgIdSet, constants.ON_SEARCH, constants.SELECT)
-  setValue(`${metroSequence.SELECT}_message`, message)
+  const schemaValidation = validateSchema(
+    'TRV12',
+    secondSelect ? airlinesSequence?.SELECT2 : airlinesSequence?.SELECT1,
+    data,
+  )
+  const contextRes: any = validateContext(
+    context,
+    msgIdSet,
+    secondSelect ? airlinesSequence.SELECT1 : constants.ON_SEARCH,
+    secondSelect ? airlinesSequence.SELECT2 : airlinesSequence.SELECT1,
+  )
+  setValue(`${airlinesSequence.SELECT1}_message`, message)
 
   if (schemaValidation !== 'error') {
     Object.assign(errorObj, schemaValidation)
@@ -35,9 +46,9 @@ export const checkSelect = (data: any, msgIdSet: any) => {
   }
 
   try {
-    const storedItemIDS: any = getValue(`${metroSequence.ON_SEARCH1}_itemsId`)
+    const storedItemIDS: any = getValue(`${airlinesSequence.ON_SEARCH}_itemsId`)
     const select = message.order
-    const onSearch: any = getValue(`${metroSequence.ON_SEARCH1}_message`)
+    const onSearch: any = getValue(`${airlinesSequence.ON_SEARCH}_message`)
 
     try {
       logger.info(`Comparing Provider object for /${constants.ON_SEARCH} and /${constants.SELECT}`)
@@ -98,7 +109,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
               fulfillmentErrors[`${stopKey}.type`] = `${stopKey}/type is required`
             }
 
-            if (checkGpsPrecision(stop?.location.gps)) {
+            if (checkGpsPrecision(stop?.location?.gps)) {
               fulfillmentErrors[`${stopKey}.gps`] =
                 'gps must be specified with at least six decimal places of precision.'
             }

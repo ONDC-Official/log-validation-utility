@@ -10,7 +10,7 @@ import { setValue } from '../shared/dao'
 export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
 import { groceryCategoryMappingWithStatutory } from '../constants/category'
 import { statutory_reqs } from './enum'
-import {  PAYMENT_STATUS } from '../constants/index'
+import { PAYMENT_STATUS } from '../constants/index'
 import { FLOW } from '../utils/enum'
 export const getObjValues = (obj: any) => {
   let values = ''
@@ -183,6 +183,8 @@ export const checkMetroContext = (
   let action = path
   if (action === 'soft_cancel' || action === 'confirm_cancel') action = 'cancel'
   else if (action === 'soft_on_cancel' || action === 'confirm_on_cancel') action = 'on_cancel'
+  else if (action === 'select1' || action === 'select2') action = 'select'
+  else if (action === 'on_select1' || action === 'on_select2') action = 'on_select'
   if (data.action != action) {
     errObj.action_err = `context.action should be ${path}`
   }
@@ -1014,7 +1016,7 @@ export const mapCancellationID = (cancelled_by: string, reason_id: string, error
 export const payment_status = (payment: any, flow: string) => {
   const errorObj: any = {}
   logger.info(`Checking payment status for flow: ${flow}`)
-  if ( (flow === FLOW.FLOW2A) && payment.status === PAYMENT_STATUS.PAID) {
+  if (flow === FLOW.FLOW2A && payment.status === PAYMENT_STATUS.PAID) {
     errorObj.message = `Cannot be ${payment.status} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
     return errorObj
   }

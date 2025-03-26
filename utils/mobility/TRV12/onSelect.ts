@@ -1,16 +1,24 @@
 import { logger } from '../../../shared/logger'
 import { getValue, setValue } from '../../../shared/dao'
 import { validateRouteInfoTags } from '../../metro/tags'
-import constants, { metroSequence } from '../../../constants'
+import constants, { airlinesSequence, metroSequence } from '../../../constants'
 import { validateQuote, validateStops } from '../../metro/metroChecks'
 import { validateSchema, isObjectEmpty } from '../../'
 import { validateContext } from '../../metro/metroChecks'
 import { validateFulfillmentV2_0 } from '../../metro/validate/helper'
 
 const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SFSJT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT', 'RJT']
-export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }, version: string) => {
+export const checkOnSelect = (
+  data: any,
+  msgIdSet: any,
+  flow: { flow: string; flowSet: string },
+  version: string,
+  secondOnSelect: boolean,
+) => {
   if (!data || isObjectEmpty(data)) {
-    return { [metroSequence.ON_SELECT]: 'Json cannot be empty' }
+    return secondOnSelect
+      ? { [airlinesSequence.ON_SELECT2]: 'Json cannot be empty' }
+      : { [airlinesSequence.ON_SELECT1]: 'Json cannot be empty' }
   }
 
   const errorObj: any = {}
@@ -19,8 +27,17 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema('TRV12', constants.ON_SELECT, data)
-  const contextRes: any = validateContext(context, msgIdSet, constants.SELECT, constants.ON_SELECT)
+  const schemaValidation = validateSchema(
+    'TRV12',
+    secondOnSelect ? airlinesSequence?.ON_SELECT2 : airlinesSequence.ON_SELECT1,
+    data,
+  )
+  const contextRes: any = validateContext(
+    context,
+    msgIdSet,
+    secondOnSelect ? airlinesSequence.SELECT2 : airlinesSequence.SELECT1,
+    secondOnSelect ? airlinesSequence.ON_SELECT2 : airlinesSequence.ON_SELECT1,
+  )
   setValue(`${metroSequence.ON_SELECT}_message`, message)
 
   if (schemaValidation !== 'error') {
@@ -32,13 +49,13 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
   }
 
   // const searchContext: any = getValue(`${metroSequence.SEARCH}_context`)
-  const select: any = getValue(`${metroSequence.SELECT}`)
+  const select: any = getValue(`${metroSequence.SELECT}`) || []
 
   try {
     const onSelect = message?.order
     const itemIDS: any = getValue(`${metroSequence.ON_SEARCH1}_itemsId`)
     const itemIdArray: any[] = []
-    const storedFull: any = getValue(`${metroSequence.ON_SEARCH1}_storedFulfillments`)
+    const storedFull: any = getValue(`${metroSequence.ON_SEARCH1}_storedFulfillments`) || ''
     // const fulfillmentIdsSet = new Set()
     const itemIdsSet = new Set()
 
@@ -64,16 +81,8 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
     try {
       logger.info(`Validating fulfillments object for /${constants.ON_SELECT}`)
       version === '2.0.0'
-        ? onSelect?.fulfillments.forEach((fulfillment: any, index: number) => {
+        ? onSelect?.fulfillments?.forEach((fulfillment: any, index: number) => {
             const fulfillmentKey = `fulfillments[${index}]`
-
-            // if (storedFull && !storedFull.includes(fulfillment.id)) {
-            //   errorObj[`${fulfillmentKey}.id`] =
-            //     `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
-            // } else {
-            //   fulfillmentIdsSet.add(fulfillment.id)
-            // }
-
             if (fulfillment?.vehicle?.category !== (String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO')) {
               errorObj['vehicle'] =
                 `vehicle.category should be ${String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO'} in Fulfillment`
@@ -105,8 +114,8 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
         : onSelect?.fulfillments &&
           validateFulfillmentV2_0(onSelect?.fulfillments ?? [], errorObj, constants.ON_SELECT, flow)
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_SELECT},  ${error.message}`)
-      return { error: error.message }
+      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_SELECT},  ${error.stack}`)
+      return { error: error.stack }
     }
 
     logger.info(`Mapping Item Ids /${constants.ON_SEARCH} and /${constants.ON_SELECT}`)
@@ -115,14 +124,14 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
     if (itemIDS && itemIDS.length > 0) {
       newItemIDSValue = itemIDS
     } else {
-      select?.message?.order?.items.map((item: { id: string }) => {
+      select?.message?.order?.items?.map((item: { id: string }) => {
         itemIdArray.push(item.id)
       })
       newItemIDSValue = itemIdArray
     }
 
     try {
-      onSelect.items.forEach((item: any, index: number) => {
+      onSelect.items?.forEach((item: any, index: number) => {
         if (!newItemIDSValue.includes(item.id)) {
           const key = `item[${index}].item_id`
           errorObj[key] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in select`
@@ -141,8 +150,8 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
           }
         }
 
-        const price = item.price
-        if (!price || !price.currency || !price.value) {
+        const price = item?.price
+        if (!price || !price?.currency || !price?.value) {
           const key = `item${index}_price`
           errorObj[key] = `Price is missing or incomplete in /items[${index}]`
         }
@@ -150,12 +159,6 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
         if (!item?.fulfillment_ids || item?.fulfillment_ids?.length === 0) {
           errorObj[`invalidFulfillmentId_${index}`] = `fulfillment_ids should be present`
         } else {
-          item.fulfillment_ids.forEach((_fulfillmentId: string) => {
-            // if (!storedFull.includes(fulfillmentId)) {
-            //   errorObj[`invalidItemFulfillmentId_${index}`] =
-            //     `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.ON_SELECT} is not matching with the fulfillment id in previous call`
-            // }
-          })
         }
 
         if (item?.payment_ids) {
@@ -164,8 +167,8 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
       })
       setValue(`itemIds`, Array.from(newItemIDSValue))
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking items info in /${constants.ON_SELECT},  ${error.message}`)
-      return { error: error.message }
+      logger.error(`!!Error occcurred while checking items info in /${constants.ON_SELECT},  ${error.stack}`)
+      return { error: error.stack }
     }
 
     try {
@@ -173,8 +176,8 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
       const quoteErrors = validateQuote(onSelect?.quote, constants.ON_SELECT)
       Object.assign(errorObj, quoteErrors)
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking Quote in /${constants.ON_SELECT},  ${error.message}`)
-      return { error: error.message }
+      logger.error(`!!Error occcurred while checking Quote in /${constants.ON_SELECT},  ${error.stack}`)
+      return { error: error.stack }
     }
 
     if (onSelect?.payments) {
@@ -188,8 +191,8 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
     setValue(`${metroSequence.ON_SELECT}`, data)
     setValue(`${metroSequence.ON_SELECT}_storedFulfillments`, Array.from(storedFull))
   } catch (error: any) {
-    logger.error(`!!Error occcurred while checking order info in /${constants.ON_SELECT},  ${error.message}`)
-    return { error: error.message }
+    logger.error(`!!Error occcurred while checking order info in /${constants.ON_SELECT},  ${error.stack}`)
+    return { error: error.stack }
   }
 
   return Object.keys(errorObj).length > 0 && errorObj

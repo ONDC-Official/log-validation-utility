@@ -899,7 +899,7 @@ export const validateContactAndLspInfo = (tags: any) => {
       throw new Error(`${tagName} has a missing or empty list.`)
     }
 
-    let requiredDescriptors
+    let requiredDescriptors: any
     if (tagCode === 'CONTACT_INFO') {
       requiredDescriptors = contactInfoDescriptors
     } else if (tagCode === 'LSP_INFO') {

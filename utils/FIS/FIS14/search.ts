@@ -5,6 +5,7 @@ import { validateSchema, isObjectEmpty, checkFISContext } from '../../../utils'
 import { validateContext } from './fis14checks'
 import _ from 'lodash'
 import { setValue } from '../../../shared/dao'
+import { validateSearchType } from '../FIS14/fis14checks'
 
 export const checkSearch = (data: any, msgIdSet: any, flow: string, action: string) => {
   const errorObj: any = {}
@@ -28,8 +29,17 @@ export const checkSearch = (data: any, msgIdSet: any, flow: string, action: stri
     const { context, message } = data
     msgIdSet.add(context.message_id)
 
+    // Determine and validate search type (full pull vs incremental pull)
+    const searchTypeResult = validateSearchType(data, action)
+    if (Object.keys(searchTypeResult.errors).length > 0) {
+      Object.assign(errorObj, searchTypeResult.errors)
+    }
+    
+    // Log the detected search type
+    logger.info(`Detected search type: ${searchTypeResult.type} for /${action}`)
+
     // validate schema
-    const schemaValidation = validateSchema('FIS14', constants.SEARCH, data)
+    const schemaValidation = validateSchema('FIS', constants.SEARCH, data)
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
     }
@@ -114,7 +124,8 @@ export const checkSearch = (data: any, msgIdSet: any, flow: string, action: stri
     }
     return errorObj
   } catch (error: any) {
-    logger.error(`!!Error while checking confirm details in /${constants.ON_CONFIRM}`, error.stack)
+
+    logger.error(`!!Error while checking search details: ${error.stack}`)
     return { error: error.message }
   }
 }

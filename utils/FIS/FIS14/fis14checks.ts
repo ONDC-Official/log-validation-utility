@@ -170,6 +170,68 @@ export const validateProvider = (provider: any, action: string) => {
   }
 }
 
+export const isIncrementalPull = (data: any): boolean => {
+  try {
+    // Check if the payload has tags
+    const tags = data?.message?.intent?.tags
+    if (!tags || !Array.isArray(tags)) {
+      return false
+    }
+
+    // Look for the INCREMENTAL_PULL tag
+    const incrementalPullTag = tags.find(
+      (tag) => tag?.descriptor?.code === 'INCREMENTAL_PULL'
+    )
+
+    if (!incrementalPullTag) {
+      return false
+    }
+
+    // Check if there's a REGISTER entry in the list
+    const registerEntry = incrementalPullTag?.list?.find(
+      (item:any) => item?.descriptor?.code === 'REGISTER' && item?.value === 'true'
+    )
+
+    return !!registerEntry
+  } catch (error: any) {
+    logger.error(`Error determining if payload is incremental pull: ${error.message}`)
+    return false
+  }
+}
+
+export const validateSearchType = (data: any, action: string): { 
+  type: 'FULL_PULL' | 'INCREMENTAL_PULL';
+  errors: Record<string, string>;
+} => {
+  const errors: Record<string, string> = {}
+  
+  const isIncremental = isIncrementalPull(data)
+  const type = isIncremental ? 'INCREMENTAL_PULL' : 'FULL_PULL'
+  
+  setValue(`${action}_type`, type)
+  
+  if (isIncremental) {
+    const incrementalPullTag = data.message.intent?.tags?.find(
+      (tag: any) => tag?.descriptor?.code === 'INCREMENTAL_PULL'
+    )
+    
+    const registerEntry = incrementalPullTag?.list?.find(
+      (item: any) => item?.descriptor?.code === 'REGISTER'
+    )
+    
+    if (!registerEntry) {
+      errors['incremental_pull.register'] = 'INCREMENTAL_PULL tag must have a REGISTER entry'
+    } else if (registerEntry.value !== 'true') {
+      errors['incremental_pull.register.value'] = 'REGISTER value must be "true"'
+    }
+  }
+  
+  return {
+    type,
+    errors
+  }
+}
+
 export const validateDescriptor = (descriptor: any, action: string, path: string, checkCode: boolean): any => {
   try {
     const errorObj: any = {}

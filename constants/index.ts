@@ -161,24 +161,30 @@ export const Fis10ApiSequence = {
 }
 
 export const FIS13HealthSequence = {
-  SEARCH: 'search',
-  ON_SEARCH: 'on_search',
-  SEARCH_OFFER: 'search_offer',
-  ON_SEARCH_OFFER: 'on_search_offer',
+  SEARCH_1: 'search_1',
+  ON_SEARCH_1: 'on_search_1',
+  SEARCH_2: 'search_2',
+  ON_SEARCH_2: 'on_search_2',
+  SEARCH_3: 'search_3',
+  ON_SEARCH_3: 'on_search_3',
   SELECT: 'select',
   ON_SELECT: 'on_select',
   SELECT_1: 'select_1',
   ON_SELECT_1: 'on_select_1',
   SELECT_2: 'select_2',
   ON_SELECT_2: 'on_select_2',
+  SELECT_3: 'select_3',
+  ON_SELECT_3: 'on_select_3',
   INIT: 'init',
   INIT_1: 'init_1',
   INIT_2: 'init_2',
   INIT_3: 'init_3',
+  INIT_4: 'init_4',
   ON_INIT: 'on_init',
   ON_INIT_1: 'on_init_1',
   ON_INIT_2: 'on_init_2',
   ON_INIT_3: 'on_init_3',
+  ON_INIT_4: 'on_init_4',
   CONFIRM: 'confirm',
   ON_CONFIRM: 'on_confirm',
   CANCEL: 'cancel',
@@ -189,6 +195,9 @@ export const FIS13HealthSequence = {
   ON_SATUS_2: 'on_status_2',
   UPDATE: 'update',
   ON_UPDATE: 'on_update',
+  ON_UPDATE_1: 'on_update_1',
+  ON_UPDATE_2: 'on_update_2',
+  ON_UPDATE_3: 'on_update_3',
   ON_UPDATE_UNCOLICATED: 'on_update_uncolicated',
 }
 
@@ -328,11 +337,18 @@ export const insuranceFormHeadings: any = {
     on_select: ['Manual Review', 'PAN & DOB', 'Know your Customer'],
     on_init: ['Vehicle & Nominee Details', 'Personal Info'],
   },
+  LIFE_INSURANCE: {
+    on_search: ['BASIC_DETAILS'],
+    on_select: ['Manual Review', 'PAN & DOB', 'Know your Customer'],
+    on_init: ['Vehicle & Nominee Details', 'Personal Info'],
+  },
 }
 
 export const fisFlows = {
   INVOICE: 'INVOICE_BASED_LOAN',
   PERSONAL: 'PERSONAL_LOAN',
+  PERSONAL_WITHOUT_AGGREGATOR: 'PERSONAL_LOAN_WITHOUT_AGGREGATOR',
+  PERSONAL_WITHOUT_AGGREGATOR_AND_MONITORING: 'PERSONAL_LOAN_WITHOUT_AGGREGATOR_AND_MONITORING',
   PRE_INVOICE: 'PERSONAL_LOAN',
   PRE_PERSONAL: 'INVOICE_BASED_LOAN',
   FORECLOSURE_PERSONAL: 'FORECLOSURE_PERSONAL',
@@ -351,6 +367,8 @@ export const insuranceFlows = {
   CANCEL_MARINE: 'CANCEL_MARINE_INSURANCE',
   CLAIM_MOTOR: 'CLAIM_MOTOR_INSURANCE',
   CANCEL_MOTOR: 'CANCEL_MOTOR_INSURANCE',
+  LIFE_WITH_MEDICAL: 'LIFE_INSURANCE',
+  LIFE_WITHOUT_MEDICAL: 'LIFE_INSURANCE',
 }
 
 export const fis14Flows = {

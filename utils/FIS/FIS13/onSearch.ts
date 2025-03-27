@@ -4,17 +4,16 @@ import { logger } from '../../../shared/logger'
 import { setValue, getValue } from '../../../shared/dao'
 import constants from '../../../constants'
 import { validateSchema, isObjectEmpty } from '../../'
-import { checkUniqueCategoryIds, getCodes, validateContext, validateDescriptor, validateXInput } from './fisChecks'
+import {
+  checkUniqueCategoryIds,
+  getCodes,
+  validateContext,
+  validateDescriptor,
+  validateXInput,
+  getAddOns,
+} from './fisChecks'
 import { validatePaymentTags, validateGeneralInfo } from './tags'
 import { isEmpty } from 'lodash'
-
-const validAddOnsCodes = [
-  'NO_CLAIM_BONUS',
-  'DAYCARE_COVER',
-  'DAILY_CASH_ALLOWANCE',
-  'DOMICILIARY_EXPENSES',
-  'HEALTH_CHECK_UPS',
-]
 
 export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: string) => {
   if (!data || isObjectEmpty(data)) {
@@ -29,7 +28,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
   }
 
   const schemaValidation = validateSchema('FIS', constants.ON_SEARCH, data)
-  const contextRes: any = validateContext(context, msgIdSet, constants.SEARCH, action)
+  const contextRes: any = validateContext(context, msgIdSet, action.replace('on_', ''), action)
 
   setValue(`${constants.ON_SEARCH}_message`, message)
   setValue(`${constants.ON_SEARCH}`, data)
@@ -47,7 +46,6 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
   const prvdrsId = new Set()
   const prvdrLocId = new Set()
   const itemsId = new Set()
-  const addOnIdSet = new Set()
   const categoriesId = new Set()
   const insurance = getValue('insurance')
 
@@ -135,51 +133,53 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
       }
 
       // check provider payments
-      try {
-        logger.info(`Checking payments in providers[${i}]`)
-        const payments = prvdr?.payments
-        if (isEmpty(payments)) {
-          errorObj.payments = `payments array is missing or empty`
-        } else {
-          payments?.forEach((arr: any, i: number) => {
-            const terms = [
-              { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' },
-              {
-                code: 'SETTLEMENT_BASIS',
-                type: 'enum',
-                value: ['INVOICE_RECEIPT', 'Delivery'],
-              },
-              { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
-              { code: 'STATIC_TERMS', type: 'url' },
-              { code: 'COURT_JURISDICTION', type: 'string' },
-              { code: 'DELAY_INTEREST', type: 'amount' },
-              {
-                code: 'OFFLINE_CONTRACT',
-                type: 'boolean',
-              },
-            ]
+      if (insurance != 'LIFE_INSURANCE') {
+        try {
+          logger.info(`Checking payments in providers[${i}]`)
+          const payments = prvdr?.payments
+          if (isEmpty(payments)) {
+            errorObj.payments = `payments array is missing or empty`
+          } else {
+            payments?.forEach((arr: any, i: number) => {
+              const terms = [
+                { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' },
+                {
+                  code: 'SETTLEMENT_BASIS',
+                  type: 'enum',
+                  value: ['INVOICE_RECEIPT', 'Delivery'],
+                },
+                { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
+                { code: 'STATIC_TERMS', type: 'url' },
+                { code: 'COURT_JURISDICTION', type: 'string' },
+                { code: 'DELAY_INTEREST', type: 'amount' },
+                {
+                  code: 'OFFLINE_CONTRACT',
+                  type: 'boolean',
+                },
+              ]
 
-            if (!arr?.collected_by) {
-              errorObj[`payemnts[${i}]_collected_by`] =
-                `payments.collected_by must be present in ${constants.ON_SEARCH}`
-            } else {
-              const srchCollectBy = getValue(`collected_by`)
-              if (srchCollectBy != arr?.collected_by) {
-                setValue(`collected_by`, arr?.collected_by)
+              if (!arr?.collected_by) {
                 errorObj[`payemnts[${i}]_collected_by`] =
-                  `payments.collected_by mismatch with what was sent in /${constants.ON_SEARCH}`
+                  `payments.collected_by must be present in ${constants.ON_SEARCH}`
+              } else {
+                const srchCollectBy = getValue(`collected_by`)
+                if (srchCollectBy != arr?.collected_by) {
+                  setValue(`collected_by`, arr?.collected_by)
+                  errorObj[`payemnts[${i}]_collected_by`] =
+                    `payments.collected_by mismatch with what was sent in /${constants.ON_SEARCH}`
+                }
               }
-            }
 
-            // Validate payment tags
-            const tagsValidation = validatePaymentTags(arr.tags, terms)
-            if (!tagsValidation.isValid) {
-              Object.assign(errorObj, { tags: tagsValidation.errors })
-            }
-          })
+              // Validate payment tags
+              const tagsValidation = validatePaymentTags(arr.tags, terms)
+              if (!tagsValidation.isValid) {
+                Object.assign(errorObj, { tags: tagsValidation.errors })
+              }
+            })
+          }
+        } catch (error: any) {
+          logger.error(`!!Errors while checking payments in providers[${i}], ${error.stack}`)
         }
-      } catch (error: any) {
-        logger.error(`!!Errors while checking payments in providers[${i}], ${error.stack}`)
       }
 
       // check provider items
@@ -232,6 +232,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
               }
 
               // Validate time
+              // if (insurance != 'LIFE_INSURANCE') {
               if (isEmpty(item?.time)) {
                 errorObj.time = `time is missing or empty at providers[${i}].items[${j}]`
               } else {
@@ -243,45 +244,47 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
 
                 if (!time?.duration) {
                   errorObj['time.duration'] = `duration is missing at providers[${i}].items[${j}]`
-                } else if (!/^PT\d+[MH]$/.test(time?.duration)) {
+                } else if (!/^P(?:(\d+Y)?(\d+M)?(\d+W)?(\d+D)?)?(T(?:(\d+H)?(\d+M)?(\d+S)?))?$/.test(time?.duration)) {
                   errorObj['time.duration'] = `incorrect format or type for duration at providers[${i}].items[${j}]`
                 }
               }
+              // }
 
               // Validate add_ons
+              const addOnIdSet = new Set()
               try {
                 console.log('``item?.add_ons-----------``', item?.add_ons)
                 logger.info(`Checking add_ons`)
-                if (isEmpty(item?.add_ons))
-                  errorObj[`item[${j}]_add_ons`] = `add_ons array is missing or empty in ${action}`
-                else {
+                if (!isEmpty(item?.add_ons)) {
                   item?.add_ons?.forEach((addOn: any, index: number) => {
                     const key = `item[${j}]_add_ons[${index}]`
 
                     if (!addOn?.id) {
                       errorObj[`${key}.id`] = `id is missing in add_ons[${index}]`
                     } else if (addOnIdSet.has(addOn?.id)) {
-                      errorObj[`${key}.id`] = `duplicate provider id: ${addOn?.id} in add_ons`
+                      errorObj[`${key}.id`] = `duplicate add_on.id: ${addOn?.id} in add_ons`
                     } else {
                       addOnIdSet.add(addOn?.id)
                     }
 
-                    if (!item?.price) {
+                    if (!addOn?.price) {
                       errorObj[`${key}.price`] = `price is missing at ${key}`
                     } else {
-                      if (!item?.price?.value) {
+                      if (!addOn?.price?.value) {
                         errorObj[`${key}.price.value`] = `price.value should be present at ${key}`
                       }
 
-                      if (!item?.price?.currency) {
+                      if (!addOn?.price?.currency) {
                         errorObj[`${key}.price.currency`] = `price.currency should be present at ${key}`
                       }
                     }
 
                     const code = addOn?.descriptor?.code
+                    const validAddOnsCodes = getAddOns()
                     if (!code) errorObj[`${key}.code`] = 'descriptor.code is missing'
                     else if (!validAddOnsCodes?.includes(code))
-                      errorObj[`${key}.code`] = `descriptor.code should be one of ${validAddOnsCodes}`
+                      errorObj[`${key}.code`] =
+                        `descriptor.code shouldn't be present if add_on is not one of what's defined by ONDC`
 
                     if (!addOn?.quantity?.available?.count) {
                       errorObj[`${key}.quantity.available`] = 'quantity.count is missing in add_ons'
@@ -307,21 +310,28 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
 
                 return errorObj
               } catch (error: any) {
+                logger.info(`checked add_ons`, error)
                 logger.error(`!!Error while checking add_ons in /${action}, ${error.stack}`)
               }
+              setValue(`${constants.ON_SEARCH}_addOnIdSet_${j}`, addOnIdSet)
             }
 
             // Validate parent_item_id & price for multi-offer calls
-            if (action?.includes('_offer')) {
+            if (!action?.includes('_1')) {
               // parent_item_id check
               console.log('itemsId---------------11', item)
-              if (!item?.parent_item_id)
-                errorObj['parent_item_id'] = `parent_item_id is missing at providers[${i}].items[${j}]`
-              else {
-                parentItems++
-                console.log('itemsId---------------', itemsId, item.parent_item_id)
-                if (!itemsId.has(item.parent_item_id)) {
-                  errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id}  doesn't match with previous item.id in providers[${i}]`
+              if (
+                (action?.includes('_3') && insurance == 'LIFE_INSURANCE') ||
+                (action?.includes('_2') && insurance != 'LIFE_INSURANCE')
+              ) {
+                if (!item?.parent_item_id)
+                  errorObj['parent_item_id'] = `parent_item_id is missing at providers[${i}].items[${j}]`
+                else {
+                  parentItems++
+                  console.log('itemsId---------------', itemsId, item.parent_item_id)
+                  if (!itemsId.has(item.parent_item_id)) {
+                    errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id}  doesn't match with previous item.id in providers[${i}]`
+                  }
                 }
               }
 
@@ -336,7 +346,11 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
 
             // Validate xinput
             // either call shouldn't be of multi-offer, or parent_item_id should be present to validate xinput
-            if (!action?.includes('_offer') || insurance == 'MOTOR_INSURANCE' || item?.parent_item_id) {
+            if (
+              !action?.includes('_2') ||
+              insurance == 'MOTOR_INSURANCE' ||
+              (item?.parent_item_id && insurance == 'LIFE_INSURANCE')
+            ) {
               const xinput = item?.xinput
               if (!xinput) errorObj['xinput'] = `xinput is missing or empty at providers[${i}].items[${j}]`
               else {
@@ -345,6 +359,9 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
                   Object.assign(errorObj, xinputValidationErrors)
                 }
               }
+
+              const formId: string[] | any = getValue('formId')
+              console.log('formId-------==============22222', formId, action)
             }
 
             // Validate Item tags
@@ -375,7 +392,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
             // }
           })
 
-          if (action?.includes('_offer') && parentItems == 0)
+          if (action?.includes('_2') && parentItems == 0)
             errorObj.parent_item_id = `child-items not found in providers[${i}]`
         }
       } catch (error: any) {
@@ -387,7 +404,6 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
     setValue(`${constants.ON_SEARCH}prvdrLocId`, prvdrLocId)
     setValue(`${constants.ON_SEARCH}categoryId`, categoriesId)
     setValue(`${constants.ON_SEARCH}_itemsId`, Array.from(itemsId))
-    setValue(`${constants.ON_SEARCH}_addOnIdSet`, addOnIdSet)
   } catch (error: any) {
     logger.error(`!!Error while checking Providers info in /${constants.ON_SEARCH}, ${error.stack}`)
     return { error: error.message }

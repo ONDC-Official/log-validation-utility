@@ -10,6 +10,7 @@ import {
   validateDescriptor,
   validateProvider,
   validateQuote,
+  validateSimplePaymentObject,
   validateXInput,
 } from './fisChecks'
 import { validateGeneralInfo } from './tags'
@@ -115,7 +116,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
 
               if (!time?.duration) {
                 errorObj['time.duration'] = `duration is missing at items[${index}]`
-              } else if (!/^PT\d+[MH]$/.test(time?.duration)) {
+              } else if (!/^P(?:(\d+Y)?(\d+M)?(\d+W)?(\d+D)?)?(T(?:(\d+H)?(\d+M)?(\d+S)?))?$/.test(time?.duration)) {
                 errorObj['time.duration'] = `incorrect format or type for duration at items[${index}]`
               }
             }
@@ -181,12 +182,13 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
           }
 
           // Validate xinput
-          const xinput = item?.xinput
-          const xinputValidationErrors = validateXInput(xinput, index, constants.ON_SELECT, 0)
-          if (xinputValidationErrors) {
-            Object.assign(errorObj, xinputValidationErrors)
+          if (insurance != 'LIFE_INSURANCE') {
+            const xinput = item?.xinput
+            const xinputValidationErrors = validateXInput(xinput, index, constants.ON_SELECT, 0)
+            if (xinputValidationErrors) {
+              Object.assign(errorObj, xinputValidationErrors)
+            }
           }
-
           // Validate Item tags
           // let tagsValidation: any = {}
           // if (insurance == 'MARINE_INSURANCE') {
@@ -207,10 +209,22 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
       )
     }
 
+    //check payments
+    if (insurance == 'LIFE_INSURANCE') {
+      try {
+        logger.info(`Checking payments details in /${constants.ON_SELECT}`)
+        const paymentErrors = validateSimplePaymentObject(onSelect?.payments, constants.ON_SELECT)
+        Object.assign(errorObj, paymentErrors)
+      } catch (error: any) {
+        logger.error(`!!Error while checking payments details in /${constants.ON_SELECT}`, error.stack)
+      }
+    }
+
     //check quote
     try {
       logger.info(`Checking quote details in /${constants.ON_SELECT}`)
       const quoteErrors = validateQuote(onSelect?.quote)
+      console.log('quoteErrors', quoteErrors)
       Object.assign(errorObj, quoteErrors)
     } catch (error: any) {
       logger.error(`!!Error while checking quote details in /${constants.ON_SELECT}`, error.stack)

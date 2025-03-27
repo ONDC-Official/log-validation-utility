@@ -96,7 +96,7 @@ export const checkFISContext = (
     errObj.id_err = "transaction_id and message id can't be same"
   }
 
-  if (data.action != path) {
+  if (data.action != path.replace(/_unsolicated|_1|_2/,'')) {
     errObj.action_err = `context.action should be ${path}`
   }
 

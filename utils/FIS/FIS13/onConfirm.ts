@@ -15,7 +15,7 @@ import {
   validateQuote,
 } from './fisChecks'
 import { validateGeneralInfo } from './tags'
-import _ from 'lodash'
+import _, { isEmpty } from 'lodash'
 
 export const checkOnConfirm = (data: any, msgIdSet: any) => {
   try {
@@ -166,9 +166,9 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
               errorObj['time.label'] = `label is missing or should be equal to  ${label} at items[${index}]`
 
             if (insurance != 'MARINE_INSURANCE') {
-              if (time?.duration) {
+              if (!time?.duration) {
                 errorObj['time.duration'] = `duration is missing at items[${index}]`
-              } else if (!/^PT\d+([YMH])$/.test(time?.duration)) {
+              } else if (!/^P(?:(\d+Y)?(\d+M)?(\d+W)?(\d+D)?)?(T(?:(\d+H)?(\d+M)?(\d+S)?))?$/.test(time?.duration)) {
                 errorObj['time.duration'] = `incorrect format or type for duration at items[${index}]`
               }
             } else {
@@ -275,7 +275,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
       try {
         logger.info(`Checking cancellation terms in /${constants.ON_CONFIRM}`)
         const cancellationErrors = validateCancellationTerms(on_confirm?.cancellation_terms)
-        Object.assign(errorObj, cancellationErrors)
+        if (!isEmpty(cancellationErrors)) Object.assign(errorObj, cancellationErrors)
       } catch (error: any) {
         logger.error(`!!Error while checking cancellation_terms in /${constants.ON_CONFIRM}, ${error.stack}`)
       }

@@ -154,7 +154,7 @@ export const validatePaymentTags = (tags: Tag[], action: string): ValidationResu
           (item) => item.descriptor.code === 'BUYER_FINDER_FEES_PERCENTAGE',
         )
 
-        if (!buyerFinderFeesPercentage || !/^\d+$/.test(buyerFinderFeesPercentage.value)) {
+        if (!buyerFinderFeesPercentage || !/^\d+(\.\d+)?$/.test(buyerFinderFeesPercentage.value)) {
           errors.push(`BUYER_FINDER_FEES_[${index}], BUYER_FINDER_FEES_PERCENTAGE must be a valid integer`)
         }
 

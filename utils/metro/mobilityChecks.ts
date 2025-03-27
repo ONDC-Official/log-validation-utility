@@ -9,7 +9,7 @@ export const validateContext = (
   pastCall: any,
   curentCall: any,
   toCheck?: boolean,
-  searchType?: boolean,
+  _searchType?: boolean,
 ) => {
   const errorObj: any = {}
 
@@ -51,7 +51,7 @@ export const validateContext = (
     }
 
     if (prevContext) {
-      if (context?.action !== 'search' || (context?.action === 'search' && searchType)) {
+      if (!['search', 'on_search', 'select', 'on_select', 'init'].includes(context?.action)) {
         if (!context?.bpp_id) {
           errorObj.bppId = 'context/bpp_id is missing'
         } else if (prevContext.bpp_id && !_.isEqual(prevContext.bpp_id, context.bpp_id)) {
@@ -98,8 +98,13 @@ export const validateContext = (
 
     try {
       logger.info(`Comparing transaction Ids of /${pastCall} and /${curentCall}`)
-      if (!_.isEqual(prevContext.transaction_id, context.transaction_id)) {
-        errorObj.transaction_id = `Transaction Id for /${pastCall} and /${curentCall} api should be same`
+      if (
+        !pastCall.includes('search') &&
+        !pastCall.includes('select') &&
+        curentCall !== 'init' &&
+        !_.isEqual(prevContext.transaction_id, context.transaction_id)
+      ) {
+        errorObj.transaction_id = `Transaction ID for /${pastCall} and /${curentCall} API should be the same`
       }
     } catch (error: any) {
       logger.info(`Error while comparing transaction ids for /${pastCall} and /${curentCall} api, ${error.stack}`)

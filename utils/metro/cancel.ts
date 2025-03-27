@@ -21,9 +21,9 @@ export const checkCancelPayload = (data: any, msgIdSet: any, cancelType: boolean
 
     const schemaValidation = validateSchema('TRV', constants.CANCEL, data)
     const validateDomainName = validateDomain(context?.domain || 'ONDC:TRV11')
-        if (!validateDomainName)
-          errorObj['domain'] =
-            `context.domain should be ${METRODOMAIN.METRO} instead of ${context?.domain} in ${cancelType ? metroSequence?.CONFIRM_CANCEL : metroSequence?.SOFT_CANCEL}`
+    if (!validateDomainName)
+      errorObj['domain'] =
+        `context.domain should be ${METRODOMAIN.METRO} instead of ${context?.domain} in ${cancelType ? metroSequence?.CONFIRM_CANCEL : metroSequence?.SOFT_CANCEL}`
     const contextRes: any = validateContext(
       context,
       msgIdSet,
@@ -47,9 +47,9 @@ export const checkCancelPayload = (data: any, msgIdSet: any, cancelType: boolean
       const { cancellation_reason_id, descriptor } = message
       if (!cancellation_reason_id)
         errorObj['cancellation_reason_id'] = `cancellation_reason_id should be sent in /${constants.CANCEL}`
-      else if (cancellation_reason_id === '0' || typeof cancellation_reason_id === 'number')
+      else if (!/^0\d{2}$/.test(cancellation_reason_id))
         errorObj['cancellation_reason_id'] =
-          `cancellation_reason_id should not be 0 or Type Integer in /${constants.CANCEL}`
+          `cancellation_reason_id should not be ${cancellation_reason_id} or Type Integer in /${constants.CANCEL}`
 
       if (!descriptor) errorObj['descriptor'] = `descriptor should be sent in /${constants.CANCEL}`
       else {

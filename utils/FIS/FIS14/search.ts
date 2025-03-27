@@ -23,17 +23,18 @@ export const checkSearch = (data: any, msgIdSet: any, flow: string, action: stri
       errorObj['missingFields'] = '/context, /message, /intent or /message/intent is missing or empty'
       return Object.keys(errorObj).length > 0 && errorObj
     }
-    console.log(flow)
+    console.log("---flow type", flow)
 
     const { context, message } = data
     msgIdSet.add(context.message_id)
 
     // validate schema
-    const schemaValidation = validateSchema('FIS', constants.SEARCH, data)
+    const schemaValidation = validateSchema('FIS14', constants.SEARCH, data)
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
     }
 
+    console.log('action--', action)
     // validate context
     let contextRes: any
     if (action?.includes('_offer')) {

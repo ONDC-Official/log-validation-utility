@@ -215,7 +215,6 @@ export const checkMetroContext = (
 const validate_schema_for_retail_json = (vertical: string, api: string, data: any) => {
   console.log(`+++++++++ validate_schema_${api}_${vertical}_for_json`)
   const res = (schemaValidator as any)[`validate_schema_${api}_${vertical}_for_json`](data)
-
   return res
 }
 
@@ -225,6 +224,7 @@ export const validateSchema = (domain: string, api: string, data: any) => {
     const errObj: any = {}
 
     const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
+    console.log("++++++++hkh", domain, api, data )
 
     const datavld = schmaVldtr
     if (datavld.status === 'fail') {

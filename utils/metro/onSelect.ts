@@ -23,9 +23,9 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
 
   const schemaValidation = validateSchema('TRV', constants.ON_SELECT, data)
   const validateDomainName = validateDomain(context?.domain || 'ONDC:TRV11')
-      if (!validateDomainName)
-        errorObj['domain'] =
-          `context.domain should be ${METRODOMAIN.METRO} instead of ${context?.domain} in ${metroSequence.ON_SELECT}`
+  if (!validateDomainName)
+    errorObj['domain'] =
+      `context.domain should be ${METRODOMAIN.METRO} instead of ${context?.domain} in ${metroSequence.ON_SELECT}`
   const contextRes: any = validateContext(context, msgIdSet, constants.SELECT, constants.ON_SELECT)
   setValue(`${metroSequence.ON_SELECT}_message`, message)
 
@@ -108,14 +108,15 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
               }
             }
           })
-        : onSelect?.fulfillments && validateFulfillmentV2_0(onSelect?.fulfillments ?? [], errorObj, constants.ON_SELECT, flow)
+        : onSelect?.fulfillments &&
+          validateFulfillmentV2_0(onSelect?.fulfillments ?? [], errorObj, constants.ON_SELECT, flow)
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_SELECT},  ${error.message}`)
       return { error: error.message }
     }
 
     logger.info(`Mapping Item Ids /${constants.ON_SEARCH} and /${constants.ON_SELECT}`)
-    let newItemIDSValue: any[]
+    let newItemIDSValue: any[] = []
 
     if (itemIDS && itemIDS.length > 0) {
       newItemIDSValue = itemIDS

@@ -222,13 +222,15 @@ export const validatePaymentTags = (tags: Tag[], action: string): ValidationResu
                 errors.push(
                   `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid value for DELAY_INTEREST`,
                 )
-              } else if (action === 'search') {
-                setValue(`DELAY_INTEREST`, item.value)
-              } else {
+              }
+              if (action === 'confirm') {
+                setValue(`DELAY_INTEREST`, item.value ?? null)
+              }
+              if (action === 'on_confirm' || action === 'on_cancel' || action.includes('status')) {
                 const delayInterest = getValue('DELAY_INTEREST')
                 if (delayInterest && delayInterest !== item?.value)
                   errors.push(
-                    `SETTLEMENT_TERMS_[${index}], DELAY_INTEREST must be similar to /search value ${delayInterest} instead of ${item?.value} at item[${itemIndex}] in ${action}`,
+                    `SETTLEMENT_TERMS_[${index}], DELAY_INTEREST must be similar to /confirm value ${delayInterest} instead of ${item?.value} at item[${itemIndex}] in ${action}`,
                   )
               }
 

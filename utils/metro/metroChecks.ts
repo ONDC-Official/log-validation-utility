@@ -26,7 +26,7 @@ interface Stop {
   parent_stop_id: string
 }
 
-export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any, searchType?: boolean) => {
+export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any, _searchType?: boolean) => {
   const errorObj: any = {}
 
   const contextRes: any = checkMetroContext(context, curentCall)
@@ -65,7 +65,7 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
     }
 
     if (prevContext) {
-      if (context?.action !== 'search' || (context?.action === 'search' && searchType)) {
+      if (!['search', 'on_search', 'select', 'on_select', 'init'].includes(context?.action)) {
         if (!context?.bpp_id) {
           errorObj.bppId = 'context/bpp_id is missing'
         } else if (prevContext.bpp_id && !_.isEqual(prevContext.bpp_id, context.bpp_id)) {
@@ -113,11 +113,12 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
     try {
       logger.info(`Comparing transaction Ids of /${pastCall} and /${curentCall}`)
       if (
-        pastCall !== 'on_search' &&
+        !pastCall.includes('search') &&
+        !pastCall.includes('select') &&
         curentCall !== 'init' &&
         !_.isEqual(prevContext.transaction_id, context.transaction_id)
       ) {
-        errorObj.transaction_id = `Transaction ID of /${curentCall} should match with the /${prevContext.action} call.`
+        errorObj.transaction_id = `Transaction ID for /${pastCall} and /${curentCall} API should be the same`
       }
     } catch (error: any) {
       logger.info(`Error while comparing transaction ids for /${pastCall} and /${curentCall} api, ${error.stack}`)

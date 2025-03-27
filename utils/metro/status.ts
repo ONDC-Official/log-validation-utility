@@ -24,7 +24,7 @@ export const checkStatus = (data: any, msgIdSet: any) => {
   if (!validateDomainName)
     errorObj['domain'] =
       `context.domain should be ${METRODOMAIN.METRO} instead of ${context?.domain} in ${metroSequence.STATUS}`
-  const contextRes: any = validateContext(context, msgIdSet, constants.ON_INIT, constants.STATUS)
+  const contextRes: any = validateContext(context, msgIdSet, constants.ON_CONFIRM, constants.STATUS)
   setValue(`${mobilitySequence.STATUS}_message`, message)
 
   if (schemaValidation !== 'error') {

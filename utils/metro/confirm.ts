@@ -25,7 +25,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     if (!validateDomainName)
       errorObj['domain'] =
         `context.domain should be ${METRODOMAIN.METRO} instead of ${context?.domain} in ${metroSequence.ON_CONFIRM}`
-    const contextRes: any = validateContext(context, msgIdSet, constants.ON_SEARCH, constants.CONFIRM)
+    const contextRes: any = validateContext(context, msgIdSet, constants.ON_INIT, constants.CONFIRM)
     setValue(`${metroSequence.CONFIRM}_message`, message)
 
     if (schemaValidation !== 'error') {

@@ -111,8 +111,8 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
         : onSelect?.fulfillments &&
           validateFulfillmentV2_0(onSelect?.fulfillments ?? [], errorObj, constants.ON_SELECT, flow)
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_SELECT},  ${error.message}`)
-      return { error: error.message }
+      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_SELECT},  ${error.stack}`)
+      return { error: error.stack }
     }
 
     logger.info(`Mapping Item Ids /${constants.ON_SEARCH} and /${constants.ON_SELECT}`)
@@ -128,8 +128,8 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
     }
 
     try {
-      onSelect.items.forEach((item: any, index: number) => {
-        if (!newItemIDSValue.includes(item.id)) {
+      onSelect?.items?.forEach((item: any, index: number) => {
+        if (!newItemIDSValue.includes(item?.id)) {
           const key = `item[${index}].item_id`
           errorObj[key] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in select`
         } else {
@@ -156,7 +156,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
         if (!item?.fulfillment_ids || item?.fulfillment_ids?.length === 0) {
           errorObj[`invalidFulfillmentId_${index}`] = `fulfillment_ids should be present`
         } else {
-          item.fulfillment_ids.forEach((_fulfillmentId: string) => {
+          item?.fulfillment_ids?.forEach((_fulfillmentId: string) => {
             // if (!storedFull.includes(fulfillmentId)) {
             //   errorObj[`invalidItemFulfillmentId_${index}`] =
             //     `Fulfillment ID '${fulfillmentId}' at index ${index} in /${constants.ON_SELECT} is not matching with the fulfillment id in previous call`
@@ -168,10 +168,10 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
           errorObj[`payment_ids_${index}`] = `payment_ids are not part of /${constants.ON_SELECT}`
         }
       })
-      setValue(`itemIds`, Array.from(newItemIDSValue))
+      setValue(`itemIds`, Array.from(newItemIDSValue ?? ''))
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking items info in /${constants.ON_SELECT},  ${error.message}`)
-      return { error: error.message }
+      logger.error(`!!Error occcurred while checking items info in /${constants.ON_SELECT},  ${error.stack}`)
+      return { error: error.stack }
     }
 
     try {
@@ -179,8 +179,8 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
       const quoteErrors = validateQuote(onSelect?.quote, constants.ON_SELECT)
       Object.assign(errorObj, quoteErrors)
     } catch (error: any) {
-      logger.error(`!!Error occcurred while checking Quote in /${constants.ON_SELECT},  ${error.message}`)
-      return { error: error.message }
+      logger.error(`!!Error occcurred while checking Quote in /${constants.ON_SELECT},  ${error.stack}`)
+      return { error: error.stack }
     }
 
     if (onSelect?.payments) {
@@ -192,10 +192,10 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: { flow: string; fl
     }
 
     setValue(`${metroSequence.ON_SELECT}`, data)
-    setValue(`${metroSequence.ON_SELECT}_storedFulfillments`, Array.from(storedFull))
+    setValue(`${metroSequence.ON_SELECT}_storedFulfillments`, Array.from(storedFull ?? ''))
   } catch (error: any) {
-    logger.error(`!!Error occcurred while checking order info in /${constants.ON_SELECT},  ${error.message}`)
-    return { error: error.message }
+    logger.error(`!!Error occcurred while checking order info in /${constants.ON_SELECT},  ${error.stack}`)
+    return { error: error.stack }
   }
 
   return Object.keys(errorObj).length > 0 && errorObj

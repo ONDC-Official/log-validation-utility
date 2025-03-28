@@ -159,7 +159,7 @@ const storeValues = (message: any, context: any, apiSequence: string) => {
 }
 
 /**
- * Validates actor relationships (complainant_id, customer_id)
+ * Validates actor relationships (complainant_id, source_id)
  */
 const validateActorRelationships = (message: any, errorObj: any) => {
   if (!message.issue.actors || message.issue.actors.length === 0) return;
@@ -170,10 +170,10 @@ const validateActorRelationships = (message: any, errorObj: any) => {
     errorObj.complainant_id = `complainant_id (${message.issue.complainant_id}) should match the id of the INTERFACING_NP actor (${interfacingNpActor.id})`;
   }
   
-  // Check customer_id matches CONSUMER actor id
+  // Check source_id matches CONSUMER actor id
   const consumerActor = message.issue.actors.find((actor: any) => actor.type === 'CONSUMER');
-  if (consumerActor && message.issue.customer_id !== consumerActor.id) {
-    errorObj.customer_id = `customer_id (${message.issue.customer_id}) should match the id of the CONSUMER actor (${consumerActor.id})`;
+  if (consumerActor && message.issue.source_id !== consumerActor.id) {
+    errorObj.source_id = `source_id (${message.issue.source_id}) should match the id of the CONSUMER actor (${consumerActor.id})`;
   }
 };
 

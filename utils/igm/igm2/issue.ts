@@ -10,7 +10,7 @@ import { validateActors } from './common/actors'
 
 const checkIssueV2 = (data: any, apiSequence:string, flow: any) => {
   const issueObj: any = {}
-  console.log("flow", flow)
+
   if (!data || isObjectEmpty(data)) {
     return { [apiSequence]: 'JSON cannot be empty' }
   }
@@ -50,8 +50,8 @@ const checkIssueV2 = (data: any, apiSequence:string, flow: any) => {
       }
       
       // Validation #2: updated_at should be equal or greater than context/timestamp
-      if (new Date(message.issue.updated_at) < new Date(context.timestamp)) {
-        issueObj.timestamp_validation = 'Issue updated_at should be equal to or greater than context timestamp'
+      if (new Date(message.issue.updated_at) <= new Date(context.timestamp)) {
+        issueObj.timestamp_validation = 'Issue updated_at should be equal to or less than context timestamp'
       }
       
       // Validation #3 & #4: Check last_action_id and updated_at with actions array
@@ -110,10 +110,10 @@ const checkIssueV2 = (data: any, apiSequence:string, flow: any) => {
           }
           
           // Transaction and issue ID should be consistent with previous calls
-          const storedTxnId = getValue('igmTxnId')
-          if (storedTxnId && context.transaction_id !== storedTxnId) {
-            issueObj.transaction_id = `Transaction ID ${context.transaction_id} should match with stored ID: ${storedTxnId}`
-          }
+          // const storedTxnId = getValue('igmTxnId')
+          // if (storedTxnId && context.transaction_id !== storedTxnId) {
+          //   issueObj.transaction_id = `Transaction ID ${context.transaction_id} should match with stored ID: ${storedTxnId}`
+          // }
           
           const storedIssueId = getValue('issueId')
           if (storedIssueId && message.issue.id !== storedIssueId) {
@@ -123,19 +123,19 @@ const checkIssueV2 = (data: any, apiSequence:string, flow: any) => {
           
         case IGM2FlowSequence.FLOW_1.ISSUE_RESOLUTION_ACCEPTED:
           // For ISSUE_3: We might expect actions to be recorded
-          if (!message.issue.actions || message.issue.actions.length === 0) {
-            issueObj.no_actions = `By ${apiSequence}, we would typically expect some actions to be recorded`
-          }
+          // if (!message.issue.actions || message.issue.actions.length === 0) {
+          //   issueObj.no_actions = `By ${apiSequence}, we would typically expect some actions to be recorded`
+          // }
           
-          // Status might have progressed
-          if (message.issue.status === 'OPEN' && message.issue.actions && message.issue.actions.length > 2) {
-            issueObj.status_progress = `With ${message.issue.actions.length} actions recorded, status might be expected to progress beyond OPEN`
-          }
-          break;
+          // // Status might have progressed
+          // if (message.issue.status === 'OPEN' && message.issue.actions && message.issue.actions.length > 2) {
+          //   issueObj.status_progress = `With ${message.issue.actions.length} actions recorded, status might be expected to progress beyond OPEN`
+          // }
+          // break;
           
         case IGM2FlowSequence.FLOW_1.ISSUE_CLOSED:
           // For ISSUE_5: This might be approaching resolution
-          if (message.issue.status === 'RESOLVED' && !message.issue.resolution) {
+          if (message.issue.status === 'RESOLVED' && !message.issue.resolutions``) {
             issueObj.missing_resolution = `When status is RESOLVED in ${apiSequence}, resolution details must be provided`
           }
           break;

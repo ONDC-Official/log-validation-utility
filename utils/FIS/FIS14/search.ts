@@ -39,7 +39,7 @@ export const checkSearch = (data: any, msgIdSet: any, flow: string, action: stri
     logger.info(`Detected search type: ${searchTypeResult.type} for /${action}`)
 
     // validate schema
-    const schemaValidation = validateSchema('FIS', constants.SEARCH, data)
+    const schemaValidation = validateSchema('FIS14', constants.SEARCH, data)
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
     }

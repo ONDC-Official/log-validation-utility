@@ -79,6 +79,14 @@ import { onConfirmSchemaTRV_12 } from '../schema/TRV-12/on_confirm'
 import { onCancelSchemaTRV_12 } from '../schema/TRV-12/on_cancel'
 import { searchFIS14Schema } from '../schema/FIS/Mutual_Funds/search'
 import {onSearchFIS14Schema} from '../schema/FIS/Mutual_Funds/on_search'
+import {selectFIS14Schema} from '../schema/FIS/Mutual_Funds/select'
+import {onSelectFIS14Schema} from '../schema/FIS/Mutual_Funds/on_select'
+import {initFIS14Schema} from '../schema/FIS/Mutual_Funds/init'
+import {onInitFIS14Schema} from '../schema/FIS/Mutual_Funds/on_init'
+import {confirmFIS14Schema} from '../schema/FIS/Mutual_Funds/confirm'
+import {onConfirmFIS14Schema} from '../schema/FIS/Mutual_Funds/on_confirm'
+import { onStatusFIS14Schema } from '../schema/FIS/Mutual_Funds/on_status'
+import { onUpdateFIS14Schema } from '../schema/FIS/Mutual_Funds/on_update'
 
 const ajv = new Ajv({
   allErrors: true,
@@ -1197,6 +1205,45 @@ const validate_schema_on_search_FIS14_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+const validate_schema_select_FIS14_for_json = (data: any) => {
+  const error_list = validate_schema(data, selectFIS14Schema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_select_FIS14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSelectFIS14Schema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_init_FIS14_for_json = (data: any) => {
+  const error_list = validate_schema(data, initFIS14Schema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_init_FIS14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onInitFIS14Schema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_confirm_FIS14_for_json = (data: any) => {
+  const error_list = validate_schema(data, confirmFIS14Schema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_confirm_FIS14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onConfirmFIS14Schema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_status_FIS14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusFIS14Schema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_update_FIS14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateFIS14Schema)
+  return formatted_error(error_list)
+}
 
 const TRVValidator = {
   validate_schema_search_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/search.yaml'),
@@ -1519,6 +1566,14 @@ export default {
   //FIS14-Mutual Funds
   validate_schema_search_FIS14_for_json,
   validate_schema_on_search_FIS14_for_json,
+  validate_schema_select_FIS14_for_json,
+  validate_schema_on_select_FIS14_for_json,
+  validate_schema_init_FIS14_for_json,
+  validate_schema_on_init_FIS14_for_json,
+  validate_schema_confirm_FIS14_for_json,
+  validate_schema_on_confirm_FIS14_for_json,
+  validate_schema_on_status_FIS14_for_json ,
+  validate_schema_on_update_FIS14_for_json,
 
   ...TRVValidator,
   ...FISValidator,

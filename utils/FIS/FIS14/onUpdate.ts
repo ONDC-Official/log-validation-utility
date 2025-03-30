@@ -7,8 +7,15 @@ import {
   isValidPhoneNumber,
   validateContext,
   validateProvider,
+  validatePayments,
 } from './fis14checks'
-import _, { isEmpty } from 'lodash'
+import {
+  validateSIPFlow,
+  validateSIPInstalmentFlow,
+  validateLumpsumFlow,
+  validateRedemptionFlow
+} from './flowValidationsOn_Update'
+import _ from 'lodash'
 
 export const checkOnUpdate = (data: any, msgIdSet: any, sequence: string) => {
   try {
@@ -51,7 +58,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, sequence: string) => {
       if (!fulfillments) {
         errorObj.fulfillments = `fulfillments is missing at /${constants.ON_UPDATE}`
       } else {
-        fulfillments?.map((fulfillment: any, i: number) => {
+        fulfillments?.forEach((fulfillment: any, i: number) => {
           if (!fulfillment?.type) {
             errorObj[`fulfillments[${i}].type`] =
               `fulfillment[${i}].type should be present in fulfillment${i} at /${constants.ON_UPDATE}`
@@ -60,22 +67,30 @@ export const checkOnUpdate = (data: any, msgIdSet: any, sequence: string) => {
             if (Object.keys(obj).length > 0) {
               errorObj.typeError = obj
             }
+            
+            switch(fulfillment.type) {
+              case 'SIP':
+                validateSIPFlow(fulfillment, errorObj, i)
+                break
+              case 'SIP_INSTALMENT':
+                validateSIPInstalmentFlow(fulfillment, errorObj, i, ON_UPDATE.status)
+                break
+              case 'LUMPSUM':
+                validateLumpsumFlow(fulfillment, errorObj, i, ON_UPDATE.status)
+                break
+              case 'REDEMPTION':
+                validateRedemptionFlow(fulfillment, errorObj, i)
+                break
+              default:
+                errorObj[`fulfillments[${i}].type.unknown`] = 
+                  `Unknown fulfillment type: ${fulfillment.type}`
+            }
           }
+          
+          // Common validations for all fulfillment types
           if (!fulfillment?.contact?.phone || !isValidPhoneNumber(fulfillment?.contact?.phone)) {
             errorObj[`fulfillments[${i}].contact.phone`] =
               `contact.phone should be present with valid value in fulfillment${i} at /${constants.ON_UPDATE}`
-          }
-          if (!fulfillment?.stops?.time?.schedule?.frequency) {
-            errorObj[`fulfillments[${i}].stops.time.schedule.frequency`] =
-              `fulfillment[${i}].stops.time.schedule.frequency should be present in fulfillment${i} at /${constants.ON_UPDATE}`
-          }
-          if (!fulfillment?.customer?.person?.id) {
-            errorObj[`fulfillments[${i}].customer.person.id`] =
-              `fulfillment[${i}].customer.person.id should be present in fulfillment${i} at /${constants.ON_UPDATE}`
-          }
-          if (!fulfillment?.agent) {
-            errorObj[`fulfillments[${i}].agent`] =
-              `fulfillment[${i}].agent should be present in fulfillment${i} at /${constants.ON_UPDATE}`
           }
         })
       }
@@ -98,50 +113,27 @@ export const checkOnUpdate = (data: any, msgIdSet: any, sequence: string) => {
         }
         if (!quote?.breakup) {
           errorObj['quotes.breakup'] = 'quotes.breakup is missing in message.order'
-        }
-        if (!quote?.breakup?.price) {
-          errorObj['quotes.breakup.price'] = 'quotes.breakup.price is missing in message.order'
-        }
-        if (!quote?.breakup?.title) {
-          errorObj['quotes.breakup.title'] = 'quotes.breakup.title is missing in message.order'
+        } else if (Array.isArray(quote.breakup)) {
+          quote.breakup.forEach((item: any, i: number) => {
+            if (!item?.price) {
+              errorObj[`quotes.breakup[${i}].price`] = `quotes.breakup[${i}].price is missing`
+            }
+            if (!item?.title) {
+              errorObj[`quotes.breakup[${i}].title`] = `quotes.breakup[${i}].title is missing`
+            }
+          })
         }
       }
     } catch (error: any) {
       logger.error(`!!Error while checking quotes in /${constants.ON_UPDATE}`, error.stack)
     }
-
-    // check payments
     try {
       logger.info(`Checking payments in /${constants.ON_UPDATE}`)
-      const payments = ON_UPDATE?.payments
-      if (isEmpty(payments)) {
-        errorObj.payments = `payments array is missing or is empty`
-      } else {
-        payments?.map((payment: any, i: number) => {
-          if (!payment?.type) {
-            errorObj[`payments[${i}].type`] = `payments[${i}].type is missing in /${constants.ON_UPDATE}`
-          }
-          if (!payment.collected_by) {
-            errorObj[`payments[${i}].collected_by`] =
-              `payments[${i}].collected_by is missing in /${constants.ON_UPDATE}`
-          }
-          if (!payment.params.source_bank_code) {
-            errorObj[`payments[${i}].params.source_bank_code`] =
-              `payments[${i}].params.source_bank_code is missing in /${constants.ON_UPDATE}`
-          }
-          if (!payment.params.source_bank_account_number) {
-            errorObj[`payments[${i}].params.source_bank_account_number`] =
-              `payments[${i}].params.source_bank_account_number is missing in /${constants.ON_UPDATE}`
-          }
-          if (!!payment.params.source_bank_account_name) {
-            errorObj[`payments[${i}].params.source_bank_account_name`] =
-              `payments[${i}].params.source_bank_account_name is missing in /${constants.ON_UPDATE}`
-          }
-        })
-      }
+      validatePayments(ON_UPDATE?.payments || [], errorObj, ON_UPDATE?.status)
     } catch (error: any) {
       logger.error(`!!Errors while checking payments in /${constants.ON_UPDATE}, ${error.stack}`)
     }
+    
     // check items
     try {
       logger.info(`Validating items array in /${constants.ON_UPDATE}`)
@@ -151,7 +143,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, sequence: string) => {
       logger.error(`!!Error while checking items array in /${constants.ON_UPDATE}, ${error.stack}`)
     }
 
-    // base detials
+    // base details
     try {
       logger.info(`Checking base details in /${constants.ON_UPDATE}`)
       if (!ON_UPDATE.id) {
@@ -159,12 +151,20 @@ export const checkOnUpdate = (data: any, msgIdSet: any, sequence: string) => {
       }
       if (!ON_UPDATE.status) {
         errorObj['status'] = 'status is missing in message.order'
+      } else {
+        // Validate status values
+        const validStatuses = ['CREATED', 'ACCEPTED', 'IN-PROGRESS', 'COMPLETED', 'CANCELLED']
+        if (!validStatuses.includes(ON_UPDATE.status)) {
+          errorObj['status.value'] = `status must be one of: ${validStatuses.join(', ')}`
+        }
       }
       if (!ON_UPDATE.created_at) {
         errorObj['created_at'] = 'created_at is missing in message.order'
       }
       if (!ON_UPDATE.updated_at) {
         errorObj['updated_at'] = 'updated_at is missing in message.order'
+      } else if (ON_UPDATE.created_at && new Date(ON_UPDATE.updated_at) < new Date(ON_UPDATE.created_at)) {
+        errorObj['updated_at.value'] = 'updated_at cannot be earlier than created_at'
       }
       if (!ON_UPDATE.ref_order_ids) {
         errorObj['ref_order_ids'] = 'ref_order_ids is missing in message.order'

@@ -3,6 +3,7 @@ import { checkIdAndUri, checkFISContext } from '../../'
 import _ from 'lodash'
 import constants, { fis14Flows } from '../../../constants'
 import { getValue, setValue } from '../../../shared/dao'
+import { isEmpty } from 'lodash'
 
 export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any) => {
   const errorObj: any = {}
@@ -377,5 +378,130 @@ export const validateTags= ( message: any, errorObj: any): void => {
     }
   } catch (error: any) {
     logger.error(`!!Error occurred while validating tags in /search, ${error.message}`);
+  }
+}
+
+export const validatePayments = (payments: any[], errorObj: any, orderStatus: string) => {
+  try {
+    if (isEmpty(payments)) {
+      errorObj.payments = 'payments array is missing or is empty'
+      return
+    }
+    
+    payments.forEach((payment, i) => {
+      // Common validations for all payments
+      if (!payment?.type) {
+        errorObj[`payments[${i}].type`] = `payments[${i}].type is missing`
+      }
+      
+      if (!payment.collected_by) {
+        errorObj[`payments[${i}].collected_by`] = `payments[${i}].collected_by is missing`
+      }
+      
+      if (!payment.status) {
+        errorObj[`payments[${i}].status`] = `payments[${i}].status is missing`
+      }
+      
+      // Validate params based on payment status
+      validatePaymentParams(payment, i, errorObj, orderStatus)
+      
+      // Validate payment tags based on status
+      validatePaymentTags(payment, i, errorObj)
+    })
+    
+    // Validate payment status consistency with order status
+    validatePaymentStatusConsistency(payments, errorObj, orderStatus)
+    
+  } catch (error: any) {
+    logger.error(`Error validating payments: ${error.stack}`)
+  }
+}
+
+
+const validatePaymentParams = (payment: any, index: number, errorObj: any, orderStatus: string) => {
+  if (!payment.params) {
+    errorObj[`payments[${index}].params`] = `payments[${index}].params is missing`
+    return
+  }
+
+  console.log(payment.status, orderStatus)
+
+  if (!payment.params.amount) {
+    errorObj[`payments[${index}].params.amount`] = `payments[${index}].params.amount is missing`
+  }
+  
+  if (!payment.params.currency) {
+    errorObj[`payments[${index}].params.currency`] = `payments[${index}].params.currency is missing`
+  }
+
+  if (payment.status === 'PAID' && !payment.params.transaction_id) {
+    errorObj[`payments[${index}].params.transaction_id`] = 
+      `payments[${index}].params.transaction_id is required when payment status is PAID`
+  }
+  
+  if (payment.type === 'ON-ORDER' || payment.type === 'PRE-FULFILLMENT') {
+    if (!payment.params.source_bank_code) {
+      errorObj[`payments[${index}].params.source_bank_code`] = 
+        `payments[${index}].params.source_bank_code is missing`
+    }
+    
+    if (!payment.params.source_bank_account_number) {
+      errorObj[`payments[${index}].params.source_bank_account_number`] = 
+        `payments[${index}].params.source_bank_account_number is missing`
+    }
+    
+    if (!payment.params.source_bank_account_name) {
+      errorObj[`payments[${index}].params.source_bank_account_name`] = 
+        `payments[${index}].params.source_bank_account_name is missing`
+    }
+  }
+}
+
+
+const validatePaymentTags = (payment: any, index: number, errorObj: any) => {
+  
+  if (payment.status === 'PAID') {
+    const receiptTag = payment.tags.find((tag: any) => 
+      tag.descriptor?.code === 'PAYMENT_RECEIPT'
+    )
+    
+    if (!receiptTag) {
+      errorObj[`payments[${index}].tags.receipt`] = 
+        `payments[${index}] with PAID status should include a PAYMENT_RECEIPT tag`
+    } else {
+      if (!receiptTag.list || !Array.isArray(receiptTag.list)) {
+        errorObj[`payments[${index}].tags.receipt.list`] = 
+          `PAYMENT_RECEIPT tag should include a list of receipt details`
+      } else {
+        const requiredReceiptFields = ['TRANSACTION_ID', 'TIMESTAMP']
+        requiredReceiptFields.forEach(field => {
+          if (!receiptTag.list.some((item: any) => item.descriptor?.code === field)) {
+            errorObj[`payments[${index}].tags.receipt.${field.toLowerCase()}`] = 
+              `PAYMENT_RECEIPT tag should include ${field}`
+          }
+        })
+      }
+    }
+  }
+}
+
+
+const validatePaymentStatusConsistency = (payments: any[], errorObj: any, orderStatus: string) => {
+  if (orderStatus === 'COMPLETED') {
+    const unpaidPayments = payments.filter(payment => payment.status !== 'PAID')
+    if (unpaidPayments.length > 0) {
+      errorObj['payments.status.consistency'] = 
+        `All payments must have status PAID when order status is COMPLETED`
+    }
+  }
+  
+  if (orderStatus === 'CANCELLED') {
+    const invalidPayments = payments.filter(payment => 
+      !['PAID', 'CANCELLED'].includes(payment.status)
+    )
+    if (invalidPayments.length > 0) {
+      errorObj['payments.status.consistency'] = 
+        `All payments must have status PAID or CANCELLED when order status is CANCELLED`
+    }
   }
 }

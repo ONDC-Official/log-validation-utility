@@ -39,7 +39,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: keyof typeof f
         errorObj.prvdrId = `provider.id is missing in /${constants.ON_SELECT}`
       } else if (selectedProviderId && !_.isEqual(selectedProviderId, providerId)) {
         errorObj.prvdrId = `provider.id: ${providerId} in /${constants.ON_SELECT} does'nt matches with the selected id ${selectedProviderId}`
-        setValue('selectedProviderId', providerId)
+        setValue('providerId', providerId)
       }
     } catch (error: any) {
       logger.error(`!!Error while checking provider object for /${constants.ON_SELECT}, ${error.stack}`)
@@ -58,10 +58,11 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: keyof typeof f
           if (!item?.quantity) {
             errorObj[`items[${i}].quantity`] = `items[${i}].quantity is missing in /${constants.ON_SELECT}`
           }
-          if (!item?.price) {
-            errorObj[`items[${i}].fulfillment_ids`] =
-              `items[${i}].fulfillment_ids is missing in /${constants.ON_SELECT}`
-          }
+          // if (!item?.price) {
+          //   console.log('item price', item)
+          //   errorObj[`items[${i}].fulfillment_ids`] =
+          //     `items[${i}].fulfillment_ids is missing in /${constants.ON_SELECT}`
+          // }
         })
       }
     } catch (error: any) {

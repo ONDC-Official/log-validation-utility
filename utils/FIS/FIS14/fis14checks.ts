@@ -151,22 +151,34 @@ export const validateProvider = (provider: any, action: string) => {
       return providerErrors
     }
 
-    if (!provider?.id) providerErrors.prvdrId = `provider.id is missing`
-    else {
+    if (!provider?.id) {
+      providerErrors.prvdrId = `provider.id is missing`
+    } else {
       logger.info(`Comparing provider id of /${action} & past call`)
       const prvrdID: any = getValue('providerId')
-      if (!_.isEqual(prvrdID, provider?.id)) {
-        providerErrors.prvdrId = `provider.id for /${action} & past call api should be same`
-        setValue('providerId', provider?.id)
-      }
-    }
+      console.log(prvrdID, "===========", provider?.id)
 
-    // send true as last argument in case if code validation is needed
-    const descriptorError = validateDescriptor(provider?.descriptor, action, `provider.descriptor`, false)
-    if (descriptorError) Object.assign(providerErrors, descriptorError)
+      if (Array.isArray(prvrdID)) {
+        if (!prvrdID.includes(provider.id)) {
+          providerErrors.prvdrId = `provider.id for /${action} & past call api should be same`
+        }
+      } 
+      else if (typeof prvrdID === 'string' && prvrdID !== provider.id) {
+        providerErrors.prvdrId = `provider.id for /${action} & past call api should be same`
+      }
+      else if (prvrdID === undefined || prvrdID === null) {
+      }
+      else if (!_.isEqual(prvrdID, provider.id)) {
+        providerErrors.prvdrId = `provider.id for /${action} & past call api should be same`
+      }
+
+      setValue('providerId', provider.id)
+    }
+    
     return providerErrors
   } catch (error: any) {
-    logger.info(`Error while checking provider object in /${action} api, ${error.stack}`)
+    logger.error(`!!Error while validating provider: ${error.stack}`)
+    return { error: error.message }
   }
 }
 
@@ -330,4 +342,40 @@ export const checkFullfillementType = (type: string, flow: keyof typeof fis14Flo
     }
   }
   return errorObj
+}
+
+export const  isValidURI= (uri: string): boolean =>{
+  try {
+    new URL(uri);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+export const validateTags= ( message: any, errorObj: any): void => {
+  try {
+    logger.info(`Validating tags in /search`)
+    const tags = message.intent?.tags;
+    
+    const bapTermsTag = tags.find((tag: any) => 
+      tag.descriptor?.code === 'BAP_TERMS'
+    );
+    
+    if (bapTermsTag && Array.isArray(bapTermsTag.list)) {
+      const staticTermsEntry = bapTermsTag.list.find((item: any) => 
+        item.descriptor?.code === 'STATIC_TERMS'
+      );
+      
+      if (staticTermsEntry) {
+        const staticTermsValue = staticTermsEntry.value;
+        
+        if (!isValidURI(staticTermsValue)) {
+          errorObj['static_terms_uri'] = `Static Terms value must be a valid URI, found: ${staticTermsValue}`;
+        }
+      }
+    }
+  } catch (error: any) {
+    logger.error(`!!Error occurred while validating tags in /search, ${error.message}`);
+  }
 }

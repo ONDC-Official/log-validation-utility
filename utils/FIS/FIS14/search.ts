@@ -5,7 +5,7 @@ import { validateSchema, isObjectEmpty, checkFISContext } from '../../../utils'
 import { validateContext } from './fis14checks'
 import _ from 'lodash'
 import { setValue } from '../../../shared/dao'
-import { validateSearchType } from '../FIS14/fis14checks'
+import { validateSearchType, validateTags} from '../FIS14/fis14checks'
 
 export const checkSearch = (data: any, msgIdSet: any, flow: string, action: string) => {
   const errorObj: any = {}
@@ -76,9 +76,10 @@ export const checkSearch = (data: any, msgIdSet: any, flow: string, action: stri
       logger.error(`!!Error occcurred while validating category in /${action},  ${error.message}`)
     }
 
-    // validate payments
+    //validating bap_terms tags
 
-    // checking providers
+    validateTags(message, errorObj);
+
     // check fullfillment
     try {
       logger.info(`Checking fulfillment object in /${constants.SEARCH}`)

@@ -117,14 +117,14 @@ export const initFIS14Schema = {
                   required: ['id', 'type', 'customer'],
                   properties: {
                     id: { type: 'string' },
-                    type: { type: 'string' },
+                    type: { type: 'string', enum: ['SIP', 'LUMPSUM'] },
                     customer: {
                       type: 'object',
                       properties: {
                         person: {
                           type: 'object',
                           properties: {
-                            id: { type: 'string' },
+                            id: { type: 'string', pattern: '^pan:[a-zA-Z0-9]+$' },
                             creds: {
                               type: 'array',
                               items: {
@@ -132,7 +132,7 @@ export const initFIS14Schema = {
                                 required: ['id', 'type'],
                                 properties: {
                                   id: { type: 'string' },
-                                  type: { type: 'string' }
+                                  type: { type: 'string', enum: ['IP_ADDRESS', 'ARN', 'SUB_BROKER_ARN', 'EUIN'] }
                                 },
                                 additionalProperties: false
                               }
@@ -143,65 +143,12 @@ export const initFIS14Schema = {
                         contact: {
                           type: 'object',
                           properties: {
-                            phone: { type: 'string' }
+                            phone: { type: 'string', pattern: '^[0-9]{10}$' }
                           },
                           additionalProperties: false
                         }
                       },
                       additionalProperties: false
-                    },
-                    agent: {
-                      type: 'object',
-                      properties: {
-                        person: {
-                          type: 'object',
-                          properties: {
-                            id: { type: 'string' }
-                          },
-                          additionalProperties: false
-                        },
-                        organization: {
-                          type: 'object',
-                          properties: {
-                            creds: {
-                              type: 'array',
-                              items: {
-                                type: 'object',
-                                required: ['id', 'type'],
-                                properties: {
-                                  id: { type: 'string' },
-                                  type: { type: 'string' }
-                                },
-                                additionalProperties: false
-                              }
-                            }
-                          },
-                          additionalProperties: false
-                        }
-                      },
-                      additionalProperties: false
-                    },
-                    stops: {
-                      type: 'array',
-                      items: {
-                        type: 'object',
-                        properties: {
-                          time: {
-                            type: 'object',
-                            properties: {
-                              schedule: {
-                                type: 'object',
-                                properties: {
-                                  frequency: { type: 'string' }
-                                },
-                                additionalProperties: false
-                              }
-                            },
-                            additionalProperties: false
-                          }
-                        },
-                        additionalProperties: false
-                      }
                     }
                   },
                   additionalProperties: false
@@ -211,32 +158,34 @@ export const initFIS14Schema = {
                 type: 'array',
                 items: {
                   type: 'object',
-                  required: ['collected_by', 'params', 'type'],
+                  required: ['collected_by', 'params', 'type', 'tags'],
                   properties: {
-                    collected_by: { type: 'string' },
+                    collected_by: { type: 'string', enum: ['BPP'] },
                     params: {
                       type: 'object',
                       required: ['amount', 'currency'],
                       properties: {
-                        amount: { type: 'string' },
-                        currency: { type: 'string' },
+                        amount: { type: 'string', pattern: '^[0-9]+(\\.[0-9]+)?$' },
+                        currency: { type: 'string', enum: ['INR'] },
                         source_bank_code: { type: 'string' },
                         source_bank_account_number: { type: 'string' },
                         source_bank_account_name: { type: 'string' }
                       },
                       additionalProperties: false
                     },
-                    type: { type: 'string' },
+                    type: { type: 'string', enum: ['PRE_FULFILLMENT'] },
                     tags: {
                       type: 'array',
                       items: {
                         type: 'object',
+                        required: ['descriptor', 'list'],
                         properties: {
                           descriptor: {
                             type: 'object',
+                            required: ['code'],
                             properties: {
                               name: { type: 'string' },
-                              code: { type: 'string' }
+                              code: { type: 'string', enum: ['PAYMENT_METHOD'] }
                             },
                             additionalProperties: false
                           },
@@ -244,15 +193,17 @@ export const initFIS14Schema = {
                             type: 'array',
                             items: {
                               type: 'object',
+                              required: ['descriptor', 'value'],
                               properties: {
                                 descriptor: {
                                   type: 'object',
+                                  required: ['code'],
                                   properties: {
-                                    code: { type: 'string' }
+                                    code: { type: 'string', enum: ['MODE'] }
                                   },
                                   additionalProperties: false
                                 },
-                                value: { type: 'string' }
+                                value: { type: 'string', enum: ['MANDATE_REGISTRATION'] }
                               },
                               additionalProperties: false
                             }

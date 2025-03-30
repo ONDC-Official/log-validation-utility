@@ -85,7 +85,7 @@ import {initFIS14Schema} from '../schema/FIS/Mutual_Funds/init'
 import {onInitFIS14Schema} from '../schema/FIS/Mutual_Funds/on_init'
 import {confirmFIS14Schema} from '../schema/FIS/Mutual_Funds/confirm'
 import {onConfirmFIS14Schema} from '../schema/FIS/Mutual_Funds/on_confirm'
-import { onStatusFIS14Schema } from '../schema/FIS/Mutual_Funds/on_status'
+// import { onStatusFIS14Schema } from '../schema/FIS/Mutual_Funds/on_status'
 import { onUpdateFIS14Schema } from '../schema/FIS/Mutual_Funds/on_update'
 
 const ajv = new Ajv({
@@ -1235,10 +1235,10 @@ const validate_schema_on_confirm_FIS14_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
-const validate_schema_on_status_FIS14_for_json = (data: any) => {
-  const error_list = validate_schema(data, onStatusFIS14Schema)
-  return formatted_error(error_list)
-}
+// const validate_schema_on_status_FIS14_for_json = (data: any) => {
+//   const error_list = validate_schema(data, onStatusFIS14Schema)
+//   return formatted_error(error_list)
+// }
 
 const validate_schema_on_update_FIS14_for_json = (data: any) => {
   const error_list = validate_schema(data, onUpdateFIS14Schema)
@@ -1572,7 +1572,7 @@ export default {
   validate_schema_on_init_FIS14_for_json,
   validate_schema_confirm_FIS14_for_json,
   validate_schema_on_confirm_FIS14_for_json,
-  validate_schema_on_status_FIS14_for_json ,
+  // validate_schema_on_status_FIS14_for_json ,
   validate_schema_on_update_FIS14_for_json,
 
   ...TRVValidator,

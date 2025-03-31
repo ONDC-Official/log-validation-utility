@@ -99,6 +99,15 @@ const onSettleSchema = {
                         additionalProperties: false
                       },
                       status: { type: 'string', enum: ['SETTLED', 'NOT_SETTLED'] },
+                      error: {
+                        type: 'object',
+                        required: ['code', 'message'],
+                        properties: {
+                          code: { type: 'string' },
+                          message: { type: 'string' }
+                        },
+                        additionalProperties: false
+                      },
                       reference_no: { type: 'string' }
                     },
                     additionalProperties: false

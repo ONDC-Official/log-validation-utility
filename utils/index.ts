@@ -224,8 +224,6 @@ export const validateSchema = (domain: string, api: string, data: any) => {
     const errObj: any = {}
 
     const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
-    console.log("++++++++hkh", domain, api, data )
-
     const datavld = schmaVldtr
     if (datavld.status === 'fail') {
       const res = datavld.errors

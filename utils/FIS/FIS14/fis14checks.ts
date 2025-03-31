@@ -157,8 +157,6 @@ export const validateProvider = (provider: any, action: string) => {
     } else {
       logger.info(`Comparing provider id of /${action} & past call`)
       const prvrdID: any = getValue('providerId')
-      console.log(prvrdID, "===========", provider?.id)
-
       if (Array.isArray(prvrdID)) {
         if (!prvrdID.includes(provider.id)) {
           providerErrors.prvdrId = `provider.id for /${action} & past call api should be same`

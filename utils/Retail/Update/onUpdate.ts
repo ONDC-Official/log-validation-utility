@@ -534,11 +534,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
 
                                 if (replaceValue === "yes" || replaceValue === "no") {
                                     logger.info(`Valid replace value: ${replaceValue} for /${apiSeq}`);
-                                } else {
-                                    onupdtObj["returnFulfillment/code/replace"] = `Invalid replace value: ${replaceValue} in ${apiSeq} (valid: 'yes' or 'no')`;
                                 }
-                            } else {
-                                onupdtObj["returnFulfillment/code/replace"] = `Replace value is missing in ${apiSeq}`;
                             }
 
                             const itemQuantityArr = _.filter(returnFulifillmentTagsList, { code: "item_quantity" })

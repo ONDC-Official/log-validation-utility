@@ -91,9 +91,7 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
                     } else {
                       updtObj['returnFulfillment/code/exchange'] = `Invalid exchange value: ${exchangeValue} in ${apiSeq}. Only "yes" or "no" are allowed.`;
                     }
-                  } else {
-                    updtObj['returnFulfillment/code/exchange'] = `Return fulfillment/tags/list/code/exchange is missing in ${apiSeq}`;
-                  }
+                  } 
 
                   // Validate ffId
                   if (ffIdArr.length > 0 && ffIdArr[0]?.value) {
@@ -111,10 +109,7 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
                     } else {
                       updtObj['returnFulfillment/code/replace'] = `Invalid replace value: ${replaceValue} in ${apiSeq}. Only "yes" or "no" are allowed.`;
                     }
-                  } else {
-                    updtObj['returnFulfillment/code/replace'] = `Return fulfillment/tags/list/code/replace is missing in ${apiSeq}`;
-                  }
-
+                  } 
                   // Validate item_quantity
                   if (itemQuantityArr.length > 0 && itemQuantityArr[0]?.value) {
                     itemQuantity = itemQuantityArr[0]?.value;
@@ -133,9 +128,7 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
                   } else {
                     updtObj['returnFulfillment/code/replace'] = `Invalid replace value: ${replaceValue} in ${apiSeq}`;
                   }
-                } else {
-                  updtObj['returnFulfillment/code/replace'] = `Return fulfillment/tags/list/code/replace is missing in ${apiSeq}`;
-                }
+                } 
 
                 if (itemQuantityArr.length > 0 && itemQuantityArr[0]?.value) {
                   itemQuantity = itemQuantityArr[0]?.value

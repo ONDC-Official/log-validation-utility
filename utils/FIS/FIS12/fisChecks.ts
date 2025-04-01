@@ -1,8 +1,8 @@
 import { getValue, setValue } from '../../../shared/dao'
-import { formHeadingsFis } from '../../../constants/'
+import { FisApiSequence, fisFlows, formHeadingsFis } from '../../../constants/'
 import { logger } from '../../../shared/logger'
 import { checkIdAndUri, checkFISContext, isValidUrl } from '../../'
-import _ from 'lodash'
+import _, { isEmpty } from 'lodash'
 import { validatePaymentTags } from './tags'
 // import { validatePaymentTags } from './tags'
 const FULFILLMENT_STATE_CODES = ['INITIATED', 'SANCTIONED', 'DISBURSED', 'PENDING', 'REJECTED', 'COMPLETED']
@@ -20,7 +20,12 @@ const getFormHeading = (action: any, loanType: any): string[] | string | null =>
   return null
 }
 
-export const validateFulfillments = (fulfillment: any, i: number, documents: any[] = []): any | null => {
+export const validateFulfillments = (
+  fulfillment: any,
+  i: number,
+  documents: any[] = [],
+  fulfillmentCode: string = '',
+): any | null => {
   const errors: any = {}
 
   const loanType: any = getValue(`LoanType`)
@@ -29,7 +34,9 @@ export const validateFulfillments = (fulfillment: any, i: number, documents: any
     errors.fulfillmentState = `Fulfillment[${i}] state descriptor code is missing`
   } else {
     const { code } = fulfillment.state.descriptor
-    if (!FULFILLMENT_STATE_CODES.includes(code)) {
+    if (!isEmpty(fulfillmentCode) && fulfillmentCode != code) {
+      errors.fulfillmentState = `Fulfillment[${i}] state descriptor code should be ${fulfillmentCode}`
+    } else if (!FULFILLMENT_STATE_CODES.includes(code)) {
       errors.fulfillmentState = `Fulfillment[${i}] state descriptor code must be one of ${FULFILLMENT_STATE_CODES.join(
         ', ',
       )}`
@@ -173,15 +180,17 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
 
     try {
       logger.info(`Comparing Message Ids of /${pastCall} and /${curentCall}`)
-      if (curentCall.startsWith('on_') && curentCall.includes(pastCall)) {
-        logger.info(`Comparing Message Ids of /${pastCall} and /${curentCall}`)
-        if (!_.isEqual(prevContext.message_id, context.message_id)) {
-          errorObj.message_id = `message_id for /${pastCall} and /${curentCall} api should be same`
-        }
-      } else {
-        logger.info(`Checking if Message Ids are different for /${pastCall} and /${curentCall}`)
-        if (_.isEqual(prevContext.message_id, context.message_id)) {
-          errorObj.message_id = `message_id for /${pastCall} and /${curentCall} api should be different`
+      if (!curentCall.includes('unsolicated')) {
+        if (curentCall.startsWith('on_') && curentCall.includes(pastCall)) {
+          logger.info(`Comparing Message Ids of /${pastCall} and /${curentCall}`)
+          if (!_.isEqual(prevContext.message_id, context.message_id)) {
+            errorObj.message_id = `message_id for /${pastCall} and /${curentCall} api should be same`
+          }
+        } else {
+          logger.info(`Checking if Message Ids are different for /${pastCall} and /${curentCall}`)
+          if (_.isEqual(prevContext.message_id, context.message_id)) {
+            errorObj.message_id = `message_id for /${pastCall} and /${curentCall} api should be different`
+          }
         }
       }
     } catch (error: any) {
@@ -284,36 +293,36 @@ export const validateXInputSubmission = (xinput: any, index: number, sequence: s
     } else {
       const formId: any = getValue(`formId`)
       if (!formId?.includes(xinput?.form?.id)) {
-        errorObj[`item${index}_formId`] = `form.id: ${xinput?.form?.id} mismatches with form.id sent in past call`
+        errorObj[`item${index}_formId`] =
+          `form.id: ${xinput?.form?.id} mismatches with form.id sent in past call, should be ${formId}`
       }
     }
 
-    if (!Object.prototype.hasOwnProperty.call(xinput?.form_response, 'status')) {
-      errorObj[
-        `item${index}_xinput`
-      ] = `/message/order/items/xinput in item[${index}] must have status in form_response`
+    if (!xinput?.form_response) {
+      errorObj[`item${index}_xinput`] = `form_response is missing in items/xinput in item[${index}]`
     } else {
-      const status = xinput?.form_response?.status
-
-      const code =
-        version == '2.0.0' && sequence == 'on_select_1'
-          ? 'PENDING'
-          : version == '2.0.0' && sequence == 'select_2'
-          ? 'APPROVED'
-          : 'SUCCESS'
-      if (status !== code) {
-        errorObj[
-          `item${index}_status`
-        ] = `/message/order/items/xinput/form_response/status in item[${index}] should be '${code}'`
+      if (!xinput?.form_response?.status) {
+        errorObj[`item${index}_xinput`] =
+          `/message/order/items/xinput in item[${index}] must have status in form_response`
+      } else {
+        let code = 'SUCCESS'
+        if (version == '2.0.0' && sequence == 'on_select_1') code = 'PENDING'
+        else if (version == '2.0.0' && sequence == 'select_2') code = 'APPROVED'
+        else if (version == '2.1.0' && sequence == 'search_3') code = 'APPROVED'
+        else if (version == '2.1.0' && sequence == 'on_search_2') code = 'CONSENT_CREATED'
+        const status = xinput?.form_response?.status
+        if (status !== code) {
+          errorObj[`item${index}_status`] =
+            `/message/order/items/xinput/form_response/status in item[${index}] should be '${code}'`
+        }
       }
-    }
 
-    if (!Object.prototype.hasOwnProperty.call(xinput?.form_response, 'submission_id')) {
-      errorObj[
-        `item${index}_xinput`
-      ] = `/message/order/items/xinput in item[${index}] must have submission_id in form_response`
-    } else {
-      setValue(`${sequence}_submission_id`, xinput?.form_response?.submission_id)
+      if (!xinput?.form_response?.submission_id) {
+        errorObj[`item${index}_xinput`] =
+          `/message/order/items/xinput in item[${index}] must have submission_id in form_response`
+      } else {
+        setValue(`${sequence}_submission_id`, xinput?.form_response?.submission_id)
+      }
     }
   }
 
@@ -371,23 +380,29 @@ export const validatePaymentsObject = (payments: any, action: string) => {
             { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
             { code: 'STATIC_TERMS', type: 'url' },
             { code: 'COURT_JURISDICTION', type: 'string' },
-            { code: 'DELAY_INTEREST', type: 'amount' },
             { code: 'SETTLEMENT_AMOUNT', type: 'amount' },
-            { code: 'SETTLEMENT_TYPE', type: 'enum', value: ['upi', 'neft', 'rtgs'] },
             {
               code: 'OFFLINE_CONTRACT',
               type: 'boolean',
             },
           ]
 
+          if (!action.includes('on_init')) {
+            terms.push(
+              ...[
+                { code: 'DELAY_INTEREST', type: 'amount' },
+                { code: 'SETTLEMENT_TYPE', type: 'enum', value: ['upi', 'neft', 'rtgs'] },
+              ],
+            )
+          }
+
           if (!payment?.collected_by) {
             errorObj[`payemnts[${index}]_collected_by`] = `payments.collected_by must be present in ${action}`
           } else {
             const collectedBy = getValue(`collected_by`)
             if (collectedBy && collectedBy != payment?.collected_by)
-              errorObj[
-                `payemnts[${index}]_collected_by`
-              ] = `payments.collected_by value sent in ${action} should be same as sent in past call: ${collectedBy}`
+              errorObj[`payemnts[${index}]_collected_by`] =
+                `payments.collected_by value sent in ${action} should be same as sent in past call: ${collectedBy}`
           }
 
           // check status
@@ -397,11 +412,10 @@ export const validatePaymentsObject = (payments: any, action: string) => {
           }
 
           // check type
-          const validTypes = ['ON-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
+          const validTypes = ['ON_ORDER', 'ON_FULFILLMENT', 'POST_FULFILLMENT']
           if (!payment?.type || !validTypes.includes(payment.type)) {
-            errorObj[
-              `payments[${index}]_type`
-            ] = `payments.type must be present in ${action} & its value must be one of: ${validTypes.join(', ')}`
+            errorObj[`payments[${index}]_type`] =
+              `payments.type must be present in ${action} & its value must be one of: ${validTypes.join(', ')}`
           }
 
           // Validate payment tags
@@ -420,52 +434,58 @@ export const validatePaymentsObject = (payments: any, action: string) => {
   }
 }
 
-export const validateDescriptor = (descriptor: any, action: string, path: string, checkCode: boolean): any => {
+export const validateDescriptor = (
+  descriptor: any,
+  action: string,
+  path: string,
+  checkCode: boolean,
+  codes: string[],
+): any => {
   try {
     const errorObj: any = {}
     if (!descriptor) {
-      errorObj.descriptor = `descriptor is missing at ${path}.`
+      errorObj[`${path}.descriptor`] = `descriptor is missing at ${path}.`
     } else {
       if (checkCode) {
-        if (!descriptor.code.trim()) {
-          errorObj.code = `code is missing at ${path}.`
+        if (!descriptor?.code?.trim()) {
+          errorObj[`${path}.code`] = `descriptor.code is missing at ${path}.`
         } else if (descriptor.code?.trim() !== descriptor.code?.trim()?.toUpperCase()) {
-          errorObj.code = `code must be in uppercase at ${path}., ${descriptor.code}`
-        }
+          errorObj[`${path}.code`] = `descriptor.code must be in uppercase at ${path}., ${descriptor.code}`
+        } else if (codes && !codes?.includes(descriptor?.code))
+          errorObj[`${path}.code`] = `descriptor.code should be one of ${codes} at ${path}`
       }
 
-      if (descriptor.images) {
+      if (descriptor?.images) {
         descriptor.images.forEach((image: any, index: number) => {
           const { url, size_type } = image
-          if (typeof url !== 'string' || !isValidUrl(url)) {
-            errorObj[`image_url_[${index}]`] = `Invalid URL for image in descriptor at ${path}.`
+          if (!isValidUrl(url)) {
+            errorObj[`${path}.image_url_[${index}]`] = `Invalid URL for image in descriptor at ${path}.`
           }
 
           const validSizes = ['xs', 'md', 'sm', 'lg']
           if (!validSizes.includes(size_type)) {
-            errorObj[
-              `image_size_[${index}]`
-            ] = `Invalid image size in descriptor. It should be one of: ${validSizes.join(', ')} at ${path}.`
+            errorObj[`${path}.image_size_[${index}]`] =
+              `Invalid image size in descriptor, should be one of: ${validSizes.join(', ')} at ${path}.`
           }
         })
       }
 
       //validate name only if checkCode is false or name is present
-      if (!checkCode || descriptor.name) {
-        if (!descriptor.name.trim()) {
-          errorObj.name = `name cannot be empty at ${path}.`
+      if (!checkCode || descriptor?.name) {
+        if (!descriptor?.name?.trim()) {
+          errorObj[`${path}.name`] = `descriptor.name is missing or empty ${path}.`
         }
       }
 
-      if (descriptor.short_desc) {
+      if (descriptor?.short_desc) {
         if (!descriptor.short_desc.trim()) {
-          errorObj.short_desc = `short_desc cannot be empty at ${path}.`
+          errorObj[`${path}.short_desc`] = `descriptor.short_desc is empty at ${path}.`
         }
       }
 
-      if (descriptor.long_desc) {
+      if (descriptor?.long_desc) {
         if (!descriptor.long_desc.trim()) {
-          errorObj.long_desc = `long_desc cannot be empty at ${path}.`
+          errorObj[`${path}.long_desc`] = `descriptor.long_desc is empty at ${path}.`
         }
       }
     }
@@ -495,7 +515,7 @@ export const validateProvider = (provider: any, action: string) => {
     }
 
     // send true as last argument in case if descriptor.code validation is required
-    const descriptorError = validateDescriptor(provider?.descriptor, action, `provider.descriptor`, false)
+    const descriptorError = validateDescriptor(provider?.descriptor, action, `provider.descriptor`, false, [])
     if (descriptorError) Object.assign(providerErrors, descriptorError)
     return providerErrors
   } catch (error: any) {
@@ -508,19 +528,31 @@ export const validateXInput = (xinput: any, j: number, action: string, currIndex
   if (!xinput || typeof xinput !== 'object') {
     errors[`item${j}_xinput`] = `xinput is missing or not an object in items[${j}]`
   } else {
-    const head = xinput.head
-    const form = xinput.form
+    const head = xinput?.head
+    const form = xinput?.form
 
     if (!head || typeof head !== 'object') {
       errors[`item${j}_xinput_head`] = `head is missing or not an object in items[${j}].xinput`
     } else {
-      const descriptor = head.descriptor
-      const index = head.index
-      const headings = head.headings
+      const descriptor = head?.descriptor
+      const index = head?.index
+      const headings = head?.headings
+      const loanType: any = getValue(`LoanType`)
+      const formHeading: any = getFormHeading(action, loanType)
+      console.log('formHeading', formHeading)
 
-      if (!descriptor || typeof descriptor !== 'object' || !descriptor.name || typeof descriptor.name !== 'string') {
-        errors[`item${j}_xinput_head_descriptor`] = `descriptor is missing or invalid in items[${j}].xinput.head`
+      console.log('formHeadingjqwdjwqnfjewnfjewn', formHeading, loanType, currIndex, formHeading[currIndex])
+
+      if (!descriptor) {
+        errors[`item${j}_xinput_head_descriptor`] = `descriptor is missing at items[${j}].xinput.head`
+      } else if (!descriptor?.name) {
+        errors[`item${j}_xinput_head_descriptor`] = `descriptor.name is missing at items[${j}].xinput.head`
       }
+      // } else if (formHeading?.length && formHeading[currIndex] )
+      // {
+      //   errors[`item${j}_xinput_head_descriptor`] =
+      //     `descriptor.name should be ${formHeading[currIndex]} at items[${j}].xinput.head form heading ${formHeading} ${formHeading?.length} ${formHeading[currIndex]} ${descriptor?.name} != ${formHeading[currIndex]}`
+      // }
 
       console.log('currIndex', currIndex)
 
@@ -531,37 +563,33 @@ export const validateXInput = (xinput: any, j: number, action: string, currIndex
       if (
         !index ||
         typeof index !== 'object' ||
-        typeof index.min !== 'number' ||
-        typeof index.cur !== 'number' ||
-        typeof index.max !== 'number'
+        typeof index?.min !== 'number' ||
+        typeof index?.cur !== 'number' ||
+        typeof index?.max !== 'number'
       ) {
-        errors[`item${j}_xinput_head_index`] = `index is missing or invalid in items[${j}].xinput.head`
-      } else if (index.cur < index.min || index.cur > index.max) {
+        errors[`item${j}_xinput_head_index`] = `index is missing or incomplete in items[${j}].xinput.head`
+      } else if (index?.cur < index?.min || index?.cur > index?.max) {
         errors[`item${j}_xinput_head_index`] = `cur should be between min and max in items[${j}].xinput.head.index`
       }
 
-      const insuranceType: any = getValue(`insuranceType`)
-      if (insuranceType && action) {
-        const formHeading: any = getFormHeading(action, insuranceType)
-
-        if (!headings || !Array.isArray(headings) || formHeading.length !== index.max + 1) {
-          errors[`item${j}_xinput_head_index`] = `max value should be ${
-            formHeading?.length - 1
-          } in items[${j}].xinput.head`
-        }
+      if (!headings || isEmpty(headings)) {
+        errors[`item${j}_xinput_head_headings`] = `headings is missing or empty at items[${j}].xinput.head`
+      } else if (!headings || !Array.isArray(headings) || headings?.length !== index?.max + 1) {
+        errors[`item${j}_xinput_head_headings`] = `max value should be ${
+          formHeading?.length - 1
+        } in items[${j}].xinput.head ${formHeading?.length} ${index?.max + 1}`
       }
     }
 
-    if (!form || typeof form !== 'object') {
-      errors[`item${j}_xinput_form`] = `form is missing or not an object in items[${j}].xinput`
+    if (!form) {
+      errors[`item${j}_xinput_form`] = `form is missing at items[${j}].xinput`
     } else {
-      const url = form.url
-      const id = form.id
+      const url = form?.url
+      const id = form?.id
 
       if (!url || typeof url !== 'string' || !isValidUrl(url)) {
-        errors[
-          `item${j}_xinput_form_url`
-        ] = `url is missing, not a string, or not a valid URL in items[${j}].xinput.form`
+        errors[`item${j}_xinput_form_url`] =
+          `url is missing, not a string, or not a valid URL in items[${j}].xinput.form`
       }
 
       if (!id || typeof id !== 'string') {
@@ -614,6 +642,17 @@ export const validateQuote = (onSelect: any, action: string) => {
       'OTHER_CHARGES',
       'PROCESSING_FEE',
     ]
+
+    if (action.includes(FisApiSequence.ON_UPDATE)) {
+      const flow = getValue('flow')
+      if (flow == fisFlows.FORECLOSURE_PERSONAL) {
+        validBreakupItems.push(...['OUTSTANDING_PRINCIPAL', 'FORCLOSUER_CHARGES', 'OUTSTANDING_INTEREST'])
+      } else if (flow == fisFlows.PRE_PART_PERSONAL) {
+        validBreakupItems.push(...['OUTSTANDING_PRINCIPAL', 'PRE_PAYMENT_CHARGE', 'OUTSTANDING_INTEREST'])
+      } else if (flow == fisFlows.MISSED_EMI_PERSONAL) {
+        validBreakupItems.push(...['LATE_FEE_AMOUNT'])
+      }
+    }
 
     const requiredBreakupItems = validBreakupItems.filter((item) =>
       quoteBreakup.some((breakupItem: any) => breakupItem.title.toUpperCase() === item),
@@ -668,32 +707,53 @@ export const validateBAPItem = (select: any, action: string, prevCall: string, s
       const selectedItemId = new Set()
 
       select?.items?.forEach((item: any, index: number) => {
+        const key = `item[${index}]`
         // Validate item id
         if (!item?.id) {
           errorObj[`item[${index}].id`] = `id should be present at item[${index}] /$${action}`
         } else {
           selectedItemId?.add(item?.id)
           if (itemId && !itemId.includes(item.id)) {
-            const key = `item[${index}].item_id`
-            errorObj[
-              key
-            ] = `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
+            errorObj[`${key}.item_id`] =
+              `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
           }
         }
 
         // Validate parent_item_id
         if (version == '2.1.0') {
           if (!item?.parent_item_id) errorObj.parent_item_id = `sub-parent_item_id not found in providers[${index}]`
-          else if (!_.isEqual(item.parent_item_id, parentItemId)) {
-            setValue('parentItemId', item.parent_item_id)
-            errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id from past call in providers[${index}]`
+          else {
+            if (sequence == 'select_1' && version == '2.1.0') {
+              if (itemId && !itemId.includes(item.parent_item_id)) {
+                setValue('parentItemId', item.parent_item_id)
+                errorObj[`${key}.parent_item_id`] =
+                  `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id from past call in providers[${index}]`
+              }
+            } else {
+              if (parentItemId && !parentItemId.includes(item.parent_item_id)) {
+                setValue('parentItemId', item.parent_item_id)
+                errorObj[`${key}.parent_item_id`] =
+                  `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id from past call in providers[${index}]`
+              }
+            }
           }
         }
 
         //validate xInput form
-        const xinputErrors = validateXInputSubmission(item?.xinput, index, sequence)
+        const xinputErrors =
+          version == '2.1.0' && sequence == 'select_1' ? null : validateXInputSubmission(item?.xinput, index, sequence)
         Object.assign(errorObj, xinputErrors)
       })
+
+      if (sequence == 'select_1' && version == '2.1.0') {
+        const parentItemIds = select?.items
+          ?.map((item: any) => {
+            return item?.parent_item_id
+          })
+          ?.filter((item: string) => !!item)
+
+        setValue('parentItemId', parentItemIds)
+      }
 
       setValue('selectedItemId', selectedItemId)
     }

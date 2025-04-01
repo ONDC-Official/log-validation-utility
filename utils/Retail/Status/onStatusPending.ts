@@ -1,7 +1,8 @@
 /* eslint-disable no-prototype-builtins */
 import _ from 'lodash'
-import constants, { ApiSequence } from '../../../constants'
+import constants, { ApiSequence, PAYMENT_STATUS } from '../../../constants'
 import { logger } from '../../../shared/logger'
+import { FLOW } from '../../../utils/enum'
 import {
   validateSchema,
   isObjectEmpty,
@@ -15,14 +16,22 @@ import { getValue, setValue } from '../../../shared/dao'
 export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fulfillmentsItemsSet: any) => {
   const onStatusObj: any = {}
   try {
+    const onConfirmOrderState = getValue('onCnfrmState')
     if (!data || isObjectEmpty(data)) {
+      if (onConfirmOrderState === "Accepted")
+        return
       return { [ApiSequence.ON_STATUS_PENDING]: 'JSON cannot be empty' }
     }
     const flow = getValue('flow')
     const { message, context }: any = data
     if (!message || !context || isObjectEmpty(message)) {
+      if (onConfirmOrderState === "Accepted")
+        return
       return { missingFields: '/context, /message, is missing or empty' }
     }
+
+    if (onConfirmOrderState === "Accepted")
+      return { errmsg: "When the onConfirm Order State is 'Accepted', the on_status_pending is not required!" }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_STATUS, data)
@@ -154,6 +163,7 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
 
     try {
       logger.info(`Validating order state`)
+      setValue('orderState', on_status.state)
       if (on_status.state !== 'Accepted') {
         onStatusObj[`order_state`] =
           `Order state should be accepted whenever Status is being sent 'Accepted'. Current state: ${on_status.state}`
@@ -192,19 +202,29 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
         `!!Error occurred while comparing order updated at for /${constants.ON_STATUS}_${state}, ${error.stack}`,
       )
     }
-
     try {
       logger.info(`Checking if transaction_id is present in message.order.payment`)
       const payment = on_status.payment
-      const status = payment_status(payment)
+      const status = payment_status(payment, flow)
       if (!status) {
         onStatusObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
       }
     } catch (err: any) {
       logger.error(`Error while checking transaction is in message.order.payment`)
     }
-
-    if (flow == '6') {
+    try {
+      if (flow === FLOW.FLOW2A) {
+        logger.info('Payment status check in on status pending call')
+        const payment = on_status.payment
+        if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
+          logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`);
+          onStatusObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
+        }
+      }
+    } catch (err: any) {
+      logger.error('Error while checking payment in message/order/payment: ' + err.message);
+    }
+    if (flow === '6' || flow === '2' || flow === '3' || flow === '5') {
       try {
         // For Delivery Object
         const fulfillments = on_status.fulfillments

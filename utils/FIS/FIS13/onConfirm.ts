@@ -1,7 +1,7 @@
 /* eslint-disable no-prototype-builtins */
-import constants, { FisApiSequence } from '../../../constants'
+import constants from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, isValidEmail, isValidPhoneNumber } from '../../'
+import { validateSchema, isObjectEmpty } from '../../'
 import { getValue, setValue } from '../../../shared/dao'
 import {
   checkUniqueCategoryIds,
@@ -9,19 +9,19 @@ import {
   validateContext,
   validateDescriptor,
   validateDocuments,
-  // validateFulfillments,
-  // validatePayments,
+  validateFulfillmentsArray,
+  validatePaymentObject,
   validateProvider,
   validateQuote,
 } from './fisChecks'
-import { validateItemsTags } from './tags'
-import _ from 'lodash'
+import { validateGeneralInfo } from './tags'
+import _, { isEmpty } from 'lodash'
 
 export const checkOnConfirm = (data: any, msgIdSet: any) => {
-  const onCnfrmObj: any = {}
   try {
+    const errorObj: any = {}
     if (!data || isObjectEmpty(data)) {
-      return { [FisApiSequence.ON_CONFIRM]: 'JSON cannot be empty' }
+      return { [constants.ON_CONFIRM]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data
@@ -33,37 +33,38 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
     const contextRes: any = validateContext(context, msgIdSet, constants.CONFIRM, constants.ON_CONFIRM)
 
     if (schemaValidation !== 'error') {
-      Object.assign(onCnfrmObj, schemaValidation)
+      Object.assign(errorObj, schemaValidation)
     }
 
     if (!contextRes?.valid) {
-      Object.assign(onCnfrmObj, contextRes.ERRORS)
+      Object.assign(errorObj, contextRes.ERRORS)
     }
-
-    setValue(`${FisApiSequence.ON_CONFIRM}`, data)
 
     const on_confirm = message.order
-    const itemIDS: any = getValue('ItmIDS')
-    const itemIdArray: any[] = []
+    const insurance: any = getValue('insurance')
+    const isAddOnPresent = getValue('isAddOnPresent')
 
-    let newItemIDSValue: any[]
-
-    if (itemIDS && itemIDS.length > 0) {
-      newItemIDSValue = itemIDS
-    } else {
-      on_confirm.items.map((item: { id: string }) => {
-        itemIdArray.push(item.id)
-      })
-      newItemIDSValue = itemIdArray
+    if (!on_confirm?.created_at) errorObj.created_at = `created_at in missing at message.order`
+    else {
+      setValue('created_at', on_confirm?.created_at)
+      if (context?.timestamp < on_confirm?.created_at)
+        errorObj.created_at = `created_at should be either equal or less than context.timestamp`
     }
+    if (!on_confirm?.updated_at) errorObj.updated_at = `updated_at in missing at message.order`
+    else {
+      setValue('updated_at', on_confirm?.updated_at)
+      if (context?.timestamp < on_confirm?.updated_at)
+        errorObj.updated_at = `updated_at should be either equal or less than context.timestamp`
 
-    setValue('ItmIDS', newItemIDSValue)
+      if (on_confirm?.created_at && on_confirm?.updated_at != on_confirm?.created_at)
+        errorObj.updated_at = `updated_at should match created_at`
+    }
 
     //validate id
     try {
       logger.info(`Checking id in message object  /${constants.ON_CONFIRM}`)
       if (!on_confirm?.id) {
-        onCnfrmObj.id = `Id in message object must be present/${constants.ON_CONFIRM}`
+        errorObj.id = `Id in message object must be present/${constants.ON_CONFIRM}`
       } else {
         setValue('orderId', on_confirm?.id)
       }
@@ -75,9 +76,9 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
     try {
       logger.info(`Checking status in message object  /${constants.ON_CONFIRM}`)
       if (!on_confirm?.status) {
-        onCnfrmObj.status = `status in message object must be present/${constants.ON_CONFIRM}`
+        errorObj.status = `status in message object must be present/${constants.ON_CONFIRM}`
       } else if (on_confirm?.status !== 'ACTIVE')
-        onCnfrmObj.status = `status should be a generic enum 'ACTIVE' at /${constants.ON_CONFIRM}`
+        errorObj.status = `status should be a generic enum 'ACTIVE' at /${constants.ON_CONFIRM}`
     } catch (error: any) {
       logger.error(`!!Error while checking status in message object  /${constants.ON_CONFIRM}, ${error.stack}`)
     }
@@ -86,9 +87,15 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
     try {
       logger.info(`Checking provider id /${constants.ON_CONFIRM}`)
       const providerErrors = validateProvider(on_confirm?.provider, constants.ON_CONFIRM)
-      Object.assign(on_confirm, providerErrors)
+      Object.assign(errorObj, providerErrors)
     } catch (error: any) {
       logger.error(`!!Error while checking provider id /${constants.ON_CONFIRM}, ${error.stack}`)
+    }
+
+    //check fulfillments
+    const fulfillmentValidation: string[] = validateFulfillmentsArray(on_confirm?.fulfillments, 'on_confirm')
+    if (fulfillmentValidation.length > 0) {
+      errorObj.fulfillments = fulfillmentValidation
     }
 
     //checks items
@@ -96,35 +103,37 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
       logger.info(`Comparing item in /${constants.ON_CONFIRM}`)
 
       if (_.isEmpty(on_confirm?.items)) {
-        onCnfrmObj['items'] = 'items array is missing or empty in message.order'
+        errorObj['items'] = 'items array is missing or empty in message.order'
       } else {
         const selectedItemId = getValue('selectedItemId')
         const categoriesId = getValue(`${constants.ON_SEARCH}categoryId`)
+        const fullIds = getValue('fulfillmentIds')
         on_confirm.items.forEach((item: any, index: number) => {
           if (selectedItemId && !selectedItemId.includes(item.id)) {
             const key = `item[${index}].item_id`
-            onCnfrmObj[
-              key
-            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
-          }
-
-          // Validate parent_item_id
-          if (!item?.parent_item_id) onCnfrmObj.parent_item_id = `parent_item_id not found in providers[${index}]`
-          else {
-            const parentItemId: any = getValue('parentItemId')
-            if (parentItemId && !parentItemId.has(item?.parent_item_id)) {
-              onCnfrmObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id's from past call in providers[${index}]`
-            }
+            errorObj[key] =
+              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
           }
 
           // Validate category_ids
           if (_.isEmpty(item.category_ids)) {
-            onCnfrmObj.category_ids = `category_ids is missing or empty at items[${index}]`
+            errorObj.category_ids = `category_ids is missing or empty at items[${index}]`
           } else {
             const areCategoryIdsUnique = checkUniqueCategoryIds(item.category_ids, categoriesId)
             if (!areCategoryIdsUnique) {
               const key = `item${index}_category_ids`
-              onCnfrmObj[key] = `category_ids value in items[${index}] should match with id provided in categories`
+              errorObj[key] = `category_ids value in items[${index}] should match with id provided in categories`
+            }
+          }
+
+          // Validate fulfillment_ids
+          if (_.isEmpty(item.fulfillment_ids)) {
+            errorObj.fulfillment_ids = `fulfillment_ids is missing or empty at items[${index}]`
+          } else {
+            const areFulfillmentIdsUnique = checkUniqueCategoryIds(item.fulfillment_ids, fullIds)
+            if (!areFulfillmentIdsUnique) {
+              const key = `item${index}_fulfillment_ids`
+              errorObj[key] = `fulfillment_ids value in items[${index}] should match with id provided in fulfillments`
             }
           }
 
@@ -134,64 +143,108 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
             constants.ON_CONFIRM,
             `items[${index}].descriptor`,
             false,
+            [],
           )
-          if (descriptorError) Object.assign(onCnfrmObj, descriptorError)
+          if (descriptorError) Object.assign(errorObj, descriptorError)
+
+          // Validate price
+          const price = item?.price
+          if (!price) errorObj[`items[${index}].price`] = `price is missing at items[${index}]`
+          else {
+            if (!price?.currency) errorObj[`items[${index}].currency`] = `currency is missing at items[${index}].price`
+            if (!price?.value) errorObj[`items[${index}].value`] = `value is missing at items[${index}].price`
+          }
 
           // Validate time
           if (_.isEmpty(item?.time)) {
-            onCnfrmObj.time = `time is missing or empty at items[${index}]`
+            errorObj.time = `time is missing or empty at items[${index}]`
           } else {
             const time = item?.time
-            if (time?.label && time?.label !== 'TENURE')
-              onCnfrmObj['time.label'] = `label is missing or should be equal to TENURE at items[${index}]`
+            //Coverage Time -> MARINE
+            const label = insurance == 'MARINE_INSURANCE' ? 'Coverage Time' : 'TENURE'
+            if (time?.label && time?.label !== label)
+              errorObj['time.label'] = `label is missing or should be equal to  ${label} at items[${index}]`
 
-            if (time?.duration && !/^PT\d+([YMH])$/.test(time?.duration)) {
-              onCnfrmObj['time.duration'] = `duration is missing at items[${index}]`
-            } else if (!/^PT\d+[MH]$/.test(time?.duration)) {
-              onCnfrmObj['time.duration'] = `incorrect format or type for duration at items[${index}]`
+            if (insurance != 'MARINE_INSURANCE') {
+              if (!time?.duration) {
+                errorObj['time.duration'] = `duration is missing at items[${index}]`
+              } else if (!/^P(?:(\d+Y)?(\d+M)?(\d+W)?(\d+D)?)?(T(?:(\d+H)?(\d+M)?(\d+S)?))?$/.test(time?.duration)) {
+                errorObj['time.duration'] = `incorrect format or type for duration at items[${index}]`
+              }
+            } else {
+              if (!time?.range || !time?.range?.start || !time?.range?.end) {
+                errorObj['time.range'] = `range.start/end is missing at items[${index}].time`
+              }
             }
           }
 
-          // Validate add_ons
-          try {
-            logger.info(`Checking add_ons`)
-            if (_.isEmpty(item?.add_ons))
-              onCnfrmObj[`item[${index}]_add_ons`] = `add_ons array is missing or empty in ${constants.ON_CONFIRM}`
+          // checks (parent_item_id & add_ons) for MOTOR & HEATLH, time for MARINE
+          if (insurance != 'MARINE_INSURANCE') {
+            // Validate parent_item_id
+            if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in providers[${index}]`
             else {
-              const selectedAddOnIds: any = getValue(`selectedAddOnIds`)
-              item?.add_ons?.forEach((addOn: any, j: number) => {
-                const key = `item[${index}]_add_ons[${j}]`
-
-                if (!addOn?.id) {
-                  onCnfrmObj[`${key}.id`] = `id is missing in add_ons[${j}]`
-                } else {
-                  if (selectedAddOnIds && !selectedAddOnIds.has(addOn?.id)) {
-                    onCnfrmObj[`${key}.id`] = `id: ${addOn?.id} not found in previous provided add_ons`
-                  }
-                }
-
-                if (!addOn?.descriptor?.code || !/^[A-Z_]+$/.test(addOn?.descriptor?.code))
-                  onCnfrmObj[`${key}.code`] = 'code should be present in a generic enum format'
-
-                if (
-                  !addOn?.quantity.selected ||
-                  !Number.isInteger(addOn?.quantity.selected) ||
-                  addOn?.quantity.selected <= 0
-                ) {
-                  onCnfrmObj[`${key}.code`] = 'Invalid quantity.selected count'
-                }
-              })
+              const parentItemId: any = getValue('parentItemId')
+              if (parentItemId && !parentItemId.includes(item?.parent_item_id)) {
+                errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id's from past call in providers[${index}]`
+              }
             }
 
-            return onCnfrmObj
-          } catch (error: any) {
-            logger.error(`!!Error while checking add_ons in /${constants.ON_CONFIRM}, ${error.stack}`)
+            // Validate add_ons
+            try {
+              if (isAddOnPresent) {
+                logger.info(`Checking add_ons`)
+                if (_.isEmpty(item?.add_ons))
+                  errorObj[`item[${index}]_add_ons`] = `add_ons array is missing or empty in ${constants.ON_CONFIRM}`
+                else {
+                  const selectedAddOnIds: any = getValue(`selectedAddOnIds`)
+                  item?.add_ons?.forEach((addOn: any, j: number) => {
+                    const key = `item[${index}]_add_ons[${j}]`
+
+                    if (!addOn?.id) {
+                      errorObj[`${key}.id`] = `id is missing in add_ons[${j}]`
+                    } else {
+                      if (selectedAddOnIds && !selectedAddOnIds.has(addOn?.id)) {
+                        errorObj[`${key}.id`] = `id: ${addOn?.id} not found in previous provided add_ons`
+                      }
+                    }
+
+                    const price = addOn?.price
+                    if (!price) errorObj[`${key}.price`] = `price is missing at items[${index}]`
+                    else {
+                      if (!price?.currency) errorObj[`${key}.currency`] = `currency is missing at items[${index}].price`
+                      if (!price?.value) errorObj[`${key}.value`] = `value is missing at items[${index}].price`
+                    }
+
+                    if (!addOn?.descriptor?.code || !/^[A-Z_]+$/.test(addOn?.descriptor?.code))
+                      errorObj[`${key}.code`] = 'code should be present in a generic enum format'
+
+                    if (!addOn?.quantity?.selected?.count) {
+                      errorObj[`${key}.code`] = 'quantity.count is missing in add_ons'
+                    } else if (
+                      !Number.isInteger(addOn?.quantity.selected.count) ||
+                      addOn?.quantity.selected.count <= 0
+                    ) {
+                      errorObj[`${key}.code`] = 'Invalid quantity.selected count'
+                    }
+                  })
+                }
+              }
+            } catch (error: any) {
+              logger.error(`!!Error while checking add_ons in /${constants.ON_CONFIRM}, ${error.stack}`)
+            }
           }
 
           // Validate Item tags
-          const tagsValidation = validateItemsTags(item?.tags)
+          // let tagsValidation: any = {}
+          // if (insurance == 'MARINE_INSURANCE') {
+          //   tagsValidation = validatePolicyDetails(item?.tags, constants.ON_CONFIRM)
+          // } else {
+          const tagsValidation = validateGeneralInfo(item?.tags, constants.ON_CONFIRM)
+          // tagsValidation = validateItemsTags(item?.tags)
+          // }
           if (!tagsValidation.isValid) {
-            Object.assign(onCnfrmObj, { tags: tagsValidation.errors })
+            // Object.assign(errorObj, { tags: tagsValidation.errors })
+            errorObj[`items.tags[${index}]`] = { ...tagsValidation.errors }
           }
         })
       }
@@ -199,68 +252,45 @@ export const checkOnConfirm = (data: any, msgIdSet: any) => {
       logger.error(`!!Error while checking items object in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
-    //check fulfillments
-    try {
-      logger.info(`checking fulfillments array in /${constants.ON_INIT}`)
-      const fulfillments = on_confirm.fulfillments
-      if (!fulfillments) {
-        onCnfrmObj.fulfillments = `fulfillments should be present & non empty in /${constants.ON_INIT}`
-      } else {
-        fulfillments?.map((fulfillment: any, i: number) => {
-          if (!fulfillment?.person?.name || typeof fulfillment?.person?.name !== 'string')
-            onCnfrmObj.name = `person.name should be present with valid value in fulfillment${i} at /${constants.ON_INIT}`
-
-          if (!fulfillment?.contact?.email || !isValidEmail(fulfillment?.contact?.email))
-            onCnfrmObj.email = `contact.email should be present with valid email in fulfillment${i} at /${constants.ON_INIT}`
-
-          if (!fulfillment?.contact?.phone || !isValidPhoneNumber(fulfillment?.contact?.phone))
-            onCnfrmObj.phone = `contact.phone should be present with valid number in fulfillment${i} at /${constants.ON_INIT}`
-
-          if (fulfillment?.state?.descriptor?.code != 'GRANTED')
-            onCnfrmObj[`fulfillments.state`] = `code should be 'GRANTED' in fulfillment${i} at /${constants.ON_INIT}`
-        })
-      }
-    } catch (error: any) {
-      logger.error(`!!Error while checking fulfillments array in /${constants.ON_INIT}, ${error.stack}`)
-    }
-
     //check quote
     try {
       logger.info(`Checking quote details in /${constants.ON_CONFIRM}`)
       const quoteErrors = validateQuote(on_confirm?.quote)
-      Object.assign(onCnfrmObj, quoteErrors)
+      Object.assign(errorObj, quoteErrors)
     } catch (error: any) {
       logger.error(`!!Error while checking quote details in /${constants.ON_CONFIRM}`, error.stack)
     }
 
     //check payments
-    // try {
-    //   logger.info(`Checking payments details in /${constants.ON_CONFIRM}`)
-    //   const paymentErrors = validatePayments(on_confirm?.payments, constants.ON_CONFIRM, on_confirm?.quote)
-    //   Object.assign(onCnfrmObj, paymentErrors)
-    // } catch (error: any) {
-    //   logger.error(`!!Error while checking payments details in /${constants.ON_CONFIRM}`, error.stack)
-    // }
+    try {
+      logger.info(`Checking payments details in /${constants.ON_CONFIRM}`)
+      const paymentErrors = validatePaymentObject(on_confirm?.payments, constants.ON_CONFIRM)
+      Object.assign(errorObj, paymentErrors)
+    } catch (error: any) {
+      logger.error(`!!Error while checking payments details in /${constants.ON_CONFIRM}`, error.stack)
+    }
 
     //check cancellation terms
-    try {
-      logger.info(`Checking cancellation terms in /${constants.ON_CONFIRM}`)
-      const cancellationErrors = validateCancellationTerms(on_confirm?.cancellation_terms, constants.ON_CONFIRM)
-      Object.assign(onCnfrmObj, cancellationErrors)
-    } catch (error: any) {
-      logger.error(`!!Error while checking cancellation_terms in /${constants.ON_CONFIRM}, ${error.stack}`)
+    if (insurance != 'MOTOR_INSURANCE') {
+      try {
+        logger.info(`Checking cancellation terms in /${constants.ON_CONFIRM}`)
+        const cancellationErrors = validateCancellationTerms(on_confirm?.cancellation_terms)
+        if (!isEmpty(cancellationErrors)) Object.assign(errorObj, cancellationErrors)
+      } catch (error: any) {
+        logger.error(`!!Error while checking cancellation_terms in /${constants.ON_CONFIRM}, ${error.stack}`)
+      }
     }
 
     //check documents
     try {
       logger.info(`Checking documents in /${constants.ON_CONFIRM}`)
-      const cancellationErrors = validateDocuments(on_confirm?.documents, constants.ON_CONFIRM)
-      Object.assign(onCnfrmObj, cancellationErrors)
+      const documentsErrors = validateDocuments(on_confirm?.documents, constants.ON_CONFIRM)
+      Object.assign(errorObj, documentsErrors)
     } catch (error: any) {
       logger.error(`!!Error while checking documents in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
-    return onCnfrmObj
+    return errorObj
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.ON_CONFIRM} API`, JSON.stringify(err.stack))
     return { error: err.message }

@@ -52,6 +52,19 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
       errorObj.contextCityError = 'context/city should be "*" while sending search_inc_catalog request'
     }
 
+    const onSearchContext: any = getValue(`${ApiSequence.ON_SEARCH}_context`)
+    try {
+      logger.info(`Comparing timestamp of /${constants.ON_SEARCH} and /${constants.INC_SEARCH}}`)
+      const tmpstmp = onSearchContext?.timestamp
+      if (_.gte(tmpstmp, context.timestamp)) {
+        errorObj.tmpstmp = `Timestamp for /${constants.ON_SEARCH} api cannot be greater than or equal to /${constants.INC_SEARCH} api`
+      }
+    } catch (error: any) {
+      logger.info(
+        `Error while comparing timestamp for /${constants.ON_SEARCH} and /${constants.INC_SEARCH}} api, ${error.stack}`,
+      )
+    }
+
     const buyerFF = parseFloat(message.intent?.payment?.['@ondc/org/buyer_app_finder_fee_amount'])
 
     if (isNaN(buyerFF)) {

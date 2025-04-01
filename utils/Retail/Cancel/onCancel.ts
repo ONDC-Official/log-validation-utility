@@ -12,6 +12,7 @@ import {
   payment_status,
   mapCancellationID,
   checkQuoteTrail,
+  checkQuoteTrailSum,
 } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -327,26 +328,8 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
           const key = `CancelFulfillmentMissing`
           onCnclObj[key] = `fulfillment type cancel is missing in /${constants.ON_CANCEL}`
         }
-        for (let obj of cancelFulfillments) {
-          let quoteTrailSum = 0
-          const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
-          for (let item of quoteTrailItems) {
-            for (let val of item.list) {
-              if (val.code === 'value') {
-                quoteTrailSum += Math.abs(val.value)
-              }
-            }
-          }
-          quoteTrailSum = Number(quoteTrailSum.toFixed(2))
-          if (priceAtConfirm != price + quoteTrailSum) {
-            const key = `invldQuoteTrailPrices`
-            onCnclObj[key] =
-              `quote_trail price and item quote price sum for ${constants.ON_CANCEL} should be equal to the price as in ${constants.ON_CONFIRM}`
-            logger.error(
-              `quote_trail price and item quote price sum for ${constants.ON_CANCEL} should be equal to the price as in ${constants.ON_CONFIRM} `,
-            )
-          }
-        }
+        checkQuoteTrailSum(cancelFulfillments, price, priceAtConfirm, onCnclObj, ApiSequence.ON_CANCEL)
+
       } else {
         logger.error(`The price breakdown in brakup does not match with the total_price for ${constants.ON_CANCEL}`)
       }
@@ -549,7 +532,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
     try {
       logger.info(`Checking if transaction_id is present in message.order.payment`)
       const payment = on_cancel.payment
-      const status = payment_status(payment)
+      const status = payment_status(payment, flow)
       if (!status) {
         onCnclObj['message/order/transaction_id'] = `Transaction_id missing in message/order/payment`
       }
@@ -587,6 +570,8 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
           const key = `missingRTO`
           onCnclObj[key] = `RTO object is mandatory for ${constants.ON_CANCEL}`
         } else {
+        setValue('RTO_Obj', RTOobj[0])
+        setValue('cnfrmpymnt', on_cancel.payment)
           for (let item of RTOobj) {
             const validVal = ['RTO-Initiated', 'RTO-Delivered', 'RTO-Disposed']
             if (!validVal.includes(item.state?.descriptor?.code)) {
@@ -637,6 +622,11 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
                 }
               }
             }
+            else {
+              if (!_.isEmpty(rto_obj_end.time)) {
+                onCnclObj[`rtoFFObj/end/time`] = `fulfillment type rto end/time should not be present in /${constants.ON_CANCEL} when state/desc/code is RTO-Initiated`
+              }
+            }
             if (!_.isEmpty(rto_obj_end?.location)) {
               rto_end_location = rto_obj_end.location
             }
@@ -654,7 +644,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
           const key = `missingDelivery`
           onCnclObj[key] = `Delivery object is mandatory for ${constants.ON_CANCEL}`
         } else {
-
+          setValue('DEL_Obj', DELobj[0])
           // Checking for start object inside Delivery
           if (!_.isEmpty(DELobj[0]?.start)) {
             const del_obj_start = DELobj[0]?.start
@@ -702,6 +692,15 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
         if (!_.isEmpty(rto_end_location) && !_.isEmpty(del_start_location)) {
           if (!_.isEqual(rto_end_location?.address, del_start_location?.address)) {
             onCnclObj['RTO.end.location/DeliveryFulfillment.start.location'] = `RTO fulfillment end and Delivery fulfillment start location mismatch in ${constants.ON_CANCEL}`
+          }
+          if (_.isEmpty(rto_end_location?.id)) {
+            onCnclObj['RTO.end.location/id'] = `RTO fulfillment end location id missing in ${constants.ON_CANCEL}`
+          }
+          if (_.isEmpty(del_start_location?.id)) {
+            onCnclObj['DeliveryFulfillment.start.location/id'] = `Delivery fulfillment start location id missing in ${constants.ON_CANCEL}`
+          }
+          if (!_.isEqual(rto_end_location?.id, del_start_location?.id)) {
+            onCnclObj['RTO.end.location/DeliveryFulfillment.start.location/id'] = `RTO fulfillment end and Delivery fulfillment start location id mismatch in ${constants.ON_CANCEL}`
           }
         } else {
           onCnclObj['RTO.end.location/DeliveryFulfillment.start.location'] = `RTO fulfillment end or Delivery fulfillment start location is missing in ${constants.ON_CANCEL}`
@@ -860,9 +859,22 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
                 onCnclObj[key] = `precancel_state.updated_at of ${constants.ON_CANCEL} is not equal with the ${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} order.updated_at`
               }
             }
+            const fulfillmentStateObj = _.filter(preCancelObj[0]?.list, { code: 'fulfillment_state' })
+            if (!fulfillmentStateObj.length) {
+              logger.error(`Pre Cancel fulfillment state is mandatory for ${constants.ON_CANCEL}`)
+              const key = `missingPrecancelFulfillmentState`
+              onCnclObj[key] = `Pre Cancel fulfillment state is mandatory for ${constants.ON_CANCEL}`
+            }
+            else {
+              if (!_.isEqual(getValue('ffIdPrecancel'), fulfillmentStateObj[0].value)) {
+                logger.error(`precancel_state.fulfillment_state of ${constants.ON_CANCEL} is not equal with the ${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} fulfillment state`)
+                const key = `precancelState.fulfillment_state`
+                onCnclObj[key] = `precancel_state.fulfillment_state of ${constants.ON_CANCEL} is not equal with the ${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} fulfillment state`
+              }
+            }
           } catch (error: any) {
             logger.error(
-              `!!Error while comparing timestamp for /${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} and /${constants.ON_CANCEL} api, ${error.stack}`,
+              `!!Error while comparing fulfillment state for /${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} and /${constants.ON_CANCEL} api, ${error.stack}`,
             )
           }
         }

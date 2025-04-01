@@ -1,9 +1,10 @@
 /* eslint-disable no-prototype-builtins */
 import _ from 'lodash'
-import constants, { ApiSequence } from '../../../constants'
+import constants, { ApiSequence, PAYMENT_STATUS } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges, compareFulfillmentObject } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
+import { FLOW } from '../../../utils/enum'
 
 export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, fulfillmentsItemsSet: any) => {
   const onStatusObj: any = {}
@@ -196,6 +197,18 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
         `!!Error occurred while comparing order updated at for /${constants.ON_STATUS}_${state}, ${error.stack}`,
       )
     }
+    try {
+      if (flow === FLOW.FLOW2A) {
+        logger.info('Payment status check in on status packed call')
+        const payment = on_status.payment
+        if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
+          logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`);
+          onStatusObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
+        }
+      }
+    } catch (err: any) {
+      logger.error('Error while checking payment in message/order/payment: ' + err.message);
+    }
 
     try {
       logger.info(`Checking order state in /${constants.ON_STATUS}_${state}`)
@@ -206,7 +219,7 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
       logger.error(`!!Error while checking order state in /${constants.ON_STATUS}_${state} Error: ${error.stack}`)
     }
 
-    if (flow == '6') {
+    if (flow === '6' || flow === '2' || flow === '3' || flow === '5') {
       try {
         // For Delivery Object
         const fulfillments = on_status.fulfillments
@@ -220,6 +233,7 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
             const keys = Object.keys(obj1)
 
             let obj2: any = _.filter(fulfillments, { type: `${obj1.type}` })
+            let apiSeq = obj1.type === "Cancel" ? ApiSequence.ON_UPDATE_PART_CANCEL : (getValue('onCnfrmState') === "Accepted" ? (ApiSequence.ON_CONFIRM) : (ApiSequence.ON_STATUS_PENDING))
             if (obj2.length > 0) {
               obj2 = obj2[0]
               if (obj2.type == "Delivery") {
@@ -228,7 +242,8 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
                 delete obj2?.tags
                 delete obj2?.state
               }
-              const errors = compareFulfillmentObject(obj1, obj2, keys, i)
+              apiSeq = obj2.type === "Cancel" ? ApiSequence.ON_UPDATE_PART_CANCEL : (getValue('onCnfrmState') === "Accepted" ? (ApiSequence.ON_CONFIRM) : (ApiSequence.ON_STATUS_PENDING))
+              const errors = compareFulfillmentObject(obj1, obj2, keys, i, apiSeq)
               if (errors.length > 0) {
                 errors.forEach((item: any) => {
                   onStatusObj[item.errKey] = item.errMsg
@@ -236,7 +251,7 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
               }
             }
             else {
-              onStatusObj[`message/order.fulfillments/${i}`] = `Missing fulfillment type '${obj1.type}' in ${ApiSequence.ON_STATUS_PACKED} as compared to ${ApiSequence.ON_STATUS_PENDING}`
+              onStatusObj[`message/order.fulfillments/${i}`] = `Missing fulfillment type '${obj1.type}' in ${ApiSequence.ON_STATUS_PACKED} as compared to ${apiSeq}`
             }
             i++
           });

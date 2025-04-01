@@ -1,8 +1,8 @@
-import constants, { RSFapiSequence } from '../../constants/index'
+import constants, { RSFapiSequence } from '../../../constants/index'
 import _ from 'lodash'
-import { isObjectEmpty } from '../index'
-import { validateSchema } from '../index'
-import { logger } from '../../shared/logger'
+import { isObjectEmpty } from '../../index'
+import { validateSchema } from '../../index'
+import { logger } from '../../../shared/logger'
 
 const checkRsfOnReceiverRecon = (data: any) => {
   const rsfObj: any = {}
@@ -10,7 +10,6 @@ const checkRsfOnReceiverRecon = (data: any) => {
   if (!data || isObjectEmpty(data)) {
     return { [RSFapiSequence.ON_RECEIVER_RECON]: 'JSON cannot be empty' }
   }
-
   try {
     const issue: any = data
     logger.info(`Validating Schema for ${constants.ON_RECEIVER_RECON} API`)

@@ -37,35 +37,37 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
 }'
 ```
 
+# Retail Log Validation Utility - Flow Payloads
+
 The table below outlines the payload structure for various transaction flows in the Retail Log Validation Utility. Each flow corresponds to specific actions within the ONDC network, and the payload structure provides a clear representation of the data expected for each action. This comprehensive reference assists developers in constructing accurate and valid JSON payloads for their transactions.
 
-| Flow 1        | Flow 2                     | Flow 3                     | Flow 4     | Flow 5                     | Flow 6                        |
-| ------------- | -------------------------- | -------------------------- | ---------- | -------------------------- | ----------------------------- |
-| search        | search                     | search                     | search     | search                     | search                        |
-| on_search     | on_search                  | on_search                  | on_search  | on_search                  | on_search                     |
-| search_inc    | select                     | select_out_of_stock        | select     | select                     | select                        |
-| on_search_inc | on_select                  | on_select_out_of_stock     | on_select  | on_select                  | on_select                     |
-|               | init                       | select                     | init       | init                       | init                          |
-|               | on_init                    | on_select                  | on_init    | on_init                    | on_init                       |
-|               | confirm                    | init                       | confirm    | confirm                    | confirm                       |
-|               | on_confirm                 | on_init                    | on_confirm | on_confirm                 | on_confirm                    |
-|               | on_status_pending          | confirm                    | cancel     | on_status_pending          | on_update_part_cancel         |
-|               | on_status_packed           | on_confirm                 | on_cancel  | on_status_packed           | update_settlement_part_cancel |
-|               | on_status_picked           | on_status_pending          |            | on_status_picked           | on_status_pending             |
-|               | on_status_out_for_delivery | on_status_packed           |            | on_status_out_for_delivery | on_status_packed              |
-|               | on_status_delivered        | on_status_picked           |            | on_cancel                  | on_status_picked              |
-|               |                            | on_status_out_for_delivery |            |                            | on_status_out_for_delivery    |
-|               |                            | on_status_delivered        |            |                            | on_status_delivered           |
-|               |                            |                            |            |                            | update_reverse_qc             |
-|               |                            |                            |            |                            | on_update_interim_reverse_qc  |
-|               |                            |                            |            |                            | on_update_approval            |
-|               |                            |                            |            |                            | on_update_picked              |
-|               |                            |                            |            |                            | update_settlement_reverse_qc  |
-|               |                            |                            |            |                            | on_update_delivered           |
-|               |                            |                            |            |                            | update_liquidated           |
-|               |                            |                            |            |                            | on_update_interim_liquidated|
-|               |                            |                            |            |                            | on_update_liquidated          |
-|               |                            |                            |            |                            | update_settlement_liquidated|
+| Flow 1        | Flow 2                     | Flow 3                     | Flow 4     | Flow 5                           | Flow 6                        | Flow 7            | Flow 8    | Flow 9            |
+| ------------- | -------------------------- | -------------------------- | ---------- | -------------------------------- | ----------------------------- | ----------------- | --------- | ----------------- |
+| search        | search                     | search                     | search     | search                           | search                        | search            | search    | search_inc        |
+| on_search     | on_search                  | on_search                  | on_search  | on_search                        | on_search                     | on_search         | on_search | on_search_inc     |
+| search_inc    | select                     | select_out_of_stock        | select     | select                           | select                        | catalog_rejection |           | catalog_rejection |
+| on_search_inc | on_select                  | on_select_out_of_stock     | on_select  | on_select                        | on_select                     |                   |           |                   |
+|               | init                       | select                     | init       | init                             | init                          |                   |           |                   |
+|               | on_init                    | on_select                  | on_init    | on_init                          | on_init                       |                   |           |                   |
+|               | confirm                    | init                       | confirm    | confirm                          | confirm                       |                   |           |                   |
+|               | on_confirm                 | on_init                    | on_confirm | on_confirm                       | on_confirm                    |                   |           |                   |
+|               | on_status_pending          | confirm                    | cancel     | on_status_pending                | on_update_part_cancel         |                   |           |                   |
+|               | on_status_packed           | on_confirm                 | on_cancel  | on_status_packed                 | update_settlement_part_cancel |                   |           |                   |
+|               | on_status_picked           | on_status_pending          |            | on_status_picked                 | on_status_pending             |                   |           |                   |
+|               | on_status_out_for_delivery | on_status_packed           |            | on_status_out_for_delivery       | on_status_packed              |                   |           |                   |
+|               | on_status_delivered        | on_status_picked           |            | on_cancel                        | on_status_picked              |                   |           |                   |
+|               |                            | on_status_out_for_delivery |            | on_status_rto_delivered/disposed | on_status_out_for_delivery    |                   |           |                   |
+|               |                            | on_status_delivered        |            |                                  | on_status_delivered           |                   |           |                   |
+|               |                            |                            |            |                                  | update_reverse_qc             |                   |           |                   |
+|               |                            |                            |            |                                  | on_update_interim_reverse_qc  |                   |           |                   |
+|               |                            |                            |            |                                  | on_update_approval            |                   |           |                   |
+|               |                            |                            |            |                                  | on_update_picked              |                   |           |                   |
+|               |                            |                            |            |                                  | update_settlement_reverse_qc  |                   |           |                   |
+|               |                            |                            |            |                                  | on_update_delivered           |                   |           |                   |
+|               |                            |                            |            |                                  | update_liquidated             |                   |           |                   |
+|               |                            |                            |            |                                  | on_update_interim_liquidated  |                   |           |                   |
+|               |                            |                            |            |                                  | on_update_liquidated          |                   |           |                   |
+|               |                            |                            |            |                                  | update_settlement_liquidated  |                   |           |                   |
 
 ### Sample Postman Request/Response
 
@@ -548,14 +550,16 @@ curl --location 'http://localhost:3008/api/validate' \
         "on_status_pending": {},
         "on_status_packed": {},
         "on_status_picked": {},
-        "on_status_out_for_delivery": {}
+        "on_status_out_for_delivery": {},
         "on_cancel": {},
+        "on_status_rto_delivered/disposed":{}
     },
     "flow": "5"
 }'
 ```
 
 ### FOR FLOW 6
+
 ```shell
 curl --location 'http://localhost:3008/api/validate' \
 --header 'Content-Type: application/json' \
@@ -594,6 +598,63 @@ curl --location 'http://localhost:3008/api/validate' \
     "flow": "6"
 }'
 ```
+
+### FOR FLOW 7
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET18",
+    "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh": {},
+        "catalog_rejection": {}
+    },
+    "flow": "7"
+}'
+```
+
+### FOR FLOW 8
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET18",
+    "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh": {}
+    },
+    "flow": "8"
+}'
+```
+
+### FOR FLOW 9
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET18",
+    "version": "1.2.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_inc_refresh": {},
+        "on_search_inc_refresh": {},
+        "catalog_rejection": {}
+    },
+    "flow": "9"
+}'
+```
+
 ### For IGM Sample Curl Request (Local)
 
 ```shell
@@ -632,7 +693,7 @@ curl --location 'https://log-validation.ondc.org/api/validate/fis/fis12' \
     "bap_id": "BUYER_APP_SUBSCRIBER_ID",
     "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
-    "search": {},
+        "search": {},
         "on_search":{},
         "select_1": {},
         "on_select_1": {},
@@ -640,18 +701,22 @@ curl --location 'https://log-validation.ondc.org/api/validate/fis/fis12' \
         "on_select_2": {},
         "select_3": {},
         "on_select_3":{},
+        "on_status_ekyc": {},
         "init_1": {},
         "on_init_1": {},
         "init_2": {},
         "on_init_2": {},
+        "on_status_enach": {},
         "init_3": {},
         "on_init_3": {},
+        "on_status_esign": {},
         "confirm": {},
         "on_confirm": {},
         "status": {},
         "on_status": {},
         "update": {},
-        "on_update": {}
+        "on_update": {},
+        "on_update_unsolicated": {}
     }
 }'
 ```
@@ -684,6 +749,117 @@ curl --location 'https://localhost:3006/api/validate/trv' \
         "on_cancel": {}
     }
 }'
+```
+
+### For RSF V2 Sample Curl Request (Local)
+
+```shell
+curl --location 'http://localhost:3008/api/validate/rsf' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:NTS10",
+    "version": "2.0.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+
+        "settle":{},
+        "on_settle":{},
+        "report":{},
+        "on_report":{},
+        "recon":{},
+        "on_recon":{}
+                }
+        }'
+
+```
+
+### For IGM 2.0.0 Sample Curl Request (Local)
+
+### For FLOW_1
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/igm' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "",
+    "version": "2.0.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "flow": "FLOW_1",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "issue_open": {},
+        "on_issue_processing_1":{},
+        "on_issue_info_required": {},
+        "issue_info_provided": {},
+        "on_issue_processing_2": {},
+        "on_issue_resolution_proposed": {},
+        "issue_resolution_accepted": {},
+        "on_issue_resolved": {},
+        "issue_closed": {}
+    }
+}'
+
+```
+
+### For FLOW_2
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/igm' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "",
+    "version": "2.0.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "flow": "FLOW_2",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "issue_open": {},
+        "on_issue_processing": {},
+        "on_issue_resolution_proposed": {},
+        "issue_resolution_accepted": {},
+        "on_issue_resolved": {},
+        "issue_esclated": {},
+        "on_issue_gro_processing": {},
+        "on_issue_gro_resolution_proposed": {},
+        "on_issue_gro_resolved": {},
+        "issue_close": {}
+    }
+}'
+
+```
+
+### For FLOW_3
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/igm' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "",
+    "version": "2.0.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "flow": "FLOW_3",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "issue_open": {},
+        "on_issue_processing": {},
+        "issue_lsp_open": {},
+        "on_issue_lsp_processing": {},
+        "on_issue_lsp_info_required": {},
+        "on_issue_info_required": {},
+        "issue_info_provided": {},
+        "issue_info_lsp_info_provided": {},
+        "on_issue_lsp_resolution_proposed": {},
+        "on_issue_resolution_proposed": {},
+        "issue_resolution_accepted": {},
+        "issue_lsp_resolution_accepted": {},
+        "on_issue_lsp_resolved": {},
+        "on_issue_resolved": {},
+        "issue_close": {},
+        "issue_lsp_close": {}
+    }
+}'
+
 ```
 
 Using Postman, you can import the above `curl` command into Postman and replace the empty objects in the payload with your actual data. This allows for easy testing and validation of transaction logs on your local environment.

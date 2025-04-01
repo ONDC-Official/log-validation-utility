@@ -1,6 +1,6 @@
 /* eslint-disable no-prototype-builtins */
 import { getValue } from '../../../shared/dao'
-import constants, { FisApiSequence } from '../../../constants'
+import constants from '../../../constants'
 import { validateSchema, isObjectEmpty } from '../..'
 import _ from 'lodash'
 import { logger } from '../../../shared/logger'
@@ -12,9 +12,9 @@ import {
   validateXInput,
   validateXInputSubmission,
 } from './fisChecks'
-import { validateItemsTags, validateLoanInfoTags, validateProviderTags } from './tags'
+import { validateItemsTags, validateLoanInfoTags, validateLoanTags, validateProviderTags } from './tags'
 
-export const checkOnSelect = (data: any, msgIdSet: any, sequence: string, flow: string) => {
+export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
   if (!data || isObjectEmpty(data)) {
     return { [constants.ON_SELECT]: 'JSON cannot be empty' }
   }
@@ -40,6 +40,8 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string, flow: 
   try {
     const onSelect = message.order
     const version = getValue('version')
+    const flow = getValue('LoanType')
+    const flow_type = getValue('flow_type')
 
     //provider checks
     try {
@@ -67,9 +69,8 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string, flow: 
         onSelect.items.forEach((item: any, index: number) => {
           if (selectedItemId && !selectedItemId.includes(item.id)) {
             const key = `item[${index}].item_id`
-            errorObj[
-              key
-            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+            errorObj[key] =
+              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
           }
 
           // Validate parent_item_id
@@ -83,30 +84,49 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string, flow: 
             }
           }
 
+          console.log("flow type ", flow_type)
+          if ((version != '2.0.0' || sequence != 'on_select_1') && !(flow_type === 'PERSONAL_LOAN')) {
+            // price check
+            const price = item?.price
+            if (!price) {
+              errorObj['price'] = `price is missing at items[${index}]`
+            } else {
+              if (!price?.currency) errorObj['currency'] = `currency is missing at items[${index}].price`
+              if (!price?.value) errorObj['value'] = `value is missing at items[${index}].price`
+            }
+          }
           // Validate descriptor
           const descriptorError = validateDescriptor(
             item?.descriptor,
             constants.ON_SELECT,
             `items[${index}].descriptor`,
             false,
+            [],
           )
           if (descriptorError) Object.assign(errorObj, descriptorError)
-
-          // Validate xinput
-          const xinput = item?.xinput
-          const xinputValidationErrors =
-            version == '2.0.0' && sequence == 'on_select_1'
-              ? validateXInputSubmission(xinput, index, sequence)
-              : validateXInput(xinput, index, constants.ON_SELECT, 0)
-          if (xinputValidationErrors) {
-            Object.assign(errorObj, xinputValidationErrors)
-          }
-
+                  // Validate xinput
+                  const xinput = item?.xinput
+                  let currIndex = parseInt(sequence.replace('on_select_', ''))
+                  if (version == '2.0.0') currIndex = currIndex - 2 || 0
+                  else currIndex = currIndex - 1 || 0
+                  const xinputValidationErrors =
+                    (version == '2.0.0' && sequence == 'on_select_1' && flow_type !== 'PERSONAL_LOAN')
+                      ? validateXInputSubmission(xinput, index, sequence)
+                      : (flow_type === 'PERSONAL_LOAN' && sequence == 'on_select_1')
+                        ? null // Skip validation for PERSONAL_LOAN with on_select_1
+                        : validateXInput(xinput, index, constants.ON_SELECT, currIndex)
+                  if (xinputValidationErrors) {
+                    Object.assign(errorObj, xinputValidationErrors)
+                  }
           // Validate Item tags
-          const tagsValidation =
-            version == '2.0.0' && sequence == 'on_select_1'
-              ? validateItemsTags(item?.tags)
-              : validateLoanInfoTags(item?.tags, flow)
+          let tagsValidation: any = {}
+          if (sequence == 'on_search_3') {
+            tagsValidation = validateLoanTags(item?.tags, sequence)
+          } else if (version == '2.0.0' && sequence == 'on_select_1') {
+            tagsValidation = validateItemsTags(item?.tags)
+          } else {
+            tagsValidation = validateLoanInfoTags(item?.tags, flow)
+          }
           if (!tagsValidation.isValid) {
             Object.assign(errorObj, { tags: tagsValidation.errors })
           }
@@ -115,9 +135,8 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string, flow: 
     } catch (error: any) {
       logger.error(`!!Error while checking items object in /${constants.ON_SELECT}, ${error.stack}`)
     }
-
     //quote checks
-    if (version == '2.0.0' && sequence !== FisApiSequence.ON_SELECT_1) {
+    if (!(version == '2.0.0' && sequence == 'on_select_1')) {
       try {
         logger.info(`Checking quote object in /${constants.ON_SELECT}`)
         const quoteErrors = validateQuote(onSelect, constants?.SELECT)

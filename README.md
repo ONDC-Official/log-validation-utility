@@ -659,6 +659,175 @@ curl --location 'https://log-validation.ondc.org/api/validate/fis/fis12' \
 }'
 ```
 
+### For FIS14 Sample Curl Requests (Local)
+
+#### For SEARCH_FULL_PULL Flow
+```shell
+curl --location 'http://localhost:3008/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS14",
+    "version": "2.0.0",
+    "flow": "SEARCH_FULL_PULL",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {}
+    }
+}'
+```
+
+#### For SEARCH_INCREMENT Flow
+```shell
+curl --location 'http://localhost:3008/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS14",
+    "version": "2.0.0",
+    "flow": "SEARCH_INCREMENT",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {}
+    }
+}'
+```
+
+#### For SIP_NEW_FOLIO_WITH_KYC Flow
+```shell
+curl --location 'http://localhost:3008/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS14",
+    "version": "2.0.0",
+    "flow": "SIP_NEW_FOLIO_WITH_KYC",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "select": {},
+        "on_select": {},
+        "select_1": {},
+        "on_select_1": {},
+        "select_2": {},
+        "on_select_2": {},
+        "select_3": {},
+        "on_select_3": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status": {}
+    }
+}'
+```
+
+#### For SIP_INSTALLEMENT_SUCCESS Flow
+```shell
+curl --location 'http://localhost:3008/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS14",
+    "version": "2.0.0",
+    "flow": "SIP_INSTALLEMENT_SUCCESS",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "on_update": {},
+        "on_confirm": {},
+        "on_status": {},
+        "on_update_1": {}
+    }
+}'
+```
+
+#### For SIP_INSTALLEMENT_FAILURE Flow
+```shell
+curl --location 'http://localhost:3008/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS14",
+    "version": "2.0.0",
+    "flow": "SIP_INSTALLEMENT_FAILURE",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "on_update": {},
+        "on_confirm": {},
+        "on_update_1": {}
+    }
+}'
+```
+
+#### For LUMPSUM_EXISTING_FOLIO Flow
+```shell
+curl --location 'http://localhost:3008/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS14",
+    "version": "2.0.0",
+    "flow": "LUMPSUM_EXISTING_FOLIO",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status": {},
+        "on_update": {}
+    }
+}'
+```
+
+#### For LUMPSUM_PAYMENT_RETRY Flow
+```shell
+curl --location 'http://localhost:3008/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS14",
+    "version": "2.0.0",
+    "flow": "LUMPSUM_PAYMENT_RETRY",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_update": {},
+        "update": {},
+        "on_update_1": {}
+    }
+}'
+```
+
+#### For REDEMPTION Flow
+```shell
+curl --location 'http://localhost:3008/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS14",
+    "version": "2.0.0",
+    "flow": "REDEMPTION",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_update": {}
+    }
+}'
+```
+
 ### For TRV10 Sample Curl Request (Local)
 
 ```shell

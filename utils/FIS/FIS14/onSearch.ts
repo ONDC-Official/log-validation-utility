@@ -18,7 +18,7 @@ export const checkonSearch = (data: any, msgIdSet: any, sequence: string) => {
       return { missingFields: '/context, /message, /catlog or /message/catlog is missing or empty' }
     }
 
-    const schemaValidation = validateSchema('FIS', constants.ON_SEARCH, data)
+    const schemaValidation = validateSchema('FIS14', constants.ON_SEARCH, data)
     const contextRes: any = validateContext(context, msgIdSet, constants.ON_SEARCH, constants.ON_SEARCH)
 
     if (schemaValidation !== 'error') {

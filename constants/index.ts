@@ -384,7 +384,7 @@ export const fis14Flows = {
 
 export const fis14FlowSequence = {
   SEARCH_FULL_PULL: ['SEARCH', 'ON_SEARCH'],
-  SEACH_INCREMENT: ['SEARCH', 'ON_SEARCH'],
+  SEARCH_INCREMENT: ['SEARCH', 'ON_SEARCH'],
   SIP_NEW_FOLIO_WITH_KYC: [
     'SELECT',
     'ON_SELECT',

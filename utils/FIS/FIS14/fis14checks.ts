@@ -3,6 +3,7 @@ import { checkIdAndUri, checkFISContext } from '../../'
 import _ from 'lodash'
 import constants, { fis14Flows } from '../../../constants'
 import { getValue, setValue } from '../../../shared/dao'
+import { isEmpty } from 'lodash'
 
 export const validateContext = (context: any, msgIdSet: any, pastCall: any, curentCall: any) => {
   const errorObj: any = {}
@@ -151,22 +152,94 @@ export const validateProvider = (provider: any, action: string) => {
       return providerErrors
     }
 
-    if (!provider?.id) providerErrors.prvdrId = `provider.id is missing`
-    else {
+    if (!provider?.id) {
+      providerErrors.prvdrId = `provider.id is missing`
+    } else {
       logger.info(`Comparing provider id of /${action} & past call`)
       const prvrdID: any = getValue('providerId')
-      if (!_.isEqual(prvrdID, provider?.id)) {
+      if (Array.isArray(prvrdID)) {
+        if (!prvrdID.includes(provider.id)) {
+          providerErrors.prvdrId = `provider.id for /${action} & past call api should be same`
+        }
+      } 
+      else if (typeof prvrdID === 'string' && prvrdID !== provider.id) {
         providerErrors.prvdrId = `provider.id for /${action} & past call api should be same`
-        setValue('providerId', provider?.id)
       }
-    }
+      else if (prvrdID === undefined || prvrdID === null) {
+      }
+      else if (!_.isEqual(prvrdID, provider.id)) {
+        providerErrors.prvdrId = `provider.id for /${action} & past call api should be same`
+      }
 
-    // send true as last argument in case if code validation is needed
-    const descriptorError = validateDescriptor(provider?.descriptor, action, `provider.descriptor`, false)
-    if (descriptorError) Object.assign(providerErrors, descriptorError)
+      setValue('providerId', provider.id)
+    }
+    
     return providerErrors
   } catch (error: any) {
-    logger.info(`Error while checking provider object in /${action} api, ${error.stack}`)
+    logger.error(`!!Error while validating provider: ${error.stack}`)
+    return { error: error.message }
+  }
+}
+
+export const isIncrementalPull = (data: any): boolean => {
+  try {
+    // Check if the payload has tags
+    const tags = data?.message?.intent?.tags
+    if (!tags || !Array.isArray(tags)) {
+      return false
+    }
+
+    // Look for the INCREMENTAL_PULL tag
+    const incrementalPullTag = tags.find(
+      (tag) => tag?.descriptor?.code === 'INCREMENTAL_PULL'
+    )
+
+    if (!incrementalPullTag) {
+      return false
+    }
+
+    // Check if there's a REGISTER entry in the list
+    const registerEntry = incrementalPullTag?.list?.find(
+      (item:any) => item?.descriptor?.code === 'REGISTER' && item?.value === 'true'
+    )
+
+    return !!registerEntry
+  } catch (error: any) {
+    logger.error(`Error determining if payload is incremental pull: ${error.message}`)
+    return false
+  }
+}
+
+export const validateSearchType = (data: any, action: string): { 
+  type: 'FULL_PULL' | 'INCREMENTAL_PULL';
+  errors: Record<string, string>;
+} => {
+  const errors: Record<string, string> = {}
+  
+  const isIncremental = isIncrementalPull(data)
+  const type = isIncremental ? 'INCREMENTAL_PULL' : 'FULL_PULL'
+  
+  setValue(`${action}_type`, type)
+  
+  if (isIncremental) {
+    const incrementalPullTag = data.message.intent?.tags?.find(
+      (tag: any) => tag?.descriptor?.code === 'INCREMENTAL_PULL'
+    )
+    
+    const registerEntry = incrementalPullTag?.list?.find(
+      (item: any) => item?.descriptor?.code === 'REGISTER'
+    )
+    
+    if (!registerEntry) {
+      errors['incremental_pull.register'] = 'INCREMENTAL_PULL tag must have a REGISTER entry'
+    } else if (registerEntry.value !== 'true') {
+      errors['incremental_pull.register.value'] = 'REGISTER value must be "true"'
+    }
+  }
+  
+  return {
+    type,
+    errors
   }
 }
 
@@ -268,4 +341,165 @@ export const checkFullfillementType = (type: string, flow: keyof typeof fis14Flo
     }
   }
   return errorObj
+}
+
+export const  isValidURI= (uri: string): boolean =>{
+  try {
+    new URL(uri);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+export const validateTags= ( message: any, errorObj: any): void => {
+  try {
+    logger.info(`Validating tags in /search`)
+    const tags = message.intent?.tags;
+    
+    const bapTermsTag = tags.find((tag: any) => 
+      tag.descriptor?.code === 'BAP_TERMS'
+    );
+    
+    if (bapTermsTag && Array.isArray(bapTermsTag.list)) {
+      const staticTermsEntry = bapTermsTag.list.find((item: any) => 
+        item.descriptor?.code === 'STATIC_TERMS'
+      );
+      
+      if (staticTermsEntry) {
+        const staticTermsValue = staticTermsEntry.value;
+        
+        if (!isValidURI(staticTermsValue)) {
+          errorObj['static_terms_uri'] = `Static Terms value must be a valid URI, found: ${staticTermsValue}`;
+        }
+      }
+    }
+  } catch (error: any) {
+    logger.error(`!!Error occurred while validating tags in /search, ${error.message}`);
+  }
+}
+
+export const validatePayments = (payments: any[], errorObj: any, orderStatus: string) => {
+  try {
+    if (isEmpty(payments)) {
+      errorObj.payments = 'payments array is missing or is empty'
+      return
+    }
+    
+    payments.forEach((payment, i) => {
+      // Common validations for all payments
+      if (!payment?.type) {
+        errorObj[`payments[${i}].type`] = `payments[${i}].type is missing`
+      }
+      
+      if (!payment.collected_by) {
+        errorObj[`payments[${i}].collected_by`] = `payments[${i}].collected_by is missing`
+      }
+      
+      if (!payment.status) {
+        errorObj[`payments[${i}].status`] = `payments[${i}].status is missing`
+      }
+      
+      // Validate params based on payment status
+      validatePaymentParams(payment, i, errorObj, orderStatus)
+      
+      // Validate payment tags based on status
+      validatePaymentTags(payment, i, errorObj)
+    })
+    
+    // Validate payment status consistency with order status
+    validatePaymentStatusConsistency(payments, errorObj, orderStatus)
+    
+  } catch (error: any) {
+    logger.error(`Error validating payments: ${error.stack}`)
+  }
+}
+
+
+const validatePaymentParams = (payment: any, index: number, errorObj: any, orderStatus: string) => {
+  if (!payment.params) {
+    errorObj[`payments[${index}].params`] = `payments[${index}].params is missing`
+    return
+  }
+
+  console.log(payment.status, orderStatus)
+
+  if (!payment.params.amount) {
+    errorObj[`payments[${index}].params.amount`] = `payments[${index}].params.amount is missing`
+  }
+  
+  if (!payment.params.currency) {
+    errorObj[`payments[${index}].params.currency`] = `payments[${index}].params.currency is missing`
+  }
+
+  if (payment.status === 'PAID' && !payment.params.transaction_id) {
+    errorObj[`payments[${index}].params.transaction_id`] = 
+      `payments[${index}].params.transaction_id is required when payment status is PAID`
+  }
+  
+  if (payment.type === 'ON-ORDER' || payment.type === 'PRE-FULFILLMENT') {
+    if (!payment.params.source_bank_code) {
+      errorObj[`payments[${index}].params.source_bank_code`] = 
+        `payments[${index}].params.source_bank_code is missing`
+    }
+    
+    if (!payment.params.source_bank_account_number) {
+      errorObj[`payments[${index}].params.source_bank_account_number`] = 
+        `payments[${index}].params.source_bank_account_number is missing`
+    }
+    
+    if (!payment.params.source_bank_account_name) {
+      errorObj[`payments[${index}].params.source_bank_account_name`] = 
+        `payments[${index}].params.source_bank_account_name is missing`
+    }
+  }
+}
+
+
+const validatePaymentTags = (payment: any, index: number, errorObj: any) => {
+  
+  if (payment.status === 'PAID') {
+    const receiptTag = payment.tags.find((tag: any) => 
+      tag.descriptor?.code === 'PAYMENT_RECEIPT'
+    )
+    
+    if (!receiptTag) {
+      errorObj[`payments[${index}].tags.receipt`] = 
+        `payments[${index}] with PAID status should include a PAYMENT_RECEIPT tag`
+    } else {
+      if (!receiptTag.list || !Array.isArray(receiptTag.list)) {
+        errorObj[`payments[${index}].tags.receipt.list`] = 
+          `PAYMENT_RECEIPT tag should include a list of receipt details`
+      } else {
+        const requiredReceiptFields = ['TRANSACTION_ID', 'TIMESTAMP']
+        requiredReceiptFields.forEach(field => {
+          if (!receiptTag.list.some((item: any) => item.descriptor?.code === field)) {
+            errorObj[`payments[${index}].tags.receipt.${field.toLowerCase()}`] = 
+              `PAYMENT_RECEIPT tag should include ${field}`
+          }
+        })
+      }
+    }
+  }
+}
+
+
+const validatePaymentStatusConsistency = (payments: any[], errorObj: any, orderStatus: string) => {
+  if (orderStatus === 'COMPLETED') {
+    const unpaidPayments = payments.filter(payment => payment.status !== 'PAID')
+    if (unpaidPayments.length > 0) {
+      errorObj['payments.status.consistency'] = 
+        `All payments must have status PAID when order status is COMPLETED`
+    }
+  }
+  
+  if (orderStatus === 'CANCELLED') {
+    const invalidPayments = payments.filter(payment => 
+      !['PAID', 'CANCELLED'].includes(payment.status)
+    )
+    if (invalidPayments.length > 0) {
+      errorObj['payments.status.consistency'] = 
+        `All payments must have status PAID or CANCELLED when order status is CANCELLED`
+    }
+  }
 }

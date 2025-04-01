@@ -688,6 +688,73 @@ curl --location 'https://localhost:3006/api/validate/trv' \
     }
 }'
 ```
+
+### For TRV11 (METRO) Sample Curl Request (Server)
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/trv' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:TRV11",
+    "version": "2.0.0",
+    "flow": "METRO_STATION_CODE",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search1": {},
+        "on_search1": {},
+        "search2": {},
+        "on_search2": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "status": {},
+        "on_status": {},
+        "soft_cancel": {},
+        "soft_on_cancel": {},
+        "confirm_cancel": {},
+        "confirm_on_cancel": {}
+    }
+}'
+```
+
+
+### For TRV11 (INTRACITY-BUS) Sample Curl Request (Server)
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/trv' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:TRV11",
+    "version": "2.0.0",
+    "flow": "INTRACITY_STATION_CODE",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search1": {},
+        "on_search1": {},
+        "search2": {},
+        "on_search2": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "status": {},
+        "on_status": {},
+        "soft_cancel": {},
+        "soft_on_cancel": {},
+        "confirm_cancel": {},
+        "confirm_on_cancel": {}
+    }
+}'
+```
+
+
 ### For RSF V2 Sample Curl Request (Local)
 
 ```shell

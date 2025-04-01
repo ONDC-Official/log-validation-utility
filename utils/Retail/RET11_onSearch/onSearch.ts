@@ -28,7 +28,9 @@ import {
   mapCustomItemToTreeNode,
   mapCustomizationsToBaseItems,
   mapItemToTreeNode,
-} from './Fb_Calculation/utils'
+} from './fb_calculation/default_selection/utils'
+import { MenuTreeBuilder } from './fb_calculation/lower_upper_range/builder'
+import { CatalogParser } from './fb_calculation/lower_upper_range/parser'
 
 export const checkOnsearchFullCatalogRefresh = (data: any) => {
   if (!data || isObjectEmpty(data)) {
@@ -376,6 +378,40 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
         errorObj[`providers[${i}_default_selection`] =
           `Error while Calculating Default Selection in /${constants.ON_SEARCH}, ${error.stack}`
         logger.info(`Error while Calculating Default Selection in /${constants.ON_SEARCH}, ${error.stack}`)
+      }
+
+      try {
+        // Parse raw data
+        const parsedCategories = CatalogParser.parseCategories(categories)
+        const menuItems = CatalogParser.parseMenuItems(items)
+        const customizations = CatalogParser.parseCustomizations(items)
+
+        // Build menu trees with price calculations
+        const treeBuilder = new MenuTreeBuilder(menuItems, parsedCategories, customizations)
+        const itemsWithPricesAndLogs = treeBuilder.buildTrees()
+
+        itemsWithPricesAndLogs.items.forEach((item: any) => {
+          console.log("itemOkay", item)
+          const calculatedPriceRange = item.priceRange
+          const givenPriceRange = item.priceRangeGiven
+
+          if (
+            calculatedPriceRange.lower !== givenPriceRange.lower ||
+            calculatedPriceRange.upper !== givenPriceRange.upper
+          ) {
+            const itemLog = CatalogParser.extractLogsForItem(itemsWithPricesAndLogs.logs, item.id)
+
+            errorObj[`providers[${i}][lower_upper_range-(${item.id})`] =
+              `Provided price range calculated incorrectly for ${item.id},
+Calculated: lower=${calculatedPriceRange.lower}, upper=${calculatedPriceRange.upper}. 
+Given: lower=${givenPriceRange.lower}, upper=${givenPriceRange.upper}. 
+Calculation: ${itemLog}`
+          }
+        })
+      } catch (error: any) {
+        errorObj[`providers[${i}][lower_upper_range`] =
+          `Error while Calculating Lower Upper Range in /${constants.ON_SEARCH}, ${error.stack}`
+        logger.info(`Error while Calculating Lower Upper Range in /${constants.ON_SEARCH}, ${error.stack}`)
       }
 
       try {

@@ -137,7 +137,7 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
           }
 
           // check type
-          const validTypes = ['ON-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
+          const validTypes = ['ON_ORDER', 'ON_FULFILLMENT', 'POST_FULFILLMENT']
           if (!arr?.type || !validTypes.includes(arr.type)) {
             errorObj[`payments[${i}]_type`] = `payments.type must be present in ${
               constants.CONFIRM

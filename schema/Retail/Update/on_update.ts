@@ -22,7 +22,8 @@ export const onUpdateSchema = {
         },
         core_version: {
           type: 'string',
-          const: '1.2.0',
+          enum: ['1.2.0', '1.2.5'],
+          minLength: 1,
         },
         bap_id: {
           type: 'string',
@@ -340,7 +341,29 @@ export const onUpdateSchema = {
                     },
                   },
                 },
-              },
+                required: ['state', 'id', 'type'],
+                dependencies: {
+                  type: {
+                    allOf: [
+                      {
+                        if: {
+                          properties: {
+                            type: {
+                              enum: ["Cancel", "Return"]
+                            }
+                          }
+                        },
+                        then: {
+                          properties: {
+                            tags: { type: "array" }
+                          },
+                          required: ["tags"]
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
             },
             quote: {
               type: 'object',
@@ -463,7 +486,7 @@ export const onUpdateSchema = {
                       },
                       settlement_type: {
                         type: 'string',
-                        enum: ['upi', 'neft', 'rtgs', 'wallet', 'netbanking', 'paylater'],
+                        enum: ['upi', 'neft', 'rtgs', 'wallet', 'netbanking', 'paylater', 'card'],
                       },
                       upi_address: { type: 'string' },
                       settlement_bank_account_no: {
@@ -528,8 +551,7 @@ export const onUpdateSchema = {
                 'type',
                 'collected_by',
                 '@ondc/org/buyer_app_finder_fee_type',
-                '@ondc/org/buyer_app_finder_fee_amount',
-                '@ondc/org/settlement_details'
+                '@ondc/org/buyer_app_finder_fee_amount'
               ],
             },
             documents: {

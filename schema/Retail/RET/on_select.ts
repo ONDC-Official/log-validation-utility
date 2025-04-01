@@ -14,7 +14,8 @@ export const onSelectSchema = {
         },
         core_version: {
           type: 'string',
-          const: '1.2.0',
+          enum: ['1.2.0', '1.2.5'],
+          minLength: 1,
         },
         bap_id: {
           type: 'string',
@@ -131,6 +132,10 @@ export const onSelectSchema = {
               items: {
                 type: 'object',
                 properties: {
+                  type: {
+                    type: 'string',
+                    enums: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
+                  },
                   id: {
                     type: 'string',
                   },
@@ -142,6 +147,15 @@ export const onSelectSchema = {
                   },
                   '@ondc/org/category': {
                     type: 'string',
+                    enum: [
+                      'Takeaway',
+                      'Kerbside',
+                      'Immediate Delivery',
+                      'Standard Delivery',
+                      'Express Delivery',
+                      'Same Day Delivery',
+                      'Next Day Delivery',
+                    ],
                   },
                   '@ondc/org/TAT': {
                     type: 'string',
@@ -199,13 +213,13 @@ export const onSelectSchema = {
                             type: 'integer',
                           },
                         },
-                        required: ['count'],
                       },
                       title: {
                         type: 'string',
                       },
                       '@ondc/org/title_type': {
                         type: 'string',
+                        enum: ['item', 'delivery', 'packing', 'tax', 'misc', 'discount', 'offer'],
                       },
                       price: {
                         type: 'object',
@@ -268,66 +282,90 @@ export const onSelectSchema = {
                             required: ['currency', 'value'],
                           },
                           tags: {
-                            type: 'array',
-                            items: {
-                              type: 'object',
-                              properties: {
-                                code: {
-                                  type: 'string',
-                                },
-                                list: {
-                                  type: 'array',
-                                  items: {
-                                    type: 'object',
-                                    properties: {
-                                      code: {
-                                        type: 'string',
+                            type: "object",
+                            properties: {
+                              tags: {
+                                type: "array",
+                                minItems: 2,
+                                items: {
+                                  oneOf: [
+                                    {
+                                      type: "object",
+                                      properties: {
+                                        code: {
+                                          type: "string",
+                                          const: "quote"
+                                        },
+                                        list: {
+                                          type: "array",
+                                          items: {
+                                            type: "object",
+                                            properties: {
+                                              code: {
+                                                type: "string"
+                                              },
+                                              value: {
+                                                type: "string"
+                                              }
+                                            },
+                                            required: ["code", "value"]
+                                          }
+                                        }
                                       },
-                                      value: {
-                                        type: 'string',
-                                      },
+                                      required: ["code", "list"]
                                     },
-                                    required: ['code', 'value'],
-                                  },
-                                },
-                              },
-                              required: ['code', 'list'],
+                                    {
+                                      type: "object",
+                                      properties: {
+                                        code: {
+                                          type: "string",
+                                          const: "offer"
+                                        },
+                                        list: {
+                                          type: "array",
+                                          items: {
+                                            type: "object",
+                                            properties: {
+                                              code: {
+                                                type: "string",
+                                                enum: ["id", "type", "auto", "additive", "item_id", "item_value", "item_count"]
+                                              },
+                                              value: {
+                                                type: "string"
+                                              }
+                                            },
+                                            required: ["code", "value"]
+                                          },
+                                          minItems: 7,
+                                          uniqueItems: true
+                                        }
+                                      },
+                                      required: ["code", "list"]
+                                    }
+                                  ]
+                                }
+                              }
                             },
-                          },
-                        },
+                            required: ["tags"]
+                          }
+                        },                      },
+                      ttl: {
+                        type: 'string',
+                        format: 'duration',
                       },
                     },
                     required: ['@ondc/org/item_id', 'title', '@ondc/org/title_type', 'price'],
                   },
                 },
-                ttl: {
-                  type: 'string',
-                  format: 'duration',
-                },
               },
-              required: ['price', 'breakup', 'ttl'],
+              required: ['price', 'breakup'],
             },
           },
           required: ['provider', 'items', 'fulfillments', 'quote'],
         },
       },
       required: ['order'],
-    },
-    error: {
-      type: 'object',
-      properties: {
-        type: {
-          type: 'string',
-        },
-        code: {
-          type: 'string',
-        },
-        message: {
-          type: 'string',
-        },
-      },
-      required: ['type', 'code', 'message'],
-    },
+    }
   },
   required: ['context', 'message'],
 }

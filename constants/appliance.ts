@@ -1,5 +1,3 @@
-import { COLOUR } from './fashionEnum'
-
 export const applianceData = {
   'Air Purifier': {
     brand: {
@@ -12,12 +10,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -32,19 +30,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,2})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -94,12 +92,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -114,19 +112,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -176,12 +174,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -196,19 +194,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -258,12 +256,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -278,19 +276,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -340,12 +338,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: true,
       value: [],
@@ -360,19 +358,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -422,12 +420,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -442,19 +440,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -504,12 +502,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -524,593 +522,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    refurbished: {
-      mandatory: false,
-      value: [],
-    },
-    energy_rating: {
-      mandatory: false,
-      value: [],
-    },
-    battery: {
-      mandatory: false,
-      value: [],
-    },
-    power_input: {
-      mandatory: false,
-      value: [],
-    },
-    warranty: {
-      mandatory: false,
-      value: [],
-    },
-    extended_warranty: {
-      mandatory: false,
-      value: [],
-    },
-    installation_detail: {
-      mandatory: false,
-      value: [],
-    },
-    wattage: {
-      mandatory: false,
-      value: [],
-    },
-    voltage: {
-      mandatory: false,
-      value: [],
-    },
-  },
-  Trimmer: {
-    brand: {
-      mandatory: true,
-      value: [],
-    },
-    model: {
-      mandatory: true,
-      value: [],
-    },
-    colour: {
-      mandatory: false,
-      value: COLOUR,
-    },
-    colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    type: {
-      mandatory: false,
-      value: [],
-    },
-    special_feature: {
-      mandatory: true,
-      value: [],
-    },
-    includes: {
-      mandatory: true,
-      value: [],
-    },
-    weight: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    length: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    breadth: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    height: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    refurbished: {
-      mandatory: false,
-      value: [],
-    },
-    energy_rating: {
-      mandatory: false,
-      value: [],
-    },
-    battery: {
-      mandatory: false,
-      value: [],
-    },
-    power_input: {
-      mandatory: false,
-      value: [],
-    },
-    warranty: {
-      mandatory: false,
-      value: [],
-    },
-    extended_warranty: {
-      mandatory: false,
-      value: [],
-    },
-    installation_detail: {
-      mandatory: false,
-      value: [],
-    },
-    wattage: {
-      mandatory: false,
-      value: [],
-    },
-    voltage: {
-      mandatory: false,
-      value: [],
-    },
-  },
-  Shaver: {
-    brand: {
-      mandatory: true,
-      value: [],
-    },
-    model: {
-      mandatory: true,
-      value: [],
-    },
-    colour: {
-      mandatory: false,
-      value: COLOUR,
-    },
-    colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    type: {
-      mandatory: false,
-      value: [],
-    },
-    special_feature: {
-      mandatory: true,
-      value: [],
-    },
-    includes: {
-      mandatory: true,
-      value: [],
-    },
-    weight: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    length: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    breadth: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    height: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    refurbished: {
-      mandatory: false,
-      value: [],
-    },
-    energy_rating: {
-      mandatory: false,
-      value: [],
-    },
-    battery: {
-      mandatory: false,
-      value: [],
-    },
-    power_input: {
-      mandatory: false,
-      value: [],
-    },
-    warranty: {
-      mandatory: false,
-      value: [],
-    },
-    extended_warranty: {
-      mandatory: false,
-      value: [],
-    },
-    installation_detail: {
-      mandatory: false,
-      value: [],
-    },
-    wattage: {
-      mandatory: false,
-      value: [],
-    },
-    voltage: {
-      mandatory: false,
-      value: [],
-    },
-  },
-  Epilator: {
-    brand: {
-      mandatory: true,
-      value: [],
-    },
-    model: {
-      mandatory: true,
-      value: [],
-    },
-    colour: {
-      mandatory: false,
-      value: COLOUR,
-    },
-    colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    type: {
-      mandatory: false,
-      value: [],
-    },
-    special_feature: {
-      mandatory: true,
-      value: [],
-    },
-    includes: {
-      mandatory: true,
-      value: [],
-    },
-    weight: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    length: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    breadth: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    height: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    refurbished: {
-      mandatory: false,
-      value: [],
-    },
-    energy_rating: {
-      mandatory: false,
-      value: [],
-    },
-    battery: {
-      mandatory: false,
-      value: [],
-    },
-    power_input: {
-      mandatory: false,
-      value: [],
-    },
-    warranty: {
-      mandatory: false,
-      value: [],
-    },
-    extended_warranty: {
-      mandatory: false,
-      value: [],
-    },
-    installation_detail: {
-      mandatory: false,
-      value: [],
-    },
-    wattage: {
-      mandatory: false,
-      value: [],
-    },
-    voltage: {
-      mandatory: false,
-      value: [],
-    },
-  },
-  'Hair Straightener': {
-    brand: {
-      mandatory: true,
-      value: [],
-    },
-    model: {
-      mandatory: true,
-      value: [],
-    },
-    colour: {
-      mandatory: true,
-      value: COLOUR,
-    },
-    colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    type: {
-      mandatory: false,
-      value: [],
-    },
-    special_feature: {
-      mandatory: true,
-      value: [],
-    },
-    includes: {
-      mandatory: true,
-      value: [],
-    },
-    weight: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    length: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    breadth: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    height: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    refurbished: {
-      mandatory: false,
-      value: [],
-    },
-    energy_rating: {
-      mandatory: false,
-      value: [],
-    },
-    battery: {
-      mandatory: false,
-      value: [],
-    },
-    power_input: {
-      mandatory: false,
-      value: [],
-    },
-    warranty: {
-      mandatory: false,
-      value: [],
-    },
-    extended_warranty: {
-      mandatory: false,
-      value: [],
-    },
-    installation_detail: {
-      mandatory: false,
-      value: [],
-    },
-    wattage: {
-      mandatory: false,
-      value: [],
-    },
-    voltage: {
-      mandatory: false,
-      value: [],
-    },
-  },
-  'Hair Dryer': {
-    brand: {
-      mandatory: true,
-      value: [],
-    },
-    model: {
-      mandatory: true,
-      value: [],
-    },
-    colour: {
-      mandatory: true,
-      value: COLOUR,
-    },
-    colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    type: {
-      mandatory: false,
-      value: [],
-    },
-    special_feature: {
-      mandatory: true,
-      value: [],
-    },
-    includes: {
-      mandatory: true,
-      value: [],
-    },
-    weight: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    length: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    breadth: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    height: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    refurbished: {
-      mandatory: false,
-      value: [],
-    },
-    energy_rating: {
-      mandatory: false,
-      value: [],
-    },
-    battery: {
-      mandatory: false,
-      value: [],
-    },
-    power_input: {
-      mandatory: false,
-      value: [],
-    },
-    warranty: {
-      mandatory: false,
-      value: [],
-    },
-    extended_warranty: {
-      mandatory: false,
-      value: [],
-    },
-    installation_detail: {
-      mandatory: false,
-      value: [],
-    },
-    wattage: {
-      mandatory: false,
-      value: [],
-    },
-    voltage: {
-      mandatory: false,
-      value: [],
-    },
-  },
-  'Hair Curler': {
-    brand: {
-      mandatory: true,
-      value: [],
-    },
-    model: {
-      mandatory: true,
-      value: [],
-    },
-    colour: {
-      mandatory: true,
-      value: COLOUR,
-    },
-    colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    type: {
-      mandatory: false,
-      value: [],
-    },
-    special_feature: {
-      mandatory: true,
-      value: [],
-    },
-    includes: {
-      mandatory: true,
-      value: [],
-    },
-    weight: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    length: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    breadth: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    height: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    refurbished: {
-      mandatory: false,
-      value: [],
-    },
-    energy_rating: {
-      mandatory: false,
-      value: [],
-    },
-    battery: {
-      mandatory: false,
-      value: [],
-    },
-    power_input: {
-      mandatory: false,
-      value: [],
-    },
-    warranty: {
-      mandatory: false,
-      value: [],
-    },
-    extended_warranty: {
-      mandatory: false,
-      value: [],
-    },
-    installation_detail: {
-      mandatory: false,
-      value: [],
-    },
-    wattage: {
-      mandatory: false,
-      value: [],
-    },
-    voltage: {
-      mandatory: false,
-      value: [],
-    },
-  },
-  'Hair Crimper': {
-    brand: {
-      mandatory: true,
-      value: [],
-    },
-    model: {
-      mandatory: true,
-      value: [],
-    },
-    colour: {
-      mandatory: true,
-      value: COLOUR,
-    },
-    colour_name: {
-      mandatory: false,
-      value: [],
-    },
-    type: {
-      mandatory: false,
-      value: [],
-    },
-    special_feature: {
-      mandatory: true,
-      value: [],
-    },
-    includes: {
-      mandatory: true,
-      value: [],
-    },
-    weight: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    length: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    breadth: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
-    },
-    height: {
-      mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -1160,12 +584,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -1180,19 +604,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -1242,12 +666,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -1262,19 +686,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -1324,12 +748,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -1344,19 +768,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -1406,12 +830,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -1426,19 +850,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -1488,12 +912,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -1508,19 +932,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -1570,12 +994,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -1590,19 +1014,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -1652,12 +1076,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -1672,19 +1096,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -1734,12 +1158,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -1754,19 +1178,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -1816,12 +1240,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -1836,19 +1260,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -1898,12 +1322,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -1918,19 +1342,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -1980,12 +1404,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -2000,19 +1424,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -2062,12 +1486,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -2082,19 +1506,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -2144,12 +1568,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -2164,19 +1588,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -2226,12 +1650,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -2246,19 +1670,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -2308,12 +1732,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -2328,19 +1752,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -2390,12 +1814,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -2410,19 +1834,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -2472,12 +1896,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -2492,19 +1916,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -2554,12 +1978,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -2574,19 +1998,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -2636,12 +2060,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -2656,19 +2080,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -2718,12 +2142,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -2738,19 +2162,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -2800,12 +2224,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -2820,19 +2244,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -2882,12 +2306,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -2902,19 +2326,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -2964,12 +2388,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -2984,19 +2408,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -3046,12 +2470,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -3066,19 +2490,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -3128,12 +2552,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -3148,19 +2572,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -3210,12 +2634,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -3230,19 +2654,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -3292,12 +2716,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -3312,19 +2736,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -3374,12 +2798,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -3394,19 +2818,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -3456,12 +2880,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -3476,19 +2900,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -3538,12 +2962,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -3558,19 +2982,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -3620,12 +3044,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -3640,19 +3064,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -3702,12 +3126,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: true,
       value: [],
@@ -3722,19 +3146,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -3784,12 +3208,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -3804,19 +3228,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -3866,12 +3290,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: true,
       value: [],
@@ -3886,19 +3310,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -3948,12 +3372,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -3968,19 +3392,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -4030,12 +3454,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: true,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
-      mandatory: false,
-      value: [],
-    },
+      mandatory: true,
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: true,
       value: [],
@@ -4050,19 +3474,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -4112,12 +3536,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -4132,19 +3556,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -4194,12 +3618,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -4214,19 +3638,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -4276,12 +3700,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -4296,19 +3720,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -4358,12 +3782,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -4378,19 +3802,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -4440,12 +3864,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -4460,19 +3884,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -4522,12 +3946,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -4542,19 +3966,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -4604,12 +4028,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -4624,19 +4048,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -4686,12 +4110,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -4706,19 +4130,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -4768,12 +4192,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -4788,19 +4212,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -4850,12 +4274,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -4870,19 +4294,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -4932,12 +4356,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -4952,19 +4376,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5014,12 +4438,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -5034,19 +4458,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5085,7 +4509,7 @@ export const applianceData = {
       value: [],
     },
   },
-  'Battery tray': {
+  'Battery Tray': {
     brand: {
       mandatory: true,
       value: [],
@@ -5096,12 +4520,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -5116,19 +4540,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5178,12 +4602,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -5198,19 +4622,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: true,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5260,12 +4684,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -5280,19 +4704,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5342,12 +4766,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -5362,19 +4786,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5424,12 +4848,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -5444,19 +4868,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5506,12 +4930,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -5526,19 +4950,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5588,12 +5012,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -5608,19 +5032,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5670,12 +5094,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -5690,19 +5114,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5752,12 +5176,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -5772,19 +5196,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5834,12 +5258,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -5854,19 +5278,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5916,12 +5340,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -5936,19 +5360,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -5998,12 +5422,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -6018,19 +5442,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -6080,12 +5504,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -6100,19 +5524,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -6162,12 +5586,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -6182,19 +5606,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -6244,12 +5668,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -6264,19 +5688,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -6326,12 +5750,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -6346,19 +5770,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -6408,12 +5832,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -6428,19 +5852,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -6490,12 +5914,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -6510,19 +5934,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -6572,12 +5996,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -6592,19 +6016,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -6654,12 +6078,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -6674,19 +6098,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -6736,12 +6160,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -6756,19 +6180,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -6818,12 +6242,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -6838,19 +6262,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -6900,12 +6324,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -6920,19 +6344,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -6982,12 +6406,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -7002,19 +6426,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -7064,12 +6488,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -7084,19 +6508,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -7146,12 +6570,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: false,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -7166,19 +6590,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -7228,12 +6652,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -7248,19 +6672,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -7310,12 +6734,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -7330,19 +6754,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -7392,12 +6816,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -7412,19 +6836,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,
@@ -7474,12 +6898,12 @@ export const applianceData = {
     },
     colour: {
       mandatory: false,
-      value: COLOUR,
+      value: '/^#([a-fA-F0-9]{6})/',
     },
     colour_name: {
       mandatory: true,
-      value: [],
-    },
+      value: '/^[a-z ]+$/',
+},
     type: {
       mandatory: false,
       value: [],
@@ -7494,19 +6918,19 @@ export const applianceData = {
     },
     weight: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     length: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     breadth: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     height: {
       mandatory: false,
-      value: "/^[0-9]+(\.[0-9]{1,3})?$/",
+      value: '/^[0-9]+(.[0-9]{1,3})?$/',
     },
     refurbished: {
       mandatory: false,

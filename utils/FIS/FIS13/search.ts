@@ -9,6 +9,7 @@ import { isEmpty, isEqual } from 'lodash'
 export const search = (data: any, msgIdSet: any, flow: string, action: string) => {
   const errorObj: any = {}
   try {
+    console.log('data', data)
     if (!data || isObjectEmpty(data)) {
       return { [action]: 'JSON cannot be empty' }
     }
@@ -35,9 +36,9 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
 
     // validate context
     let contextRes: any
-    if (action?.includes('_offer')) {
-      // if action is search_offer, validate context with bpp & bap details
-      contextRes = validateContext(context, msgIdSet, action, constants.SEARCH)
+    if (action?.includes('_2')) {
+      // if action is search_2, validate context with bpp & bap details
+      contextRes = validateContext(context, msgIdSet, constants.ON_SEARCH, action)
     } else {
       // if action is search, validate context with only bap details
       contextRes = checkFISContext(data.context, action)
@@ -54,13 +55,14 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
       logger.info(`Validating category in /${action}`)
       const code = message.intent?.category?.descriptor?.code
       if (code) {
-        if (code != insuranceFlows[flow as keyof typeof insuranceFlows]) {
+        // if (code != insuranceFlows[flow as keyof typeof insuranceFlows]) {
+        if (!Object.values(insuranceFlows).includes(code)) {
           errorObj['category'] = `code value should be ${
             insuranceFlows[flow as keyof typeof insuranceFlows]
           }, in a standard enum format as at category.descriptor`
         }
 
-        setValue(`insuranceType`, code)
+        setValue(`insurance`, code)
       } else
         errorObj['category'] = `code: ${
           insuranceFlows[flow as keyof typeof insuranceFlows]
@@ -73,32 +75,44 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
     try {
       logger.info(`Validating payments in /${action}`)
       const payment = message.intent?.payment
-      const collectedBy = payment?.collected_by
-      const allowedCollectedByValues = ['BPP', 'BAP']
-      const terms: any = [{ code: 'STATIC_TERMS', type: 'url' }]
+      if (!payment) errorObj[`payment`] = `payment is missing in ${action}`
+      else {
+        const collectedBy = payment?.collected_by
+        const allowedCollectedByValues = ['BPP', 'BAP']
+        const terms: any = [
+          { code: 'STATIC_TERMS', type: 'url' },
+          {
+            code: 'OFFLINE_CONTRACT',
+            type: 'boolean',
+          },
+        ]
 
-      if (!collectedBy) {
-        errorObj[`collected_by`] = `payment.collected_by must be present in ${action}`
-      } else if (!allowedCollectedByValues.includes(collectedBy)) {
-        errorObj['collected_by'] = `Invalid value for collected_by, should be either of ${allowedCollectedByValues}`
-      } else {
-        terms?.push({ code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' })
-        terms?.push({
-          code: 'SETTLEMENT_BASIS',
-          type: 'enum',
-          value: ['INVOICE_RECEIPT', 'Delivery', 'return_window_expiry'],
-        })
+        if (!collectedBy) {
+          errorObj[`collected_by`] = `payment.collected_by must be present in ${action}`
+        } else if (!allowedCollectedByValues.includes(collectedBy)) {
+          errorObj['collected_by'] = `Invalid value for collected_by, should be either of ${allowedCollectedByValues}`
+        } else {
+          if (collectedBy == 'BPP') terms?.push({ code: 'DELAY_INTEREST', type: 'amount' })
+          else {
+            terms?.push({ code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' })
+            terms?.push({
+              code: 'SETTLEMENT_BASIS',
+              type: 'enum',
+              value: ['INVOICE_RECEIPT', 'Delivery', 'return_window_expiry'],
+            })
+          }
 
-        if (collectedBy == 'BPP') terms?.push({ code: 'DELAY_INTEREST', type: 'amount' })
+          setValue(`collected_by`, collectedBy)
+        }
 
-        setValue(`collected_by`, collectedBy)
-      }
-
-      // Validate payment tags
-      const tagsValidation = validatePaymentTags(payment.tags, terms)
-      console.log('tagsValidation', tagsValidation)
-      if (!tagsValidation.isValid) {
-        Object.assign(errorObj, { tags: tagsValidation.errors })
+        if (flow != 'LIFE_INSURANCE') {
+          // Validate payment tags
+          const tagsValidation = validatePaymentTags(payment.tags, terms)
+          console.log('tagsValidation', tagsValidation)
+          if (!tagsValidation.isValid) {
+            Object.assign(errorObj, { tags: tagsValidation.errors })
+          }
+        }
       }
     } catch (error: any) {
       console.log('error', error)
@@ -107,9 +121,9 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
 
     // checking providers
     try {
-      // validate providers if type action is search_offer
+      // validate providers if type action is not search || search_1
       console.log('action', action)
-      if (isEqual(action, 'search_offer')) {
+      if (!isEqual(action, 'search') && !isEqual(action, 'search_1')) {
         logger.info(`Validating providers in /${action}`)
         const provider = message.intent?.provider
 
@@ -131,7 +145,7 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
           try {
             logger.info(`checking item array in provider /${action}`)
             if (!provider.items) {
-              errorObj.items = `items must be present & should non empty in /${action}`
+              errorObj.items = `items array must be present & should non empty in /${action}`
             } else {
               provider.items.forEach((item: any, index: number) => {
                 // Validate item id
@@ -140,15 +154,16 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
                 } else {
                   if (itemId && !itemId.includes(item.id)) {
                     const key = `item[${index}].item_id`
-                    errorObj[
-                      key
-                    ] = `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
+                    errorObj[key] =
+                      `/message/order/items/id in item: ${item.id} should be one of the item.id mapped in previous call`
                   }
                 }
 
                 //validate xInput form
-                const xinputErrors = validateXInputSubmission(item?.xinput, index, action)
-                Object.assign(errorObj, xinputErrors)
+                if (!isEqual(action, 'search_3')) {
+                  const xinputErrors = validateXInputSubmission(item?.xinput, index, action)
+                  Object.assign(errorObj, xinputErrors)
+                }
               })
             }
           } catch (error: any) {

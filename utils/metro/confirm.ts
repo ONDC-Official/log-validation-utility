@@ -2,10 +2,12 @@ import constants, { metroSequence } from '../../constants'
 import { logger } from '../../shared/logger'
 import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
-import { validateContext, validateStops } from './metroChecks'
+import { validateContext } from './metroChecks'
 import { validatePaymentTags } from './tags'
+import { checkItemsExist, checkBilling, validateParams, validateDomain } from './validate/helper'
+import _, { isEmpty, isNil } from 'lodash'
+import { METRODOMAIN } from './validate/functions/constant'
 
-const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
 export const checkConfirm = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
   try {
@@ -18,8 +20,11 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const onInit: any = getValue(`${metroSequence.ON_INIT}_message`)
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.CONFIRM, data)
+    const schemaValidation = validateSchema('TRV', constants.CONFIRM, data)
+    const validateDomainName = validateDomain(context?.domain || 'ONDC:TRV11')
+    if (!validateDomainName)
+      errorObj['domain'] =
+        `context.domain should be ${METRODOMAIN.METRO} instead of ${context?.domain} in ${metroSequence.ON_CONFIRM}`
     const contextRes: any = validateContext(context, msgIdSet, constants.ON_INIT, constants.CONFIRM)
     setValue(`${metroSequence.CONFIRM}_message`, message)
 
@@ -32,15 +37,16 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
     }
 
     const confirm = message.order
+
     const itemIDS: any = getValue('itemIds')
     const itemIdArray: any[] = []
-    const storedFull: any = getValue(`${metroSequence.ON_SELECT}_storedFulfillments`)
     let newItemIDSValue: any[]
 
     if (itemIDS && itemIDS.length > 0) {
       newItemIDSValue = itemIDS
     } else {
-      onInit.order.items.map((item: { id: string }) => {
+      const onSelect: any = getValue(`${metroSequence.ON_SEARCH1}_message`)
+      onSelect?.order?.items.map((item: { id: string }) => {
         itemIdArray.push(item.id)
       })
       newItemIDSValue = itemIdArray
@@ -48,44 +54,41 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
 
     setValue('itemIds', newItemIDSValue)
 
-    if (Object.prototype.hasOwnProperty.call(confirm, 'id')) {
-      errorObj[`order`] = `/message/order/id is not part of /${constants.CONFIRM} call`
-    }
-
     try {
-      logger.info(`Comparing provider object in /${constants.ON_INIT} and /${constants.CONFIRM}`)
-      if (getValue('providerId') != confirm.provider['id']) {
-        errorObj.prvdId = `Provider Id mismatches in /${constants.ON_INIT} and /${constants.CONFIRM}`
-      }
+      logger.info(`Comparing Provider Id of /${constants.ON_SEARCH} and /${constants.CONFIRM}`)
+      const prvrdID = getValue('providerId') //type should be an array instead of string
+
+      const selectedProviderId = confirm?.provider?.id ?? null
+
+      if (!isNil(selectedProviderId)) {
+        if (!prvrdID?.includes(selectedProviderId))
+          errorObj['providerId'] = `Provider Id for /${constants.ON_INIT} and /${constants.CONFIRM} api should be same`
+      } else errorObj['providerId'] = 'Provider Id is missing in /' + constants.CONFIRM
     } catch (error: any) {
-      logger.error(
-        `!!Error while checking provider object in /${constants.ON_INIT} and /${constants.CONFIRM}, ${error.stack}`,
+      logger.info(
+        `Error while comparing provider id for /${constants.ON_SEARCH} and /${constants.CONFIRM} api, ${error.stack}`,
       )
     }
 
-    try {
-      logger.info(`Comparing item in /${constants.CONFIRM}`)
-      confirm.items.forEach((item: any, index: number) => {
-        if (!newItemIDSValue.includes(item.id)) {
-          const key = `item[${index}].item_id`
-          errorObj[key] =
-            `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
-        }
-      })
-    } catch (error: any) {
-      logger.error(`!!Error while comparing Item Id in /${constants.ON_INIT} and /${constants.CONFIRM}`)
-    }
+    //check items
+    const getItemError = checkItemsExist(confirm?.items, newItemIDSValue, constants.CONFIRM)
+    if (Object.keys(getItemError)?.length) Object.assign(errorObj, getItemError)
 
     try {
       logger.info(`Checking payments in /${constants.CONFIRM}`)
       confirm?.payments?.forEach((arr: any, i: number) => {
         if (!arr?.collected_by) {
-          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.ON_INIT}`
+          errorObj[`payemnts[${i}]_collected_by`] = `payments.collected_by must be present in ${constants.ON_SEARCH}`
         } else {
           const srchCollectBy = getValue(`collected_by`)
-          if (srchCollectBy != arr?.collected_by)
+          if (srchCollectBy && srchCollectBy != arr?.collected_by)
             errorObj[`payemnts[${i}]_collected_by`] =
-              `payments.collected_by value sent in ${constants.ON_INIT} should be ${srchCollectBy} as sent in ${constants.CONFIRM}`
+              `payments.collected_by value sent in ${constants.ON_SEARCH} should be ${srchCollectBy} as sent in ${constants.CONFIRM}`
+
+          if (arr?.collected_by === 'BPP' && 'id' in arr)
+            errorObj[`payemnts[${i}]_id`] = `id should not be present if collector is BPP`
+
+          setValue(`collected_by`, arr?.collected_by)
         }
 
         const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
@@ -102,29 +105,56 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
           } & its value must be one of: ${validStatus.join(', ')}`
         }
 
-        const params = arr.params
-        if (!params?.bank_code) {
-          errorObj[`payments[${i}]_bank_code`] = `payments.params.bank_code must be present in ${constants.CONFIRM}`
-        } else {
-          setValue('bank_code', params?.bank_code)
-        }
+        if (!arr.id) errorObj[`payments[${i}]_id`] = `payments.id must be present in ${constants.CONFIRM}`
+        else setValue('paymentId', arr?.id)
 
-        if (!params?.bank_account_number) {
-          errorObj[`payments[${i}]_bank_account_number`] =
-            `payments.params.bank_account_number must be present in ${constants.CONFIRM}`
-        } else {
-          setValue('bank_account_number', params?.bank_account_number)
-        }
+        const payment_type = getValue('INIT_PAYMENT_TYPE') ?? 'NEFT'
+        const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.CONFIRM, payment_type)
+        if (!isEmpty(validatePayementParams)) Object.assign(errorObj, validatePayementParams)
+        // const { params } = arr
 
-        if (!params?.virtual_payment_address) {
-          errorObj[`payments[${i}]_virtual_payment_address`] =
-            `payments.params.virtual_payment_address must be present in ${constants.CONFIRM}`
-        } else {
-          setValue('virtual_payment_address', params?.virtual_payment_address)
-        }
+        // if (!params) {
+        //   errorObj[`payments[${i}]_params`] = `payments.params must be present in ${constants.CONFIRM}`
+        // } else {
+        //   const { amount, currency, transaction_id, bank_code, bank_account_number } = params
+
+        //   if (!amount) {
+        //     errorObj[`payments[${i}]_params_amount`] = `payments.params.amount must be present in ${constants.CONFIRM}`
+        //   } else {
+        //     setValue('paramsAmount', amount)
+        //   }
+
+        //   if (!currency) {
+        //     errorObj[`payments[${i}]_params_currency`] =
+        //       `payments.params.currency must be present in ${constants.CONFIRM}`
+        //   } else if (currency !== 'INR') {
+        //     errorObj[`payments[${i}]_params_currency`] = `payments.params.currency must be INR in ${constants.CONFIRM}`
+        //   }
+
+        //   if (!bank_code) {
+        //     errorObj[`payments[${i}]_params_bank_code`] =
+        //       `payments.params.bank_code must be present in ${constants.CONFIRM}`
+        //   } else {
+        //     setValue('paramsBankCode', bank_code)
+        //   }
+
+        //   if (!bank_account_number) {
+        //     errorObj[`payments[${i}]_params_bank_account_number`] =
+        //       `payments.params.bank_account_number must be present in ${constants.CONFIRM}`
+        //   } else {
+        //     setValue('paramsBankAccountNumber', bank_account_number)
+        //   }
+
+        //   if (!transaction_id) {
+        //     errorObj[`payments[${i}]_params_transaction_id`] =
+        //       `payments.params.transaction_id must be present in ${constants.CONFIRM}`
+        //   } else {
+        //     setValue('paramsTransactionId', transaction_id)
+        //   }
+        // }
 
         // Validate payment tags
-        const tagsValidation = validatePaymentTags(arr.tags)
+        const tagsValidation = validatePaymentTags(arr.tags, constants?.CONFIRM)
         if (!tagsValidation.isValid) {
           Object.assign(errorObj, { tags: tagsValidation.errors })
         }
@@ -133,64 +163,11 @@ export const checkConfirm = (data: any, msgIdSet: any) => {
       logger.error(`!!Errors while checking payments in /${constants.CONFIRM}, ${error.stack}`)
     }
 
-    try {
-      logger.info(`Validating fulfillments object for /${constants.CONFIRM}`)
-      confirm.fulfillments.forEach((full: any, index: number) => {
-        const fulfillmentKey = `fulfillments[${index}]`
-        if (!storedFull.includes(full.id)) {
-          const key = `fulfillments[${index}].id`
-          errorObj[key] =
-            `/message/order/fulfillments/id in fulfillments: ${full.id} should be one of the /fulfillments/id mapped in previous call`
-        }
-
-        if (!VALID_VEHICLE_CATEGORIES.includes(full.vehicle.category)) {
-          errorObj[`fulfillment_${index}_vehicleCategory`] =
-            `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
-        }
-
-        if (!Object.prototype.hasOwnProperty.call(full.customer?.person, 'name')) {
-          errorObj[`fulfillments${index}_customer`] = `/message/order/fulfillments/customer in customer: must have name`
-        } else {
-          if (full.customer.person.name.trim() === '') {
-            errorObj[`fulfillments${index}_customer_name`] = `Empty name is not allowed for fulfillment ${index}`
-          } else {
-            setValue(`customer_name`, full.customer.person.name)
-          }
-        }
-
-        if (!Object.prototype.hasOwnProperty.call(full.customer?.contact, 'phone')) {
-          errorObj[`fulfillments${index}_customer`] = `/message/order/fulfillments/customer in customer: must have name`
-        } else {
-          const phoneRegex = /^[0-9]{10}$/
-          const isValidPhone = phoneRegex.test(full.customer.contact.phone)
-          if (!isValidPhone) {
-            errorObj[`fulfillments${index}_customer_phone`] = `Invalid phone format for fulfillment ${index}`
-          } else {
-            setValue(`customer_phone`, full.customer.contact.phone)
-          }
-        }
-
-        //if type is sent then it should be DELIVERY else, no mandatory to check for the BAP's call
-        if (full.type && full.type !== 'DELIVERY') {
-          errorObj[`${fulfillmentKey}.type`] =
-            `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_SELECT}`
-        }
-
-        // Check stops for START and END, or time range with valid timestamp and GPS
-        const otp = false
-        const cancel = false
-        validateStops(full?.stops, index, otp, cancel)
-      })
-    } catch (error: any) {
-      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.CONFIRM},  ${error.message}`)
-      return { error: error.message }
-    }
-
-    if ('billing' in confirm && confirm?.billing?.name) {
-      setValue('billingName', confirm?.billing?.name)
-    } else {
-      errorObj['billing'] = `billing must be part of /${constants.CONFIRM}`
-    }
+    //check billing
+    if (!isNil(confirm?.billing)) {
+      const getBillingError = checkBilling(confirm?.billing, 'CONFIRM')
+      if (Object.keys(getBillingError)?.length) Object.assign(errorObj, getBillingError)
+    } else errorObj['billing'] = `billing object is missing in /${constants.CONFIRM}`
 
     return errorObj
   } catch (err: any) {

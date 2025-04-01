@@ -1,4 +1,4 @@
-export const cancel_RTO_Schema = {
+export const status_cancel_RTO_Schema = {
   type: 'object',
   properties: {
     context: {
@@ -18,11 +18,12 @@ export const cancel_RTO_Schema = {
         },
         action: {
           type: 'string',
-          const: 'on_cancel',
+          enum: ["on_cancel", "on_status"]
         },
         core_version: {
           type: 'string',
-          const: '1.2.0',
+          enum: ['1.2.0', '1.2.5'],
+          minLength: 1,
         },
         bap_id: {
           type: 'string',
@@ -196,7 +197,7 @@ export const cancel_RTO_Schema = {
                 updated_at: {
                   type: 'string',
                   format: 'rfc3339-date-time',
-                },
+                }
               },
               required: ['name', 'address', 'phone', 'created_at', 'updated_at'],
             },

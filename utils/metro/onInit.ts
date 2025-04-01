@@ -5,18 +5,23 @@ import { validateSchema, isObjectEmpty } from '..'
 import { getValue, setValue } from '../../shared/dao'
 import {
   validateContext,
-  validatePaymentParams,
+  // validatePaymentParams,
   validateQuote,
   validateStops,
   validateCancellationTerms,
+  validateItemDescriptor,
+  validateDescriptor,
 } from './metroChecks'
-import { validatePaymentTags, validateRouteInfoTags } from './tags'
+import { validatePaymentTags, validateRouteInfoTags, validateTags } from './tags'
+import { checkItemTime, checkProviderTime, validateDomain, validateFulfillmentV2_0, validateParams } from './validate/helper'
+import { isEmpty, isNil } from 'lodash'
+import { METRODOMAIN } from './validate/functions/constant'
 
-const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SESJT', 'RUT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT']
-const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
-export const checkOnInit = (data: any, msgIdSet: any) => {
+const VALID_DESCRIPTOR_CODES = ['SJT', 'SFSJT', 'RJT', 'PASS']
+export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }, version: string) => {
   try {
     const errorObj: any = {}
+    let FULFILLMENT: string[] = []
     if (!data || isObjectEmpty(data)) {
       return { [metroSequence.ON_INIT]: 'Json cannot be empty' }
     }
@@ -26,9 +31,12 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.ON_INIT, data)
+    const schemaValidation = validateSchema('TRV', constants.ON_INIT, data)
+    const validateDomainName = validateDomain(context?.domain || 'ONDC:TRV11')
+        if (!validateDomainName)
+          errorObj['domain'] =
+            `context.domain should be ${METRODOMAIN.METRO} instead of ${context?.domain} in ${metroSequence.ON_INIT}`
     const contextRes: any = validateContext(context, msgIdSet, constants.INIT, constants.ON_INIT)
-    setValue(`${metroSequence.ON_INIT}_message`, message)
 
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
@@ -41,7 +49,8 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     const on_init = message.order
     const itemIDS: any = getValue('ItmIDS')
     const itemIdArray: any[] = []
-    const storedFull: any = getValue(`${metroSequence.ON_SELECT}_storedFulfillments`)
+    const prvdrId = getValue('providerId') || ([] as string[])
+    // const storedFull: any = getValue(`${metroSequence.ON_SEARCH1}_storedFulfillments`)
     const fulfillmentIdsSet = new Set()
 
     let newItemIDSValue: any[]
@@ -57,10 +66,44 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
 
     setValue('ItmIDS', newItemIDSValue)
 
+    //check provider
     try {
+      if (String(flow?.flow)?.toUpperCase() === 'METRO' && on_init?.tags) {
+        const tagsValidation: { [key: string]: any } | null = validateTags(on_init?.tags ?? [], 0)
+        if (!isNil(tagsValidation)) Object.assign(errorObj, tagsValidation)
+      }
+
       logger.info(`Checking provider Id in /${constants.ON_SEARCH} and /${constants.ON_INIT}`)
-      if (!on_init.provider || on_init.provider.id != getValue('providerId')) {
-        errorObj.prvdrId = `Provider Id mismatches in /${constants.ON_SEARCH} and /${constants.ON_INIT}`
+      if (!on_init.provider)
+        //seprate both the checks from a single function
+        errorObj.prvdrId = `Provider Id id missing in /${constants.ON_INIT}`
+
+      if (!prvdrId.includes(on_init.provider.id))
+        errorObj.prvdrId = `Provider Id mismatches in /${constants.INIT} and /${constants.ON_INIT}`
+
+      // //use validateDescriptor instead
+      const descriptorError = validateDescriptor(
+        on_init?.provider?.descriptor,
+        constants.ON_INIT,
+        `provider.descriptor`,
+        false,
+        [],
+      )
+      if (descriptorError) Object.assign(errorObj, descriptorError)
+      // if (!on_init?.provider?.descriptor)
+      //   errorObj.prvdrIdDescriptor = `Provider Descriptor is Missing in /${constants.ON_INIT}`
+      // else if (
+      //   on_init?.provider?.descriptor &&
+      //   (!on_init.provider.descriptor.name || on_init.provider.descriptor.name === '')
+      // ) {
+      //   errorObj.DescriptorName = `Provider Descriptor Name is Missing or Empty /${constants.ON_INIT}`
+      // }
+
+      //check time validation
+      // fix checkProviderTime also
+      if (String(flow?.flow).toUpperCase() === 'METRO') {
+        const checkTimeError = checkProviderTime(on_init?.provider)
+        if (Object.keys(checkTimeError).length > 0) Object.assign(errorObj, checkTimeError)
       }
     } catch (error: any) {
       logger.error(
@@ -68,99 +111,156 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       )
     }
 
+    //add billing & SCHEDULED_INFO tag-group function also
+    //check fulfillments
     try {
       logger.info(`Validating fulfillments object for /${constants.ON_INIT}`)
-      on_init.fulfillments.forEach((fulfillment: any, index: number) => {
-        const fulfillmentKey = `fulfillments[${index}]`
-        fulfillmentIdsSet.add(fulfillment.id)
-        if (!storedFull.includes(fulfillment.id)) {
-          errorObj[
-            `${fulfillmentKey}.id`
-          ] = `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
-        }
+      if (!on_init?.fulfillments) errorObj.fulfillments = `Fulfillments missing in /${constants.ON_INIT}`
+      // wrap below conditions in an else block
+      else {
+        version === '2.0.0'
+          ? on_init.fulfillments.forEach((fulfillment: any, index: number) => {
+              const fulfillmentKey = `fulfillments[${index}]`
 
-        if (!VALID_VEHICLE_CATEGORIES.includes(fulfillment.vehicle.category)) {
-          errorObj[
-            `${fulfillmentKey}.vehicleCategory`
-          ] = `Vehicle category should be one of ${VALID_VEHICLE_CATEGORIES}`
-        }
+              if (fulfillment?.id) {
+                fulfillmentIdsSet.add(fulfillment?.id)
+                FULFILLMENT = [...FULFILLMENT, fulfillment?.id as string]
+                setValue(`${metroSequence.ON_INIT}_storedFulfillments`, FULFILLMENT)
+                // if (!storedFull.includes(fulfillment?.id)) {
+                //   errorObj[`${fulfillmentKey}.id`] =
+                //     `/message/order/fulfillments/id in fulfillments: ${fulfillment.id} should be one of the /fulfillments/id mapped in previous call`
+                // }
+              } else {
+                errorObj[`Fulfillment[${index}].id`] = `fulfillment.id missing in /${constants.ON_INIT}`
+              }
 
-        if (fulfillment.type !== 'DELIVERY') {
-          errorObj[
-            `${fulfillmentKey}.type`
-          ] = `Fulfillment type must be DELIVERY at index ${index} in /${constants.ON_INIT}`
-        }
+              if (fulfillment?.vehicle?.category !== (String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO')) {
+                errorObj[`${fulfillmentKey}.vehicleCategory`] =
+                  `Vehicle category should be ${String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO'} in Fulfillment.`
+              }
 
-        if (Object.prototype.hasOwnProperty.call(fulfillment, 'agent')) {
-          errorObj[`fulfillments${index}_agent`] = `/message/order/agent is not part of /${constants.ON_INIT} call`
-        }
+              if (fulfillment.type !== 'TRIP') {
+                errorObj[`${fulfillmentKey}.type`] =
+                  `Fulfillment type must be TRIP at index ${index} in /${constants.ON_INIT}`
+              }
 
-        // Check stops for START and END, or time range with valid timestamp and GPS
-        const otp = false
-        const cancel = false
-        validateStops(fulfillment?.stops, index, otp, cancel)
+              const otp = false
+              const cancel = false
+              const getStopsError = validateStops(fulfillment?.stops, index, otp, cancel, constants.ON_INIT)
+              const errorValue = Object.values(getStopsError)[0] || []
+              if (Object.keys(getStopsError).length > 0 && Object.keys(errorValue)?.length)
+                Object.assign(errorObj, getStopsError)
 
-        if (fulfillment.tags) {
-          // Validate route info tags
-          const tagsValidation = validateRouteInfoTags(fulfillment.tags)
-          if (!tagsValidation.isValid) {
-            Object.assign(errorObj, { tags: tagsValidation.errors })
-          }
-        }
-      })
+              if (String(flow?.flow).toUpperCase() !== 'METRO') {
+                if (!fulfillment?.tags)
+                  errorObj[`ulfillment_${index}_tags`] = `Tags should be present in Fulfillment in case of Intracity.`
+                else {
+                  // Validate route info tags
+                  const tagsValidation = validateRouteInfoTags(fulfillment?.tags)
+                  if (!tagsValidation.isValid) {
+                    Object.assign(errorObj, { tags: tagsValidation.errors })
+                  }
+                }
+              }
+            })
+          : on_init?.fulfillments &&
+            validateFulfillmentV2_0(on_init?.fulfillments ?? [], errorObj, constants.ON_INIT, flow)
+
+        setValue(`storedFulfillments`, fulfillmentIdsSet)
+      }
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking fulfillments info in /${constants.ON_INIT},  ${error.message}`)
       return { error: error.message }
     }
 
+    //check items
     try {
-      on_init.items.forEach((item: any, index: number) => {
-        if (!newItemIDSValue.includes(item.id)) {
-          const key = `item[${index}].item_id`
-          errorObj[
-            key
-          ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_INIT}`
-        }
-
-        if (!item.descriptor || !item.descriptor.code) {
-          const key = `item${index}_descriptor`
-          errorObj[key] = `Descriptor is missing in items[${index}]`
-        } else {
-          if (!VALID_DESCRIPTOR_CODES.includes(item.descriptor.code)) {
-            const key = `item${index}_descriptor`
-            errorObj[
-              key
-            ] = `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
+      //items null check
+      if (!on_init?.items) errorObj.items = `Items missing in /${constants.ON_INIT}`
+      else {
+        on_init?.items?.forEach((item: any, index: number) => {
+          //handle id non-existant check
+          if (!item.id) errorObj[`item[${index}].id`] = `Item id missing in /${constants.ON_INIT}`
+          else if (!newItemIDSValue.includes(item.id)) {
+            const key = `item[${index}].item_id`
+            errorObj[key] =
+              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_INIT}`
           }
-        }
 
-        const price = item.price
-        if (!price || !price.currency || !price.value) {
-          const key = `item${index}_price`
-          errorObj[key] = `Price is incomplete in /items[${index}]`
-        }
+          //use common descriptor function
+          const getDescriptorError = validateItemDescriptor(item, index, VALID_DESCRIPTOR_CODES)
+          if (Object.keys(getDescriptorError)?.length) Object.assign(errorObj, getDescriptorError)
 
-        item.fulfillment_ids.forEach((fulfillmentId: string) => {
-          if (!fulfillmentIdsSet.has(fulfillmentId)) {
-            errorObj[
-              `invalidFulfillmentId_${index}`
-            ] = `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_INIT} is not valid`
+          //handle price non-existant check
+          const price = item?.price
+          if (!price || !price.currency || !price.value) {
+            const key = `item${index}_price`
+            errorObj[key] = `Price is incomplete or missing in /items[${index}]`
+          }
+
+          //missing time check
+          const itemTimeError = checkItemTime(item?.time, 0, index)
+          if (!isNil(itemTimeError)) Object.assign(errorObj, itemTimeError)
+
+          //missing category_ids check
+          if (String(flow?.flow)?.toUpperCase() === 'METRO') {
+            if (!item?.category_ids)
+              errorObj[`item${index}category_ids`] = `Category_ids array is missing in /${constants.ON_INIT}`
+            else {
+              if (item?.category_ids && !item?.category_ids.length)
+                errorObj[`item${index}category_ids`] = `Category_ids array is empty in /${constants.ON_INIT}`
+            }
+          }
+
+          //missing quantity check
+
+          if (!item?.quantity) {
+            errorObj[`item${index}quantity`] = `Quantity is missing in /${constants.ON_INIT}`
+          } else {
+            if (!item?.quantity?.selected)
+              errorObj[`item${index}quantity_selected`] = `Quantity selected is missing in /${constants.ON_INIT}`
+
+            if (!item?.quantity?.selected?.count)
+              errorObj[`item${index}quantity_selected_count`] =
+                `Quantity selected count is missing in /${constants.ON_INIT}`
+          }
+
+          //handle fulfillment_ids non-existant check
+          if (!item?.fulfillment_ids)
+            errorObj[`item${index}fulfillment_ids`] = `Fulfillment ids missing in /${constants.ON_INIT}`
+          else {
+            item?.fulfillment_ids.forEach((fulfillmentId: string) => {
+              if (!fulfillmentIdsSet.has(fulfillmentId)) {
+                errorObj[`invalidItemFulfillmentId_${index}`] =
+                  `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_INIT} is not valid`
+              }
+            })
           }
         })
-      })
+      }
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking items info in /${constants.ON_INIT},  ${error.message}`)
       return { error: error.message }
     }
 
+    //check cancellation_terms
+    // revisit & handle external_ref check
     try {
-      logger.info(`Checking cancellation terms in /${constants.ON_INIT}`)
-      const cancellationErrors = validateCancellationTerms(on_init.cancellation_terms, constants.ON_INIT)
-      Object.assign(errorObj, cancellationErrors)
+      if (String(flow?.flow)?.toUpperCase() === 'METRO') {
+        if (!on_init?.cancellation_terms)
+          errorObj.cancellation_terms = `cancellation_terms missing in /${constants.ON_INIT}`
+        else {
+          logger.info(`Checking cancellation terms in /${constants.ON_INIT}`)
+
+          const cancellationErrors = validateCancellationTerms(on_init?.cancellation_terms, constants.ON_INIT)
+          if (!isNil(cancellationErrors)) Object.assign(errorObj, cancellationErrors)
+        }
+      }
     } catch (error: any) {
       logger.error(`!!Error while checking cancellation_terms in /${constants.ON_INIT}, ${error.stack}`)
     }
 
+    //check payments
     try {
       logger.info(`Checking payments in /${constants.ON_INIT}`)
       on_init?.payments?.forEach((arr: any, i: number) => {
@@ -169,9 +269,8 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
         } else {
           const srchCollectBy = getValue(`collected_by`)
           if (srchCollectBy != arr?.collected_by)
-            errorObj[
-              `payemnts[${i}]_collected_by`
-            ] = `payments.collected_by value sent in ${constants.ON_INIT} should be ${srchCollectBy} as sent in ${constants.ON_SELECT}`
+            errorObj[`payemnts[${i}]_collected_by`] =
+              `payments.collected_by value sent in ${constants.ON_INIT} should be ${srchCollectBy} as sent in ${constants.ON_SEARCH}`
         }
 
         const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
@@ -188,21 +287,26 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
           } & its value must be one of: ${validStatus.join(', ')}`
         }
 
-        const params = arr.params
-        const bankCode: string | null = getValue('bank_code')
-        const bankAccountNumber: string | null = getValue('bank_account_number')
-        const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
-        // Validate bank_code
-        validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.ON_INIT)
+        const payment_type = getValue('INIT_PAYMENT_TYPE') ?? 'NEFT'
 
-        // Validate bank_account_number
-        validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.ON_INIT)
+        const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.ON_INIT, payment_type)
+        if (!isEmpty(validatePayementParams)) Object.assign(errorObj, validatePayementParams)
+        // const params = arr.params
+        // const bankCode: string | null = getValue('bank_code')
+        // const bankAccountNumber: string | null = getValue('bank_account_number')
+        // const virtualPaymentAddress: string | null = getValue('virtual_payment_address')
+        // // Validate bank_code
 
-        // Validate virtual_payment_address
-        validatePaymentParams(params, virtualPaymentAddress, 'virtual_payment_address', errorObj, i, constants.ON_INIT)
+        // validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.ON_INIT)
+
+        // // Validate bank_account_number
+        // validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.ON_INIT)
+
+        // // Validate virtual_payment_address
+        // validatePaymentParams(params, virtualPaymentAddress, 'virtual_payment_address', errorObj, i, constants.ON_INIT)
 
         // Validate payment tags
-        const tagsValidation = validatePaymentTags(arr.tags)
+        const tagsValidation = validatePaymentTags(arr?.tags, constants?.ON_INIT)
         if (!tagsValidation.isValid) {
           Object.assign(errorObj, { tags: tagsValidation.errors })
         }
@@ -211,6 +315,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
       logger.error(`!!Errors while checking payments in /${constants.ON_INIT}, ${error.stack}`)
     }
 
+    //check quote
     try {
       logger.info(`Checking quote details in /${constants.ON_INIT}`)
       const quoteErrors = validateQuote(on_init?.quote, constants.ON_INIT)

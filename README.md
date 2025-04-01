@@ -38,7 +38,6 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
 ```
 
 The table below outlines the payload structure for various transaction flows in the Retail Log Validation Utility. Each flow corresponds to specific actions within the ONDC network, and the payload structure provides a clear representation of the data expected for each action. This comprehensive reference assists developers in constructing accurate and valid JSON payloads for their transactions.
-
 | Flow 1        | Flow 2                     | Flow 3                     | Flow 4     | Flow 5                     | Flow 6                        |
 | ------------- | -------------------------- | -------------------------- | ---------- | -------------------------- | ----------------------------- |
 | search        | search                     | search                     | search     | search                     | search                        |
@@ -54,7 +53,7 @@ The table below outlines the payload structure for various transaction flows in 
 |               | on_status_picked           | on_status_pending          |            | on_status_picked           | on_status_pending             |
 |               | on_status_out_for_delivery | on_status_packed           |            | on_status_out_for_delivery | on_status_packed              |
 |               | on_status_delivered        | on_status_picked           |            | on_cancel                  | on_status_picked              |
-|               |                            | on_status_out_for_delivery |            |                            | on_status_out_for_delivery    |
+|               |                            | on_status_out_for_delivery |            | on_status_rto_delivered/disposed | on_status_out_for_delivery    |
 |               |                            | on_status_delivered        |            |                            | on_status_delivered           |
 |               |                            |                            |            |                            | update_reverse_qc             |
 |               |                            |                            |            |                            | on_update_interim_reverse_qc  |
@@ -62,11 +61,10 @@ The table below outlines the payload structure for various transaction flows in 
 |               |                            |                            |            |                            | on_update_picked              |
 |               |                            |                            |            |                            | update_settlement_reverse_qc  |
 |               |                            |                            |            |                            | on_update_delivered           |
-|               |                            |                            |            |                            | update_liquidated           |
-|               |                            |                            |            |                            | on_update_interim_liquidated|
+|               |                            |                            |            |                            | update_liquidated             |
+|               |                            |                            |            |                            | on_update_interim_liquidated  |
 |               |                            |                            |            |                            | on_update_liquidated          |
-|               |                            |                            |            |                            | update_settlement_liquidated|
-
+|               |                            |                            |            |                            | update_settlement_liquidated  |
 ### Sample Postman Request/Response
 
 ```shell
@@ -548,8 +546,9 @@ curl --location 'http://localhost:3008/api/validate' \
         "on_status_pending": {},
         "on_status_packed": {},
         "on_status_picked": {},
-        "on_status_out_for_delivery": {}
+        "on_status_out_for_delivery": {},
         "on_cancel": {},
+        "on_status_rto_delivered/disposed":{}
     },
     "flow": "5"
 }'
@@ -632,7 +631,7 @@ curl --location 'https://log-validation.ondc.org/api/validate/fis/fis12' \
     "bap_id": "BUYER_APP_SUBSCRIBER_ID",
     "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
     "payload": {
-    "search": {},
+        "search": {},
         "on_search":{},
         "select_1": {},
         "on_select_1": {},
@@ -640,17 +639,190 @@ curl --location 'https://log-validation.ondc.org/api/validate/fis/fis12' \
         "on_select_2": {},
         "select_3": {},
         "on_select_3":{},
+        "on_status_ekyc": {},
         "init_1": {},
         "on_init_1": {},
         "init_2": {},
         "on_init_2": {},
+        "on_status_enach": {},
         "init_3": {},
         "on_init_3": {},
+        "on_status_esign": {},
         "confirm": {},
         "on_confirm": {},
         "status": {},
         "on_status": {},
         "update": {},
+        "on_update": {},
+        "on_update_unsolicated": {}
+    }
+}'
+```
+
+### For FIS14 Sample Curl Requests (Local)
+
+#### For SEARCH_FULL_PULL Flow
+```shell
+curl --location 'http://localhost:3008/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS14",
+    "version": "2.0.0",
+    "flow": "SEARCH_FULL_PULL",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {}
+    }
+}'
+```
+
+#### For SEARCH_INCREMENT Flow
+```shell
+curl --location 'http://localhost:3008/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS14",
+    "version": "2.0.0",
+    "flow": "SEARCH_INCREMENT",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {}
+    }
+}'
+```
+
+#### For SIP_NEW_FOLIO_WITH_KYC Flow
+```shell
+curl --location 'http://localhost:3008/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS14",
+    "version": "2.0.0",
+    "flow": "SIP_NEW_FOLIO_WITH_KYC",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "select": {},
+        "on_select": {},
+        "select_1": {},
+        "on_select_1": {},
+        "select_2": {},
+        "on_select_2": {},
+        "select_3": {},
+        "on_select_3": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status": {}
+    }
+}'
+```
+
+#### For SIP_INSTALLEMENT_SUCCESS Flow
+```shell
+curl --location 'http://localhost:3008/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS14",
+    "version": "2.0.0",
+    "flow": "SIP_INSTALLEMENT_SUCCESS",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "on_update": {},
+        "on_confirm": {},
+        "on_status": {},
+        "on_update_1": {}
+    }
+}'
+```
+
+#### For SIP_INSTALLEMENT_FAILURE Flow
+```shell
+curl --location 'http://localhost:3008/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS14",
+    "version": "2.0.0",
+    "flow": "SIP_INSTALLEMENT_FAILURE",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "on_update": {},
+        "on_confirm": {},
+        "on_update_1": {}
+    }
+}'
+```
+
+#### For LUMPSUM_EXISTING_FOLIO Flow
+```shell
+curl --location 'http://localhost:3008/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS14",
+    "version": "2.0.0",
+    "flow": "LUMPSUM_EXISTING_FOLIO",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status": {},
+        "on_update": {}
+    }
+}'
+```
+
+#### For LUMPSUM_PAYMENT_RETRY Flow
+```shell
+curl --location 'http://localhost:3008/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS14",
+    "version": "2.0.0",
+    "flow": "LUMPSUM_PAYMENT_RETRY",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_update": {},
+        "update": {},
+        "on_update_1": {}
+    }
+}'
+```
+
+#### For REDEMPTION Flow
+```shell
+curl --location 'http://localhost:3008/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS14",
+    "version": "2.0.0",
+    "flow": "REDEMPTION",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
         "on_update": {}
     }
 }'
@@ -684,6 +856,116 @@ curl --location 'https://localhost:3006/api/validate/trv' \
         "on_cancel": {}
     }
 }'
+```
+### For RSF V2 Sample Curl Request (Local)
+
+```shell
+curl --location 'http://localhost:3008/api/validate/rsf' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:NTS10",
+    "version": "2.0.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+
+        "settle":{},
+        "on_settle":{},
+        "report":{},
+        "on_report":{},
+        "recon":{},
+        "on_recon":{}
+                }
+        }'
+
+```
+
+### For IGM 2.0.0 Sample Curl Request (Local)
+
+### For FLOW_1
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/igm' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "",
+    "version": "2.0.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "flow": "FLOW_1",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "issue_open": {},
+        "on_issue_processing_1":{},
+        "on_issue_info_required": {},
+        "issue_info_provided": {},
+        "on_issue_processing_2": {},
+        "on_issue_resolution_proposed": {},
+        "issue_resolution_accepted": {},
+        "on_issue_resolved": {},
+        "issue_closed": {}
+    }
+}'
+
+```
+
+### For FLOW_2
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/igm' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "",
+    "version": "2.0.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "flow": "FLOW_2",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "issue_open": {},
+        "on_issue_processing": {},
+        "on_issue_resolution_proposed": {},
+        "issue_resolution_accepted": {},
+        "on_issue_resolved": {},
+        "issue_esclated": {},
+        "on_issue_gro_processing": {},
+        "on_issue_gro_resolution_proposed": {},
+        "on_issue_gro_resolved": {},
+        "issue_close": {}
+    }
+}'
+
+```
+
+### For FLOW_3
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/igm' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "",
+    "version": "2.0.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "flow": "FLOW_3",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "issue_open": {},
+        "on_issue_processing": {},
+        "issue_lsp_open": {},
+        "on_issue_lsp_processing": {},
+        "on_issue_lsp_info_required": {},
+        "on_issue_info_required": {},
+        "issue_info_provided": {},
+        "issue_info_lsp_info_provided": {},
+        "on_issue_lsp_resolution_proposed": {},
+        "on_issue_resolution_proposed": {},
+        "issue_resolution_accepted": {},
+        "issue_lsp_resolution_accepted": {},
+        "on_issue_lsp_resolved": {},
+        "on_issue_resolved": {},
+        "issue_close": {},
+        "issue_lsp_close": {}
+    }
+}'
+
 ```
 
 Using Postman, you can import the above `curl` command into Postman and replace the empty objects in the payload with your actual data. This allows for easy testing and validation of transaction logs on your local environment.

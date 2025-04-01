@@ -15,7 +15,8 @@ export const FnBonInitSchema = {
         },
         core_version: {
           type: 'string',
-          const: '1.2.0',
+          enum: ['1.2.0', '1.2.5'],
+          minLength: 1,
         },
         bap_id: {
           type: 'string',
@@ -538,7 +539,113 @@ export const FnBonInitSchema = {
                 '@ondc/org/settlement_details',
               ],
             },
+            offers: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  id: {
+                    type: 'string',
+                    description: 'Unique identifier for the offer.',
+                  },
+                  descriptor: {
+                    type: 'object',
+                    properties: {
+                      code: {
+                        type: 'string',
+                        description: 'Type of the offer (e.g., discount, buyXgetY, freebie).',
+                        enums: ['discount', 'buyXgetY', 'freebie', 'slab', 'combo', 'delivery', 'exchange', 'financing']
+                      },
+                      images: {
+                        type: 'array',
+                        items: {
+                          type: 'string',
+                          format: 'uri',
+                          description: 'URL to images related to the offer.',
+                        },
+                      },
+                    },
+                    required: ['code', 'images'],
+                  },
+                  location_ids: {
+                    type: 'array',
+                    items: {
+                      type: 'string',
+                      description: 'List of location identifiers where the offer is valid.',
+                    },
+                  },
+                  item_ids: {
+                    type: 'array',
+                    items: {
+                      type: 'string',
+                      description: 'List of item identifiers applicable for the offer.',
+                    },
+                  },
+                  time: {
+                    type: 'object',
+                    properties: {
+                      label: {
+                        type: 'string',
+                        description: 'Label for the time validity of the offer (e.g., valid).',
+                      },
+                      range: {
+                        type: 'object',
+                        properties: {
+                          start: {
+                            type: 'string',
+                            format: 'date-time',
+                            description: 'Start date and time for the offer.',
+                          },
+                          end: {
+                            type: 'string',
+                            format: 'date-time',
+                            description: 'End date and time for the offer.',
+                          },
+                        },
+                        required: ['start', 'end'],
+                      },
+                    },
+                    required: ['label', 'range'],
+                  },
+                  tags: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        code: {
+                          type: 'string',
+                          description: 'Type of the tag (e.g., qualifier, benefit, meta).',
+                          enums: ['qualifier', 'benefit', 'meta']
+                        },
+                        list: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                                description: 'Code representing the specific tag property.',
+                                enums: ['min_value', 'value_type', 'value', 'additive', 'item_count', 'item_id', 'item_value']
+                              },
+                              value: {
+                                type: 'string',
+                                description: 'Value for the tag property.',
+                              },
+                            },
 
+                          },
+                          required: ['code', 'value'],
+                        },
+                      },
+                    },
+                    required: ['code', 'list'],
+                  },
+                },
+              },
+
+              required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags',],
+
+            },
             tags: {
               type: 'array',
               items: {

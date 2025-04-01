@@ -2,12 +2,16 @@ import _ from 'lodash'
 import { sign, hash } from '../../shared/crypto'
 import { logger } from '../../shared/logger'
 import { DOMAIN, ERROR_MESSAGE } from '../../shared/types'
-import { IGMvalidateLogs, validateLogs, RSFvalidateLogs } from '../../shared/validateLogs'
+import { IGMvalidateLogs, validateLogs, RSFvalidateLogs, RSFvalidateLogsV2, IGMvalidateLogs2 } from '../../shared/validateLogs'
 import { validateLogsForFIS12 } from '../../shared/Actions/FIS12Actions'
 import { validateLogsForMobility } from '../../shared/Actions/mobilityActions'
 import { validateLogsForMetro } from '../../shared/Actions/metroActions'
 import { validateLogsForFIS10 } from '../../shared/Actions/FIS10Actions'
 import { validateLogsForFIS13 } from '../../shared/Actions/FIS13Actions'
+import { validateLogsForTRV13 } from '../../shared/Actions/TRV13Actions'
+import { getFis14Format, validateLogsForFIS14 } from '../../shared/Actions/FIS14Actions'
+import { validateLogsForTRV14 } from '../../shared/Actions/TRV14Actions'
+import { validateLogsForAirline } from '../../shared/Actions/TRV12Action'
 
 const createSignature = async ({ message }: { message: string }) => {
   const privateKey = process.env.SIGN_PRIVATE_KEY as string
@@ -49,6 +53,7 @@ const validateRetail = async (
 
   switch (version) {
     case '1.2.0':
+    case '1.2.5':
       response = await validateLogs(payload, domain, flow)
 
       if (_.isEmpty(response)) {
@@ -101,6 +106,17 @@ const validateFinance = async (domain: string, payload: string, version: string,
       }
 
       break
+
+    case 'ONDC:FIS14':
+      console.log('flow hello', flow)
+      response = validateLogsForFIS14(payload, flow, version)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+
+      break
     default:
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
       logger.warn('Invalid Version!!')
@@ -113,8 +129,9 @@ const validateMobility = async (domain: string, payload: string, version: string
   let success = false
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
 
+
   if (!flow) throw new Error('Flow not defined')
-  if (version !== '2.0.0') {
+  if (version !== '2.0.0' && domain === 'ONDC:TRV10') {
     logger.warn('Invalid Version!!')
     message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
     return { response, success, message }
@@ -122,7 +139,7 @@ const validateMobility = async (domain: string, payload: string, version: string
 
   switch (domain) {
     case 'ONDC:TRV10':
-      response = validateLogsForMobility(payload, domain, flow)
+      response = validateLogsForMobility(payload, flow, version)
 
       if (_.isEmpty(response)) {
         success = true
@@ -132,7 +149,7 @@ const validateMobility = async (domain: string, payload: string, version: string
       break
 
     case 'ONDC:TRV11':
-      response = validateLogsForMetro(payload)
+      response = validateLogsForMetro(payload, flow, version)
 
       if (_.isEmpty(response)) {
         success = true
@@ -140,6 +157,34 @@ const validateMobility = async (domain: string, payload: string, version: string
       }
 
       break
+
+      case 'ONDC:TRV12':
+      response = validateLogsForAirline(payload, flow, version)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+
+      break
+
+      case 'ONDC:TRV13':
+        response = validateLogsForTRV13(payload, domain, flow)
+  
+        if (_.isEmpty(response)) {
+          success = true
+          message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+        }
+        break
+      case 'ONDC:TRV14':
+        response = validateLogsForTRV14(payload, flow, version)
+  
+        if (_.isEmpty(response)) {
+          success = true
+          message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+        }
+        break
+
     default:
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_DOMAIN
       logger.warn('Invalid Domain!!')
@@ -147,7 +192,7 @@ const validateMobility = async (domain: string, payload: string, version: string
 
   return { response, success, message }
 }
-const validateIGM = async (payload: string, version: string) => {
+const validateIGM = async (payload: string, version: string, flow?: string) => {
   let response
   let success = false
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
@@ -162,14 +207,31 @@ const validateIGM = async (payload: string, version: string) => {
       }
 
       break
+      case '2.0.0':
+      response = IGMvalidateLogs2(payload, flow)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+
+      break
+
     default:
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
       logger.warn('Invalid Version!!')
   }
 
+ 
+
   return { response, success, message }
 }
+
+
+
+
 const validateRSF = async (payload: string, version: string) => {
+  logger.info('Entering validateRSF function')
   let response
   let success = false
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
@@ -181,8 +243,18 @@ const validateRSF = async (payload: string, version: string) => {
         success = true
         message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
       }
+      break;
 
-      break
+    case '2.0.0':
+      response = RSFvalidateLogsV2(payload)
+      logger.info('RSF 2.0.0 validation response:', response)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+      break;
+
     default:
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
       logger.warn('Invalid Version!!')
@@ -191,12 +263,22 @@ const validateRSF = async (payload: string, version: string) => {
   return { response, success, message }
 }
 
+const getFinanceValidationFormat = (domain: string, version: string) => {
+  switch (domain) {
+    case 'ONDC:FIS14':
+      return getFis14Format(version)
+    default:
+      throw new Error('Domain not supported yet')
+  }
+}
+
 export default {
   validateFinance,
   validateIGM,
   validateMobility,
   validateRetail,
   validateRSF,
+  getFinanceValidationFormat,
   getEnumForDomain,
   createSignature,
 }

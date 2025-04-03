@@ -27,6 +27,7 @@ export function validateLogsForMetro(data: any, flowName: string, version: strin
   }
 
   try {
+    
     if (data[metroSequence.SEARCH1]) {
       const searchResp = search(data[metroSequence.SEARCH1], msgIdSet, false, flow)
       if (!_.isEmpty(searchResp)) {

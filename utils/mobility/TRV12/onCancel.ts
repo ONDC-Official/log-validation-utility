@@ -7,9 +7,9 @@ import { validateSchema, isObjectEmpty } from '../../'
 import { validateContext } from '../../metro/metroChecks'
 import { validateParams } from '../../metro/validate/helper'
 import { isEmpty } from 'lodash'
+import { compareItems, validateQuotePricing } from './functions/helper'
 
 const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
-const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SFSJT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT', 'RJT']
 const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT']
 const validStatus = ['NOT-PAID', 'PAID']
 
@@ -25,6 +25,7 @@ export const checkOnCancelPayload = (
     if (!data || isObjectEmpty(data)) {
       return { [constants.ON_CANCEL]: 'Json cannot be empty' }
     }
+    const onConfirmMessage = getValue('on_confirm_message')
 
     const { message, context }: any = data
     if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
@@ -129,7 +130,7 @@ export const checkOnCancelPayload = (
 
         if (fulfillment.tags) {
           // Validate route info tags
-          if (String(flow.flow.toUpperCase()).includes('INTRACITY')) {
+          if (String(flow.flow.toUpperCase()).includes('AIRLINES')) {
             const tagsValidation = validateRouteInfoTags(fulfillment.tags)
             if (!tagsValidation.isValid) {
               Object.assign(errorObj, { tags: tagsValidation.errors })
@@ -143,39 +144,17 @@ export const checkOnCancelPayload = (
     }
 
     try {
-      on_cancel?.items &&
-        on_cancel?.items.forEach((item: any, index: number) => {
-          if (!isEmpty(newItemIDSValue) && !newItemIDSValue.includes(item.id)) {
-            const key = `item[${index}].item_id`
-            errorObj[key] =
-              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_CANCEL}`
-          }
+      if(on_cancel?.items){
+        const itemsCheck = compareItems(on_cancel?.items, newItemIDSValue);
+        if(!itemsCheck.success){
+          Object.assign(errorObj, itemsCheck.data)
 
-          if (!item.descriptor || !item.descriptor.code) {
-            const key = `item${index}_descriptor`
-            errorObj[key] = `Descriptor is missing in items[${index}]`
-          } else {
-            if (!VALID_DESCRIPTOR_CODES.includes(item.descriptor.code)) {
-              const key = `item${index}_descriptor`
-              errorObj[key] =
-                `descriptor.code should be one of ${VALID_DESCRIPTOR_CODES} instead of ${item.descriptor.code}`
-            }
-          }
+        }
+        if(onConfirmMessage?.order?.items && JSON.stringify(onConfirmMessage?.order?.items) !== JSON.stringify(on_cancel?.items)){
+          errorObj[`Items:error`] = `Items mismatch in ${constants.ON_CONFIRM} and ${constants.ON_CANCEL}`
+        }
 
-          const price = item.price
-          if (!price || !price.currency || !price.value) {
-            const key = `item${index}_price`
-            errorObj[key] = `Price is incomplete in /items[${index}]`
-          }
-
-          item.fulfillment_ids &&
-            item.fulfillment_ids.forEach((fulfillmentId: string) => {
-              if (!fulfillmentIdsSet.has(fulfillmentId)) {
-                errorObj[`invalidItemFulfillmentId_${index}`] =
-                  `Item Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_CANCEL}.`
-              }
-            })
-        })
+      }
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking items info in /${constants.ON_CANCEL},  ${error.message}`)
       return { error: error.message }
@@ -256,8 +235,15 @@ export const checkOnCancelPayload = (
 
     try {
       logger.info(`Checking quote details in /${constants.ON_CANCEL}`)
+      const quotePriceCheck = validateQuotePricing(on_cancel?.quote)
+      if(!quotePriceCheck.success){
+        Object.assign(errorObj, quotePriceCheck.data)
+      }
       const quoteErrors = validateQuote(on_cancel?.quote, constants.ON_CANCEL)
       Object.assign(errorObj, quoteErrors)
+      if(onConfirmMessage?.order?.quote && JSON.stringify(onConfirmMessage?.order?.quote) !== JSON.stringify(on_cancel?.quote)){
+        errorObj[`Quote:error`] = `Quote mismatch in ${constants.ON_CONFIRM} and ${constants.ON_CANCEL}`
+      }
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking Quote in /${constants.ON_CANCEL},  ${error.message}`)
       return { error: error.message }

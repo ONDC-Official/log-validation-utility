@@ -48,6 +48,7 @@ const controller = {
           {
             const { response, success, message } = await helper.validateMobility(domain, payload, version, flow)
             result = { response, success, message }
+            
           }
 
           break
@@ -77,7 +78,6 @@ const controller = {
         domain,
         reportTimestamp: new Date().toISOString(),
       }
-
       const { signature, currentDate } = await helper.createSignature({ message: JSON.stringify(httpResponse) })
 
       if (!success)

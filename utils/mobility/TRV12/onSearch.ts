@@ -1,6 +1,6 @@
 import { logger } from '../../../shared/logger'
 import { setValue } from '../../../shared/dao'
-import { validateRouteInfoTags, validateTags } from '../../metro/tags'
+import { validateRouteInfoTags } from '../../metro/tags'
 import constants, { airlinesSequence } from '../../../constants'
 import { validateDescriptor, validateStops } from '../../metro/metroChecks'
 import { validateSchema, isObjectEmpty } from '../../'
@@ -13,9 +13,9 @@ import {
   checkPayment,
   checkRefIds,
   validateFarePolicyTags,
-} from '../../metro/validate/helper'
-import { VALID_DESCRIPTOR_CODES } from '../../metro/enum'
+} from './functions/helper'
 
+export const VALID_DESCRIPTOR_CODES = ['ADULT_TICKET', 'CHILD_TICKET']
 export const checkOnSearch = (
   data: any,
   msgIdSet: any,
@@ -35,8 +35,8 @@ export const checkOnSearch = (
   }
 
   const contextRes: any = validateContext(context, msgIdSet, constants.SEARCH, constants.ON_SEARCH)
-  const schemaValidation = validateSchema('TRV12', constants.ON_SEARCH, data)
-  setValue(`${airlinesSequence.ON_SEARCH}_message`, message)
+  const schemaValidation = validateSchema(flow?.flow === 'Airlines' ? 'TRV12' : 'TRV12BUS', constants.ON_SEARCH, data)
+  setValue(`${constants.ON_SEARCH}_message`, message)
 
   if (schemaValidation !== 'error') {
     Object.assign(errorObj, schemaValidation)
@@ -71,16 +71,10 @@ export const checkOnSearch = (
     while (i < len) {
       //validate categories
       const categories = onSearchCatalog['providers'][i]?.categories
-      if (String(flow?.flow)?.toUpperCase() === 'METRO' && onSearchCatalog['providers'][i]?.tags) {
-        const tagsValidation: { [key: string]: any } | null = validateTags(
-          onSearchCatalog['providers'][i]?.tags ?? [],
-          i,
-        )
-        if (!isNil(tagsValidation)) Object.assign(errorObj, tagsValidation)
-      }
+
       // }
 
-      if (String(flow.flow)?.toUpperCase() === 'METRO') {
+      if (String(flow.flow)?.toUpperCase() === 'AIRLINES') {
         const providerTime = onSearchCatalog['providers'][i]?.time
 
         if (providerTime) {
@@ -98,7 +92,7 @@ export const checkOnSearch = (
       }
 
       const categoriesIds: string[] = []
-      if (String(flow?.flow)?.toUpperCase() === 'METRO') {
+      if (String(flow?.flow)?.toUpperCase() === 'AIRLINES') {
         if (categories) {
           onSearchCatalog['providers'][i]?.categories?.map(
             (item: { id: string; descriptor: { code: string } }, index: number) => {
@@ -143,7 +137,7 @@ export const checkOnSearch = (
             storedFulfillments.add(fulfillment.id)
           }
 
-          if (String(flow?.flow).toUpperCase() !== 'METRO') {
+          if (String(flow?.flow).toUpperCase() !== 'AIRLINES') {
             if (!fulfillment?.tags)
               errorObj[`provider_${i}_fulfillment_${k}tags`] =
                 `Tags should be present in Fulfillment in case of Intracity.`

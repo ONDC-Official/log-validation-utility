@@ -7,13 +7,14 @@ import { validateSchema, isObjectEmpty } from '../../'
 import { validateContext } from '../../metro/metroChecks'
 import { isEmpty, isNil } from 'lodash'
 import { validateFulfillmentV2_0, validateParams } from '../../metro/validate/helper'
+import { compareItems, validateQuotePricing } from './functions/helper'
 
-// const VALID_VEHICLE_CATEGORIES = ['AUTO_RICKSHAW', 'CAB', 'METRO', 'BUS', 'AIRLINE']
-const VALID_DESCRIPTOR_CODES = ['RIDE', 'SJT', 'SFSJT', 'PASS', 'SEAT', 'NON STOP', 'CONNECT', 'RJT']
+const VALID_DESCRIPTOR_CODES = ['ADULT_TICKET', 'CHILD_TICKET']
 
 export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }, version: string) => {
   const errorObj: any = {}
   const payment = getValue('paymentId')
+  const onInitMessage = getValue('on_init_message');
   // const paymentAmount = getValue('paramsAmount')
   // const paymentTransactionId = getValue('paramsTransactionId')
   try {
@@ -43,7 +44,6 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
     const itemIdArray: any[] = []
     const fulfillmentIdsSet = new Set()
     const storedFull: any = getValue(`${airlinesSequence.ON_INIT}_storedFulfillments`)
-    // const getFulfillmentId = getValue('StoredFulfillmentId') || []
 
     let newItemIDSValue: any[]
 
@@ -98,10 +98,11 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
             if (!fulfillment?.vehicle) {
               errorObj['Vehicle'] = 'Vehicle Object Is Missing'
             } else if (
-              fulfillment?.vehicle?.category !== (String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO')
+              fulfillment?.vehicle?.category !==
+              (String(flow?.flow).toUpperCase() !== 'AIRLINES' ? 'AIRLINE' : 'AIRLINE')
             ) {
               errorObj[`${fulfillmentKey}.vehicleCategory`] =
-                `Vehicle category should be ${String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO'} in Fulfillment.`
+                `Vehicle category should be ${String(flow?.flow).toUpperCase() !== 'AIRLINES' ? 'AIRLINES' : 'AIRLINES'} in Fulfillment.`
             }
 
             if (fulfillment.type !== 'TRIP') {
@@ -115,9 +116,9 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
             if (Object.keys(getStopsError).length > 0 && Object.keys(errorValue)?.length)
               Object.assign(errorObj, getStopsError)
 
-            if (String(flow?.flow).toUpperCase() !== 'METRO') {
+            if (String(flow?.flow).toUpperCase() !== 'AIRLINES') {
               if (!fulfillment?.tags)
-                errorObj[`ulfillment_${index}_tags`] = `Tags should be present in Fulfillment in case of Intracity.`
+                errorObj[`ulfillment_${index}_tags`] = `Tags should be present in Fulfillment in case of Airline.`
               else {
                 // Validate route info tags
                 const tagsValidation = validateRouteInfoTags(fulfillment?.tags)
@@ -170,6 +171,15 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
               }
             })
         })
+
+        const itemsCheck = compareItems(on_confirm?.items, itemIDS);
+        if(!itemsCheck.success){
+          Object.assign(errorObj, itemsCheck.data)
+        }
+
+        if(onInitMessage?.items && JSON.stringify(onInitMessage?.items) !== JSON.stringify(on_confirm?.items)){
+          errorObj[`Items:error`] = `Items mismatch in ${constants.ON_INIT} and ${constants.ON_CONFIRM}`
+        }
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking items info in /${constants.ON_CONFIRM},  ${error.message}`)
       return { error: error.message }
@@ -215,50 +225,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
         const payment_type = getValue('INIT_PAYMENT_TYPE') ?? 'NEFT'
         const validatePayementParams = validateParams(arr.params, arr?.collected_by, constants.ON_CONFIRM, payment_type)
         if (!isEmpty(validatePayementParams)) Object.assign(errorObj, validatePayementParams)
-        // if (!params) {
-        //   errorObj[`payments[${i}]_params`] = `payments.params must be present in ${constants.CONFIRM}`
-        // } else {
-        //   const { amount, currency, transaction_id } = params
-
-        //   if (!amount) {
-        //     errorObj[`payments[${i}]_params_amount`] =
-        //       `payments.params.amount must be present in ${constants.ON_CONFIRM}`
-        //   } else if (amount !== paymentAmount) {
-        //     errorObj[`payments[${i}]_params_amount`] =
-        //       `payments.params.amount must match with the ${paymentAmount} in ${constants.ON_CONFIRM}`
-        //   }
-
-        //   if (!currency) {
-        //     errorObj[`payments[${i}]_params_currency`] =
-        //       `payments.params.currency must be present in ${constants.CONFIRM}`
-        //   } else if (currency !== 'INR') {
-        //     errorObj[`payments[${i}]_params_currency`] =
-        //       `payments.params.currency must be INR in ${constants.ON_CONFIRM}`
-        //   }
-
-        //   if (!transaction_id) {
-        //     errorObj[`payments[${i}]_params_transaction_id`] =
-        //       `payments.params.transaction_id must be present in ${constants.ON_CONFIRM}`
-        //   } else if (transaction_id !== paymentTransactionId) {
-        //     errorObj[`payments[${i}]_params_transaction_id`] =
-        //       `payments.params.transaction_id must match with the ${paymentTransactionId} in ${constants.ON_CONFIRM}`
-        //   }
-        // }
-        // // Validate bank_code
-        // validatePaymentParams(params, bankCode, 'bank_code', errorObj, i, constants.ON_CONFIRM)
-
-        // // Validate bank_account_number
-        // validatePaymentParams(params, bankAccountNumber, 'bank_account_number', errorObj, i, constants.ON_CONFIRM)
-
-        // // Validate virtual_payment_address
-        // validatePaymentParams(
-        //   params,
-        //   virtualPaymentAddress,
-        //   'virtual_payment_address',
-        //   errorObj,
-        //   i,
-        //   constants.ON_CONFIRM,
-        // )
+       
 
         if (arr.time) {
           if (!arr.label || arr.label !== 'INSTALLMENT') {
@@ -278,8 +245,15 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
 
     try {
       logger.info(`Checking quote details in /${constants.ON_CONFIRM}`)
+      const quotePriceCheck = validateQuotePricing(on_confirm?.quote)
+      if(!quotePriceCheck.success){
+        Object.assign(errorObj, quotePriceCheck.data)
+      }
       const quoteErrors = validateQuote(on_confirm?.quote, constants.ON_CONFIRM)
       Object.assign(errorObj, quoteErrors)
+      if(onInitMessage?.order?.quote && JSON.stringify(onInitMessage?.order?.quote) !== JSON.stringify(on_confirm?.quote)){
+        errorObj[`Quote:error`] = `Quote mismatch in ${constants.ON_INIT} and ${constants.ON_CONFIRM}`
+      }
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking Quote in /${constants.ON_CONFIRM},  ${error.message}`)
       return { error: error.message }
@@ -287,7 +261,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
 
     try {
       logger.info(`Checking cancellation terms in /${constants.ON_CONFIRM}`)
-      if (String(flow?.flow)?.toUpperCase() === 'METRO') {
+      if (String(flow?.flow)?.toUpperCase() === 'AIRLINES') {
         if (!on_confirm?.cancellation_terms)
           errorObj.cancellation_terms = `cancellation_terms missing in /${constants.ON_CONFIRM}`
         else {
@@ -311,7 +285,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: { flow: string; f
       logger.error(`!!Error while checking status in message.order object  /${constants.ON_CONFIRM}, ${error.stack}`)
     }
 
-    if (String(flow?.flow)?.toUpperCase() === 'METRO' && on_confirm?.tags) {
+    if (String(flow?.flow)?.toUpperCase() === 'AIRLINES' && on_confirm?.tags) {
       const tagsValidation: { [key: string]: any } | null = validateTags(on_confirm?.tags ?? [], 0)
       if (!isNil(tagsValidation)) Object.assign(errorObj, tagsValidation)
     }

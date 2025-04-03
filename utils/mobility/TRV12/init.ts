@@ -6,6 +6,7 @@ import { validateContext } from '../../metro/metroChecks'
 import { isEmpty, isNil } from 'lodash'
 import { checkBilling, checkItemsExist, validateParams } from '../../metro/validate/helper'
 import { validatePaymentTags } from '../tags'
+import { compareItems } from './functions/helper'
 
 export const checkInit = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
@@ -20,7 +21,7 @@ export const checkInit = (data: any, msgIdSet: any) => {
     }
 
     const schemaValidation = validateSchema('TRV12', constants.INIT, data)
-    const contextRes: any = validateContext(context, msgIdSet, constants.ON_SEARCH, constants.INIT)
+    const contextRes: any = validateContext(context, msgIdSet, constants.ON_SELECT, constants.INIT)
     setValue(`${airlinesSequence.INIT}_message`, message)
 
     if (schemaValidation !== 'error') {
@@ -72,6 +73,10 @@ export const checkInit = (data: any, msgIdSet: any) => {
     //check items
     const getItemError = checkItemsExist(init?.items, newItemIDSValue, constants.INIT)
     if (Object.keys(getItemError)?.length) Object.assign(errorObj, getItemError)
+    const checkItems = compareItems(init?.items, newItemIDSValue)
+  if(!checkItems.success){
+    Object.assign(errorObj, checkItems.data)
+  }
 
     try {
       logger.info(`Checking payments in /${constants.INIT}`)

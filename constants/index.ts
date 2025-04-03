@@ -223,9 +223,7 @@ export const TRV14ApiSequence = {
   INIT: 'init',
   ON_INIT: 'on_init',
   CONFIRM: 'confirm',
-  ON_CONFIRM: 'on_confirm',
-  STATUS: 'status',
-  ON_STATUS: 'on_status',
+  ON_CONFIRM: 'on_confirm',  STATUS: 'status',  ON_STATUS: 'on_status',
   SOFT_CANCEL: 'soft_cancel',
   SOFT_ON_CANCEL: 'soft_on_cancel',
   CANCEL: 'cancel',
@@ -288,8 +286,14 @@ export const airlinesSequence = {
   ON_CONFIRM: 'on_confirm',
   CANCEL: 'cancel',
   ON_CANCEL: 'on_cancel',
+  STATUS: 'status',
+  ON_STATUS: 'on_status'
 }
-
+export const intercitySequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SELECT: 'select',
+}
 export const mobilityFlow: any = {
   AIRLINES: 'airlines',
   METRO: 'metro',

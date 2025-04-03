@@ -1,11 +1,10 @@
 import { logger } from '../../../shared/logger'
 import { getValue, setValue } from '../../../shared/dao'
 import { validatePaymentTags, validateRouteInfoTags, validateTags } from '../../metro/tags'
-import constants, { airlinesSequence } from '../../../constants'
+import constants, { airlinesSequence, metroSequence } from '../../../constants'
 import {
   validateCancellationTerms,
   validateDescriptor,
-  validateItemDescriptor,
   validateQuote,
   validateStops,
 } from '../../metro/metroChecks'
@@ -13,13 +12,12 @@ import { validateSchema, isObjectEmpty } from '../../'
 import { validateContext } from '../../metro/metroChecks'
 import { isEmpty, isNil } from 'lodash'
 import {
-  checkItemTime,
   checkProviderTime,
   validateFulfillmentV2_0,
   validateParams,
 } from '../../metro/validate/helper'
+import { compareItems, validateQuotePricing } from './functions/helper'
 
-const VALID_DESCRIPTOR_CODES = ['SJT', 'SFSJT', 'RJT', 'PASS']
 export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }, version: string) => {
   try {
     const errorObj: any = {}
@@ -27,7 +25,7 @@ export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flow
     if (!data || isObjectEmpty(data)) {
       return { [airlinesSequence.ON_INIT]: 'Json cannot be empty' }
     }
-
+    const onSelectMessage = getValue('on_select_message')
     const { message, context }: any = data
     if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
@@ -66,7 +64,7 @@ export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flow
 
     //check provider
     try {
-      if (String(flow?.flow)?.toUpperCase() === 'METRO' && on_init?.tags) {
+      if (String(flow?.flow)?.toUpperCase() === 'AIRLINES' && on_init?.tags) {
         const tagsValidation: { [key: string]: any } | null = validateTags(on_init?.tags ?? [], 0)
         if (!isNil(tagsValidation)) Object.assign(errorObj, tagsValidation)
       }
@@ -99,7 +97,7 @@ export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flow
 
       //check time validation
       // fix checkProviderTime also
-      if (String(flow?.flow).toUpperCase() === 'METRO') {
+      if (String(flow?.flow).toUpperCase() === 'AIRLINES') {
         const checkTimeError = checkProviderTime(on_init?.provider)
         if (Object.keys(checkTimeError).length > 0) Object.assign(errorObj, checkTimeError)
       }
@@ -132,9 +130,9 @@ export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flow
                 errorObj[`Fulfillment[${index}].id`] = `fulfillment.id missing in /${constants.ON_INIT}`
               }
 
-              if (fulfillment?.vehicle?.category !== (String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO')) {
+              if (fulfillment?.vehicle?.category !== (String(flow?.flow).toUpperCase() !== 'AIRLINES' ? 'AIRLINES' : 'AIRLINES')) {
                 errorObj[`${fulfillmentKey}.vehicleCategory`] =
-                  `Vehicle category should be ${String(flow?.flow).toUpperCase() !== 'METRO' ? 'BUS' : 'METRO'} in Fulfillment.`
+                  `Vehicle category should be ${String(flow?.flow).toUpperCase() !== 'AIRLINES' ? 'AIRLINES' : 'AIRLINES'} in Fulfillment.`
               }
 
               if (fulfillment.type !== 'TRIP') {
@@ -149,7 +147,7 @@ export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flow
               if (Object.keys(getStopsError).length > 0 && Object.keys(errorValue)?.length)
                 Object.assign(errorObj, getStopsError)
 
-              if (String(flow?.flow).toUpperCase() !== 'METRO') {
+              if (String(flow?.flow).toUpperCase() !== 'AIRLINES') {
                 if (!fulfillment?.tags)
                   errorObj[`ulfillment_${index}_tags`] = `Tags should be present in Fulfillment in case of Intracity.`
                 else {
@@ -175,67 +173,14 @@ export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flow
     try {
       //items null check
       if (!on_init?.items) errorObj.items = `Items missing in /${constants.ON_INIT}`
-      else {
-        on_init?.items?.forEach((item: any, index: number) => {
-          //handle id non-existant check
-          if (!item.id) errorObj[`item[${index}].id`] = `Item id missing in /${constants.ON_INIT}`
-          else if (!newItemIDSValue.includes(item.id)) {
-            const key = `item[${index}].item_id`
-            errorObj[key] =
-              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in /${constants.ON_INIT}`
-          }
-
-          //use common descriptor function
-          const getDescriptorError = validateItemDescriptor(item, index, VALID_DESCRIPTOR_CODES)
-          if (Object.keys(getDescriptorError)?.length) Object.assign(errorObj, getDescriptorError)
-
-          //handle price non-existant check
-          const price = item?.price
-          if (!price || !price.currency || !price.value) {
-            const key = `item${index}_price`
-            errorObj[key] = `Price is incomplete or missing in /items[${index}]`
-          }
-
-          //missing time check
-          const itemTimeError = checkItemTime(item?.time, 0, index)
-          if (!isNil(itemTimeError)) Object.assign(errorObj, itemTimeError)
-
-          //missing category_ids check
-          if (String(flow?.flow)?.toUpperCase() === 'METRO') {
-            if (!item?.category_ids)
-              errorObj[`item${index}category_ids`] = `Category_ids array is missing in /${constants.ON_INIT}`
-            else {
-              if (item?.category_ids && !item?.category_ids.length)
-                errorObj[`item${index}category_ids`] = `Category_ids array is empty in /${constants.ON_INIT}`
-            }
-          }
-
-          //missing quantity check
-
-          if (!item?.quantity) {
-            errorObj[`item${index}quantity`] = `Quantity is missing in /${constants.ON_INIT}`
-          } else {
-            if (!item?.quantity?.selected)
-              errorObj[`item${index}quantity_selected`] = `Quantity selected is missing in /${constants.ON_INIT}`
-
-            if (!item?.quantity?.selected?.count)
-              errorObj[`item${index}quantity_selected_count`] =
-                `Quantity selected count is missing in /${constants.ON_INIT}`
-          }
-
-          //handle fulfillment_ids non-existant check
-          if (!item?.fulfillment_ids)
-            errorObj[`item${index}fulfillment_ids`] = `Fulfillment ids missing in /${constants.ON_INIT}`
-          else {
-            item?.fulfillment_ids.forEach((fulfillmentId: string) => {
-              if (!fulfillmentIdsSet.has(fulfillmentId)) {
-                errorObj[`invalidItemFulfillmentId_${index}`] =
-                  `Fulfillment ID should be one of the fulfillment id  '${fulfillmentId}' at index ${index} in /${constants.ON_INIT} is not valid`
-              }
-            })
-          }
-        })
+      const itemCheck = compareItems(on_init?.items, newItemIDSValue)
+      if(!itemCheck.success) {
+        Object.assign(errorObj, itemCheck.data)
       }
+      if(onSelectMessage?.order?.items && JSON.stringify(on_init?.items) != JSON.stringify(onSelectMessage?.order?.items)){
+        errorObj[`Items:error`] = `Items mismatch in ${metroSequence.ON_SELECT} and ${metroSequence.ON_INIT}`
+      }
+    
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking items info in /${constants.ON_INIT},  ${error.message}`)
       return { error: error.message }
@@ -244,7 +189,7 @@ export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flow
     //check cancellation_terms
     // revisit & handle external_ref check
     try {
-      if (String(flow?.flow)?.toUpperCase() === 'METRO') {
+      if (String(flow?.flow)?.toUpperCase() === 'AIRLINES') {
         if (!on_init?.cancellation_terms)
           errorObj.cancellation_terms = `cancellation_terms missing in /${constants.ON_INIT}`
         else {
@@ -316,7 +261,16 @@ export const checkOnInit = (data: any, msgIdSet: any, flow: { flow: string; flow
     //check quote
     try {
       logger.info(`Checking quote details in /${constants.ON_INIT}`)
+      const quotePriceCheck = validateQuotePricing(on_init?.quote)
+      if(!quotePriceCheck.success){
+        Object.assign(errorObj, quotePriceCheck.data)
+      }
       const quoteErrors = validateQuote(on_init?.quote, constants.ON_INIT)
+      
+
+      if(onSelectMessage?.order?.quote && JSON.stringify(on_init?.quote) !== JSON.stringify(onSelectMessage?.order?.quote)){
+        errorObj[`Quote:error`] = `Quote mismatch in ${metroSequence.ON_SELECT} and ${metroSequence.ON_INIT}`
+      }
       Object.assign(errorObj, quoteErrors)
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking Quote in /${constants.ON_INIT},  ${error.message}`)

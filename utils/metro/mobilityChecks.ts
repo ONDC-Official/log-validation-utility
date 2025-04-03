@@ -14,6 +14,7 @@ export const validateContext = (
   const errorObj: any = {}
 
   const contextRes: any = checkMobilityContext(context, curentCall)
+  
 
   if (!contextRes?.valid) {
     Object.assign(errorObj, contextRes.ERRORS)

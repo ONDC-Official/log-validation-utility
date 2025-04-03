@@ -1,4 +1,4 @@
-export const onSelectSchemaTRV_12 = {
+export const onSelectSchemaTRV_12 =  {
   type: 'object',
   required: ['context', 'message'],
   properties: {
@@ -228,9 +228,103 @@ export const onSelectSchemaTRV_12 = {
                 },
               },
             },
+            quote: {
+              type: 'object',
+              properties: {
+                price: {
+                  type: 'object',
+                  required: ['value', 'currency'],
+                  properties: {
+                    value: { type: 'string' },
+                    currency: { type: 'string', enum: ['INR'] },
+                  },
+                },
+                breakup: {
+                  type: 'array',
+                  items: {
+                    type: 'object',
+                    required: ['title', 'price'],
+                    properties: {
+                      title: { type: 'string', enum: ['BASE_FARE', 'TAX', 'CONVENIENCE_FEE', 'SEAT_FARE', 'ADD_ONS', 'OTHER_CHARGES'] },
+                      item: {
+                        type: 'object',
+                        properties: {
+                          id: { type: 'string' },
+                          quantity: {
+                            type: 'object',
+                            properties: {
+                              selected: {
+                                type: 'object',
+                                properties: {
+                                  count: { type: 'integer' },
+                                },
+                              },
+                            },
+                          },
+                          price: {
+                            type: 'object',
+                            properties: {
+                              currency: { type: 'string', enum: ['INR'] },
+                              value: { type: 'string' },
+                            },
+                          },
+                          add_ons: {
+                            type: 'array',
+                            items: {
+                              type: 'object',
+                              properties: {
+                                id: { type: 'string' },
+                              },
+                            },
+                          },
+                          tags: {
+                            type: 'array',
+                            items: {
+                              type: 'object',
+                              properties: {
+                                descriptor: {
+                                  type: 'object',
+                                  properties: {
+                                    code: { type: 'string', enum: ['TAX', 'OTHER_CHARGES'] },
+                                    name: { type: 'string' },
+                                  },
+                                },
+                                list: {
+                                  type: 'array',
+                                  items: {
+                                    type: 'object',
+                                    properties: {
+                                      descriptor: {
+                                        type: 'object',
+                                        properties: {
+                                          name: { type: 'string' },
+                                          code: { type: 'string' },
+                                        },
+                                      },
+                                      value: { type: 'string' },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      price: {
+                        type: 'object',
+                        properties: {
+                          currency: { type: 'string', enum: ['INR'] },
+                          value: { type: 'string' },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
           },
         },
       },
     },
   },
-}
+};

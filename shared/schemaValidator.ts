@@ -67,16 +67,19 @@ import onSearch1SchemaTRV14 from '../schema/TRV-14/onSearch1'
 import onSearch2SchemaTRV14 from '../schema/TRV-14/onSearch2'
 import newIssueSchema from '../schema/Igm/2.0.0/issue'
 import newOnIssueSchema from '../schema/Igm/2.0.0/on_issue'
-import { searchSchemaTRV_12 } from '../schema/TRV-12/search'
-import { onSearchSchemaTRV_12 } from '../schema/TRV-12/on_search'
-import { onSelectSchemaTRV_12 } from '../schema/TRV-12/on_select'
-import { selectSchemaTRV_12 } from '../schema/TRV-12/select'
-import { initSchemaTRV_12 } from '../schema/TRV-12/init'
-import { onInitSchemaTRV_12 } from '../schema/TRV-12/on_init'
-import { confirmSchemaTRV_12 } from '../schema/TRV-12/confirm'
-import { cancelSchemaTRV_12 } from '../schema/TRV-12/cancel'
-import { onConfirmSchemaTRV_12 } from '../schema/TRV-12/on_confirm'
-import { onCancelSchemaTRV_12 } from '../schema/TRV-12/on_cancel'
+import {  searchSchemaTRV_12 } from '../schema/TRV-12/Airlines/search'
+import { onSearchSchemaTRV_12 } from '../schema/TRV-12/Airlines/on_search'
+import { onSelectSchemaTRV_12 } from '../schema/TRV-12/Airlines/on_select'
+import { selectSchemaTRV_12 } from '../schema/TRV-12/Airlines/select'
+import { initSchemaTRV_12 } from '../schema/TRV-12/Airlines/init'
+import { onInitSchemaTRV_12 } from '../schema/TRV-12/Airlines/on_init'
+import { confirmSchemaTRV_12 } from '../schema/TRV-12/Airlines/confirm'
+import { cancelSchemaTRV_12 } from '../schema/TRV-12/Airlines/cancel'
+import { onConfirmSchemaTRV_12 } from '../schema/TRV-12/Airlines/on_confirm'
+import { onCancelSchemaTRV_12 } from '../schema/TRV-12/Airlines/on_cancel'
+import { searchSchemaTRV12BUS } from '../schema/TRV-12/Intercity/search'
+import { onSearchSchemaTRV12BUS } from '../schema/TRV-12/Intercity/onSearch'
+import { selectSchemaTRV12BUS } from '../schema/TRV-12/Intercity/select'
 
 const ajv = new Ajv({
   allErrors: true,
@@ -1100,15 +1103,31 @@ const validate_schema_search_TRV12_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+const validate_schema_search_TRV12BUS_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchSchemaTRV12BUS)
+  return formatted_error(error_list)
+}
+
 const validate_schema_on_search_TRV12_for_json = (data: any) => {
   const error_list = validate_schema(data, onSearchSchemaTRV_12)
   return formatted_error(error_list)
 }
+const validate_schema_on_search_TRV12BUS_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSearchSchemaTRV12BUS)
+  return formatted_error(error_list)
+}
+
 
 const validate_schema_select_TRV12_for_json = (data: any) => {
   const error_list = validate_schema(data, selectSchemaTRV_12)
   return formatted_error(error_list)
 }
+const validate_schema_select_TRV12BUS_for_json = (data: any) => {
+  const error_list = validate_schema(data, selectSchemaTRV12BUS)
+  return formatted_error(error_list)
+}
+
+
 
 const validate_schema_on_select_TRV12_for_json = (data: any) => {
   const error_list = validate_schema(data, onSelectSchemaTRV_12)
@@ -1500,6 +1519,11 @@ export default {
   validate_schema_on_confirm_TRV12_for_json,
   validate_schema_cancel_TRV12_for_json,
   validate_schema_on_cancel_TRV12_for_json,
+
+  // TRV12-BUS
+  validate_schema_search_TRV12BUS_for_json,
+  validate_schema_on_search_TRV12BUS_for_json,
+  validate_schema_select_TRV12BUS_for_json,
 
   ...TRVValidator,
   ...FISValidator,

@@ -6,7 +6,7 @@ import { validateSchema, isObjectEmpty } from '../../'
 import { validatePaymentTags } from './functions/validateTags'
 import { validateFulfillmentStops } from './functions/helper'
 
-export const search = (data: any, msgIdSet: any, _flow: { flow: string; flowSet: string }) => {
+export const search = (data: any, msgIdSet: any, flow: { flow: string; flowSet: string }) => {
   const errorObj: any = {}
   const { context, message } = data
   try {
@@ -24,8 +24,9 @@ export const search = (data: any, msgIdSet: any, _flow: { flow: string; flowSet:
       errorObj['missingFields'] = '/context, /message, /intent or /message/intent is missing or empty'
       return Object.keys(errorObj).length > 0 && errorObj
     }
+    console.log('Flow.Flow: ', flow.flow)
 
-    const schemaValidation = validateSchema('TRV12', constants.SEARCH, data)
+    const schemaValidation = validateSchema(flow?.flow === 'AIRLINE' ? 'TRV12' : 'TRV12BUS', constants.SEARCH, data)
 
     const contextRes: any = validateContext(context, msgIdSet, constants.ON_SEARCH, constants.SEARCH, false)
     setValue(`${airlinesSequence.SEARCH}_message`, message)

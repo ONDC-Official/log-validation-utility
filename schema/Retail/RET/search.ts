@@ -274,55 +274,6 @@ export const searchSchema = {
                   },
                   {
                     properties: {
-                      code: { const: 'bnp_features' },
-                    },
-                    then: {
-                      properties: {
-                        list: {
-                          contains: {
-                            type: 'object',
-                            properties: {
-                              code: { const: '000' },
-                              value: {
-                                type: "string",
-                                enum: ['yes', 'no']
-                              }
-                            },
-                            required: ['code', 'value'],
-                          },
-                        },
-                      },
-                    },
-                  },
-                  // Did changes for catalog_full
-                  {
-                    properties: {
-                      code: { const: 'catalog_full' },
-                    },
-                    then: {
-                      properties: {
-                        list: {
-                          type: "array",
-                          items: {
-                            type: "object",
-                            properties: {
-                              code: {
-                                type: "string",
-                                const: "payload_type"
-                              },
-                              value: {
-                                type: "string",
-                                enum: ['link', 'inline']
-                              }
-                            },
-                            required: ["code", "value"],
-                          }
-                        }
-                      }
-                    }
-                  },
-                  {
-                    properties: {
                       code: { const: 'catalog_inc' },
                     },
                     then: {
@@ -405,7 +356,7 @@ export const searchSchema = {
               contains: {
                 type: 'object',
                 properties: {
-                  code: { enum: ['bnp_features', 'catalog_full', 'catalog_inc'] },
+                  code: { enum: ['bnp_features', 'catalog_full', 'catalog_inc','bap_terms'] },
                  
                 },
                 required: ['code', 'list'],

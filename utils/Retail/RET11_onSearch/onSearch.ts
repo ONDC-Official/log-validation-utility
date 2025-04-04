@@ -887,7 +887,6 @@ Calculation: ${itemLog}`
                       errorObj[key] = `item_id: ${item.id} should contain category_ids in bpp/providers[${i}]`
                     }
                   }
-
                   break
 
                 case 'custom_group':

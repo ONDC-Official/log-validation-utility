@@ -99,7 +99,22 @@ export const updateSchema = {
                             type: 'object',
                             properties: {
                               code: { type: 'string' },
-                              value: { type: ['array', 'string'], items: { type: 'string' } },
+                              value: {
+                                anyOf: [
+                                  {
+                                    type: 'string',
+                                    minLength: 1,
+                                  },
+                                  {
+                                    type: 'array',
+                                    items: {
+                                      type: 'string',
+                                      minLength: 1,
+                                    },
+                                    minItems: 1,
+                                  },
+                                ],
+                              },
                             },
                             required: ['code', 'value'],
                           },
@@ -121,7 +136,10 @@ export const updateSchema = {
                     properties: {
                       settlement_counterparty: { type: 'string' },
                       settlement_phase: { type: 'string' },
-                      settlement_type: { type: 'string', enum: ['upi', 'neft', 'rtgs', 'wallet', 'netbanking', 'paylater', 'card'] },
+                      settlement_type: {
+                        type: 'string',
+                        enum: ['upi', 'neft', 'rtgs', 'wallet', 'netbanking', 'paylater', 'card'],
+                      },
                       settlement_amount: { type: 'string' },
                       settlement_timestamp: { type: 'string', format: 'rfc3339-date-time' },
                     },

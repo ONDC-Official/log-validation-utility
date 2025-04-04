@@ -29,8 +29,8 @@ import {
   mapCustomizationsToBaseItems,
   mapItemToTreeNode,
 } from './fb_calculation/default_selection/utils'
-import { MenuTreeBuilder } from './fb_calculation/lower_upper_range/builder'
-import { CatalogParser } from './fb_calculation/lower_upper_range/parser'
+// import { MenuTreeBuilder } from './fb_calculation/lower_upper_range/builder'
+// import { CatalogParser } from './fb_calculation/lower_upper_range/parser'
 
 export const checkOnsearchFullCatalogRefresh = (data: any) => {
   if (!data || isObjectEmpty(data)) {

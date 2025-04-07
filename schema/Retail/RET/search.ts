@@ -149,7 +149,7 @@ export const searchSchema = {
                 properties: {
                   code: {
                     type: 'string',
-                    enum: ['catalog_inc', 'bap_terms', 'bnp_features', 'catalog_full', 'bnp_features'],
+                    enum: ['catalog_inc', 'bap_terms', 'catalog_full', 'bnp_features'],
                   },
                   list: {
                     type: 'array',
@@ -165,7 +165,6 @@ export const searchSchema = {
                             'static_terms',
                             'effective_date',
                             'static_terms_new',
-                            'payload_type',
                             'payload_type',
                             '000',
                             '001',
@@ -235,9 +234,9 @@ export const searchSchema = {
                             properties: {
                               code: { const: '000' },
                               value: {
-                                type: "string",
-                                enum: ['yes', 'no']
-                              }
+                                type: 'string',
+                                enum: ['yes', 'no'],
+                              },
                             },
                             required: ['code', 'value'],
                           },
@@ -253,24 +252,24 @@ export const searchSchema = {
                     then: {
                       properties: {
                         list: {
-                          type: "array",
+                          type: 'array',
                           items: {
-                            type: "object",
+                            type: 'object',
                             properties: {
                               code: {
-                                type: "string",
-                                const: "payload_type"
+                                type: 'string',
+                                const: 'payload_type',
                               },
                               value: {
-                                type: "string",
-                                enum: ['link', 'inline']
-                              }
+                                type: 'string',
+                                enum: ['link', 'inline'],
+                              },
                             },
-                            required: ["code", "value"],
-                          }
-                        }
-                      }
-                    }
+                            required: ['code', 'value'],
+                          },
+                        },
+                      },
+                    },
                   },
                   {
                     properties: {
@@ -356,8 +355,7 @@ export const searchSchema = {
               contains: {
                 type: 'object',
                 properties: {
-                  code: { enum: ['bnp_features', 'catalog_full', 'catalog_inc','bap_terms'] },
-                 
+                  code: { enum: ['bnp_features', 'catalog_full', 'catalog_inc', 'bap_terms'] },
                 },
                 required: ['code', 'list'],
               },

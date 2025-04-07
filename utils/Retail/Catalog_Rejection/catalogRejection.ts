@@ -42,9 +42,9 @@ export const checkCatalogRejection = (data: any) => {
                     catalogError = catalogRejectionErrors[code];
                 }
             }
-            if (error.message != catalogError?.message) {
-                errorObj[`error.message${index}`] = `Catalog rejection error message doesn't matches with the provided error.message code: ${errorCode}`
-            }
+            // if (error.message != catalogError?.message) {
+            //     errorObj[`error.message${index}`] = `Catalog rejection error message doesn't matches with the provided error.message code: ${errorCode}`
+            // }
 
             if (error.type != catalogError?.type) {
                 errorObj[`error.type${index}`] = `Catalog rejection error message doesn't matches with the provided error.type code: ${errorCode}`

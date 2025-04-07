@@ -347,8 +347,8 @@ export const FnBsearchSchema = {
               minItems: 1,
               contains: {
                 type: 'object',
-                properties: {
-                  code: { const: 'bnp_features' },
+               properties: {
+                  code: { enum: ['bnp_features', 'catalog_full', 'catalog_inc', 'bap_terms'] },
                 },
                 required: ['code', 'list'],
               },

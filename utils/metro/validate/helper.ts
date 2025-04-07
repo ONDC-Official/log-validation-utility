@@ -76,7 +76,7 @@ export function checkRefIds(refIds: string[], i: number, j: number, storedIds: a
 
   refIds?.map((id: string) => {
     if (!storedIds.includes(id))
-      errorObj[`${refName}_ids`] =
+      errorObj[`${refName}_ids_${j}`] =
         `id:${id} doesn't match with the id's passed in ${refName}, at /providers[${i}]/items[${j}]`
   })
 

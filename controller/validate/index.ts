@@ -75,6 +75,7 @@ const controller = {
         bpp_id,
         bap_id,
         domain,
+        payload,
         reportTimestamp: new Date().toISOString(),
       }
 
@@ -92,33 +93,59 @@ const controller = {
 
   validateToken: async (req: Request, res: Response): Promise<Response | void> => {
     try {
-      const { success, response, signature, signTimestamp } = req.body
-
-      if (!signature || !signTimestamp || !response || success === undefined)
-        throw new Error('Payload needs to have signature, signTimestamp, success, and response')
-
-      const publicKey = process.env.SIGN_PUBLIC_KEY as string
-
-      const httpResponse: IHttpResponse = {
-        message: response?.message,
-        report: response?.report,
-        bpp_id: response?.bpp_id,
-        bap_id: response?.bap_id,
-        domain: response?.domain,
-        reportTimestamp: response?.reportTimestamp,
+      const { success, response, signature, signTimestamp } = req.body;
+      
+      // Validate required fields exist
+      if (
+        signature === undefined || 
+        signTimestamp === undefined || 
+        response === undefined || 
+        success === undefined ||
+        response.payload === undefined  // Check payload inside response
+      ) {
+        throw new Error('Payload must contain: signature, signTimestamp, success, response (with payload)');
       }
 
-      const hashString = await hash({ message: JSON.stringify(httpResponse) })
+      const publicKey = process.env.SIGN_PUBLIC_KEY as string;
+      if (!publicKey) {
+        throw new Error('Server configuration error: SIGN_PUBLIC_KEY not set');
+      }
 
-      const signingString = `${hashString}|${signTimestamp}`
+      // Create httpResponse from the response object
+      const httpResponse: IHttpResponse = {
+        message: response.message,
+        report: response.report,
+        bpp_id: response.bpp_id,
+        bap_id: response.bap_id,
+        domain: response.domain,
+        payload: response.payload,  // Get payload from response
+        reportTimestamp: response.reportTimestamp,
+      };
 
-      const isVerified = await verify({ signedMessage: signature, message: signingString, publicKey })
-      const reportMessage = isVerified ? 'The report is validated' : 'The report is not validated'
+      const hashString = await hash({ message: JSON.stringify(httpResponse) });
+      const signingString = `${hashString}|${signTimestamp}`;
 
-      return res.status(200).send({ success: true, response: { message: reportMessage, verified: isVerified } })
+      const isVerified = await verify({ 
+        signedMessage: signature, 
+        message: signingString, 
+        publicKey 
+      });
+
+      return res.status(200).send({ 
+        success: true, 
+        response: { 
+          message: isVerified ? 'Signature verification successful' : 'Invalid signature',
+          verified: isVerified 
+        } 
+      });
     } catch (error: any) {
-      logger.error(error)
-      return res.status(500).send({ success: false, response: { message: error?.message || error } })
+      logger.error('Signature verification failed:', error);
+      return res.status(400).send({ 
+        success: false, 
+        response: { 
+          message: error?.message || 'Signature verification failed' 
+        } 
+      });
     }
   },
 

@@ -22,4 +22,5 @@ export interface IHttpResponse {
   bpp_id: string
   bap_id: string
   domain: string
+  payload:any
 }

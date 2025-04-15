@@ -60,75 +60,78 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
                 const itemQuantityArr = _.filter(returnFulifillmentTagsList, { code: "item_quantity" })
                 let ffId = "";
                 let itemQuantity = ""
-                let exchangeValue = "";
-                if (exchangeArr.length > 0 && exchangeArr[0]?.value) {
-                  exchangeValue = exchangeArr[0]?.value;
 
-                  // Validate exchange value
-                  if (exchangeArr.length > 0 && exchangeArr[0]?.value) {
-                    exchangeValue = exchangeArr[0]?.value;
+                //Required for exchange and replace flow in 1.2.5
 
-                    if (exchangeValue === "yes" || exchangeValue === "no") {
-                      logger.info(`Exchange value is ${exchangeValue} for /${apiSeq}`);
+                // let exchangeValue = "";
+                // if (exchangeArr.length > 0 && exchangeArr[0]?.value) {
+                //   exchangeValue = exchangeArr[0]?.value;
 
-                      if (exchangeValue === "yes") {
-                        logger.info(`Exchange is requested for /${apiSeq}. Proceeding with additional checks...`);
+                //   // Validate exchange value
+                //   if (exchangeArr.length > 0 && exchangeArr[0]?.value) {
+                //     exchangeValue = exchangeArr[0]?.value;
 
-                        // Validate condition_id
-                        const conditionIdArr = _.filter(returnFulifillmentTagsList, { code: "condition_id" });
-                        if (conditionIdArr.length === 0 || !conditionIdArr[0]?.value) {
-                          updtObj['returnFulfillment/code/condition_id'] = `condition_id is missing for /${apiSeq}`;
-                        } else if (!condition_id.includes(conditionIdArr[0]?.value)) {
-                          updtObj['returnFulfillment/code/condition_id'] = `Invalid condition_id: ${conditionIdArr[0]?.value} in ${apiSeq}. Only 001, 002, or 003 are allowed.`;
-                        }
+                //     if (exchangeValue === "yes" || exchangeValue === "no") {
+                //       logger.info(`Exchange value is ${exchangeValue} for /${apiSeq}`);
 
-                        // Validate condition_desc
-                        const conditionDescArr = _.filter(returnFulifillmentTagsList, { code: "condition_desc" });
-                        if (conditionDescArr.length === 0 || !conditionDescArr[0]?.value) {
-                          updtObj['returnFulfillment/code/condition_desc'] = `condition_desc is missing for /${apiSeq}`;
-                        }
-                      }
-                    } else {
-                      updtObj['returnFulfillment/code/exchange'] = `Invalid exchange value: ${exchangeValue} in ${apiSeq}. Only "yes" or "no" are allowed.`;
-                    }
-                  } 
+                //       if (exchangeValue === "yes") {
+                //         logger.info(`Exchange is requested for /${apiSeq}. Proceeding with additional checks...`);
 
-                  // Validate ffId
-                  if (ffIdArr.length > 0 && ffIdArr[0]?.value) {
-                    ffId = ffIdArr[0]?.value;
-                  } else {
-                    updtObj['returnFulfillment/code/id'] = `Return fulfillment/tags/list/code/id is missing in ${apiSeq}`;
-                  }
+                //         // Validate condition_id
+                //         const conditionIdArr = _.filter(returnFulifillmentTagsList, { code: "condition_id" });
+                //         if (conditionIdArr.length === 0 || !conditionIdArr[0]?.value) {
+                //           updtObj['returnFulfillment/code/condition_id'] = `condition_id is missing for /${apiSeq}`;
+                //         } else if (!condition_id.includes(conditionIdArr[0]?.value)) {
+                //           updtObj['returnFulfillment/code/condition_id'] = `Invalid condition_id: ${conditionIdArr[0]?.value} in ${apiSeq}. Only 001, 002, or 003 are allowed.`;
+                //         }
 
-                  // Validate replace value
-                  if (replaceArr.length > 0 && replaceArr[0]?.value) {
-                    replaceValue = replaceArr[0]?.value;
+                //         // Validate condition_desc
+                //         const conditionDescArr = _.filter(returnFulifillmentTagsList, { code: "condition_desc" });
+                //         if (conditionDescArr.length === 0 || !conditionDescArr[0]?.value) {
+                //           updtObj['returnFulfillment/code/condition_desc'] = `condition_desc is missing for /${apiSeq}`;
+                //         }
+                //       }
+                //     } else {
+                //       updtObj['returnFulfillment/code/exchange'] = `Invalid exchange value: ${exchangeValue} in ${apiSeq}. Only "yes" or "no" are allowed.`;
+                //     }
+                //   } 
 
-                    if (replaceValue === "yes" || replaceValue === "no") {
-                      logger.info(`Valid replace value: ${replaceValue} for /${apiSeq}`);
-                    } else {
-                      updtObj['returnFulfillment/code/replace'] = `Invalid replace value: ${replaceValue} in ${apiSeq}. Only "yes" or "no" are allowed.`;
-                    }
-                  } 
-                  // Validate item_quantity
-                  if (itemQuantityArr.length > 0 && itemQuantityArr[0]?.value) {
-                    itemQuantity = itemQuantityArr[0]?.value;
-                  } else {
-                    updtObj['returnFulfillment/code/item_quantity'] = `Return fulfillment/tags/list/code/item_quantity is missing in ${apiSeq}`;
-                  }
-                  return { ffId: ffId, itemQuantity: itemQuantity };
-                } else {
-                  updtObj[`returnFulfillment`] = `Return fulfillment/tags/list is missing in ${apiSeq}`;
-                }
-                if (replaceArr.length > 0 && replaceArr[0]?.value) {
-                  replaceValue = replaceArr[0]?.value;
+                //   // Validate ffId
+                //   if (ffIdArr.length > 0 && ffIdArr[0]?.value) {
+                //     ffId = ffIdArr[0]?.value;
+                //   } else {
+                //     updtObj['returnFulfillment/code/id'] = `Return fulfillment/tags/list/code/id is missing in ${apiSeq}`;
+                //   }
 
-                  if (replaceValue === "yes" || replaceValue === "no") {
-                    logger.info(`Valid replace value: ${replaceValue} for /${apiSeq}`);
-                  } else {
-                    updtObj['returnFulfillment/code/replace'] = `Invalid replace value: ${replaceValue} in ${apiSeq}`;
-                  }
-                } 
+                //   // Validate replace value
+                //   if (replaceArr.length > 0 && replaceArr[0]?.value) {
+                //     replaceValue = replaceArr[0]?.value;
+
+                //     if (replaceValue === "yes" || replaceValue === "no") {
+                //       logger.info(`Valid replace value: ${replaceValue} for /${apiSeq}`);
+                //     } else {
+                //       updtObj['returnFulfillment/code/replace'] = `Invalid replace value: ${replaceValue} in ${apiSeq}. Only "yes" or "no" are allowed.`;
+                //     }
+                //   } 
+                //   // Validate item_quantity
+                //   if (itemQuantityArr.length > 0 && itemQuantityArr[0]?.value) {
+                //     itemQuantity = itemQuantityArr[0]?.value;
+                //   } else {
+                //     updtObj['returnFulfillment/code/item_quantity'] = `Return fulfillment/tags/list/code/item_quantity is missing in ${apiSeq}`;
+                //   }
+                //   return { ffId: ffId, itemQuantity: itemQuantity };
+                // } else {
+                //   updtObj[`returnFulfillment`] = `Return fulfillment/tags/list is missing in ${apiSeq}`;
+                // }
+                // if (replaceArr.length > 0 && replaceArr[0]?.value) {
+                //   replaceValue = replaceArr[0]?.value;
+
+                //   if (replaceValue === "yes" || replaceValue === "no") {
+                //     logger.info(`Valid replace value: ${replaceValue} for /${apiSeq}`);
+                //   } else {
+                //     updtObj['returnFulfillment/code/replace'] = `Invalid replace value: ${replaceValue} in ${apiSeq}`;
+                //   }
+                // } 
 
                 if (itemQuantityArr.length > 0 && itemQuantityArr[0]?.value) {
                   itemQuantity = itemQuantityArr[0]?.value

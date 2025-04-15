@@ -13,7 +13,7 @@ export const selectSchema = {
         },
         core_version: {
           type: 'string',
-          enum: ['1.2.0', '1.2.5'],
+          enum: ['1.2.0'],
           minLength: 1,
         },
         bap_id: {

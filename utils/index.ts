@@ -3,6 +3,7 @@ import _ from 'lodash'
 import { logger } from '../shared/logger'
 import constants, { ApiSequence, statusArray } from '../constants'
 import schemaValidator from '../shared/schemaValidator'
+import schemaValidatorV2 from '../shared/schemaValidatorV2'
 import data from '../constants/AreacodeMap.json'
 import { reasonCodes } from '../constants/reasonCode'
 import { InputObject } from '../shared/interface'
@@ -218,12 +219,41 @@ const validate_schema_for_retail_json = (vertical: string, api: string, data: an
   return res
 }
 
+const validate_schema_for_retail_json_v2 = (vertical: string, api: string, data: any) => {
+  console.log(`+++++++++ validate_schema_${api}_${vertical}_for_json`)
+  const res = (schemaValidatorV2 as any)[`validate_schema_${api}_${vertical}_for_json`](data)
+  return res
+}
+
 export const validateSchema = (domain: string, api: string, data: any) => {
   try {
     logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
     const errObj: any = {}
 
     const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
+    const datavld = schmaVldtr
+    if (datavld.status === 'fail') {
+      const res = datavld.errors
+      let i = 0
+      const len = res.length
+      while (i < len) {
+        const key = `schemaErr${i}`
+        errObj[key] = `${res[i].details} ${res[i].message}`
+        i++
+      }
+
+      return errObj
+    } else return 'error'
+  } catch (e: any) {
+    logger.error(`Some error occured while validating schema, ${e.stack}`)
+  }
+}
+export const validateSchemaRetailV2 = (domain: string, api: string, data: any) => {
+  try {
+    logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
+    const errObj: any = {}
+
+    const schmaVldtr = validate_schema_for_retail_json_v2(domain, api, data)
     const datavld = schmaVldtr
     if (datavld.status === 'fail') {
       const res = datavld.errors

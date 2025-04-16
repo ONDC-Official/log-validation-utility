@@ -1,7 +1,7 @@
 import _, { isEmpty } from 'lodash'
 import { logger } from '../../../shared/logger'
 import constants, { ApiSequence, buyerReturnId } from '../../../constants'
-import { validateSchemaRetailV2, isObjectEmpty, checkBppIdOrBapId, checkContext, isValidUrl, timeDiff } from '../..'
+import { validateSchema, isObjectEmpty, checkBppIdOrBapId, checkContext, isValidUrl, timeDiff } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 import { condition_id } from '../../../constants/reasonCode'
 
@@ -187,7 +187,7 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
 
 
     // Validating Schema
-    const schemaValidation = validateSchemaRetailV2(context.domain.split(':')[1], constants.UPDATE, data)
+    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.UPDATE, data)
 
     if (schemaValidation !== 'error') {
       Object.assign(updtObj, schemaValidation)

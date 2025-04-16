@@ -101,7 +101,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       ApiSequence.CANCEL,
       ApiSequence.ON_CANCEL,
     ]
-    const flowFiveSeqeence = [
+    const flowFiveSequence = [
       ApiSequence.SEARCH,
       ApiSequence.ON_SEARCH,
       ApiSequence.SELECT,
@@ -278,7 +278,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         logReport = processApiSequence(flowFourSequence, data, logReport, msgIdSet, flow)
         break
       case FLOW.FLOW5:
-        logReport = processApiSequence(flowFiveSeqeence, data, logReport, msgIdSet, flow)
+        logReport = processApiSequence(flowFiveSequence, data, logReport, msgIdSet, flow)
         break
       case FLOW.FLOW6:
         logReport = processApiSequence(flowSixSequence, data, logReport, msgIdSet, flow)
@@ -371,7 +371,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.CANCEL,
       ApiSequence.ON_CANCEL,
     ]
-    const flowFiveSeqeence = [
+    const flowFiveSequence = [
       ApiSequence.SEARCH,
       ApiSequence.ON_SEARCH,
       ApiSequence.SELECT,
@@ -548,7 +548,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
         logReport = processApiSequence(flowFourSequence, data, logReport, msgIdSet, flow)
         break
       case FLOW.FLOW5:
-        logReport = processApiSequence(flowFiveSeqeence, data, logReport, msgIdSet, flow)
+        logReport = processApiSequence(flowFiveSequence, data, logReport, msgIdSet, flow)
         break
       case FLOW.FLOW6:
         logReport = processApiSequence(flowSixSequence, data, logReport, msgIdSet, flow)

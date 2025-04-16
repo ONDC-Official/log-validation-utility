@@ -145,6 +145,50 @@ export const FisApiSequence = {
   ON_UPDATE_UNSOLICATED: 'on_update_unsolicated',
 }
 
+export const FisWCLApiSequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SEARCH_1: 'search_1',
+  ON_SEARCH_1: 'on_search_1',
+  SEARCH_2: 'search_2',
+  ON_SEARCH_2: 'on_search_2',
+  SELECT: 'select',
+  ON_SELECT: 'on_select',
+  ON_STATUS_KYC: 'on_status_kyc',
+  SELECT_1: 'select_1',
+  ON_SELECT_1: 'on_select_1',
+  SELECT_2: 'select_2',
+  ON_SELECT_2: 'on_select_2',
+  SELECT_3: 'select_3',
+  ON_SELECT_3: 'on_select_3',
+  ON_STATUS_EKYC: 'on_status_ekyc',
+  INIT: 'init',
+  ON_INIT: 'on_init',
+  INIT_1: 'init_1',
+  ON_INIT_1: 'on_init_1',
+  INIT_2: 'init_2',
+  ON_INIT_2: 'on_init_2',
+  ON_STATUS_ESIGN: 'on_status_esign',
+  INIT_3: 'init_3',
+  ON_INIT_3: 'on_init_3',
+  ON_STATUS_EMANDATE: 'on_status_emandate',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  CANCEL: 'cancel',
+  ON_CANCEL: 'on_cancel',
+  STATUS: 'status',
+  ON_STATUS: 'on_status',
+  ON_UPDATE: 'on_update',
+  UPDATE: 'update',
+  ON_UPDATE_EMI_DETAIL: 'on_update_emi_detail',
+  ON_UPDATE_PRE_PART_PAYMENT: 'on_update_pre_part_payment',
+  ON_UPDATE_FORECLOSURE_DETAIL: 'on_update_foreclosure_detail',
+  ON_UPDATE_BASE_TRANSACTION: 'on_update_base_transaction',
+  ON_UPDATE_UNSOLICATED: 'on_update_unsolicated',
+  ON_UPDATE_PAYMENT_STATUS: 'on_update_payment_status',
+  
+}
+
 export const Fis10ApiSequence = {
   SEARCH: 'search',
   ON_SEARCH: 'on_search',
@@ -354,6 +398,13 @@ export const fisFlows = {
   FORECLOSURE_PERSONAL: 'FORECLOSURE_PERSONAL',
   PRE_PART_PERSONAL: 'PRE_PART_PERSONAL',
   MISSED_EMI_PERSONAL: 'MISSED_EMI_PERSONAL',
+  // WCL flows
+  WCL_CREDIT_LINE_ASSIGNMENT: 'WCL_CREDIT_LINE_ASSIGNMENT',
+  WCL_CREDIT_LINE_DRAWDOWN: 'WCL_CREDIT_LINE_DRAWDOWN',
+  WCL_MISSED_EMI_PAYMENT: 'WCL_MISSED_EMI_PAYMENT',
+  WCL_PRE_PART_PAYMENT: 'WCL_PRE_PART_PAYMENT',
+  WCL_DRAWDOWN_FORECLOSURE: 'WCL_DRAWDOWN_FORECLOSURE',
+  WCL_CREDIT_LINE_CANCELLATION: 'WCL_CREDIT_LINE_CANCELLATION'
 }
 
 export const insuranceFlows = {

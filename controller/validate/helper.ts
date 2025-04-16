@@ -108,7 +108,6 @@ const validateFinance = async (domain: string, payload: string, version: string,
       break
 
     case 'ONDC:FIS14':
-      console.log('flow hello', flow)
       response = validateLogsForFIS14(payload, flow, version)
 
       if (_.isEmpty(response)) {

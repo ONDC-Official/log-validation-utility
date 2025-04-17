@@ -82,7 +82,6 @@ const checkRsfOnSettle = (data: any) => {
         rsfObj.inter_participant = 'inter_participant is not required for MISC type'
       }
     }
-  
     logger.info('Validate required fields for NIL type')
     if (message?.settlement?.type === 'NIL') {
       if (message?.collector_app_id) {

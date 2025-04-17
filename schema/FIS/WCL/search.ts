@@ -161,7 +161,7 @@ export const searchFIS12WCLSchema = {
                 minItems: 1,
               },
             },
-            required: ['category', 'tags'],
+            required: ['category'],
           },
         },
         required: ['intent'],

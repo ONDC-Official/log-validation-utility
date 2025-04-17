@@ -87,6 +87,20 @@ import {confirmFIS14Schema} from '../schema/FIS/Mutual_Funds/confirm'
 import {onConfirmFIS14Schema} from '../schema/FIS/Mutual_Funds/on_confirm'
 // import { onStatusFIS14Schema } from '../schema/FIS/Mutual_Funds/on_status'
 import { onUpdateFIS14Schema } from '../schema/FIS/Mutual_Funds/on_update'
+import { searchFIS12WCLSchema } from '../schema/FIS/WCL/search'
+import { onSearchFIS12WCLSchema } from '../schema/FIS/WCL/on_search'
+import { onCancelFISWCLSchema } from '../schema/FIS/WCL/on_cancel'
+import { cancelFISWCLSchema } from '../schema/FIS/WCL/cancel'
+import { onUpdateFIS12WCLSchema } from '../schema/FIS/WCL/on_update'
+import { updateFISWCLSchema } from '../schema/FIS/WCL/update'
+import { onStatusFISWCLSchema } from '../schema/FIS/WCL/on_status'
+import { onConfirmFISWCLSchema } from '../schema/FIS/WCL/on_confirm'
+import { confirmFIS12WCLSchema } from '../schema/FIS/WCL/confirm'
+import { onInitFIS12WCLSchema } from '../schema/FIS/WCL/on_init'
+import { initFIS12Schema } from '../schema/FIS/WCL/init'
+import { onSelectFIS12WCLSchema } from '../schema/FIS/WCL/on_select'
+import { selectFIS12WCLSchema } from '../schema/FIS/WCL/select'
+import { onUpdateFIS12FlowSchema } from '../schema/FIS/WCL/on_update_flow'
 
 const ajv = new Ajv({
   allErrors: true,
@@ -1245,6 +1259,71 @@ const validate_schema_on_update_FIS14_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+//validate schema for FIS 12 Working capital
+const validate_schema_search_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchFIS12WCLSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_search_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSearchFIS12WCLSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_select_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, selectFIS12WCLSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_select_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSelectFIS12WCLSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_init_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, initFIS12Schema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_init_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, onInitFIS12WCLSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_confirm_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, confirmFIS12WCLSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_confirm_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, onConfirmFISWCLSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_status_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusFISWCLSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_update_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, updateFISWCLSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_update_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateFIS12WCLSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_update_flows_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateFIS12FlowSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_cancel_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancelFISWCLSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, onCancelFISWCLSchema)
+  return formatted_error(error_list)
+}
+
+
 const TRVValidator = {
   validate_schema_search_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/search.yaml'),
   validate_schema_on_search_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/on_search.yaml'),
@@ -1574,6 +1653,22 @@ export default {
   validate_schema_on_confirm_FIS14_for_json,
   // validate_schema_on_status_FIS14_for_json ,
   validate_schema_on_update_FIS14_for_json,
+
+  // FIS 12 : WCL
+  validate_schema_search_FIS_WCL_for_json,
+  validate_schema_on_search_FIS_WCL_for_json,
+  validate_schema_select_FIS_WCL_for_json,
+  validate_schema_on_select_FIS_WCL_for_json,
+  validate_schema_init_FIS_WCL_for_json,
+  validate_schema_on_init_FIS_WCL_for_json,
+  validate_schema_confirm_FIS_WCL_for_json,
+  validate_schema_on_confirm_FIS_WCL_for_json,
+  validate_schema_on_status_FIS_WCL_for_json,
+  validate_schema_update_FIS_WCL_for_json,
+  validate_schema_on_update_FIS_WCL_for_json,
+  validate_schema_on_update_flows_FIS_WCL_for_json,
+  validate_schema_cancel_FIS_WCL_for_json,
+  validate_schema_on_cancel_FIS_WCL_for_json,
 
   ...TRVValidator,
   ...FISValidator,

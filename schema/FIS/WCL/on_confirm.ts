@@ -1,4 +1,4 @@
-export const onConfirmFIS12Schema = {
+export const onConfirmFISWCLSchema = {
     type: 'object',
     properties: {
       context: {

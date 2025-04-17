@@ -1,4 +1,4 @@
-export const onStatusFIS12Schema = {
+export const onStatusFISWCLSchema = {
     type: 'object',
     properties: {
       context: {

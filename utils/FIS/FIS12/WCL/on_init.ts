@@ -24,10 +24,10 @@ export const checkOninitWCL = (data: any, msgIdSet: any, flow: string, sequence:
       return Object.keys(errorObj).length > 0 && errorObj
     }
 
-    const schemaValidation = validateSchema('FIS_WCL', constants.ON_SELECT, data)
-    const contextRes: any = checkFISContext(data.context, constants.ON_SELECT)
+    const schemaValidation = validateSchema('FIS_WCL', constants.ON_INIT, data)
+    const contextRes: any = checkFISContext(data.context, constants.ON_INIT)
     
-    setValue(`${constants.ON_SELECT}_context`, data.context)
+    setValue(`${constants.ON_INIT}_context`, data.context)
     msgIdSet.add(data.context.message_id)
 
     if (!contextRes?.valid) {

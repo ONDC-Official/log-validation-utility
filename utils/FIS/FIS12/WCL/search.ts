@@ -1,20 +1,17 @@
-import { logger } from '../../../../shared/logger'
-import { setValue } from '../../../../shared/dao'
-import constants from '../../../../constants'
-import { validateSchema, isObjectEmpty, checkFISContext } from '../../../../utils'
-// import { validatePaymentTags } from '.././tags'
-// import { isEmpty } from 'lodash'
-// import { validateXInputSubmission } from '.././fisChecks'
+import { logger } from '../../../../shared/logger';
+import { setValue} from '../../../../shared/dao';
+import constants from '../../../../constants';
+import { validateSchema, isObjectEmpty, checkFISContext } from '../../../../utils';
 
 export const checksearchWCL = (data: any, msgIdSet: any, flow: string, sequence: string) => {
-  const errorObj: any = {}
+  const errorObj: any = {};
+
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [constants.SEARCH]: 'JSON cannot be empty' }
+      return { [constants.SEARCH]: 'JSON cannot be empty' };
     }
 
-    console.log("flow ---", flow)
-    console.log("sequence ---", sequence)
+    console.log('flow', flow, sequence)
 
     if (
       !data.message ||
@@ -23,33 +20,78 @@ export const checksearchWCL = (data: any, msgIdSet: any, flow: string, sequence:
       isObjectEmpty(data.message) ||
       isObjectEmpty(data.message.intent)
     ) {
-      errorObj['missingFields'] = '/context, /message, /intent or /message/intent is missing or empty'
-      return Object.keys(errorObj).length > 0 && errorObj
+      errorObj['missingFields'] = '/context, /message, /intent or /message/intent is missing or empty';
+      return Object.keys(errorObj).length > 0 && errorObj;
     }
 
-    const schemaValidation = validateSchema('FIS_WCL', constants.SEARCH, data)
-    const contextRes: any = checkFISContext(data.context, constants.SEARCH)
-    // const code = data.message.intent?.category?.descriptor?.code
-    // const LoanType = getValue(`LoanType`)
-    setValue(`${constants.SEARCH}_context`, data.context)
-    msgIdSet.add(data.context.message_id)
+    const schemaValidation = validateSchema('FIS_WCL', constants.SEARCH, data);
+    const contextRes: any = checkFISContext(data.context, constants.SEARCH);
+    
+    setValue(`${constants.SEARCH}_context`, data.context);
+    msgIdSet.add(data.context.message_id);
 
     if (!contextRes?.valid) {
-      Object.assign(errorObj, contextRes.ERRORS)
+      Object.assign(errorObj, contextRes.ERRORS);
     }
 
     if (schemaValidation !== 'error') {
-      Object.assign(errorObj, schemaValidation)
+      Object.assign(errorObj, schemaValidation);
     }
 
-    // validate payments
+    const { context, message } = data;
+    const intent = message.intent;
 
+    // Validate context
+    if (context.domain !== 'ONDC:FIS12') {
+      errorObj['context.domain'] = 'Domain must be ONDC:FIS12';
+    }
 
-    // checking providers
+    if (context.action !== 'search') {
+      errorObj['context.action'] = 'Action must be search';
+    }
 
-    return Object.keys(errorObj).length > 0 && errorObj
+    // Validate intent
+    if (!intent.category?.descriptor?.code) {
+      errorObj['intent.category'] = 'Category descriptor code is required';
+    } else if (intent.category.descriptor.code !== 'WORKING_CAPITAL_LOAN') {
+      errorObj['intent.category.code'] = 'Category code must be WORKING_CAPITAL_LOAN';
+    }
+
+    // Validate provider
+    if (intent.provider) {
+      if (!intent.provider.descriptor?.name) {
+        errorObj['intent.provider.descriptor'] = 'Provider descriptor name is required';
+      }
+    }
+
+    // Validate fulfillment
+    if (intent.fulfillment) {
+      if (!intent.fulfillment.start?.location?.gps) {
+        errorObj['intent.fulfillment.start.location'] = 'Fulfillment start location GPS is required';
+      }
+      if (!intent.fulfillment.end?.location?.gps) {
+        errorObj['intent.fulfillment.end.location'] = 'Fulfillment end location GPS is required';
+      }
+    }
+
+    // Validate tags
+    if (!intent.tags || !Array.isArray(intent.tags)) {
+      errorObj['intent.tags'] = 'Intent tags array is required';
+    } else {
+      const loanAmountTag = intent.tags.find((tag: any) => tag.descriptor?.code === 'LOAN_AMOUNT');
+      if (!loanAmountTag || !loanAmountTag.list) {
+        errorObj['intent.tags.LOAN_AMOUNT'] = 'LOAN_AMOUNT tag with list is required';
+      }
+
+      const loanTenureTag = intent.tags.find((tag: any) => tag.descriptor?.code === 'LOAN_TENURE');
+      if (!loanTenureTag || !loanTenureTag.list) {
+        errorObj['intent.tags.LOAN_TENURE'] = 'LOAN_TENURE tag with list is required';
+      }
+    }
+
+    return Object.keys(errorObj).length > 0 && errorObj;
   } catch (error: any) {
-    logger.error(error.message)
-    return { error: error.message }
+    logger.error(`Error in checkSearchWCL: ${error.message}`);
+    return { error: error.message };
   }
 }

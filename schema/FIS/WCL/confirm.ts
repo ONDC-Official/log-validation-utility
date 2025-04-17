@@ -1,4 +1,4 @@
-export const confirmFIS12Schema = {
+export const confirmFIS12WCLSchema = {
     type: 'object',
     properties: {
       context: {

@@ -26,7 +26,7 @@ export const search = (data: any, msgIdSet: any) => {
     msgIdSet.add(context.message_id)
 
     // validate schema
-    const schemaValidation = validateSchema('FIS', constants.SEARCH, data)
+    const schemaValidation = validateSchema('FIS10', constants.SEARCH, data)
     if (schemaValidation !== 'error') {
       Object.assign(errorObj, schemaValidation)
     }

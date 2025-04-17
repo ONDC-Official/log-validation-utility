@@ -20,7 +20,7 @@ export const checkOnSearch = (data: any, msgIdSet: any, flow: string, action: st
     return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
   }
 
-  const schemaValidation = validateSchema('FIS', constants.ON_SEARCH, data)
+  const schemaValidation = validateSchema('FIS10', constants.ON_SEARCH, data)
   const contextRes: any = validateContext(context, msgIdSet, constants.SEARCH, constants.ON_SEARCH)
 
   const errorObj: any = {}

@@ -46,6 +46,11 @@ export const checkOnsearch = (data: any) => {
 
   setValue(`${ApiSequence.ON_SEARCH}_context`, context)
   setValue(`${ApiSequence.ON_SEARCH}_message`, message)
+  const providerOffers: any[] = message?.catalog["bpp/providers"]
+  ?.flatMap((provider:any) => provider?.offers || []);
+  if(providerOffers && providerOffers.length > 0){
+    setValue(`${ApiSequence.ON_SEARCH}_offers`,providerOffers)
+  }
   let errorObj: any = {}
 
   if (schemaValidation !== 'error') {
@@ -89,7 +94,6 @@ export const checkOnsearch = (data: any) => {
   }
 
   setValue(`${ApiSequence.ON_SEARCH}`, data)
-
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
 
   try {

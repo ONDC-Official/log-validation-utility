@@ -415,147 +415,9 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
     }
     try {
       logger.info(`Checking or offers in /${constants.SELECT}`)
-      // const now = new Date()
-
-      // const isOfferValid = (offer: any): boolean => {
-      //   const label = offer?.time?.label
-      //   const start = offer?.time?.range?.start
-      //   const end = offer?.time?.range?.end
-
-      //   if (label !== 'valid' || !start || !end) return false
-
-      //   const startTime = new Date(start)
-      //   const endTime = new Date(end)
-
-      //   return now >= startTime && now <= endTime
-      // }
-      // if (select?.offers && select?.offers.length > 0) {
-      //   const providerOffers: any = getValue(`${ApiSequence.ON_SEARCH}_offers`);
-      //   const applicableOffers: any[] = [];
-      //   const orderItemIds = select?.items?.map((item: any) => item.id) || []
-      //   const orderLocationIds = select?.provider?.locations?.map((item: any) => item.id) || []
-      //   select.offers.forEach((offer: any, index: number) => {
-      //     const providerOffer = providerOffers?.find((providedOffer: any) => providedOffer?.id === offer?.id)
-      //     // const providerMetaTags = providerOffer?.tags?.find((tag:any)=>tag.code === "meta")
-      //     const offerLocationIds = providerOffer?.location_ids || []
-      //     const locationMatch = offerLocationIds.some((id: string) => orderLocationIds.includes(id))
-
-      //     if (!locationMatch) {
-      //       errorObj[`offer[${index}]`] =
-      //         `Offer with id '${offer.id}' is not applicable for any of the order's locations [${orderLocationIds.join(', ')}].`
-      //       return
-      //     }
-          
-      //     const offerItemIds = providerOffer?.item_ids || []
-      //     const itemMatch = offerItemIds.some((id: string) => orderItemIds.includes(id))
-
-      //     if (!itemMatch) {
-      //       errorObj[`offer[${index}]`] =
-      //         `Offer with id '${offer.id}' is not applicable for any of the ordered item(s) [${orderItemIds.join(', ')}].`
-      //       return
-      //     }
-      //     if (!providerOffer) {
-      //       errorObj[`offer[${index}]`] = `Offer with id ${offer.id} is not available for the provider.`
-      //       return
-      //     }
-
-      //     const { label, range } = providerOffer?.time || {}
-      //     const start = range?.start
-      //     const end = range?.end
-
-      //     if (label !== 'valid' || !start || !end) {
-      //       errorObj[`offer[${index}]`] = `Offer with id ${offer.id} has an invalid or missing time configuration.`
-      //       return
-      //     }
-
-      //     const currentTimeStamp = new Date(context?.timestamp)
-      //     const startTime = new Date(start)
-      //     const endTime = new Date(end)
-
-      //     if (!(currentTimeStamp >= startTime && currentTimeStamp <= endTime)) {
-      //       errorObj[`offer[${index}]`] = `Offer with id ${offer.id} is not currently valid based on time range.`
-      //       return
-      //     }
-
-      //     const isSelected = offer?.tags?.some(
-      //       (tag: any) =>
-      //         tag.code === 'selection' &&
-      //         tag.list?.some((entry: any) => entry.code === 'apply' && entry.value === 'yes'),
-      //     )
-
-      //     if (!isSelected) {
-      //       errorObj[`offer[${index}]`] = `Offer with id ${offer.id} is not selected (apply: "yes" missing).`
-      //       return
-      //     }
-
-      //     applicableOffers.push(providerOffer)
-      //   })
+      console.log("offers in select call",JSON.stringify(select.offers));
       
-      //   console.log("Applicable Offers:", applicableOffers);
-      //   setValue('selected_offer',applicableOffers)
-      // }
-
-      // if (select?.offers && select?.offers.length === 1) {
-      //   const providerOffers: any = getValue(`${ApiSequence.ON_SEARCH}_offers`);
-      //   const applicableOffers: any[] = [];
-      //   const orderItemIds = select?.items?.map((item: any) => item.id) || [];
-      //   const orderLocationIds = select?.provider?.locations?.map((item: any) => item.id) || [];
-      
-      //   select.offers.forEach((offer: any, index: number) => {
-      //     const providerOffer = providerOffers?.find((providedOffer: any) => providedOffer?.id === offer?.id)
-      //     if (!providerOffer) {
-      //       errorObj[`offer[${index}]`] = `Offer with id ${offer.id} is not available for the provider.`
-      //       return
-      //     }
-
-      //     const offerLocationIds = providerOffer?.location_ids || []
-      //     const locationMatch = offerLocationIds.some((id: string) => orderLocationIds.includes(id))
-      //     if (!locationMatch) {
-      //       errorObj[`offer[${index}]`] =
-      //         `Offer with id '${offer.id}' is not applicable for any of the order's locations [${orderLocationIds.join(', ')}].`
-      //       return
-      //     }
-
-      //     const offerItemIds = providerOffer?.item_ids || []
-      //     const itemMatch = offerItemIds.some((id: string) => orderItemIds.includes(id))
-      //     if (!itemMatch) {
-      //       errorObj[`offer[${index}]`] =
-      //         `Offer with id '${offer.id}' is not applicable for any of the ordered item(s) [${orderItemIds.join(', ')}].`
-      //       return
-      //     }
-
-      //     const { label, range } = providerOffer?.time || {}
-      //     const start = range?.start
-      //     const end = range?.end
-      //     if (label !== 'valid' || !start || !end) {
-      //       errorObj[`offer[${index}]`] = `Offer with id ${offer.id} has an invalid or missing time configuration.`
-      //       return
-      //     }
-
-      //     const currentTimeStamp = new Date(context?.timestamp)
-      //     const startTime = new Date(start)
-      //     const endTime = new Date(end)
-      //     if (!(currentTimeStamp >= startTime && currentTimeStamp <= endTime)) {
-      //       errorObj[`offer[${index}]`] = `Offer with id ${offer.id} is not currently valid based on time range.`
-      //       return
-      //     }
-
-      //     const isSelected = offer?.tags?.some(
-      //       (tag: any) =>
-      //         tag.code === 'selection' &&
-      //         tag.list?.some((entry: any) => entry.code === 'apply' && entry.value === 'yes'),
-      //     )
-      //     if (!isSelected) {
-      //       errorObj[`offer[${index}]`] = `Offer with id ${offer.id} is not selected (apply: "yes" missing).`
-      //       return
-      //     }
-
-      //     applicableOffers.push({ ...providerOffer, index })
-      //     setValue('selected_offer', applicableOffers)
-      //   })
-      // }
-
-      if (select?.offers && select?.offers.length > 1) {
+      if (select?.offers && select?.offers.length > 0) {
         const providerOffers: any = getValue(`${ApiSequence.ON_SEARCH}_offers`)
         const applicableOffers: any[] = []
         const orderItemIds = select?.items?.map((item: any) => item.id) || []
@@ -563,6 +425,8 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
 
         select.offers.forEach((offer: any, index: number) => {
           const providerOffer = providerOffers?.find((providedOffer: any) => providedOffer?.id === offer?.id)
+          console.log("providerOffer in select call",JSON.stringify(providerOffer));
+          
           if (!providerOffer) {
             errorObj[`offer[${index}]`] = `Offer with id ${offer.id} is not available for the provider.`
             return
@@ -611,6 +475,8 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
           }
 
           applicableOffers.push({ ...providerOffer, index })
+          console.log("applicableOffers",JSON.stringify(applicableOffers));
+          
         })
 
         // Additive validation
@@ -651,14 +517,14 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
           // setValue('Addtive-Offers',false)
           return
         }
-          console.log('Applicable Offers:', applicableOffers)
+          console.log('Applicable Offers in select:', applicableOffers)
           setValue('selected_offer', applicableOffers)
       }
       
       
       
     } catch (error:any) {
-      logger.error(`Error while checking for customization Items in /${constants.SELECT}, ${error.stack}`)
+      logger.error(`Error while checking for offers in /${constants.SELECT}, ${error.stack}`)
     }
   }
 

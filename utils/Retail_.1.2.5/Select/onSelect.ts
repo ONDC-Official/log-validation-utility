@@ -416,6 +416,21 @@ export const checkOnSelect = (data: any) => {
     const itemsCtgrs: any = getValue('itemsCtgrs')
     const providerOffers: any = getValue(`${ApiSequence.ON_SEARCH}_offers`);
     const applicableOffers: any[] = []
+    const orderItemIds = on_select?.items?.map((item: any) => item.id) || []
+    const items:any = orderItemIds
+      .map((id:any) => {
+        const item = on_select?.quote?.breakup.find((entry:any) => entry['@ondc/org/item_id'] === id)
+        return item ? { id, price: item.price.value } : null
+      })
+      .filter((item:any) => item !== null)
+    console.log("itemPrices of found items in breakup",JSON.stringify(items));
+
+    const priceSums = items.reduce((acc: Record<string, number>, item: { id: string; price: string }) => {
+      const { id, price } = item;
+      acc[id] = (acc[id] || 0) + parseFloat(price);
+      return acc;
+    }, {});
+    
     console.log("providerOffers",JSON.stringify(providerOffers));
     if (on_select.quote) {
       const totalWithoutOffers = on_select?.quote?.breakup.reduce((sum:any, item:any) => {
@@ -432,7 +447,8 @@ export const checkOnSelect = (data: any) => {
       console.log("applicableOffer",applicableOffer);
       const deliveryCharges = Math.abs(parseFloat(on_select.quote.breakup.find((item:any)=>item["@ondc/org/title_type"] === "delivery")?.price?.value)) || 0;
       
-      if (offers.length > 0 && !applicableOffer) {
+      if (offers.length > 0) {
+        setValue('on_select_offers',offers)
         const additiveOffers = offers.filter((offer: any) => {
           const metaTag = offer?.item.tags?.find((tag: any) => tag.code === 'offer')
           return metaTag?.list?.some((entry: any) => entry.code === 'additive' && entry.value.toLowerCase() === 'yes')
@@ -608,7 +624,6 @@ export const checkOnSelect = (data: any) => {
               }
 
               const providerOffer = providerOffers?.find((p: any) => p?.id === offerId)
-              const orderItemIds = on_select?.items?.map((item: any) => item.id) || []
               const orderLocationIds = on_select?.provider?.locations?.map((loc: any) => loc.id) || []
 
               console.log('providerOffer', JSON.stringify(providerOffer))
@@ -625,7 +640,7 @@ export const checkOnSelect = (data: any) => {
               const offerItemIds = providerOffer?.item_ids || []
               const itemMatch = offerItemIds.some((id: string) => orderItemIds.includes(id))
 
-              if (!itemMatch) {
+              if (!itemMatch && titleType === "buyXgetY") {
                 errorObj[`offer_item[${i}]`] =
                   `Offer with id '${offerId}' is not applicable for any of the ordered item(s). \nApplicable items in offer: [${offerItemIds.join(', ')}], \nItems in order: [${orderItemIds.join(', ')}].`
               }
@@ -769,6 +784,9 @@ export const checkOnSelect = (data: any) => {
                   const itemTags = element?.item?.tags || []
 
                   const offerTag = itemTags.find((tag: any) => tag.code === 'offer')
+                  if(!offerTag){
+                    errorObj.invalidTags = `tags are required in on_select   /quote with @ondc/org/title_type:${titleType} and offerId:${offerId}`
+                  }
 
                   const offerItemId = offerTag?.list?.find((entry: any) => entry.code === 'item_id')?.value || ''
                   const offerItemCount = parseInt(
@@ -848,6 +866,9 @@ export const checkOnSelect = (data: any) => {
                   const itemTags = element?.item?.tags || []
 
                   const offerTag = itemTags.find((tag: any) => tag.code === 'offer')
+                  if(!offerTag){
+                    errorObj.invalidTags = `tags are required in on_select   /quote with @ondc/org/title_type:${titleType} and offerId:${offerId}`
+                  }
 
                   const offerItemId = offerTag?.list?.find((entry: any) => entry.code === 'item_id')?.value || ''
                   const offerItemCount = parseInt(
@@ -923,12 +944,99 @@ export const checkOnSelect = (data: any) => {
               }
 
               if (offerType === 'buyXgetY') {
-                const offerMinItemCount = parseFloat(qualifierList.find((l: any) => l.code === 'item_count')?.value)
-                if (!offerMinItemCount || 0) {
+                const offerMinItemCount =
+                  parseFloat(qualifierList.find((l: any) => l.code === 'item_count')?.value) || 0
+                if (!offerMinItemCount || offerMinItemCount === 0) {
                   errorObj.invalidItems = `Minimum Item Count required in catalog /offers/tags/qualifier/list/code:item_count or minimum item_count cannot be 0 for offer with id :${offerId}`
                 }
+                if (minValue > 0 && minValue !== null) {
+                  const qualifies: boolean = minValue >= priceSums
+                  console.log('qualifies', qualifies, minValue)
+
+                  if (!qualifies) {
+                    errorObj['priceErr'] =
+                      `Offer not applicable as required ${minValue} min_value for order is not satisfied`
+                  }
+                }
+                const benefitItemId = benefitList.find((entry: any) => entry.code === 'item_id')?.value || ''
+                const benefitItemCount = parseInt(
+                  benefitList.find((entry: any) => entry.code === 'item_count')?.value || '0',
+                )
+                const itemTags = element?.item?.tags || []
+
+                const offerTag = itemTags.find((tag: any) => tag.code === 'offer')
+                if(!offerTag){
+                  errorObj.invalidTags = `tags are required in on_select   /quote with @ondc/org/title_type:${titleType} and offerId:${offerId}`
+                }
+
+                const offerItemId = offerTag?.list?.find((entry: any) => entry.code === 'item_id')?.value || ''
+                const offerItemCount = parseInt(
+                  offerTag?.list?.find((entry: any) => entry.code === 'item_count')?.value || '0',
+                )
+                if (!offerItemCount) {
+                  errorObj.invalidItems = `item_count is required in on_select   /quote with @ondc/org/title_type:${titleType} and offerId:${offerId} `
+                }
+                if (offerItemId !== benefitItemId) {
+                  errorObj.invalidBenefitItem = `Mismatch: item_id used in on_select quote.breakup (${offerItemId}) doesn't match with offer benefit item_id (${benefitItemId}) in on_search catalog for offer ID: ${offerId}`
+                }
+                if (benefitItemCount !== offerItemCount) {
+                  errorObj.invalidItemCount = `Mismatch: item_count used in on_select quote.breakup (${offerItemCount}) quantity doesn't match with offer benefit item_count (${benefitItemCount}) in on_search catalog  for offer ID: ${offerId}`
+                }
+                if (offerItemId) {
+                  const itemIds = offerItemId.split(',').map((id: string) => id.trim())
+                  // let totalExpectedOfferValue = 0
+                  const matchedItems = itemsOnSearch[0].filter((item: any) => itemIds.includes(item.id))
+
+                  const priceMismatchItems: string[] = []
+                  let totalExpectedOfferValue = 0
+                  console.log(totalExpectedOfferValue)
+                  let allItemsEligible = true
+
+                  matchedItems.forEach((item: any) => {
+                    const itemPrice = Math.abs(parseFloat(item?.price?.value || '0'))
+                    const availableCount = parseInt(item?.quantity?.available?.count || '0', 10)
+
+                    // Calculate the expected total price for the item
+                    const expectedItemTotal = itemPrice * offerItemCount
+                    totalExpectedOfferValue += expectedItemTotal
+
+                    // Validate stock availability
+                    if (availableCount < offerItemCount) {
+                      errorObj.invalidItems = `Item ID: ${item.id} does not have sufficient stock. Required: ${offerItemCount}, Available: ${availableCount}`
+                      allItemsEligible = false
+                    }
+
+                    // Validate price consistency
+                    const quotedPrice = Math.abs(parseFloat(element?.price?.value || '0'))
+                    if (expectedItemTotal !== quotedPrice) {
+                      priceMismatchItems.push(
+                        `ID: ${item.id} (Expected Total: ₹${expectedItemTotal}, Quoted: ₹${quotedPrice})`,
+                      )
+                      allItemsEligible = false
+                    }
+                  })
+
+                  // Report any price mismatches
+                  if (priceMismatchItems.length > 0) {
+                    errorObj.priceMismatch = `Price mismatch found for item(s): ${priceMismatchItems.join('; ')}`
+                  }
+
+                  // If not all items are eligible, identify missing or out-of-stock items
+                  if (!allItemsEligible) {
+                    const missingOrOutOfStock = itemIds.filter((id: string) => {
+                      const matchedItem = matchedItems.find((item: any) => item.id === id)
+                      if (!matchedItem) return true
+                      const availableCount = parseInt(matchedItem?.quantity?.available?.count || '0', 10)
+                      return availableCount < offerItemCount
+                    })
+
+                    if (missingOrOutOfStock.length > 0) {
+                      errorObj.invalidItems = `Item(s) with ID(s) ${missingOrOutOfStock.join(', ')} not found in catalog or do not have enough stock for offer ID: ${offerId}`
+                    }
+                  }
+                }
               }
-              if (offerType === 'delivery' && quoteType === "fulfillment") {
+              if (offerType === 'delivery' && quoteType === 'fulfillment') {
                 if (deliveryCharges > 0 || deliveryCharges !== null) {
                   if (minValue > 0 && minValue !== null) {
                     const qualifies: boolean = totalWithoutOffers >= minValue
@@ -953,28 +1061,24 @@ export const checkOnSelect = (data: any) => {
                   let qualifies = false
 
                   if (valueType === 'percent') {
-
-                    if(value_cap === 0){
+                    if (value_cap === 0) {
                       errorObj['priceErr'] = `Offer benefit amount cannot be equal to ${value_cap}`
-                    }
-                    else{
-                      console.log("delivery charges",deliveryCharges,offerPriceValue);
-                      let expectedDiscount = 0;
-                      expectedDiscount = ( benefitValue/ 100) * deliveryCharges;
+                    } else {
+                      console.log('delivery charges', deliveryCharges, offerPriceValue)
+                      let expectedDiscount = 0
+                      expectedDiscount = (benefitValue / 100) * deliveryCharges
                       if (expectedDiscount > value_cap) {
-                        expectedDiscount = value_cap;
+                        expectedDiscount = value_cap
                       }
                       if (expectedDiscount > deliveryCharges) {
-                          errorObj.priceMismatch = `Discount exceeds delivery charge. Discount: ₹${expectedDiscount.toFixed(2)}, Delivery Charge: ₹${deliveryCharges.toFixed(2)}`
+                        errorObj.priceMismatch = `Discount exceeds delivery charge. Discount: ₹${expectedDiscount.toFixed(2)}, Delivery Charge: ₹${deliveryCharges.toFixed(2)}`
                       }
                       if (offerPriceValue !== expectedDiscount) {
                         errorObj.priceMismatch = `Discount value mismatch. Expected: -${expectedDiscount.toFixed(2)}, Found: -${offerPriceValue.toFixed(2)}`
                       }
-
                     }
-                  }
-                  else {
-                    if(benefitValue !== offerPriceValue){
+                  } else {
+                    if (benefitValue !== offerPriceValue) {
                       errorObj['priceErr'] =
                         `Discount mismatch: Expected discount is -₹${benefitValue.toFixed(2)}, but found -₹${offerPriceValue.toFixed(2)}. in offer with ${offerId} in ${titleType}`
                     }
@@ -993,8 +1097,7 @@ export const checkOnSelect = (data: any) => {
                         `Quoted price mismatch: After ₹${benefitValue} discount on ₹${totalWithoutOffers}, expected price is ₹${quoteAfterBenefit.toFixed(2)}, but got ₹${quotedPrice.toFixed(2)}.`
                     }
                   }
-                }
-                else{
+                } else {
                   errorObj.invalidOfferType = `item with id: ${offerId} in quote.breakup[${i}] does not exist in items[]. Hence offer cannot be applied for this order.`
                 }
               }

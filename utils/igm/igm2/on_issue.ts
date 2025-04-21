@@ -278,31 +278,39 @@ const checkOnIssueV2 = (data: any, apiSequence:string, flow: any) => {
       // Sequence-specific validations
       switch(apiSequence) {
         case IGM2FlowSequence.FLOW_1.ON_ISSUE_PROCESSING_1:
-          // For ON_ISSUE_1: updated_at should equal created_at
-          break
-          
-        case IGM2Sequence.ON_ISSUE_2:
-          
-          break
-          
-        case IGM2Sequence.ON_ISSUE_3:
-        
-          break
-          
-        case IGM2Sequence.ON_ISSUE_4:
-          break
-          
-        case IGM2Sequence.ON_ISSUE_5:
-        case IGM2Sequence.ON_ISSUE_6:
-        case IGM2Sequence.ON_ISSUE_7:
-        
-          
-         
-          break
+          if (message.issue.status !== 'PROCESSING') {
+            onIssueObj.status_processing = `For ${apiSequence}, status should be PROCESSING, found: ${message.issue.status}`
+          }
+          break;
+
+        case IGM2FlowSequence.FLOW_1.ON_ISSUE_INFO_REQUIRED_1:
+        case IGM2FlowSequence.FLOW_1.ON_ISSUE_INFO_REQUIRED_2:
+          // if (message.issue.status !== 'PROCESSING') {
+          //   onIssueObj.status_info_required = `For ${apiSequence}, status should be PROCESSING, found: ${message.issue.status}`
+          // }
+          break;
+
+        case IGM2FlowSequence.FLOW_1.ON_ISSUE_PROCESSING_2:
+          // if (message.issue.status !== 'PROCESSING') {
+          //   onIssueObj.status_processing = `For ${apiSequence}, status should be PROCESSING, found: ${message.issue.status}`
+          // }
+          break;
+
+        case IGM2FlowSequence.FLOW_1.ON_ISSUE_RESOLUTION_PROPOSED:
+          if (message.issue.status !== 'PROCESSING') {
+            onIssueObj.status_resolution = `For ${apiSequence}, status should be PROCESSING, found: ${message.issue.status}`
+          }
+          break;
+
+        case IGM2FlowSequence.FLOW_1.ON_ISSUE_RESOLVED:
+          if (message.issue.status !== 'RESOLVED') {
+            onIssueObj.status_resolved = `For ${apiSequence}, status should be RESOLVED, found: ${message.issue.status}`
+          }
+          break;
           
         default:
           logger.warn(`Unknown API sequence: ${apiSequence}. No specific validations applied.`)
-          break
+          break;
       }
 
       // Store updated values

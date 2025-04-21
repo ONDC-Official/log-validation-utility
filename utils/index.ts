@@ -1131,7 +1131,7 @@ export const checkQuoteTrail = (quoteTrailItems: any[], errorObj: any, selectPri
   }
 }
 
-function deepCompare(obj1: any, obj2: any): boolean {
+export function deepCompare(obj1: any, obj2: any): boolean {
   if (typeof obj1 !== 'object' || typeof obj2 !== 'object') {
     return obj1 === obj2
   }
@@ -1382,3 +1382,62 @@ export function validateBppUri(bppUri: string, bpp_id: string, errorObj: any): a
     errorObj['bpp_id_in_uri'] = `Bpp_id ${bpp_id} is not found in BppUri ${bppUri}`
   }
 }
+export interface TagListItem {
+  code: string;
+  value: string;
+}
+
+export interface Tag {
+  code: string;
+  list: TagListItem[];
+}
+
+export interface Fulfillment {
+  id: string;
+  tags?: Tag[];
+  [key: string]: any; 
+}
+
+
+export function compareAllObjects(
+  obj1: Record<string, any>,
+  obj2: Record<string, any>
+): {
+  isEqual: boolean;
+  isObj1InObj2: boolean;
+  isObj2InObj1: boolean;
+  isContained: boolean;
+} {
+  const isEqual = JSON.stringify(obj1) === JSON.stringify(obj2);
+
+  const isSubset = (subset: Record<string, any>, superset: Record<string, any>): boolean => {
+    return Object.entries(subset).every(([key, value]) => {
+      const superValue = superset?.[key];
+
+      if (typeof value === 'object' && value !== null) {
+        if (Array.isArray(value)) {
+          if (!Array.isArray(superValue)) return false;
+          return value.every((val, idx) =>
+            compareAllObjects(val, superValue[idx]).isObj1InObj2
+          );
+        } else {
+          return compareAllObjects(value, superValue).isObj1InObj2;
+        }
+      }
+
+      return superset?.hasOwnProperty(key) && superValue === value;
+    });
+  };
+
+  const isObj1InObj2 = isSubset(obj1, obj2);
+  const isObj2InObj1 = isSubset(obj2, obj1);
+
+  return {
+    isEqual,
+    isObj1InObj2,
+    isObj2InObj1,
+    isContained: isObj1InObj2 || isObj2InObj1
+  };
+}
+
+

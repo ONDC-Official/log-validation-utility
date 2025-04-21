@@ -2,7 +2,7 @@
 import _ from 'lodash'
 import constants, { ApiSequence, ROUTING_ENUMS, PAYMENT_STATUS } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchemaRetailV2, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges, compareFulfillmentObject } from '../..'
+import { validateSchemaRetailV2, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges, compareFulfillmentObject, compareAllObjects } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
 
@@ -437,6 +437,41 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any, 
         logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_DELIVERED}, ${error.stack}`)
       }
     }
+
+     if (flow === FLOW.FLOW020) {
+
+         const fulfillments = on_status.fulfillments
+         if (!fulfillments.length) {
+           const key = `missingFulfillments`
+           onStatusObj[key] = `missingFulfillments is mandatory for ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}`
+         }
+   
+         fulfillments.forEach((fulfillment: any) => {
+           const tags = fulfillment.tags || []
+           const delayTag = tags.find((tag: { code: string }) => tag.code === 'fulfillment_delay')
+           const fulfillmentDelayTagList = getValue('fulfillmentDelayTagList')
+          if(!delayTag){
+                   const key = `missingFulfillmentTags`
+             onStatusObj[key] = `'fulfillment_delay should be present in FulfillmentTags in ${ApiSequence.ON_STATUS_DELIVERED}`
+          }
+   if(delayTag)
+{
+   const Errors = compareAllObjects(
+             delayTag.list,
+             fulfillmentDelayTagList,
+   
+           )
+           
+           if (!Errors.isEqual || !Errors.isObj1InObj2 || !Errors.isObj2InObj1 || !Errors.isContained) {
+             const key = `missingFulfillmentTags`
+             onStatusObj[key] = `missingFulfillmentTags are mandatory for ${ApiSequence.ON_STATUS_DELIVERED}`
+           }
+}   
+   
+   
+         })
+       }
+   
 
     return onStatusObj
   } catch (err: any) {

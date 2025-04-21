@@ -1,13 +1,26 @@
 /* eslint-disable no-prototype-builtins */
 import _ from 'lodash'
-import constants, { ApiSequence, ROUTING_ENUMS, PAYMENT_STATUS} from '../../../constants'
+import constants, {
+  ApiSequence,
+   ROUTING_ENUMS,
+  PAYMENT_STATUS,
+} from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchemaRetailV2, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges, compareFulfillmentObject } from '../..'
+import {
+  validateSchemaRetailV2,
+  isObjectEmpty,
+  checkContext,
+  areTimestampsLessThanOrEqualTo,
+  compareTimeRanges,
+  compareFulfillmentObject,
+} from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
+import { delivery_delay_reasonCodes } from '../../../constants/reasonCode'
 
 export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, fulfillmentsItemsSet: any) => {
   const onStatusObj: any = {}
+  const states: string[] = ['Order-picked-up', 'Order-delivered']
   try {
     if (!data || isObjectEmpty(data)) {
       return { [ApiSequence.ON_STATUS_PICKED]: 'JSON cannot be empty' }
@@ -257,7 +270,12 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
           setValue('deliveryFulfillmentAction', ApiSequence.ON_STATUS_PICKED)
         } else {
           const storedFulfillmentAction = getValue('deliveryFulfillmentAction')
-          const fulfillmentRangeerrors = compareTimeRanges(storedFulfillment, storedFulfillmentAction, deliveryFulfillment[0], ApiSequence.ON_STATUS_PICKED)
+          const fulfillmentRangeerrors = compareTimeRanges(
+            storedFulfillment,
+            storedFulfillmentAction,
+            deliveryFulfillment[0],
+            ApiSequence.ON_STATUS_PICKED,
+          )
 
           if (fulfillmentRangeerrors) {
             let i = 0
@@ -284,7 +302,7 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
           }
 
           ffId = ff.id
-          if (ff.type != "Cancel") {
+          if (ff.type != 'Cancel') {
             if (getValue(`${ffId}_tracking`)) {
               if (ff.tracking === false || ff.tracking === true) {
                 if (getValue(`${ffId}_tracking`) != ff.tracking) {
@@ -312,18 +330,18 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
         `Error while checking pickup timestamp in /${constants.ON_STATUS}_${state}.json Error: ${error.stack}`,
       )
     }
-     try {
-          if (flow === FLOW.FLOW2A) {
-            logger.info('Payment status check in on status picked call')
-            const payment = on_status.payment
-            if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
-              logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`);
-              onStatusObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
-            }
-          }
-        } catch (err: any) {
-          logger.error('Error while checking payment in message/order/payment: ' + err.message);
+    try {
+      if (flow === FLOW.FLOW2A) {
+        logger.info('Payment status check in on status picked call')
+        const payment = on_status.payment
+        if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
+          logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`)
+          onStatusObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
         }
+      }
+    } catch (err: any) {
+      logger.error('Error while checking payment in message/order/payment: ' + err.message)
+    }
 
     if (flow === '6' || flow === '2' || flow === '3' || flow === '5') {
       try {
@@ -332,22 +350,26 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
         if (!fulfillments.length) {
           const key = `missingFulfillments`
           onStatusObj[key] = `missingFulfillments is mandatory for ${ApiSequence.ON_STATUS_PICKED}`
-        }
-        else {
+        } else {
           fulfillments.forEach((ff: any) => {
-            if (ff.type == "Delivery") {
-              setValue("deliveryTmpStmp", ff?.start?.time?.timestamp)
+            if (ff.type == 'Delivery') {
+              setValue('deliveryTmpStmp', ff?.start?.time?.timestamp)
             }
-          });
+          })
           let i: number = 0
           fulfillmentsItemsSet.forEach((obj1: any) => {
             const keys = Object.keys(obj1)
 
             let obj2: any = _.filter(fulfillments, { type: `${obj1.type}` })
-            let apiSeq = obj1.type === "Cancel" ? ApiSequence.ON_UPDATE_PART_CANCEL : (getValue('onCnfrmState') === "Accepted" ? (ApiSequence.ON_CONFIRM) : (ApiSequence.ON_STATUS_PENDING))
+            let apiSeq =
+              obj1.type === 'Cancel'
+                ? ApiSequence.ON_UPDATE_PART_CANCEL
+                : getValue('onCnfrmState') === 'Accepted'
+                  ? ApiSequence.ON_CONFIRM
+                  : ApiSequence.ON_STATUS_PENDING
             if (obj2.length > 0) {
               obj2 = obj2[0]
-              if (obj2.type == "Delivery") {
+              if (obj2.type == 'Delivery') {
                 delete obj2?.start?.instructions
                 delete obj2?.end?.instructions
                 delete obj2?.agent
@@ -355,24 +377,120 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
                 delete obj2?.tags
                 delete obj2?.state
               }
-              apiSeq = obj2.type === "Cancel" ? ApiSequence.ON_UPDATE_PART_CANCEL : (getValue('onCnfrmState') === "Accepted" ? (ApiSequence.ON_CONFIRM) : (ApiSequence.ON_STATUS_PENDING))
+              apiSeq =
+                obj2.type === 'Cancel'
+                  ? ApiSequence.ON_UPDATE_PART_CANCEL
+                  : getValue('onCnfrmState') === 'Accepted'
+                    ? ApiSequence.ON_CONFIRM
+                    : ApiSequence.ON_STATUS_PENDING
               const errors = compareFulfillmentObject(obj1, obj2, keys, i, apiSeq)
               if (errors.length > 0) {
                 errors.forEach((item: any) => {
                   onStatusObj[item.errKey] = item.errMsg
                 })
               }
-            }
-            else {
-              onStatusObj[`message/order.fulfillments/${i}`] = `Missing fulfillment type '${obj1.type}' in ${ApiSequence.ON_STATUS_PICKED} as compared to ${apiSeq}`
+            } else {
+              onStatusObj[`message/order.fulfillments/${i}`] =
+                `Missing fulfillment type '${obj1.type}' in ${ApiSequence.ON_STATUS_PICKED} as compared to ${apiSeq}`
             }
             i++
-          });
+          })
+        }
+      } catch (error: any) {
+        logger.error(
+          `Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_PICKED}, ${error.stack}`,
+        )
+      }
+    }
+
+    function validateFulfillmentTags(fulfillments: any) {
+      const errors: any = []
+
+      fulfillments.forEach((fulfillment: any) => {
+        const tags = fulfillment.tags || []
+        const delayTag = tags.find((tag: { code: string }) => tag.code === 'fulfillment_delay')
+
+        if (!delayTag) {
+          errors.push({
+            fulfillmentId: fulfillment.id,
+            error: "Missing 'fulfillment_delay' tag",
+          })
+
+          return
         }
 
-      } catch (error: any) {
-        logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_PICKED}, ${error.stack}`)
-      }
+        const tagList = delayTag.list || []
+
+        setValue("fulfillmentDelayTagList", tagList)
+        // State check
+        const stateEntry = tagList.find((entry: { code: string }) => entry.code === 'state')
+        if (!stateEntry || !stateEntry.value) {
+          errors.push({
+            fulfillmentId: fulfillment.id,
+            error: "Missing or invalid 'state' in 'fulfillment_delay' tag",
+          })
+        } else if (!states.includes(stateEntry.value)) {
+          errors.push({
+            fulfillmentId: fulfillment.id,
+            error: `state value  must be enums like ${states}`,
+          })
+        }
+
+        // Reason ID check
+        const reasonEntry = tagList.find((entry: { code: string }) => entry.code === 'reason_id')
+        if (!reasonEntry || !reasonEntry.value) {
+          errors.push({
+            fulfillmentId: fulfillment.id,
+            error: "Missing or invalid 'reason_id' in 'fulfillment_delay' tag",
+          })
+        } else if (!delivery_delay_reasonCodes.includes(reasonEntry.value)) {
+          errors.push({
+            fulfillmentId: fulfillment.id,
+            error: `reason_id value  must be ${delivery_delay_reasonCodes}`,
+          })
+        }
+
+        // Timestamp check
+        const timestampEntry = tagList.find((entry: { code: string }) => entry.code === 'timestamp')
+        if (!timestampEntry || !timestampEntry.value) {
+          errors.push({
+            fulfillmentId: fulfillment.id,
+            error: "Missing or invalid 'timestamp' in 'fulfillment_delay' tag",
+          })
+        } else {
+            try {
+                if (_.gte(getValue('tmpstmp'), context.timestamp)) {
+                  onStatusObj.tmpstmp = `Timestamp for  /${constants.ON} api cannot be greater than or equal to /init api`
+                }
+          
+                setValue('tmpstmp', context.timestamp)
+              } catch (error: any) {
+                logger.error(
+                  `!!Error while comparing timestamp for /${constants.ON_SELECT} and /${constants.INIT} api, ${error.stack}`,
+                )
+              }
+          const isValidDate = !isNaN(Date.parse(timestampEntry.value))
+          if (!isValidDate) {
+            errors.push({
+              fulfillmentId: fulfillment.id,
+              error: `'timestamp' value '${timestampEntry.value}' is not a valid ISO date`,
+            })
+          }
+        }
+      })
+
+
+      return errors
+    }
+    if (flow === FLOW.FLOW020) {
+      const fulfillments = on_status.fulfillments
+console.log('fulfillments', fulfillments)
+      const res = validateFulfillmentTags(fulfillments)
+      res.map((ele: {fulfillmentId: string, error: string}, index: number) => {
+        const key = `invalid_attribute/${index}/${ele.fulfillmentId}`
+        onStatusObj[key] = `${ele.error}`
+      })
+
     }
 
     return onStatusObj

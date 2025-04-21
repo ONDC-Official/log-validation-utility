@@ -112,9 +112,6 @@ export const onSearchSchema = {
                 },
                 symbol: {
                   type: 'string',
-                  format: 'url',
-                  errorMessage: 'descriptor/symbol should be URLs or can be empty array as well',
-                },
                 short_desc: {
                   type: 'string',
                 },
@@ -918,491 +915,1663 @@ export const onSearchSchema = {
                   offers: {
                     type: 'array',
                     items: {
-                      type: 'object',
-                      properties: {
-                        id: {
-                          type: 'string',
-                          description: 'Unique identifier for the offer.',
-                        },
-                        descriptor: {
-                          type: 'object',
-                          properties: {
-                            code: {
-                              type: 'string',
-                              description: 'Type of the offer (e.g., discount, buyXgetY, freebie).',
-                              enums: ['discount', 'buyXgetY', 'freebie', 'slab', 'combo', 'delivery', 'exchange', 'financing']
-                            },
-                            images: {
-                              type: 'array',
-                              items: {
-                                type: 'string',
-                                format: 'uri',
-                                description: 'URL to images related to the offer.',
-                              },
-                            },
-                          },
-                          required: ['code', 'images'],
-                        },
-                        location_ids: {
-                          type: 'array',
-                          items: {
-                            type: 'string',
-                            description: 'List of location identifiers where the offer is valid.',
-                          },
-                        },
-                        item_ids: {
-                          type: 'array',
-                          items: {
-                            type: 'string',
-                            description: 'List of item identifiers applicable for the offer.',
-                          },
-                        },
-                        time: {
-                          type: 'object',
-                          properties: {
-                            label: {
-                              type: 'string',
-                              description: 'Label for the time validity of the offer (e.g., valid).',
-                            },
-                            range: {
-                              type: 'object',
-                              properties: {
-                                start: {
-                                  type: 'string',
-                                  format: 'date-time',
-                                  description: 'Start date and time for the offer.',
-                                },
-                                end: {
-                                  type: 'string',
-                                  format: 'date-time',
-                                  description: 'End date and time for the offer.',
-                                },
-                              },
-                              required: ['start', 'end'],
-                            },
-                          },
-                          required: ['label', 'range'],
-                        },
-                        tags: {
-                          type: 'array',
-                          items: {
+                      anyOf: [
+                        // Discount offer validation
+                        {
+                          if: {
                             type: 'object',
                             properties: {
-                              code: {
-                                type: 'string',
-                                description: 'Type of the tag (e.g., qualifier, benefit, meta).',
-                                enums: ['qualifier', 'benefit', 'meta']
+                              descriptor: {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'discount' }
+                                }
+                              }
+                            }
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              id: { type: 'string' },
+                              descriptor: {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'discount' },
+                                  images: {
+                                    type: 'array',
+                                    items: { type: 'string', format: 'uri' }
+                                  }
+                                },
+                                required: ['code', 'images']
                               },
-                              list: {
+                              location_ids: { type: 'array', items: { type: 'string' } },
+                              item_ids: { type: 'array', items: { type: 'string' } },
+                              time: {
+                                type: 'object',
+                                properties: {
+                                  label: { type: 'string' },
+                                  range: {
+                                    type: 'object',
+                                    properties: {
+                                      start: { type: 'string', format: 'date-time' },
+                                      end: { type: 'string', format: 'date-time' }
+                                    },
+                                    required: ['start', 'end']
+                                  }
+                                },
+                                required: ['label', 'range']
+                              },
+                              tags: {
                                 type: 'array',
                                 items: {
-                                  type: 'object',
-                                  properties: {
-                                    code: {
-                                      type: 'string',
-                                      description: 'Code representing the specific tag property.',
-                                      enums: ['min_value', 'value_type', 'value', 'additive', 'item_count', 'item_id', 'item_value']
+                                  oneOf: [
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'qualifier' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'qualifier' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'min_value' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'min_value' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
                                     },
-                                    value: {
-                                      type: 'string',
-                                      description: 'Value for the tag property.',
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'benefit' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'benefit' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value_type' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value_type' },
+                                                      value: {
+                                                        type: 'string',
+                                                        enum: ['percent', 'amount']
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                },
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                },
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value_cap' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value_cap' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            },
+                                            minItems: 2,
+                                            errorMessage: 'Benefit tag must contain value_type and value'
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
                                     },
-                                  },
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'meta' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'meta' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'additive' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'additive' },
+                                                      value: {
+                                                        type: 'string',
+                                                        enum: ['yes', 'no']
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                },
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'auto' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'auto' },
+                                                      value: {
+                                                        type: 'string',
+                                                        enum: ['yes', 'no']
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            },
+                                            minItems: 2,
+                                            errorMessage: 'Meta tag must contain both additive and auto'
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
+                                    }
+                                  ]
                                 },
-                                required: ['code', 'value'],
-                              },
+                                minItems: 3,
+                                errorMessage: 'Tags must contain qualifier, benefit, and meta'
+                              }
                             },
-                          },
-                          required: ['code', 'list'],
+                            required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
+                          }
                         },
-                      },
-                    },
-
-                    required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags'],
+                        // BuyXgetY offer validation
+                        {
+                          if: {
+                            type: 'object',
+                            properties: {
+                              descriptor: {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'buyXgetY' }
+                                }
+                              }
+                            }
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              id: { type: 'string' },
+                              descriptor: {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'buyXgetY' },
+                                  images: {
+                                    type: 'array',
+                                    items: { type: 'string', format: 'uri' }
+                                  }
+                                },
+                                required: ['code', 'images']
+                              },
+                              location_ids: { type: 'array', items: { type: 'string' } },
+                              item_ids: { type: 'array', items: { type: 'string' } },
+                              time: {
+                                type: 'object',
+                                properties: {
+                                  label: { type: 'string' },
+                                  range: {
+                                    type: 'object',
+                                    properties: {
+                                      start: { type: 'string', format: 'date-time' },
+                                      end: { type: 'string', format: 'date-time' }
+                                    },
+                                    required: ['start', 'end']
+                                  }
+                                },
+                                required: ['label', 'range']
+                              },
+                              tags: {
+                                type: 'array',
+                                items: {
+                                  oneOf: [
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'qualifier' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'qualifier' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'min_value' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'min_value' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                },
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'item_count' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'item_count' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^[0-9]+$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            },
+                                            minItems: 1,
+                                            errorMessage: 'Qualifier tag must contain item_count'
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
+                                    },
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'benefit' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'benefit' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'item_count' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'item_count' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^[0-9]+$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                },
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'item_id' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'item_id' },
+                                                      value: { type: 'string' }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            },
+                                            minItems: 1,
+                                            errorMessage: 'Benefit tag must contain item_count'
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
+                                    },
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'meta' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'meta' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'additive' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'additive' },
+                                                      value: {
+                                                        type: 'string',
+                                                        enum: ['yes', 'no']
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                },
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'auto' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'auto' },
+                                                      value: {
+                                                        type: 'string',
+                                                        enum: ['yes', 'no']
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            },
+                                            minItems: 2,
+                                            errorMessage: 'Meta tag must contain both additive and auto'
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
+                                    }
+                                  ]
+                                },
+                                minItems: 3,
+                                errorMessage: 'Tags must contain qualifier, benefit, and meta'
+                              }
+                            },
+                            required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
+                          }
+                        },
+                        // Freebie offer validation
+                        {
+                          if: {
+                            type: 'object',
+                            properties: {
+                              descriptor: {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'freebie' }
+                                }
+                              }
+                            }
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              id: { type: 'string' },
+                              descriptor: {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'freebie' },
+                                  images: {
+                                    type: 'array',
+                                    items: { type: 'string', format: 'uri' }
+                                  }
+                                },
+                                required: ['code', 'images']
+                              },
+                              location_ids: { type: 'array', items: { type: 'string' } },
+                              item_ids: { type: 'array', items: { type: 'string' } },
+                              time: {
+                                type: 'object',
+                                properties: {
+                                  label: { type: 'string' },
+                                  range: {
+                                    type: 'object',
+                                    properties: {
+                                      start: { type: 'string', format: 'date-time' },
+                                      end: { type: 'string', format: 'date-time' }
+                                    },
+                                    required: ['start', 'end']
+                                  }
+                                },
+                                required: ['label', 'range']
+                              },
+                              tags: {
+                                type: 'array',
+                                items: {
+                                  oneOf: [
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'qualifier' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'qualifier' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'min_value' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'min_value' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
+                                    },
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'benefit' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'benefit' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'item_count' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'item_count' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^[0-9]+$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                },
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'item_id' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'item_id' },
+                                                      value: { type: 'string' }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                },
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'item_value' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'item_value' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            },
+                                            minItems: 3,
+                                            errorMessage: 'Benefit tag must contain item_count, item_id, and item_value'
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
+                                    },
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'meta' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'meta' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'additive' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'additive' },
+                                                      value: {
+                                                        type: 'string',
+                                                        enum: ['yes', 'no']
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                },
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'auto' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'auto' },
+                                                      value: {
+                                                        type: 'string',
+                                                        enum: ['yes', 'no']
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            },
+                                            minItems: 2,
+                                            errorMessage: 'Meta tag must contain both additive and auto'
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
+                                    }
+                                  ]
+                                },
+                                minItems: 3,
+                                errorMessage: 'Tags must contain qualifier, benefit, and meta'
+                              }
+                            },
+                            required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
+                          }
+                        },
+                        // Slab offer validation
+                        {
+                          if: {
+                            type: 'object',
+                            properties: {
+                              descriptor: {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'slab' }
+                                }
+                              }
+                            }
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              id: { type: 'string' },
+                              descriptor: {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'slab' },
+                                  images: {
+                                    type: 'array',
+                                    items: { type: 'string', format: 'uri' }
+                                  }
+                                },
+                                required: ['code', 'images']
+                              },
+                              location_ids: { type: 'array', items: { type: 'string' } },
+                              item_ids: { type: 'array', items: { type: 'string' } },
+                              time: {
+                                type: 'object',
+                                properties: {
+                                  label: { type: 'string' },
+                                  range: {
+                                    type: 'object',
+                                    properties: {
+                                      start: { type: 'string', format: 'date-time' },
+                                      end: { type: 'string', format: 'date-time' }
+                                    },
+                                    required: ['start', 'end']
+                                  }
+                                },
+                                required: ['label', 'range']
+                              },
+                              tags: {
+                                type: 'array',
+                                items: {
+                                  oneOf: [
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'qualifier' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'qualifier' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'min_value' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'min_value' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
+                                    },
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'benefit' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'benefit' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value_type' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value_type' },
+                                                      value: {
+                                                        type: 'string',
+                                                        enum: ['percent', 'amount']
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                },
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                },
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value_cap' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value_cap' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            },
+                                            minItems: 3,
+                                            errorMessage: 'Benefit tag must contain value_type, value, and value_cap'
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
+                                    },
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'meta' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'meta' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'additive' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'additive' },
+                                                      value: {
+                                                        type: 'string',
+                                                        enum: ['yes', 'no']
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                },
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'auto' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'auto' },
+                                                      value: {
+                                                        type: 'string',
+                                                        enum: ['yes', 'no']
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            },
+                                            minItems: 2,
+                                            errorMessage: 'Meta tag must contain both additive and auto'
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
+                                    }
+                                  ]
+                                },
+                                minItems: 3,
+                                errorMessage: 'Tags must contain qualifier, benefit, and meta'
+                              }
+                            },
+                            required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
+                          }
+                        },
+                        // Combo offer validation
+                        {
+                          if: {
+                            type: 'object',
+                            properties: {
+                              descriptor: {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'combo' }
+                                }
+                              }
+                            }
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              id: { type: 'string' },
+                              descriptor: {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'combo' },
+                                  images: {
+                                    type: 'array',
+                                    items: { type: 'string', format: 'uri' }
+                                  }
+                                },
+                                required: ['code', 'images']
+                              },
+                              location_ids: { type: 'array', items: { type: 'string' } },
+                              item_ids: { type: 'array', items: { type: 'string' } },
+                              time: {
+                                type: 'object',
+                                properties: {
+                                  label: { type: 'string' },
+                                  range: {
+                                    type: 'object',
+                                    properties: {
+                                      start: { type: 'string', format: 'date-time' },
+                                      end: { type: 'string', format: 'date-time' }
+                                    },
+                                    required: ['start', 'end']
+                                  }
+                                },
+                                required: ['label', 'range']
+                              },
+                              tags: {
+                                type: 'array',
+                                items: {
+                                  oneOf: [
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'qualifier' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'qualifier' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'min_value' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'min_value' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
+                                    },
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'benefit' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'benefit' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                },
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value_cap' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value_cap' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            },
+                                            minItems: 2,
+                                            errorMessage: 'Benefit tag must contain value and value_cap'
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
+                                    },
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'meta' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'meta' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'additive' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'additive' },
+                                                      value: {
+                                                        type: 'string',
+                                                        enum: ['yes', 'no']
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                },
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'auto' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'auto' },
+                                                      value: {
+                                                        type: 'string',
+                                                        enum: ['yes', 'no']
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            },
+                                            minItems: 2,
+                                            errorMessage: 'Meta tag must contain both additive and auto'
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
+                                    }
+                                  ]
+                                },
+                                minItems: 3,
+                                errorMessage: 'Tags must contain qualifier, benefit, and meta'
+                              }
+                            },
+                            required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
+                          }
+                        },
+                        // Delivery offer validation
+                        {
+                          if: {
+                            type: 'object',
+                            properties: {
+                              descriptor: {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'delivery' }
+                                }
+                              }
+                            }
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              id: { type: 'string' },
+                              descriptor: {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'delivery' },
+                                  images: {
+                                    type: 'array',
+                                    items: { type: 'string', format: 'uri' }
+                                  }
+                                },
+                                required: ['code', 'images']
+                              },
+                              location_ids: { type: 'array', items: { type: 'string' } },
+                              item_ids: { type: 'array', items: { type: 'string' } },
+                              time: {
+                                type: 'object',
+                                properties: {
+                                  label: { type: 'string' },
+                                  range: {
+                                    type: 'object',
+                                    properties: {
+                                      start: { type: 'string', format: 'date-time' },
+                                      end: { type: 'string', format: 'date-time' }
+                                    },
+                                    required: ['start', 'end']
+                                  }
+                                },
+                                required: ['label', 'range']
+                              },
+                              tags: {
+                                type: 'array',
+                                items: {
+                                  oneOf: [
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'qualifier' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'qualifier' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'min_value' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'min_value' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
+                                    },
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'benefit' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'benefit' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value_type' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value_type' },
+                                                      value: {
+                                                        type: 'string',
+                                                        enum: ['percent', 'amount']
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                },
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                },
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value_cap' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value_cap' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            },
+                                            minItems: 2,
+                                            errorMessage: 'Benefit tag must contain value_type and value'
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
+                                    },
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'meta' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'meta' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'additive' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'additive' },
+                                                      value: {
+                                                        type: 'string',
+                                                        enum: ['yes', 'no']
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                },
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'auto' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'auto' },
+                                                      value: {
+                                                        type: 'string',
+                                                        enum: ['yes', 'no']
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            },
+                                            minItems: 2,
+                                            errorMessage: 'Meta tag must contain both additive and auto'
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
+                                    }
+                                  ]
+                                },
+                                minItems: 3,
+                                errorMessage: 'Tags must contain qualifier, benefit, and meta'
+                              }
+                            },
+                            required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
+                          }
+                        },
+                        // Exchange offer validation
+                        {
+                          if: {
+                            type: 'object',
+                            properties: {
+                              descriptor: {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'exchange' }
+                                }
+                              }
+                            }
+                          },
+                          then: {
+                            type: 'object',
+                            properties: {
+                              id: { type: 'string' },
+                              descriptor: {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'exchange' },
+                                  images: {
+                                    type: 'array',
+                                    items: { type: 'string', format: 'uri' }
+                                  }
+                                },
+                                required: ['code', 'images']
+                              },
+                              location_ids: { type: 'array', items: { type: 'string' } },
+                              item_ids: { type: 'array', items: { type: 'string' } },
+                              time: {
+                                type: 'object',
+                                properties: {
+                                  label: { type: 'string' },
+                                  range: {
+                                    type: 'object',
+                                    properties: {
+                                      start: { type: 'string', format: 'date-time' },
+                                      end: { type: 'string', format: 'date-time' }
+                                    },
+                                    required: ['start', 'end']
+                                  }
+                                },
+                                required: ['label', 'range']
+                              },
+                              tags: {
+                                type: 'array',
+                                items: {
+                                  oneOf: [
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'qualifier' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'qualifier' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'min_value' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'min_value' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
+                                    },
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'benefit' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'benefit' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value_type' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value_type' },
+                                                      value: {
+                                                        type: 'string',
+                                                        enum: ['percent', 'amount']
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                },
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'value' },
+                                                      value: {
+                                                        type: 'string',
+                                                        pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            },
+                                            minItems: 2,
+                                            errorMessage: 'Benefit tag must contain value_type and value'
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
+                                    },
+                                    {
+                                      if: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'meta' }
+                                        }
+                                      },
+                                      then: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { const: 'meta' },
+                                          list: {
+                                            type: 'array',
+                                            items: {
+                                              oneOf: [
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'additive' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'additive' },
+                                                      value: {
+                                                        type: 'string',
+                                                        enum: ['yes', 'no']
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                },
+                                                {
+                                                  if: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'auto' }
+                                                    }
+                                                  },
+                                                  then: {
+                                                    type: 'object',
+                                                    properties: {
+                                                      code: { const: 'auto' },
+                                                      value: {
+                                                        type: 'string',
+                                                        enum: ['yes', 'no']
+                                                      }
+                                                    },
+                                                    required: ['code', 'value']
+                                                  }
+                                                }
+                                              ]
+                                            },
+                                            minItems: 2,
+                                            errorMessage: 'Meta tag must contain both additive and auto'
+                                          }
+                                        },
+                                        required: ['code', 'list']
+                                      }
+                                    }
+                                  ]
+                                },
+                                minItems: 3,
+                                errorMessage: 'Tags must contain qualifier, benefit, and meta'
+                              }
+                            },
+                            required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
+                          }
+                        }
+                      ]
+                    }
                   },
-                  tags: {
-                    type: 'array',
-                    minItems: 1,
-                    items: {
-                      allOf: [
-                        {
-                          if: {
-                            type: 'object',
-                            properties: {
-                              code: {
-                                const: 'timing',
-                              },
-                            },
-                          },
-                          then: {
-                            type: 'object',
-                            properties: {
-                              list: {
-                                type: 'array',
-                                items: {
-                                  allOf: [
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'type',
-                                          },
-                                        },
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            enum: ['Self-Pickup', 'Order', 'Delivery', 'All'],
-                                            errorMessage:
-                                              "timing for fulfillment type, enum - 'Order' (online order processing timings 'Delivery' (order shipment timings, will be same as delivery timings for hyperlocal), 'Self-Pickup' (self-pickup timings), All",
-                                          },
-                                        },
-                                        required: ['code', 'value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'location',
-                                          },
-                                        },
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                          },
-                                        },
-                                        required: ['code', 'value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'day_from',
-                                          },
-                                        },
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            pattern: '^[0-7]+$',
-                                            errorMessage:
-                                              "Value for 'day_from' must be numeric characters only from 1 to 7",
-                                          },
-                                        },
-                                        required: ['code', 'value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'day_to',
-                                          },
-                                        },
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            pattern: '^[1-7]$',
-                                            errorMessage:
-                                              "Value for 'day_to' must be numeric characters only from 1 to 7",
-                                          },
-                                        },
-                                        required: ['code', 'value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'time_from',
-                                          },
-                                        },
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            pattern: '^([01][0-9]|2[0-3])[0-5][0-9]$',
-                                            errorMessage:
-                                              "Value for 'time_from' must be a 4-digit numeric value in HHMM format",
-                                            minLength: 4,
-                                          },
-                                        },
-                                        required: ['code', 'value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'time_to',
-                                          },
-                                        },
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            pattern: '^(2[0-3]|[01]?[0-9]|24)[0-5]?[0-9]$',
-                                            errorMessage:
-                                              "Value for 'time_to' must be a 4-digit numeric value in HHMM format",
-                                          },
-                                        },
-                                        required: ['code', 'value'],
-                                      },
-                                    },
-                                  ],
-                                },
-                              },
-                            },
-                          },
-                        },
-                        {
-                          if: {
-                            type: 'object',
-                            properties: {
-                              code: {
-                                const: 'serviceability',
-                              },
-                            },
-                          },
-                          then: {
-                            type: 'object',
-                            properties: {
-                              list: {
-                                type: 'array',
-                                items: {
-                                  type: 'object',
-                                  properties: {
-                                    code: {
-                                      type: 'string',
-                                      enum: ['location', 'category', 'type', 'val', 'unit'],
-                                      errorMessage:
-                                        "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit'",
-                                    },
-                                    value: {
-                                      type: 'string',
-                                    },
-                                  },
-                                  required: ['code', 'value'],
-                                  additionalProperties: false,
-                                },
-                                minItems: 5,
-                                maxItems: 5,
-                                uniqueItems: true,
-                                errorMessage: {
-                                  minItems: 'Serviceability must have minimum 5 values',
-                                  maxItems: 'Serviceability must have maximum 5 values',
-                                  uniqueItems: 'Serviceability must have unique items',
-                                  _: "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit' and no duplicacy or other elements allowed",
-                                },
-                              },
-                            },
-                          },
-                        },
-                        {
-                          if: {
-                            type: 'object',
-                            properties: {
-                              code: {
-                                const: 'catalog_link',
-                              },
-                            },
-                          },
-                          then: {
-                            type: 'object',
-                            properties: {
-                              list: {
-                                type: 'array',
-                                items: {
-                                  allOf: [
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'type_validity',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            format: 'duration',
-                                            errorMessage: 'Duration must be RFC3339 duration.',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'last_update',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            description: 'RFC3339 UTC timestamp format',
-                                            format: 'rfc3339-date-time',
-                                            errorMessage: 'Time must be RFC3339 UTC timestamp format.',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'type_value',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            format: 'url',
-                                            errorMessage: 'Type value must be url',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'last_update',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            description: 'RFC3339 UTC timestamp format',
-                                            format: 'rfc3339-date-time',
-                                            errorMessage: 'Time must be RFC3339 UTC timestamp format.',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'type',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            enum: ['inline', 'link'],
-                                            errorMessage:
-                                              "Type value must be 'inline'(items array in inline response, which is the default today) or 'link'(link to zip file for items array for the provider)",
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                  ],
-                                },
-                              },
-                            },
-                          },
-                        },
-                        {
-                          if: {
-                            type: 'object',
-                            properties: {
-                              code: {
-                                const: 'order_value',
-                              },
-                            },
-                          },
-                          then: {
-                            type: 'object',
-                            properties: {
-                              list: {
-                                type: 'array',
-                                items: {
-                                  allOf: [
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            const: 'min_value',
-                                          },
-                                        },
-                                        required: ['code'],
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          value: {
-                                            type: 'string',
-                                            pattern: '^[0-9]+(?:.[0-9]{1,2})?$',
-                                            errorMessage: 'min_value must be number with exactly two decimal places',
-                                          },
-                                        },
-                                        required: ['value'],
-                                      },
-                                    },
-                                  ],
-                                },
-                              },
-                            },
-                          },
-                        },
-                      ],
-                    },
-                  },
-                  required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],
+                  required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],}
                 },
               },
             },

@@ -134,7 +134,7 @@ export const onSelectSchema = {
                 properties: {
                   type: {
                     type: 'string',
-                    enums: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
+                    enum: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
                   },
                   id: {
                     type: 'string',

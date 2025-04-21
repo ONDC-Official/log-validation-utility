@@ -295,6 +295,112 @@ export const onInitSchema = {
                 required: ['id', 'type', 'end'],
               },
             },
+            offers: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  id: {
+                    type: 'string',
+                    description: 'Unique identifier for the offer.',
+                  },
+                  descriptor: {
+                    type: 'object',
+                    properties: {
+                      code: {
+                        type: 'string',
+                        description: 'Type of the offer (e.g., discount, buyXgetY, freebie).',
+                        enum: ['discount', 'buyXgetY', 'freebie', 'slab', 'combo', 'delivery', 'exchange', 'financing']
+                      },
+                      images: {
+                        type: 'array',
+                        items: {
+                          type: 'string',
+                          format: 'uri',
+                          description: 'URL to images related to the offer.',
+                        },
+                      },
+                    },
+                    required: ['code', 'images'],
+                  },
+                  location_ids: {
+                    type: 'array',
+                    items: {
+                      type: 'string',
+                      description: 'List of location identifiers where the offer is valid.',
+                    },
+                  },
+                  item_ids: {
+                    type: 'array',
+                    items: {
+                      type: 'string',
+                      description: 'List of item identifiers applicable for the offer.',
+                    },
+                  },
+                  time: {
+                    type: 'object',
+                    properties: {
+                      label: {
+                        type: 'string',
+                        description: 'Label for the time validity of the offer (e.g., valid).',
+                      },
+                      range: {
+                        type: 'object',
+                        properties: {
+                          start: {
+                            type: 'string',
+                            format: 'date-time',
+                            description: 'Start date and time for the offer.',
+                          },
+                          end: {
+                            type: 'string',
+                            format: 'date-time',
+                            description: 'End date and time for the offer.',
+                          },
+                        },
+                        required: ['start', 'end'],
+                      },
+                    },
+                    required: ['label', 'range'],
+                  },
+                  tags: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        code: {
+                          type: 'string',
+                          description: 'Type of the tag (e.g., qualifier, benefit, meta).',
+                          enum: ['qualifier', 'benefit', 'meta']
+                        },
+                        list: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                                description: 'Code representing the specific tag property.',
+                                enum: ['min_value', 'value_type', 'value', 'additive', 'item_count', 'item_id', 'item_value']
+                              },
+                              value: {
+                                type: 'string',
+                                description: 'Value for the tag property.'
+                              }
+                            },
+                            required: ['code', 'value']
+                          }
+                        }
+                      },
+                      required: ['code', 'list']
+                    }
+                  },
+                },
+              },
+
+              required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags',],
+
+            },
             quote: {
               type: 'object',
               properties: {
@@ -536,6 +642,59 @@ export const onInitSchema = {
                 '@ondc/org/buyer_app_finder_fee_amount',
                 '@ondc/org/settlement_details',
               ],
+            },
+            cancellation_terms: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  fulfillment_state: {
+                    type: 'object',
+                    properties: {
+                      descriptor: {
+                        type: 'object',
+                        properties: {
+                          code: {
+                            type: 'string',
+                            enum: ['Pending', 'Packed', 'Order-picked-up', 'Out-for-delivery', '*'],
+                          },
+                          short_desc: {
+                            type: 'string',
+                          },
+                        },
+                        required: ['code', 'short_desc'],
+                      },
+                    },
+                    required: ['descriptor'],
+                  },
+                  cancellation_fee: {
+                    type: 'object',
+                    properties: {
+                      percentage: {
+                        type: 'string',
+                        pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                        errorMessage: 'Percentage should be a number with up to 2 decimal places',
+                      },
+                      amount: {
+                        type: 'object',
+                        properties: {
+                          currency: {
+                            type: 'string',
+                          },
+                          value: {
+                            type: 'string',
+                            pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                            errorMessage: 'Amount value should be a number with up to 2 decimal places',
+                          },
+                        },
+                        required: ['currency', 'value'],
+                      },
+                    },
+                    required: ['percentage'],
+                  },
+                },
+                required: ['fulfillment_state', 'cancellation_fee'],
+              },
             },
             tags: {
               type: 'array',

@@ -912,1664 +912,1771 @@ export const onSearchSchema = {
                       additionalProperties: false,
                     },
                   },
+                  // offers: {
+                  //   type: 'array',
+                  //   items: {
+                  //     anyOf: [
+                  //       // Discount offer validation
+                  //       {
+                  //         if: {
+                  //           type: 'object',
+                  //           properties: {
+                  //             descriptor: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 code: { const: 'discount' }
+                  //               }
+                  //             }
+                  //           }
+                  //         },
+                  //         then: {
+                  //           type: 'object',
+                  //           properties: {
+                  //             id: { type: 'string' },
+                  //             descriptor: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 code: { const: 'discount' },
+                  //                 images: {
+                  //                   type: 'array',
+                  //                   items: { type: 'string', format: 'uri' }
+                  //                 }
+                  //               },
+                  //               required: ['code', 'images']
+                  //             },
+                  //             location_ids: { type: 'array', items: { type: 'string' } },
+                  //             item_ids: { type: 'array', items: { type: 'string' } },
+                  //             time: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 label: { type: 'string' },
+                  //                 range: {
+                  //                   type: 'object',
+                  //                   properties: {
+                  //                     start: { type: 'string', format: 'date-time' },
+                  //                     end: { type: 'string', format: 'date-time' }
+                  //                   },
+                  //                   required: ['start', 'end']
+                  //                 }
+                  //               },
+                  //               required: ['label', 'range']
+                  //             },
+                  //             tags: {
+                  //               type: 'array',
+                  //               items: {
+                  //                 oneOf: [
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'qualifier' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'qualifier' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'min_value' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'min_value' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           }
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   },
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'benefit' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'benefit' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value_type' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value_type' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       enum: ['percent', 'amount']
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               },
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               },
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value_cap' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value_cap' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           },
+                  //                           minItems: 2,
+                  //                           errorMessage: 'Benefit tag must contain value_type and value'
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   },
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'meta' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'meta' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'additive' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'additive' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       enum: ['yes', 'no']
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               },
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'auto' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'auto' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       enum: ['yes', 'no']
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           },
+                  //                           minItems: 2,
+                  //                           errorMessage: 'Meta tag must contain both additive and auto'
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   }
+                  //                 ]
+                  //               },
+                  //               minItems: 3,
+                  //               errorMessage: 'Tags must contain qualifier, benefit, and meta'
+                  //             }
+                  //           },
+                  //           required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
+                  //         }
+                  //       },
+                  //       // BuyXgetY offer validation
+                  //       {
+                  //         if: {
+                  //           type: 'object',
+                  //           properties: {
+                  //             descriptor: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 code: { const: 'buyXgetY' }
+                  //               }
+                  //             }
+                  //           }
+                  //         },
+                  //         then: {
+                  //           type: 'object',
+                  //           properties: {
+                  //             id: { type: 'string' },
+                  //             descriptor: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 code: { const: 'buyXgetY' },
+                  //                 images: {
+                  //                   type: 'array',
+                  //                   items: { type: 'string', format: 'uri' }
+                  //                 }
+                  //               },
+                  //               required: ['code', 'images']
+                  //             },
+                  //             location_ids: { type: 'array', items: { type: 'string' } },
+                  //             item_ids: { type: 'array', items: { type: 'string' } },
+                  //             time: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 label: { type: 'string' },
+                  //                 range: {
+                  //                   type: 'object',
+                  //                   properties: {
+                  //                     start: { type: 'string', format: 'date-time' },
+                  //                     end: { type: 'string', format: 'date-time' }
+                  //                   },
+                  //                   required: ['start', 'end']
+                  //                 }
+                  //               },
+                  //               required: ['label', 'range']
+                  //             },
+                  //             tags: {
+                  //               type: 'array',
+                  //               items: {
+                  //                 oneOf: [
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'qualifier' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'qualifier' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'min_value' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'min_value' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               },
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'item_count' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'item_count' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^[0-9]+$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           },
+                  //                           minItems: 1,
+                  //                           errorMessage: 'Qualifier tag must contain item_count'
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   },
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'benefit' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'benefit' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'item_count' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'item_count' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^[0-9]+$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               },
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'item_id' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'item_id' },
+                  //                                     value: { type: 'string' }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           },
+                  //                           minItems: 1,
+                  //                           errorMessage: 'Benefit tag must contain item_count'
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   },
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'meta' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'meta' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'additive' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'additive' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       enum: ['yes', 'no']
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               },
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'auto' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'auto' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       enum: ['yes', 'no']
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           },
+                  //                           minItems: 2,
+                  //                           errorMessage: 'Meta tag must contain both additive and auto'
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   }
+                  //                 ]
+                  //               },
+                  //               minItems: 3,
+                  //               errorMessage: 'Tags must contain qualifier, benefit, and meta'
+                  //             }
+                  //           },
+                  //           required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
+                  //         }
+                  //       },
+                  //       // Freebie offer validation
+                  //       {
+                  //         if: {
+                  //           type: 'object',
+                  //           properties: {
+                  //             descriptor: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 code: { const: 'freebie' }
+                  //               }
+                  //             }
+                  //           }
+                  //         },
+                  //         then: {
+                  //           type: 'object',
+                  //           properties: {
+                  //             id: { type: 'string' },
+                  //             descriptor: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 code: { const: 'freebie' },
+                  //                 images: {
+                  //                   type: 'array',
+                  //                   items: { type: 'string', format: 'uri' }
+                  //                 }
+                  //               },
+                  //               required: ['code', 'images']
+                  //             },
+                  //             location_ids: { type: 'array', items: { type: 'string' } },
+                  //             item_ids: { type: 'array', items: { type: 'string' } },
+                  //             time: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 label: { type: 'string' },
+                  //                 range: {
+                  //                   type: 'object',
+                  //                   properties: {
+                  //                     start: { type: 'string', format: 'date-time' },
+                  //                     end: { type: 'string', format: 'date-time' }
+                  //                   },
+                  //                   required: ['start', 'end']
+                  //                 }
+                  //               },
+                  //               required: ['label', 'range']
+                  //             },
+                  //             tags: {
+                  //               type: 'array',
+                  //               items: {
+                  //                 oneOf: [
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'qualifier' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'qualifier' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'min_value' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'min_value' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           }
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   },
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'benefit' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'benefit' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'item_count' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'item_count' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^[0-9]+$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               },
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'item_id' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'item_id' },
+                  //                                     value: { type: 'string' }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               },
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'item_value' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'item_value' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           },
+                  //                           minItems: 3,
+                  //                           errorMessage: 'Benefit tag must contain item_count, item_id, and item_value'
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   },
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'meta' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'meta' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'additive' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'additive' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       enum: ['yes', 'no']
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               },
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'auto' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'auto' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       enum: ['yes', 'no']
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           },
+                  //                           minItems: 2,
+                  //                           errorMessage: 'Meta tag must contain both additive and auto'
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   }
+                  //                 ]
+                  //               },
+                  //               minItems: 3,
+                  //               errorMessage: 'Tags must contain qualifier, benefit, and meta'
+                  //             }
+                  //           },
+                  //           required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
+                  //         }
+                  //       },
+                  //       // Slab offer validation
+                  //       {
+                  //         if: {
+                  //           type: 'object',
+                  //           properties: {
+                  //             descriptor: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 code: { const: 'slab' }
+                  //               }
+                  //             }
+                  //           }
+                  //         },
+                  //         then: {
+                  //           type: 'object',
+                  //           properties: {
+                  //             id: { type: 'string' },
+                  //             descriptor: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 code: { const: 'slab' },
+                  //                 images: {
+                  //                   type: 'array',
+                  //                   items: { type: 'string', format: 'uri' }
+                  //                 }
+                  //               },
+                  //               required: ['code', 'images']
+                  //             },
+                  //             location_ids: { type: 'array', items: { type: 'string' } },
+                  //             item_ids: { type: 'array', items: { type: 'string' } },
+                  //             time: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 label: { type: 'string' },
+                  //                 range: {
+                  //                   type: 'object',
+                  //                   properties: {
+                  //                     start: { type: 'string', format: 'date-time' },
+                  //                     end: { type: 'string', format: 'date-time' }
+                  //                   },
+                  //                   required: ['start', 'end']
+                  //                 }
+                  //               },
+                  //               required: ['label', 'range']
+                  //             },
+                  //             tags: {
+                  //               type: 'array',
+                  //               items: {
+                  //                 oneOf: [
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'qualifier' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'qualifier' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'min_value' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'min_value' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           }
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   },
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'benefit' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'benefit' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value_type' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value_type' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       enum: ['percent', 'amount']
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               },
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               },
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value_cap' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value_cap' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           },
+                  //                           minItems: 3,
+                  //                           errorMessage: 'Benefit tag must contain value_type, value, and value_cap'
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   },
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'meta' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'meta' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'additive' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'additive' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       enum: ['yes', 'no']
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               },
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'auto' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'auto' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       enum: ['yes', 'no']
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           },
+                  //                           minItems: 2,
+                  //                           errorMessage: 'Meta tag must contain both additive and auto'
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   }
+                  //                 ]
+                  //               },
+                  //               minItems: 3,
+                  //               errorMessage: 'Tags must contain qualifier, benefit, and meta'
+                  //             }
+                  //           },
+                  //           required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
+                  //         }
+                  //       },
+                  //       // Combo offer validation
+                  //       {
+                  //         if: {
+                  //           type: 'object',
+                  //           properties: {
+                  //             descriptor: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 code: { const: 'combo' }
+                  //               }
+                  //             }
+                  //           }
+                  //         },
+                  //         then: {
+                  //           type: 'object',
+                  //           properties: {
+                  //             id: { type: 'string' },
+                  //             descriptor: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 code: { const: 'combo' },
+                  //                 images: {
+                  //                   type: 'array',
+                  //                   items: { type: 'string', format: 'uri' }
+                  //                 }
+                  //               },
+                  //               required: ['code', 'images']
+                  //             },
+                  //             location_ids: { type: 'array', items: { type: 'string' } },
+                  //             item_ids: { type: 'array', items: { type: 'string' } },
+                  //             time: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 label: { type: 'string' },
+                  //                 range: {
+                  //                   type: 'object',
+                  //                   properties: {
+                  //                     start: { type: 'string', format: 'date-time' },
+                  //                     end: { type: 'string', format: 'date-time' }
+                  //                   },
+                  //                   required: ['start', 'end']
+                  //                 }
+                  //               },
+                  //               required: ['label', 'range']
+                  //             },
+                  //             tags: {
+                  //               type: 'array',
+                  //               items: {
+                  //                 oneOf: [
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'qualifier' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'qualifier' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'min_value' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'min_value' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           }
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   },
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'benefit' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'benefit' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               },
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value_cap' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value_cap' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           },
+                  //                           minItems: 2,
+                  //                           errorMessage: 'Benefit tag must contain value and value_cap'
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   },
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'meta' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'meta' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'additive' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'additive' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       enum: ['yes', 'no']
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               },
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'auto' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'auto' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       enum: ['yes', 'no']
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           },
+                  //                           minItems: 2,
+                  //                           errorMessage: 'Meta tag must contain both additive and auto'
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   }
+                  //                 ]
+                  //               },
+                  //               minItems: 3,
+                  //               errorMessage: 'Tags must contain qualifier, benefit, and meta'
+                  //             }
+                  //           },
+                  //           required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
+                  //         }
+                  //       },
+                  //       // Delivery offer validation
+                  //       {
+                  //         if: {
+                  //           type: 'object',
+                  //           properties: {
+                  //             descriptor: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 code: { const: 'delivery' }
+                  //               }
+                  //             }
+                  //           }
+                  //         },
+                  //         then: {
+                  //           type: 'object',
+                  //           properties: {
+                  //             id: { type: 'string' },
+                  //             descriptor: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 code: { const: 'delivery' },
+                  //                 images: {
+                  //                   type: 'array',
+                  //                   items: { type: 'string', format: 'uri' }
+                  //                 }
+                  //               },
+                  //               required: ['code', 'images']
+                  //             },
+                  //             location_ids: { type: 'array', items: { type: 'string' } },
+                  //             item_ids: { type: 'array', items: { type: 'string' } },
+                  //             time: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 label: { type: 'string' },
+                  //                 range: {
+                  //                   type: 'object',
+                  //                   properties: {
+                  //                     start: { type: 'string', format: 'date-time' },
+                  //                     end: { type: 'string', format: 'date-time' }
+                  //                   },
+                  //                   required: ['start', 'end']
+                  //                 }
+                  //               },
+                  //               required: ['label', 'range']
+                  //             },
+                  //             tags: {
+                  //               type: 'array',
+                  //               items: {
+                  //                 oneOf: [
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'qualifier' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'qualifier' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'min_value' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'min_value' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           }
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   },
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'benefit' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'benefit' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value_type' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value_type' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       enum: ['percent', 'amount']
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               },
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               },
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value_cap' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value_cap' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           },
+                  //                           minItems: 2,
+                  //                           errorMessage: 'Benefit tag must contain value_type and value'
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   },
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'meta' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'meta' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'additive' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'additive' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       enum: ['yes', 'no']
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               },
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'auto' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'auto' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       enum: ['yes', 'no']
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           },
+                  //                           minItems: 2,
+                  //                           errorMessage: 'Meta tag must contain both additive and auto'
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   }
+                  //                 ]
+                  //               },
+                  //               minItems: 3,
+                  //               errorMessage: 'Tags must contain qualifier, benefit, and meta'
+                  //             }
+                  //           },
+                  //           required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
+                  //         }
+                  //       },
+                  //       // Exchange offer validation
+                  //       {
+                  //         if: {
+                  //           type: 'object',
+                  //           properties: {
+                  //             descriptor: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 code: { const: 'exchange' }
+                  //               }
+                  //             }
+                  //           }
+                  //         },
+                  //         then: {
+                  //           type: 'object',
+                  //           properties: {
+                  //             id: { type: 'string' },
+                  //             descriptor: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 code: { const: 'exchange' },
+                  //                 images: {
+                  //                   type: 'array',
+                  //                   items: { type: 'string', format: 'uri' }
+                  //                 }
+                  //               },
+                  //               required: ['code', 'images']
+                  //             },
+                  //             location_ids: { type: 'array', items: { type: 'string' } },
+                  //             item_ids: { type: 'array', items: { type: 'string' } },
+                  //             time: {
+                  //               type: 'object',
+                  //               properties: {
+                  //                 label: { type: 'string' },
+                  //                 range: {
+                  //                   type: 'object',
+                  //                   properties: {
+                  //                     start: { type: 'string', format: 'date-time' },
+                  //                     end: { type: 'string', format: 'date-time' }
+                  //                   },
+                  //                   required: ['start', 'end']
+                  //                 }
+                  //               },
+                  //               required: ['label', 'range']
+                  //             },
+                  //             tags: {
+                  //               type: 'array',
+                  //               items: {
+                  //                 oneOf: [
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'qualifier' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'qualifier' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'min_value' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'min_value' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           }
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   },
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'benefit' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'benefit' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value_type' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value_type' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       enum: ['percent', 'amount']
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               },
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'value' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           },
+                  //                           minItems: 2,
+                  //                           errorMessage: 'Benefit tag must contain value_type and value'
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   },
+                  //                   {
+                  //                     if: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'meta' }
+                  //                       }
+                  //                     },
+                  //                     then: {
+                  //                       type: 'object',
+                  //                       properties: {
+                  //                         code: { const: 'meta' },
+                  //                         list: {
+                  //                           type: 'array',
+                  //                           items: {
+                  //                             oneOf: [
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'additive' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'additive' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       enum: ['yes', 'no']
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               },
+                  //                               {
+                  //                                 if: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'auto' }
+                  //                                   }
+                  //                                 },
+                  //                                 then: {
+                  //                                   type: 'object',
+                  //                                   properties: {
+                  //                                     code: { const: 'auto' },
+                  //                                     value: {
+                  //                                       type: 'string',
+                  //                                       enum: ['yes', 'no']
+                  //                                     }
+                  //                                   },
+                  //                                   required: ['code', 'value']
+                  //                                 }
+                  //                               }
+                  //                             ]
+                  //                           },
+                  //                           minItems: 2,
+                  //                           errorMessage: 'Meta tag must contain both additive and auto'
+                  //                         }
+                  //                       },
+                  //                       required: ['code', 'list']
+                  //                     }
+                  //                   }
+                  //                 ]
+                  //               },
+                  //               minItems: 3,
+                  //               errorMessage: 'Tags must contain qualifier, benefit, and meta'
+                  //             }
+                  //           },
+                  //           required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
+                  //         }
+                  //       }
+                  //     ]
+                  //   }
+                  // },
                   offers: {
                     type: 'array',
                     items: {
-                      anyOf: [
-                        // Discount offer validation
-                        {
-                          if: {
-                            type: 'object',
-                            properties: {
-                              descriptor: {
-                                type: 'object',
-                                properties: {
-                                  code: { const: 'discount' }
-                                }
-                              }
-                            }
-                          },
-                          then: {
-                            type: 'object',
-                            properties: {
-                              id: { type: 'string' },
-                              descriptor: {
-                                type: 'object',
-                                properties: {
-                                  code: { const: 'discount' },
-                                  images: {
-                                    type: 'array',
-                                    items: { type: 'string', format: 'uri' }
-                                  }
-                                },
-                                required: ['code', 'images']
-                              },
-                              location_ids: { type: 'array', items: { type: 'string' } },
-                              item_ids: { type: 'array', items: { type: 'string' } },
-                              time: {
-                                type: 'object',
-                                properties: {
-                                  label: { type: 'string' },
-                                  range: {
-                                    type: 'object',
-                                    properties: {
-                                      start: { type: 'string', format: 'date-time' },
-                                      end: { type: 'string', format: 'date-time' }
-                                    },
-                                    required: ['start', 'end']
-                                  }
-                                },
-                                required: ['label', 'range']
-                              },
-                              tags: {
-                                type: 'array',
-                                items: {
-                                  oneOf: [
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'qualifier' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'qualifier' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'min_value' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'min_value' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            }
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'benefit' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'benefit' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value_type' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value_type' },
-                                                      value: {
-                                                        type: 'string',
-                                                        enum: ['percent', 'amount']
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                },
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                },
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value_cap' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value_cap' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            },
-                                            minItems: 2,
-                                            errorMessage: 'Benefit tag must contain value_type and value'
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'meta' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'meta' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'additive' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'additive' },
-                                                      value: {
-                                                        type: 'string',
-                                                        enum: ['yes', 'no']
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                },
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'auto' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'auto' },
-                                                      value: {
-                                                        type: 'string',
-                                                        enum: ['yes', 'no']
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            },
-                                            minItems: 2,
-                                            errorMessage: 'Meta tag must contain both additive and auto'
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
-                                    }
-                                  ]
-                                },
-                                minItems: 3,
-                                errorMessage: 'Tags must contain qualifier, benefit, and meta'
-                              }
-                            },
-                            required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
-                          }
+                      type: 'object',
+                      properties: {
+                        id: {
+                          type: 'string',
+                          description: 'Unique identifier for the offer.',
                         },
-                        // BuyXgetY offer validation
-                        {
-                          if: {
-                            type: 'object',
-                            properties: {
-                              descriptor: {
-                                type: 'object',
-                                properties: {
-                                  code: { const: 'buyXgetY' }
-                                }
-                              }
-                            }
-                          },
-                          then: {
-                            type: 'object',
-                            properties: {
-                              id: { type: 'string' },
-                              descriptor: {
-                                type: 'object',
-                                properties: {
-                                  code: { const: 'buyXgetY' },
-                                  images: {
-                                    type: 'array',
-                                    items: { type: 'string', format: 'uri' }
-                                  }
-                                },
-                                required: ['code', 'images']
-                              },
-                              location_ids: { type: 'array', items: { type: 'string' } },
-                              item_ids: { type: 'array', items: { type: 'string' } },
-                              time: {
-                                type: 'object',
-                                properties: {
-                                  label: { type: 'string' },
-                                  range: {
-                                    type: 'object',
-                                    properties: {
-                                      start: { type: 'string', format: 'date-time' },
-                                      end: { type: 'string', format: 'date-time' }
-                                    },
-                                    required: ['start', 'end']
-                                  }
-                                },
-                                required: ['label', 'range']
-                              },
-                              tags: {
-                                type: 'array',
-                                items: {
-                                  oneOf: [
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'qualifier' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'qualifier' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'min_value' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'min_value' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                },
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'item_count' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'item_count' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^[0-9]+$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            },
-                                            minItems: 1,
-                                            errorMessage: 'Qualifier tag must contain item_count'
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'benefit' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'benefit' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'item_count' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'item_count' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^[0-9]+$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                },
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'item_id' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'item_id' },
-                                                      value: { type: 'string' }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            },
-                                            minItems: 1,
-                                            errorMessage: 'Benefit tag must contain item_count'
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'meta' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'meta' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'additive' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'additive' },
-                                                      value: {
-                                                        type: 'string',
-                                                        enum: ['yes', 'no']
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                },
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'auto' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'auto' },
-                                                      value: {
-                                                        type: 'string',
-                                                        enum: ['yes', 'no']
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            },
-                                            minItems: 2,
-                                            errorMessage: 'Meta tag must contain both additive and auto'
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
-                                    }
-                                  ]
-                                },
-                                minItems: 3,
-                                errorMessage: 'Tags must contain qualifier, benefit, and meta'
-                              }
+                        descriptor: {
+                          type: 'object',
+                          properties: {
+                            code: {
+                              type: 'string',
+                              description: 'Type of the offer (e.g., discount, buyXgetY, freebie).',
+                              enum: ['discount', 'buyXgetY', 'freebie', 'slab', 'combo', 'delivery', 'exchange', 'financing']
                             },
-                            required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
-                          }
+                            images: {
+                              type: 'array',
+                              items: {
+                                type: 'string',
+                                format: 'uri',
+                                description: 'URL to images related to the offer.',
+                              },
+                            },
+                          },
+                          required: ['code', 'images'],
                         },
-                        // Freebie offer validation
-                        {
-                          if: {
-                            type: 'object',
-                            properties: {
-                              descriptor: {
-                                type: 'object',
-                                properties: {
-                                  code: { const: 'freebie' }
-                                }
-                              }
-                            }
+                        location_ids: {
+                          type: 'array',
+                          items: {
+                            type: 'string',
+                            description: 'List of location identifiers where the offer is valid.',
                           },
-                          then: {
-                            type: 'object',
-                            properties: {
-                              id: { type: 'string' },
-                              descriptor: {
-                                type: 'object',
-                                properties: {
-                                  code: { const: 'freebie' },
-                                  images: {
-                                    type: 'array',
-                                    items: { type: 'string', format: 'uri' }
-                                  }
-                                },
-                                required: ['code', 'images']
-                              },
-                              location_ids: { type: 'array', items: { type: 'string' } },
-                              item_ids: { type: 'array', items: { type: 'string' } },
-                              time: {
-                                type: 'object',
-                                properties: {
-                                  label: { type: 'string' },
-                                  range: {
-                                    type: 'object',
-                                    properties: {
-                                      start: { type: 'string', format: 'date-time' },
-                                      end: { type: 'string', format: 'date-time' }
-                                    },
-                                    required: ['start', 'end']
-                                  }
-                                },
-                                required: ['label', 'range']
-                              },
-                              tags: {
-                                type: 'array',
-                                items: {
-                                  oneOf: [
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'qualifier' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'qualifier' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'min_value' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'min_value' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            }
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'benefit' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'benefit' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'item_count' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'item_count' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^[0-9]+$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                },
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'item_id' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'item_id' },
-                                                      value: { type: 'string' }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                },
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'item_value' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'item_value' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            },
-                                            minItems: 3,
-                                            errorMessage: 'Benefit tag must contain item_count, item_id, and item_value'
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'meta' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'meta' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'additive' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'additive' },
-                                                      value: {
-                                                        type: 'string',
-                                                        enum: ['yes', 'no']
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                },
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'auto' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'auto' },
-                                                      value: {
-                                                        type: 'string',
-                                                        enum: ['yes', 'no']
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            },
-                                            minItems: 2,
-                                            errorMessage: 'Meta tag must contain both additive and auto'
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
-                                    }
-                                  ]
-                                },
-                                minItems: 3,
-                                errorMessage: 'Tags must contain qualifier, benefit, and meta'
-                              }
-                            },
-                            required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
-                          }
                         },
-                        // Slab offer validation
-                        {
-                          if: {
-                            type: 'object',
-                            properties: {
-                              descriptor: {
-                                type: 'object',
-                                properties: {
-                                  code: { const: 'slab' }
-                                }
-                              }
-                            }
+                        item_ids: {
+                          type: 'array',
+                          items: {
+                            type: 'string',
+                            description: 'List of item identifiers applicable for the offer.',
                           },
-                          then: {
-                            type: 'object',
-                            properties: {
-                              id: { type: 'string' },
-                              descriptor: {
-                                type: 'object',
-                                properties: {
-                                  code: { const: 'slab' },
-                                  images: {
-                                    type: 'array',
-                                    items: { type: 'string', format: 'uri' }
-                                  }
-                                },
-                                required: ['code', 'images']
-                              },
-                              location_ids: { type: 'array', items: { type: 'string' } },
-                              item_ids: { type: 'array', items: { type: 'string' } },
-                              time: {
-                                type: 'object',
-                                properties: {
-                                  label: { type: 'string' },
-                                  range: {
-                                    type: 'object',
-                                    properties: {
-                                      start: { type: 'string', format: 'date-time' },
-                                      end: { type: 'string', format: 'date-time' }
-                                    },
-                                    required: ['start', 'end']
-                                  }
-                                },
-                                required: ['label', 'range']
-                              },
-                              tags: {
-                                type: 'array',
-                                items: {
-                                  oneOf: [
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'qualifier' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'qualifier' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'min_value' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'min_value' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            }
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'benefit' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'benefit' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value_type' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value_type' },
-                                                      value: {
-                                                        type: 'string',
-                                                        enum: ['percent', 'amount']
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                },
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                },
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value_cap' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value_cap' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            },
-                                            minItems: 3,
-                                            errorMessage: 'Benefit tag must contain value_type, value, and value_cap'
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'meta' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'meta' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'additive' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'additive' },
-                                                      value: {
-                                                        type: 'string',
-                                                        enum: ['yes', 'no']
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                },
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'auto' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'auto' },
-                                                      value: {
-                                                        type: 'string',
-                                                        enum: ['yes', 'no']
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            },
-                                            minItems: 2,
-                                            errorMessage: 'Meta tag must contain both additive and auto'
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
-                                    }
-                                  ]
-                                },
-                                minItems: 3,
-                                errorMessage: 'Tags must contain qualifier, benefit, and meta'
-                              }
-                            },
-                            required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
-                          }
                         },
-                        // Combo offer validation
-                        {
-                          if: {
-                            type: 'object',
-                            properties: {
-                              descriptor: {
-                                type: 'object',
-                                properties: {
-                                  code: { const: 'combo' }
-                                }
-                              }
-                            }
-                          },
-                          then: {
-                            type: 'object',
-                            properties: {
-                              id: { type: 'string' },
-                              descriptor: {
-                                type: 'object',
-                                properties: {
-                                  code: { const: 'combo' },
-                                  images: {
-                                    type: 'array',
-                                    items: { type: 'string', format: 'uri' }
-                                  }
-                                },
-                                required: ['code', 'images']
-                              },
-                              location_ids: { type: 'array', items: { type: 'string' } },
-                              item_ids: { type: 'array', items: { type: 'string' } },
-                              time: {
-                                type: 'object',
-                                properties: {
-                                  label: { type: 'string' },
-                                  range: {
-                                    type: 'object',
-                                    properties: {
-                                      start: { type: 'string', format: 'date-time' },
-                                      end: { type: 'string', format: 'date-time' }
-                                    },
-                                    required: ['start', 'end']
-                                  }
-                                },
-                                required: ['label', 'range']
-                              },
-                              tags: {
-                                type: 'array',
-                                items: {
-                                  oneOf: [
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'qualifier' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'qualifier' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'min_value' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'min_value' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            }
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'benefit' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'benefit' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                },
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value_cap' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value_cap' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            },
-                                            minItems: 2,
-                                            errorMessage: 'Benefit tag must contain value and value_cap'
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'meta' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'meta' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'additive' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'additive' },
-                                                      value: {
-                                                        type: 'string',
-                                                        enum: ['yes', 'no']
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                },
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'auto' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'auto' },
-                                                      value: {
-                                                        type: 'string',
-                                                        enum: ['yes', 'no']
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            },
-                                            minItems: 2,
-                                            errorMessage: 'Meta tag must contain both additive and auto'
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
-                                    }
-                                  ]
-                                },
-                                minItems: 3,
-                                errorMessage: 'Tags must contain qualifier, benefit, and meta'
-                              }
+                        time: {
+                          type: 'object',
+                          properties: {
+                            label: {
+                              type: 'string',
+                              description: 'Label for the time validity of the offer (e.g., valid).',
                             },
-                            required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
-                          }
+                            range: {
+                              type: 'object',
+                              properties: {
+                                start: {
+                                  type: 'string',
+                                  format: 'date-time',
+                                  description: 'Start date and time for the offer.',
+                                },
+                                end: {
+                                  type: 'string',
+                                  format: 'date-time',
+                                  description: 'End date and time for the offer.',
+                                },
+                              },
+                              required: ['start', 'end'],
+                            },
+                          },
+                          required: ['label', 'range'],
                         },
-                        // Delivery offer validation
-                        {
-                          if: {
+                        tags: {
+                          type: 'array',
+                          items: {
                             type: 'object',
                             properties: {
-                              descriptor: {
-                                type: 'object',
-                                properties: {
-                                  code: { const: 'delivery' }
-                                }
-                              }
-                            }
-                          },
-                          then: {
-                            type: 'object',
-                            properties: {
-                              id: { type: 'string' },
-                              descriptor: {
-                                type: 'object',
-                                properties: {
-                                  code: { const: 'delivery' },
-                                  images: {
-                                    type: 'array',
-                                    items: { type: 'string', format: 'uri' }
-                                  }
-                                },
-                                required: ['code', 'images']
+                              code: {
+                                type: 'string',
+                                description: 'Type of the tag (e.g., qualifier, benefit, meta).',
+                                enum: ['qualifier', 'benefit', 'meta']
                               },
-                              location_ids: { type: 'array', items: { type: 'string' } },
-                              item_ids: { type: 'array', items: { type: 'string' } },
-                              time: {
-                                type: 'object',
-                                properties: {
-                                  label: { type: 'string' },
-                                  range: {
-                                    type: 'object',
-                                    properties: {
-                                      start: { type: 'string', format: 'date-time' },
-                                      end: { type: 'string', format: 'date-time' }
-                                    },
-                                    required: ['start', 'end']
-                                  }
-                                },
-                                required: ['label', 'range']
-                              },
-                              tags: {
+                              list: {
                                 type: 'array',
                                 items: {
-                                  oneOf: [
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'qualifier' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'qualifier' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'min_value' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'min_value' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            }
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
+                                  type: 'object',
+                                  properties: {
+                                    code: {
+                                      type: 'string',
+                                      description: 'Code representing the specific tag property.',
+                                      enum: ['min_value', 'value_type', 'value', 'additive', 'item_count', 'item_id', 'item_value']
                                     },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'benefit' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'benefit' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value_type' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value_type' },
-                                                      value: {
-                                                        type: 'string',
-                                                        enum: ['percent', 'amount']
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                },
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                },
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value_cap' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value_cap' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            },
-                                            minItems: 2,
-                                            errorMessage: 'Benefit tag must contain value_type and value'
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
+                                    value: {
+                                      type: 'string',
+                                      description: 'Value for the tag property.',
                                     },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'meta' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'meta' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'additive' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'additive' },
-                                                      value: {
-                                                        type: 'string',
-                                                        enum: ['yes', 'no']
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                },
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'auto' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'auto' },
-                                                      value: {
-                                                        type: 'string',
-                                                        enum: ['yes', 'no']
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            },
-                                            minItems: 2,
-                                            errorMessage: 'Meta tag must contain both additive and auto'
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
-                                    }
-                                  ]
+                                  },
+      
                                 },
-                                minItems: 3,
-                                errorMessage: 'Tags must contain qualifier, benefit, and meta'
-                              }
+                                required: ['code', 'value'],
+                              },
                             },
-                            required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
-                          }
+                          },
+                          required: ['code', 'list'],
                         },
-                        // Exchange offer validation
-                        {
-                          if: {
-                            type: 'object',
-                            properties: {
-                              descriptor: {
-                                type: 'object',
-                                properties: {
-                                  code: { const: 'exchange' }
-                                }
-                              }
-                            }
-                          },
-                          then: {
-                            type: 'object',
-                            properties: {
-                              id: { type: 'string' },
-                              descriptor: {
-                                type: 'object',
-                                properties: {
-                                  code: { const: 'exchange' },
-                                  images: {
-                                    type: 'array',
-                                    items: { type: 'string', format: 'uri' }
-                                  }
-                                },
-                                required: ['code', 'images']
-                              },
-                              location_ids: { type: 'array', items: { type: 'string' } },
-                              item_ids: { type: 'array', items: { type: 'string' } },
-                              time: {
-                                type: 'object',
-                                properties: {
-                                  label: { type: 'string' },
-                                  range: {
-                                    type: 'object',
-                                    properties: {
-                                      start: { type: 'string', format: 'date-time' },
-                                      end: { type: 'string', format: 'date-time' }
-                                    },
-                                    required: ['start', 'end']
-                                  }
-                                },
-                                required: ['label', 'range']
-                              },
-                              tags: {
-                                type: 'array',
-                                items: {
-                                  oneOf: [
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'qualifier' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'qualifier' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'min_value' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'min_value' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^[0-9]+(\\.[0-9]{1,2})?$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            }
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'benefit' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'benefit' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value_type' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value_type' },
-                                                      value: {
-                                                        type: 'string',
-                                                        enum: ['percent', 'amount']
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                },
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'value' },
-                                                      value: {
-                                                        type: 'string',
-                                                        pattern: '^-?[0-9]+(\\.[0-9]{1,2})?$'
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            },
-                                            minItems: 2,
-                                            errorMessage: 'Benefit tag must contain value_type and value'
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
-                                    },
-                                    {
-                                      if: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'meta' }
-                                        }
-                                      },
-                                      then: {
-                                        type: 'object',
-                                        properties: {
-                                          code: { const: 'meta' },
-                                          list: {
-                                            type: 'array',
-                                            items: {
-                                              oneOf: [
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'additive' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'additive' },
-                                                      value: {
-                                                        type: 'string',
-                                                        enum: ['yes', 'no']
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                },
-                                                {
-                                                  if: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'auto' }
-                                                    }
-                                                  },
-                                                  then: {
-                                                    type: 'object',
-                                                    properties: {
-                                                      code: { const: 'auto' },
-                                                      value: {
-                                                        type: 'string',
-                                                        enum: ['yes', 'no']
-                                                      }
-                                                    },
-                                                    required: ['code', 'value']
-                                                  }
-                                                }
-                                              ]
-                                            },
-                                            minItems: 2,
-                                            errorMessage: 'Meta tag must contain both additive and auto'
-                                          }
-                                        },
-                                        required: ['code', 'list']
-                                      }
-                                    }
-                                  ]
-                                },
-                                minItems: 3,
-                                errorMessage: 'Tags must contain qualifier, benefit, and meta'
-                              }
-                            },
-                            required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags']
-                          }
-                        }
-                      ]
-                    }
+                      },
+                    },
+      
+                    required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags',],
+      
                   },
                   required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags'],}
                 },

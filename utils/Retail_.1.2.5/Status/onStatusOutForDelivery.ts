@@ -475,12 +475,8 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
 
     if (flow === FLOW.FLOW020) {
       const fulfillments = on_status.fulfillments
-      if (!fulfillments.length) {
-        const key = `missingFulfillments`
-        onStatusObj[key] = `missingFulfillments is mandatory for ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}`
-      }
 
-      fulfillments.forEach((fulfillment: any) => {
+      fulfillments?.forEach((fulfillment: any) => {
         const tags = fulfillment.tags || []
         const delayTag = tags.find((tag: { code: string }) => tag.code === 'fulfillment_delay')
         const fulfillmentDelayTagList = getValue('fulfillmentDelayTagList')

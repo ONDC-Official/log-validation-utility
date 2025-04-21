@@ -403,88 +403,123 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
       }
     }
 
-    function validateFulfillmentTags(fulfillments: any) {
-      const errors: any = []
+       function validateFulfillmentTags(fulfillments: any) {
+  const errors: any[] = []
 
-      fulfillments.forEach((fulfillment: any) => {
-        const tags = fulfillment.tags || []
-        const delayTag = tags.find((tag: { code: string }) => tag.code === 'fulfillment_delay')
+  fulfillments.forEach((fulfillment: any) => {
+    const tags = fulfillment.tags || []
+    // Step 1: Get all fulfillment_delay tags
+    const delayTags = tags.filter((tag: { code: string }) => tag.code === 'fulfillment_delay')
 
-        if (!delayTag) {
-          errors.push({
-            fulfillmentId: fulfillment.id,
-            error: "Missing 'fulfillment_delay' tag",
-          })
-
-          return
-        }
-
-        const tagList = delayTag.list || []
-
-        setValue("fulfillmentDelayTagList", tagList)
-        // State check
-        const stateEntry = tagList.find((entry: { code: string }) => entry.code === 'state')
-        if (!stateEntry || !stateEntry.value) {
-          errors.push({
-            fulfillmentId: fulfillment.id,
-            error: "Missing or invalid 'state' in 'fulfillment_delay' tag",
-          })
-        } else if (!states.includes(stateEntry.value)) {
-          errors.push({
-            fulfillmentId: fulfillment.id,
-            error: `state value  must be enums like ${states}`,
-          })
-        }
-
-        // Reason ID check
-        const reasonEntry = tagList.find((entry: { code: string }) => entry.code === 'reason_id')
-        if (!reasonEntry || !reasonEntry.value) {
-          errors.push({
-            fulfillmentId: fulfillment.id,
-            error: "Missing or invalid 'reason_id' in 'fulfillment_delay' tag",
-          })
-        } else if (!delivery_delay_reasonCodes.includes(reasonEntry.value)) {
-          errors.push({
-            fulfillmentId: fulfillment.id,
-            error: `reason_id value  must be ${delivery_delay_reasonCodes}`,
-          })
-        }
-
-        // Timestamp check
-        const timestampEntry = tagList.find((entry: { code: string }) => entry.code === 'timestamp')
-        if (!timestampEntry || !timestampEntry.value) {
-          errors.push({
-            fulfillmentId: fulfillment.id,
-            error: "Missing or invalid 'timestamp' in 'fulfillment_delay' tag",
-          })
-        } else {
-            try {
-                if (_.gte(getValue('tmpstmp'), context.timestamp)) {
-                  onStatusObj.tmpstmp = `Timestamp for  /${constants.ON} api cannot be greater than or equal to /init api`
-                }
-          
-                setValue('tmpstmp', context.timestamp)
-              } catch (error: any) {
-                logger.error(
-                  `!!Error while comparing timestamp for /${constants.ON_SELECT} and /${constants.INIT} api, ${error.stack}`,
-                )
-              }
-          const isValidDate = !isNaN(Date.parse(timestampEntry.value))
-          if (!isValidDate) {
-            errors.push({
-              fulfillmentId: fulfillment.id,
-              error: `'timestamp' value '${timestampEntry.value}' is not a valid ISO date`,
-            })
-          }
-        }
+    if (delayTags.length === 0) {
+      errors.push({
+        fulfillmentId: fulfillment.id,
+        error: "Missing 'fulfillment_delay' tag",
       })
-
-
-      return errors
+      return
     }
+
+    // Step 2: Group by 'state' and pick latest by 'timestamp'
+    const latestByState: Record<string, any> = {}
+
+    delayTags.forEach((tag:any) => {
+      const tagList = tag.list || []
+      const stateEntry = tagList.find((entry: any) => entry.code === 'state')
+      const timestampEntry = tagList.find((entry: any) => entry.code === 'timestamp')
+      if (stateEntry && stateEntry.value && timestampEntry && timestampEntry.value) {
+        const state = stateEntry.value
+        const timestamp = new Date(timestampEntry.value).getTime()
+
+       const existingTimestamp = _.get(latestByState[state], 'list', [])
+  .find((e: any) => e.code === 'timestamp')?.value
+
+if (!latestByState[state] || _.gt(new Date(existingTimestamp).getTime(), timestamp)) {
+  latestByState[state] = tag.list
+}
+      }
+    })
+
+    // Step 3: Validate only latest fulfillment_delay tags per state
+    Object.entries(latestByState).forEach(([stateValue, tag]) => {
+      const tagList = tag.list || []
+      setValue("fulfillmentDelayTagList", tagList)
+      // Validate state (already grouped by it, but still check validity)
+      if (!states.includes(stateValue)) {
+        errors.push({
+          fulfillmentId: fulfillment.id,
+          error: `'state' value '${stateValue}' must be one of ${states}`,
+        })
+      }
+
+      // Validate reason_id
+      const reasonEntry = tag.find((entry: any) => entry.code === 'reason_id')
+      if (!reasonEntry || !reasonEntry.value) {
+        errors.push({
+          fulfillmentId: fulfillment.id,
+          error: `Missing or invalid 'reason_id' in 'fulfillment_delay' tag (state: ${stateValue})`,
+        })
+      } else if (!delivery_delay_reasonCodes.includes(reasonEntry.value)) {
+        errors.push({
+          fulfillmentId: fulfillment.id,
+          error: `'reason_id' must be one of ${delivery_delay_reasonCodes} (state: ${stateValue})`,
+        })
+      }
+
+      // Validate timestamp
+      const timestampEntry = tag.find((entry: any) => entry.code === 'timestamp')
+      
+      if (!timestampEntry || !timestampEntry.value) {
+        errors.push({
+          fulfillmentId: fulfillment.id,
+          error: `Missing or invalid 'timestamp' in 'fulfillment_delay' tag (state: ${stateValue})`,
+        })
+      } else {
+       try {
+  const stateEntry = tag.find((entry: any) => entry.code === 'state');
+  const deliveryFulfillment = fulfillments.find((f: any) => f.type === 'Delivery');
+
+  if (!stateEntry?.value || !timestampEntry?.value || !deliveryFulfillment) return;
+
+  const state = stateEntry.value;
+  const timestamp = timestampEntry.value;
+
+  const stateTimestampMap: Record<string, string | undefined> = {
+    'Order-picked-up': deliveryFulfillment.start?.time?.timestamp,
+    'Order-delivered': deliveryFulfillment.end?.time?.timestamp,
+  };
+
+  const fulfillmentTimestamp = stateTimestampMap[state];
+
+  if (fulfillmentTimestamp && _.gte(timestamp, fulfillmentTimestamp)) {
+    onStatusObj.tmpstmp = `Timestamp in fulfillmentDelay in fulfillmentTags cannot be greater than or equal to ${state === 'Order-picked-up' ? 'start' : 'end'} timestamp in fulfillments`;
+  }
+
+  if (_.gte(timestamp, context.timestamp)) {
+    onStatusObj.tmpstmp = `Timestamp for /${constants.ON_STATUS_PICKED} api cannot be greater than or equal to /on_status_picked api`;
+  }
+
+  setValue('timestampOrderPicked', timestamp);
+} catch (error: any) {
+  logger.error(`!!Error comparing timestamp for /${constants.ON_STATUS_PICKED}, ${error.stack}`);
+}
+
+
+        const isValidDate = !isNaN(Date.parse(timestampEntry.value))
+        if (!isValidDate) {
+          errors.push({
+            fulfillmentId: fulfillment.id,
+            error: `'timestamp' value '${timestampEntry.value}' is not a valid ISO date (state: ${stateValue})`,
+          })
+        }
+      }
+    })
+  })
+
+
+  return errors
+}
     if (flow === FLOW.FLOW020) {
       const fulfillments = on_status.fulfillments
-console.log('fulfillments', fulfillments)
       const res = validateFulfillmentTags(fulfillments)
       res.map((ele: {fulfillmentId: string, error: string}, index: number) => {
         const key = `invalid_attribute/${index}/${ele.fulfillmentId}`

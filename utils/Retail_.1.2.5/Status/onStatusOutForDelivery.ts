@@ -10,6 +10,7 @@ import {
   compareTimeRanges,
   compareFulfillmentObject,
   compareAllObjects,
+  getProviderId,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
@@ -480,21 +481,32 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
         const tags = fulfillment.tags || []
         const delayTag = tags.find((tag: { code: string }) => tag.code === 'fulfillment_delay')
         const fulfillmentDelayTagList = getValue('fulfillmentDelayTagList')
-       
 
+        const Errors = compareAllObjects(delayTag.list, fulfillmentDelayTagList)
 
-
- const Errors = compareAllObjects(
-          delayTag.list,
-          fulfillmentDelayTagList,
-
-        )
-        
         if (!Errors.isEqual || !Errors.isObj1InObj2 || !Errors.isObj2InObj1 || !Errors.isContained) {
           const key = `missingFulfillmentTags`
           onStatusObj[key] = `missingFulfillmentTags are mandatory for ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}`
         }
       })
+    }
+
+    if (flow === FLOW.FLOW01C) {
+      const fulfillments = on_status.fulfillments
+      const deliveryFulfillment = fulfillments.find((f: any) => f.type === 'Delivery')
+
+      if (!deliveryFulfillment.hasOwnProperty('provider_id')) {
+        onStatusObj['missingFulfillments'] =
+          `provider_id must be present in ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY} as order is accepted`
+      }
+
+      const id = getProviderId(deliveryFulfillment)
+      const fulfillmentProviderId = getValue('fulfillmentProviderId')
+
+      if (deliveryFulfillment.hasOwnProperty('provider_id') && id !== fulfillmentProviderId) {
+        onStatusObj['providerIdMismatch'] =
+          `provider_id in fulfillment in ${ApiSequence.ON_CONFIRM} does not match expected provider_id: expected '${fulfillmentProviderId}' in ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY} but got ${id}`
+      }
     }
 
     return onStatusObj

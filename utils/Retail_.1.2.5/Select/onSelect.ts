@@ -19,7 +19,7 @@ const retailPymntTtl: { [key: string]: string } = {
   tax: 'tax',
   discount: 'discount',
   'convenience fee': 'misc',
-  offer: 'offer'
+  offer: 'offer',
 }
 export const checkOnSelect = (data: any) => {
   if (!data || isObjectEmpty(data)) {
@@ -40,7 +40,8 @@ export const checkOnSelect = (data: any) => {
   try {
     logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
     if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
-      errorObj[`${ApiSequence.ON_SELECT}_msgId`] = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+      errorObj[`${ApiSequence.ON_SELECT}_msgId`] =
+        `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
     }
   } catch (error: any) {
     logger.error(`!!Error while checking message id for /${constants.ON_SELECT}, ${error.stack}`)
@@ -49,7 +50,8 @@ export const checkOnSelect = (data: any) => {
   try {
     logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
     if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
-      errorObj[`${ApiSequence.ON_SELECT}_msgId`] = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+      errorObj[`${ApiSequence.ON_SELECT}_msgId`] =
+        `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
     }
   } catch (error: any) {
     logger.error(`!!Error while checking message id for /${constants.ON_SELECT}, ${error.stack}`)
@@ -123,11 +125,11 @@ export const checkOnSelect = (data: any) => {
   try {
     const fulfillments = message.order.fulfillments
     const selectFlflmntSet: any = []
-    const fulfillment_tat_obj:any={}
+    const fulfillment_tat_obj: any = {}
     fulfillments.forEach((flflmnt: any) => {
-      fulfillment_tat_obj[flflmnt.id] = isoDurToSec(flflmnt["@ondc/org/TAT"])
+      fulfillment_tat_obj[flflmnt.id] = isoDurToSec(flflmnt['@ondc/org/TAT'])
       selectFlflmntSet.push(flflmnt.id)
-    })        
+    })
     setValue('selectFlflmntSet', selectFlflmntSet)
     setValue('fulfillment_tat_obj', fulfillment_tat_obj)
   } catch (error: any) {
@@ -149,9 +151,11 @@ export const checkOnSelect = (data: any) => {
   try {
     logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
     if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
-      errorObj[`${ApiSequence.ON_SELECT}_msgId`] = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+      errorObj[`${ApiSequence.ON_SELECT}_msgId`] =
+        `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
       if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
-        errorObj[`${ApiSequence.ON_SELECT}_msgId`] = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+        errorObj[`${ApiSequence.ON_SELECT}_msgId`] =
+          `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
       }
     }
   } catch (error: any) {
@@ -305,36 +309,31 @@ export const checkOnSelect = (data: any) => {
         const ffDesc = ff.state.descriptor
 
         function checkFFOrgCategory(selfPickupOrDelivery: number) {
-          if (!ff["@ondc/org/category"] || !ffCategory[selfPickupOrDelivery].includes(ff["@ondc/org/category"])) {
+          if (!ff['@ondc/org/category'] || !ffCategory[selfPickupOrDelivery].includes(ff['@ondc/org/category'])) {
             const key = `fulfillment${idx}/@ondc/org/category`
             errorObj[key] =
               `In Fulfillment${idx}, @ondc/org/category is not a valid value in ${constants.ON_SELECT} and should have one of these values ${[ffCategory[selfPickupOrDelivery]]}`
           }
           const domain = data.context.domain.split(':')[1]
-          if(ff.type === "Delivery" && domain === "RET11" && ff["@ondc/org/category"] !== "Immediate Delivery")
-            {
-              const key = `fulfillment${idx}/@ondc/org/category`
-              errorObj[key] =
+          if (ff.type === 'Delivery' && domain === 'RET11' && ff['@ondc/org/category'] !== 'Immediate Delivery') {
+            const key = `fulfillment${idx}/@ondc/org/category`
+            errorObj[key] =
               `In Fulfillment${idx}, @ondc/org/category should be "Immediate Delivery" for F&B in ${constants.ON_SELECT}`
-            }
+          }
         }
-        if (ffDesc.code === 'Serviceable' && ff.type == "Delivery") {
+        if (ffDesc.code === 'Serviceable' && ff.type == 'Delivery') {
           checkFFOrgCategory(0)
-        }
-        else if (ff.type == "Self-Pickup") {
+        } else if (ff.type == 'Self-Pickup') {
           checkFFOrgCategory(1)
         }
-      }
-      else {
+      } else {
         const key = `fulfillment${idx}/descCode`
-        errorObj[key] =
-          `In Fulfillment${idx}, descriptor code is mandatory in ${constants.ON_SELECT}`
+        errorObj[key] = `In Fulfillment${idx}, descriptor code is mandatory in ${constants.ON_SELECT}`
       }
-    });
+    })
   } catch (error: any) {
     logger.error(`!!Error while checking fulfillments @ondc/org/category in /${constants.ON_SELECT}, ${error.stack}`)
   }
-
 
   let onSelectPrice: any = 0 //Net price after discounts and tax in /on_select
   let onSelectItemsPrice = 0 //Price of only items in /on_select
@@ -544,8 +543,9 @@ export const checkOnSelect = (data: any) => {
           item['@ondc/org/title_type'] !== 'item' &&
           retailPymntTtl[item.title.toLowerCase().trim()] !== item['@ondc/org/title_type']
         ) {
-          errorObj.pymntttlmap = `Quote breakup Payment title "${item.title}" comes under the title type "${retailPymntTtl[item.title.toLowerCase().trim()]
-            }"`
+          errorObj.pymntttlmap = `Quote breakup Payment title "${item.title}" comes under the title type "${
+            retailPymntTtl[item.title.toLowerCase().trim()]
+          }"`
         }
       })
     } else {
@@ -568,15 +568,14 @@ export const checkOnSelect = (data: any) => {
     logger.info(`Error while checking fulfillments TAT in /${constants.ON_SELECT}`)
   }
 
-
   try {
     // Checking fulfillment.id, fulfillment.type and tracking
     logger.info('Checking fulfillment.id, fulfillment.type and tracking')
     on_select.fulfillments.forEach((ff: any) => {
-      let ffId = ""
+      let ffId = ''
       if (!ff.id) {
         logger.info(`Fulfillment Id must be present `)
-        errorObj["ffId"] = `Fulfillment Id must be present`
+        errorObj['ffId'] = `Fulfillment Id must be present`
       }
 
       ffId = ff.id
@@ -584,10 +583,9 @@ export const checkOnSelect = (data: any) => {
       if (ffId) {
         if (ff.tracking === false || ff.tracking === true) {
           setValue(`${ffId}_tracking`, ff.tracking)
-        }
-        else {
+        } else {
           logger.info(`Tracking must be present for fulfillment ID: ${ff.id} in boolean form`)
-          errorObj["ffTracking"] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
+          errorObj['ffTracking'] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
         }
       }
     })
@@ -640,6 +638,13 @@ export const checkOnSelect = (data: any) => {
   }
 
   setValue('quote_price', on_select.quote.price.value)
+  const MinOrderValue = getValue('MinOrderValue')
+  if (MinOrderValue) {
+    if (_.lt(on_select.quote.price.value, MinOrderValue)) {
+      const key = `orderValue`
+      errorObj[key] = `Order value must be greater or equal to Minimum Order Value`
+    }
+  }
 
   return Object.keys(errorObj).length > 0 && errorObj
 }

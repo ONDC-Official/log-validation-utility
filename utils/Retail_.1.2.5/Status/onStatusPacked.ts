@@ -2,7 +2,15 @@
 import _ from 'lodash'
 import constants, { ApiSequence, PAYMENT_STATUS } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchemaRetailV2, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges, compareFulfillmentObject } from '../..'
+import {
+  validateSchemaRetailV2,
+  isObjectEmpty,
+  checkContext,
+  areTimestampsLessThanOrEqualTo,
+  compareTimeRanges,
+  compareFulfillmentObject,
+  getProviderId,
+} from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
 
@@ -141,7 +149,12 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
       const storedFulfillment = getValue(`deliveryFulfillment`)
       const deliveryFulfillment = on_status.fulfillments.filter((fulfillment: any) => fulfillment.type === 'Delivery')
       const storedFulfillmentAction = getValue('deliveryFulfillmentAction')
-      const fulfillmentRangeerrors = compareTimeRanges(storedFulfillment, storedFulfillmentAction, deliveryFulfillment[0], ApiSequence.ON_STATUS_PACKED)
+      const fulfillmentRangeerrors = compareTimeRanges(
+        storedFulfillment,
+        storedFulfillmentAction,
+        deliveryFulfillment[0],
+        ApiSequence.ON_STATUS_PACKED,
+      )
       if (fulfillmentRangeerrors) {
         let i = 0
         const len = fulfillmentRangeerrors.length
@@ -167,7 +180,7 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
         }
 
         ffId = ff.id
-        if (ff.type != "Cancel") {
+        if (ff.type != 'Cancel') {
           if (`${ffId}_tracking`) {
             if (ff.tracking === false || ff.tracking === true) {
               if (getValue(`${ffId}_tracking`) != ff.tracking) {
@@ -202,12 +215,12 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
         logger.info('Payment status check in on status packed call')
         const payment = on_status.payment
         if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
-          logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`);
+          logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`)
           onStatusObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
         }
       }
     } catch (err: any) {
-      logger.error('Error while checking payment in message/order/payment: ' + err.message);
+      logger.error('Error while checking payment in message/order/payment: ' + err.message)
     }
 
     try {
@@ -226,39 +239,67 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
         if (!fulfillments.length) {
           const key = `missingFulfillments`
           onStatusObj[key] = `missingFulfillments is mandatory for ${ApiSequence.ON_STATUS_PACKED}`
-        }
-        else {
+        } else {
           let i: number = 0
           fulfillmentsItemsSet.forEach((obj1: any) => {
             const keys = Object.keys(obj1)
 
             let obj2: any = _.filter(fulfillments, { type: `${obj1.type}` })
-            let apiSeq = obj1.type === "Cancel" ? ApiSequence.ON_UPDATE_PART_CANCEL : (getValue('onCnfrmState') === "Accepted" ? (ApiSequence.ON_CONFIRM) : (ApiSequence.ON_STATUS_PENDING))
+            let apiSeq =
+              obj1.type === 'Cancel'
+                ? ApiSequence.ON_UPDATE_PART_CANCEL
+                : getValue('onCnfrmState') === 'Accepted'
+                  ? ApiSequence.ON_CONFIRM
+                  : ApiSequence.ON_STATUS_PENDING
             if (obj2.length > 0) {
               obj2 = obj2[0]
-              if (obj2.type == "Delivery") {
+              if (obj2.type == 'Delivery') {
                 delete obj2?.start?.instructions
                 delete obj2?.end?.instructions
                 delete obj2?.tags
                 delete obj2?.state
               }
-              apiSeq = obj2.type === "Cancel" ? ApiSequence.ON_UPDATE_PART_CANCEL : (getValue('onCnfrmState') === "Accepted" ? (ApiSequence.ON_CONFIRM) : (ApiSequence.ON_STATUS_PENDING))
+              apiSeq =
+                obj2.type === 'Cancel'
+                  ? ApiSequence.ON_UPDATE_PART_CANCEL
+                  : getValue('onCnfrmState') === 'Accepted'
+                    ? ApiSequence.ON_CONFIRM
+                    : ApiSequence.ON_STATUS_PENDING
               const errors = compareFulfillmentObject(obj1, obj2, keys, i, apiSeq)
               if (errors.length > 0) {
                 errors.forEach((item: any) => {
                   onStatusObj[item.errKey] = item.errMsg
                 })
               }
-            }
-            else {
-              onStatusObj[`message/order.fulfillments/${i}`] = `Missing fulfillment type '${obj1.type}' in ${ApiSequence.ON_STATUS_PACKED} as compared to ${apiSeq}`
+            } else {
+              onStatusObj[`message/order.fulfillments/${i}`] =
+                `Missing fulfillment type '${obj1.type}' in ${ApiSequence.ON_STATUS_PACKED} as compared to ${apiSeq}`
             }
             i++
-          });
+          })
         }
-
       } catch (error: any) {
-        logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_PACKED}, ${error.stack}`)
+        logger.error(
+          `Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_PACKED}, ${error.stack}`,
+        )
+      }
+    }
+
+    if (flow === FLOW.FLOW01C) {
+      const fulfillments = on_status.fulfillments
+      const deliveryFulfillment = fulfillments.find((f: any) => f.type === 'Delivery')
+
+      if (!deliveryFulfillment.hasOwnProperty('provider_id')) {
+        onStatusObj['missingFulfillments'] =
+          `provider_id must be present in ${ApiSequence.ON_STATUS_PACKED} as order is accepted`
+      }
+
+      const id = getProviderId(deliveryFulfillment)
+      const fulfillmentProviderId = getValue('fulfillmentProviderId')
+
+      if (deliveryFulfillment.hasOwnProperty('provider_id') && id !== fulfillmentProviderId) {
+        onStatusObj['providerIdMismatch'] =
+          `provider_id in fulfillment in ${ApiSequence.ON_CONFIRM} does not match expected provider_id: expected '${fulfillmentProviderId}' in ${ApiSequence.ON_STATUS_PACKED} but got ${id}`
       }
     }
 

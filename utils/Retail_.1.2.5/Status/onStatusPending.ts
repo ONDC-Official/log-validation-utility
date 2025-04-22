@@ -10,6 +10,7 @@ import {
   areTimestampsLessThanOrEqualTo,
   payment_status,
   compareTimeRanges,
+  getProviderId,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -18,19 +19,17 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
   try {
     const onConfirmOrderState = getValue('onCnfrmState')
     if (!data || isObjectEmpty(data)) {
-      if (onConfirmOrderState === "Accepted")
-        return
+      if (onConfirmOrderState === 'Accepted') return
       return { [ApiSequence.ON_STATUS_PENDING]: 'JSON cannot be empty' }
     }
     const flow = getValue('flow')
     const { message, context }: any = data
     if (!message || !context || isObjectEmpty(message)) {
-      if (onConfirmOrderState === "Accepted")
-        return
+      if (onConfirmOrderState === 'Accepted') return
       return { missingFields: '/context, /message, is missing or empty' }
     }
 
-    if (onConfirmOrderState === "Accepted")
+    if (onConfirmOrderState === 'Accepted')
       return { errmsg: "When the onConfirm Order State is 'Accepted', the on_status_pending is not required!" }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
@@ -118,7 +117,7 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
         }
 
         ffId = ff.id
-        if (ff.type != "Cancel") {
+        if (ff.type != 'Cancel') {
           if (getValue(`${ffId}_tracking`)) {
             if (ff.tracking === false || ff.tracking === true) {
               if (getValue(`${ffId}_tracking`) != ff.tracking) {
@@ -145,7 +144,12 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
         setValue('deliveryFulfillmentAction', ApiSequence.ON_STATUS_PENDING)
       } else {
         const storedFulfillmentAction = getValue('deliveryFulfillmentAction')
-        const fulfillmentRangeerrors = compareTimeRanges(storedFulfillment, storedFulfillmentAction, deliveryFulfillment[0], ApiSequence.ON_STATUS_PENDING)
+        const fulfillmentRangeerrors = compareTimeRanges(
+          storedFulfillment,
+          storedFulfillmentAction,
+          deliveryFulfillment[0],
+          ApiSequence.ON_STATUS_PENDING,
+        )
 
         if (fulfillmentRangeerrors) {
           let i = 0
@@ -217,12 +221,12 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
         logger.info('Payment status check in on status pending call')
         const payment = on_status.payment
         if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
-          logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`);
+          logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`)
           onStatusObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
         }
       }
     } catch (err: any) {
-      logger.error('Error while checking payment in message/order/payment: ' + err.message);
+      logger.error('Error while checking payment in message/order/payment: ' + err.message)
     }
     if (flow === '6' || flow === '2' || flow === '3' || flow === '5') {
       try {
@@ -231,13 +235,12 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
         if (!fulfillments.length) {
           const key = `missingFulfillments`
           onStatusObj[key] = `missingFulfillments is mandatory for ${ApiSequence.ON_STATUS_PENDING}`
-        }
-        else {
-          const deliveryObjArr = _.filter(fulfillments, { type: "Delivery" })
+        } else {
+          const deliveryObjArr = _.filter(fulfillments, { type: 'Delivery' })
           if (!deliveryObjArr.length) {
-            onStatusObj[`message/order.fulfillments/`] = `Delivery fullfillment must be present in ${ApiSequence.ON_STATUS_PENDING}`
-          }
-          else {
+            onStatusObj[`message/order.fulfillments/`] =
+              `Delivery fullfillment must be present in ${ApiSequence.ON_STATUS_PENDING}`
+          } else {
             const deliverObj = deliveryObjArr[0]
             delete deliverObj?.state
             delete deliverObj?.tags
@@ -246,9 +249,28 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
             fulfillmentsItemsSet.add(deliverObj)
           }
         }
-
       } catch (error: any) {
-        logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_PENDING}, ${error.stack}`)
+        logger.error(
+          `Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_PENDING}, ${error.stack}`,
+        )
+      }
+    }
+
+    if (flow === FLOW.FLOW01C) {
+      const fulfillments = on_status.fulfillments
+      const deliveryFulfillment = fulfillments.find((f: any) => f.type === 'Delivery')
+
+      if (!deliveryFulfillment.hasOwnProperty('provider_id')) {
+        onStatusObj['missingFulfillments'] =
+          `provider_id must be present in ${ApiSequence.ON_STATUS_PENDING} as order is accepted`
+      }
+
+      const id = getProviderId(deliveryFulfillment)
+      const fulfillmentProviderId = getValue('fulfillmentProviderId')
+
+      if (deliveryFulfillment.hasOwnProperty('provider_id') && id !== fulfillmentProviderId) {
+        onStatusObj['providerIdMismatch'] =
+          `provider_id in fulfillment in ${ApiSequence.ON_CONFIRM} does not match expected provider_id: expected '${fulfillmentProviderId}' in ${ApiSequence.ON_STATUS_PENDING} but got ${id}`
       }
     }
 

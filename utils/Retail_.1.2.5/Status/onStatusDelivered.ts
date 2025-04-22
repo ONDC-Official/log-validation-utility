@@ -2,7 +2,16 @@
 import _ from 'lodash'
 import constants, { ApiSequence, ROUTING_ENUMS, PAYMENT_STATUS } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchemaRetailV2, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges, compareFulfillmentObject, compareAllObjects } from '../..'
+import {
+  validateSchemaRetailV2,
+  isObjectEmpty,
+  checkContext,
+  areTimestampsLessThanOrEqualTo,
+  compareTimeRanges,
+  compareFulfillmentObject,
+  compareAllObjects,
+  getProviderId,
+} from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
 
@@ -123,32 +132,32 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any, 
         if (!deliveryObj.tags) {
           const key = `missingTags`
           onStatusObj[key] = `Tags are mandatory in Delivery Fulfillment for ${ApiSequence.ON_STATUS_DELIVERED}`
-        }
-        else {
+        } else {
           const tags = deliveryObj.tags
           const routingTagArr = _.filter(tags, { code: 'routing' })
           if (!routingTagArr.length) {
             const key = `missingRouting/Tag`
-            onStatusObj[key] = `RoutingTag object is mandatory in Tags of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED}`
-          }
-          else {
+            onStatusObj[key] =
+              `RoutingTag object is mandatory in Tags of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED}`
+          } else {
             const routingTag = routingTagArr[0]
             const routingTagList = routingTag.list
             if (!routingTagList) {
               const key = `missingRouting/Tag/List`
-              onStatusObj[key] = `RoutingTagList is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED}`
-            }
-            else {
+              onStatusObj[key] =
+                `RoutingTagList is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED}`
+            } else {
               const routingTagTypeArr = _.filter(routingTagList, { code: 'type' })
               if (!routingTagTypeArr.length) {
                 const key = `missingRouting/Tag/List/Type`
-                onStatusObj[key] = `RoutingTagListType object is mandatory in RoutingTag/List of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED}`
-              }
-              else {
+                onStatusObj[key] =
+                  `RoutingTagListType object is mandatory in RoutingTag/List of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED}`
+              } else {
                 const routingTagType = routingTagTypeArr[0]
                 if (!ROUTING_ENUMS.includes(routingTagType.value)) {
-                  const key = `missingRouting/Tag/List/Type/Value`;
-                  onStatusObj[key] = `RoutingTagListType Value is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED} and should be equal to 'P2P' or 'P2H2P'`;
+                  const key = `missingRouting/Tag/List/Type/Value`
+                  onStatusObj[key] =
+                    `RoutingTagListType Value is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED} and should be equal to 'P2P' or 'P2H2P'`
                 }
               }
             }
@@ -170,32 +179,32 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any, 
         if (!deliveryObj.tags) {
           const key = `missingTags`
           onStatusObj[key] = `Tags are mandatory in Delivery Fulfillment for ${ApiSequence.ON_STATUS_DELIVERED}`
-        }
-        else {
+        } else {
           const tags = deliveryObj.tags
           const routingTagArr = _.filter(tags, { code: 'routing' })
           if (!routingTagArr.length) {
             const key = `missingRouting/Tag`
-            onStatusObj[key] = `RoutingTag object is mandatory in Tags of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED}`
-          }
-          else {
+            onStatusObj[key] =
+              `RoutingTag object is mandatory in Tags of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED}`
+          } else {
             const routingTag = routingTagArr[0]
             const routingTagList = routingTag.list
             if (!routingTagList) {
               const key = `missingRouting/Tag/List`
-              onStatusObj[key] = `RoutingTagList is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED}`
-            }
-            else {
+              onStatusObj[key] =
+                `RoutingTagList is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED}`
+            } else {
               const routingTagTypeArr = _.filter(routingTagList, { code: 'type' })
               if (!routingTagTypeArr.length) {
                 const key = `missingRouting/Tag/List/Type`
-                onStatusObj[key] = `RoutingTagListType object is mandatory in RoutingTag/List of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED}`
-              }
-              else {
+                onStatusObj[key] =
+                  `RoutingTagListType object is mandatory in RoutingTag/List of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED}`
+              } else {
                 const routingTagType = routingTagTypeArr[0]
                 if (!ROUTING_ENUMS.includes(routingTagType.value)) {
-                  const key = `missingRouting/Tag/List/Type/Value`;
-                  onStatusObj[key] = `RoutingTagListType Value is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED} and should be equal to 'P2P' or 'P2H2P'`;
+                  const key = `missingRouting/Tag/List/Type/Value`
+                  onStatusObj[key] =
+                    `RoutingTagListType Value is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_DELIVERED} and should be equal to 'P2P' or 'P2H2P'`
                 }
               }
             }
@@ -240,7 +249,12 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any, 
       const storedFulfillment = getValue(`deliveryFulfillment`)
       const deliveryFulfillment = on_status.fulfillments.filter((fulfillment: any) => fulfillment.type === 'Delivery')
       const storedFulfillmentAction = getValue('deliveryFulfillmentAction')
-      const fulfillmentRangeerrors = compareTimeRanges(storedFulfillment, storedFulfillmentAction, deliveryFulfillment[0], ApiSequence.ON_STATUS_DELIVERED)
+      const fulfillmentRangeerrors = compareTimeRanges(
+        storedFulfillment,
+        storedFulfillmentAction,
+        deliveryFulfillment[0],
+        ApiSequence.ON_STATUS_DELIVERED,
+      )
       if (fulfillmentRangeerrors) {
         let i = 0
         const len = fulfillmentRangeerrors.length
@@ -340,7 +354,7 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any, 
           }
 
           ffId = ff.id
-          if (ff.type != "Cancel") {
+          if (ff.type != 'Cancel') {
             if (getValue(`${ffId}_tracking`)) {
               if (ff.tracking === false || ff.tracking === true) {
                 if (getValue(`${ffId}_tracking`) != ff.tracking) {
@@ -369,12 +383,14 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any, 
         logger.info('Payment status check in on status delivered call')
         const payment = on_status.payment
         if (payment.status == PAYMENT_STATUS.NOT_PAID) {
-          logger.error(`Payment status should be ${PAYMENT_STATUS.PAID} for ${FLOW.FLOW2A} flow (Item has been delivered in this state!)`);
+          logger.error(
+            `Payment status should be ${PAYMENT_STATUS.PAID} for ${FLOW.FLOW2A} flow (Item has been delivered in this state!)`,
+          )
           onStatusObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.PAID} for ${FLOW.FLOW2A} flow since Item has been delivered in this state (Cash on Delivery)`
         }
       }
     } catch (err: any) {
-      logger.error('Error while checking payment in message/order/payment: ' + err.message);
+      logger.error('Error while checking payment in message/order/payment: ' + err.message)
     }
 
     if (flow === '6' || flow === '2' || flow === '3' || flow === '5') {
@@ -384,24 +400,29 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any, 
         if (!fulfillments.length) {
           const key = `missingFulfillments`
           onStatusObj[key] = `missingFulfillments is mandatory for ${ApiSequence.ON_STATUS_DELIVERED}`
-        }
-        else {
+        } else {
           const fulfillmentsItemsStatusSet = new Set()
           fulfillments.forEach((ff: any, i: number) => {
-            if (ff.type == "Delivery" && !_.isEqual(ff?.start?.time?.timestamp, getValue("deliveryTmpStmp"))) {
-              onStatusObj[`message/order.fulfillments/${i}`] = `Mismatch occur while comparing ${ff.type} fulfillment start timestamp with the ${ApiSequence.ON_STATUS_PICKED}`
+            if (ff.type == 'Delivery' && !_.isEqual(ff?.start?.time?.timestamp, getValue('deliveryTmpStmp'))) {
+              onStatusObj[`message/order.fulfillments/${i}`] =
+                `Mismatch occur while comparing ${ff.type} fulfillment start timestamp with the ${ApiSequence.ON_STATUS_PICKED}`
             }
             fulfillmentsItemsStatusSet.add(JSON.stringify(ff))
-          });
+          })
           let i: number = 0
           fulfillmentsItemsSet.forEach((obj1: any) => {
             const keys = Object.keys(obj1)
 
             let obj2: any = _.filter(fulfillments, { type: `${obj1.type}` })
-            let apiSeq = obj1.type === "Cancel" ? ApiSequence.ON_UPDATE_PART_CANCEL : (getValue('onCnfrmState') === "Accepted" ? (ApiSequence.ON_CONFIRM) : (ApiSequence.ON_STATUS_PENDING))
+            let apiSeq =
+              obj1.type === 'Cancel'
+                ? ApiSequence.ON_UPDATE_PART_CANCEL
+                : getValue('onCnfrmState') === 'Accepted'
+                  ? ApiSequence.ON_CONFIRM
+                  : ApiSequence.ON_STATUS_PENDING
             if (obj2.length > 0) {
               obj2 = obj2[0]
-              if (obj2.type == "Delivery") {
+              if (obj2.type == 'Delivery') {
                 delete obj2?.tags
                 delete obj2?.agent
                 delete obj2?.start?.instructions
@@ -410,20 +431,25 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any, 
                 delete obj2?.end?.time?.timestamp
                 delete obj2?.state
               }
-              apiSeq = obj2.type === "Cancel" ? ApiSequence.ON_UPDATE_PART_CANCEL : (getValue('onCnfrmState') === "Accepted" ? (ApiSequence.ON_CONFIRM) : (ApiSequence.ON_STATUS_PENDING))
+              apiSeq =
+                obj2.type === 'Cancel'
+                  ? ApiSequence.ON_UPDATE_PART_CANCEL
+                  : getValue('onCnfrmState') === 'Accepted'
+                    ? ApiSequence.ON_CONFIRM
+                    : ApiSequence.ON_STATUS_PENDING
               const errors = compareFulfillmentObject(obj1, obj2, keys, i, apiSeq)
               if (errors.length > 0) {
                 errors.forEach((item: any) => {
                   onStatusObj[item.errKey] = item.errMsg
                 })
               }
-            }
-            else {
-              onStatusObj[`message/order.fulfillments/${i}`] = `Missing fulfillment type '${obj1.type}' in ${ApiSequence.ON_STATUS_DELIVERED} as compared to ${apiSeq}`
+            } else {
+              onStatusObj[`message/order.fulfillments/${i}`] =
+                `Missing fulfillment type '${obj1.type}' in ${ApiSequence.ON_STATUS_DELIVERED} as compared to ${apiSeq}`
             }
             i++
-          });
-          fulfillmentsItemsSet.clear();
+          })
+          fulfillmentsItemsSet.clear()
           fulfillmentsItemsStatusSet.forEach((ff: any) => {
             const obj: any = JSON.parse(ff)
             delete obj?.state
@@ -432,46 +458,56 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any, 
             fulfillmentsItemsSet.add(obj)
           })
         }
-
       } catch (error: any) {
-        logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_DELIVERED}, ${error.stack}`)
+        logger.error(
+          `Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_DELIVERED}, ${error.stack}`,
+        )
       }
     }
 
-     if (flow === FLOW.FLOW020) {
+    if (flow === FLOW.FLOW020) {
+      const fulfillments = on_status.fulfillments
+      if (!fulfillments.length) {
+        const key = `missingFulfillments`
+        onStatusObj[key] = `missingFulfillments is mandatory for ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}`
+      }
 
-         const fulfillments = on_status.fulfillments
-         if (!fulfillments.length) {
-           const key = `missingFulfillments`
-           onStatusObj[key] = `missingFulfillments is mandatory for ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}`
-         }
-   
-         fulfillments.forEach((fulfillment: any) => {
-           const tags = fulfillment.tags || []
-           const delayTag = tags.find((tag: { code: string }) => tag.code === 'fulfillment_delay')
-           const fulfillmentDelayTagList = getValue('fulfillmentDelayTagList')
-          if(!delayTag){
-                   const key = `missingFulfillmentTags`
-             onStatusObj[key] = `'fulfillment_delay should be present in FulfillmentTags in ${ApiSequence.ON_STATUS_DELIVERED}`
+      fulfillments.forEach((fulfillment: any) => {
+        const tags = fulfillment.tags || []
+        const delayTag = tags.find((tag: { code: string }) => tag.code === 'fulfillment_delay')
+        const fulfillmentDelayTagList = getValue('fulfillmentDelayTagList')
+        if (!delayTag) {
+          const key = `missingFulfillmentTags`
+          onStatusObj[key] =
+            `'fulfillment_delay should be present in FulfillmentTags in ${ApiSequence.ON_STATUS_DELIVERED}`
+        }
+        if (delayTag) {
+          const Errors = compareAllObjects(delayTag.list, fulfillmentDelayTagList)
+
+          if (!Errors.isEqual || !Errors.isObj1InObj2 || !Errors.isObj2InObj1 || !Errors.isContained) {
+            const key = `missingFulfillmentTags`
+            onStatusObj[key] = `missingFulfillmentTags are mandatory for ${ApiSequence.ON_STATUS_DELIVERED}`
           }
-   if(delayTag)
-{
-   const Errors = compareAllObjects(
-             delayTag.list,
-             fulfillmentDelayTagList,
-   
-           )
-           
-           if (!Errors.isEqual || !Errors.isObj1InObj2 || !Errors.isObj2InObj1 || !Errors.isContained) {
-             const key = `missingFulfillmentTags`
-             onStatusObj[key] = `missingFulfillmentTags are mandatory for ${ApiSequence.ON_STATUS_DELIVERED}`
-           }
-}   
-   
-   
-         })
-       }
-   
+        }
+      })
+    }
+    if (flow === FLOW.FLOW01C) {
+      const fulfillments = on_status.fulfillments
+      const deliveryFulfillment = fulfillments.find((f: any) => f.type === 'Delivery')
+
+      if (!deliveryFulfillment.hasOwnProperty('provider_id')) {
+        onStatusObj['missingFulfillments'] =
+          `provider_id must be present in ${ApiSequence.ON_STATUS_DELIVERED} as order is accepted`
+      }
+
+      const id = getProviderId(deliveryFulfillment)
+      const fulfillmentProviderId = getValue('fulfillmentProviderId')
+
+      if (deliveryFulfillment.hasOwnProperty('provider_id') && id !== fulfillmentProviderId) {
+        onStatusObj['providerIdMismatch'] =
+          `provider_id in fulfillment in ${ApiSequence.ON_CONFIRM} does not match expected provider_id: expected '${fulfillmentProviderId}' in ${ApiSequence.ON_STATUS_DELIVERED} but got ${id}`
+      }
+    }
 
     return onStatusObj
   } catch (err: any) {

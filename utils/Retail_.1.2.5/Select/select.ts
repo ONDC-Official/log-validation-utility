@@ -50,8 +50,7 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
       }
       msgIdSet.add(context.message_id)
       setValue(`${ApiSequence.SELECT_OUT_OF_STOCK}_msgId`, data.context.message_id)
-    }
-    else {
+    } else {
       logger.info(`Adding Message Id /${constants.SELECT}`)
       if (msgIdSet.has(context.message_id)) {
         errorObj[`${ApiSequence.SELECT}_msgId`] = `Message id should not be same with previous calls`
@@ -62,8 +61,7 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
   } catch (error: any) {
     if (flow === '3' && apiSeq == ApiSequence.SELECT_OUT_OF_STOCK) {
       logger.error(`!!Error while checking message id for /${constants.SELECT_OUT_OF_STOCK}, ${error.stack}`)
-    }
-    else {
+    } else {
       logger.error(`!!Error while checking message id for /${constants.SELECT}, ${error.stack}`)
     }
   }
@@ -230,12 +228,12 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
     select.items.forEach((item: any, index: number) => {
       onSearchItems.forEach((it: any) => {
         const tagsTypeArr = _.filter(it?.tags, { code: 'type' })
-        let isNotCustomization = true;
+        let isNotCustomization = true
         if (tagsTypeArr.length > 0) {
           const tagsType = _.filter(tagsTypeArr[0]?.list, { code: 'type' })
           if (tagsType.length > 0) {
-            if (tagsType[0]?.value == "customization") {
-              isNotCustomization = false;
+            if (tagsType[0]?.value == 'customization') {
+              isNotCustomization = false
             }
           }
         }
@@ -419,6 +417,26 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
   } else {
     errorObj.providerChecks = `Warning: Missed checks for provider as provider with  ID: ${select.provider.id} does not exist on ${constants.ON_SEARCH} API`
   }
+
+  try {
+    
+     const providers = onSearch?.message?.catalog['bpp/providers']
+    const getAllTags = (providers: any[]) => {
+      return providers.flatMap((provider) => provider.tags || [])
+    }
+    const tagList = getAllTags(providers)
+    const tag = tagList.find((ele): any => ele.code === 'order_value')
+    const minVal = tag.list.find((ele: { code: string }): any => ele.code === 'min_value')
+    setValue('MinOrderValue', minVal.value)
+    const price = getValue('selectedPrice')
+    if (_.lt(price, minVal.value)) {
+      const key = `orderValue`
+      errorObj[key] = `Order value must be greater or equal to Minimum Order Value`
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while saving MinOrderValue in ${constants.SELECT}`, error)
+  }
+   
 
   return Object.keys(errorObj).length > 0 && errorObj
 }

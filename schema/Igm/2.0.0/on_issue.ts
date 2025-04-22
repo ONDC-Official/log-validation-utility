@@ -275,7 +275,14 @@ const newOnIssueSchema = {
                 },
                 images: {
                   type: 'array',
-                  items: { type: 'string', format: 'uri' },
+                  items: { 
+                    type: 'object',
+                    properties: {
+                      url: { type: 'string', format: 'uri' },
+                      size_type: { type: 'string' }
+                    },
+                    required: ['url', 'size_type']
+                  },
                 },
               },
               required: ['code', 'short_desc', 'long_desc'],

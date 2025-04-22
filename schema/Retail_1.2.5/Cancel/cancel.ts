@@ -87,8 +87,8 @@ export const cancelSchema = {
         },
         cancellation_reason_id: {
           type: 'string',
-          minLength: 3,
-          maxLength: 3,
+          enum: ['001', '002', '003', '004', '005', '006', '009', '010', '011', '013', '014', '016', '017', '018', '020', '998', '999'],
+          errorMessage: 'Invalid cancellation reason ID. Must be one of the predefined codes.',
         },
         descriptor: {
           type: 'object',
@@ -101,11 +101,41 @@ export const cancelSchema = {
               type: 'string',
               minLength: 1,
             },
+            tags: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  
+                  code: {
+                    type: 'string',
+                    const: 'params',
+                  },
+                  list: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      properties: {
+                        code: {
+                          type: 'string',
+                          enum: ['force', 'ttl_response'],
+                        },
+                        value: {
+                          type: 'string',
+                        },
+                      },
+                      required: ['code', 'value'],
+                    },
+                  },
+                },
+                required: ['code', 'list'],
+              },
+            },
           },
           required: ['name', 'short_desc'],
         },
       },
-      required: ['order_id', 'cancellation_reason_id'],
+      required: ['order_id', 'cancellation_reason_id', 'descriptor'],
     },
   },
   required: ['context', 'message'],

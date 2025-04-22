@@ -1055,6 +1055,7 @@ curl --location 'https://log-validation.ondc.org/api/validate/igm' \
         "issue_esclated": {},
         "on_issue_gro_processing": {},
         "on_issue_gro_resolution_proposed": {},
+        "issue_gro_resolution_accepted":{}
         "on_issue_gro_resolved": {},
         "issue_close": {}
     }

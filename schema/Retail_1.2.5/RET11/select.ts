@@ -175,7 +175,6 @@ export const FnBselectSchema = {
                               },
                               value: {
                                 type: "string",
-                                enum: ["yes", "no"]
                               }
                             },
                             required: ["code", "value"]
@@ -186,7 +185,7 @@ export const FnBselectSchema = {
                     }
                   }
                 },
-                required: ["id", "tags"]
+                required: ["id"]
               },
             },
             fulfillments: {

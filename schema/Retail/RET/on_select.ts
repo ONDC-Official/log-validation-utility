@@ -134,7 +134,7 @@ export const onSelectSchema = {
                 properties: {
                   type: {
                     type: 'string',
-                    enums: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
+                    enum: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
                   },
                   id: {
                     type: 'string',
@@ -307,6 +307,7 @@ export const onSelectSchema = {
                                         },
                                         required: ['code', 'value'],
                                       },
+                                      minItems: 1,
                                     },
                                   },
                                   required: ['code', 'list'],
@@ -348,7 +349,6 @@ export const onSelectSchema = {
                                 },
                               ],
                             },
-                            required: ['tags'],
                           },
                         },
                       },

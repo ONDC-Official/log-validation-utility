@@ -104,7 +104,6 @@ export const FnBonInitSchema = {
               },
               required: ['id'],
             },
-
             items: {
               type: 'array',
               items: {
@@ -554,7 +553,7 @@ export const FnBonInitSchema = {
                       code: {
                         type: 'string',
                         description: 'Type of the offer (e.g., discount, buyXgetY, freebie).',
-                        enums: ['discount', 'buyXgetY', 'freebie', 'slab', 'combo', 'delivery', 'exchange', 'financing']
+                        enum: ['discount', 'buyXgetY', 'freebie', 'slab', 'combo', 'delivery', 'exchange', 'financing']
                       },
                       images: {
                         type: 'array',
@@ -615,7 +614,7 @@ export const FnBonInitSchema = {
                         code: {
                           type: 'string',
                           description: 'Type of the tag (e.g., qualifier, benefit, meta).',
-                          enums: ['qualifier', 'benefit', 'meta']
+                          enum: ['qualifier', 'benefit', 'meta']
                         },
                         list: {
                           type: 'array',
@@ -625,7 +624,7 @@ export const FnBonInitSchema = {
                               code: {
                                 type: 'string',
                                 description: 'Code representing the specific tag property.',
-                                enums: ['min_value', 'value_type', 'value', 'additive', 'item_count', 'item_id', 'item_value']
+                                enum: ['min_value', 'value_type', 'value', 'additive', 'item_count', 'item_id', 'item_value']
                               },
                               value: {
                                 type: 'string',
@@ -793,6 +792,59 @@ export const FnBonInitSchema = {
                 },
               },
             },
+            cancellation_terms: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  fulfillment_state: {
+                    type: 'object',
+                    properties: {
+                      descriptor: {
+                        type: 'object',
+                        properties: {
+                          code: {
+                            type: 'string',
+                            enum: ['Pending', 'Packed', 'Order-picked-up', 'Out-for-delivery', '*'],
+                          },
+                          short_desc: {
+                            type: 'string',
+                          },
+                        },
+                        required: ['code', 'short_desc'],
+                      },
+                    },
+                    required: ['descriptor'],
+                  },
+                  cancellation_fee: {
+                    type: 'object',
+                    properties: {
+                      percentage: {
+                        type: 'string',
+                        pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                        errorMessage: 'Percentage should be a number with up to 2 decimal places',
+                      },
+                      amount: {
+                        type: 'object',
+                        properties: {
+                          currency: {
+                            type: 'string',
+                          },
+                          value: {
+                            type: 'string',
+                            pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                            errorMessage: 'Amount value should be a number with up to 2 decimal places',
+                          },
+                        },
+                        required: ['currency', 'value'],
+                      },
+                    },
+                    required: ['percentage'],
+                  },
+                },
+                required: ['fulfillment_state', 'cancellation_fee'],
+              },
+            }
           },
           required: ['provider', 'items', 'billing', 'fulfillments', 'quote', 'payment', 'tags'],
           additionalProperties: false,

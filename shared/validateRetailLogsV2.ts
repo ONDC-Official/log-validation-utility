@@ -30,7 +30,7 @@ import { checkOnStatusDelivered } from '../utils/Retail_.1.2.5/Status/onStatusDe
 import { checkOnStatusRTODelivered } from '../utils/Retail_.1.2.5/Status/onStatusRTODelivered'
 import { checkCancel } from '../utils/Retail_.1.2.5/Cancel/cancel'
 import { checkOnCancel } from '../utils/Retail_.1.2.5/Cancel/onCancel'
-import {checkCatalogRejection} from '../utils/Retail_.1.2.5/Catalog_Rejection/catalogRejection'
+import { checkCatalogRejection } from '../utils/Retail_.1.2.5/Catalog_Rejection/catalogRejection'
 
 export const validateLogs = async (data: any, domain: string, flow: string) => {
   const msgIdSet = new Set()
@@ -145,20 +145,9 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       ApiSequence.ON_UPDATE_LIQUIDATED,
       ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED,
     ]
-    const flowSevenSequence = [
-      ApiSequence.SEARCH,
-      ApiSequence.ON_SEARCH,
-      ApiSequence.CATALOG_REJECTION
-    ]
-    const flowEightSequence = [
-      ApiSequence.SEARCH,
-      ApiSequence.ON_SEARCH,
-    ]
-    const flowNineSequence = [
-      ApiSequence.INC_SEARCH,
-      ApiSequence.INC_ONSEARCH,
-      ApiSequence.CATALOG_REJECTION
-    ]
+    const flowSevenSequence = [ApiSequence.SEARCH, ApiSequence.ON_SEARCH, ApiSequence.CATALOG_REJECTION]
+    const flowEightSequence = [ApiSequence.SEARCH, ApiSequence.ON_SEARCH]
+    const flowNineSequence = [ApiSequence.INC_SEARCH, ApiSequence.INC_ONSEARCH, ApiSequence.CATALOG_REJECTION]
 
     const processApiSequence = (apiSequence: any, data: any, logReport: any, msgIdSet: any, flow: string) => {
       if (validFlows.includes(flow)) {
@@ -231,27 +220,83 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         case ApiSequence.ON_STATUS_DELIVERED:
           return checkOnStatusDelivered(data, 'delivered', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.ON_UPDATE_PART_CANCEL:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_PART_CANCEL, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-a")
+          return checkOnUpdate(
+            data,
+            msgIdSet,
+            ApiSequence.ON_UPDATE_PART_CANCEL,
+            settlementDetatilSet,
+            quoteTrailItemsSet,
+            fulfillmentsItemsSet,
+            '6-a',
+          )
         case ApiSequence.UPDATE_SETTLEMENT_PART_CANCEL:
           return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_PART_CANCEL, settlementDetatilSet, '6-a')
         case ApiSequence.UPDATE_REVERSE_QC:
           return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_REVERSE_QC, settlementDetatilSet, '6-b')
         case ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, '6-b')
+          return checkOnUpdate(
+            data,
+            msgIdSet,
+            ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC,
+            settlementDetatilSet,
+            quoteTrailItemsSet,
+            fulfillmentsItemsSet,
+            '6-b',
+          )
         case ApiSequence.ON_UPDATE_APPROVAL:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_APPROVAL, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-b")
+          return checkOnUpdate(
+            data,
+            msgIdSet,
+            ApiSequence.ON_UPDATE_APPROVAL,
+            settlementDetatilSet,
+            quoteTrailItemsSet,
+            fulfillmentsItemsSet,
+            '6-b',
+          )
         case ApiSequence.ON_UPDATE_PICKED:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_PICKED, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-b")
+          return checkOnUpdate(
+            data,
+            msgIdSet,
+            ApiSequence.ON_UPDATE_PICKED,
+            settlementDetatilSet,
+            quoteTrailItemsSet,
+            fulfillmentsItemsSet,
+            '6-b',
+          )
         case ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC:
           return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC, settlementDetatilSet, '6-b')
         case ApiSequence.ON_UPDATE_DELIVERED:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_DELIVERED, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-b")
+          return checkOnUpdate(
+            data,
+            msgIdSet,
+            ApiSequence.ON_UPDATE_DELIVERED,
+            settlementDetatilSet,
+            quoteTrailItemsSet,
+            fulfillmentsItemsSet,
+            '6-b',
+          )
         case ApiSequence.UPDATE_LIQUIDATED:
           return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_LIQUIDATED, settlementDetatilSet, '6-c')
         case ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-c")
+          return checkOnUpdate(
+            data,
+            msgIdSet,
+            ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED,
+            settlementDetatilSet,
+            quoteTrailItemsSet,
+            fulfillmentsItemsSet,
+            '6-c',
+          )
         case ApiSequence.ON_UPDATE_LIQUIDATED:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_LIQUIDATED, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-c")
+          return checkOnUpdate(
+            data,
+            msgIdSet,
+            ApiSequence.ON_UPDATE_LIQUIDATED,
+            settlementDetatilSet,
+            quoteTrailItemsSet,
+            fulfillmentsItemsSet,
+            '6-c',
+          )
         case ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED:
           return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED, settlementDetatilSet, '6-c')
         case ApiSequence.TRACK:
@@ -284,12 +329,12 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         logReport = processApiSequence(flowSixSequence, data, logReport, msgIdSet, flow)
         break
       case FLOW.FLOW7:
-        logReport= processApiSequence(flowSevenSequence, data, logReport, msgIdSet, flow)
+        logReport = processApiSequence(flowSevenSequence, data, logReport, msgIdSet, flow)
         break
       case FLOW.FLOW8:
         logReport = processApiSequence(flowEightSequence, data, logReport, msgIdSet, flow)
         break
-      case FLOW.FLOW9: 
+      case FLOW.FLOW9:
         logReport = processApiSequence(flowNineSequence, data, logReport, msgIdSet, flow)
         break
     }
@@ -302,7 +347,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
 }
 export const validateLogsRetailV2 = async (data: any, domain: string, flow: string) => {
     console.log("in this");
-    
+
   const msgIdSet = new Set()
   const quoteTrailItemsSet = new Set()
   const settlementDetatilSet = new Set()
@@ -317,7 +362,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
   }
 
   try {
-    const validFlows = ['1', '2', '2A', '3', '4', '5', '6', '7', '8', '9', ]
+    const validFlows = ['1', '2', '2A', '3', '4', '5', '6', '7', '8', '9', '020']
     if (!retailDomains.includes(domain)) {
       return 'Domain should 1.2.5 retail domains'
     }
@@ -385,7 +430,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_STATUS_PICKED,
       ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
       ApiSequence.ON_CANCEL,
-      ApiSequence.ON_STATUS_RTO_DELIVERED
+      ApiSequence.ON_STATUS_RTO_DELIVERED,
     ]
 
     const flowSixSequence = [
@@ -415,19 +460,23 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_UPDATE_LIQUIDATED,
       ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED,
     ]
-    const flowSevenSequence = [
+    const flowSevenSequence = [ApiSequence.SEARCH, ApiSequence.ON_SEARCH, ApiSequence.CATALOG_REJECTION]
+    const flowEightSequence = [ApiSequence.SEARCH, ApiSequence.ON_SEARCH]
+    const flowNineSequence = [ApiSequence.INC_SEARCH, ApiSequence.INC_ONSEARCH, ApiSequence.CATALOG_REJECTION]
+    const flow020Sequence = [
       ApiSequence.SEARCH,
       ApiSequence.ON_SEARCH,
-      ApiSequence.CATALOG_REJECTION
-    ]
-    const flowEightSequence = [
-      ApiSequence.SEARCH,
-      ApiSequence.ON_SEARCH,
-    ]
-    const flowNineSequence = [
-      ApiSequence.INC_SEARCH,
-      ApiSequence.INC_ONSEARCH,
-      ApiSequence.CATALOG_REJECTION
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+      ApiSequence.ON_STATUS_PENDING,
+      ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
+      ApiSequence.ON_STATUS_DELIVERED,
     ]
 
     const processApiSequence = (apiSequence: any, data: any, logReport: any, msgIdSet: any, flow: string) => {
@@ -501,27 +550,83 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
         case ApiSequence.ON_STATUS_DELIVERED:
           return checkOnStatusDelivered(data, 'delivered', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.ON_UPDATE_PART_CANCEL:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_PART_CANCEL, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-a")
+          return checkOnUpdate(
+            data,
+            msgIdSet,
+            ApiSequence.ON_UPDATE_PART_CANCEL,
+            settlementDetatilSet,
+            quoteTrailItemsSet,
+            fulfillmentsItemsSet,
+            '6-a',
+          )
         case ApiSequence.UPDATE_SETTLEMENT_PART_CANCEL:
           return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_PART_CANCEL, settlementDetatilSet, '6-a')
         case ApiSequence.UPDATE_REVERSE_QC:
           return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_REVERSE_QC, settlementDetatilSet, '6-b')
         case ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, '6-b')
+          return checkOnUpdate(
+            data,
+            msgIdSet,
+            ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC,
+            settlementDetatilSet,
+            quoteTrailItemsSet,
+            fulfillmentsItemsSet,
+            '6-b',
+          )
         case ApiSequence.ON_UPDATE_APPROVAL:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_APPROVAL, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-b")
+          return checkOnUpdate(
+            data,
+            msgIdSet,
+            ApiSequence.ON_UPDATE_APPROVAL,
+            settlementDetatilSet,
+            quoteTrailItemsSet,
+            fulfillmentsItemsSet,
+            '6-b',
+          )
         case ApiSequence.ON_UPDATE_PICKED:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_PICKED, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-b")
+          return checkOnUpdate(
+            data,
+            msgIdSet,
+            ApiSequence.ON_UPDATE_PICKED,
+            settlementDetatilSet,
+            quoteTrailItemsSet,
+            fulfillmentsItemsSet,
+            '6-b',
+          )
         case ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC:
           return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC, settlementDetatilSet, '6-b')
         case ApiSequence.ON_UPDATE_DELIVERED:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_DELIVERED, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-b")
+          return checkOnUpdate(
+            data,
+            msgIdSet,
+            ApiSequence.ON_UPDATE_DELIVERED,
+            settlementDetatilSet,
+            quoteTrailItemsSet,
+            fulfillmentsItemsSet,
+            '6-b',
+          )
         case ApiSequence.UPDATE_LIQUIDATED:
           return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_LIQUIDATED, settlementDetatilSet, '6-c')
         case ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-c")
+          return checkOnUpdate(
+            data,
+            msgIdSet,
+            ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED,
+            settlementDetatilSet,
+            quoteTrailItemsSet,
+            fulfillmentsItemsSet,
+            '6-c',
+          )
         case ApiSequence.ON_UPDATE_LIQUIDATED:
-          return checkOnUpdate(data, msgIdSet, ApiSequence.ON_UPDATE_LIQUIDATED, settlementDetatilSet, quoteTrailItemsSet, fulfillmentsItemsSet, "6-c")
+          return checkOnUpdate(
+            data,
+            msgIdSet,
+            ApiSequence.ON_UPDATE_LIQUIDATED,
+            settlementDetatilSet,
+            quoteTrailItemsSet,
+            fulfillmentsItemsSet,
+            '6-c',
+          )
         case ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED:
           return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED, settlementDetatilSet, '6-c')
         case ApiSequence.TRACK:
@@ -554,13 +659,16 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
         logReport = processApiSequence(flowSixSequence, data, logReport, msgIdSet, flow)
         break
       case FLOW.FLOW7:
-        logReport= processApiSequence(flowSevenSequence, data, logReport, msgIdSet, flow)
+        logReport = processApiSequence(flowSevenSequence, data, logReport, msgIdSet, flow)
         break
       case FLOW.FLOW8:
         logReport = processApiSequence(flowEightSequence, data, logReport, msgIdSet, flow)
         break
-      case FLOW.FLOW9: 
+      case FLOW.FLOW9:
         logReport = processApiSequence(flowNineSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW020:
+        logReport = processApiSequence(flow020Sequence, data, logReport, msgIdSet, flow)
         break
     }
   } catch (error: any) {
@@ -571,15 +679,15 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
   return logReport
 }
 export const validateActionSchema = (data: any, domain: string, action: string) => {
-    const errorObj: any = {}
-  
-    if (domain === 'ONDC:RET11') {
-      const schemaError = validateSchema('RET11', action, data)
-      if (schemaError !== 'error') Object.assign(errorObj, schemaError)
-      return isObjectEmpty(errorObj) ? false : errorObj
-    } else {
-      const schemaError = validateSchema('RET10', action, data)
-      if (schemaError !== 'error') Object.assign(errorObj, schemaError)
-      return isObjectEmpty(errorObj) ? false : errorObj
-    }
+  const errorObj: any = {}
+
+  if (domain === 'ONDC:RET11') {
+    const schemaError = validateSchema('RET11', action, data)
+    if (schemaError !== 'error') Object.assign(errorObj, schemaError)
+    return isObjectEmpty(errorObj) ? false : errorObj
+  } else {
+    const schemaError = validateSchema('RET10', action, data)
+    if (schemaError !== 'error') Object.assign(errorObj, schemaError)
+    return isObjectEmpty(errorObj) ? false : errorObj
   }
+}

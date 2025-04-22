@@ -373,7 +373,6 @@ export const checkOnSelect = (data: any) => {
         itemPrices.set(item['@ondc/org/item_id'], Math.abs(item.price.value))
       }
     })
-    
 
     setValue('selectPriceMap', itemPrices)
   } catch (error: any) {
@@ -413,41 +412,46 @@ export const checkOnSelect = (data: any) => {
     logger.info(`-x-x-x-x-Quote Breakup ${constants.ON_SELECT} all checks-x-x-x-x`)
     const itemsIdList: any = getValue('itemsIdList')
     const itemsCtgrs: any = getValue('itemsCtgrs')
-    const providerOffers: any = getValue(`${ApiSequence.ON_SEARCH}_offers`);
+    const providerOffers: any = getValue(`${ApiSequence.ON_SEARCH}_offers`)
     const applicableOffers: any[] = []
     const orderItemIds = on_select?.items?.map((item: any) => item.id) || []
-    const items:any = orderItemIds
-      .map((id:any) => {
-        const item = on_select?.quote?.breakup.find((entry:any) => entry['@ondc/org/item_id'] === id)
+    const items: any = orderItemIds
+      .map((id: any) => {
+        const item = on_select?.quote?.breakup.find((entry: any) => entry['@ondc/org/item_id'] === id)
         return item ? { id, price: item.price.value } : null
       })
-      .filter((item:any) => item !== null)
-    console.log("itemPrices of found items in breakup",JSON.stringify(items));
+      .filter((item: any) => item !== null)
+    console.log('itemPrices of found items in breakup', JSON.stringify(items))
 
     const priceSums = items.reduce((acc: Record<string, number>, item: { id: string; price: string }) => {
-      const { id, price } = item;
-      acc[id] = (acc[id] || 0) + parseFloat(price);
-      return acc;
-    }, {});
-    
-    console.log("providerOffers",JSON.stringify(providerOffers));
+      const { id, price } = item
+      acc[id] = (acc[id] || 0) + parseFloat(price)
+      return acc
+    }, {})
+
+    console.log('providerOffers', JSON.stringify(providerOffers))
     if (on_select.quote) {
-      const totalWithoutOffers = on_select?.quote?.breakup.reduce((sum:any, item:any) => {
-        if (item["@ondc/org/title_type"] !== "offer") {
-          const value = parseFloat(item.price?.value || "0");
-          return sum + value;
+      const totalWithoutOffers = on_select?.quote?.breakup.reduce((sum: any, item: any) => {
+        if (item['@ondc/org/title_type'] !== 'offer') {
+          const value = parseFloat(item.price?.value || '0')
+          return sum + value
         }
-        return sum;
-      }, 0);
-      
-      console.log("Total without offers:", totalWithoutOffers.toFixed(2));
-      const offers:any = on_select.quote.breakup.filter((offer:any)=>offer["@ondc/org/title_type"] === "offer");
+        return sum
+      }, 0)
+
+      console.log('Total without offers:', totalWithoutOffers.toFixed(2))
+      const offers: any = on_select.quote.breakup.filter((offer: any) => offer['@ondc/org/title_type'] === 'offer')
       const applicableOffer = getValue('selected_offer')
-      console.log("applicableOffer",applicableOffer);
-      const deliveryCharges = Math.abs(parseFloat(on_select.quote.breakup.find((item:any)=>item["@ondc/org/title_type"] === "delivery")?.price?.value)) || 0;
-      
+      console.log('applicableOffer', applicableOffer)
+      const deliveryCharges =
+        Math.abs(
+          parseFloat(
+            on_select.quote.breakup.find((item: any) => item['@ondc/org/title_type'] === 'delivery')?.price?.value,
+          ),
+        ) || 0
+
       if (offers.length > 0) {
-        setValue('on_select_offers',offers)
+        setValue('on_select_offers', offers)
         const additiveOffers = offers.filter((offer: any) => {
           const metaTag = offer?.item.tags?.find((tag: any) => tag.code === 'offer')
           return metaTag?.list?.some((entry: any) => entry.code === 'additive' && entry.value.toLowerCase() === 'yes')
@@ -471,15 +475,15 @@ export const checkOnSelect = (data: any) => {
           applicableOffers.length = 0
           const offer = nonAdditiveOffers[0]
           const offerId = offer?.item?.tags
-                ?.find((tag: any) => tag.code === 'offer')
-                ?.list?.find((entry: any) => entry.code === 'id')?.value
+            ?.find((tag: any) => tag.code === 'offer')
+            ?.list?.find((entry: any) => entry.code === 'id')?.value
           const providerOffer = providerOffers.find((o: any) => o.id === offerId)
           if (providerOffer) {
             applicableOffers.push(providerOffer)
           }
         } else if (nonAdditiveOffers.length > 1) {
-         console.log("nonAdditiveOffers",nonAdditiveOffers);
-         
+          console.log('nonAdditiveOffers', nonAdditiveOffers)
+
           applicableOffers.length = 0
           nonAdditiveOffers.forEach((offer: any) => {
             errorObj[`offer[${offer.index}]`] =
@@ -494,13 +498,13 @@ export const checkOnSelect = (data: any) => {
         const titleType = element['@ondc/org/title_type']
 
         console.log(`Calculating quoted Price Breakup for element ${element.title}`)
-        if (titleType === "offer") {
-          const priceValue = parseFloat(element.price.value);
-        
+        if (titleType === 'offer') {
+          const priceValue = parseFloat(element.price.value)
+
           if (isNaN(priceValue)) {
-            errorObj.invalidPrice = `Price for title type "offer" is not a valid number.`;
+            errorObj.invalidPrice = `Price for title type "offer" is not a valid number.`
           } else if (priceValue >= 0) {
-            errorObj.positivePrice = `Price for title type "offer" must be negative, but got ${priceValue}.`;
+            errorObj.positivePrice = `Price for title type "offer" must be negative, but got ${priceValue}.`
           }
         }
         onSelectPrice += parseFloat(element.price.value)
@@ -639,7 +643,7 @@ export const checkOnSelect = (data: any) => {
               const offerItemIds = providerOffer?.item_ids || []
               const itemMatch = offerItemIds.some((id: string) => orderItemIds.includes(id))
 
-              if (!itemMatch && titleType === "buyXgetY") {
+              if (!itemMatch && titleType === 'buyXgetY') {
                 errorObj[`offer_item[${i}]`] =
                   `Offer with id '${offerId}' is not applicable for any of the ordered item(s). \nApplicable items in offer: [${offerItemIds.join(', ')}], \nItems in order: [${orderItemIds.join(', ')}].`
               }
@@ -714,8 +718,7 @@ export const checkOnSelect = (data: any) => {
                         `Quoted price mismatch: After ${benefitAmount}% discount on ₹${totalWithoutOffers}, expected price is ₹${quoteAfterBenefit.toFixed(2)}, but got ₹${quotedPrice.toFixed(2)}.`
                     }
                   }
-                }
-                 else {
+                } else {
                   if (value_cap > 0) {
                     benefitValue = value_cap - benefitAmount
 
@@ -783,7 +786,7 @@ export const checkOnSelect = (data: any) => {
                   const itemTags = element?.item?.tags || []
 
                   const offerTag = itemTags.find((tag: any) => tag.code === 'offer')
-                  if(!offerTag){
+                  if (!offerTag) {
                     errorObj.invalidTags = `tags are required in on_select   /quote with @ondc/org/title_type:${titleType} and offerId:${offerId}`
                   }
 
@@ -811,7 +814,7 @@ export const checkOnSelect = (data: any) => {
                   const matchedItems = itemsOnSearch[0].filter((item: any) => itemIds.includes(item.id))
 
                   const priceMismatchItems: string[] = []
-                  let totalExpectedOfferValue:number = 0
+                  let totalExpectedOfferValue: number = 0
                   console.log(totalExpectedOfferValue)
                   let allItemsEligible = true
 
@@ -855,8 +858,7 @@ export const checkOnSelect = (data: any) => {
                       errorObj.invalidItems = `Item(s) with ID(s) ${missingOrOutOfStock.join(', ')} not found in catalog or do not have enough stock for offer ID: ${offerId}`
                     }
                   }
-                }
-                 else {
+                } else {
                   console.log('benefit lsit', benefitList)
                   const benefitItemId = benefitList.find((entry: any) => entry.code === 'item_id')?.value || ''
                   const benefitItemCount = parseInt(
@@ -865,7 +867,7 @@ export const checkOnSelect = (data: any) => {
                   const itemTags = element?.item?.tags || []
 
                   const offerTag = itemTags.find((tag: any) => tag.code === 'offer')
-                  if(!offerTag){
+                  if (!offerTag) {
                     errorObj.invalidTags = `tags are required in on_select   /quote with @ondc/org/title_type:${titleType} and offerId:${offerId}`
                   }
 
@@ -964,7 +966,7 @@ export const checkOnSelect = (data: any) => {
                 const itemTags = element?.item?.tags || []
 
                 const offerTag = itemTags.find((tag: any) => tag.code === 'offer')
-                if(!offerTag){
+                if (!offerTag) {
                   errorObj.invalidTags = `tags are required in on_select   /quote with @ondc/org/title_type:${titleType} and offerId:${offerId}`
                 }
 
@@ -1101,8 +1103,10 @@ export const checkOnSelect = (data: any) => {
                 }
               }
             }
-          } catch (error:any) {
-            logger.error(`!!Error while checking and validating the offer price in /${constants.ON_SELECT}, ${error.stack}`)
+          } catch (error: any) {
+            logger.error(
+              `!!Error while checking and validating the offer price in /${constants.ON_SELECT}, ${error.stack}`,
+            )
           }
         }
       })
@@ -1177,13 +1181,13 @@ export const checkOnSelect = (data: any) => {
           item['@ondc/org/title_type'] !== 'offer' &&
           !(item.title.toLowerCase().trim() in retailPymntTtl)
         ) {
-          errorObj.pymntttl = `Quote breakup Payment title "${item.title}" is not as per the API Contract`;
+          errorObj.pymntttl = `Quote breakup Payment title "${item.title}" is not as per the API Contract`
         } else if (
           item['@ondc/org/title_type'] !== 'item' &&
           item['@ondc/org/title_type'] !== 'offer' &&
           retailPymntTtl[item.title.toLowerCase().trim()] !== item['@ondc/org/title_type']
         ) {
-          errorObj.pymntttlmap = `Quote breakup Payment title "${item.title}" comes under the title type "${retailPymntTtl[item.title.toLowerCase().trim()]}"`;
+          errorObj.pymntttlmap = `Quote breakup Payment title "${item.title}" comes under the title type "${retailPymntTtl[item.title.toLowerCase().trim()]}"`
         }
       })
     } else {
@@ -1278,7 +1282,7 @@ export const checkOnSelect = (data: any) => {
   setValue('quote_price', on_select.quote.price.value)
   const MinOrderValue = getValue('MinOrderValue')
   if (MinOrderValue) {
-    if (_.lt(on_select.quote.price.value, MinOrderValue)) {
+    if (_.lt(Number(on_select.quote.price.value), Number(MinOrderValue))) {
       const key = `orderValue`
       errorObj[key] = `Order value must be greater or equal to Minimum Order Value`
     }

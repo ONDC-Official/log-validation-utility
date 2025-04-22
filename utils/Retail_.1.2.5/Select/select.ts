@@ -10,6 +10,7 @@ import {
 } from '../..'
 import _ from 'lodash'
 import { logger } from '../../../shared/logger'
+import { FLOW } from '../../enum'
 
 const tagFinder = (item: { tags: any[] }, value: string): any => {
   const res = item?.tags?.find((tag: any) => {
@@ -526,32 +527,47 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
     }
   }
 
-  // Call the provider check Function only when valid provider is present
   if (providerOnSelect) {
     checksOnValidProvider(providerOnSelect)
   } else {
     errorObj.providerChecks = `Warning: Missed checks for provider as provider with  ID: ${select.provider.id} does not exist on ${constants.ON_SEARCH} API`
   }
 
-  try {
+  let minVal: any = null;
+
+try {
+  const providers = onSearch?.message?.catalog['bpp/providers'];
+  const getAllTags = (providers: any[]) => {
+    return providers.flatMap((provider) => {
     
-     const providers = onSearch?.message?.catalog['bpp/providers']
-    const getAllTags = (providers: any[]) => {
-      return providers.flatMap((provider) => provider.tags || [])
-    }
-    const tagList = getAllTags(providers)
-    const tag = tagList.find((ele): any => ele.code === 'order_value')
-    const minVal = tag.list.find((ele: { code: string }): any => ele.code === 'min_value')
-    setValue('MinOrderValue', minVal.value)
-    const price = getValue('selectedPrice')
-    if (_.lt(price, minVal.value)) {
-      const key = `orderValue`
-      errorObj[key] = `Order value must be greater or equal to Minimum Order Value`
-    }
-  } catch (error: any) {
-    logger.error(`!!Error while saving MinOrderValue in ${constants.SELECT}`, error)
+      return provider.tags;
+    });
+  };
+
+  const tagList = getAllTags(providers);
+  const tag = tagList.find((ele): any => ele.code === 'order_value');
+  minVal = tag.list.find((ele: { code: string }) => ele.code === 'min_value');
+  if(minVal.value)setValue('MinOrderValue', minVal.value);
+} catch (error: any) {
+  logger.error(`!!Error while extracting MinOrderValue in ${constants.SELECT}`, error);
+}
+
+const validDomains = ['ONDC:RET10', 'ONDC:RET13', 'ONDC:RET18'];
+if (flow === FLOW.FLOW008 && validDomains.includes(context.domain)) {
+ if (!minVal ) {
+   const key = `order_value`;
+    errorObj[key] = `Tags must contain "order_value" with Minimum Order Value`;
   }
-   
+  if (minVal) {
+    const price = getValue('selectedPrice');
+    if (_.lt(price, minVal.value)) {
+      const key = `minimum_order_value`;
+      errorObj[key] = `Order value must be greater or equal to Minimum Order Value`;
+    }
+  }
+}
+
+
 
   return Object.keys(errorObj).length > 0 && errorObj
 }

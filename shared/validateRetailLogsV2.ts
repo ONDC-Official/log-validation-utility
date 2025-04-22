@@ -362,7 +362,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
   }
 
   try {
-    const validFlows = ['1', '2', '2A', '3', '4', '5', '6', '7', '8', '9', '020','01C']
+    const validFlows = ['1', '2', '2A', '3', '4', '5', '6', '7', '8', '9', '020','01C','008']
     if (!retailDomains.includes(domain)) {
       return 'Domain should 1.2.5 retail domains'
     }
@@ -492,6 +492,14 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_STATUS_PICKED,
       ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
       ApiSequence.ON_STATUS_DELIVERED,
+    ]
+    const flow008Sequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
     ]
    
 
@@ -688,6 +696,9 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
         break
       case FLOW.FLOW01C:
         logReport = processApiSequence(flow01CSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW008:
+        logReport = processApiSequence(flow008Sequence, data, logReport, msgIdSet, flow)
         break
     
     }

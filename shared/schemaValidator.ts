@@ -1309,17 +1309,22 @@ const validate_schema_on_update_FIS_WCL_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
-const validate_schema_on_update_flows_FIS_WCL_for_json = (data: any) => {
-  const error_list = validate_schema(data, onUpdateFIS12FlowSchema)
-  return formatted_error(error_list)
-}
-
 const validate_schema_cancel_FIS_WCL_for_json = (data: any) => {
   const error_list = validate_schema(data, cancelFISWCLSchema)
   return formatted_error(error_list)
 }
 const validate_schema_on_cancel_FIS_WCL_for_json = (data: any) => {
   const error_list = validate_schema(data, onCancelFISWCLSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_update_foreclosure_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateFIS12FlowSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_update_flow_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateFIS12FlowSchema)
   return formatted_error(error_list)
 }
 
@@ -1666,7 +1671,8 @@ export default {
   validate_schema_on_status_FIS_WCL_for_json,
   validate_schema_update_FIS_WCL_for_json,
   validate_schema_on_update_FIS_WCL_for_json,
-  validate_schema_on_update_flows_FIS_WCL_for_json,
+  validate_schema_on_update_foreclosure_FIS_WCL_for_json,
+  validate_schema_on_update_flow_FIS_WCL_for_json,
   validate_schema_cancel_FIS_WCL_for_json,
   validate_schema_on_cancel_FIS_WCL_for_json,
 

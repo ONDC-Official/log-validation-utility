@@ -22,6 +22,8 @@ export default Object.freeze({
   STATUS: 'status',
   UPDATE: 'update',
   ON_UPDATE: 'on_update',
+  ON_UPDATE_FLOW: 'on_update_flow',
+  ON_UPDATE_FORECLOSURE:'on_update_foreclosure',
   ON_UPDATE_INTERIM: 'on_update_interim',
   ON_STATUS: 'on_status',
   ON_STATUS_PENDING: 'on_status_pending',

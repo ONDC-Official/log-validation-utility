@@ -2,12 +2,13 @@ import { logger } from '../../../../shared/logger'
 import { setValue} from '../../../../shared/dao'
 import constants from '../../../../constants'
 import { validateSchema, isObjectEmpty, checkFISContext } from '../../../../utils'
+import { validateCancellationDetails, validateTransactionConsistency } from './commonValidations'
 
 export const checkcancelWCL = (data: any, msgIdSet: any, flow: string, sequence: string) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [constants.ON_SELECT]: 'JSON cannot be empty' }
+      return { [constants.CANCEL]: 'JSON cannot be empty' }
     }
 
     console.log("flow ---", flow)
@@ -16,11 +17,9 @@ export const checkcancelWCL = (data: any, msgIdSet: any, flow: string, sequence:
     if (
       !data.message ||
       !data.context ||
-      !data.message.order ||
-      isObjectEmpty(data.message) ||
-      isObjectEmpty(data.message.order)
+      isObjectEmpty(data.message)
     ) {
-      errorObj['missingFields'] = '/context, /message, /order or /message/order is missing or empty'
+      errorObj['missingFields'] = '/context or /message is missing or empty'
       return Object.keys(errorObj).length > 0 && errorObj
     }
 
@@ -38,7 +37,16 @@ export const checkcancelWCL = (data: any, msgIdSet: any, flow: string, sequence:
       Object.assign(errorObj, schemaValidation)
     }
 
-    // Additional validation logic can be added here
+    // Validate cancellation details
+    const cancellationErrors = validateCancellationDetails(data.message)
+    Object.assign(errorObj, cancellationErrors)
+    
+    // Validate transaction consistency
+    const transactionErrors = validateTransactionConsistency(data.context)
+    Object.assign(errorObj, transactionErrors)
+    
+    // Store order ID for cross-validation
+    setValue('cancelled_order_id', data.message.order_id)
 
     return Object.keys(errorObj).length > 0 && errorObj
   } catch (error: any) {

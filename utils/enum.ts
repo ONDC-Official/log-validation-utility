@@ -695,7 +695,7 @@ export enum DOMAIN {
 export enum FLOW {
   FLOW1 = '1',
   FLOW2 = '2',
-  FLOW2A = '2A',
+  FLOW012 = '012',
   FLOW3 = '3',
   FLOW4 = '4',
   FLOW5 = '5',

@@ -362,7 +362,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
   }
 
   try {
-    const validFlows = ['1', '2', '012', '3', '4', '5', '6', '7', '8', '9', '020', ,'01C','008']
+    const validFlows = ['1', '2', '012', '3', '4', '5', '6', '7', '8', '9', '020','01C','008']
     if (!retailDomains.includes(domain)) {
       return 'Domain should 1.2.5 retail domains'
     }

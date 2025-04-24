@@ -291,7 +291,6 @@ export const onSelectSchema = {
                                   properties: {
                                     code: {
                                       type: 'string',
-                                      const: 'quote',
                                     },
                                     list: {
                                       type: 'array',

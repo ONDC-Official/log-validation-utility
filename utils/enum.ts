@@ -711,3 +711,13 @@ export enum statutory_reqs {
   PackagedCommodities = '@ondc/org/statutory_reqs_packaged_commodities',
   None = 'None'
 }
+export enum OFFERSFLOW { 
+  FLOW0091 = "0091",
+  FLOW0092 = "0092",
+  FLOW0093 = "0093",
+  FLOW0094 = "0094",
+  FLOW0095 = "0095",
+  FLOW0096 = "0096",
+  FLOW0097 = "0097",
+  FLOW0098 = "0098"
+}

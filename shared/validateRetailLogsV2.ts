@@ -18,7 +18,7 @@ import { checkSearch } from '../utils/Retail_.1.2.5/Search/search'
 import { checkOnsearch } from '../utils/Retail_.1.2.5/Search/on_search'
 import { checkSearchIncremental } from '../utils/Retail_.1.2.5/SearchInc/searchIncremental'
 import { checkOnsearchIncremental } from '../utils/Retail_.1.2.5/SearchInc/onSearchIncremental'
-import { FLOW } from '../utils/enum'
+import { FLOW,OFFERSFLOW } from '../utils/enum'
 import { checkSelect_OOS } from '../utils/Retail_.1.2.5/Select_OOS/select_oos'
 import { checkOnSelect_OOS } from '../utils/Retail_.1.2.5/Select_OOS/on_select_oos'
 import { checkUpdate } from '../utils/Retail_.1.2.5/Update/update'
@@ -188,7 +188,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
             return checkSelect(data, msgIdSet, ApiSequence.SELECT)
           }
         case ApiSequence.ON_SELECT:
-          return checkOnSelect(data)
+          return checkOnSelect(data,flow)
         case ApiSequence.SELECT_OUT_OF_STOCK:
           return checkSelect(data, msgIdSet, ApiSequence.SELECT_OUT_OF_STOCK)
         case ApiSequence.ON_SELECT_OUT_OF_STOCK:
@@ -336,7 +336,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
         break
       case FLOW.FLOW9:
         logReport = processApiSequence(flowNineSequence, data, logReport, msgIdSet, flow)
-        break
+        break          
     }
   } catch (error: any) {
     logger.error(error.message)
@@ -362,7 +362,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
   }
 
   try {
-    const validFlows = ['1', '2', '2A', '3', '4', '5', '6', '7', '8', '9', '020']
+    const validFlows = ['1', '2', '2A', '3', '4', '5', '6', '7', '8', '9','0091','0092','0093','0094','0095','0096','0097','0098','020']
     if (!retailDomains.includes(domain)) {
       return 'Domain should 1.2.5 retail domains'
     }
@@ -478,6 +478,86 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
       ApiSequence.ON_STATUS_DELIVERED,
     ]
+    const flowOfferTypeDiscountSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+    ]
+    const flowOfferTypeFreebieSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+    ]
+    const flowOfferTypebuyXgetYSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+    ]
+    const flowOfferTypeDeliverySequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+    ]
+    const flowOfferTypeSlabSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+    ]
+    const flowOfferTypeComboSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+    ]
+    const flowOfferTypeExchangeSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+    ]
+    const flowOfferTypeFinancingSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+    ]
 
     const processApiSequence = (apiSequence: any, data: any, logReport: any, msgIdSet: any, flow: string) => {
       if (validFlows.includes(flow)) {
@@ -518,7 +598,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
             return checkSelect(data, msgIdSet, ApiSequence.SELECT)
           }
         case ApiSequence.ON_SELECT:
-          return checkOnSelect(data)
+          return checkOnSelect(data,flow)
         case ApiSequence.SELECT_OUT_OF_STOCK:
           return checkSelect(data, msgIdSet, ApiSequence.SELECT_OUT_OF_STOCK)
         case ApiSequence.ON_SELECT_OUT_OF_STOCK:
@@ -666,6 +746,30 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
         break
       case FLOW.FLOW9:
         logReport = processApiSequence(flowNineSequence, data, logReport, msgIdSet, flow)
+        break
+      case OFFERSFLOW.FLOW0091:
+        logReport = processApiSequence(flowOfferTypeDiscountSequence, data, logReport, msgIdSet, flow)
+        break
+      case OFFERSFLOW.FLOW0092:
+        logReport = processApiSequence(flowOfferTypebuyXgetYSequence, data, logReport, msgIdSet, flow)
+        break  
+      case OFFERSFLOW.FLOW0093:
+        logReport = processApiSequence(flowOfferTypeFreebieSequence, data, logReport, msgIdSet, flow)
+        break
+      case OFFERSFLOW.FLOW0094:
+        logReport = processApiSequence(flowOfferTypeSlabSequence, data, logReport, msgIdSet, flow)
+        break
+      case OFFERSFLOW.FLOW0095:
+        logReport = processApiSequence(flowOfferTypeComboSequence, data, logReport, msgIdSet, flow)
+        break 
+      case OFFERSFLOW.FLOW0096:
+        logReport = processApiSequence(flowOfferTypeDeliverySequence, data, logReport, msgIdSet, flow)
+        break
+      case OFFERSFLOW.FLOW0097:
+        logReport = processApiSequence(flowOfferTypeExchangeSequence, data, logReport, msgIdSet, flow)
+        break
+      case OFFERSFLOW.FLOW0098:  
+        logReport = processApiSequence(flowOfferTypeFinancingSequence, data, logReport, msgIdSet, flow)
         break
       case FLOW.FLOW020:
         logReport = processApiSequence(flow020Sequence, data, logReport, msgIdSet, flow)

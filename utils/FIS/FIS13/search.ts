@@ -36,6 +36,7 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
 
     // validate context
     let contextRes: any
+    const flowName = getValue(`flowName`)
     if (action?.includes('_2')) {
       // if action is search_2, validate context with bpp & bap details
       contextRes = validateContext(context, msgIdSet, constants.ON_SEARCH, action)
@@ -105,7 +106,7 @@ export const search = (data: any, msgIdSet: any, flow: string, action: string) =
           setValue(`collected_by`, collectedBy)
         }
 
-        if (flow != 'LIFE_INSURANCE') {
+        if (flowName != 'LIFE_INSURANCE') {
           // Validate payment tags
           const tagsValidation = validatePaymentTags(payment.tags, terms)
           console.log('tagsValidation', tagsValidation)

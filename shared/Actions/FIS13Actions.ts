@@ -38,7 +38,14 @@ export function validateLogsForFIS13(data: any, flow: string, version: string) {
     logReport = { ...logReport, version: `Invalid version ${version}` }
   }
 
-  setValue(`flow`, flow)
+  let flowName = ''
+  if (insuranceFlows.hasOwnProperty(flow)) {
+    setValue(`flow`, flow)
+    flowName = insuranceFlows[flow]
+    setValue(`flowName`, flowName)
+  } else {
+    logReport = { ...logReport, version: `Invalid flow ${flow}` }
+  }
 
   try {
     const processFIS13HealthSequence = (FIS13HealthSequence: any, data: any, logReport: any, flow: string) => {
@@ -135,39 +142,39 @@ export function validateLogsForFIS13(data: any, flow: string, version: string) {
       }
     }
 
-    switch (flow) {
+    switch (flowName) {
       case insuranceFlows.HEALTH:
-        logReport = processFIS13HealthSequence(healthSequence, data, logReport, flow)
+        logReport = processFIS13HealthSequence(healthSequence, data, logReport, flowName)
         break
       case insuranceFlows.CLAIM_HEALTH:
-        logReport = processFIS13HealthSequence(claimSequence, data, logReport, flow)
+        logReport = processFIS13HealthSequence(claimSequence, data, logReport, flowName)
         break
       case insuranceFlows.RENEW_HEALTH:
-        logReport = processFIS13HealthSequence(renewSequence, data, logReport, flow)
+        logReport = processFIS13HealthSequence(renewSequence, data, logReport, flowName)
         break
       case insuranceFlows.MARINE:
-        logReport = processFIS13HealthSequence(marineSequence, data, logReport, flow)
+        logReport = processFIS13HealthSequence(marineSequence, data, logReport, flowName)
         break
       case insuranceFlows.CLAIM_MARINE:
-        logReport = processFIS13HealthSequence(claimSequence, data, logReport, flow)
+        logReport = processFIS13HealthSequence(claimSequence, data, logReport, flowName)
         break
       case insuranceFlows.CANCEL_MARINE:
-        logReport = processFIS13HealthSequence(cancelSequence, data, logReport, flow)
+        logReport = processFIS13HealthSequence(cancelSequence, data, logReport, flowName)
         break
       case insuranceFlows.MOTOR:
-        logReport = processFIS13HealthSequence(motorSequence, data, logReport, flow)
+        logReport = processFIS13HealthSequence(motorSequence, data, logReport, flowName)
         break
       case insuranceFlows.CLAIM_MOTOR:
-        logReport = processFIS13HealthSequence(claimSequence, data, logReport, flow)
+        logReport = processFIS13HealthSequence(claimSequence, data, logReport, flowName)
         break
       case insuranceFlows.CANCEL_MOTOR:
-        logReport = processFIS13HealthSequence(cancelSequence, data, logReport, flow)
+        logReport = processFIS13HealthSequence(cancelSequence, data, logReport, flowName)
         break
       case insuranceFlows.LIFE_WITH_MEDICAL:
-        logReport = processFIS13HealthSequence(lifeSequenceWithMedical, data, logReport, flow)
+        logReport = processFIS13HealthSequence(lifeSequenceWithMedical, data, logReport, flowName)
         break
       case insuranceFlows.LIFE_WITHOUT_MEDICAL:
-        logReport = processFIS13HealthSequence(lifeSequenceWithoutMedical, data, logReport, flow)
+        logReport = processFIS13HealthSequence(lifeSequenceWithoutMedical, data, logReport, flowName)
         break
     }
     return logReport

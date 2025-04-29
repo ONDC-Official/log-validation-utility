@@ -43,7 +43,8 @@ export const checkOnStatus = (data: any, msgIdSet: any, sequence: string, flow: 
 
     const on_status = message.order
     const version: any = getValue('version')
-    const LoanType: any = getValue('LoanType')
+    // const LoanType: any = getValue('LoanType')
+    const flowType = getValue('flow_type')
 
     try {
       logger.info(`Checking provider id /${constants.ON_STATUS}`)
@@ -80,7 +81,7 @@ export const checkOnStatus = (data: any, msgIdSet: any, sequence: string, flow: 
             if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in providers[${index}]`
             else {
               const parentItemId: any = getValue('parentItemId')
-              if (parentItemId && !parentItemId.has(item?.parent_item_id)) {
+              if (parentItemId && !parentItemId?.includes(item?.parent_item_id)) {
                 errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id's from past call in providers[${index}]`
               }
             }
@@ -104,12 +105,13 @@ export const checkOnStatus = (data: any, msgIdSet: any, sequence: string, flow: 
           }
 
           // Validate Item tags
-          let tagsValidation: any = {}
-          if (LoanType == 'INVOICE_BASED_LOAN') {
-            tagsValidation = validateLoanTags(item?.tags, constants.ON_STATUS)
-          } else {
-            tagsValidation = validateLoanInfoTags(item?.tags, flow)
-          }
+          // let tagsValidation: any = {}
+          // if (LoanType == 'INVOICE_BASED_LOAN') {
+          //   tagsValidation = validateLoanTags(item?.tags, constants.ON_STATUS)
+          // } else {
+          //   tagsValidation = validateLoanInfoTags(item?.tags, flow)
+          // }
+          const tagsValidation: any = validateLoanInfoTags(item?.tags, flowType)
           if (!tagsValidation.isValid) {
             Object.assign(errorObj, { tags: tagsValidation.errors })
           }

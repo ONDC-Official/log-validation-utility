@@ -123,7 +123,7 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         case FisApiSequence.CONFIRM:
           return checkConfirm(data[FisApiSequence.CONFIRM], msgIdSet)
         case FisApiSequence.ON_CONFIRM:
-          return checkOnConfirm(data[FisApiSequence.ON_CONFIRM], msgIdSet, flow)
+          return checkOnConfirm(data[FisApiSequence.ON_CONFIRM], msgIdSet)
 
         case FisApiSequence.UPDATE:
           return checkUpdate(data[FisApiSequence.UPDATE], msgIdSet, flow)

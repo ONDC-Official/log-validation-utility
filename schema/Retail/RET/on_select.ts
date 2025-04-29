@@ -291,7 +291,6 @@ export const onSelectSchema = {
                                   properties: {
                                     code: {
                                       type: 'string',
-                                      const: 'quote',
                                     },
                                     list: {
                                       type: 'array',
@@ -307,6 +306,7 @@ export const onSelectSchema = {
                                         },
                                         required: ['code', 'value'],
                                       },
+                                      minItems: 1,
                                     },
                                   },
                                   required: ['code', 'list'],
@@ -348,7 +348,6 @@ export const onSelectSchema = {
                                 },
                               ],
                             },
-                            required: ['tags'],
                           },
                         },
                       },

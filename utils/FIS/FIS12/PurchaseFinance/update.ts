@@ -3,7 +3,7 @@ import { setValue } from '../../../../shared/dao'
 import constants from '../../../../constants'
 import { validateSchema, isObjectEmpty, checkFISContext } from '../../..'
 
-export const checkupdateWCL = (data: any, msgIdSet: any, flow: string, sequence: string) => {
+export const checkupdatePurchaseFinance = (data: any, msgIdSet: any, flow: string, sequence: string) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {

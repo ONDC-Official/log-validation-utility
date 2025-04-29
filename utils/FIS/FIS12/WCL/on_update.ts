@@ -218,7 +218,16 @@ export const checkon_updateWCL = (data: any, msgIdSet: any, flow: string, sequen
         errorObj['order.timestamps.missing'] = 'Both created_at and updated_at timestamps are required'
       }
       
-    } else {
+    } 
+    else if(flow === "WCL_MISSED_EMI_PAYMENT"){
+
+      const schemaValidation = validateSchema('FIS_WCL', constants.ON_UPDATE_FORECLOSURE, data)
+      if (schemaValidation !== 'error') {
+        Object.assign(errorObj, schemaValidation)
+      }
+
+    }
+    else {
      
       const schemaValidation = validateSchema('FIS_WCL', constants.ON_UPDATE, data)
       if (schemaValidation !== 'error') {

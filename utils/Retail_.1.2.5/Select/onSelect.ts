@@ -4,7 +4,7 @@ import constants, { ApiSequence, ffCategory } from '../../../constants'
 import { validateSchemaRetailV2, isObjectEmpty, checkContext, timeDiff, isoDurToSec, checkBppIdOrBapId } from '../..'
 import _ from 'lodash'
 import { logger } from '../../../shared/logger'
-import { taxNotInlcusive } from '../../enum'
+import { FLOW, taxNotInlcusive } from '../../enum'
 
 interface BreakupElement {
   '@ondc/org/title_type': string
@@ -21,11 +21,10 @@ const retailPymntTtl: { [key: string]: string } = {
   'convenience fee': 'misc',
   offer: 'offer',
 }
-export const checkOnSelect = (data: any) => {
+export const checkOnSelect = (data: any,flow?:string) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.ON_SELECT]: 'JSON cannot be empty' }
   }
-
   const { message, context } = data
   if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
@@ -1287,6 +1286,12 @@ export const checkOnSelect = (data: any) => {
       errorObj[key] = `Order value must be greater or equal to Minimum Order Value`
     }
   }
+  if(flow===FLOW.FLOW003){
+    const fulfillments = on_select.fulfillments
+  setValue('fulfillmentSlots',fulfillments)
+
+  }
+
 
   return Object.keys(errorObj).length > 0 && errorObj
 }

@@ -362,7 +362,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
   }
 
   try {
-    const validFlows = ['1', '2', '2A', '3', '4', '5', '6', '7', '8', '9', '020','01C','008']
+    const validFlows = ['1', '2', '2A', '3', '4', '5', '6', '7', '8', '9', '020','01C','008','003',]
     if (!retailDomains.includes(domain)) {
       return 'Domain should 1.2.5 retail domains'
     }
@@ -501,6 +501,19 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.INIT,
       ApiSequence.ON_INIT,
     ]
+    const flow003Sequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+        ApiSequence.ON_STATUS_PENDING,
+      ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_PICKED,
+    ]
    
 
     const processApiSequence = (apiSequence: any, data: any, logReport: any, msgIdSet: any, flow: string) => {
@@ -542,7 +555,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
             return checkSelect(data, msgIdSet, ApiSequence.SELECT)
           }
         case ApiSequence.ON_SELECT:
-          return checkOnSelect(data)
+          return checkOnSelect(data,flow)
         case ApiSequence.SELECT_OUT_OF_STOCK:
           return checkSelect(data, msgIdSet, ApiSequence.SELECT_OUT_OF_STOCK)
         case ApiSequence.ON_SELECT_OUT_OF_STOCK:
@@ -699,6 +712,9 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
         break
       case FLOW.FLOW008:
         logReport = processApiSequence(flow008Sequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW003:
+        logReport = processApiSequence(flow003Sequence, data, logReport, msgIdSet, flow)
         break
     
     }

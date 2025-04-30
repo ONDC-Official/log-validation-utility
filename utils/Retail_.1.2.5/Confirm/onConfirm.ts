@@ -731,6 +731,26 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
       logger.error(`Error while Checking bap_terms in ${constants.ON_CONFIRM}, ${err.stack} `)
     }
 
+    if (flow === FLOW.FLOW003) {
+      const fulfillmentId = getValue('fulfillmentId')
+      const slot = getValue('fulfillmentSlots')
+      const ele = on_confirm.fulfillments.find((ele: { id: any }): any => ele.id === fulfillmentId)
+      const item = slot.find((ele: { id: any }): any => ele.id === fulfillmentId)
+      if (!ele || !item) {
+        const key = `fulfillments missing`
+        onCnfrmObj[key] = `fulfillments must be same as in /${constants.ON_INIT}`
+      }
+      if (item?.end?.time?.range && ele?.end?.time?.range) {
+        const itemRange = item.end.time.range
+        const eleRange = ele.end.time.range
+
+        if (itemRange.start !== eleRange.start && itemRange.end !== eleRange.end) {
+          const key = `slotsMismatch`
+          onCnfrmObj[key] = `slots in fulfillments must be same as in /${constants.ON_INIT}`
+        }
+      }
+    }
+
     return onCnfrmObj
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.ON_CONFIRM} API`, JSON.stringify(err.stack))

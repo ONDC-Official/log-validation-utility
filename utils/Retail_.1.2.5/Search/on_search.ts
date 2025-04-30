@@ -741,6 +741,11 @@ export const checkOnsearch = (data: any) => {
         if (item.quantity && item.quantity.available && typeof item.quantity.available.count === 'string') {
           const availCount = parseInt(item.quantity.available.count, 10)
           const maxCount = parseInt(item.quantity.maximum.count, 10)
+          const minCount = parseInt(item.quantity.minimum.count, 10)
+          if(!minCount){
+              const key = `prvdr${i}item${j}minimum.count`
+            errorObj[key] = `item.quantity.minimum.count must be added , if not set default as 99 `
+          }
           if (item.quantity.unitized.measure.value < 1) {
             const key = `prvdr${i}item${j}unitized`
             errorObj[key] = `item.quantity.unitized.measure.value should be greater than 0`

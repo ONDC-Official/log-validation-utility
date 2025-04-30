@@ -540,6 +540,25 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
       }
     }
 
+    if (flow === FLOW.FLOW003) {
+      const fulfillmentId = getValue('fulfillmentId')
+      const slot = getValue('fulfillmentSlots')
+      const ele = on_status.fulfillments.find((ele: { id: any }): any => ele.id === fulfillmentId)
+      const item = slot.find((ele: { id: any }): any => ele.id === fulfillmentId)
+      if (!ele || !item) {
+        const key = `fulfillments missing`
+        onStatusObj[key] = `fulfillments must be same as in /${constants.ON_CONFIRM}`
+      }
+      if (item?.end?.time?.range && ele?.end?.time?.range) {
+        const itemRange = item.end.time.range
+        const eleRange = ele.end.time.range
+        if (itemRange.start !== eleRange.start || itemRange.end !== eleRange.end) {
+          const key = `slotsMismatch`
+          onStatusObj[key] = `slots in fulfillments must be same as in /${constants.ON_CONFIRM}`
+        }
+      }
+    }
+
     return onStatusObj
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)

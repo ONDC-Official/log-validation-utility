@@ -401,7 +401,7 @@ export const validateDescriptor = (
         } else if (descriptor.code?.trim() !== descriptor.code?.trim()?.toUpperCase()) {
           errorObj.code = `descriptor.code must be in uppercase at ${path}., ${descriptor.code}`
         } else if (descriptor?.code && !codes?.includes(descriptor?.code))
-          errorObj.code = `descriptor.code should be one of ${codes}`
+          errorObj.code = `descriptor.code should be one of ${codes} in ${path}`
       }
 
       if (descriptor?.images) {

@@ -14,7 +14,7 @@ import {
   validatePaymentsObject,
 } from './fisChecks'
 import { getValue, setValue } from '../../../shared/dao'
-import { validateLoanInfoTags, validateLoanTags, validatePaymentTags } from './tags'
+import { validateLoanInfoTags, validatePaymentTags, validateContactAndLspTags } from './tags'
 
 export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
   try {
@@ -43,13 +43,21 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
 
     const on_init = message.order
     const version: any = getValue('version')
-    const LoanType: any = getValue('LoanType')
+    // const LoanType: any = getValue('LoanType')
+    const flowType = getValue('flow_type')
 
     //provider checks
     try {
       logger.info(`Checking provider details in /${constants.ON_INIT}`)
       const providerErrors = validateProvider(on_init?.provider, constants.ON_INIT)
       Object.assign(errorObj, providerErrors)
+
+      // Validate tags
+      logger.info(`Checking tags construct for provider`)
+      const tagsValidation = validateContactAndLspTags(on_init?.provider?.tags)
+      if (!tagsValidation.isValid) {
+        Object.assign(errorObj, { providerTags: tagsValidation.errors })
+      }
     } catch (error: any) {
       logger.error(`!!Error while checking provider details in /${constants.ON_INIT}`, error.stack)
     }
@@ -74,7 +82,7 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
             if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in providers[${index}]`
             else {
               const parentItemId: any = getValue('parentItemId')
-              if (parentItemId && !parentItemId.has(item?.parent_item_id)) {
+              if (parentItemId && !parentItemId?.includes(item?.parent_item_id)) {
                 errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id's from past call in providers[${index}]`
               }
             }
@@ -99,12 +107,13 @@ export const checkOnInit = (data: any, msgIdSet: any, sequence: string) => {
           }
 
           // Validate Item tags
-          let tagsValidation: any = {}
-          if (LoanType == 'INVOICE_BASED_LOAN') {
-            tagsValidation = validateLoanTags(item?.tags, sequence)
-          } else {
-            tagsValidation = validateLoanInfoTags(item?.tags, LoanType)
-          }
+          // let tagsValidation: any = {}
+          // if (LoanType == 'INVOICE_BASED_LOAN') {
+          //   tagsValidation = validateLoanTags(item?.tags, sequence)
+          // } else {
+          //   tagsValidation = validateLoanInfoTags(item?.tags, LoanType)
+          // }
+          const tagsValidation: any = validateLoanInfoTags(item?.tags, flowType)
           if (!tagsValidation.isValid) {
             Object.assign(errorObj, { tags: tagsValidation.errors })
           }

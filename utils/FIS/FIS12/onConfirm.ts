@@ -13,10 +13,10 @@ import {
   validateProvider,
   validateQuote,
 } from './fisChecks'
-import { validateLoanInfoTags, validateLoanTags, validateProviderTags } from './tags'
+import { validateLoanInfoTags, validateContactAndLspTags } from './tags'
 import _ from 'lodash'
 
-export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
+export const checkOnConfirm = (data: any, msgIdSet: any) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -43,7 +43,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
 
     const on_confirm = message.order
     const version: any = getValue('version')
-    const LoanType: any = getValue('LoanType')
+    // const LoanType: any = getValue('LoanType')
+    const flowType = getValue('flow_type')
 
     //check order.id
     try {
@@ -64,9 +65,10 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
       Object.assign(errorObj, providerErrors)
 
       // Validate tags
-      const tagsValidation = validateProviderTags(on_confirm?.provider?.tags)
+      logger.info(`Checking tags construct for provider`)
+      const tagsValidation = validateContactAndLspTags(on_confirm?.provider?.tags)
       if (!tagsValidation.isValid) {
-        Object.assign(providerErrors, { tags: tagsValidation.errors })
+        Object.assign(errorObj, { providerTags: tagsValidation.errors })
       }
     } catch (error: any) {
       logger.error(`!!Error while checking provider details in /${constants.ON_CONFIRM}`, error.stack)
@@ -83,9 +85,8 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
         on_confirm.items.forEach((item: any, index: number) => {
           if (selectedItemId && !selectedItemId.includes(item.id)) {
             const key = `item[${index}].item_id`
-            errorObj[
-              key
-            ] = `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
+            errorObj[key] =
+              `/message/order/items/id in item: ${item.id} should be one of the /item/id mapped in previous call`
           }
 
           // Validate parent_item_id
@@ -93,7 +94,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
             if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in providers[${index}]`
             else {
               const parentItemId: any = getValue('parentItemId')
-              if (parentItemId && !parentItemId.has(item?.parent_item_id)) {
+              if (parentItemId && !parentItemId?.includes(item?.parent_item_id)) {
                 errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id's from past call in providers[${index}]`
               }
             }
@@ -105,17 +106,18 @@ export const checkOnConfirm = (data: any, msgIdSet: any, flow: any) => {
             constants.ON_CONFIRM,
             `items[${index}].descriptor`,
             false,
-            []
+            [],
           )
           if (descriptorError) Object.assign(errorObj, descriptorError)
 
           // Validate Item tags
-          let tagsValidation: any = {}
-          if (LoanType == 'INVOICE_BASED_LOAN') {
-            tagsValidation = validateLoanTags(item?.tags, constants.ON_CONFIRM)
-          } else {
-            tagsValidation = validateLoanInfoTags(item?.tags, flow)
-          }
+          // let tagsValidation: any = {}
+          // if (LoanType == 'INVOICE_BASED_LOAN') {
+          //   tagsValidation = validateLoanTags(item?.tags, constants.ON_CONFIRM)
+          // } else {
+          //   tagsValidation = validateLoanInfoTags(item?.tags, flow)
+          // }
+          const tagsValidation: any = validateLoanInfoTags(item?.tags, flowType)
           if (!tagsValidation.isValid) {
             Object.assign(errorObj, { tags: tagsValidation.errors })
           }

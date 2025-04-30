@@ -12,6 +12,7 @@ import {
   validatePaymentObject,
   validateProviderId,
   validateFulfillments,
+  hasOnlyAllowedKeys,
 } from './mobilityChecks'
 import { validateItemsTags } from './tags'
 import attributeConfig from './config/config2.0.1.json'
@@ -50,7 +51,9 @@ export const checkOnInit = (data: any, msgIdSet: any, version: any) => {
     try {
       logger.info(`Checking provider id in /${constants.ON_INIT}`)
       const providerError = validateProviderId(on_init?.provider?.id, constants.INIT, constants.ON_INIT)
+      const additionalKeys = hasOnlyAllowedKeys(on_init?.provider, ['id', 'descriptor'])
       Object.assign(errorObj, providerError)
+      errorObj.providerAddKeys = `provider obj is having additional keys ${additionalKeys.join(', ')}`
     } catch (error: any) {
       logger.error(`!!Error while checking provider id in /${constants.ON_INIT}, ${error.stack}`)
     }
@@ -62,7 +65,7 @@ export const checkOnInit = (data: any, msgIdSet: any, version: any) => {
       constants.ON_INIT,
       false,
       false,
-      ''
+      '',
     )
     Object.assign(errorObj, fulfillmentError)
 
@@ -105,11 +108,15 @@ export const checkOnInit = (data: any, msgIdSet: any, version: any) => {
           }
 
           // FARE_POLICY & INFO checks
-          if (item.tags) {
+          if (item?.tags) {
             const tagsValidation = validateItemsTags(item.tags)
+            console.log('tagsValidationtagsValidation2', tagsValidation)
             if (!tagsValidation.isValid) {
-              Object.assign(errorObj, { tags: tagsValidation.errors })
+              Object.assign(errorObj, { itemTags: tagsValidation.errors })
             }
+            console.log('tagsValidationtagsValidation2', tagsValidation, errorObj)
+          } else {
+            Object.assign(errorObj, { itemTags: `Missing tag-group at ${itemKey}` })
           }
         })
       }

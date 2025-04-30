@@ -418,6 +418,8 @@ export const onDemandFlows = {
   RIDER_CANCEL: 'RIDER_CANCEL',
   DRIVER_CANCEL: 'DRIVER_CANCEL',
   PRICE_UPDATE: 'PRICE_UPDATE',
+  DRIVER_NOT_FOUND: 'DRIVER_NOT_FOUND',
+  DRIVER_NOT_FOUND_POST_CONFIRM: 'DRIVER_NOT_FOUND_POST_CONFIRM',
 }
 
 export const flowsFis10 = {
@@ -462,17 +464,17 @@ export const IGM2Sequence = {
 
 export const IGM2FlowSequence = {
   FLOW_1: {
-    ISSUE_OPEN: "issue_open",
-    ON_ISSUE_PROCESSING_1: "on_issue_processing_1",
-    ON_ISSUE_INFO_REQUIRED_1: "on_issue_info_required_1",
-    ISSUE_INFO_PROVIDED_1: "issue_info_provided_1",
-    ON_ISSUE_PROCESSING_2: "on_issue_processing_2",
-    ON_ISSUE_INFO_REQUIRED_2: "on_issue_info_required_2",
-    ISSUE_INFO_PROVIDED_2: "issue_info_provided_2",
-    ON_ISSUE_RESOLUTION_PROPOSED: "on_issue_resolution_proposed",
-    ISSUE_RESOLUTION_ACCEPTED: "issue_resolution_accepted",
-    ON_ISSUE_RESOLVED: "on_issue_resolved",
-    ISSUE_CLOSED: "issue_closed"
+    ISSUE_OPEN: 'issue_open',
+    ON_ISSUE_PROCESSING_1: 'on_issue_processing_1',
+    ON_ISSUE_INFO_REQUIRED_1: 'on_issue_info_required_1',
+    ISSUE_INFO_PROVIDED_1: 'issue_info_provided_1',
+    ON_ISSUE_PROCESSING_2: 'on_issue_processing_2',
+    ON_ISSUE_INFO_REQUIRED_2: 'on_issue_info_required_2',
+    ISSUE_INFO_PROVIDED_2: 'issue_info_provided_2',
+    ON_ISSUE_RESOLUTION_PROPOSED: 'on_issue_resolution_proposed',
+    ISSUE_RESOLUTION_ACCEPTED: 'issue_resolution_accepted',
+    ON_ISSUE_RESOLVED: 'on_issue_resolved',
+    ISSUE_CLOSED: 'issue_closed',
   },
 
   FLOW_2: {
@@ -597,6 +599,7 @@ export const MOB_FULL_STATE = [
   'RIDE_ASSIGNED',
   'RIDE_ENROUTE_PICKUP',
   'RIDE_ARRIVED_PICKUP',
+  'RIDE_CONFIRMED',
 ]
 
 export const ffCategory = [

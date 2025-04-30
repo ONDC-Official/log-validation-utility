@@ -131,11 +131,11 @@ const validateMobility = async (domain: string, payload: string, version: string
 
 
   if (!flow) throw new Error('Flow not defined')
-  if (version !== '2.0.0' && domain === 'ONDC:TRV10') {
-    logger.warn('Invalid Version!!')
-    message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
-    return { response, success, message }
-  }
+  // if (version !== '2.0.0' && domain === 'ONDC:TRV10') {
+  //   logger.warn('Invalid Version!!')
+  //   message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
+  //   return { response, success, message }
+  // }
 
   switch (domain) {
     case 'ONDC:TRV10':

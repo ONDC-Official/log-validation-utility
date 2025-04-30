@@ -277,7 +277,7 @@ export const validateCancellationTerms = (cancellationTerms: any, action: string
         }
       }
     } else {
-      errorObj.cancellationTerms = `cancellation_terms should be an array in /${action}`
+      errorObj.cancellationTerms = `cancellation_terms is missing or is empty in /${action}`
     }
   } catch (error: any) {
     logger.error(`!!Error while checking cancellation_terms in /${action}, ${error.stack}`)
@@ -386,26 +386,25 @@ export const validatePaymentObject = (payments: any, action: string): any => {
     } else {
       const allowedStatusValues = ['NOT-PAID', 'PAID']
       const requiredParams = ['bank_code', 'bank_account_number', 'virtual_payment_address']
+      const terms = [
+        { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' },
+        {
+          code: 'SETTLEMENT_BASIS',
+          type: 'enum',
+          value: ['invoice_receipt', 'delivery'],
+        },
+        { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
+        { code: 'STATIC_TERMS', type: 'url' },
+        { code: 'COURT_JURISDICTION', type: 'string' },
+        { code: 'DELAY_INTEREST', type: 'amount' },
+        {
+          code: 'SETTLEMENT_TYPE',
+          type: 'enum',
+          value: ['upi', 'neft', 'rtgs'],
+        },
+        { code: 'SETTLEMENT_AMOUNT', type: 'amount' },
+      ]
       payments?.forEach((arr: any, i: number) => {
-        const terms = [
-          { code: 'SETTLEMENT_WINDOW', type: 'time', value: '/^PTd+[MH]$/' },
-          {
-            code: 'SETTLEMENT_BASIS',
-            type: 'enum',
-            value: ['INVOICE_RECEIPT', 'Delivery'],
-          },
-          { code: 'MANDATORY_ARBITRATION', type: 'boolean' },
-          { code: 'STATIC_TERMS', type: 'url' },
-          { code: 'COURT_JURISDICTION', type: 'string' },
-          { code: 'DELAY_INTEREST', type: 'amount' },
-          {
-            code: 'SETTLEMENT_TYPE',
-            type: 'enum',
-            value: ['upi', 'neft', 'rtgs'],
-          },
-          { code: 'SETTLEMENT_AMOUNT', type: 'amount' },
-        ]
-
         if (!action.includes('init')) {
           if (!arr?.id) errorObj[`payemnts[${i}]_id`] = `payments.id must be present in ${action}`
           else setValue(`paymentId`, arr?.id)
@@ -573,9 +572,9 @@ export const validateVehicle = (vehicle: any, checkInfo: boolean) => {
     if (!vehicle?.make) errorObj.make = 'make is missing in vehicle'
     if (!vehicle?.model) errorObj.model = 'model is missing in vehicle'
     if (!vehicle?.registration) errorObj.registration = 'registration is missing in vehicle'
-    else if (vehicle?.registration && !/^[A-Z]{2}-\d{2}-[A-Z]{2}-\d{4}$/.test(vehicle.registration)) {
-      errorObj.registration = 'registration must follow the format XX-00-XX-0000'
-    }
+    // else if (vehicle?.registration && !/^[A-Z]{2}-\d{2}-[A-Z]{2}-\d{4}$/.test(vehicle.registration)) {
+    //   errorObj.registration = 'registration must follow the format XX-00-XX-0000'
+    // }
   }
 
   const extraKeys = Object.keys(vehicle).filter((key) => !allowedKeys.includes(key) && key !== 'variant')
@@ -625,8 +624,10 @@ export const validateItems = (items: any, action: string, fulfillmentIdsSet: any
         if (item.tags) {
           const tagsValidation = validateItemsTags(item.tags)
           if (!tagsValidation.isValid) {
-            Object.assign(errorObj, { tags: tagsValidation.errors })
+            Object.assign(errorObj, { itemTags: tagsValidation.errors })
           }
+        } else {
+          Object.assign(errorObj, { itemTags: `Missing tag-group at ${itemKey}` })
         }
       })
 
@@ -728,12 +729,14 @@ export const validateFulfillments = (
       const stopsError = validateStops(fulfillment?.stops, index, checkAgent, cancel)
       if (!stopsError?.valid) Object.assign(errorObj, stopsError.errors)
 
-      if (fulfillment.tags) {
+      if (fulfillment?.tags) {
         // Validate route info tags
-        const tagsValidation = validateRouteInfoTags(fulfillment.tags)
+        const tagsValidation = validateRouteInfoTags(fulfillment?.tags)
         if (!tagsValidation.isValid) {
           Object.assign(errorObj, { tags: tagsValidation.errors })
         }
+      } else {
+        Object.assign(errorObj, { routeInfoTags: `Missing ROUTE_INFO tag-group at ${fulfillmentKey}` })
       }
     })
     return errorObj
@@ -741,4 +744,10 @@ export const validateFulfillments = (
     logger.error(`!!Error occcurred while checking fulfillments info in /${action},  ${error.message}`)
     return { error: error.message }
   }
+}
+
+export const hasOnlyAllowedKeys = (obj: any, allowedKeys: string[]) => {
+  const invalidKeys = Object.keys(obj).filter((key) => !allowedKeys.includes(key))
+  console.log('invalidKeysinvalidKeysinvalidKeysinvalidKeys', invalidKeys)
+  return invalidKeys
 }

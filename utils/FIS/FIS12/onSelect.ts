@@ -12,7 +12,7 @@ import {
   validateXInput,
   validateXInputSubmission,
 } from './fisChecks'
-import { validateItemsTags, validateLoanInfoTags, validateLoanTags, validateProviderTags } from './tags'
+import { validateItemsTags, validateLoanInfoTags, validateLoanTags, validateContactAndLspTags } from './tags'
 
 export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
   if (!data || isObjectEmpty(data)) {
@@ -40,7 +40,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
   try {
     const onSelect = message.order
     const version = getValue('version')
-    const flow = getValue('LoanType')
+    // const flow = getValue('LoanType')
     const flow_type = getValue('flow_type')
 
     //provider checks
@@ -50,9 +50,10 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
       Object.assign(errorObj, providerErrors)
 
       // Validate tags
-      const tagsValidation = validateProviderTags(onSelect?.provider?.tags)
+      logger.info(`Checking tags construct for provider`)
+      const tagsValidation = validateContactAndLspTags(onSelect?.provider?.tags)
       if (!tagsValidation.isValid) {
-        Object.assign(providerErrors, { tags: tagsValidation.errors })
+        Object.assign(errorObj, { providerTags: tagsValidation.errors })
       }
     } catch (error: any) {
       logger.error(`!!Error while checking provider details in /${constants.ON_SELECT}`, error.stack)
@@ -78,13 +79,12 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
             if (!item?.parent_item_id) errorObj.parent_item_id = `parent_item_id not found in providers[${index}]`
             else {
               const parentItemId: any = getValue('parentItemId')
-              if (parentItemId && !parentItemId.has(item?.parent_item_id)) {
+              if (parentItemId && !parentItemId?.includes(item?.parent_item_id)) {
                 errorObj.parent_item_id = `parent_item_id: ${item.parent_item_id} doesn't match with parent_item_id's from past call in providers[${index}]`
               }
             }
           }
 
-          console.log("flow type ", flow_type)
           if ((version != '2.0.0' || sequence != 'on_select_1') && !(flow_type === 'PERSONAL_LOAN')) {
             // price check
             const price = item?.price
@@ -104,20 +104,23 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
             [],
           )
           if (descriptorError) Object.assign(errorObj, descriptorError)
-                  // Validate xinput
-                  const xinput = item?.xinput
-                  let currIndex = parseInt(sequence.replace('on_select_', ''))
-                  if (version == '2.0.0') currIndex = currIndex - 2 || 0
-                  else currIndex = currIndex - 1 || 0
-                  const xinputValidationErrors =
-                    (version == '2.0.0' && sequence == 'on_select_1' && flow_type !== 'PERSONAL_LOAN')
-                      ? validateXInputSubmission(xinput, index, sequence)
-                      : (flow_type === 'PERSONAL_LOAN' && sequence == 'on_select_1')
-                        ? null // Skip validation for PERSONAL_LOAN with on_select_1
-                        : validateXInput(xinput, index, constants.ON_SELECT, currIndex)
-                  if (xinputValidationErrors) {
-                    Object.assign(errorObj, xinputValidationErrors)
-                  }
+          // Validate xinput
+          const xinput = item?.xinput
+          let currIndex = parseInt(sequence.replace('on_select_', ''))
+          if (version == '2.0.0') currIndex = currIndex - 2 || 0
+          else currIndex = currIndex - 1 || 0
+          let xinputValidationErrors = ''
+          if (version == '2.0.0' && sequence == 'on_select_1' && flow_type !== 'PERSONAL_LOAN')
+            xinputValidationErrors = validateXInputSubmission(xinput, index, sequence)
+          else if (version == '2.1.0' && flow_type === 'INVOICE_BASED_LOAN') {
+            xinputValidationErrors = validateXInput(xinput, index, constants.ON_SELECT, currIndex)
+          } else if (flow_type === 'PERSONAL_LOAN' && sequence == 'on_select_1')
+            xinputValidationErrors = '' // Skip validation for PERSONAL_LOAN with on_select_1
+          else xinputValidationErrors = validateXInput(xinput, index, constants.ON_SELECT, currIndex)
+
+          if (xinputValidationErrors) {
+            Object.assign(errorObj, xinputValidationErrors)
+          }
           // Validate Item tags
           let tagsValidation: any = {}
           if (sequence == 'on_search_3') {
@@ -125,7 +128,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, sequence: string) => {
           } else if (version == '2.0.0' && sequence == 'on_select_1') {
             tagsValidation = validateItemsTags(item?.tags)
           } else {
-            tagsValidation = validateLoanInfoTags(item?.tags, flow)
+            tagsValidation = validateLoanInfoTags(item?.tags, flow_type)
           }
           if (!tagsValidation.isValid) {
             Object.assign(errorObj, { tags: tagsValidation.errors })

@@ -276,73 +276,75 @@ export const FnBonSelectSchema = {
                             required: ['currency', 'value'],
                           },
                           tags: {
-                            type: "object",
-                            properties: {
-                              tags: {
-                                type: "array",
-                                minItems: 2,
-                                items: {
-                                  oneOf: [
-                                    {
-                                      type: "object",
-                                      properties: {
-                                        code: {
-                                          type: "string",
-                                          const: "quote"
-                                        },
-                                        list: {
-                                          type: "array",
-                                          items: {
-                                            type: "object",
-                                            properties: {
-                                              code: {
-                                                type: "string"
-                                              },
-                                              value: {
-                                                type: "string"
-                                              }
-                                            },
-                                            required: ["code", "value"]
-                                          }
-                                        }
-                                      },
-                                      required: ["code", "list"]
+                            type: 'array',
+                            minItems: 2,
+                            items: {
+                              oneOf: [
+                                {
+                                  type: 'object',
+                                  properties: {
+                                    code: {
+                                      type: 'string',
                                     },
-                                    {
-                                      type: "object",
-                                      properties: {
-                                        code: {
-                                          type: "string",
-                                          const: "offer"
-                                        },
-                                        list: {
-                                          type: "array",
-                                          items: {
-                                            type: "object",
-                                            properties: {
-                                              code: {
-                                                type: "string",
-                                                enum: ["id", "type", "auto", "additive", "item_id", "item_value", "item_count"]
-                                              },
-                                              value: {
-                                                type: "string"
-                                              }
-                                            },
-                                            required: ["code", "value"]
+                                    list: {
+                                      type: 'array',
+                                      items: {
+                                        type: 'object',
+                                        properties: {
+                                          code: {
+                                            type: 'string',
                                           },
-                                          minItems: 7,
-                                          uniqueItems: true
-                                        }
+                                          value: {
+                                            type: 'string',
+                                          },
+                                        },
+                                        required: ['code', 'value'],
                                       },
-                                      required: ["code", "list"]
-                                    }
-                                  ]
-                                }
-                              }
+                                      minItems: 1,
+                                    },
+                                  },
+                                  required: ['code', 'list'],
+                                },
+                                {
+                                  type: 'object',
+                                  properties: {
+                                    code: {
+                                      type: 'string',
+                                      const: 'offer',
+                                    },
+                                    list: {
+                                      type: 'array',
+                                      items: {
+                                        type: 'object',
+                                        properties: {
+                                          code: {
+                                            type: 'string',
+                                            enum: [
+                                              'id',
+                                              'type',
+                                              'auto',
+                                              'additive',
+                                              'item_id',
+                                              'item_value',
+                                              'item_count',
+                                            ],
+                                          },
+                                          value: {
+                                            type: 'string',
+                                          },
+                                        },
+                                        required: ['code', 'value'],
+                                      },
+                                      uniqueItems: true,
+                                    },
+                                  },
+                                  required: ['code', 'list'],
+                                },
+                              ],
                             },
-                            required: ["tags"]
-                          }
-                        },                      },
+                          },
+                        },
+                      },
                       ttl: {
                         type: 'string',
                         format: 'duration',
@@ -373,7 +375,7 @@ export const FnBonSelectSchema = {
           },
         },
         required: ['context', 'message'],
-      }
-    }
-  }
+      },
+    },
+  },
 }

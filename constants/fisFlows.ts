@@ -267,3 +267,79 @@ export const wclCreditLineCancellationSequence = [
   FisWCLApiSequence.ON_CANCEL,
   FisWCLApiSequence.ON_UPDATE
 ]
+export const invoiceSequence = [
+  FisApiSequence.SEARCH_1,
+  FisApiSequence.ON_SEARCH_1,
+  FisApiSequence.SEARCH_2,
+  FisApiSequence.ON_SEARCH_2,
+  FisApiSequence.SEARCH_3,
+  FisApiSequence.ON_SEARCH_3,
+  FisApiSequence.SELECT_1,
+  FisApiSequence.ON_SELECT_1,
+  FisApiSequence.SELECT_2,
+  FisApiSequence.ON_SELECT_2,
+  // FisApiSequence.ON_STATUS_EKYC,
+  FisApiSequence.INIT_1,
+  FisApiSequence.ON_INIT_1,
+  FisApiSequence.INIT_2,
+  FisApiSequence.ON_INIT_2,
+  // FisApiSequence.ON_STATUS_ENACH,
+  FisApiSequence.INIT_3,
+  FisApiSequence.ON_INIT_3,
+  FisApiSequence.INIT_4,
+  FisApiSequence.ON_INIT_4,
+  // FisApiSequence.ON_STATUS_ESIGN,
+  FisApiSequence.CONFIRM,
+  FisApiSequence.ON_CONFIRM,
+  FisApiSequence.ON_UPDATE_UNSOLICATED,
+  FisApiSequence.UPDATE,
+  FisApiSequence.ON_UPDATE,
+]
+
+export const invoiceWithoutMonitoringAndAggregatorSequence = [
+  FisApiSequence.SEARCH_1,
+  FisApiSequence.ON_SEARCH_1,
+  FisApiSequence.SEARCH_2,
+  FisApiSequence.ON_SEARCH_2,
+  FisApiSequence.SELECT_1,
+  FisApiSequence.ON_SELECT_1,
+  FisApiSequence.SELECT_2,
+  FisApiSequence.ON_SELECT_2,
+  // FisApiSequence.ON_STATUS_EKYC,
+  FisApiSequence.INIT_1,
+  FisApiSequence.ON_INIT_1,
+  FisApiSequence.INIT_2,
+  FisApiSequence.ON_INIT_2,
+  // FisApiSequence.ON_STATUS_ENACH,
+  FisApiSequence.INIT_3,
+  FisApiSequence.ON_INIT_3,
+  FisApiSequence.INIT_4,
+  FisApiSequence.ON_INIT_4,
+  // FisApiSequence.ON_STATUS_ESIGN,
+  FisApiSequence.CONFIRM,
+  FisApiSequence.ON_CONFIRM,
+]
+
+export const invoiceForclosureSequence = [
+  FisApiSequence.CONFIRM,
+  FisApiSequence.ON_CONFIRM,
+  FisApiSequence.UPDATE,
+  FisApiSequence.ON_UPDATE,
+  FisApiSequence.ON_UPDATE_UNSOLICATED,
+]
+
+export const invoicePrePartSequence = [
+  FisApiSequence.CONFIRM,
+  FisApiSequence.ON_CONFIRM,
+  FisApiSequence.UPDATE,
+  FisApiSequence.ON_UPDATE,
+  FisApiSequence.ON_UPDATE_UNSOLICATED,
+]
+
+export const invoiceMissedEmiSequence = [
+  FisApiSequence.CONFIRM,
+  FisApiSequence.ON_CONFIRM,
+  FisApiSequence.UPDATE,
+  FisApiSequence.ON_UPDATE,
+  FisApiSequence.ON_UPDATE_UNSOLICATED,
+]

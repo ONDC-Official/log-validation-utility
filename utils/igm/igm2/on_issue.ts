@@ -109,28 +109,28 @@ const validateLastAction = (message: any, errorObj: any) => {
 /**
  * Validates description object
  */
-const validateDescription = (message: any, errorObj: any) => {
-  if (!message.issue.description) return
+// const validateDescription = (message: any, errorObj: any) => {
+//   if (!message.issue.description) return
   
-  if (!message.issue.description.code || !message.issue.description.short_desc) {
-    errorObj.description = 'description must contain code and short_desc'
-  }
+//   if (!message.issue.description.code || !message.issue.description.short_desc) {
+//     errorObj.description = 'description must contain code and short_desc'
+//   }
   
-  if (message.issue.description.images) {
-    if (!Array.isArray(message.issue.description.images)) {
-      errorObj.images = 'images must be an array'
-    } else {
-      // Validate each image URL
-      message.issue.description.images.forEach((url: string, index: number) => {
-        try {
-          new URL(url)
-        } catch (error) {
-          errorObj[`image_url_${index}`] = `Invalid URL in images array at index ${index}: ${url}`
-        }
-      })
-    }
-  }
-}
+//   if (message.issue.description.images) {
+//     if (!Array.isArray(message.issue.description.images)) {
+//       errorObj.images = 'images must be an array'
+//     } else {
+//       // Validate each image URL
+//       message.issue.description.images.forEach((url: string, index: number) => {
+//         try {
+//           new URL(url)
+//         } catch (error) {
+//           errorObj[`image_url_${index}`] = `Invalid URL in images array at index ${index}: ${url}`
+//         }
+//       })
+//     }
+//   }
+// }
 
 /**
  * Validates resolution object if present
@@ -268,7 +268,7 @@ const checkOnIssueV2 = (data: any, apiSequence:string, flow: any) => {
       Object.assign(onIssueObj, validateRefs(message.issue.refs, flow))
       Object.assign(onIssueObj, validateActions(message.issue.actions, message))
       Object.assign(onIssueObj, validateActors(message.issue.actors, context, flow))
-      validateDescription(message, onIssueObj)
+      //validateDescription(message, onIssueObj)
       validateResolution(message, onIssueObj)
 
       if (message.issue.updated_at <= message.issue.created_at) {
@@ -278,31 +278,39 @@ const checkOnIssueV2 = (data: any, apiSequence:string, flow: any) => {
       // Sequence-specific validations
       switch(apiSequence) {
         case IGM2FlowSequence.FLOW_1.ON_ISSUE_PROCESSING_1:
-          // For ON_ISSUE_1: updated_at should equal created_at
-          break
-          
-        case IGM2Sequence.ON_ISSUE_2:
-          
-          break
-          
-        case IGM2Sequence.ON_ISSUE_3:
-        
-          break
-          
-        case IGM2Sequence.ON_ISSUE_4:
-          break
-          
-        case IGM2Sequence.ON_ISSUE_5:
-        case IGM2Sequence.ON_ISSUE_6:
-        case IGM2Sequence.ON_ISSUE_7:
-        
-          
-         
-          break
+          if (message.issue.status !== 'PROCESSING') {
+            onIssueObj.status_processing = `For ${apiSequence}, status should be PROCESSING, found: ${message.issue.status}`
+          }
+          break;
+
+        case IGM2FlowSequence.FLOW_1.ON_ISSUE_INFO_REQUIRED_1:
+        case IGM2FlowSequence.FLOW_1.ON_ISSUE_INFO_REQUIRED_2:
+          // if (message.issue.status !== 'PROCESSING') {
+          //   onIssueObj.status_info_required = `For ${apiSequence}, status should be PROCESSING, found: ${message.issue.status}`
+          // }
+          break;
+
+        case IGM2FlowSequence.FLOW_1.ON_ISSUE_PROCESSING_2:
+          // if (message.issue.status !== 'PROCESSING') {
+          //   onIssueObj.status_processing = `For ${apiSequence}, status should be PROCESSING, found: ${message.issue.status}`
+          // }
+          break;
+
+        case IGM2FlowSequence.FLOW_1.ON_ISSUE_RESOLUTION_PROPOSED:
+          if (message.issue.status !== 'PROCESSING') {
+            onIssueObj.status_resolution = `For ${apiSequence}, status should be PROCESSING, found: ${message.issue.status}`
+          }
+          break;
+
+        case IGM2FlowSequence.FLOW_1.ON_ISSUE_RESOLVED:
+          if (message.issue.status !== 'RESOLVED') {
+            onIssueObj.status_resolved = `For ${apiSequence}, status should be RESOLVED, found: ${message.issue.status}`
+          }
+          break;
           
         default:
           logger.warn(`Unknown API sequence: ${apiSequence}. No specific validations applied.`)
-          break
+          break;
       }
 
       // Store updated values

@@ -15,8 +15,9 @@ import {
   compareQuoteObjects,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
+import { FLOW } from '../../enum'
 
-export const checkOnInit = (data: any, flow:string) => {
+export const checkOnInit = (data: any, flow: string) => {
   try {
     const onInitObj: any = {}
     if (!data || isObjectEmpty(data)) {
@@ -385,7 +386,7 @@ export const checkOnInit = (data: any, flow:string) => {
       logger.info(`/${constants.ON_INIT} Price Breakup: ${initBreakupPrice}`)
 
       initQuotePrice = parseFloat(on_init.quote.price.value)
-      setValue("initQuotePrice", initQuotePrice);
+      setValue('initQuotePrice', initQuotePrice)
       logger.info(`/${constants.ON_INIT} Quoted Price: ${initQuotePrice}`)
 
       logger.info(`Comparing /${constants.ON_INIT} Quoted Price and Net Price Breakup`)
@@ -633,6 +634,27 @@ export const checkOnInit = (data: any, flow:string) => {
       })
     } catch (error: any) {
       logger.error(`Error while validating tags, ${error.stack}`)
+    }
+
+    if (flow === FLOW.FLOW003) {
+      const fulfillmentId = on_init.fulfillments?.[0]?.id
+      setValue('fulfillmentId', on_init.fulfillments?.[0]?.id)
+      const slot = getValue('fulfillmentSlots')
+      const ele = on_init.fulfillments.find((ele: { id: any }): any => ele.id === fulfillmentId)
+      const item = slot.find((ele: { id: any }): any => ele.id === fulfillmentId)
+      if (!ele || !item) {
+        const key = `fulfillments missing`
+        onInitObj[key] = `fulfillments must be same as in /${constants.ON_INIT}`
+      }
+      if (item?.end?.time?.range && ele?.end?.time?.range) {
+        const itemRange = item.end.time.range
+        const eleRange = ele.end.time.range
+
+        if (itemRange.start !== eleRange.start && itemRange.end !== eleRange.end) {
+          const key = `slotsMismatch`
+          onInitObj[key] = `slots in fulfillments must be same as in /${constants.ON_SELECT}`
+        }
+      }
     }
 
     return onInitObj

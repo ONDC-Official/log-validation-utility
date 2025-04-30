@@ -1441,3 +1441,9 @@ export function compareAllObjects(
 }
 
 
+export function getProviderId(obj: Record<string, any>): string | null {
+  if ('provider_id' in obj && obj.provider_id) {
+    return obj.provider_id;
+  }
+  return null;
+}

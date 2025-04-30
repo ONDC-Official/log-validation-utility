@@ -4,7 +4,7 @@ import constants, { ApiSequence, ffCategory } from '../../../constants'
 import { validateSchemaRetailV2, isObjectEmpty, checkContext, timeDiff, isoDurToSec, checkBppIdOrBapId } from '../..'
 import _ from 'lodash'
 import { logger } from '../../../shared/logger'
-import { taxNotInlcusive } from '../../enum'
+import { FLOW, taxNotInlcusive } from '../../enum'
 
 interface BreakupElement {
   '@ondc/org/title_type': string
@@ -19,13 +19,12 @@ const retailPymntTtl: { [key: string]: string } = {
   tax: 'tax',
   discount: 'discount',
   'convenience fee': 'misc',
-  offer: 'offer'
+  offer: 'offer',
 }
-export const checkOnSelect = (data: any) => {
+export const checkOnSelect = (data: any,flow?:string) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.ON_SELECT]: 'JSON cannot be empty' }
   }
-
   const { message, context } = data
   if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
@@ -40,7 +39,8 @@ export const checkOnSelect = (data: any) => {
   try {
     logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
     if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
-      errorObj[`${ApiSequence.ON_SELECT}_msgId`] = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+      errorObj[`${ApiSequence.ON_SELECT}_msgId`] =
+        `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
     }
   } catch (error: any) {
     logger.error(`!!Error while checking message id for /${constants.ON_SELECT}, ${error.stack}`)
@@ -49,7 +49,8 @@ export const checkOnSelect = (data: any) => {
   try {
     logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
     if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
-      errorObj[`${ApiSequence.ON_SELECT}_msgId`] = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+      errorObj[`${ApiSequence.ON_SELECT}_msgId`] =
+        `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
     }
   } catch (error: any) {
     logger.error(`!!Error while checking message id for /${constants.ON_SELECT}, ${error.stack}`)
@@ -123,11 +124,11 @@ export const checkOnSelect = (data: any) => {
   try {
     const fulfillments = message.order.fulfillments
     const selectFlflmntSet: any = []
-    const fulfillment_tat_obj:any={}
+    const fulfillment_tat_obj: any = {}
     fulfillments.forEach((flflmnt: any) => {
-      fulfillment_tat_obj[flflmnt.id] = isoDurToSec(flflmnt["@ondc/org/TAT"])
+      fulfillment_tat_obj[flflmnt.id] = isoDurToSec(flflmnt['@ondc/org/TAT'])
       selectFlflmntSet.push(flflmnt.id)
-    })        
+    })
     setValue('selectFlflmntSet', selectFlflmntSet)
     setValue('fulfillment_tat_obj', fulfillment_tat_obj)
   } catch (error: any) {
@@ -149,9 +150,11 @@ export const checkOnSelect = (data: any) => {
   try {
     logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
     if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
-      errorObj[`${ApiSequence.ON_SELECT}_msgId`] = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+      errorObj[`${ApiSequence.ON_SELECT}_msgId`] =
+        `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
       if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
-        errorObj[`${ApiSequence.ON_SELECT}_msgId`] = `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+        errorObj[`${ApiSequence.ON_SELECT}_msgId`] =
+          `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
       }
     }
   } catch (error: any) {
@@ -305,36 +308,31 @@ export const checkOnSelect = (data: any) => {
         const ffDesc = ff.state.descriptor
 
         function checkFFOrgCategory(selfPickupOrDelivery: number) {
-          if (!ff["@ondc/org/category"] || !ffCategory[selfPickupOrDelivery].includes(ff["@ondc/org/category"])) {
+          if (!ff['@ondc/org/category'] || !ffCategory[selfPickupOrDelivery].includes(ff['@ondc/org/category'])) {
             const key = `fulfillment${idx}/@ondc/org/category`
             errorObj[key] =
               `In Fulfillment${idx}, @ondc/org/category is not a valid value in ${constants.ON_SELECT} and should have one of these values ${[ffCategory[selfPickupOrDelivery]]}`
           }
           const domain = data.context.domain.split(':')[1]
-          if(ff.type === "Delivery" && domain === "RET11" && ff["@ondc/org/category"] !== "Immediate Delivery")
-            {
-              const key = `fulfillment${idx}/@ondc/org/category`
-              errorObj[key] =
+          if (ff.type === 'Delivery' && domain === 'RET11' && ff['@ondc/org/category'] !== 'Immediate Delivery') {
+            const key = `fulfillment${idx}/@ondc/org/category`
+            errorObj[key] =
               `In Fulfillment${idx}, @ondc/org/category should be "Immediate Delivery" for F&B in ${constants.ON_SELECT}`
-            }
+          }
         }
-        if (ffDesc.code === 'Serviceable' && ff.type == "Delivery") {
+        if (ffDesc.code === 'Serviceable' && ff.type == 'Delivery') {
           checkFFOrgCategory(0)
-        }
-        else if (ff.type == "Self-Pickup") {
+        } else if (ff.type == 'Self-Pickup') {
           checkFFOrgCategory(1)
         }
-      }
-      else {
+      } else {
         const key = `fulfillment${idx}/descCode`
-        errorObj[key] =
-          `In Fulfillment${idx}, descriptor code is mandatory in ${constants.ON_SELECT}`
+        errorObj[key] = `In Fulfillment${idx}, descriptor code is mandatory in ${constants.ON_SELECT}`
       }
-    });
+    })
   } catch (error: any) {
     logger.error(`!!Error while checking fulfillments @ondc/org/category in /${constants.ON_SELECT}, ${error.stack}`)
   }
-
 
   let onSelectPrice: any = 0 //Net price after discounts and tax in /on_select
   let onSelectItemsPrice = 0 //Price of only items in /on_select
@@ -374,7 +372,6 @@ export const checkOnSelect = (data: any) => {
         itemPrices.set(item['@ondc/org/item_id'], Math.abs(item.price.value))
       }
     })
-    
 
     setValue('selectPriceMap', itemPrices)
   } catch (error: any) {
@@ -414,41 +411,46 @@ export const checkOnSelect = (data: any) => {
     logger.info(`-x-x-x-x-Quote Breakup ${constants.ON_SELECT} all checks-x-x-x-x`)
     const itemsIdList: any = getValue('itemsIdList')
     const itemsCtgrs: any = getValue('itemsCtgrs')
-    const providerOffers: any = getValue(`${ApiSequence.ON_SEARCH}_offers`);
+    const providerOffers: any = getValue(`${ApiSequence.ON_SEARCH}_offers`)
     const applicableOffers: any[] = []
     const orderItemIds = on_select?.items?.map((item: any) => item.id) || []
-    const items:any = orderItemIds
-      .map((id:any) => {
-        const item = on_select?.quote?.breakup.find((entry:any) => entry['@ondc/org/item_id'] === id)
+    const items: any = orderItemIds
+      .map((id: any) => {
+        const item = on_select?.quote?.breakup.find((entry: any) => entry['@ondc/org/item_id'] === id)
         return item ? { id, price: item.price.value } : null
       })
-      .filter((item:any) => item !== null)
-    console.log("itemPrices of found items in breakup",JSON.stringify(items));
+      .filter((item: any) => item !== null)
+    console.log('itemPrices of found items in breakup', JSON.stringify(items))
 
     const priceSums = items.reduce((acc: Record<string, number>, item: { id: string; price: string }) => {
-      const { id, price } = item;
-      acc[id] = (acc[id] || 0) + parseFloat(price);
-      return acc;
-    }, {});
-    
-    console.log("providerOffers",JSON.stringify(providerOffers));
+      const { id, price } = item
+      acc[id] = (acc[id] || 0) + parseFloat(price)
+      return acc
+    }, {})
+
+    console.log('providerOffers', JSON.stringify(providerOffers))
     if (on_select.quote) {
-      const totalWithoutOffers = on_select?.quote?.breakup.reduce((sum:any, item:any) => {
-        if (item["@ondc/org/title_type"] !== "offer") {
-          const value = parseFloat(item.price?.value || "0");
-          return sum + value;
+      const totalWithoutOffers = on_select?.quote?.breakup.reduce((sum: any, item: any) => {
+        if (item['@ondc/org/title_type'] !== 'offer') {
+          const value = parseFloat(item.price?.value || '0')
+          return sum + value
         }
-        return sum;
-      }, 0);
-      
-      console.log("Total without offers:", totalWithoutOffers.toFixed(2));
-      const offers:any = on_select.quote.breakup.filter((offer:any)=>offer["@ondc/org/title_type"] === "offer");
+        return sum
+      }, 0)
+
+      console.log('Total without offers:', totalWithoutOffers.toFixed(2))
+      const offers: any = on_select.quote.breakup.filter((offer: any) => offer['@ondc/org/title_type'] === 'offer')
       const applicableOffer = getValue('selected_offer')
-      console.log("applicableOffer",applicableOffer);
-      const deliveryCharges = Math.abs(parseFloat(on_select.quote.breakup.find((item:any)=>item["@ondc/org/title_type"] === "delivery")?.price?.value)) || 0;
-      
+      console.log('applicableOffer', applicableOffer)
+      const deliveryCharges =
+        Math.abs(
+          parseFloat(
+            on_select.quote.breakup.find((item: any) => item['@ondc/org/title_type'] === 'delivery')?.price?.value,
+          ),
+        ) || 0
+
       if (offers.length > 0) {
-        setValue('on_select_offers',offers)
+        setValue('on_select_offers', offers)
         const additiveOffers = offers.filter((offer: any) => {
           const metaTag = offer?.item.tags?.find((tag: any) => tag.code === 'offer')
           return metaTag?.list?.some((entry: any) => entry.code === 'additive' && entry.value.toLowerCase() === 'yes')
@@ -472,15 +474,15 @@ export const checkOnSelect = (data: any) => {
           applicableOffers.length = 0
           const offer = nonAdditiveOffers[0]
           const offerId = offer?.item?.tags
-                ?.find((tag: any) => tag.code === 'offer')
-                ?.list?.find((entry: any) => entry.code === 'id')?.value
+            ?.find((tag: any) => tag.code === 'offer')
+            ?.list?.find((entry: any) => entry.code === 'id')?.value
           const providerOffer = providerOffers.find((o: any) => o.id === offerId)
           if (providerOffer) {
             applicableOffers.push(providerOffer)
           }
         } else if (nonAdditiveOffers.length > 1) {
-         console.log("nonAdditiveOffers",nonAdditiveOffers);
-         
+          console.log('nonAdditiveOffers', nonAdditiveOffers)
+
           applicableOffers.length = 0
           nonAdditiveOffers.forEach((offer: any) => {
             errorObj[`offer[${offer.index}]`] =
@@ -495,13 +497,13 @@ export const checkOnSelect = (data: any) => {
         const titleType = element['@ondc/org/title_type']
 
         console.log(`Calculating quoted Price Breakup for element ${element.title}`)
-        if (titleType === "offer") {
-          const priceValue = parseFloat(element.price.value);
-        
+        if (titleType === 'offer') {
+          const priceValue = parseFloat(element.price.value)
+
           if (isNaN(priceValue)) {
-            errorObj.invalidPrice = `Price for title type "offer" is not a valid number.`;
+            errorObj.invalidPrice = `Price for title type "offer" is not a valid number.`
           } else if (priceValue >= 0) {
-            errorObj.positivePrice = `Price for title type "offer" must be negative, but got ${priceValue}.`;
+            errorObj.positivePrice = `Price for title type "offer" must be negative, but got ${priceValue}.`
           }
         }
         onSelectPrice += parseFloat(element.price.value)
@@ -640,7 +642,7 @@ export const checkOnSelect = (data: any) => {
               const offerItemIds = providerOffer?.item_ids || []
               const itemMatch = offerItemIds.some((id: string) => orderItemIds.includes(id))
 
-              if (!itemMatch && titleType === "buyXgetY") {
+              if (!itemMatch && titleType === 'buyXgetY') {
                 errorObj[`offer_item[${i}]`] =
                   `Offer with id '${offerId}' is not applicable for any of the ordered item(s). \nApplicable items in offer: [${offerItemIds.join(', ')}], \nItems in order: [${orderItemIds.join(', ')}].`
               }
@@ -715,8 +717,7 @@ export const checkOnSelect = (data: any) => {
                         `Quoted price mismatch: After ${benefitAmount}% discount on ₹${totalWithoutOffers}, expected price is ₹${quoteAfterBenefit.toFixed(2)}, but got ₹${quotedPrice.toFixed(2)}.`
                     }
                   }
-                }
-                 else {
+                } else {
                   if (value_cap > 0) {
                     benefitValue = value_cap - benefitAmount
 
@@ -784,7 +785,7 @@ export const checkOnSelect = (data: any) => {
                   const itemTags = element?.item?.tags || []
 
                   const offerTag = itemTags.find((tag: any) => tag.code === 'offer')
-                  if(!offerTag){
+                  if (!offerTag) {
                     errorObj.invalidTags = `tags are required in on_select   /quote with @ondc/org/title_type:${titleType} and offerId:${offerId}`
                   }
 
@@ -812,7 +813,7 @@ export const checkOnSelect = (data: any) => {
                   const matchedItems = itemsOnSearch[0].filter((item: any) => itemIds.includes(item.id))
 
                   const priceMismatchItems: string[] = []
-                  let totalExpectedOfferValue:number = 0
+                  let totalExpectedOfferValue: number = 0
                   console.log(totalExpectedOfferValue)
                   let allItemsEligible = true
 
@@ -856,8 +857,7 @@ export const checkOnSelect = (data: any) => {
                       errorObj.invalidItems = `Item(s) with ID(s) ${missingOrOutOfStock.join(', ')} not found in catalog or do not have enough stock for offer ID: ${offerId}`
                     }
                   }
-                }
-                 else {
+                } else {
                   console.log('benefit lsit', benefitList)
                   const benefitItemId = benefitList.find((entry: any) => entry.code === 'item_id')?.value || ''
                   const benefitItemCount = parseInt(
@@ -866,7 +866,7 @@ export const checkOnSelect = (data: any) => {
                   const itemTags = element?.item?.tags || []
 
                   const offerTag = itemTags.find((tag: any) => tag.code === 'offer')
-                  if(!offerTag){
+                  if (!offerTag) {
                     errorObj.invalidTags = `tags are required in on_select   /quote with @ondc/org/title_type:${titleType} and offerId:${offerId}`
                   }
 
@@ -965,7 +965,7 @@ export const checkOnSelect = (data: any) => {
                 const itemTags = element?.item?.tags || []
 
                 const offerTag = itemTags.find((tag: any) => tag.code === 'offer')
-                if(!offerTag){
+                if (!offerTag) {
                   errorObj.invalidTags = `tags are required in on_select   /quote with @ondc/org/title_type:${titleType} and offerId:${offerId}`
                 }
 
@@ -1102,8 +1102,10 @@ export const checkOnSelect = (data: any) => {
                 }
               }
             }
-          } catch (error:any) {
-            logger.error(`!!Error while checking and validating the offer price in /${constants.ON_SELECT}, ${error.stack}`)
+          } catch (error: any) {
+            logger.error(
+              `!!Error while checking and validating the offer price in /${constants.ON_SELECT}, ${error.stack}`,
+            )
           }
         }
       })
@@ -1178,13 +1180,13 @@ export const checkOnSelect = (data: any) => {
           item['@ondc/org/title_type'] !== 'offer' &&
           !(item.title.toLowerCase().trim() in retailPymntTtl)
         ) {
-          errorObj.pymntttl = `Quote breakup Payment title "${item.title}" is not as per the API Contract`;
+          errorObj.pymntttl = `Quote breakup Payment title "${item.title}" is not as per the API Contract`
         } else if (
           item['@ondc/org/title_type'] !== 'item' &&
           item['@ondc/org/title_type'] !== 'offer' &&
           retailPymntTtl[item.title.toLowerCase().trim()] !== item['@ondc/org/title_type']
         ) {
-          errorObj.pymntttlmap = `Quote breakup Payment title "${item.title}" comes under the title type "${retailPymntTtl[item.title.toLowerCase().trim()]}"`;
+          errorObj.pymntttlmap = `Quote breakup Payment title "${item.title}" comes under the title type "${retailPymntTtl[item.title.toLowerCase().trim()]}"`
         }
       })
     } else {
@@ -1207,15 +1209,14 @@ export const checkOnSelect = (data: any) => {
     logger.info(`Error while checking fulfillments TAT in /${constants.ON_SELECT}`)
   }
 
-
   try {
     // Checking fulfillment.id, fulfillment.type and tracking
     logger.info('Checking fulfillment.id, fulfillment.type and tracking')
     on_select.fulfillments.forEach((ff: any) => {
-      let ffId = ""
+      let ffId = ''
       if (!ff.id) {
         logger.info(`Fulfillment Id must be present `)
-        errorObj["ffId"] = `Fulfillment Id must be present`
+        errorObj['ffId'] = `Fulfillment Id must be present`
       }
 
       ffId = ff.id
@@ -1223,10 +1224,9 @@ export const checkOnSelect = (data: any) => {
       if (ffId) {
         if (ff.tracking === false || ff.tracking === true) {
           setValue(`${ffId}_tracking`, ff.tracking)
-        }
-        else {
+        } else {
           logger.info(`Tracking must be present for fulfillment ID: ${ff.id} in boolean form`)
-          errorObj["ffTracking"] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
+          errorObj['ffTracking'] = `Tracking must be present for fulfillment ID: ${ff.id} in boolean form`
         }
       }
     })
@@ -1279,6 +1279,19 @@ export const checkOnSelect = (data: any) => {
   }
 
   setValue('quote_price', on_select.quote.price.value)
+  const MinOrderValue = getValue('MinOrderValue')
+  if (MinOrderValue) {
+    if (_.lt(Number(on_select.quote.price.value), Number(MinOrderValue))) {
+      const key = `orderValue`
+      errorObj[key] = `Order value must be greater or equal to Minimum Order Value`
+    }
+  }
+  if(flow===FLOW.FLOW003){
+    const fulfillments = on_select.fulfillments
+  setValue('fulfillmentSlots',fulfillments)
+
+  }
+
 
   return Object.keys(errorObj).length > 0 && errorObj
 }

@@ -138,15 +138,15 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
           )
 
         case FisApiSequence.ON_STATUS_EKYC:
-          return checkOnStatus(data[FisApiSequence.ON_STATUS_EKYC], msgIdSet, FisApiSequence.ON_STATUS_EKYC, flow)
+          return checkOnStatus(data[FisApiSequence.ON_STATUS_EKYC], msgIdSet, FisApiSequence.ON_STATUS_EKYC)
         case FisApiSequence.ON_STATUS_ENACH:
-          return checkOnStatus(data[FisApiSequence.ON_STATUS_ENACH], msgIdSet, FisApiSequence.ON_STATUS_ENACH, flow)
+          return checkOnStatus(data[FisApiSequence.ON_STATUS_ENACH], msgIdSet, FisApiSequence.ON_STATUS_ENACH)
 
         case FisApiSequence.ON_STATUS_ESIGN:
-          return checkOnStatus(data[FisApiSequence.ON_STATUS_ESIGN], msgIdSet, FisApiSequence.ON_STATUS_ESIGN, flow)
+          return checkOnStatus(data[FisApiSequence.ON_STATUS_ESIGN], msgIdSet, FisApiSequence.ON_STATUS_ESIGN)
 
         case FisApiSequence.ON_STATUS:
-          return checkOnStatus(data[FisApiSequence.ON_STATUS], msgIdSet, FisApiSequence.ON_STATUS, flow)
+          return checkOnStatus(data[FisApiSequence.ON_STATUS], msgIdSet, FisApiSequence.ON_STATUS)
 
         default:
           return null

@@ -13,10 +13,10 @@ import {
   validateQuote,
   validateXInputSubmission,
 } from './fisChecks'
-import { validateLoanInfoTags, validateLoanTags, validatePaymentTags } from './tags'
+import { validateLoanInfoTags, validatePaymentTags } from './tags'
 import _, { isEmpty } from 'lodash'
 
-export const checkOnStatus = (data: any, msgIdSet: any, sequence: string, flow: string) => {
+export const checkOnStatus = (data: any, msgIdSet: any, sequence: string) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {

@@ -14,8 +14,9 @@ import {
 import {
   validatePaymentTags,
   // validateLoanTags,
+  validateContactAndLspTags,
 } from './tags'
-import { validateGeneralInfoTags } from '../FIS12/tags';
+import { validateGeneralInfoTags } from '../FIS12/tags'
 import { isEmpty } from 'lodash'
 
 export const checkOnSearch = (data: any, msgIdSet: any, sequence: string, flow: string) => {
@@ -289,11 +290,11 @@ export const checkOnSearch = (data: any, msgIdSet: any, sequence: string, flow: 
           if (true) {
             // tagsValidation = validateLoanTags(item?.tags, sequence)
             // console.log('tagsValidation', tagsValidation)
-            const tagsValidation = validateGeneralInfoTags(item?.tags);
+            const tagsValidation = validateGeneralInfoTags(item?.tags)
             console.log('tagsValidation-->', item?.tags)
             if (!tagsValidation.isValid) {
-              errorObj.tagErrors = tagsValidation.errors;
-  }
+              errorObj.tagErrors = tagsValidation.errors
+            }
           } else {
             // tagsValidation = validateItemsTags(item?.tags)
           }
@@ -310,19 +311,17 @@ export const checkOnSearch = (data: any, msgIdSet: any, sequence: string, flow: 
         logger.error(`!!Errors while checking items in providers[${i}], ${error.stack}`)
       }
 
-      // try {
-      //   logger.info(`Checking tags construct for providers[${i}]`)
-
-      //   const tags = onSearchCatalog['providers'][i]['tags']
-
-      //   // Validate tags
-      //   const tagsValidation = validateProviderTags(tags)
-      //   if (!tagsValidation.isValid) {
-      //     Object.assign(errorObj, { tags: tagsValidation.errors })
-      //   }
-      // } catch (error: any) {
-      //   logger.error(`!!Error while checking tags construct for providers[${i}], ${error.stack}`)
-      // }
+      // Validate provider tags (CONTACT_INFO, LSP_INFO)
+      try {
+        logger.info(`Checking tags construct for providers[${i}]`)
+        const tags = onSearchCatalog['providers'][i]['tags']
+        const tagsValidation = validateContactAndLspTags(tags)
+        if (!tagsValidation.isValid) {
+          Object.assign(errorObj, { providerTags: tagsValidation.errors })
+        }
+      } catch (error: any) {
+        logger.error(`!!Error while checking tags construct for providers[${i}], ${error.stack}`)
+      }
 
       //tags missing
 

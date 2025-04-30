@@ -285,7 +285,6 @@ export const FnBonSelectSchema = {
                                   properties: {
                                     code: {
                                       type: 'string',
-                                      const: 'quote',
                                     },
                                     list: {
                                       type: 'array',

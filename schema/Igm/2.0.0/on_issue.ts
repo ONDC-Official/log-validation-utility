@@ -281,7 +281,7 @@ const newOnIssueSchema = {
                       url: { type: 'string', format: 'uri' },
                       size_type: { type: 'string' }
                     },
-                    required: ['url', 'size_type']
+                    required: ['url']
                   },
                 },
               },

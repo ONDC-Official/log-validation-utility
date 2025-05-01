@@ -78,6 +78,7 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
   }
 
   try {
+    console.log('FIS12Sequence', flow)
     const processFIS12Sequence = (FIS12Sequence: any, data: any, logReport: any, flow: string) => {
       console.log('FIS12Sequence', FIS12Sequence)
       if (flow in fisFlows) {
@@ -86,7 +87,6 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         FIS12Sequence.forEach((apiSeq: any) => {
           if (data[apiSeq]) {
             const resp = getResponse(apiSeq, data, msgIdSet)
-            console.log('resp', resp, apiSeq)
             if (!_.isEmpty(resp)) {
               logReport = { ...logReport, [apiSeq]: resp }
               hasErrors = true
@@ -106,7 +106,6 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         return { invldFlow: 'Provided flow is invalid' }
       }
     }
-
     const getResponse = (apiSeq: any, data: any, msgIdSet: any) => {
       if (flow.includes('WCL')) {
         switch (apiSeq) {
@@ -355,24 +354,6 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
           case fisFlows.PERSONAL_WITHOUT_AGGREGATOR_AND_MONITORING:
             logReport = processFIS12Sequence(personalWithoutMonitoringAndAggregatorSequence, data, logReport, flow)
             break
-          case fisFlows.WCL_CREDIT_LINE_ASSIGNMENT:
-        logReport = processFIS12Sequence(wclCreditLineAssignmentSequence, data, logReport, flow)
-        break
-      case fisFlows.WCL_CREDIT_LINE_DRAWDOWN:
-        logReport = processFIS12Sequence(wclCreditLineDrawdownSequence, data, logReport, flow)
-        break
-      case fisFlows.WCL_MISSED_EMI_PAYMENT:
-        logReport = processFIS12Sequence(wclMissedEmiPaymentSequence, data, logReport, flow)
-        break
-      case fisFlows.WCL_PRE_PART_PAYMENT:
-        logReport = processFIS12Sequence(wclPrePartPaymentSequence, data, logReport, flow)
-        break
-      case fisFlows.WCL_DRAWDOWN_FORECLOSURE:
-        logReport = processFIS12Sequence(wclDrawdownForeclosureSequence, data, logReport, flow)
-        break
-      case fisFlows.WCL_CREDIT_LINE_CANCELLATION:
-        logReport = processFIS12Sequence(wclCreditLineCancellationSequence, data, logReport, flow)
-        break
     }
 
         break
@@ -397,6 +378,30 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
             break
         }
 
+        break
+      }
+
+      case '2.3.0': {
+        switch (flowName) {
+          case fisFlows.WCL_CREDIT_LINE_ASSIGNMENT:
+              logReport = processFIS12Sequence(wclCreditLineAssignmentSequence, data, logReport, flow)
+              break
+          case fisFlows.WCL_CREDIT_LINE_DRAWDOWN:
+            logReport = processFIS12Sequence(wclCreditLineDrawdownSequence, data, logReport, flow)
+            break
+          case fisFlows.WCL_MISSED_EMI_PAYMENT:
+            logReport = processFIS12Sequence(wclMissedEmiPaymentSequence, data, logReport, flow)
+            break
+          case fisFlows.WCL_PRE_PART_PAYMENT:
+            logReport = processFIS12Sequence(wclPrePartPaymentSequence, data, logReport, flow)
+            break
+          case fisFlows.WCL_DRAWDOWN_FORECLOSURE:
+            logReport = processFIS12Sequence(wclDrawdownForeclosureSequence, data, logReport, flow)
+            break
+          case fisFlows.WCL_CREDIT_LINE_CANCELLATION:
+            logReport = processFIS12Sequence(wclCreditLineCancellationSequence, data, logReport, flow)
+            break
+        }
         break
       }
 

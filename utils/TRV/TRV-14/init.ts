@@ -1,12 +1,13 @@
 import { logger } from '../../../shared/logger'
 import { TRV14ApiSequence } from '../../../constants'
 import { isObjectEmpty, validateSchema } from '../../../utils'
-import { setValue } from '../../../shared/dao'
+import { getValue, setValue } from '../../../shared/dao'
+import { compareFulfillments, compareItems, validateTagsStructure } from './TRV14checks'
 
 // @ts-ignore
 export const checkInit = (data: any, msgIdSet: any, version: any) => {
   const rsfObj: any = {}
-
+ const itemMap =  getValue('items')
   const { message, context }: any = data
 
   if (!data || isObjectEmpty(data)) {
@@ -21,6 +22,48 @@ export const checkInit = (data: any, msgIdSet: any, version: any) => {
       Object.assign(rsfObj, vs)
     }
 
+    //checking providerid
+     const init =message.order
+     const prvdrid =  getValue(`select2prvdrId`)
+     const fulfillment = getValue(`select2fulfillment`)
+     const items = getValue(`select2items`)
+
+     if(init.provider.id !== prvdrid ){
+      rsfObj.prvdrid = `provider id mismatches in init and on_select`
+     }
+
+     //init items
+     init.items.forEach((itm:any) => {
+      if(!itemMap.has(itm.id) ){
+        rsfObj.itm = `${itm.id} was not in select call  `
+      }
+      if(itm.quantity.selected.count !== itemMap.get(itm.id) ){
+        rsfObj.itm = `${itm.id} quantity changed from previous call  `
+      }
+     })
+
+     //compareItems
+     try {
+      const ItemsError = compareItems(init.items,items)
+      Object.assign(rsfObj,ItemsError)
+     } catch (error) {
+      logger.error(error)
+     }
+
+     //compare fulfillments
+     try {
+      const fulfillmentError = compareFulfillments(init.fulfillments,fulfillment)
+      Object.assign(rsfObj,fulfillmentError)
+     } catch (error) {
+      logger.error(error)
+     }
+
+     //init tags
+    const tagsError =  validateTagsStructure(init.tags)
+     Object.assign(rsfObj,tagsError)
+
+    setValue('initpayments',init.payments) 
+    setValue('initfullfilments',init.fulfillments)
     setValue('init_context', context)
     setValue('init_message', message)
 

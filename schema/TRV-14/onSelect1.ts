@@ -58,7 +58,7 @@ const onSelect1SchemaTRV14 = {
       properties: {
         order: {
           type: 'object',
-          required: ['items', 'fulfillments', 'provider', 'quote'],
+          required: ['items', 'fulfillments', 'provider', 'quote','replacement_terms'],
           properties: {
             items: {
               type: 'array',
@@ -72,7 +72,7 @@ const onSelect1SchemaTRV14 = {
                     required: ['name', 'code'],
                     properties: {
                       name: { type: 'string' },
-                      code: { type: 'string' },
+                      code: { type: 'string' , enum:["ENTRY_PASS","ABSTRACT","ADD_ON"]},
                     },
                   },
                   location_ids: { type: 'array', items: { type: 'string' } },
@@ -84,17 +84,17 @@ const onSelect1SchemaTRV14 = {
               type: 'array',
               items: {
                 type: 'object',
-                required: ['id', 'type', 'stops'],
+                required: ['id', 'type', 'stops',"vehicle"],
                 properties: {
                   id: { type: 'string' },
-                  type: { type: 'string' },
+                  type: { type: 'string' , enum:["VISIT"] },
                   stops: {
                     type: 'array',
                     items: {
                       type: 'object',
                       required: ['type', 'time'],
                       properties: {
-                        type: { type: 'string' },
+                        type: { type: 'string',enum:["START","END"] },
                         time: {
                           type: 'object',
                           required: ['timestamp'],
@@ -105,6 +105,13 @@ const onSelect1SchemaTRV14 = {
                       },
                     },
                   },
+                  vehicle:{
+                    type: 'object',
+                    required:["category"],
+                    properties:{
+                      category:{type:"string",enum:["SITE"]}
+                    }
+                  }
                 },
               },
             },
@@ -154,6 +161,30 @@ const onSelect1SchemaTRV14 = {
                 },
               },
             },
+            replacement_terms: {
+              type: 'array',
+              items: {
+                type: 'object',
+                required: ['external_ref'],
+                properties: {
+                  external_ref: {
+                    type: 'object',
+                    required: ['mimetype', 'url'],
+                    properties: {
+                      mimetype: {
+                        type: 'string',
+                        enum: ['text/html', 'text/plain', 'application/pdf']
+                      },
+                      url: {
+                        type: 'string',
+                        format: 'uri',
+                        pattern: '^https://'
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
         },
       },

@@ -26,7 +26,7 @@ export const checkOnInit = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema('FIS', constants.ON_INIT, data)
+  const schemaValidation = validateSchema('FIS10', constants.ON_INIT, data)
   const contextRes: any = validateContext(context, msgIdSet, constants.INIT, constants.ON_INIT)
   const errorObj: any = {}
 

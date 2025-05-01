@@ -26,7 +26,7 @@ export const checkOnStatus = (data: any, msgIdSet: any) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema('FIS', constants.ON_STATUS, data)
+  const schemaValidation = validateSchema('FIS10', constants.ON_STATUS, data)
   const contextRes: any = validateContext(context, msgIdSet, constants.STATUS, constants.ON_STATUS)
   const errorObj: any = {}
 

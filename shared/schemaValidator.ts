@@ -87,6 +87,18 @@ import {confirmFIS14Schema} from '../schema/FIS/Mutual_Funds/confirm'
 import {onConfirmFIS14Schema} from '../schema/FIS/Mutual_Funds/on_confirm'
 // import { onStatusFIS14Schema } from '../schema/FIS/Mutual_Funds/on_status'
 import { onUpdateFIS14Schema } from '../schema/FIS/Mutual_Funds/on_update'
+import { searchSchemaFIS10 } from '../schema/FIS/Gift_Card/search'
+import { selectSchemaFIS10 } from '../schema/FIS/Gift_Card/select'
+import { onSelectSchemaFIS10 } from '../schema/FIS/Gift_Card/on_select'
+import { InitSchemaFIS10 } from '../schema/FIS/Gift_Card/init'
+import { onInitSchemaFIS10 } from '../schema/FIS/Gift_Card/on_init'
+import { confirmSchemaFIS10 } from '../schema/FIS/Gift_Card/confirm'
+import { onConfirmSchemaFIS10 } from '../schema/FIS/Gift_Card/on_confirm'
+import { statusSchemaFIS10 } from '../schema/FIS/Gift_Card/status'
+import { onStatusSchemaFIS10 } from '../schema/FIS/Gift_Card/on_status'
+import { onSearchSchemaFIS10 } from '../schema/FIS/Gift_Card/on_search'
+import { onUpdateFIS10 } from '../schema/FIS/Gift_Card/on_update'
+import { onCancelSchemaFIS10 } from '../schema/FIS/Gift_Card/on_cancel'
 
 const ajv = new Ajv({
   allErrors: true,
@@ -1154,6 +1166,57 @@ const validate_schema_on_cancel_TRV12_for_json = (data: any) => {
   const error_list = validate_schema(data, onCancelSchemaTRV_12)
   return formatted_error(error_list)
 }
+// FIS10
+const validate_schema_search_FIS10_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchSchemaFIS10)
+  return formatted_error(error_list)
+}
+const validate_schema_on_search_FIS10_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSearchSchemaFIS10)
+  return formatted_error(error_list)
+}
+
+const validate_schema_select_FIS10_for_json =  (data: any) => {
+  const error_list = validate_schema(data, selectSchemaFIS10)
+  return formatted_error(error_list)
+}
+const validate_schema_on_select_FIS10_for_json =  (data: any) => {
+  const error_list = validate_schema(data, onSelectSchemaFIS10)
+  return formatted_error(error_list)
+}
+const validate_schema_init_FIS10_for_json =  (data: any) => {
+  const error_list = validate_schema(data, InitSchemaFIS10)
+  return formatted_error(error_list)
+}
+const validate_schema_on_init_FIS10_for_json =  (data: any) => {
+  const error_list = validate_schema(data, onInitSchemaFIS10)
+  return formatted_error(error_list)
+}
+const validate_schema_confirm_FIS10_for_json =  (data: any) => {
+  const error_list = validate_schema(data, confirmSchemaFIS10)
+  return formatted_error(error_list)
+}
+const validate_schema_on_confirm_FIS10_for_json =  (data: any) => {
+  const error_list = validate_schema(data, onConfirmSchemaFIS10)
+  return formatted_error(error_list)
+}
+const validate_schema_status_FIS10_for_json =  (data: any) => {
+  const error_list = validate_schema(data, statusSchemaFIS10)
+  return formatted_error(error_list)
+}
+const validate_schema_on_status_FIS10_for_json =  (data: any) => {
+  const error_list = validate_schema(data, onStatusSchemaFIS10)
+  return formatted_error(error_list)
+}
+const validate_schema_on_update_FIS10_for_json =  (data: any) => {
+  const error_list = validate_schema(data, onUpdateFIS10)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_FIS10_for_json =  (data: any) => {
+  const error_list = validate_schema(data, onCancelSchemaFIS10)
+  return formatted_error(error_list)
+}
+
 
 //________________________________________________________________________________________________
 
@@ -1575,6 +1638,19 @@ export default {
   // validate_schema_on_status_FIS14_for_json ,
   validate_schema_on_update_FIS14_for_json,
 
+  // FIS10- Gift Card
+  validate_schema_search_FIS10_for_json,
+  validate_schema_on_search_FIS10_for_json,
+  validate_schema_select_FIS10_for_json,
+  validate_schema_on_select_FIS10_for_json,
+  validate_schema_init_FIS10_for_json,
+  validate_schema_on_init_FIS10_for_json,
+  validate_schema_confirm_FIS10_for_json,
+  validate_schema_on_confirm_FIS10_for_json,
+  validate_schema_status_FIS10_for_json,
+  validate_schema_on_status_FIS10_for_json,
+  validate_schema_on_update_FIS10_for_json,
+  validate_schema_on_cancel_FIS10_for_json,
   ...TRVValidator,
   ...FISValidator,
 }

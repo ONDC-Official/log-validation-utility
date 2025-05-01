@@ -21,7 +21,7 @@ export const checkOnSelect = (data: any, msgIdSet: any, flow: string) => {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
 
-  const schemaValidation = validateSchema('FIS', constants.ON_SELECT, data)
+  const schemaValidation = validateSchema('FIS10', constants.ON_SELECT, data)
   const contextRes: any = validateContext(context, msgIdSet, constants.SELECT, constants.ON_SELECT)
   const errorObj: any = {}
 

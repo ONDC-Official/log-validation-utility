@@ -719,6 +719,147 @@ curl --location 'https://log-validation.ondc.org/api/validate/fis/fis12' \
 }'
 ```
 
+### For FIS12 Working Capital Loans Sample Curl Requests
+
+#### For WCL_CREDIT_LINE_ASSIGNMENT Flow
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS12",
+    "version": "2.3.0",
+    "flow": "WCL_CREDIT_LINE_ASSIGNMENT",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "search_1": {},
+        "on_search_1": {},
+        "search_2": {},
+        "on_search_2": {},
+        "select": {},
+        "on_select": {},
+        "on_status_kyc": {},
+        "select_1": {},
+        "on_select_1":{},
+        "select_2":{},
+        "on_select_2": {},
+        "init":{},
+        "on_init":{},
+        "init_1":{},
+        "on_init_1":{},
+        "on_status_emandate":{},
+        "init_2": {},
+        "on_init_2": {},
+        "on_status_esign":{},
+        "init_3":{},
+        "on_init_3":{},
+        "confirm":{},
+        "on_confirm":{}
+    }
+}'
+```
+
+#### For WCL_CREDIT_LINE_DRAWDOWN Flow
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS12",
+    "version": "2.3.0",
+    "flow": "WCL_CREDIT_LINE_DRAWDOWN",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "init": {},
+        "on_init": {},
+        "init_1": {},
+        "on_init_2": {},
+        "confirm": {},
+        "on_confirm":{},
+        "on_update":{},
+        "on_update_base_transaction": {}
+    }
+}'
+```
+
+#### For WCL_MISSED_EMI_PAYMENT Flow
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS12",
+    "version": "2.3.0",
+    "flow": "WCL_MISSED_EMI_PAYMENT",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "update": {},
+        "on_update_emi_detail":{},
+        "on_update_payment_status":{},
+        "on_update_base_transaction":{}
+    }
+}'
+```
+
+#### For WCL_PRE_PART_PAYMENT Flow
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS12",
+    "version": "2.3.0",
+    "flow": "WCL_PRE_PART_PAYMENT",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "update": {},
+        "on_update_pre_part_payment": {},
+        "on_update_payment_status": {},
+        "on_update_base_transaction": {}
+    }
+}'
+```
+
+#### For WCL_DRAWDOWN_FORECLOSURE Flow
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS12",
+    "version": "2.3.0",
+    "flow": "WCL_DRAWDOWN_FORECLOSURE",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "update": {},
+        "on_update_foreclosure_detail": {},
+        "on_update_payment_status":{},
+        "on_update_base_transaction": {}
+    }
+}'
+```
+
+#### For WCL_CREDIT_LINE_CANCELLATION Flow
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS12",
+    "version": "2.3.0",
+    "flow": "WCL_CREDIT_LINE_CANCELLATION",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "cancel": {},
+        "on_cancel":{},
+        "on_update": {}
+    }
+}'
+```
+
+
 ### For FIS14 Sample Curl Requests (Local)
 
 #### For SEARCH_FULL_PULL Flow
@@ -887,6 +1028,7 @@ curl --location 'http://localhost:3008/api/validate/fis' \
     }
 }'
 ```
+
 
 ### For TRV10 Sample Curl Request (Local)
 

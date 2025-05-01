@@ -225,7 +225,6 @@ export const FIS14ApiSequence = {
 export const TRV14ApiSequence = {
   SEARCH: 'search',
   ON_SEARCH1: 'on_search_1',
-  ON_SEARCH2: 'on_search_2',
   SELECT1: 'select_1',
   ON_SELECT1: 'on_select_1',
   SELECT2: 'select_2',
@@ -236,8 +235,6 @@ export const TRV14ApiSequence = {
   ON_CONFIRM: 'on_confirm',
   STATUS: 'status',
   ON_STATUS: 'on_status',
-  SOFT_CANCEL: 'soft_cancel',
-  SOFT_ON_CANCEL: 'soft_on_cancel',
   CANCEL: 'cancel',
   ON_CANCEL: 'on_cancel',
   UPDATE: 'update',

@@ -58,3 +58,8 @@ export const partialCancellation = [
 ]
 
 export const cancellationRejected = [TRV14ApiSequence.CANCEL, TRV14ApiSequence.ON_CANCEL]
+
+export const TRV14OptialCalls: { [key: string]: string[] } = {
+  technicalCancellation: [TRV14ApiSequence.CANCEL, TRV14ApiSequence.ON_CANCEL],
+  PAGINATION: [TRV14ApiSequence.ON_SEARCH_2],
+}

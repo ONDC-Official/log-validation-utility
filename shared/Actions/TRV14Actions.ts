@@ -30,6 +30,7 @@ import {
   TRV14FLOWS,
   userCancellation,
 } from '../../constants/trvFlows'
+import { checkIsOptional } from '../../utils'
 
 export function validateLogsForTRV14(data: any, _flow: string, version: string) {
   const msgIdSet = new Set()
@@ -69,8 +70,8 @@ export function validateLogsForTRV14(data: any, _flow: string, version: string) 
             logReport = { ...logReport, [apiSeq]: resp }
           }
         } else {
-          if (apiSeq !== TRV14ApiSequence.ON_SEARCH_2)
-            logReport = { ...logReport, [apiSeq]: `Missing required data of : ${apiSeq}` }
+          const IsOptional = checkIsOptional(apiSeq, flow)
+          if (!IsOptional) logReport = { ...logReport, [apiSeq]: `Missing required data of : ${apiSeq}` }
         }
       })
       logger.info(logReport, 'Report Generated Successfully!!')

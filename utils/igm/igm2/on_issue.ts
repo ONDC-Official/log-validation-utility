@@ -109,28 +109,28 @@ const validateLastAction = (message: any, errorObj: any) => {
 /**
  * Validates description object
  */
-const validateDescription = (message: any, errorObj: any) => {
-  if (!message.issue.description) return
+// const validateDescription = (message: any, errorObj: any) => {
+//   if (!message.issue.description) return
   
-  if (!message.issue.description.code || !message.issue.description.short_desc) {
-    errorObj.description = 'description must contain code and short_desc'
-  }
+//   if (!message.issue.description.code || !message.issue.description.short_desc) {
+//     errorObj.description = 'description must contain code and short_desc'
+//   }
   
-  if (message.issue.description.images) {
-    if (!Array.isArray(message.issue.description.images)) {
-      errorObj.images = 'images must be an array'
-    } else {
-      // Validate each image URL
-      message.issue.description.images.forEach((url: string, index: number) => {
-        try {
-          new URL(url)
-        } catch (error) {
-          errorObj[`image_url_${index}`] = `Invalid URL in images array at index ${index}: ${url}`
-        }
-      })
-    }
-  }
-}
+//   if (message.issue.description.images) {
+//     if (!Array.isArray(message.issue.description.images)) {
+//       errorObj.images = 'images must be an array'
+//     } else {
+//       // Validate each image URL
+//       message.issue.description.images.forEach((url: string, index: number) => {
+//         try {
+//           new URL(url)
+//         } catch (error) {
+//           errorObj[`image_url_${index}`] = `Invalid URL in images array at index ${index}: ${url}`
+//         }
+//       })
+//     }
+//   }
+// }
 
 /**
  * Validates resolution object if present
@@ -268,7 +268,7 @@ const checkOnIssueV2 = (data: any, apiSequence:string, flow: any) => {
       Object.assign(onIssueObj, validateRefs(message.issue.refs, flow))
       Object.assign(onIssueObj, validateActions(message.issue.actions, message))
       Object.assign(onIssueObj, validateActors(message.issue.actors, context, flow))
-      validateDescription(message, onIssueObj)
+      //validateDescription(message, onIssueObj)
       validateResolution(message, onIssueObj)
 
       if (message.issue.updated_at <= message.issue.created_at) {

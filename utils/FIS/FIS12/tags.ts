@@ -506,102 +506,107 @@ export const validateItemsTags = (tags: Tag[]): ValidationResult => {
 }
 
 export const validateGeneralInfoTags = (tags: any[]): ValidationResult => {
-  const errors: string[] = [];
-  
+  const errors: string[] = []
+
   if (!tags || !Array.isArray(tags) || tags.length === 0) {
-    errors.push('Tags array is missing or empty');
-    return { isValid: false, errors };
+    errors.push('Tags array is missing or empty')
+    return { isValid: false, errors }
   }
-  
+
   const expectedListCodes = [
     'MIN_INTEREST_RATE',
-    'MAX_INTEREST_RATE', 
+    'MAX_INTEREST_RATE',
     'MIN_TENURE',
     'MAX_TENURE',
     'MIN_LOAN_AMOUNT',
-    'MAX_LOAN_AMOUNT'
-  ];
-  
+    'MAX_LOAN_AMOUNT',
+  ]
+
   try {
     tags.forEach((tag, tagIndex) => {
       if (!tag.descriptor || !tag.descriptor.code) {
-        errors.push(`Tag[${tagIndex}] is missing descriptor.code`);
+        errors.push(`Tag[${tagIndex}] is missing descriptor.code`)
       } else if (tag.descriptor.code !== 'INFO') {
-        errors.push(`Tag[${tagIndex}] has invalid descriptor.code: ${tag.descriptor.code}. Expected: INFO`);
+        errors.push(`Tag[${tagIndex}] has invalid descriptor.code: ${tag.descriptor.code}. Expected: INFO`)
       }
-      
+
       if (tag.display === undefined) {
-        errors.push(`Tag[${tagIndex}] is missing 'display' property`);
+        errors.push(`Tag[${tagIndex}] is missing 'display' property`)
       } else if (typeof tag.display !== 'boolean') {
-        errors.push(`Tag[${tagIndex}] has invalid 'display' property. Expected boolean, got: ${typeof tag.display}`);
+        errors.push(`Tag[${tagIndex}] has invalid 'display' property. Expected boolean, got: ${typeof tag.display}`)
       }
-      
+
       if (!tag.list || !Array.isArray(tag.list) || tag.list.length === 0) {
-        errors.push(`Tag[${tagIndex}] is missing 'list' array or list is empty`);
+        errors.push(`Tag[${tagIndex}] is missing 'list' array or list is empty`)
       } else {
-        const foundCodes = new Set<string>();
+        const foundCodes = new Set<string>()
 
-        tag.list.forEach((item: any, itemIndex:any) => {
+        tag.list.forEach((item: any, itemIndex: any) => {
           if (!item.descriptor || !item.descriptor.code) {
-            errors.push(`Tag[${tagIndex}].list[${itemIndex}] is missing descriptor.code`);
+            errors.push(`Tag[${tagIndex}].list[${itemIndex}] is missing descriptor.code`)
           } else {
-            const code = item.descriptor.code;
-            
-            if (!expectedListCodes.includes(code)) {
-              errors.push(`Tag[${tagIndex}].list[${itemIndex}] has invalid descriptor.code: ${code}`);              // Check if code is in expected list
-            } else {
+            const code = item.descriptor.code
 
+            if (!expectedListCodes.includes(code)) {
+              errors.push(`Tag[${tagIndex}].list[${itemIndex}] has invalid descriptor.code: ${code}`) // Check if code is in expected list
+            } else {
               if (foundCodes.has(code)) {
-                errors.push(`Tag[${tagIndex}].list contains duplicate descriptor.code: ${code}`);
+                errors.push(`Tag[${tagIndex}].list contains duplicate descriptor.code: ${code}`)
               }
-              foundCodes.add(code);
+              foundCodes.add(code)
             }
-            
+
             if (!item.value) {
-              errors.push(`Tag[${tagIndex}].list[${itemIndex}] is missing 'value'`);
+              errors.push(`Tag[${tagIndex}].list[${itemIndex}] is missing 'value'`)
             } else {
               switch (code) {
                 case 'MIN_INTEREST_RATE':
                 case 'MAX_INTEREST_RATE':
                   if (!/^\d+(\.\d+)?\s*%$/.test(item.value)) {
-                    errors.push(`Tag[${tagIndex}].list[${itemIndex}] (${code}) has invalid rate format: ${item.value}. Expected format: "10 %"`);
+                    errors.push(
+                      `Tag[${tagIndex}].list[${itemIndex}] (${code}) has invalid rate format: ${item.value}. Expected format: "10 %"`,
+                    )
                   }
-                  break;
+                  break
                 case 'MIN_TENURE':
                 case 'MAX_TENURE':
                   if (!/^PT\d+[YM]$/.test(item.value)) {
-                    errors.push(`Tag[${tagIndex}].list[${itemIndex}] (${code}) has invalid tenure format: ${item.value}. Expected format: "PT5Y" or "PT6M"`);
+                    errors.push(
+                      `Tag[${tagIndex}].list[${itemIndex}] (${code}) has invalid tenure format: ${item.value}. Expected format: "PT5Y" or "PT6M"`,
+                    )
                   }
-                  break;
+                  break
                 case 'MIN_LOAN_AMOUNT':
                 case 'MAX_LOAN_AMOUNT':
                   if (!/^\d+\s*INR$/.test(item.value)) {
-                    errors.push(`Tag[${tagIndex}].list[${itemIndex}] (${code}) has invalid amount format: ${item.value}. Expected format: "50000 INR"`);
+                    errors.push(
+                      `Tag[${tagIndex}].list[${itemIndex}] (${code}) has invalid amount format: ${item.value}. Expected format: "50000 INR"`,
+                    )
                   }
-                  break;
+                  break
               }
             }
           }
-        });
-        
-        const missingCodes = expectedListCodes.filter(code => !foundCodes.has(code));
+        })
+
+        const missingCodes = expectedListCodes.filter((code) => !foundCodes.has(code))
         if (missingCodes.length > 0) {
-          errors.push(`Tag[${tagIndex}].list is missing required descriptor codes: ${missingCodes.join(', ')}`);
+          errors.push(`Tag[${tagIndex}].list is missing required descriptor codes: ${missingCodes.join(', ')}`)
         }
       }
-    });
+    })
   } catch (error: any) {
-    logger.error(`!!Error while validating general info tags: ${error.stack}`);
-    errors.push(`Unexpected error during validation: ${error.message}`);
+    logger.error(`!!Error while validating general info tags: ${error.stack}`)
+    errors.push(`Unexpected error during validation: ${error.message}`)
   }
-  
-  return { 
-    isValid: errors.length === 0, 
-    errors 
-  };
-};
 
-export const validateLoanInfoTags = (tags: Tag[], flag: string): ValidationResult => {
+  return {
+    isValid: errors.length === 0,
+    errors,
+  }
+}
+
+export const validateLoanInfoTags = (tags: Tag[], flow_type: string): ValidationResult => {
   const errors: string[] = []
   const searchContext = getValue(`search_context`)
   const version = searchContext?.version || ''
@@ -614,14 +619,18 @@ export const validateLoanInfoTags = (tags: Tag[], flag: string): ValidationResul
     }
   }
 
+  let validDescriptorCode = 'LOAN_INFO'
+  if (flow_type === 'INVOICE_BASED_LOAN') validDescriptorCode = 'INFO'
+
   tags.forEach((tag, index) => {
     if (!tag?.descriptor?.code || !tag.list) {
       errors.push(`Tag at index ${index} is missing descriptor or list`)
       return
     }
 
-    if (tag?.descriptor?.code !== 'LOAN_INFO') {
-      errors.push(`Tag at index ${index} has an invalid descriptor code. It should be 'LOAN_INFO'`)
+    if (tag?.descriptor?.code !== validDescriptorCode) {
+      errors.push(`Tag at index ${index} has an invalid descriptor code. It should be '${validDescriptorCode}'`)
+      return
     }
 
     let validListCodes = [
@@ -636,17 +645,18 @@ export const validateLoanInfoTags = (tags: Tag[], flag: string): ValidationResul
       'TNC_LINK',
     ]
 
-    if (flag === 'PERSONAL_LOAN') {
-      validListCodes = validListCodes.concat([
-        'ANNUAL_PERCENTAGE_RATE',
-        'REPAYMENT_FREQUENCY',
-        'NUMBER_OF_INSTALLMENTS_OF_REPAYMENT',
-        'INSTALLMENT_AMOUNT',
-        'COOL_OFF_PERIOD',
-      ])
-    }
+    // if (flow_type === 'PERSONAL_LOAN') {
+    // can be used for both loan types
+    validListCodes = validListCodes.concat([
+      'ANNUAL_PERCENTAGE_RATE',
+      'REPAYMENT_FREQUENCY',
+      'NUMBER_OF_INSTALLMENTS_OF_REPAYMENT',
+      'INSTALLMENT_AMOUNT',
+      'COOL_OFF_PERIOD',
+    ])
+    // }
 
-    if (version === '2.0.1') {
+    if (version === '2.0.1' || flow_type === 'INVOICE_BASED_LOAN') {
       validListCodes.push('KFS_LINK')
     }
 
@@ -676,10 +686,10 @@ export const validateLoanInfoTags = (tags: Tag[], flag: string): ValidationResul
 
           break
         case 'KFS_LINK':
-            if (!isValidUrl(item.value)) {
-              errors.push(`Value for 'KFS_LINK' at index ${itemIndex} within tag ${index} must be a valid URL`)
-            }
-            break;
+          if (!isValidUrl(item.value)) {
+            errors.push(`Value for 'KFS_LINK' at index ${itemIndex} within tag ${index} must be a valid URL`)
+          }
+          break
         case 'TERM':
         case 'APPLICATION_FEE':
         case 'INSTALLMENT_AMOUNT':
@@ -690,7 +700,6 @@ export const validateLoanInfoTags = (tags: Tag[], flag: string): ValidationResul
               `Value for '${item.descriptor.code}' at index ${itemIndex} within tag ${index} must be a positive number`,
             )
           }
-        
 
           break
 
@@ -829,6 +838,81 @@ export const validateLoanTags = (tags: any, sequence: any) => {
           }
         })
       }
+    })
+  }
+
+  return {
+    isValid: errors.length === 0,
+    errors: errors.length > 0 ? errors : undefined,
+  }
+}
+
+export const validateContactAndLspTags = (tags: any) => {
+  const errors: string[] = []
+
+  const contactInfoValidators: Record<string, (value: string) => boolean> = {
+    GRO_NAME: (value) => typeof value === 'string' && value.trim().length > 0,
+    GRO_EMAIL: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+    GRO_CONTACT_NUMBER: (value) => /^[0-9\s\-+()]+$/.test(value),
+    GRO_DESIGNATION: (value) => typeof value === 'string' && value.trim().length > 0,
+    GRO_ADDRESS: (value) => typeof value === 'string' && value.trim().length > 0,
+    CUSTOMER_SUPPORT_LINK: (value) => /^https?:\/\/.+/.test(value),
+    CUSTOMER_SUPPORT_CONTACT_NUMBER: (value) => /^[0-9\s\-+()]+$/.test(value),
+    CUSTOMER_SUPPORT_EMAIL: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+  }
+
+  const lspInfoValidators: Record<string, (value: string) => boolean> = {
+    LSP_NAME: (value) => typeof value === 'string' && value.trim().length > 0,
+    LSP_EMAIL: (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+    LSP_CONTACT_NUMBER: (value) => /^[0-9\s\-+()]+$/.test(value),
+    LSP_ADDRESS: (value) => typeof value === 'string' && value.trim().length > 0,
+  }
+
+  const requiredGroupValidators: Record<string, Record<string, (value: string) => boolean>> = {
+    CONTACT_INFO: contactInfoValidators,
+    LSP_INFO: lspInfoValidators,
+  }
+
+  if (!tags || !Array.isArray(tags) || tags.length === 0) {
+    errors.push('Tags are empty or missing.')
+  } else {
+    tags.forEach((tag: any, tagIndex: number) => {
+      const groupCode = tag?.descriptor?.code
+      const groupName = tag?.descriptor?.name
+
+      if (!groupCode || !groupName) {
+        errors.push(`Tag[${tagIndex}] is missing required descriptor fields (code or name).`)
+        return
+      }
+
+      const groupValidators = requiredGroupValidators[groupCode]
+      if (!groupValidators) {
+        errors.push(`Unexpected descriptor.code '${groupCode}' at Tag[${tagIndex}].`)
+        return
+      }
+
+      if (!tag.list || !Array.isArray(tag.list) || tag.list.length === 0) {
+        errors.push(`Tag[${tagIndex}] has an empty or missing list.`)
+        return
+      }
+
+      tag.list.forEach((item: any, itemIndex: number) => {
+        const descriptorCode = item?.descriptor?.code
+        const descriptorName = item?.descriptor?.name
+        const value = item?.value
+
+        if (!descriptorCode || !descriptorName) {
+          errors.push(`Tag[${tagIndex}] -> List[${itemIndex}] is missing descriptor code or name.`)
+          return
+        }
+
+        const validator = groupValidators[descriptorCode]
+        if (!validator) {
+          errors.push(`Tag[${tagIndex}] -> List[${itemIndex}] has unknown descriptor code '${descriptorCode}'.`)
+        } else if (!value || !validator(value)) {
+          errors.push(`Tag[${tagIndex}] -> List[${itemIndex}] has invalid or missing value for '${descriptorCode}'.`)
+        }
+      })
     })
   }
 

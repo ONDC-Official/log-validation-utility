@@ -56,8 +56,8 @@ export const checkSelect = (data: any, msgIdSet: any, sequence: string) => {
     //check items
     try {
       logger.info(`checking item array in /${constants.INIT}`)
-      const quoteErrors = validateBAPItem(select, constants?.SELECT, constants?.SEARCH, sequence)
-      Object.assign(errorObj, quoteErrors)
+      const itemErrors = validateBAPItem(select, constants?.SELECT, constants?.SEARCH, sequence)
+      Object.assign(errorObj, itemErrors)
     } catch (error: any) {
       logger.error(`!!Error while checking item in /${constants.INIT}`)
     }

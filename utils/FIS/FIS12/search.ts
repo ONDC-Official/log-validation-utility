@@ -1,6 +1,6 @@
 import { logger } from '../../../shared/logger'
 import { getValue, setValue } from '../../../shared/dao'
-import constants from '../../../constants'
+import constants, { FisApiSequence } from '../../../constants'
 import { validateSchema, isObjectEmpty, checkFISContext } from '../../../utils'
 import { validatePaymentTags } from './tags'
 import { isEmpty } from 'lodash'
@@ -28,6 +28,7 @@ export const search = (data: any, msgIdSet: any, flow: string, sequence: string)
     const contextRes: any = checkFISContext(data.context, constants.SEARCH)
     const code = data.message.intent?.category?.descriptor?.code
     const LoanType = getValue(`LoanType`)
+    const flowType = getValue(`flow_type`)
     setValue(`${constants.SEARCH}_context`, data.context)
     msgIdSet.add(data.context.message_id)
 
@@ -98,7 +99,10 @@ export const search = (data: any, msgIdSet: any, flow: string, sequence: string)
     // checking providers
     try {
       // validate providers if type sequence is search_offer
-      if (code == 'INVOICE_BASED_LOAN' && sequence !== 'search') {
+      if (
+        flowType.includes('INVOICE') &&
+        (sequence !== FisApiSequence.SEARCH || sequence !== FisApiSequence.SEARCH_1)
+      ) {
         logger.info(`Validating providers in /${sequence}`)
         const provider = data?.message.intent?.provider
 

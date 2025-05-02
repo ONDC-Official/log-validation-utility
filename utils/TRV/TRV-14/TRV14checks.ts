@@ -713,7 +713,7 @@ export const validateQuote = (quote: any, action: string): Record<string, string
   
     // Validate head
     const head = xinput.head;
-    if (!head || typeof head !== 'object') {
+    if (head || typeof head !== 'object') {
       errors['xinput.head'] = "Missing or invalid 'head'";
     } else {
       const name = head.descriptor?.name;

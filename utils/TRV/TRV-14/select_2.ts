@@ -25,6 +25,8 @@ export const checkSelect2 = (data: any, msgIdSet: any) => {
     }
 
     const select = message.order
+    const Xinputmap = getValue(`xinputmap`)
+
     const items = getValue(`select1items`)
     const fulfillments = getValue(`select1fulfillments`)
     const prvdrid = getValue(`select1prvdrid`)
@@ -60,6 +62,21 @@ export const checkSelect2 = (data: any, msgIdSet: any) => {
       try {
         const ItemsError= compareFulfillments(select.fulfillments,fulfillments)
         Object.assign(rsfObj,ItemsError)
+      } catch (error) {
+        logger.error(error)
+      }
+
+      // checking xinput
+      try {
+        select.items.forEach((itm:any)=>{
+        const xinput = itm.xinput
+          if(Xinputmap.has(itm.id)){
+           const Xinput = Xinputmap.get(itm.id)
+           if(xinput.form.id !== Xinput.form.id){
+            rsfObj[xinput.id] =  ` the xinput form dont't match`
+           }
+          }
+        })
       } catch (error) {
         logger.error(error)
       }

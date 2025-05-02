@@ -40,6 +40,7 @@ export const checkSelect1 = (data: any, msgIdSet: any) => {
       } catch (error) {
         
       }
+
       
       //fulfillment
       select.fulfillments.forEach((itm: any)=>{

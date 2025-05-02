@@ -635,10 +635,10 @@ export const checkOnInit = (data: any, flow: string) => {
     } catch (error: any) {
       logger.error(`Error while validating tags, ${error.stack}`)
     }
-
+        const fulfillmentId = on_init?.fulfillments?.[0]?.id
+      setValue('fulfillmentId', on_init?.fulfillments?.[0]?.id)
     if (flow === FLOW.FLOW003) {
-      const fulfillmentId = on_init.fulfillments?.[0]?.id
-      setValue('fulfillmentId', on_init.fulfillments?.[0]?.id)
+   
       const slot = getValue('fulfillmentSlots')
       const ele = on_init.fulfillments.find((ele: { id: any }): any => ele.id === fulfillmentId)
       const item = slot.find((ele: { id: any }): any => ele.id === fulfillmentId)

@@ -18,6 +18,7 @@ import {
   compareLists,
   isoDurToSec,
   getProviderId,
+  deepCompare,
 } from '../..'
 import { FLOW } from '../../enum'
 import { getValue, setValue } from '../../../shared/dao'
@@ -687,7 +688,9 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
         logger.info('Payment status check in on confirm call')
         const payment = on_confirm.payment
         if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
-          logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`);
+          logger.error(
+            `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`,
+          )
           onCnfrmObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`
         }
       }
@@ -749,6 +752,33 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
           onCnfrmObj[key] = `slots in fulfillments must be same as in /${constants.ON_INIT}`
         }
       }
+    }
+
+    try {
+      const credsWithProviderId = getValue('credsWithProviderId')
+      const providerId = on_confirm?.provider?.id
+      const confirmCreds = on_confirm?.provider?.creds
+      const found = credsWithProviderId.find((ele: { providerId: any }) => ele.providerId === providerId)
+
+      const expectedCreds = found?.creds
+     if (flow === FLOW.FLOW017) {
+        if (!expectedCreds || !credsWithProviderId|| !confirmCreds) {
+          onCnfrmObj['MissingCreds'] = `creds must be present in /${constants.ON_SEARCH}`
+        } else if (!deepCompare(expectedCreds, confirmCreds)) {
+          onCnfrmObj['MissingCreds'] = `creds must be present and same as in /${constants.ON_SEARCH}`
+        }
+      }
+      if (credsWithProviderId && confirmCreds) {
+
+        if (expectedCreds) {
+          if (!deepCompare(expectedCreds, confirmCreds)) {
+            onCnfrmObj['MissingCreds'] = `Mismatch found in creds, it must be same as in /${constants.ON_SEARCH}`
+          }
+        }
+      }
+     
+    } catch (err: any) {
+      logger.error(`Error while Checking creds in ${constants.ON_CONFIRM}, ${err.stack} `)
     }
 
     return onCnfrmObj

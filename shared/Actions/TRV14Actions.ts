@@ -31,6 +31,7 @@ import {
   userCancellation,
 } from '../../constants/trvFlows'
 import { checkIsOptional } from '../../utils'
+import { checkOnSearch } from '../../utils/TRV/TRV-14/onSearch'
 
 export function validateLogsForTRV14(data: any, _flow: string, version: string) {
   const msgIdSet = new Set()
@@ -86,15 +87,15 @@ export function validateLogsForTRV14(data: any, _flow: string, version: string) 
       case TRV14ApiSequence.SEARCH:
         return checkSearch(data[TRV14ApiSequence.SEARCH], msgIdSet, '', '')
       case TRV14ApiSequence.ON_SEARCH:
-        return checkOnSearch1(data[TRV14ApiSequence.ON_SEARCH], msgIdSet, '')
+        return checkOnSearch(data[TRV14ApiSequence.ON_SEARCH], msgIdSet, '')
       case TRV14ApiSequence.ON_SEARCH_1:
-        return checkOnSearch1(data[TRV14ApiSequence.ON_SEARCH_1], msgIdSet, '')
+        return checkOnSearch1(data[TRV14ApiSequence.ON_SEARCH_1], msgIdSet, '',TRV14ApiSequence.ON_SEARCH_1)
       case TRV14ApiSequence.ON_SEARCH_2:
-        return checkOnSearch1(data[TRV14ApiSequence.ON_SEARCH_2], msgIdSet, '')
+        return checkOnSearch1(data[TRV14ApiSequence.ON_SEARCH_2], msgIdSet, '',TRV14ApiSequence.ON_SEARCH_2)
       case TRV14ApiSequence.SELECT_1:
         return checkSelect1(data[TRV14ApiSequence.SELECT_1], msgIdSet)
       case TRV14ApiSequence.ON_SELECT_1:
-        return checkOnSelect1(data[TRV14ApiSequence.ON_SELECT_1], msgIdSet, TRV14ApiSequence.ON_SELECT_1)
+        return checkOnSelect1(data[TRV14ApiSequence.ON_SELECT_1], msgIdSet,'')
       case TRV14ApiSequence.SELECT_2:
         return checkSelect2(data[TRV14ApiSequence.SELECT_2], msgIdSet)
       case TRV14ApiSequence.ON_SELECT_2:
@@ -166,9 +167,14 @@ export function validateLogsForTRV14(data: any, _flow: string, version: string) 
         logReport = { ...logReport, [TRV14ApiSequence.SEARCH]: errors }
       }
     }
-
+    if (data[TRV14ApiSequence.ON_SEARCH]) {
+      const errors = checkOnSearch(data[TRV14ApiSequence.ON_SEARCH], msgIdSet, version)
+      if (!_.isEmpty(errors)) {
+        logReport = { ...logReport, [TRV14ApiSequence.ON_SEARCH]: errors }
+      }
+    }
     if (data[TRV14ApiSequence.ON_SEARCH_1]) {
-      const errors = checkOnSearch1(data[TRV14ApiSequence.ON_SEARCH_1], msgIdSet, version)
+      const errors = checkOnSearch1(data[TRV14ApiSequence.ON_SEARCH_1], msgIdSet, version,TRV14ApiSequence.ON_SEARCH_1)
       if (!_.isEmpty(errors)) {
         logReport = { ...logReport, [TRV14ApiSequence.ON_SEARCH_1]: errors }
       }

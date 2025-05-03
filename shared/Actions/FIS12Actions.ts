@@ -381,6 +381,8 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         break
       }
 
+      
+
       case '2.3.0': {
         switch (flowName) {
           case fisFlows.WCL_CREDIT_LINE_ASSIGNMENT:

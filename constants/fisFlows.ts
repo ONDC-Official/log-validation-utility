@@ -1,4 +1,4 @@
-import { FIS13HealthSequence, FisApiSequence, FisWCLApiSequence } from './index'
+import { FIS12PurchaseFinanceApiSequence, FIS13HealthSequence, FisApiSequence, FisWCLApiSequence } from './index'
 
 export const healthSequence = [
   FIS13HealthSequence.SEARCH_1,
@@ -267,6 +267,112 @@ export const wclCreditLineCancellationSequence = [
   FisWCLApiSequence.ON_CANCEL,
   FisWCLApiSequence.ON_UPDATE
 ]
+
+export const PFwithAggregatorID = [
+  FIS12PurchaseFinanceApiSequence.SEARCH,
+  FIS12PurchaseFinanceApiSequence.ON_SEARCH,
+  FIS12PurchaseFinanceApiSequence.SEARCH_1,
+  FIS12PurchaseFinanceApiSequence.ON_SEARCH_1,
+  FIS12PurchaseFinanceApiSequence.SEARCH_2,
+  FIS12PurchaseFinanceApiSequence.ON_SEARCH_2,
+  FIS12PurchaseFinanceApiSequence.SEARCH_3,
+  FIS12PurchaseFinanceApiSequence.ON_SEARCH_3,
+  FIS12PurchaseFinanceApiSequence.SELECT,
+  FIS12PurchaseFinanceApiSequence.ON_SELECT,
+  FIS12PurchaseFinanceApiSequence.SELECT_1,
+  FIS12PurchaseFinanceApiSequence.ON_SELECT_2,
+  FIS12PurchaseFinanceApiSequence.SELECT_2,
+  FIS12PurchaseFinanceApiSequence.ON_SELECT_3,
+  FIS12PurchaseFinanceApiSequence.SELECT_3,
+  FIS12PurchaseFinanceApiSequence.ON_SELECT_3,
+  FIS12PurchaseFinanceApiSequence.ON_STATUS_KYC,
+  FIS12PurchaseFinanceApiSequence.INIT,
+  FIS12PurchaseFinanceApiSequence.ON_INIT,
+  FIS12PurchaseFinanceApiSequence.INIT_1,
+  FIS12PurchaseFinanceApiSequence.ON_INIT_1,
+  FIS12PurchaseFinanceApiSequence.INIT_2,
+  FIS12PurchaseFinanceApiSequence.ON_INIT_2,
+  FIS12PurchaseFinanceApiSequence.ON_STATUS_ESIGN,
+  FIS12PurchaseFinanceApiSequence.INIT_3,
+  FIS12PurchaseFinanceApiSequence.ON_INIT_3,
+  FIS12PurchaseFinanceApiSequence.ON_STATUS_EMANDATE,
+  FIS12PurchaseFinanceApiSequence.CONFIRM,
+  FIS12PurchaseFinanceApiSequence.ON_CONFIRM,
+  FIS12PurchaseFinanceApiSequence.CANCEL,
+  FIS12PurchaseFinanceApiSequence.ON_CANCEL,
+  FIS12PurchaseFinanceApiSequence.STATUS,
+  FIS12PurchaseFinanceApiSequence.ON_STATUS,
+  FIS12PurchaseFinanceApiSequence.UPDATE,
+  FIS12PurchaseFinanceApiSequence.ON_UPDATE,
+  FIS12PurchaseFinanceApiSequence.ON_UPDATE_FULLFILLMENT_STATE,
+]
+
+export const PFwithoutAggregatorID = [
+  FIS12PurchaseFinanceApiSequence.SEARCH,
+  FIS12PurchaseFinanceApiSequence.ON_SEARCH,
+  FIS12PurchaseFinanceApiSequence.SEARCH_1,
+  FIS12PurchaseFinanceApiSequence.ON_SEARCH_1,
+  FIS12PurchaseFinanceApiSequence.SEARCH_2,
+  FIS12PurchaseFinanceApiSequence.ON_SEARCH_2,
+  FIS12PurchaseFinanceApiSequence.SELECT,
+  FIS12PurchaseFinanceApiSequence.ON_SELECT,
+  FIS12PurchaseFinanceApiSequence.SELECT_1,
+  FIS12PurchaseFinanceApiSequence.ON_SELECT_2,
+  FIS12PurchaseFinanceApiSequence.SELECT_2,
+  FIS12PurchaseFinanceApiSequence.ON_SELECT_3,
+  FIS12PurchaseFinanceApiSequence.SELECT_3,
+  FIS12PurchaseFinanceApiSequence.ON_SELECT_3,
+  FIS12PurchaseFinanceApiSequence.ON_STATUS_KYC,
+  FIS12PurchaseFinanceApiSequence.INIT,
+  FIS12PurchaseFinanceApiSequence.ON_INIT,
+  FIS12PurchaseFinanceApiSequence.INIT_1,
+  FIS12PurchaseFinanceApiSequence.ON_INIT_1,
+  FIS12PurchaseFinanceApiSequence.INIT_2,
+  FIS12PurchaseFinanceApiSequence.ON_INIT_2,
+  FIS12PurchaseFinanceApiSequence.ON_STATUS_ESIGN,
+  FIS12PurchaseFinanceApiSequence.INIT_3,
+  FIS12PurchaseFinanceApiSequence.ON_INIT_3,
+  FIS12PurchaseFinanceApiSequence.ON_STATUS_EMANDATE,
+  FIS12PurchaseFinanceApiSequence.CONFIRM,
+  FIS12PurchaseFinanceApiSequence.ON_CONFIRM,
+  FIS12PurchaseFinanceApiSequence.UPDATE,
+  FIS12PurchaseFinanceApiSequence.ON_UPDATE,
+  FIS12PurchaseFinanceApiSequence.ON_UPDATE_FULLFILLMENT_STATE,
+]
+
+export const PFmultipleOffer = [
+  FIS12PurchaseFinanceApiSequence.SEARCH,
+  FIS12PurchaseFinanceApiSequence.ON_SEARCH,
+  FIS12PurchaseFinanceApiSequence.SEARCH_1,
+  FIS12PurchaseFinanceApiSequence.ON_SEARCH_1,
+  FIS12PurchaseFinanceApiSequence.SEARCH_2,
+  FIS12PurchaseFinanceApiSequence.ON_SEARCH_2,
+  FIS12PurchaseFinanceApiSequence.SEARCH_3,
+  FIS12PurchaseFinanceApiSequence.ON_SEARCH_3,
+]
+
+export const PFloanForeclosure = [
+  FIS12PurchaseFinanceApiSequence.ON_CONFIRM,
+  FIS12PurchaseFinanceApiSequence.UPDATE,
+  FIS12PurchaseFinanceApiSequence.ON_UPDATE_FORECLOSURE_DETAIL,
+  FIS12PurchaseFinanceApiSequence.ON_UPDATE_UNSOLICATED,
+]
+
+export const PFloanPrePartPayment = [
+  FIS12PurchaseFinanceApiSequence.ON_CONFIRM,
+  FIS12PurchaseFinanceApiSequence.UPDATE,
+  FIS12PurchaseFinanceApiSequence.ON_UPDATE_PRE_PART_PAYMENT,
+  FIS12PurchaseFinanceApiSequence.ON_UPDATE_UNSOLICATED,
+]
+
+export const PFmissedEmiPayment = [
+  FIS12PurchaseFinanceApiSequence.ON_CONFIRM,
+  FIS12PurchaseFinanceApiSequence.UPDATE,
+  FIS12PurchaseFinanceApiSequence.ON_UPDATE_EMI_DETAIL,
+  FIS12PurchaseFinanceApiSequence.ON_UPDATE_UNSOLICATED,
+]
+
+
 export const invoiceSequence = [
   FisApiSequence.SEARCH_1,
   FisApiSequence.ON_SEARCH_1,

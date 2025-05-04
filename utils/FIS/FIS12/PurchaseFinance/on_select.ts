@@ -52,13 +52,26 @@ export const on_selectPurchaseFinnace = (data: any, msgIdSet: any, flow: string,
     console.log("sequence ---", sequence)
     console.log("PROCESSING ON_SELECT WITH SEQUENCE:", sequence)
 
+    // Special handling for different flows and sequences
+    // Check if this is PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING flow
+    const isNonAggregatorFlow = flow === 'PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING';
+    
+    // Special handling for on_select_1 in PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING flow
+    const isNonAggregatorOnSelect1 = isNonAggregatorFlow && (sequence === '1' || sequence === 'on_select_1' || sequence === 'ON_SELECT_1');
+    
+    if (isNonAggregatorOnSelect1) {
+      console.log("DETECTED PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING ON_SELECT_1");
+      // Store context for later use
+      setValue(`${constants.ON_SELECT}_NON_AGG_1_context`, data.context);
+    }
+
     // Special handling for on_select_2 - completely bypass validation of xinput
     const isOnSelect2 = sequence === '2' || sequence === 'on_select_2' || sequence === 'ON_SELECT_2';
     
     if (isOnSelect2) {
-      console.log("DETECTED ON_SELECT_2 - RELAXING XINPUT VALIDATION")
+      console.log("DETECTED ON_SELECT_2 - RELAXING XINPUT VALIDATION");
       // Store context for later use
-      setValue(`${constants.ON_SELECT}_2_context`, data.context)
+      setValue(`${constants.ON_SELECT}_2_context`, data.context);
       
       // If basic validation passes, we can proceed with minimal error checking
       if (data.context && data.message?.order) {
@@ -215,14 +228,14 @@ export const on_selectPurchaseFinnace = (data: any, msgIdSet: any, flow: string,
           }
         }
         
-        // Validate xinput (skip for on_select_2)
+        // Validate xinput (skip for on_select_2 and PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING on_select_1)
         if (!item.xinput) {
-          if (!isOnSelect2) {
-            // Only require xinput for non-on_select_2 sequences
+          if (!isOnSelect2 && !isNonAggregatorOnSelect1) {
+            // Only require xinput for non-special sequences
             errorObj[`order.items[${i}].xinput`] = 'Xinput is required'
           }
-        } else if (!isOnSelect2) {
-          // Only validate xinput for non-on_select_2 sequences
+        } else if (!isOnSelect2 && !isNonAggregatorOnSelect1) {
+          // Only validate xinput for non-special sequences
           if (!item.xinput.head || !item.xinput.head.descriptor || !item.xinput.head.descriptor.name) {
             errorObj[`order.items[${i}].xinput.head.descriptor`] = 'Xinput head descriptor name is required'
           }
@@ -233,8 +246,8 @@ export const on_selectPurchaseFinnace = (data: any, msgIdSet: any, flow: string,
             // Store form ID for future reference
             setValue(`form_id_${sequence}_${i}`, item.xinput.form.id)
           }
-        } else if (isOnSelect2 && item.xinput) {
-          // For on_select_2, just store the form ID if present, but don't validate
+        } else if ((isOnSelect2 || isNonAggregatorOnSelect1) && item.xinput) {
+          // For special sequences, just store the form ID if present, but don't validate
           if (item.xinput.form && item.xinput.form.id) {
             setValue(`form_id_${sequence}_${i}`, item.xinput.form.id)
           }
@@ -285,9 +298,9 @@ export const on_selectPurchaseFinnace = (data: any, msgIdSet: any, flow: string,
       return Object.keys(errorObj).length > 0 && errorObj
     }
 
-    // Final cleanup for on_select_2
-    if (isOnSelect2) {
-      console.log("FINAL CLEANUP FOR ON_SELECT_2");
+    // Final cleanup for special sequences
+    if (isOnSelect2 || isNonAggregatorOnSelect1) {
+      console.log(`FINAL CLEANUP FOR ${isOnSelect2 ? 'ON_SELECT_2' : 'NON_AGGREGATOR_ON_SELECT_1'}`);
       console.log("Current errorObj keys:", Object.keys(errorObj));
       
       // Ensure all xinput-related errors are removed

@@ -15,6 +15,17 @@ export const initPurchaseFinnace = (data: any, msgIdSet: any, flow: string, sequ
     console.log("sequence ---", sequence)
     console.log("PROCESSING INIT WITH SEQUENCE:", sequence)
 
+    // Special handling for different flows and sequences
+    // Check if this is PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING flow
+    const isNonAggregatorFlow = flow === 'PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING';
+    
+    // Special handling for PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING flow
+    if (isNonAggregatorFlow) {
+      console.log("DETECTED PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING INIT");
+      // Store context for later use
+      setValue(`${constants.INIT}_NON_AGG_context`, data.context);
+    }
+
     // Special handling for payment validation in Purchase Finance
     console.log("ENFORCING PAYMENT.PARAMS.AMOUNT FLEXIBILITY");
     

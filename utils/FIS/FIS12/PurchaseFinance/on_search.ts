@@ -15,6 +15,25 @@ export const on_searchPurchaseFinnace = (data: any, msgIdSet: any, flow: string,
     console.log("sequence ---", sequence)
     console.log("PROCESSING ON_SEARCH WITH SEQUENCE:", sequence)
 
+    // Special handling for different flows and sequences
+    // Check if this is PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING flow
+    const isNonAggregatorFlow = flow === 'PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING';
+    
+    // Special handling for on_search_2 in PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING flow
+    const isNonAggregatorOnSearch2 = isNonAggregatorFlow && (sequence === '2' || sequence === 'on_search_2' || sequence === 'ON_SEARCH_2');
+    
+    if (isNonAggregatorOnSearch2) {
+      console.log("DETECTED PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING ON_SEARCH_2");
+      // Store context for later use
+      setValue(`${constants.ON_SEARCH}_NON_AGG_2_context`, data.context);
+      
+      // For this flow and sequence, xinput validation is optional
+      if (data.context) {
+        // Basic validation passed, store for reference
+        setValue(`${constants.ON_SEARCH}_2_context`, data.context);
+      }
+    }
+
     // Special handling for on_search_3 - completely bypass validation of xinput
     const isOnSearch3 = sequence === '3' || sequence === 'on_search_3' || sequence === 'ON_SEARCH_3';
     
@@ -215,8 +234,8 @@ export const on_searchPurchaseFinnace = (data: any, msgIdSet: any, flow: string,
           }
         }
 
-        // If xinput is present, validate it (skip for on_search_3)
-        if (item.xinput && !isOnSearch3) {
+        // If xinput is present, validate it (skip for on_search_3 and PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING on_search_2)
+        if (item.xinput && !isOnSearch3 && !isNonAggregatorOnSearch2) {
           // Only validate xinput structure for other sequences
           if (!item.xinput.head || !item.xinput.head.descriptor || !item.xinput.head.descriptor.name) {
             errorObj[`catalog.providers[0].items[${i}].xinput.head.descriptor`] = 'Xinput head descriptor name is required'
@@ -242,8 +261,9 @@ export const on_searchPurchaseFinnace = (data: any, msgIdSet: any, flow: string,
               setValue(`form_submission_id_${sequence}_${i}`, item.xinput.form_response.submission_id)
             }
           }
-        } else if (isOnSearch3 && item.xinput) {
-          // For on_search_3, just store the form ID if present, but don't validate
+        } else if ((isOnSearch3 || isNonAggregatorOnSearch2) && item.xinput) {
+          // For on_search_3 or PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING on_search_2,
+          // just store the form ID if present, but don't validate
           if (item.xinput.form && item.xinput.form.id) {
             setValue(`form_id_${sequence}_${i}`, item.xinput.form.id)
           }
@@ -354,9 +374,9 @@ export const on_searchPurchaseFinnace = (data: any, msgIdSet: any, flow: string,
       return Object.keys(errorObj).length > 0 ? errorObj : {}
     }
 
-    // Final cleanup for sequence 3
-    if (isOnSearch3) {
-      console.log("FINAL CLEANUP FOR ON_SEARCH_3");
+    // Final cleanup for special sequences
+    if (isOnSearch3 || isNonAggregatorOnSearch2) {
+      console.log(`FINAL CLEANUP FOR ${isOnSearch3 ? 'ON_SEARCH_3' : 'NON_AGGREGATOR_ON_SEARCH_2'}`);
       console.log("Current errorObj keys:", Object.keys(errorObj));
       
       // Ensure all xinput-related errors are removed

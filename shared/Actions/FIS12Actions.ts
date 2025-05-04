@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { dropDB, setValue } from '../dao'
 import { logger } from '../logger'
-import { FisApiSequence, fisFlows, FisWCLApiSequence } from '../../constants'
+import { FIS12PurchaseFinanceApiSequence, FisApiSequence, fisFlows, FisWCLApiSequence } from '../../constants'
 import { search } from '../../utils/FIS/FIS12/search'
 import { checkOnSearch } from '../../utils/FIS/FIS12/onSearch'
 import { checkSelect } from '../../utils/FIS/FIS12/select'
@@ -32,6 +32,12 @@ import {
   invoicePrePartSequence,
   invoiceMissedEmiSequence,
   invoiceWithoutMonitoringAndAggregatorSequence,
+  PFwithAggregatorID,
+  PFwithoutAggregatorID,
+  PFmultipleOffer,
+  PFloanForeclosure,
+  PFmissedEmiPayment,
+  PFloanPrePartPayment,
 } from '../../constants/fisFlows'
 import { checksearchWCL } from '../../utils/FIS/FIS12/WCL/search'
 import { checkon_searchWCL } from '../../utils/FIS/FIS12/WCL/on_search'
@@ -46,6 +52,17 @@ import { checkConfirmWCL } from '../../utils/FIS/FIS12/WCL/confirm'
 import { checkon_cancelWCL } from '../../utils/FIS/FIS12/WCL/on_cancel'
 import { checkcancelWCL } from '../../utils/FIS/FIS12/WCL/cancel'
 import { checkon_confirmWCL } from '../../utils/FIS/FIS12/WCL/on_confirm'
+import { searchPurchaseFinance } from '../../utils/FIS/FIS12/PurchaseFinance/search'
+import { on_searchPurchaseFinnace } from '../../utils/FIS/FIS12/PurchaseFinance/on_search'
+import { checkselectPurchaseFinance } from '../../utils/FIS/FIS12/PurchaseFinance/select'
+import { on_selectPurchaseFinnace } from '../../utils/FIS/FIS12/PurchaseFinance/on_select'
+import { on_statusPurchaseFinnace } from '../../utils/FIS/FIS12/PurchaseFinance/on_status'
+import { initPurchaseFinnace } from '../../utils/FIS/FIS12/PurchaseFinance/init'
+import { on_initPurchaseFinnace } from '../../utils/FIS/FIS12/PurchaseFinance/on_init'
+import { confirmPurchaseFinnace } from '../../utils/FIS/FIS12/PurchaseFinance/confirm'
+import { on_confirmPurchaseFinnace } from '../../utils/FIS/FIS12/PurchaseFinance/on_confirm'
+import { checkupdatePurchaseFinance } from '../../utils/FIS/FIS12/PurchaseFinance/update'
+import { on_updatePurchaseFinnace } from '../../utils/FIS/FIS12/PurchaseFinance/on_update'
 
 export function validateLogsForFIS12(data: any, flow: string, version: string) {
   const msgIdSet = new Set()
@@ -111,7 +128,6 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
         switch (apiSeq) {
           // Search related cases
           case FisWCLApiSequence.SEARCH:
-            console.log('FIS12Sequeishchnce')
             return checksearchWCL(data[FisWCLApiSequence.SEARCH], msgIdSet, flow, FisWCLApiSequence.SEARCH)
           case FisWCLApiSequence.ON_SEARCH:
             return checkon_searchWCL(data[FisWCLApiSequence.ON_SEARCH], msgIdSet, flow, FisWCLApiSequence.ON_SEARCH)
@@ -251,11 +267,105 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
               flow,
               FisWCLApiSequence.ON_UPDATE_PAYMENT_STATUS,
             )
+          
           default:
             return { invalidApiSeq: `Invalid API Sequence ${apiSeq} for flow ${flow}` }
         }
       }
-
+      console.log('Other Flow', flow)
+      // Purchase Finance related cases
+      if (flow.includes('PURCHASE_FINANCE')) {
+        console.log('Purchase Finance Flow')
+        switch (apiSeq) {
+            case FIS12PurchaseFinanceApiSequence.SEARCH:
+              return searchPurchaseFinance(data[FIS12PurchaseFinanceApiSequence.SEARCH], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.SEARCH)
+            case FIS12PurchaseFinanceApiSequence.ON_SEARCH:
+              return on_searchPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_SEARCH], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.ON_SEARCH)
+            case FIS12PurchaseFinanceApiSequence.SEARCH_1:
+              return searchPurchaseFinance(data[FIS12PurchaseFinanceApiSequence.SEARCH_1], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.SEARCH_1)
+            case FIS12PurchaseFinanceApiSequence.ON_SEARCH_1:
+              return on_searchPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_SEARCH_1], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.ON_SEARCH_1)
+            case FIS12PurchaseFinanceApiSequence.SEARCH_2:
+                return searchPurchaseFinance(data[FIS12PurchaseFinanceApiSequence.SEARCH_2], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.SEARCH_2)
+            case FIS12PurchaseFinanceApiSequence.ON_SEARCH_2:
+                return on_searchPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_SEARCH_2], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.ON_SEARCH_2)
+            case FIS12PurchaseFinanceApiSequence.SEARCH_3:
+                  return searchPurchaseFinance(data[FIS12PurchaseFinanceApiSequence.SEARCH_3], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.SEARCH_3)
+            case FIS12PurchaseFinanceApiSequence.ON_SEARCH_3:
+                  return on_searchPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_SEARCH_3], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.ON_SEARCH_3)
+                  
+              // Select related cases
+              case FIS12PurchaseFinanceApiSequence.SELECT:
+                return checkselectPurchaseFinance(data[FIS12PurchaseFinanceApiSequence.SELECT], msgIdSet,flow, FIS12PurchaseFinanceApiSequence.SELECT)
+              case FIS12PurchaseFinanceApiSequence.ON_SELECT:
+                return  on_selectPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_SELECT], msgIdSet, flow,FIS12PurchaseFinanceApiSequence.ON_SELECT)
+              case FIS12PurchaseFinanceApiSequence.SELECT_1:
+                return checkselectPurchaseFinance(data[FIS12PurchaseFinanceApiSequence.SELECT_1], msgIdSet, flow,FIS12PurchaseFinanceApiSequence.SELECT_1)
+              case FIS12PurchaseFinanceApiSequence.ON_SELECT_1:
+                return on_selectPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_SELECT_1], msgIdSet, flow,FIS12PurchaseFinanceApiSequence.ON_SELECT_1)
+              case FIS12PurchaseFinanceApiSequence.SELECT_2:
+                return checkselectPurchaseFinance(data[FIS12PurchaseFinanceApiSequence.SELECT_2], msgIdSet, flow,FIS12PurchaseFinanceApiSequence.SELECT_2)
+              case FIS12PurchaseFinanceApiSequence.ON_SELECT_2:
+                return on_selectPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_SELECT_2], msgIdSet, flow,FIS12PurchaseFinanceApiSequence.ON_SELECT_2)
+              case FIS12PurchaseFinanceApiSequence.SELECT_3:
+                return checkselectPurchaseFinance(data[FIS12PurchaseFinanceApiSequence.SELECT_3], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.SELECT_3)
+              case FIS12PurchaseFinanceApiSequence.ON_SELECT_3:
+                return on_selectPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_SELECT_3], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.ON_SELECT_3)
+                
+              // Status related cases
+              case FIS12PurchaseFinanceApiSequence.ON_STATUS_KYC:
+                return on_statusPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_STATUS_KYC], msgIdSet, flow,FIS12PurchaseFinanceApiSequence.ON_STATUS_KYC)
+              case FIS12PurchaseFinanceApiSequence.ON_STATUS_EKYC:
+                return on_statusPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_STATUS_EKYC], msgIdSet, flow,FIS12PurchaseFinanceApiSequence.ON_STATUS_EKYC)
+              case FIS12PurchaseFinanceApiSequence.ON_STATUS_ESIGN:
+                return on_statusPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_STATUS_ESIGN], msgIdSet, flow,FIS12PurchaseFinanceApiSequence.ON_STATUS_ESIGN)
+              case FIS12PurchaseFinanceApiSequence.ON_STATUS_EMANDATE:
+                return on_statusPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_STATUS_EMANDATE], msgIdSet, flow,FIS12PurchaseFinanceApiSequence.ON_STATUS_EMANDATE)
+              case FIS12PurchaseFinanceApiSequence.STATUS:
+                return on_statusPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.STATUS], msgIdSet, flow,FIS12PurchaseFinanceApiSequence.STATUS)
+              case FIS12PurchaseFinanceApiSequence.ON_STATUS:
+                return on_statusPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_STATUS], msgIdSet, flow,FIS12PurchaseFinanceApiSequence.ON_STATUS)
+                
+              // Init related cases
+              case FIS12PurchaseFinanceApiSequence.INIT:
+                return initPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.INIT], msgIdSet, flow,FIS12PurchaseFinanceApiSequence.INIT)
+              case FIS12PurchaseFinanceApiSequence.ON_INIT:
+                return on_initPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_INIT], msgIdSet, flow,FIS12PurchaseFinanceApiSequence.ON_INIT)
+              case FIS12PurchaseFinanceApiSequence.INIT_1:
+                return initPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.INIT_1], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.INIT_1)
+              case FIS12PurchaseFinanceApiSequence.ON_INIT_1:
+                return on_initPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_INIT_1], msgIdSet, flow,FIS12PurchaseFinanceApiSequence.ON_INIT_1)
+              case FIS12PurchaseFinanceApiSequence.INIT_2:
+                return initPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.INIT_2], msgIdSet, flow,FIS12PurchaseFinanceApiSequence.INIT_2)
+              case FIS12PurchaseFinanceApiSequence.ON_INIT_2:
+                return on_initPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_INIT_2], msgIdSet, flow,FIS12PurchaseFinanceApiSequence.ON_INIT_2)
+              // Confirm related cases
+              case FIS12PurchaseFinanceApiSequence.CONFIRM:
+                return confirmPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.CONFIRM], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.CONFIRM)
+              case FIS12PurchaseFinanceApiSequence.ON_CONFIRM:
+                return on_confirmPurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_CONFIRM], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.ON_CONFIRM)
+            
+              // Update related cases
+              case FIS12PurchaseFinanceApiSequence.UPDATE:
+                return checkupdatePurchaseFinance(data[FIS12PurchaseFinanceApiSequence.UPDATE], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.UPDATE)
+              case FIS12PurchaseFinanceApiSequence.ON_UPDATE:
+                return on_updatePurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_UPDATE], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.ON_UPDATE)
+              case FIS12PurchaseFinanceApiSequence.ON_UPDATE_FULLFILLMENT_STATE:
+                return on_updatePurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_UPDATE_FULLFILLMENT_STATE], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.ON_UPDATE_FULLFILLMENT_STATE)
+              case FIS12PurchaseFinanceApiSequence.ON_UPDATE_EMI_DETAIL:
+                return on_updatePurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_UPDATE_EMI_DETAIL], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.ON_UPDATE_EMI_DETAIL)
+              case FIS12PurchaseFinanceApiSequence.ON_UPDATE_PRE_PART_PAYMENT:
+                return on_updatePurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_UPDATE_PRE_PART_PAYMENT], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.ON_UPDATE_PRE_PART_PAYMENT)
+              case FIS12PurchaseFinanceApiSequence.ON_UPDATE_FORECLOSURE_DETAIL:
+                return on_updatePurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_UPDATE_FORECLOSURE_DETAIL], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.ON_UPDATE_FORECLOSURE_DETAIL)
+              case FIS12PurchaseFinanceApiSequence.ON_UPDATE_BASE_TRANSACTION:
+                return on_updatePurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_UPDATE_BASE_TRANSACTION], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.ON_UPDATE_BASE_TRANSACTION)
+              case FIS12PurchaseFinanceApiSequence.ON_UPDATE_UNSOLICATED:
+                return on_updatePurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_UPDATE_UNSOLICATED], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.ON_UPDATE_UNSOLICATED)
+              case FIS12PurchaseFinanceApiSequence.ON_UPDATE_PAYMENT_STATUS:
+                return on_updatePurchaseFinnace(data[FIS12PurchaseFinanceApiSequence.ON_UPDATE_PAYMENT_STATUS], msgIdSet, flow, FIS12PurchaseFinanceApiSequence.ON_UPDATE_PAYMENT_STATUS)
+        }
+      }
       switch (apiSeq) {
         case FisApiSequence.SEARCH:
           return search(data[FisApiSequence.SEARCH], msgIdSet, flow, FisApiSequence.SEARCH)
@@ -382,7 +492,6 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
       }
 
       
-
       case '2.3.0': {
         switch (flowName) {
           case fisFlows.WCL_CREDIT_LINE_ASSIGNMENT:
@@ -405,6 +514,31 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
             break
         }
         break
+      }
+
+      case '2.2.0':{
+        switch (flowName) {
+          case fisFlows.PURCHASE_FINANCE_WITH_AGGREGATOR:
+            logReport = processFIS12Sequence(PFwithAggregatorID, data, logReport, flow)
+            break
+          case fisFlows.PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING:
+            logReport = processFIS12Sequence(PFwithoutAggregatorID, data, logReport, flow)
+            break
+          case fisFlows.PURCHASE_FINANCE_MISSED_EMI:
+              logReport = processFIS12Sequence(PFmissedEmiPayment, data, logReport, flow)
+              break
+          case fisFlows.PURCHASE_FINANCE_PRE_PART_PAYMENT:
+            logReport = processFIS12Sequence(PFloanPrePartPayment, data, logReport, flow)
+            break
+          case fisFlows.PURCHASE_FINANCE_FORECLOSURE:
+            logReport = processFIS12Sequence(PFloanForeclosure, data, logReport, flow)
+            break
+          case fisFlows.PURCHASE_FINANCE_MULTIPLE_OFFER:
+            logReport = processFIS12Sequence(PFmultipleOffer, data, logReport, flow)
+            break
+        }
+        break
+
       }
 
       default:

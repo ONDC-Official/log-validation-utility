@@ -3,7 +3,7 @@ import { setValue} from '../../../../shared/dao'
 import constants from '../../../../constants'
 import { validateSchema, isObjectEmpty, checkFISContext } from '../../..'
 
-export const on_cancelPurchaseFinnace = (data: any, msgIdSet: any, flow: string, sequence: string) => {
+export const on_statusPurchaseFinnace = (data: any, msgIdSet: any, flow: string, sequence: string) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -24,10 +24,10 @@ export const on_cancelPurchaseFinnace = (data: any, msgIdSet: any, flow: string,
       return Object.keys(errorObj).length > 0 && errorObj
     }
 
-    const schemaValidation = validateSchema('FIS12_PF', constants.ON_CANCEL, data)
-    const contextRes: any = checkFISContext(data.context, constants.ON_CANCEL)
+    const schemaValidation = validateSchema('FIS_WCL', constants.ON_STATUS, data)
+    const contextRes: any = checkFISContext(data.context, constants.ON_STATUS)
     
-    setValue(`${constants.ON_CANCEL}_context`, data.context)
+    setValue(`${constants.ON_SELECT}_context`, data.context)
     msgIdSet.add(data.context.message_id)
 
     if (!contextRes?.valid) {

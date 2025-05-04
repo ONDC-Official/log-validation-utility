@@ -67,7 +67,7 @@ export const onUpdateFIS12PurchaseFinanceSchema = {
             },
             status: {
               type: 'string',
-              const: 'ACTIVE',
+              enum: ['ACTIVE', 'COMPLETE'],
             },
             provider: {
               type: 'object',
@@ -122,7 +122,7 @@ export const onUpdateFIS12PurchaseFinanceSchema = {
                         properties: {
                           code: {
                             type: 'string',
-                            enum: ['SANCTIONED', 'DISBURSED', 'DELIVERED'],
+                            enum: ['SANCTIONED', 'DISBURSED', 'DELIVERED', 'PLACED'],
                           },
                         },
                         required: ['code'],
@@ -276,7 +276,16 @@ export const onUpdateFIS12PurchaseFinanceSchema = {
                   },
                   status: {
                     type: 'string',
-                    enum: ['PAID', 'NOT-PAID'],
+                    enum: ['PAID', 'NOT-PAID', 'DEFERRED'],
+                  },
+                  time: {
+                    type: 'object',
+                    properties: {
+                      label: {
+                        type: 'string',
+                        enum: ['INSTALLMENT', 'MISSED_EMI_PAYMENT', 'PRE_PART_PAYMENT', 'FORECLOSURE'],
+                      },
+                    },
                   },
                 },
                 required: ['id', 'type'],

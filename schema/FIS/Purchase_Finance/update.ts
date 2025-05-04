@@ -65,7 +65,7 @@ export const updateFIS12PurchaseFinanceSchema = {
       properties: {
         update_target: {
           type: 'string',
-          const: 'fulfillments',
+          enum: ['fulfillments', 'payments'],
         },
         order: {
           type: 'object',
@@ -134,8 +134,32 @@ export const updateFIS12PurchaseFinanceSchema = {
               },
               minItems: 1,
             },
+            payments: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  time: {
+                    type: 'object',
+                    properties: {
+                      label: {
+                        type: 'string',
+                        enum: ['MISSED_EMI_PAYMENT', 'INSTALLMENT', 'PRE_PART_PAYMENT', 'FORECLOSURE']
+                      },
+                    },
+                  }
+                }
+              }
+            }
           },
-          required: ['id', 'fulfillments'],
+          oneOf: [
+            {
+              required: ['id', 'fulfillments']
+            },
+            {
+              required: ['id', 'payments']
+            }
+          ]
         },
       },
       required: ['update_target', 'order'],

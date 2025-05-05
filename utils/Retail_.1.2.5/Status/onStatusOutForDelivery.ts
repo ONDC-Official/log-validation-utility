@@ -11,6 +11,7 @@ import {
   compareFulfillmentObject,
   compareAllObjects,
   getProviderId,
+  deepCompare,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
@@ -508,6 +509,29 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
           `provider_id in fulfillment in ${ApiSequence.ON_CONFIRM} does not match expected provider_id: expected '${fulfillmentProviderId}' in ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY} but got ${id}`
       }
     }
+
+     try {
+          const credsWithProviderId = getValue('credsWithProviderId')
+          const providerId = on_status?.provider?.id
+          const confirmCreds = on_status?.provider?.creds
+          const found = credsWithProviderId.find((ele: { providerId: any }) => ele.providerId === providerId)
+          const expectedCreds = found?.creds
+           if (!expectedCreds) {
+            onStatusObj['MissingCreds'] = `creds must be present in /${constants.ON_SEARCH}`
+          }
+           if (flow === FLOW.FLOW017) {
+     
+          if (!expectedCreds) {
+            onStatusObj['MissingCreds'] = `creds must be present in /${constants.ON_SEARCH}`
+          } else if (!deepCompare(expectedCreds, confirmCreds)) {
+            console.log('here inside else')
+            onStatusObj['MissingCreds'] = `creds must be present and same as in /${constants.ON_SEARCH}`
+          }
+        }
+          
+        } catch (err: any) {
+        logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)
+        }
 
     return onStatusObj
   } catch (err: any) {

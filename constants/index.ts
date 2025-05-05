@@ -104,7 +104,11 @@ export const ApiSequence = {
   ON_UPDATE_LIQUIDATED: 'on_update_liquidated',
   SELECT_OUT_OF_STOCK: 'select_out_of_stock',
   ON_SELECT_OUT_OF_STOCK: 'on_select_out_of_stock',
-  CATALOG_REJECTION: 'catalog_rejection',
+  CATALOG_REJECTION:'catalog_rejection',
+  UPDATE_ADDRESS:'update_address',
+  ON_UPDATE_ADDRESS:'on_update_address',
+  UPDATE_INSTRUCTIONS:'update_instructions',
+  ON_UPDATE_INSTRUCTIONS:'on_update_instructions',
 }
 
 export const FisApiSequence = {

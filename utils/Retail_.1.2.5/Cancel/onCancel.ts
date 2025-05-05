@@ -13,8 +13,10 @@ import {
   mapCancellationID,
   checkQuoteTrail,
   checkQuoteTrailSum,
+  deepCompare,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
+import { FLOW } from '../../enum'
 
 export const checkOnCancel = (data: any, msgIdSet: any) => {
   const onCnclObj: any = {}
@@ -897,6 +899,30 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
     } catch (error: any) {
       logger.error(`!!Error while checking Reason ID ,RTO Id and Initiated_by for ${constants.ON_CANCEL}`)
     }
+
+
+     try {
+          const credsWithProviderId = getValue('credsWithProviderId')
+          const providerId = on_cancel?.provider?.id
+          const confirmCreds = on_cancel?.provider?.creds
+          const found = credsWithProviderId.find((ele: { providerId: any }) => ele.providerId === providerId)
+          const expectedCreds = found?.creds
+           if (!expectedCreds) {
+            onCnclObj['MissingCreds'] = `creds must be present in /${constants.ON_CANCEL} same as in /${constants.ON_SEARCH}`
+          }
+           if (flow === FLOW.FLOW017) {
+     
+          if (!expectedCreds) {
+            onCnclObj['MissingCreds'] = `creds must be present in /${constants.ON_CANCEL} `
+          } else if (!deepCompare(expectedCreds, confirmCreds)) {
+            console.log('here inside else')
+            onCnclObj['MissingCreds'] = `creds must be present and same as in /${constants.ON_SEARCH}`
+          }
+        }
+          
+        } catch (err: any) {
+        logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)
+        }
 
     return onCnclObj
   } catch (err: any) {

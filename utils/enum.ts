@@ -706,7 +706,11 @@ export enum FLOW {
   FLOW020 = '020',
   FLOW01C = '01C',
   FLOW008 = '008',
-  FLOW003 = '003'
+  FLOW003 = '003',
+  FLOW00F = '00F',
+  FLOW011 = '011',
+  FLOW017 = '017'
+
   
 
 }

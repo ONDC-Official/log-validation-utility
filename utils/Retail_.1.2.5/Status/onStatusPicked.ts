@@ -10,6 +10,7 @@ import {
   compareTimeRanges,
   compareFulfillmentObject,
   getProviderId,
+  deepCompare,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
@@ -331,7 +332,9 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
         logger.info('Payment status check in on status picked call')
         const payment = on_status.payment
         if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
-          logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`)
+          logger.error(
+            `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`,
+          )
           onStatusObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`
         }
       }
@@ -559,6 +562,29 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
       }
     }
 
+    try {
+      const credsWithProviderId = getValue('credsWithProviderId')
+      const providerId = on_status?.provider?.id
+      const confirmCreds = on_status?.provider?.creds
+      const found = credsWithProviderId.find((ele: { providerId: any }) => ele.providerId === providerId)
+      const expectedCreds = found?.creds
+       if (!expectedCreds) {
+        onStatusObj['MissingCreds'] = `creds must be present in /${constants.ON_SEARCH}`
+      }
+       if (flow === FLOW.FLOW017) {
+ 
+      if (!expectedCreds) {
+        onStatusObj['MissingCreds'] = `creds must be present in /${constants.ON_SEARCH}`
+      } else if (!deepCompare(expectedCreds, confirmCreds)) {
+        console.log('here inside else')
+        onStatusObj['MissingCreds'] = `creds must be present and same as in /${constants.ON_SEARCH}`
+      }
+    }
+      
+    } catch (err: any) {
+    logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)
+    }
+   
     return onStatusObj
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)

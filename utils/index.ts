@@ -10,8 +10,10 @@ import { setValue } from '../shared/dao'
 export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
 import { groceryCategoryMappingWithStatutory } from '../constants/category'
 import { statutory_reqs } from './enum'
-import {  PAYMENT_STATUS } from '../constants/index'
+import { PAYMENT_STATUS } from '../constants/index'
 import { FLOW } from '../utils/enum'
+import { TRV14OptialCalls } from '../constants/trvFlows'
+
 export const getObjValues = (obj: any) => {
   let values = ''
   Object.values(obj).forEach((value) => {
@@ -96,7 +98,7 @@ export const checkFISContext = (
     errObj.id_err = "transaction_id and message id can't be same"
   }
 
-  if (data.action != path.replace(/_unsolicated|_1|_2/,'')) {
+  if (data.action != path.replace(/_unsolicated|_1|_2/, '')) {
     errObj.action_err = `context.action should be ${path}`
   }
 
@@ -1012,7 +1014,7 @@ export const mapCancellationID = (cancelled_by: string, reason_id: string, error
 export const payment_status = (payment: any, flow: string) => {
   const errorObj: any = {}
   logger.info(`Checking payment status for flow: ${flow}`)
-  if ( (flow === FLOW.FLOW2A) && payment.status === PAYMENT_STATUS.PAID) {
+  if (flow === FLOW.FLOW2A && payment.status === PAYMENT_STATUS.PAID) {
     errorObj.message = `Cannot be ${payment.status} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
     return errorObj
   }
@@ -1351,4 +1353,13 @@ export function validateBppUri(bppUri: string, bpp_id: string, errorObj: any): a
   if (!checkIdInUri(bppUri, bpp_id)) {
     errorObj['bpp_id_in_uri'] = `Bpp_id ${bpp_id} is not found in BppUri ${bppUri}`
   }
+}
+
+export const checkIsOptional = (apiSeq: string, flow: string): boolean => {
+  if (TRV14OptialCalls.hasOwnProperty(flow)) {
+    const api: string[] = TRV14OptialCalls[flow]
+    if (api.includes(apiSeq)) {
+      return true
+    } else return false
+  } else return false
 }

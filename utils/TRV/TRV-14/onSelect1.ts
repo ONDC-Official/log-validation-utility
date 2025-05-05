@@ -11,12 +11,12 @@ export const checkOnSelect1 = (data: any, msgIdSet: any, version: any) => {
   const { message, context }: any = data
 
   if (!data || isObjectEmpty(data)) {
-    return { [TRV14ApiSequence.ON_SELECT1]: 'JSON cannot be empty' }
+    return { [TRV14ApiSequence.ON_SELECT_1]: 'JSON cannot be empty' }
   }
 
   try {
-    logger.info(`Validating Schema for ${TRV14ApiSequence.ON_SELECT1} API`)
-    const vs = validateSchema('trv14', TRV14ApiSequence.ON_SELECT1, data)
+    logger.info(`Validating Schema for ${TRV14ApiSequence.ON_SELECT_1} API`)
+    const vs = validateSchema('trv14', TRV14ApiSequence.ON_SELECT_1, data)
 
     if (vs != 'error') {
       Object.assign(rsfObj, vs)
@@ -26,7 +26,7 @@ export const checkOnSelect1 = (data: any, msgIdSet: any, version: any) => {
     const prvdrId = getValue(`prvdrId`)
     const fulfillmentids = getValue(`fulfillmentids`)
     const itemAddOn= getValue(`addOnItems`)
-
+    const Xinputmap= new Map()
     
 
     if(onSelect.provider.id !== prvdrId){
@@ -87,11 +87,17 @@ export const checkOnSelect1 = (data: any, msgIdSet: any, version: any) => {
       }
     });
     
-    //checking xinput
-    try{
-      
+     //validating xinput
+     try{ 
+    
       onSelect.items.forEach((itm:any)=>{
-        const validateXinput = validateXInput(itm.xinput)
+        const validateXinput = validateXInput(itm?.xinput)
+        if(Xinputmap.get(itm.id)){
+          rsfObj.itm.id =  `${itm.id} has been already in items`
+        }
+        else{
+          Xinputmap.set(itm.id,itm.xinput)
+        }
         Object.assign(rsfObj,validateXinput)
       })
       
@@ -101,21 +107,21 @@ export const checkOnSelect1 = (data: any, msgIdSet: any, version: any) => {
     }
 
 
-
     setValue('onSelect1_context', context)
     setValue('onSelect1_message', message)
     setValue("agent",onSelect.fulfillments[0]?.agent)
     setValue("replacementterms",onSelect.replacement_terms)
     setValue("onselect1quote",onSelect.quote)
     setValue("onSelect1Items",onSelect.items)
+    setValue('xinputmap',Xinputmap)
     Object.assign(rsfObj, errorObj)
     return rsfObj
   } catch (err: any) {
     if (err.code === 'ENOENT') {
-      logger.info(`!!File not found for /${TRV14ApiSequence.ON_SELECT1} API!`)
+      logger.info(`!!File not found for /${TRV14ApiSequence.ON_SELECT_1} API!`)
     } else {
       console.log('Error occurred while checking /API:', err)
-      logger.error(`!!Some error occurred while checking /${TRV14ApiSequence.ON_SELECT1} API`, err)
+      logger.error(`!!Some error occurred while checking /${TRV14ApiSequence.ON_SELECT_1} API`, err)
     }
   }
 }

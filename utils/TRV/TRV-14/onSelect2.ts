@@ -13,7 +13,7 @@ export const checkOnSelect2 = (data: any, msgIdSet: any, version: any) => {
 
 
   if (!data || isObjectEmpty(data)) {
-    return { [TRV14ApiSequence.ON_SELECT2]: 'JSON cannot be empty' }
+    return { [TRV14ApiSequence.ON_SELECT_2]: 'JSON cannot be empty' }
   }
 
   const replacement_terms=getValue('replacementterms')
@@ -22,8 +22,8 @@ export const checkOnSelect2 = (data: any, msgIdSet: any, version: any) => {
 
 
   try {
-    logger.info(`Validating Schema for ${TRV14ApiSequence.ON_SELECT1} API`)
-    const vs = validateSchema('trv14', TRV14ApiSequence.ON_SELECT1, data)
+    logger.info(`Validating Schema for ${TRV14ApiSequence.ON_SELECT_2} API`)
+    const vs = validateSchema('trv14', TRV14ApiSequence.ON_SELECT_2, data)
 
     if (vs != 'error') {
       Object.assign(rsfObj, vs)
@@ -119,10 +119,10 @@ export const checkOnSelect2 = (data: any, msgIdSet: any, version: any) => {
     return rsfObj
   } catch (err: any) {
     if (err.code === 'ENOENT') {
-      logger.info(`!!File not found for /${TRV14ApiSequence.ON_SELECT1} API!`)
+      logger.info(`!!File not found for /${TRV14ApiSequence.ON_SELECT_2} API!`)
     } else {
       console.log('Error occurred while checking /API:', err)
-      logger.error(`!!Some error occurred while checking /${TRV14ApiSequence.ON_SELECT1} API`, err)
+      logger.error(`!!Some error occurred while checking /${TRV14ApiSequence.ON_SELECT_2} API`, err)
     }
   }
 }

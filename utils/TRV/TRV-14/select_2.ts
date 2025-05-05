@@ -13,18 +13,20 @@ export const checkSelect2 = (data: any, msgIdSet: any) => {
   const { message, context }: any = data
 
   if (!data || isObjectEmpty(data)) {
-    return { [TRV14ApiSequence.SELECT1]: 'JSON cannot be empty' }
+    return { [TRV14ApiSequence.SELECT_2]: 'JSON cannot be empty' }
   }
 
   try {
-    logger.info(`Validating Schema for ${TRV14ApiSequence.SELECT1} API`)
-    const vs = validateSchema('trv14', TRV14ApiSequence.SELECT1, data)
+    logger.info(`Validating Schema for ${TRV14ApiSequence.SELECT_2} API`)
+    const vs = validateSchema('trv14', TRV14ApiSequence.SELECT_2, data)
 
     if (vs != 'error') {
       Object.assign(rsfObj, vs)
     }
 
     const select = message.order
+    const Xinputmap = getValue(`xinputmap`)
+
     const items = getValue(`select1items`)
     const fulfillments = getValue(`select1fulfillments`)
     const prvdrid = getValue(`select1prvdrid`)
@@ -64,6 +66,21 @@ export const checkSelect2 = (data: any, msgIdSet: any) => {
         logger.error(error)
       }
 
+      // checking xinput
+      try {
+        select.items.forEach((itm:any)=>{
+        const xinput = itm.xinput
+          if(Xinputmap.has(itm.id)){
+           const Xinput = Xinputmap.get(itm.id)
+           if(xinput.form.id !== Xinput.form.id){
+            rsfObj[xinput.id] =  ` the xinput form dont't match`
+           }
+          }
+        })
+      } catch (error) {
+        logger.error(error)
+      }
+
       //fulfillment
       select.fulfillments.forEach((itm: any)=>{
         fulfillmentIdsSet.add(itm.id)
@@ -79,10 +96,10 @@ export const checkSelect2 = (data: any, msgIdSet: any) => {
     return rsfObj
   } catch (err: any) {
     if (err.code === 'ENOENT') {
-      logger.info(`!!File not found for /${TRV14ApiSequence.SELECT1} API!`)
+      logger.info(`!!File not found for /${TRV14ApiSequence.SELECT_2} API!`)
     } else {
       console.log('Error occurred while checking /API:', err)
-      logger.error(`!!Some error occurred while checking /${TRV14ApiSequence.SELECT1} API`, err)
+      logger.error(`!!Some error occurred while checking /${TRV14ApiSequence.SELECT_2} API`, err)
     }
   }
 }

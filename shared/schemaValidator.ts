@@ -63,6 +63,7 @@ import cancel2SchemaTRV14 from '../schema/TRV-14/cancel2'
 import onCancel2SchemaTRV14 from '../schema/TRV-14/onCancel2'
 import updateSchemaTRV14 from '../schema/TRV-14/update'
 import onUpdateSchemaTRV14 from '../schema/TRV-14/onUpdate'
+import onSearchSchemaTRV14 from '../schema/TRV-14/onSearch'
 import onSearch1SchemaTRV14 from '../schema/TRV-14/onSearch1'
 import onSearch2SchemaTRV14 from '../schema/TRV-14/onSearch2'
 import newIssueSchema from '../schema/Igm/2.0.0/issue'
@@ -299,6 +300,11 @@ const validate_schema_search_trv14_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 // On search
+
+const validate_schema_on_search_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSearchSchemaTRV14)
+  return formatted_error(error_list)
+}
 
 const validate_schema_on_search_1_trv14_for_json = (data: any) => {
   const error_list = validate_schema(data, onSearch1SchemaTRV14)
@@ -1325,6 +1331,7 @@ export default {
   validate_schema_catalog_rejection_AGR10_for_json,
   validate_schema_catalog_rejection_RET1A_for_json,
   validate_schema_search_trv14_for_json,
+  validate_schema_on_search_trv14_for_json,
   validate_schema_on_search_1_trv14_for_json,
   validate_schema_on_search_2_trv14_for_json,
   validate_schema_select_1_trv14_for_json,

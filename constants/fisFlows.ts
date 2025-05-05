@@ -1,4 +1,4 @@
-import { FIS13HealthSequence, FisApiSequence } from './index'
+import { FIS13HealthSequence, FisApiSequence, FisWCLApiSequence } from './index'
 
 export const healthSequence = [
   FIS13HealthSequence.SEARCH_1,
@@ -202,6 +202,71 @@ export const personalMissedEmiSequence = [
   FisApiSequence.ON_UPDATE_UNSOLICATED,
 ]
 
+export const wclCreditLineAssignmentSequence = [
+  FisWCLApiSequence.SEARCH,
+  FisWCLApiSequence.ON_SEARCH,
+  FisWCLApiSequence.SEARCH_1,
+  FisWCLApiSequence.ON_SEARCH_1,
+  FisWCLApiSequence.SEARCH_2,
+  FisWCLApiSequence.ON_SEARCH_2,
+  FisWCLApiSequence.SELECT,
+  FisWCLApiSequence.ON_SELECT,
+  FisWCLApiSequence.ON_STATUS_KYC,
+  FisWCLApiSequence.SELECT_1,
+  FisWCLApiSequence.ON_SELECT_1,
+  FisWCLApiSequence.SELECT_2,
+  FisWCLApiSequence.ON_SELECT_2,
+  FisWCLApiSequence.INIT,
+  FisWCLApiSequence.ON_INIT,
+  FisWCLApiSequence.INIT_1,
+  FisWCLApiSequence.ON_INIT_1,
+  FisWCLApiSequence.ON_STATUS_EMANDATE,
+  FisWCLApiSequence.INIT_2,
+  FisWCLApiSequence.ON_INIT_2,
+  FisWCLApiSequence.ON_STATUS_ESIGN,
+  FisWCLApiSequence.INIT_3,
+  FisWCLApiSequence.ON_INIT_3,
+  FisWCLApiSequence.CONFIRM,
+  FisWCLApiSequence.ON_CONFIRM
+]
+
+export const wclCreditLineDrawdownSequence = [
+  FisWCLApiSequence.INIT,
+  FisWCLApiSequence.ON_INIT,
+  FisWCLApiSequence.INIT_1,
+  FisWCLApiSequence.ON_INIT_2,
+  FisWCLApiSequence.CONFIRM,
+  FisWCLApiSequence.ON_CONFIRM,
+  FisWCLApiSequence.ON_UPDATE,
+  FisWCLApiSequence.ON_UPDATE_BASE_TRANSACTION
+]
+
+export const wclMissedEmiPaymentSequence = [
+  FisWCLApiSequence.UPDATE,
+  FisWCLApiSequence.ON_UPDATE_EMI_DETAIL,
+  FisWCLApiSequence.ON_UPDATE_PAYMENT_STATUS,
+  FisWCLApiSequence.ON_UPDATE_BASE_TRANSACTION
+]
+
+export const wclPrePartPaymentSequence = [
+  FisWCLApiSequence.UPDATE,
+  FisWCLApiSequence.ON_UPDATE_PRE_PART_PAYMENT,
+  FisWCLApiSequence.ON_UPDATE_PAYMENT_STATUS,
+  FisWCLApiSequence.ON_UPDATE_BASE_TRANSACTION
+]
+
+export const wclDrawdownForeclosureSequence = [
+  FisWCLApiSequence.UPDATE,
+  FisWCLApiSequence.ON_UPDATE_FORECLOSURE_DETAIL,
+  FisWCLApiSequence.ON_UPDATE_PAYMENT_STATUS,
+  FisWCLApiSequence.ON_UPDATE_BASE_TRANSACTION
+]
+
+export const wclCreditLineCancellationSequence = [
+  FisWCLApiSequence.CANCEL,
+  FisWCLApiSequence.ON_CANCEL,
+  FisWCLApiSequence.ON_UPDATE
+]
 export const invoiceSequence = [
   FisApiSequence.SEARCH_1,
   FisApiSequence.ON_SEARCH_1,

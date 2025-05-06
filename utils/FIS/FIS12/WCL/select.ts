@@ -24,8 +24,8 @@ export const checkselectWCL = (data: any, msgIdSet: any, flow: string, sequence:
       return Object.keys(errorObj).length > 0 && errorObj
     }
 
-    const schemaValidation = validateSchema('FIS_WCL', constants.ON_SELECT, data)
-    const contextRes: any = checkFISContext(data.context, constants.ON_SELECT)
+    const schemaValidation = validateSchema('FIS_WCL', constants.SELECT, data)
+    const contextRes: any = checkFISContext(data.context, constants.SELECT)
     
     setValue(`${constants.ON_SELECT}_context`, data.context)
     msgIdSet.add(data.context.message_id)

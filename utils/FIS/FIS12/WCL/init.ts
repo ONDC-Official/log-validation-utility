@@ -1,7 +1,7 @@
 import { logger } from '../../../../shared/logger'
-import { setValue} from '../../../../shared/dao'
 import constants from '../../../../constants'
 import { validateSchema, isObjectEmpty, checkFISContext } from '../../../../utils'
+import { validateTransactionIdConsistency, validateMessageIdPair } from './commonValidations'
 
 export const checkinitWCL = (data: any, msgIdSet: any, flow: string, sequence: string) => {
   const errorObj: any = {}
@@ -27,7 +27,15 @@ export const checkinitWCL = (data: any, msgIdSet: any, flow: string, sequence: s
     const schemaValidation = validateSchema('FIS_WCL', constants.INIT, data)
     const contextRes: any = checkFISContext(data.context, constants.INIT)
     
-    setValue(`${constants.INIT}_context`, data.context)
+    // Add transaction ID consistency check
+    const transactionIdConsistency = validateTransactionIdConsistency(data.context)
+    Object.assign(errorObj, transactionIdConsistency)
+    
+    // Add message ID pair validation
+    const messageIdPair = validateMessageIdPair(data.context, constants.INIT, false)
+    Object.assign(errorObj, messageIdPair)
+    
+    // Save message ID to check for uniqueness
     msgIdSet.add(data.context.message_id)
 
     if (!contextRes?.valid) {

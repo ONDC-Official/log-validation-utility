@@ -1,7 +1,8 @@
 import { logger } from '../../../../shared/logger'
-import { setValue, getValue } from '../../../../shared/dao'
+import {  getValue } from '../../../../shared/dao'
 import constants from '../../../../constants'
 import { validateSchema, isObjectEmpty, checkFISContext } from '../../../../utils'
+import { validateTransactionIdConsistency, validateMessageIdPair } from './commonValidations'
 
 export const checkon_cancelWCL = (data: any, msgIdSet: any, flow: string, sequence: string) => {
   const errorObj: any = {}
@@ -27,8 +28,15 @@ export const checkon_cancelWCL = (data: any, msgIdSet: any, flow: string, sequen
     const schemaValidation = validateSchema('FIS_WCL', constants.ON_CANCEL, data)
     const contextRes: any = checkFISContext(data.context, constants.ON_CANCEL)
     
-    setValue(`${constants.ON_CANCEL}_context`, data.context)
-    setValue(`${constants.ON_CANCEL}_order`, data.message.order)
+    // Add transaction ID consistency check
+    const transactionIdConsistency = validateTransactionIdConsistency(data.context)
+    Object.assign(errorObj, transactionIdConsistency)
+    
+    // Add message ID pair validation - this is an on_action call
+    const messageIdPair = validateMessageIdPair(data.context, constants.ON_CANCEL, true)
+    Object.assign(errorObj, messageIdPair)
+    
+    // Save message ID to check for uniqueness
     msgIdSet.add(data.context.message_id)
 
     if (!contextRes?.valid) {
@@ -39,35 +47,16 @@ export const checkon_cancelWCL = (data: any, msgIdSet: any, flow: string, sequen
       Object.assign(errorObj, schemaValidation)
     }
 
-    // Validate order details
-    const order = data.message.order
-    
-    // Basic order validation for cancellation flow
-    if (!order.id) {
-      errorObj['order.id'] = 'Order ID is required in cancellation response'
+    // Validate order status
+    const { order } = data.message
+    if (order.status !== 'CANCELLED') {
+      errorObj['order.status'] = 'Order status must be CANCELLED in on_cancel response'
     }
-    
-    if (!order.status) {
-      errorObj['order.status'] = 'Order status is required in cancellation response'
-    }
-    
-    // Validate provider - only check for id and descriptor, not locations
-    if (!order.provider) {
-      errorObj['provider'] = 'Provider details are required'
-    } else if (!order.provider.id) {
-      errorObj['provider.id'] = 'Provider ID is required'
-    }
-    
-    // Validate transaction consistency
-    const previousContext = getValue(`${constants.CANCEL}_context`)
-    if (previousContext && previousContext.transaction_id !== data.context.transaction_id) {
-      errorObj['context.transaction_id'] = `Transaction ID mismatch: expected ${previousContext.transaction_id}, found ${data.context.transaction_id}`
-    }
-    
-    // Validate order ID matches the one in cancel request
+
+    // Validate order ID consistency with cancel request
     const cancelledOrderId = getValue('cancelled_order_id')
-    if (cancelledOrderId && order.id !== cancelledOrderId) {
-      errorObj['order.id.mismatch'] = `Order ID in on_cancel (${order.id}) does not match the ID in cancel request (${cancelledOrderId})`
+    if (cancelledOrderId && cancelledOrderId !== order.id) {
+      errorObj['order.id.consistency'] = `Order ID mismatch: expected ${cancelledOrderId}, found ${order.id}`
     }
 
     return Object.keys(errorObj).length > 0 && errorObj

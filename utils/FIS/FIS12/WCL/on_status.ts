@@ -1,13 +1,13 @@
 import { logger } from '../../../../shared/logger'
-import { setValue} from '../../../../shared/dao'
 import constants from '../../../../constants'
 import { validateSchema, isObjectEmpty, checkFISContext } from '../../../../utils'
+import { validateTransactionIdConsistency, validateMessageIdPair } from './commonValidations'
 
 export const checkon_statusWCL = (data: any, msgIdSet: any, flow: string, sequence: string) => {
   const errorObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [constants.ON_SELECT]: 'JSON cannot be empty' }
+      return { [constants.ON_STATUS]: 'JSON cannot be empty' }
     }
 
     console.log("flow ---", flow)
@@ -27,7 +27,15 @@ export const checkon_statusWCL = (data: any, msgIdSet: any, flow: string, sequen
     const schemaValidation = validateSchema('FIS_WCL', constants.ON_STATUS, data)
     const contextRes: any = checkFISContext(data.context, constants.ON_STATUS)
     
-    setValue(`${constants.ON_SELECT}_context`, data.context)
+    // Add transaction ID consistency check
+    const transactionIdConsistency = validateTransactionIdConsistency(data.context)
+    Object.assign(errorObj, transactionIdConsistency)
+    
+    // Add message ID pair validation
+    const messageIdPair = validateMessageIdPair(data.context, constants.ON_STATUS, true)
+    Object.assign(errorObj, messageIdPair)
+    
+    // Save message ID to check for uniqueness
     msgIdSet.add(data.context.message_id)
 
     if (!contextRes?.valid) {

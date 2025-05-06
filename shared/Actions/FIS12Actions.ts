@@ -48,7 +48,7 @@ import { checkon_selectWCL } from '../../utils/FIS/FIS12/WCL/on_select'
 import { checkon_statusWCL } from '../../utils/FIS/FIS12/WCL/on_status'
 import { checkinitWCL } from '../../utils/FIS/FIS12/WCL/init'
 import { checkOninitWCL } from '../../utils/FIS/FIS12/WCL/on_init'
-import { checkConfirmWCL } from '../../utils/FIS/FIS12/WCL/confirm'
+import { checkconfirmWCL } from '../../utils/FIS/FIS12/WCL/confirm'
 import { checkon_cancelWCL } from '../../utils/FIS/FIS12/WCL/on_cancel'
 import { checkcancelWCL } from '../../utils/FIS/FIS12/WCL/cancel'
 import { checkon_confirmWCL } from '../../utils/FIS/FIS12/WCL/on_confirm'
@@ -212,7 +212,7 @@ export function validateLogsForFIS12(data: any, flow: string, version: string) {
 
           // Confirm/Cancel related cases
           case FisWCLApiSequence.CONFIRM:
-            return checkConfirmWCL(data[FisWCLApiSequence.CONFIRM], msgIdSet, flow, FisWCLApiSequence.CONFIRM)
+            return checkconfirmWCL(data[FisWCLApiSequence.CONFIRM], msgIdSet, flow, FisWCLApiSequence.CONFIRM)
           case FisWCLApiSequence.ON_CONFIRM:
             return checkon_confirmWCL(data[FisWCLApiSequence.ON_CONFIRM], msgIdSet, flow, FisWCLApiSequence.ON_CONFIRM)
           case FisWCLApiSequence.CANCEL:

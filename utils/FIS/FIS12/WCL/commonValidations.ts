@@ -417,3 +417,40 @@ export const validateTransactionConsistency = (context: any) => {
   
   return errorObj
 }
+
+export const validateTransactionIdConsistency = (context: any) => {
+  const errorObj: any = {}
+  
+  // Get previously stored transaction ID
+  const previousContext = getValue('first_context')
+  if (!previousContext) {
+    setValue('first_context', context) // Store first context for future validations
+    return errorObj
+  }
+  
+  // Check transaction ID consistency across the flow
+  if (previousContext.transaction_id !== context.transaction_id) {
+    errorObj['context.transaction_id.consistency'] = `Transaction ID mismatch: expected ${previousContext.transaction_id}, found ${context.transaction_id}`
+  }
+  
+  return errorObj
+}
+
+export const validateMessageIdPair = (context: any, action: string, isOnAction: boolean) => {
+  const errorObj: any = {}
+  
+  // For on_action calls, check if message_id matches with the corresponding action call
+  if (isOnAction) {
+    const actionName = action.substring(3) // remove 'on_' prefix
+    const actionContext = getValue(`${actionName}_context`)
+    
+    if (actionContext && context.message_id !== actionContext.message_id) {
+      errorObj['context.message_id.consistency'] = `Message ID mismatch between ${actionName} and ${action}: expected ${actionContext.message_id}, found ${context.message_id}`
+    }
+  }
+  
+  // Store context for future validations
+  setValue(`${action}_context`, context)
+  
+  return errorObj
+}

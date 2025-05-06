@@ -1409,6 +1409,25 @@ curl --location 'https://log-validation.ondc.org/api/validate/igm' \
 
 ```
 
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/trv' \
+--header 'Content-Type: application/json' \
+--data '{
+  "domain": "ONDC:TRV14",
+  "version": "2.0.0",
+  "flow": "PAGINATION",
+  "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+  "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+  "payload": {
+    "search": {},
+    "on_search": {},
+    "on_search1": {}
+  }
+}
+'
+
+```
+
 Using Postman, you can import the above `curl` command into Postman and replace the empty objects in the payload with your actual data. This allows for easy testing and validation of transaction logs on your local environment.
 
 With these instructions, you can start using the Retail Logs Validation Utility for local log validation.

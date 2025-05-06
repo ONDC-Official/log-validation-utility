@@ -11,8 +11,6 @@ export const validateContext = (context: any, action: string) => {
     errorObj['context.action'] = `Action must be ${action}`
   }
 
-  // For PURCHASE_FINANCE flows, we need to be more flexible with transaction_id
-  // Extract action base and sequence if present
   let baseAction = action;
   
   const sequenceMatch = /^([a-z_]+)_(\d+)$/.exec(action);
@@ -20,17 +18,9 @@ export const validateContext = (context: any, action: string) => {
     baseAction = sequenceMatch[1];
   }
   
-  // In PURCHASE_FINANCE flows, we can have multiple sequences with different transaction_ids
-  // For example, search/on_search can have one transaction_id, and select/on_select can have another
-  
-  // Only validate transaction_id consistency within same sequence steps
   const storedContext = getValue(`${action}_context`)
   if (storedContext && storedContext.transaction_id !== context.transaction_id) {
-    // Check if this is a PURCHASE_FINANCE flow with a new transaction_id for a new sequence
-    // For PURCHASE_FINANCE, allow different transaction_ids for select and init steps
     if (baseAction === 'select' || baseAction === 'init' || baseAction === 'confirm' || baseAction === 'update') {
-      // Allow new transaction IDs for these steps in PURCHASE_FINANCE
-      // Don't report an error
     } else {
       errorObj['context.transaction_id'] = `Transaction ID mismatch: expected ${storedContext.transaction_id}, found ${context.transaction_id}`
     }
@@ -60,14 +50,6 @@ export const validateProvider = (provider: any) => {
   if (!provider.descriptor?.name) {
     errorObj['provider.descriptor'] = 'Provider descriptor name is required'
   }
-
-  // Make provider.locations optional
-  /* 
-  if (!provider.locations?.[0]?.id) {
-    errorObj['provider.locations'] = 'Provider location ID is required'
-  }
-  */
-
   return errorObj
 }
 
@@ -90,12 +72,10 @@ export const validateItems = (items: any[]) => {
     // Check if it's a subsequent item in a multi-item flow
     const storedItemIds = getValue('item_ids') || []
     if (!Array.isArray(storedItemIds) || (storedItemIds.length > 0 && !storedItemIds.includes(item.id))) {
-      // Only store the new ID, but don't report an error as this could be a valid multi-item scenario
       const newItemIds = Array.isArray(storedItemIds) ? [...storedItemIds, item.id] : [storedItemId, item.id]
       setValue('item_ids', newItemIds)
     }
   } else if (item.id) {
-    // First time seeing this item ID
     setValue('item_id', item.id)
     // Initialize item_ids array if not already set
     const storedItemIds = getValue('item_ids')
@@ -107,14 +87,6 @@ export const validateItems = (items: any[]) => {
   if (!item.descriptor?.name || !item.descriptor?.code) {
     errorObj['items.descriptor'] = 'Item descriptor name and code are required'
   }
-
-  // Make quantity optional - it may not be relevant for all finance flows
-  /*
-  if (!item.quantity?.count) {
-    errorObj['items.quantity'] = 'Item quantity count is required'
-  }
-  */
-
   if (!item.category_ids || !Array.isArray(item.category_ids) || item.category_ids.length === 0) {
     errorObj['item.category_ids'] = 'Item category_ids array is required and cannot be empty'
   } else {
@@ -125,39 +97,20 @@ export const validateItems = (items: any[]) => {
     }
   }
 
-  // Make price completely optional since some references to the item won't include price
-  /*
-  // Validate price
-  if (!item.price) {
-    // Make price optional
-    // errorObj['item.price'] = 'Item price is required'
-  } else if (!item.price.value || !item.price.currency) {
-    errorObj['item.price'] = 'Price value and currency are required if price is provided'
-  }
-  */
-  
-  // If price is provided, ensure it has the required fields
   if (item.price && (!item.price.value || !item.price.currency)) {
     errorObj['item.price'] = 'Price value and currency are required if price is provided'
   }
 
   // Validate xinput if applicable
-  if (item.xinput) {
-    // Access only what we use, don't destructure what's not needed
-    const { form } = item.xinput
-    
-    // Make both head and form components completely optional
-    // Don't report any errors for missing components
-    
-    // If form is provided, store form ID for reference but don't validate
-    if (form?.id) {
-      const storedFormId = getValue('form_id')
-      if (storedFormId && form.id !== storedFormId) {
-        // Don't report form ID mismatch errors either
-        // This is handled in specific action validations
-      }
-    }
-  }
+  // if (item.xinput) {
+  //   const { form } = item.xinput
+
+  //   // if (form?.id) {
+  //   //   const storedFormId = getValue('form_id')
+  //   //   if (storedFormId && form.id !== storedFormId) {
+  //   //   }
+  //   // }
+  // }
 
   return errorObj
 }
@@ -208,17 +161,6 @@ export const validatePayment = (payment: any) => {
     errorObj['payment.type'] = 'Payment type is required'
   }
 
-  // Make collected_by optional for all payment types in PURCHASE_FINANCE flows
-  // Different payment types can appear in different parts of the flow
-
-  // Make params.amount optional as it's not always provided in PURCHASE_FINANCE flows
-  // Comment out this validation as it causes false positives in different steps
-  /*
-  if (payment.params && !payment.params.amount) {
-    errorObj['payment.params.amount'] = 'Payment amount is required when params are specified'
-  }
-  */
-
   return errorObj
 }
 
@@ -258,17 +200,9 @@ export const validateLoanTags = (tags: any[]) => {
 export const validateMessageId = (context: any, msgIdSet: Set<string>) => {
   const errorObj: any = {}
   
-  // In PURCHASE_FINANCE flow, there are multiple sequences with different versions of requests
-  // Each action/on_action pair uses the same message ID, and we need to account for numeric suffixes
   const action = context.action;
   const isOnAction = action.startsWith('on_');
   
-  // Validation rules:
-  // 1. on_X can have the same message_id as X (e.g., on_search can match search)
-  // 2. X_N can have the same message_id as on_X_N (e.g., search_1 can match on_search_1)
-  // 3. But search_1 should not have the same message_id as search_2 or on_search_2
-  
-  // Extract base action and sequence number if present
   const actionBaseName = isOnAction ? action.substring(3) : action;
   let baseAction = actionBaseName;
   let sequenceNum = '';
@@ -285,34 +219,22 @@ export const validateMessageId = (context: any, msgIdSet: Set<string>) => {
   
   // Check if this is an on_action message
   if (isOnAction) {
-    // Allow on_action messages to reuse the message_id of their corresponding action
     const correspondingActionContext = getValue(`${actionKey}_context`);
     
-    // Skip validation if this on_action's message_id matches its corresponding action's message_id
     if (correspondingActionContext && correspondingActionContext.message_id === context.message_id) {
       return errorObj;
     }
   } else {
-    // For action messages, check if there's a corresponding on_action with the same message_id
     const correspondingOnActionContext = getValue(`${onActionKey}_context`);
     
-    // Skip validation if there's a corresponding on_action with the same message_id
     if (correspondingOnActionContext && correspondingOnActionContext.message_id === context.message_id) {
       return errorObj;
     }
   }
   
-  // If we get here, check against all other message IDs
-  // But allow for reuse in specific patterns in PURCHASE_FINANCE
   if (msgIdSet.has(context.message_id)) {
-    // For PURCHASE_FINANCE flow, we're being more lenient about message ID reuse
-    // Check if this is a known permitted reuse pattern
-    
-    // Message IDs for search steps can be reused in different sequence numbers in PURCHASE_FINANCE
-    // This is a special exemption for this specific domain and flow
     if (baseAction === 'search' || baseAction === 'select' || baseAction === 'init' || 
         baseAction === 'update' || baseAction === 'confirm') {
-      // Don't report an error for PURCHASE_FINANCE flows
       return errorObj;
     }
     
@@ -381,9 +303,6 @@ export const validateQuote = (quote: any) => {
   const principalItem = quote.breakup.find((item: any) => item.title.toLowerCase().includes('principal'))
   const interestItem = quote.breakup.find((item: any) => item.title.toLowerCase().includes('interest'))
   
-  // Processing fee is optional - some loan products may not have it
-  // const processingFeeItem = quote.breakup.find((item: any) => item.title.toLowerCase().includes('processing fee'))
-  
   if (!principalItem) {
     errorObj['quote.breakup.principal'] = 'Principal amount is required in quote breakup'
   }
@@ -391,12 +310,6 @@ export const validateQuote = (quote: any) => {
   if (!interestItem) {
     errorObj['quote.breakup.interest'] = 'Interest amount is required in quote breakup'
   }
-  
-  /* 
-  if (!processingFeeItem) {
-    errorObj['quote.breakup.processing_fee'] = 'Processing fee is required in quote breakup'
-  }
-  */
 
   return errorObj
 }
@@ -409,26 +322,11 @@ export const validateXInput = (xinput: any) => {
     return errorObj
   }
 
-  // In PURCHASE_FINANCE, xinput references might be minimal in certain steps
-  // Both head and form can be optional depending on the step in the flow
-  
-  // Make form optional
   if (xinput.form) {
-    // Only validate form fields if form is provided
     if (!xinput.form.id) {
       errorObj['xinput.form.id'] = 'Form ID is required if form is provided'
     }
-    // Make URL optional as well
-    // Commented out because URL is optional in some sequences
-    /*
-    if (!xinput.form.url) {
-      errorObj['xinput.form.url'] = 'Form URL is required if form is provided'
-    }
-    */
   }
-
-  // Make head component completely optional
-  // No validation needed for head as it's optional
 
   return errorObj
 }
@@ -598,30 +496,22 @@ export const validateOrderConsistency = (currentOrder: any, previousAction: stri
 export const validateTransactionConsistency = (context: any) => {
   const errorObj: any = {}
   
-  // For PURCHASE_FINANCE_WITH_AGGREGATOR flow, we have multiple sequence numbers
-  // with the same transaction ID, so we need to be more lenient here
-  
-  // Get only the contexts that match the current flow based on sequence patterns
-  // E.g., search/on_search, search_1/on_search_1, init/on_init, init_1/on_init_1, etc.
   const action = context.action
   const currentStep = action.startsWith('on_') ? action.substring(3) : action
   
   const relevantContexts = []
   
-  // If this is a sequence step like search_1, init_2, etc.
   const sequenceMatch = /^([a-z_]+)_(\d+)$/.exec(currentStep)
   if (sequenceMatch) {
     const baseStep = sequenceMatch[1]
     const sequence = sequenceMatch[2]
     
-    // Find the corresponding contexts for this sequence
     const baseContext = getValue(`${baseStep}_${sequence}_context`)
     const onBaseContext = getValue(`on_${baseStep}_${sequence}_context`)
     
     if (baseContext) relevantContexts.push(baseContext)
     if (onBaseContext) relevantContexts.push(onBaseContext)
   } else {
-    // If this is a regular step like search, init, etc.
     const allContexts = [
       getValue(`${currentStep}_context`),
       getValue(`on_${currentStep}_context`)
@@ -814,17 +704,7 @@ export const validatePaymentTags = (payment: any) => {
   }
 
   // Only require these fields if BAP_TERMS or SETTLEMENT_TERMS exists
-  if (bapTermsTag || settlementTermsTag) {
-    // Don't report errors for missing fields, as they're optional in PURCHASE_FINANCE
-    // We're making the validation more lenient for now
-    /*
-    for (const [field, found] of Object.entries(fieldsFound)) {
-      if (!found) {
-        errorObj[`order.payments[0].tags.${field}`] = `${field} value is required in payment tags`
-      }
-    }
-    */
-  }
+
 
   return errorObj
 }

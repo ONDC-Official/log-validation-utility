@@ -15,18 +15,15 @@ export const initPurchaseFinnace = (data: any, msgIdSet: any, flow: string, sequ
     console.log("sequence ---", sequence)
     console.log("PROCESSING INIT WITH SEQUENCE:", sequence)
 
-    // Special handling for different flows and sequences
-    // Check if this is PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING flow
     const isNonAggregatorFlow = flow === 'PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING';
     
-    // Special handling for PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING flow
+
     if (isNonAggregatorFlow) {
       console.log("DETECTED PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING INIT");
       // Store context for later use
       setValue(`${constants.INIT}_NON_AGG_context`, data.context);
     }
 
-    // Special handling for payment validation in Purchase Finance
     console.log("ENFORCING PAYMENT.PARAMS.AMOUNT FLEXIBILITY");
     
     // Check for basic structure
@@ -156,9 +153,7 @@ export const initPurchaseFinnace = (data: any, msgIdSet: any, flow: string, sequ
     } else {
       // Validate each payment
       order.payments.forEach((payment: any, index: number) => {
-        // Make payment.params.amount optional for all payment types
-        // This is needed because some payment references in PURCHASE_FINANCE don't include amount
-        
+
         // Handle payment ID validation separately
         if (!payment.id) {
           // Remove schema validation errors for missing payment ID
@@ -166,7 +161,6 @@ export const initPurchaseFinnace = (data: any, msgIdSet: any, flow: string, sequ
           delete errorObj[`order.payments[${index}].id`];
         }
         
-        // Use common payment validation but handle special cases
         const paymentErrors = (global as any).validatePayment ? (global as any).validatePayment(payment) : validatePayment(payment);
         
         // Remove specific payment validation errors for init flow
@@ -195,10 +189,7 @@ export const initPurchaseFinnace = (data: any, msgIdSet: any, flow: string, sequ
         }
       })
       
-      // Final cleanup for payment.params.amount errors
-      console.log("FINAL CLEANUP FOR PAYMENT PARAMS VALIDATION");
-      
-      // Remove any remaining payment.params.amount validation errors
+
       for (const key in {...errorObj}) {
         if (key.includes('params.amount')) {
           console.log("Removing payment params error:", key);

@@ -383,23 +383,42 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
       logger.error(`Error while checking for update_target_obj for /${apiSeq} , ${error}`)
     }
 
-
-
     try {
-  const requiresUpdateTarget = [FLOW.FLOW00F, FLOW.FLOW011].includes(flow);
+      const requiresUpdateTarget = [FLOW.FLOW00F, FLOW.FLOW011].includes(flow)
 
-  if ('update_target' in message) {
-    const updateObj = update.fulfillments.find((ele: { id: any }) => ele.id === fulfillmentId);
-    setValue('updateObj', updateObj);
-  } else if (requiresUpdateTarget) {
-    updtObj['update_target'] = `update target must be present in order to be updated`;
-  }
-} catch (error: any) {
-  logger.error(`!!Some error occurred while checking /${apiSeq} API`, error.stack);
-}
+      if ('update_target' in message) {
+        const updateObj = update.fulfillments.find((ele: { id: any }) => ele.id === fulfillmentId)
+        setValue('updateObj', updateObj)
+      } else if (requiresUpdateTarget) {
+        updtObj['update_target'] = `update target must be present in order to be updated`
+      }
+    } catch (error: any) {
+      logger.error(`!!Some error occurred while checking /${apiSeq} API`, error.stack)
+    }
+    if (flow === FLOW.FLOW00E) {
+      const np_type = getValue(`${ApiSequence.ON_SEARCH}np_type`)
+      const status = getValue('orderStatus')
 
+      if (np_type === 'ISN' && status === 'Order-picked-up') {
+        const fulfimntObj = update?.fulfillments?.find((ele: { id: any }): any => ele.id === fulfillmentId)
+        if(!fulfimntObj){
+                      const key = `missingFulfillment`
+                    updtObj[key] = `fulfillmentObj must be present in /${constants.UPDATE} with fulfillmentId provided in /${constants.ON_STATUS}   API for /${apiSeq}`
+        }
+        const invoiceTag = fulfimntObj.tags?.find((ele: { code: string }):any=> ele.code==='update_sale_invoice')
+        if(!invoiceTag){
+            const key = `missingTags`
+                    updtObj[key] = `update_sale_invoice should be present in tags  /${constants.UPDATE} API for /${apiSeq}`
+        }
 
-  
+        const list = invoiceTag?.list?.find((ele: { code: string }):any=> ele.code ==='url')
+        if(!list){
+           const key = `missingUrl`
+                    updtObj[key] = `url for update_sale_invoice must be present in tag list in  /${constants.UPDATE} API for /${apiSeq}`
+        }
+      }
+    }
+
     return updtObj
   } catch (error: any) {
     logger.error(`!!Some error occurred while checking /${apiSeq} API`, error.stack)

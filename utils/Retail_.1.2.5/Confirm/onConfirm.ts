@@ -687,6 +687,11 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
       if (flow === FLOW.FLOW012) {
         logger.info('Payment status check in on confirm call')
         const payment = on_confirm.payment
+        const confirmPaymentStatus = getValue('confirmPaymentStatus')
+        if(payment.status!== confirmPaymentStatus){
+              const key = `missmatchStatus`
+                  onCnfrmObj[key] = `payment status in /${constants.ON_CONFIRM} must be same as in /${constants.CONFIRM} `
+        }
         if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
           logger.error(
             `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`,

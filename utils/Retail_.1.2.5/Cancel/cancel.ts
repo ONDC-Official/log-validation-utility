@@ -4,8 +4,9 @@ import constants, { ApiSequence, buyerCancellationRid } from '../../../constants
 import { logger } from '../../../shared/logger'
 import { validateSchemaRetailV2, isObjectEmpty, checkContext, checkBppIdOrBapId } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
+import { FLOW } from '../../enum'
 
-export const checkCancel = (data: any, msgIdSet: any) => {
+export const checkCancel = (data: any, msgIdSet: any,flow?:string) => {
   const cnclObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -115,6 +116,17 @@ export const checkCancel = (data: any, msgIdSet: any) => {
       } else setValue('cnclRid', cancel.cancellation_reason_id)
     } catch (error: any) {
       logger.info(`Error while checking validity of cancellation reason id /${constants.CANCEL}, ${error.stack}`)
+    }
+    try {
+      const descriptor = cancel?.order?.descriptor.name
+      if (flow === FLOW.FLOW00D) {
+        if (descriptor === 'fulfillment') {
+          setValue('FulfillmentId', cancel?.order?.descriptor.short_desc)
+
+        }
+      }
+    } catch (err: any) {
+      logger.error(`!!Some error occurred while checking /${constants.CANCEL} API`, err)
     }
 
     return cnclObj

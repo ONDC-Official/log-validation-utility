@@ -719,8 +719,318 @@ curl --location 'https://log-validation.ondc.org/api/validate/fis/fis12' \
 }'
 ```
 
-### For FIS13 Sample Curl Request (MOTOR)
+### For FIS12 Working Capital Loans Sample Curl Requests
 
+#### For WCL_CREDIT_LINE_ASSIGNMENT Flow
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS12",
+    "version": "2.3.0",
+    "flow": "WCL_CREDIT_LINE_ASSIGNMENT",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "search_1": {},
+        "on_search_1": {},
+        "search_2": {},
+        "on_search_2": {},
+        "select": {},
+        "on_select": {},
+        "on_status_kyc": {},
+        "select_1": {},
+        "on_select_1":{},
+        "select_2":{},
+        "on_select_2": {},
+        "init":{},
+        "on_init":{},
+        "init_1":{},
+        "on_init_1":{},
+        "on_status_emandate":{},
+        "init_2": {},
+        "on_init_2": {},
+        "on_status_esign":{},
+        "init_3":{},
+        "on_init_3":{},
+        "confirm":{},
+        "on_confirm":{}
+    }
+}'
+```
+
+#### For WCL_CREDIT_LINE_DRAWDOWN Flow
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS12",
+    "version": "2.3.0",
+    "flow": "WCL_CREDIT_LINE_DRAWDOWN",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "init": {},
+        "on_init": {},
+        "init_1": {},
+        "on_init_2": {},
+        "confirm": {},
+        "on_confirm":{},
+        "on_update":{},
+        "on_update_base_transaction": {}
+    }
+}'
+```
+
+#### For WCL_MISSED_EMI_PAYMENT Flow
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS12",
+    "version": "2.3.0",
+    "flow": "WCL_MISSED_EMI_PAYMENT",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "update": {},
+        "on_update_emi_detail":{},
+        "on_update_payment_status":{},
+        "on_update_base_transaction":{}
+    }
+}'
+```
+
+#### For WCL_PRE_PART_PAYMENT Flow
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS12",
+    "version": "2.3.0",
+    "flow": "WCL_PRE_PART_PAYMENT",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "update": {},
+        "on_update_pre_part_payment": {},
+        "on_update_payment_status": {},
+        "on_update_base_transaction": {}
+    }
+}'
+```
+
+#### For WCL_DRAWDOWN_FORECLOSURE Flow
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS12",
+    "version": "2.3.0",
+    "flow": "WCL_DRAWDOWN_FORECLOSURE",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "update": {},
+        "on_update_foreclosure_detail": {},
+        "on_update_payment_status":{},
+        "on_update_base_transaction": {}
+    }
+}'
+```
+
+#### For WCL_CREDIT_LINE_CANCELLATION Flow
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS12",
+    "version": "2.3.0",
+    "flow": "WCL_CREDIT_LINE_CANCELLATION",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "cancel": {},
+        "on_cancel":{},
+        "on_update": {}
+    }
+}'
+```
+
+### For Purchase Finance Sample Curl Requests
+
+The following curl commands demonstrate how to validate different Purchase Finance flows using the Log Validation Utility.
+
+#### For PURCHASE_FINANCE_WITH_AGGREGATOR Flow
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS12",
+    "version": "2.2.0",
+    "flow": "PURCHASE_FINANCE_WITH_AGGREGATOR",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search":{},
+        "on_search": {},
+        "search_1": {},
+        "on_search_1":{},
+        "search_2": {},
+        "on_search_2": {},
+        "search_3": {},
+        "on_search_3": {},
+        "select": {},
+        "on_select":{},
+        "select_1":{},
+        "on_select_1":{},
+        "select_2": {},
+        "on_select_2":{},
+        "on_status_kyc": {},
+        "init":{},
+        "on_init": {},
+        "init_1": {},
+        "on_init_1":{},
+        "init_2": {},
+        "on_init_2": {},
+        "on_status_esign": {},
+        "on_status_emandate": {},
+        "confirm": {},
+        "on_confirm": {},
+        "status": {},
+        "on_status": {},
+        "update":{},
+        "on_update": {},
+        "on_update_fullfillment_state":{}
+    }
+}'
+```
+
+#### For PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING Flow
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS12",
+    "version": "2.2.0",
+    "flow": "PURCHASE_FINANCE_WITHOUT_AGGREGATOR_AND_MONITORING",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search":{},
+        "search_1": {},
+        "on_search_1":{},
+        "search_2":{},
+        "on_search_2": {},
+        "select":{},
+        "on_select":{},
+        "select_1":{},
+        "on_select_1":{},
+        "select_2":{},
+        "on_select_2":{},
+        "on_status_kyc": {},
+        "init":{},
+        "on_init": {},
+        "init_1":{},
+        "on_init_1": {},
+        "init_2": {},
+        "on_init_2": {},
+        "on_status_esign": {},
+        "on_status_emandate": {},
+        "confirm": {},
+        "on_confirm": {},
+        "update": {},
+        "on_update":{},
+        "on_update_fulfillement_state":{}
+    }
+}'
+```
+
+#### For PURCHASE_FINANCE_MISSED_EMI Flow
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS12",
+    "version": "2.2.0",
+    "flow": "PURCHASE_FINANCE_MISSED_EMI",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "on_confirm": {},
+        "update": {},
+        "on_update_emi_detail": {},
+        "on_update_unsolicated": {}
+    }
+}'
+```
+
+#### For PURCHASE_FINANCE_PRE_PART_PAYMENT Flow
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS12",
+    "version": "2.2.0",
+    "flow": "PURCHASE_FINANCE_PRE_PART_PAYMENT",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "on_confirm": {},
+        "update": {},
+        "on_update_pre_part_payment": {},
+        "on_update_unsolicated": {}
+    }
+}'
+```
+
+#### For PURCHASE_FINANCE_FORECLOSURE Flow
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS12",
+    "version": "2.2.0",
+    "flow": "PURCHASE_FINANCE_FORECLOSURE",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "on_confirm": {},
+        "update": {},
+        "on_update_foreclosure_detail": {},
+        "on_update_unsolicated": {}
+    }
+}'
+```
+
+#### For PURCHASE_FINANCE_MULTIPLE_OFFER Flow
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS12",
+    "version": "2.2.0",
+    "flow": "PURCHASE_FINANCE_MULTIPLE_OFFER",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "search_1": {},
+        "on_search_1": {},
+        "search_2": {},
+        "on_search_2": {},
+        "search_3": {},
+        "on_search_3": {}
+    }
+}'
+```
+
+### For FIS13 Sample Curl Requests
+#### For MOTOR_INSURANCE Flow
 ```shell
 curl --location 'https://log-validation.ondc.org/api/validate/fis' \
 --header 'Content-Type: application/json' \
@@ -920,6 +1230,7 @@ curl --location 'http://localhost:3008/api/validate/fis' \
 }'
 ```
 
+
 ### For TRV10 Sample Curl Request (Local)
 
 ```shell
@@ -1014,6 +1325,42 @@ curl --location 'https://log-validation.ondc.org/api/validate/trv' \
     }
 }'
 ```
+
+### For TRV13 (HOTEL-SERVICES) Sample Curl Request (Server)
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/trv' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:TRV13",
+    "version": "2.0.0",
+    "flow": "FLOW1",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "search_inc": {},
+        "on_search_inc": {},
+        "search_time": {},
+        "on_search_time": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "update": {},
+        "on_update": {},
+        "status": {},
+        "on_status": {},
+        "cancel": {},
+        "on_cancel": {}
+    }
+}'
+```
+
+
 
 
 ### For RSF V2 Sample Curl Request (Local)
@@ -1125,6 +1472,25 @@ curl --location 'https://log-validation.ondc.org/api/validate/igm' \
         "issue_lsp_close": {}
     }
 }'
+
+```
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/trv' \
+--header 'Content-Type: application/json' \
+--data '{
+  "domain": "ONDC:TRV14",
+  "version": "2.0.0",
+  "flow": "PAGINATION",
+  "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+  "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+  "payload": {
+    "search": {},
+    "on_search": {},
+    "on_search1": {}
+  }
+}
+'
 
 ```
 

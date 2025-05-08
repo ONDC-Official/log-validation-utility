@@ -120,7 +120,7 @@ const initSchemaTRV14 = {
                       type: 'object',
                       required: ['type', 'time'],
                       properties: {
-                        type: { type: 'string' },
+                        type: { type: 'string',enum:["START"] },
                         time: {
                           type: 'object',
                           required: ['timestamp'],
@@ -156,8 +156,8 @@ const initSchemaTRV14 = {
                 type: 'object',
                 required: ['collected_by', 'status', 'type'],
                 properties: {
-                  collected_by: { type: 'string' },
-                  status: { type: 'string' },
+                  collected_by: { type: 'string',enum:["BAP"] },
+                  status: { type: 'string',enum:["PAID","NOT-PAID"] },
                   type: { type: 'string' },
                 },
               },

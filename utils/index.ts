@@ -12,6 +12,8 @@ import { groceryCategoryMappingWithStatutory } from '../constants/category'
 import { statutory_reqs } from './enum'
 import { PAYMENT_STATUS } from '../constants/index'
 import { FLOW } from '../utils/enum'
+import { TRV14OptialCalls } from '../constants/trvFlows'
+
 export const getObjValues = (obj: any) => {
   let values = ''
   Object.values(obj).forEach((value) => {
@@ -235,7 +237,15 @@ export const validateSchema = (domain: string, api: string, data: any) => {
     logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
     const errObj: any = {}
 
-    const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
+    let schmaVldtr;
+    // Special case for TRV13 search to avoid double function calls
+    if (domain === 'TRV13' && api === 'search') {
+      schmaVldtr = (schemaValidator as any).validate_schema_search_TRV13_for_json(data);
+      console.log("Using direct TRV13 search validator");
+    } else {
+      schmaVldtr = validate_schema_for_retail_json(domain, api, data);
+    }
+    
     const datavld = schmaVldtr
     if (datavld.status === 'fail') {
       const res = datavld.errors
@@ -1363,4 +1373,13 @@ export function validateBppUri(bppUri: string, bpp_id: string, errorObj: any): a
   if (!checkIdInUri(bppUri, bpp_id)) {
     errorObj['bpp_id_in_uri'] = `Bpp_id ${bpp_id} is not found in BppUri ${bppUri}`
   }
+}
+
+export const checkIsOptional = (apiSeq: string, flow: string): boolean => {
+  if (TRV14OptialCalls.hasOwnProperty(flow)) {
+    const api: string[] = TRV14OptialCalls[flow]
+    if (api.includes(apiSeq)) {
+      return true
+    } else return false
+  } else return false
 }

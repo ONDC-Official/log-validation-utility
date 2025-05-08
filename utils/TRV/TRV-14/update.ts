@@ -20,6 +20,10 @@ export const checkUpdate = (data: any, msgIdSet: any, version: any) => {
       Object.assign(rsfObj, vs)
     }
 
+    const Update = message.order
+
+    setValue(`itemonUpdate`,Update.items)
+
     setValue('update_context', context)
     setValue('update_message', message)
 

@@ -18,7 +18,7 @@ export const validateContext = (context: any, msgIdSet: any, pastCall: any, cure
   setValue(`${curentCall}_context`, context)
   msgIdSet.add(context.message_id)
 
-  if (!context.location || !context.location.city || !context.location.country) {
+  if (!context?.location || !context?.location?.city || !context?.location?.country) {
     errorObj['location'] = 'context/location/city and context/location/country are required'
   }
 

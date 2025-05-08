@@ -169,7 +169,7 @@ export const checkMobilityContext = (
     }
   }
 
-  if (data?.bpp_uri || data?.bpp_id) {
+  if (data?.action == 'search' && (data?.bpp_uri || data?.bpp_id)) {
     errObj.bpp = `bpp_id & bpp_uri shouldn't be present if action is search`
   }
 

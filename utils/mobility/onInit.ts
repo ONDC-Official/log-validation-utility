@@ -110,11 +110,9 @@ export const checkOnInit = (data: any, msgIdSet: any, version: any) => {
           // FARE_POLICY & INFO checks
           if (item?.tags) {
             const tagsValidation = validateItemsTags(item.tags)
-            console.log('tagsValidationtagsValidation2', tagsValidation)
             if (!tagsValidation.isValid) {
               Object.assign(errorObj, { itemTags: tagsValidation.errors })
             }
-            console.log('tagsValidationtagsValidation2', tagsValidation, errorObj)
           } else {
             Object.assign(errorObj, { itemTags: `Missing tag-group at ${itemKey}` })
           }

@@ -118,10 +118,10 @@ export const checkCancel = (data: any, msgIdSet: any,flow?:string) => {
       logger.info(`Error while checking validity of cancellation reason id /${constants.CANCEL}, ${error.stack}`)
     }
     try {
-      const descriptor = cancel?.order?.descriptor.name
+      const descriptor = cancel?.descriptor.name
       if (flow === FLOW.FLOW00D) {
         if (descriptor === 'fulfillment') {
-          setValue('FulfillmentId', cancel?.order?.descriptor.short_desc)
+          setValue('FulfillmentId', cancel?.descriptor.short_desc)
 
         }
       }

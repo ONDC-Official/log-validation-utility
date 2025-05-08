@@ -1125,6 +1125,42 @@ curl --location 'https://log-validation.ondc.org/api/validate/trv' \
 }'
 ```
 
+### For TRV13 (HOTEL-SERVICES) Sample Curl Request (Server)
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/trv' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:TRV13",
+    "version": "2.0.0",
+    "flow": "FLOW1",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "search_inc": {},
+        "on_search_inc": {},
+        "search_time": {},
+        "on_search_time": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "update": {},
+        "on_update": {},
+        "status": {},
+        "on_status": {},
+        "cancel": {},
+        "on_cancel": {}
+    }
+}'
+```
+
+
+
 
 ### For RSF V2 Sample Curl Request (Local)
 

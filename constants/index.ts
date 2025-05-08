@@ -296,6 +296,28 @@ export const TRV14ApiSequence = {
   UPDATE_1: 'update_1',
   ON_UPDATE_1: 'on_update_1',
 }
+
+export const TRV13ApiSequence = {
+  SEARCH: 'search',
+  ON_SEARCH: 'on_search',
+  SEARCH_INC: 'search_inc',
+  ON_SEARCH_INC: 'on_search_inc',
+  SEARCH_TIME: 'search_time',
+  ON_SEARCH_TIME: 'on_search_time',
+  SELECT: 'select',
+  ON_SELECT: 'on_select',
+  INIT: 'init',
+  ON_INIT: 'on_init',
+  CONFIRM: 'confirm',
+  ON_CONFIRM: 'on_confirm',
+  CANCEL: 'cancel',
+  ON_CANCEL: 'on_cancel',
+  UPDATE: 'update',
+  ON_UPDATE: 'on_update',
+  STATUS: 'status',
+  ON_STATUS: 'on_status',
+}
+
 export const mobilitySequence = {
   SEARCH: 'search',
   SEARCH_INC: 'search_inc',
@@ -478,6 +500,11 @@ export const onDemandFlows = {
   RIDER_CANCEL: 'RIDER_CANCEL',
   DRIVER_CANCEL: 'DRIVER_CANCEL',
   PRICE_UPDATE: 'PRICE_UPDATE',
+}
+
+export const TRV13Flows = {
+  FLOW1: 'FLOW1',
+  FLOW2: 'FLOW2'
 }
 
 export const flowsFis10 = {

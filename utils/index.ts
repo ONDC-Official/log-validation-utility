@@ -225,7 +225,15 @@ export const validateSchema = (domain: string, api: string, data: any) => {
     logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
     const errObj: any = {}
 
-    const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
+    let schmaVldtr;
+    // Special case for TRV13 search to avoid double function calls
+    if (domain === 'TRV13' && api === 'search') {
+      schmaVldtr = (schemaValidator as any).validate_schema_search_TRV13_for_json(data);
+      console.log("Using direct TRV13 search validator");
+    } else {
+      schmaVldtr = validate_schema_for_retail_json(domain, api, data);
+    }
+    
     const datavld = schmaVldtr
     if (datavld.status === 'fail') {
       const res = datavld.errors

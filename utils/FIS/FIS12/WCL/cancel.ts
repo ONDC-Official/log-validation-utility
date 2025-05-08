@@ -2,7 +2,7 @@ import { logger } from '../../../../shared/logger'
 import { setValue} from '../../../../shared/dao'
 import constants from '../../../../constants'
 import { validateSchema, isObjectEmpty, checkFISContext } from '../../../../utils'
-import { validateCancellationDetails, validateTransactionConsistency } from './commonValidations'
+import { validateTransactionIdConsistency, validateMessageIdPair } from './commonValidations'
 
 export const checkcancelWCL = (data: any, msgIdSet: any, flow: string, sequence: string) => {
   const errorObj: any = {}
@@ -17,16 +17,25 @@ export const checkcancelWCL = (data: any, msgIdSet: any, flow: string, sequence:
     if (
       !data.message ||
       !data.context ||
-      isObjectEmpty(data.message)
+      !data.message.order_id ||
+      !data.message.cancellation_reason_id
     ) {
-      errorObj['missingFields'] = '/context or /message is missing or empty'
+      errorObj['missingFields'] = '/context, /message, /order_id or /cancellation_reason_id is missing or empty'
       return Object.keys(errorObj).length > 0 && errorObj
     }
 
     const schemaValidation = validateSchema('FIS_WCL', constants.CANCEL, data)
     const contextRes: any = checkFISContext(data.context, constants.CANCEL)
     
-    setValue(`${constants.CANCEL}_context`, data.context)
+    // Add transaction ID consistency check
+    const transactionIdConsistency = validateTransactionIdConsistency(data.context)
+    Object.assign(errorObj, transactionIdConsistency)
+    
+    // Add message ID pair validation
+    const messageIdPair = validateMessageIdPair(data.context, constants.CANCEL, false)
+    Object.assign(errorObj, messageIdPair)
+    
+    // Save message ID to check for uniqueness
     msgIdSet.add(data.context.message_id)
 
     if (!contextRes?.valid) {
@@ -38,14 +47,11 @@ export const checkcancelWCL = (data: any, msgIdSet: any, flow: string, sequence:
     }
 
     // Validate cancellation details
-    const cancellationErrors = validateCancellationDetails(data.message)
-    Object.assign(errorObj, cancellationErrors)
+    if (!data.message.descriptor?.short_desc) {
+      errorObj['message.descriptor.short_desc'] = 'Cancellation description is required'
+    }
     
-    // Validate transaction consistency
-    const transactionErrors = validateTransactionConsistency(data.context)
-    Object.assign(errorObj, transactionErrors)
-    
-    // Store order ID for cross-validation
+    // Store order ID for cross-validation with on_cancel
     setValue('cancelled_order_id', data.message.order_id)
 
     return Object.keys(errorObj).length > 0 && errorObj

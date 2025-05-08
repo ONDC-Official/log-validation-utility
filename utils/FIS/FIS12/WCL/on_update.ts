@@ -8,6 +8,8 @@ import {
   validateQuote,
   validateItems,
   validateFulfillments,
+  validateTransactionIdConsistency,
+  validateMessageIdPair
 } from './commonValidations'
 
 export const checkon_updateWCL = (data: any, msgIdSet: any, flow: string, sequence: string) => {
@@ -273,6 +275,14 @@ export const checkon_updateWCL = (data: any, msgIdSet: any, flow: string, sequen
         }
       }
     }
+
+    // Add transaction ID consistency check
+    const transactionIdConsistency = validateTransactionIdConsistency(data.context)
+    Object.assign(errorObj, transactionIdConsistency)
+    
+    // Add message ID pair validation - this is an on_action call
+    const messageIdPair = validateMessageIdPair(data.context, constants.ON_UPDATE, true)
+    Object.assign(errorObj, messageIdPair)
 
     return Object.keys(errorObj).length > 0 && errorObj
   } catch (error: any) {

@@ -120,6 +120,16 @@ import { initFIS12Schema } from '../schema/FIS/WCL/init'
 import { onSelectFIS12WCLSchema } from '../schema/FIS/WCL/on_select'
 import { selectFIS12WCLSchema } from '../schema/FIS/WCL/select'
 import { onUpdateFIS12FlowSchema } from '../schema/FIS/WCL/on_update_flow'
+import { searchFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/search'
+import { onSearchFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/on_search'
+import { selectFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/select'
+import { onSelectFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/on_select'
+import { initFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/init'
+import { onInitFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/on_init'
+import { confirmFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/confirm'
+import { onConfirmFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/on_confirm'
+import { updateFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/update'
+import { onUpdateFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/on_update'
 
 const ajv = new Ajv({
   allErrors: true,
@@ -1450,6 +1460,69 @@ const validate_schema_on_update_flow_FIS_WCL_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+// Purchase Finance Schema
+
+const validate_schema_search_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_search_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSearchFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_select_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, selectFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_select_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSelectFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_init_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, initFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_init_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, onInitFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_confirm_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, confirmFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_confirm_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, onConfirmFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+// const validate_schema_status_FIS12_for_json = (data: any) => {
+//   // Using the generic FIS status schema from FISValidator
+//   return validate_schema_for_json(data, 'schema/FIS/status.yaml')
+// }
+
+// const validate_schema_on_status_FIS12_for_json = (data: any) => {
+//   const error_list = validate_schema(data, onStatusFISWCLSchema)
+//   return formatted_error(error_list)
+// }
+
+const validate_schema_update_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, updateFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_update_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+
 
 const TRVValidator = {
   validate_schema_search_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/search.yaml'),
@@ -1820,6 +1893,18 @@ export default {
   validate_schema_on_update_flow_FIS_WCL_for_json,
   validate_schema_cancel_FIS_WCL_for_json,
   validate_schema_on_cancel_FIS_WCL_for_json,
+
+  //FIS 12 : Purchase Finance
+  validate_schema_search_FIS12_PF_for_json,
+  validate_schema_on_search_FIS12_PF_for_json,
+  validate_schema_on_confirm_FIS12_PF_for_json,
+  validate_schema_on_update_FIS12_PF_for_json,
+  validate_schema_select_FIS12_PF_for_json,
+  validate_schema_on_select_FIS12_PF_for_json,
+  validate_schema_init_FIS12_PF_for_json,
+  validate_schema_on_init_FIS12_PF_for_json,
+  validate_schema_confirm_FIS12_PF_for_json,
+  validate_schema_update_FIS12_PF_for_json,
 
   ...TRVValidator,
   ...FISValidator,

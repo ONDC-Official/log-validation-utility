@@ -479,6 +479,7 @@ if (Array.isArray(fulfillments)) {
     try {
       if (flow === FLOW.FLOW012) {
         logger.info(`checking payment object in /${constants.CONFIRM}`)
+        setValue('confirmPaymentStatus',confirm.payment.status)
         if (confirm.payment['@ondc/org/settlement_details'][0]['settlement_counterparty'] != 'buyer-app') {
           cnfrmObj.sttlmntcntrparty = `settlement_counterparty is expected to be 'buyer-app' in @ondc/org/settlement_details`
         }

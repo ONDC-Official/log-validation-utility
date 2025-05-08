@@ -383,8 +383,14 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any, 
         logger.info('Payment status check in on status delivered call')
         const payment = on_status.payment
         if (payment.status == PAYMENT_STATUS.NOT_PAID) {
-          logger.error(`Payment status should be ${PAYMENT_STATUS.PAID} for ${FLOW.FLOW012} flow (Item has been delivered in this state!)`);
+          logger.error(
+            `Payment status should be ${PAYMENT_STATUS.PAID} for ${FLOW.FLOW012} flow (Item has been delivered in this state!)`,
+          )
           onStatusObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.PAID} for ${FLOW.FLOW012} flow since Item has been delivered in this state (Cash on Delivery)`
+        }
+        if (!payment?.time || !payment?.time?.timestamp) {
+          onStatusObj['missingTimestamp'] =
+            `Payment must have time with timestamp for ${PAYMENT_STATUS.PAID} in ${FLOW.FLOW012} flow since Item has been delivered in this state (Cash on Delivery)`
         }
       }
     } catch (err: any) {

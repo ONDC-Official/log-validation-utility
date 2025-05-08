@@ -1029,7 +1029,37 @@ curl --location 'https://log-validation.ondc.org/api/validate/fis' \
 }'
 ```
 
-
+### For FIS13 Sample Curl Requests
+#### For MOTOR_INSURANCE Flow
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/fis' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:FIS13",
+    "version": "2.0.0",
+    "flow": "MOTOR_INSURANCE",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_1": {},
+        "on_search_1":{},
+        "search_2": {},
+        "on_search_2":{},
+        "select_1": {},
+        "on_select_1": {},
+        "select_2": {},
+        "on_select_2": {},
+        "select_3": {},
+        "on_select_3": {},
+        "init_1": {},
+        "on_init_1": {},
+        "init_2": {},
+        "on_init_2": {},
+        "confirm": {},
+        "on_confirm": {}
+    }
+}'
+```
 
 ### For FIS14 Sample Curl Requests (Local)
 

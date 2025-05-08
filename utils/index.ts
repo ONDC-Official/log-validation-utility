@@ -131,7 +131,15 @@ export const checkFISContext = (
 }
 
 export const checkMobilityContext = (
-  data: { transaction_id: string; message_id: string; action: string; ttl: string; timestamp: string },
+  data: {
+    transaction_id: string
+    message_id: string
+    action: string
+    ttl: string
+    timestamp: string
+    bpp_uri?: string
+    bpp_id?: string
+  },
   path: any,
 ) => {
   if (!data) return
@@ -161,6 +169,10 @@ export const checkMobilityContext = (
     } else if (result && result.err === 'INVLD_DT') {
       errObj.timestamp_err = 'Timestamp should be in date-time format'
     }
+  }
+
+  if (data?.action == 'search' && (data?.bpp_uri || data?.bpp_id)) {
+    errObj.bpp = `bpp_id & bpp_uri shouldn't be present if action is search`
   }
 
   if (_.isEmpty(errObj)) {

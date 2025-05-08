@@ -88,6 +88,24 @@ import {confirmFIS14Schema} from '../schema/FIS/Mutual_Funds/confirm'
 import {onConfirmFIS14Schema} from '../schema/FIS/Mutual_Funds/on_confirm'
 // import { onStatusFIS14Schema } from '../schema/FIS/Mutual_Funds/on_status'
 import { onUpdateFIS14Schema } from '../schema/FIS/Mutual_Funds/on_update'
+import {searchSchemaTRV13} from '../schema/TRV-13/search'
+import onSearchSchemaTRV13 from '../schema/TRV-13/onSearch'
+import searchIncSchemaTRV13 from '../schema/TRV-13/searchInc'
+import onSearchIncSchemaTRV13 from '../schema/TRV-13/onSearchInc'
+import searchTimeSchemaTRV13 from '../schema/TRV-13/searchTime'
+import onSearchTimeSchemaTRV13 from '../schema/TRV-13/onSearchTime'
+import selectSchemaTRV13 from '../schema/TRV-13/select'
+import onSelectSchemaTRV13 from '../schema/TRV-13/onSelect'
+import initSchemaTRV13 from '../schema/TRV-13/init'
+import onInitSchemaTRV13 from '../schema/TRV-13/onInit'
+import confirmSchemaTRV13 from '../schema/TRV-13/confirm'
+import onConfirmSchemaTRV13 from '../schema/TRV-13/onConfirm'
+import statusSchemaTRV13 from '../schema/TRV-13/status'
+import onStatusSchemaTRV13 from '../schema/TRV-13/onStatus'
+import updateSchemaTRV13 from '../schema/TRV-13/update'
+import onUpdateSchemaTRV13 from '../schema/TRV-13/onUpdate'
+import cancelSchemaTRV13 from '../schema/TRV-13/cancel'
+import onCancelSchemaTRV13 from '../schema/TRV-13/onCancel'
 import { searchFIS12WCLSchema } from '../schema/FIS/WCL/search'
 import { onSearchFIS12WCLSchema } from '../schema/FIS/WCL/on_search'
 import { onCancelFISWCLSchema } from '../schema/FIS/WCL/on_cancel'
@@ -1175,7 +1193,100 @@ const validate_schema_on_cancel_TRV12_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
-//________________________________________________________________________________________________
+// TRV-13 Schema Validation Functions
+const validate_schema_search_TRV13_for_json = (data: any) => {
+  console.log("+++++++++ data", data)
+  const error_list = validate_schema(data, searchSchemaTRV13)
+  console.log("+++++++++ error_list", error_list)
+  return formatted_error(error_list)
+}
+
+
+const validate_schema_on_search_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSearchSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_search_inc_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchIncSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_search_inc_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSearchIncSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_search_time_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchTimeSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_search_time_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSearchTimeSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_select_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, selectSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_select_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSelectSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_init_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, initSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_init_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onInitSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_confirm_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, confirmSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_confirm_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onConfirmSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_status_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, statusSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_status_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_update_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, updateSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_update_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_cancel_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancelSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_cancel_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onCancelSchemaTRV13)
+  return formatted_error(error_list)
+}
+
 
 const validate_schema_for_json = (data: any, schemaPath: any) => {
   let error_list
@@ -1252,6 +1363,11 @@ const validate_schema_confirm_FIS14_for_json = (data: any) => {
 
 const validate_schema_on_confirm_FIS14_for_json = (data: any) => {
   const error_list = validate_schema(data, onConfirmFIS14Schema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_search_TRV1_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchSchemaTRV13)
   return formatted_error(error_list)
 }
 
@@ -1402,7 +1518,29 @@ const validate_schema_on_recon_rsf_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+// Create TRV13Validator object
+
+
 export default {
+  validate_schema_search_TRV1_for_json,
+  validate_schema_search_TRV13_for_json,
+  validate_schema_on_search_TRV13_for_json,
+  validate_schema_search_inc_TRV13_for_json,
+  validate_schema_on_search_inc_TRV13_for_json,
+  validate_schema_search_time_TRV13_for_json,
+  validate_schema_on_search_time_TRV13_for_json,
+  validate_schema_select_TRV13_for_json,
+  validate_schema_on_select_TRV13_for_json,
+  validate_schema_init_TRV13_for_json,
+  validate_schema_on_init_TRV13_for_json,
+  validate_schema_confirm_TRV13_for_json,
+  validate_schema_on_confirm_TRV13_for_json,
+  validate_schema_status_TRV13_for_json,
+  validate_schema_on_status_TRV13_for_json,
+  validate_schema_update_TRV13_for_json,
+  validate_schema_on_update_TRV13_for_json,
+  validate_schema_cancel_TRV13_for_json,
+  validate_schema_on_cancel_TRV13_for_json,
   validate_schema_catalog_rejection_RET10_for_json,
   validate_schema_catalog_rejection_RET11_for_json,
   validate_schema_catalog_rejection_RET12_for_json,
@@ -1685,4 +1823,5 @@ export default {
 
   ...TRVValidator,
   ...FISValidator,
+  // ...TRV13Validator,
 }

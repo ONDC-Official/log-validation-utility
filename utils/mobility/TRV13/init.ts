@@ -1,0 +1,409 @@
+import { logger } from '../../../shared/logger'
+import { setValue } from '../../../shared/dao'
+import { TRV13ApiSequence } from '../../../constants'
+import { validateSchema, isObjectEmpty } from '../../../utils'
+import { validateContext } from '../mobilityChecks'
+
+export const checkInit = (data: any, msgIdSet: any, version: any) => {
+  console.log("Version", version)
+  if (!data || isObjectEmpty(data)) {
+    return { [TRV13ApiSequence.INIT]: 'JSON cannot be empty' }
+  }
+
+  const { message, context } = data
+  if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
+    return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
+  }
+
+  const schemaValidation = validateSchema('TRV13', TRV13ApiSequence.INIT, data)
+  const contextRes: any = validateContext(context, msgIdSet, TRV13ApiSequence.ON_SELECT, TRV13ApiSequence.INIT)
+  setValue(`${TRV13ApiSequence.INIT}_message`, message)
+  const errorObj: any = {}
+
+  if (schemaValidation !== 'error') {
+    Object.assign(errorObj, schemaValidation)
+  }
+
+  if (!contextRes?.valid) {
+    Object.assign(errorObj, contextRes.ERRORS)
+  }
+
+  const initOrder: any = message.order
+
+  try {
+    // Provider validation
+    if (!initOrder?.provider) {
+      errorObj.provider = 'provider is missing in order'
+    } else {
+      const provider = initOrder.provider
+      if (!provider?.id) {
+        errorObj.provider_id = 'provider.id is missing'
+      }
+    }
+
+    // Items validation
+    if (!initOrder?.items || !Array.isArray(initOrder.items) || initOrder.items.length === 0) {
+      errorObj.items = 'items array is missing or empty'
+    } else {
+      initOrder.items.forEach((item: any, index: number) => {
+        // Item ID validation
+        if (!item?.id) {
+          errorObj[`item_${index}_id`] = `item.id is missing at index ${index}`
+        }
+
+        // Location IDs validation
+        if (!item?.location_ids || !Array.isArray(item.location_ids) || item.location_ids.length === 0) {
+          errorObj[`item_${index}_location_ids`] = `item.location_ids array is missing or empty at index ${index}`
+        }
+
+        // Quantity validation
+        if (!item?.quantity) {
+          errorObj[`item_${index}_quantity`] = `item.quantity is missing at index ${index}`
+        } else {
+          if (!item.quantity?.selected) {
+            errorObj[`item_${index}_quantity_selected`] = `item.quantity.selected is missing at index ${index}`
+          } else {
+            if (!item.quantity.selected?.count) {
+              errorObj[`item_${index}_quantity_selected_count`] = `item.quantity.selected.count is missing at index ${index}`
+            } else {
+              const count = parseInt(item.quantity.selected.count)
+              if (isNaN(count) || count <= 0) {
+                errorObj[`item_${index}_quantity_selected_count`] = `item.quantity.selected.count should be a positive number at index ${index}`
+              }
+            }
+          }
+        }
+
+        // Add-ons validation (if present)
+        if (item?.add_ons) {
+          if (!Array.isArray(item.add_ons)) {
+            errorObj[`item_${index}_add_ons`] = `item.add_ons should be an array at index ${index}`
+          } else {
+            item.add_ons.forEach((addon: any, addonIndex: number) => {
+              if (!addon?.id) {
+                errorObj[`item_${index}_addon_${addonIndex}_id`] = `addon.id is missing at item index ${index}, addon index ${addonIndex}`
+              }
+            })
+          }
+        }
+      })
+    }
+
+    // Payments validation
+    if (!initOrder?.payments || !Array.isArray(initOrder.payments) || initOrder.payments.length === 0) {
+      errorObj.payments = 'payments array is missing or empty'
+    } else {
+      initOrder.payments.forEach((payment: any, index: number) => {
+        // Payment ID validation
+        if (!payment?.id) {
+          errorObj[`payment_${index}_id`] = `payment.id is missing at index ${index}`
+        }
+
+        // Payment type validation
+        if (!payment?.type) {
+          errorObj[`payment_${index}_type`] = `payment.type is missing at index ${index}`
+        } else {
+          const validTypes = ['PRE-ORDER', 'ON-FULFILLMENT', 'PART-PAYMENT']
+          if (!validTypes.includes(payment.type)) {
+            errorObj[`payment_${index}_type`] = `payment.type should be one of ${validTypes.join(', ')} at index ${index}`
+          }
+        }
+
+        // Payment status validation (if present)
+        if (payment?.status) {
+          const validStatuses = ['NOT-PAID', 'PAID']
+          if (!validStatuses.includes(payment.status)) {
+            errorObj[`payment_${index}_status`] = `payment.status should be one of ${validStatuses.join(', ')} at index ${index}`
+          }
+        }
+
+        // Collected by validation (if present)
+        if (payment?.collected_by) {
+          const validCollectors = ['BAP', 'BPP']
+          if (!validCollectors.includes(payment.collected_by)) {
+            errorObj[`payment_${index}_collected_by`] = `payment.collected_by should be one of ${validCollectors.join(', ')} at index ${index}`
+          }
+        }
+
+        // Tags validation
+        if (!payment?.tags || !Array.isArray(payment.tags) || payment.tags.length === 0) {
+          errorObj[`payment_${index}_tags`] = `payment.tags array is missing or empty at index ${index}`
+        } else {
+          payment.tags.forEach((tag: any, tagIndex: number) => {
+            if (!tag?.descriptor) {
+              errorObj[`payment_${index}_tag_${tagIndex}_descriptor`] = `tag.descriptor is missing at payment index ${index}, tag index ${tagIndex}`
+            } else {
+              if (!tag.descriptor?.code) {
+                errorObj[`payment_${index}_tag_${tagIndex}_descriptor_code`] = `tag.descriptor.code is missing at payment index ${index}, tag index ${tagIndex}`
+              } else {
+                const validCodes = ['FULL-PAYMENT', 'LINKED-PAYMENTS', 'ADV-DEPOSIT', 'FINAL-PAYMENT']
+                if (!validCodes.includes(tag.descriptor.code)) {
+                  errorObj[`payment_${index}_tag_${tagIndex}_descriptor_code`] = `tag.descriptor.code should be one of ${validCodes.join(', ')} at payment index ${index}, tag index ${tagIndex}`
+                }
+              }
+            }
+
+            // List validation (if present)
+            if (tag?.list) {
+              if (!Array.isArray(tag.list)) {
+                errorObj[`payment_${index}_tag_${tagIndex}_list`] = `tag.list should be an array at payment index ${index}, tag index ${tagIndex}`
+              } else {
+                tag.list.forEach((listItem: any, listIndex: number) => {
+                  if (!listItem?.descriptor) {
+                    errorObj[`payment_${index}_tag_${tagIndex}_list_${listIndex}_descriptor`] = `listItem.descriptor is missing at payment index ${index}, tag index ${tagIndex}, list index ${listIndex}`
+                  } else {
+                    if (!listItem.descriptor?.code) {
+                      errorObj[`payment_${index}_tag_${tagIndex}_list_${listIndex}_descriptor_code`] = `listItem.descriptor.code is missing at payment index ${index}, tag index ${tagIndex}, list index ${listIndex}`
+                    }
+                  }
+                  if (!listItem?.value) {
+                    errorObj[`payment_${index}_tag_${tagIndex}_list_${listIndex}_value`] = `listItem.value is missing at payment index ${index}, tag index ${tagIndex}, list index ${listIndex}`
+                  }
+                })
+              }
+            }
+          })
+        }
+
+        // Params validation (if present)
+        if (payment?.params) {
+          if (!payment.params?.currency) {
+            errorObj[`payment_${index}_params_currency`] = `payment.params.currency is missing at index ${index}`
+          }
+          if (!payment.params?.amount) {
+            errorObj[`payment_${index}_params_amount`] = `payment.params.amount is missing at index ${index}`
+          } else {
+            const amount = parseFloat(payment.params.amount)
+            if (isNaN(amount) || amount < 0) {
+              errorObj[`payment_${index}_params_amount`] = `payment.params.amount should be a valid non-negative number at index ${index}`
+            }
+          }
+
+          // Additional payment params validation for ON-FULFILLMENT type
+          if (payment.type === 'ON-FULFILLMENT') {
+            if (!payment.params?.bank_code) {
+              errorObj[`payment_${index}_params_bank_code`] = `payment.params.bank_code is missing for ON-FULFILLMENT payment at index ${index}`
+            }
+            if (!payment.params?.bank_account_number) {
+              errorObj[`payment_${index}_params_bank_account_number`] = `payment.params.bank_account_number is missing for ON-FULFILLMENT payment at index ${index}`
+            }
+            if (!payment.params?.virtual_payment_address) {
+              errorObj[`payment_${index}_params_virtual_payment_address`] = `payment.params.virtual_payment_address is missing for ON-FULFILLMENT payment at index ${index}`
+            }
+          }
+        }
+      })
+    }
+
+    // Billing validation
+    if (!initOrder?.billing) {
+      errorObj.billing = 'billing is missing in order'
+    } else {
+      const billing = initOrder.billing
+
+      // Required billing fields validation
+      if (!billing?.name) {
+        errorObj.billing_name = 'billing.name is missing'
+      }
+      if (!billing?.address) {
+        errorObj.billing_address = 'billing.address is missing'
+      }
+      if (!billing?.state?.name) {
+        errorObj.billing_state_name = 'billing.state.name is missing'
+      }
+      if (!billing?.city?.name) {
+        errorObj.billing_city_name = 'billing.city.name is missing'
+      }
+      if (!billing?.organization?.descriptor?.name) {
+        errorObj.billing_organization_name = 'billing.organization.descriptor.name is missing'
+      }
+      if (!billing?.organization?.address) {
+        errorObj.billing_organization_address = 'billing.organization.address is missing'
+      }
+      if (!billing?.email) {
+        errorObj.billing_email = 'billing.email is missing'
+      } else {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        if (!emailRegex.test(billing.email)) {
+          errorObj.billing_email = 'billing.email should be a valid email address'
+        }
+      }
+      if (!billing?.phone) {
+        errorObj.billing_phone = 'billing.phone is missing'
+      } else {
+        const phoneRegex = /^[0-9]{10}$/
+        if (!phoneRegex.test(billing.phone)) {
+          errorObj.billing_phone = 'billing.phone should be a valid 10-digit phone number'
+        }
+      }
+      if (!billing?.tax_id) {
+        errorObj.billing_tax_id = 'billing.tax_id is missing'
+      }
+    }
+
+    // Fulfillments validation
+    if (!initOrder?.fulfillments || !Array.isArray(initOrder.fulfillments) || initOrder.fulfillments.length === 0) {
+      errorObj.fulfillments = 'fulfillments array is missing or empty'
+    } else {
+      initOrder.fulfillments.forEach((fulfillment: any, index: number) => {
+        // Fulfillment ID validation
+        if (!fulfillment?.id) {
+          errorObj[`fulfillment_${index}_id`] = `fulfillment.id is missing at index ${index}`
+        }
+
+        // Customer validation
+        if (!fulfillment?.customer) {
+          errorObj[`fulfillment_${index}_customer`] = `fulfillment.customer is missing at index ${index}`
+        } else {
+          const customer = fulfillment.customer
+
+          // Person validation
+          if (!customer?.person) {
+            errorObj[`fulfillment_${index}_customer_person`] = `fulfillment.customer.person is missing at index ${index}`
+          } else {
+            const person = customer.person
+
+            // Required person fields validation
+            if (!person?.name) {
+              errorObj[`fulfillment_${index}_customer_person_name`] = `fulfillment.customer.person.name is missing at index ${index}`
+            }
+            if (!person?.age) {
+              errorObj[`fulfillment_${index}_customer_person_age`] = `fulfillment.customer.person.age is missing at index ${index}`
+            } else {
+              const age = parseInt(person.age)
+              if (isNaN(age) || age < 0 || age > 120) {
+                errorObj[`fulfillment_${index}_customer_person_age`] = `fulfillment.customer.person.age should be a valid number between 0 and 120 at index ${index}`
+              }
+            }
+            if (!person?.dob) {
+              errorObj[`fulfillment_${index}_customer_person_dob`] = `fulfillment.customer.person.dob is missing at index ${index}`
+            } else {
+              const dob = new Date(person.dob)
+              if (isNaN(dob.getTime())) {
+                errorObj[`fulfillment_${index}_customer_person_dob`] = `fulfillment.customer.person.dob should be a valid date at index ${index}`
+              }
+            }
+            if (!person?.gender) {
+              errorObj[`fulfillment_${index}_customer_person_gender`] = `fulfillment.customer.person.gender is missing at index ${index}`
+            } else {
+              const validGenders = ['M', 'F', 'O']
+              if (!validGenders.includes(person.gender)) {
+                errorObj[`fulfillment_${index}_customer_person_gender`] = `fulfillment.customer.person.gender should be one of ${validGenders.join(', ')} at index ${index}`
+              }
+            }
+
+            // Credentials validation (if present)
+            if (person?.creds) {
+              if (!Array.isArray(person.creds)) {
+                errorObj[`fulfillment_${index}_customer_person_creds`] = `fulfillment.customer.person.creds should be an array at index ${index}`
+              } else {
+                person.creds.forEach((cred: any, credIndex: number) => {
+                  if (!cred?.id) {
+                    errorObj[`fulfillment_${index}_customer_person_cred_${credIndex}_id`] = `cred.id is missing at fulfillment index ${index}, cred index ${credIndex}`
+                  }
+                  if (!cred?.type) {
+                    errorObj[`fulfillment_${index}_customer_person_cred_${credIndex}_type`] = `cred.type is missing at fulfillment index ${index}, cred index ${credIndex}`
+                  }
+                })
+              }
+            }
+          }
+
+          // Contact validation
+          if (!customer?.contact) {
+            errorObj[`fulfillment_${index}_customer_contact`] = `fulfillment.customer.contact is missing at index ${index}`
+          } else {
+            const contact = customer.contact
+
+            if (!contact?.phone) {
+              errorObj[`fulfillment_${index}_customer_contact_phone`] = `fulfillment.customer.contact.phone is missing at index ${index}`
+            } else {
+              const phoneRegex = /^[0-9]{10}$/
+              if (!phoneRegex.test(contact.phone)) {
+                errorObj[`fulfillment_${index}_customer_contact_phone`] = `fulfillment.customer.contact.phone should be a valid 10-digit phone number at index ${index}`
+              }
+            }
+
+            if (!contact?.email) {
+              errorObj[`fulfillment_${index}_customer_contact_email`] = `fulfillment.customer.contact.email is missing at index ${index}`
+            } else {
+              const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+              if (!emailRegex.test(contact.email)) {
+                errorObj[`fulfillment_${index}_customer_contact_email`] = `fulfillment.customer.contact.email should be a valid email address at index ${index}`
+              }
+            }
+          }
+        }
+      })
+    }
+
+    // Tags validation
+    if (initOrder?.tags) {
+      if (!Array.isArray(initOrder.tags)) {
+        errorObj.tags = 'order.tags should be an array'
+      } else {
+        initOrder.tags.forEach((tag: any, index: number) => {
+          if (!tag?.descriptor) {
+            errorObj[`tag_${index}_descriptor`] = `tag.descriptor is missing at index ${index}`
+          } else {
+            if (!tag.descriptor?.code) {
+              errorObj[`tag_${index}_descriptor_code`] = `tag.descriptor.code is missing at index ${index}`
+            } else {
+              const validCodes = ['BAP_TERMS', 'BUYER_FINDER_FEES']
+              if (!validCodes.includes(tag.descriptor.code)) {
+                errorObj[`tag_${index}_descriptor_code`] = `tag.descriptor.code should be one of ${validCodes.join(', ')} at index ${index}`
+              }
+            }
+          }
+
+          // List validation (if present)
+          if (tag?.list) {
+            if (!Array.isArray(tag.list)) {
+              errorObj[`tag_${index}_list`] = `tag.list should be an array at index ${index}`
+            } else {
+              tag.list.forEach((listItem: any, listIndex: number) => {
+                if (!listItem?.descriptor) {
+                  errorObj[`tag_${index}_list_${listIndex}_descriptor`] = `listItem.descriptor is missing at tag index ${index}, list index ${listIndex}`
+                } else {
+                  if (!listItem.descriptor?.code) {
+                    errorObj[`tag_${index}_list_${listIndex}_descriptor_code`] = `listItem.descriptor.code is missing at tag index ${index}, list index ${listIndex}`
+                  }
+                }
+                if (!listItem?.value) {
+                  errorObj[`tag_${index}_list_${listIndex}_value`] = `listItem.value is missing at tag index ${index}, list index ${listIndex}`
+                } else {
+                  // Validate specific tag values
+                  if (tag.descriptor.code === 'BAP_TERMS') {
+                    if (listItem.descriptor.code === 'EFFECTIVE_DATE') {
+                      const date = new Date(listItem.value)
+                      if (isNaN(date.getTime())) {
+                        errorObj[`tag_${index}_list_${listIndex}_value`] = `EFFECTIVE_DATE should be a valid ISO date string at tag index ${index}, list index ${listIndex}`
+                      }
+                    } else if (listItem.descriptor.code === 'STATIC_TERMS_NEW') {
+                      const urlRegex = /^https?:\/\/.+/
+                      if (!urlRegex.test(listItem.value)) {
+                        errorObj[`tag_${index}_list_${listIndex}_value`] = `STATIC_TERMS_NEW should be a valid URL at tag index ${index}, list index ${listIndex}`
+                      }
+                    }
+                  } else if (tag.descriptor.code === 'BUYER_FINDER_FEES') {
+                    if (listItem.descriptor.code === 'BUYER_FINDER_FEES_PERCENTAGE') {
+                      const percentage = parseFloat(listItem.value)
+                      if (isNaN(percentage) || percentage < 0 || percentage > 100) {
+                        errorObj[`tag_${index}_list_${listIndex}_value`] = `BUYER_FINDER_FEES_PERCENTAGE should be a valid number between 0 and 100 at tag index ${index}, list index ${listIndex}`
+                      }
+                    }
+                  }
+                }
+              })
+            }
+          }
+        })
+      }
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while checking init info in /${TRV13ApiSequence.INIT}, ${error.stack}`)
+    return { error: error.message }
+  }
+
+  return Object.keys(errorObj).length > 0 && errorObj
+}

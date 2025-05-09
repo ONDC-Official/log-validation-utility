@@ -549,7 +549,7 @@ export const onStatusSchema = {
                                   type: 'string',
                                 },
                               },
-                              required: ['category', 'size', 'registration'],
+                              required: ['registration'],
                             },
                           },
                           required: [

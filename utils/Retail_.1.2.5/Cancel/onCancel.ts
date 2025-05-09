@@ -13,11 +13,13 @@ import {
   mapCancellationID,
   checkQuoteTrail,
   checkQuoteTrailSum,
+  compareQuoteObjects,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
 export const checkOnCancel = (data: any, msgIdSet: any) => {
   const onCnclObj: any = {}
+  const onConfirmQuote = getValue(`${constants.ON_CONFIRM}/quote`)
   try {
     if (!data || isObjectEmpty(data)) {
       return { [ApiSequence.ON_CANCEL]: 'JSON cannot be empty' }
@@ -338,6 +340,25 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
     }
 
     try {
+      console.log("onConfirmQuote",JSON.stringify(onConfirmQuote));
+            logger.info(`Comparing Quote object for /${constants.ON_CONFIRM} and /${constants.ON_CANCEL}`)
+            const quoteErrors = compareQuoteObjects(onConfirmQuote, on_cancel.quote, constants.ON_CONFIRM, constants.ON_CANCEL)
+            if (quoteErrors) {
+              let i = 0
+              const len = quoteErrors.length
+              while (i < len) {
+                const key = `quoteErr${i}`
+                onCnclObj[key] = `${quoteErrors[i]}`
+                i++
+              }
+            }
+          
+
+    } catch (error:any) {
+      logger.error(`!!Error while Comparing Quote_Trail object for /${constants.ON_CANCEL}, ${error.stack} `)
+    }
+
+    try {
       logger.info(`Checking for Item IDs in quote object in /${constants.ON_CANCEL}`)
       let cancelFulfillments = null
       if (flow === '5') {
@@ -346,7 +367,91 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
         cancelFulfillments = _.filter(on_cancel.fulfillments, { type: 'Cancel' })
       }
       for (let obj of cancelFulfillments) {
+        const offerItems = on_cancel.quote.breakup.find((item: any) => item['@ondc/org/title_type'] === 'offer')
         const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
+        const offerBreakup = onConfirmQuote.breakup
+          .filter((item: any) => item['@ondc/org/title_type'] === 'offer')
+          .map((item: any) => ({
+            id: item['@ondc/org/item_id'],
+            value: parseFloat(item.price?.value),
+          }))
+        console.log('offerBreakupValue', JSON.stringify(offerBreakup))
+
+        if (offerItems) {
+          const offerType = offerItems?.item?.tags
+            ?.find((tag: any) => tag.code === 'offer')
+            ?.list?.find((entry: any) => entry.code === 'type')?.value
+          if (offerType === 'buyXgetY') {
+            const benefitValue = parseInt(
+              offerItems?.item?.tags
+                ?.find((tag: any) => tag.code === 'offer')
+                ?.list?.find((entry: any) => entry.code === 'item_value').value || '0',
+            )
+            if (benefitValue > 0) {
+              const quoteTrailItemOffer = quoteTrailItems.find((trail) =>
+                trail.list.some((entry: any) => entry.code === 'type' && entry.value === 'offer'),
+              )
+              if (quoteTrailItemOffer) {
+                offerBreakup.forEach((offer: any) => {
+                  const idEntry = quoteTrailItemOffer.list.find((item: any) => item.code === 'id')
+                  const valueEntry = quoteTrailItemOffer.list.find((item: any) => item.code === 'value')
+
+                  const actualId = idEntry?.value
+                  const quoteValue = parseFloat(valueEntry?.value || '0')
+                  const expectedValue = Math.abs(offer.value)
+
+                  if (actualId !== offer.id) {
+                    onCnclObj['invalidItem'] = `ID : expected '${offer.id}', got '${actualId}'`
+                  } else if (quoteValue < expectedValue) {
+                    onCnclObj['invalidItem'] =
+                      `Value mismatch for ID '${offer.id}': expected ${expectedValue}, got ${quoteValue}`
+                  }
+                })
+                const quoteTrailValue = parseInt(
+                  quoteTrailItemOffer.list.find((entry: any) => entry.code === 'value')?.value || '0',
+                )
+                console.log('quoteTrailValue', quoteTrailValue, quoteTrailItemOffer)
+              }
+
+              console.log('offerItem', JSON.stringify(offerItems), quoteTrailItemOffer)
+            }
+            console.log('benefitValue', benefitValue)
+          }
+          else{
+            const quoteTrailItemOffer = quoteTrailItems.find((trail) =>
+              trail.list.some((entry: any) => entry.code === 'type' && entry.value === 'offer'),
+            )
+            if(!quoteTrailItemOffer){
+              onCnclObj["invalidItem"] = `Quote trail with type offer not found`
+            }
+            // if (quoteTrailItemOffer) {
+              offerBreakup.forEach((offer: any) => {
+                const idEntry = quoteTrailItemOffer.list.find((item: any) => item.code === 'id')
+                const valueEntry = quoteTrailItemOffer.list.find((item: any) => item.code === 'value')
+
+                const actualId = idEntry?.value
+                const quoteValue = parseFloat(valueEntry?.value || '0')
+                const expectedValue = Math.abs(offer.value)
+
+                if (actualId !== offer.id) {
+                  onCnclObj['invalidItem'] = `ID : expected '${offer.id}', got '${actualId}'`
+                } else if (quoteValue < expectedValue) {
+                  onCnclObj['invalidItem'] =
+                    `Value mismatch for ID '${offer.id}': expected ${expectedValue}, got ${quoteValue}`
+                }
+              })
+              const quoteTrailValue = parseInt(
+                quoteTrailItemOffer.list.find((entry: any) => entry.code === 'value')?.value || '0',
+              )
+              console.log('quoteTrailValue', quoteTrailValue, quoteTrailItemOffer)
+            // }
+          }
+        }
+
+        // if()
+
+        console.log('quoteTrailItems', JSON.stringify(quoteTrailItems))
+
         checkQuoteTrail(quoteTrailItems, onCnclObj, selectPriceMap, itemSet)
       }
     } catch (error: any) {

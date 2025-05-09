@@ -1064,30 +1064,34 @@ export const checkQuoteTrailSum = (
 ) => {
   let quoteTrailSum = 0
   for (const obj of fulfillmentArr) {
-    const arrType = ['misc', 'packing', 'delivery', 'tax', 'item']
+    const arrType = ['misc', 'packing', 'delivery', 'tax', 'item','offer']
     const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
     for (const item of quoteTrailItems) {
       for (const val of item.list) {
         if (val.code === 'type') {
           if (!arrType.includes(val.value)) {
             errorObj[`invalidQuoteTrailType${apiSeq}`] =
-              `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax' or 'item'`
+              `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax' , 'offer' or 'item'`
           }
         }
         if (val.code === 'type') {
           if (!arrType.includes(val.value)) {
             errorObj[`invalidQuoteTrailType${apiSeq}`] =
-              `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax' or 'item'`
+              `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax','offer' or 'item'`
           }
         }
         if (val.code === 'value') {
           quoteTrailSum -= val.value
+          console.log("quoteTrailSum",quoteTrailSum);
+          
         }
       }
     }
   }
   quoteTrailSum = Number(quoteTrailSum.toFixed(2))
   if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
+    console.log("price in prince",price,priceAtConfirm);
+    
     const key = `invldQuoteTrailPrices`
     errorObj[key] =
       `quote_trail price and item quote price sum for ${apiSeq} should be equal to the price as in ${constants.ON_CONFIRM}`

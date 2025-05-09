@@ -569,6 +569,7 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
       logger.info(`Comparing order price value in /${constants.ON_INIT} and /${constants.CONFIRM}`)
       const oninitQuotePrice: any = getValue('initQuotePrice')
       const onConfirmQuotePrice = parseFloat(on_confirm.quote.price.value)
+      setValue(`${constants.ON_CONFIRM}/quote`,on_confirm.quote)
 
       logger.info(`Comparing quote prices of /${constants.ON_INIT} and /${constants.CONFIRM}`)
       if (oninitQuotePrice != onConfirmQuotePrice) {

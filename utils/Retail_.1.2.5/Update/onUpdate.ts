@@ -9,6 +9,9 @@ import {
     sumQuoteBreakUp,
     payment_status,
     checkQuoteTrailSum,
+    compareQuoteObjects,
+    compareCoordinates,
+    checkQuoteTrail,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { timeDiff } from '../../index';
@@ -17,9 +20,14 @@ import {
     return_rejected_request_reasonCodes,
     return_request_reasonCodes,
 } from '../../../constants/reasonCode'
+
 export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDetatilSet: any, quoteTrailItemsSet: any, fulfillmentsItemsSet: any, flow: any) => {
     const onupdtObj: any = {}
     const quoteItemSet: any = new Set()
+    const onConfirmQuote = getValue(`${constants.ON_CONFIRM}/quote`)
+    const selectPriceMap: any = getValue('selectPriceMap')
+    const itemSet = new Set()
+    // const onConfirmDeliveryFulfillment = getValue('deliveryFulfillment');
     try {
         if (!data || isObjectEmpty(data)) {
             return { [ApiSequence.ON_UPDATE]: 'JSON cannot be empty' }
@@ -58,6 +66,13 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                     if (!_.isEqual(getValue(`${ApiSequence.UPDATE_LIQUIDATED}_msgId`), context.message_id)) {
                         onupdtObj[`${apiSeq}_msgId`] =
                             `Message Ids for  /${ApiSequence.UPDATE_LIQUIDATED} and /${ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED} api should be same`
+                    }
+                }
+                else if (apiSeq == ApiSequence.ON_UPDATE_REPLACEMENT) {
+                    logger.info(`Comparing Message Ids of /${ApiSequence.UPDATE_REPLACEMENT} and /${ApiSequence.ON_UPDATE_REPLACEMENT}`)
+                    if (!_.isEqual(getValue(`${ApiSequence.UPDATE_REPLACEMENT}_msgId`), context.message_id)) {
+                        onupdtObj[`${apiSeq}_msgId`] =
+                            `Message Ids for  /${ApiSequence.UPDATE_REPLACEMENT} and /${ApiSequence.ON_UPDATE_REPLACEMENT} api should be same`
                     }
                 }
             } else {
@@ -255,6 +270,23 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
         }
 
         try {
+              console.log("onConfirmQuote",JSON.stringify(onConfirmQuote));
+                    logger.info(`Comparing Quote object for /${constants.ON_CONFIRM} and /${constants.ON_CANCEL}`)
+                    const quoteErrors = compareQuoteObjects(onConfirmQuote, on_update.quote, constants.ON_CONFIRM, constants.ON_UPDATE)
+                    if (quoteErrors) {
+                      let i = 0
+                      const len = quoteErrors.length
+                      while (i < len) {
+                        const key = `quoteErr${i}`
+                        onupdtObj[key] = `${quoteErrors[i]}`
+                        i++
+                      }
+                    }
+            } catch (error:any) {
+              logger.error(`!!Error while Comparing Quote object for /${constants.ON_CANCEL}, ${error.stack} `)
+            }
+
+        try {
             // For Delivery Object
             const DELobj = _.filter(on_update.fulfillments, { type: 'Delivery' })
             let del_start_location: any = {}
@@ -317,7 +349,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
             logger.error(`Error while checking for the availability of initiated_by in ${apiSeq}`)
         }
 
-        const flowSixAChecks = (data: any) => {
+        const flowSixAChecks =  (data: any) => {
             try {
                 try {
                     const orderState = getValue('orderState')
@@ -351,6 +383,69 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                         const price = Number(on_update.quote.price.value)
                         const priceAtConfirm = Number(getValue('quotePrice'))
                         const cancelFulfillments = _.filter(on_update.fulfillments, { type: 'Cancel' })
+                        for (let obj of cancelFulfillments) {
+                          const offerItems = on_update.quote.breakup.find(
+                            (item: any) => item['@ondc/org/title_type'] === 'offer',
+                          )
+                          const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
+                          const offerBreakup = onConfirmQuote.breakup
+                            .filter((item: any) => item['@ondc/org/title_type'] === 'offer')
+                            .map((item: any) => ({
+                              id: item['@ondc/org/item_id'],
+                              value: parseFloat(item.price?.value),
+                            }))
+                          console.log('offerBreakupValue', JSON.stringify(offerBreakup))
+
+                          if (offerItems) {
+                            const offerType = offerItems?.item?.tags
+                              ?.find((tag: any) => tag.code === 'offer')
+                              ?.list?.find((entry: any) => entry.code === 'type')?.value
+                            if (offerType === 'buyXgetY') {
+                              const benefitValue = parseInt(
+                                offerItems?.item?.tags
+                                  ?.find((tag: any) => tag.code === 'offer')
+                                  ?.list?.find((entry: any) => entry.code === 'item_value').value || '0',
+                              )
+                              if (benefitValue > 0) {
+                                const quoteTrailItemOffer = quoteTrailItems.find((trail) =>
+                                  trail.list.some((entry: any) => entry.code === 'type' && entry.value === 'offer'),
+                                )
+                                if (quoteTrailItemOffer) {
+                                  offerBreakup.forEach((offer: any) => {
+                                    const idEntry = quoteTrailItemOffer.list.find((item: any) => item.code === 'id')
+                                    const valueEntry = quoteTrailItemOffer.list.find(
+                                      (item: any) => item.code === 'value',
+                                    )
+
+                                    const actualId = idEntry?.value
+                                    const quoteValue = parseFloat(valueEntry?.value || '0')
+                                    const expectedValue = Math.abs(offer.value)
+
+                                    if (actualId !== offer.id) {
+                                      onupdtObj['invalidItem'] = `ID : expected '${offer.id}', got '${actualId}'`
+                                    } else if (quoteValue < expectedValue) {
+                                      onupdtObj['invalidItem'] =
+                                        `Value mismatch for ID '${offer.id}': expected ${expectedValue}, got ${quoteValue}`
+                                    }
+                                  })
+                                  const quoteTrailValue = parseInt(
+                                    quoteTrailItemOffer.list.find((entry: any) => entry.code === 'value')?.value || '0',
+                                  )
+                                  console.log('quoteTrailValue', quoteTrailValue, quoteTrailItemOffer)
+                                }
+
+                                console.log('offerItem', JSON.stringify(offerItems), quoteTrailItemOffer)
+                              }
+                              console.log('benefitValue', benefitValue)
+                            }
+                          }
+
+                          // if()
+
+                          console.log('quoteTrailItems', JSON.stringify(quoteTrailItems))
+
+                          checkQuoteTrail(quoteTrailItems, onupdtObj, selectPriceMap, itemSet)
+                        }
                         logger.info(`Checking for quote_trail price and item quote price sum for ${apiSeq}`)
                         checkQuoteTrailSum(cancelFulfillments, price, priceAtConfirm, onupdtObj, ApiSequence.ON_UPDATE)
                     } else {
@@ -489,11 +584,11 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
             logger.info(`Error while checking fulfillments id, type and tracking in /${constants.ON_STATUS}`)
         }
 
-        if (flow === '6-b' || flow === '6-c') {
+        if (flow === '6-b' || flow === '6-c' || flow === "00B") {
             try {
                 const timestampOnUpdatePartCancel = getValue(`${ApiSequence.ON_UPDATE_PART_CANCEL}_tmpstmp`)
                 const timeDif = timeDiff(context.timestamp, timestampOnUpdatePartCancel)
-                if (timeDif <= 0) {
+                if (timeDif <= 0 && (flow !== "00B" || apiSeq !== ApiSequence.ON_UPDATE_REPLACEMENT)) {
                     const key = 'context/timestamp'
                     onupdtObj[key] = `context/timestamp of /${apiSeq} should be greater than /${ApiSequence.ON_UPDATE_PART_CANCEL} context/timestamp`
                 }
@@ -606,13 +701,13 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
         if (flow === '6-a') {
             flowSixAChecks(message.order)
         }
-        if (flow === '6-b') {
+        if (flow === '6-b' || flow === '00B') {
 
             // Checking for location and time id is there or not in start/end object of return fulfillment
-            if (apiSeq == ApiSequence.ON_UPDATE_APPROVAL || apiSeq == ApiSequence.ON_UPDATE_PICKED || apiSeq == ApiSequence.ON_UPDATE_DELIVERED) {
+            if (apiSeq == ApiSequence.ON_UPDATE_APPROVAL || apiSeq == ApiSequence.ON_UPDATE_PICKED || apiSeq == ApiSequence.ON_UPDATE_DELIVERED || apiSeq === ApiSequence.ON_UPDATE_REPLACEMENT) {
                 try {
                     // For Return Object
-                    const RETobj = _.filter(on_update.fulfillments, { type: 'Return' })
+                    const RETobj:any = _.filter(on_update.fulfillments, { type: 'Return' })
                     let ret_start_location: any = {}
                     if (!RETobj.length) {
                         logger.error(`Return object is mandatory for ${apiSeq}`)
@@ -746,7 +841,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                             }
                         } else {
                             onupdtObj['ReturnFulfillment.start'] = `Return fulfillment start object is missing in ${apiSeq}`
-                        }
+                        }                         
                     }
                 } catch (error: any) {
                     logger.error(`Error while checking Fulfillments Return Obj in /${apiSeq}, ${error.stack}`)
@@ -764,6 +859,67 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                     if (
                         apiSeq == ApiSequence.ON_UPDATE_PICKED || apiSeq == ApiSequence.ON_UPDATE_DELIVERED
                     ) {
+                        const offerItems = on_update.quote.breakup.find(
+                            (item: any) => item['@ondc/org/title_type'] === 'offer',
+                          )
+                          const quoteTrailItems = _.filter(returnCancelFulfillments[0].tags, { code: 'quote_trail' })
+                          const offerBreakup = onConfirmQuote.breakup
+                            .filter((item: any) => item['@ondc/org/title_type'] === 'offer')
+                            .map((item: any) => ({
+                              id: item['@ondc/org/item_id'],
+                              value: parseFloat(item.price?.value),
+                            }))
+                          console.log('offerBreakupValue', JSON.stringify(offerBreakup))
+
+                          if (offerItems) {
+                            const offerType = offerItems?.item?.tags
+                              ?.find((tag: any) => tag.code === 'offer')
+                              ?.list?.find((entry: any) => entry.code === 'type')?.value
+                            if (offerType === 'buyXgetY') {
+                              const benefitValue = parseInt(
+                                offerItems?.item?.tags
+                                  ?.find((tag: any) => tag.code === 'offer')
+                                  ?.list?.find((entry: any) => entry.code === 'item_value').value || '0',
+                              )
+                              if (benefitValue > 0) {
+                                const quoteTrailItemOffer = quoteTrailItems.find((trail) =>
+                                  trail.list.some((entry: any) => entry.code === 'type' && entry.value === 'offer'),
+                                )
+                                if (quoteTrailItemOffer) {
+                                  offerBreakup.forEach((offer: any) => {
+                                    const idEntry = quoteTrailItemOffer.list.find((item: any) => item.code === 'id')
+                                    const valueEntry = quoteTrailItemOffer.list.find(
+                                      (item: any) => item.code === 'value',
+                                    )
+
+                                    const actualId = idEntry?.value
+                                    const quoteValue = parseFloat(valueEntry?.value || '0')
+                                    const expectedValue = Math.abs(offer.value)
+
+                                    if (actualId !== offer.id) {
+                                      onupdtObj['invalidItem'] = `ID : expected '${offer.id}', got '${actualId}'`
+                                    } else if (quoteValue < expectedValue) {
+                                      onupdtObj['invalidItem'] =
+                                        `Value mismatch for ID '${offer.id}': expected ${expectedValue}, got ${quoteValue}`
+                                    }
+                                  })
+                                  const quoteTrailValue = parseInt(
+                                    quoteTrailItemOffer.list.find((entry: any) => entry.code === 'value')?.value || '0',
+                                  )
+                                  console.log('quoteTrailValue', quoteTrailValue, quoteTrailItemOffer)
+                                }
+
+                                console.log('offerItem', JSON.stringify(offerItems), quoteTrailItemOffer)
+                              }
+                              console.log('benefitValue', benefitValue)
+                            }
+                          }
+
+                          // if()
+
+                          console.log('quoteTrailItems', JSON.stringify(quoteTrailItems))
+
+                          checkQuoteTrail(quoteTrailItems, onupdtObj, selectPriceMap, itemSet)
                         logger.info(`Checking for quote_trail price and item quote price sum for ${apiSeq}`)
                         checkQuoteTrailSum(returnCancelFulfillments, price, priceAtConfirm, onupdtObj, ApiSequence.ON_UPDATE)
                     }
@@ -778,39 +934,37 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
 
             // Checking for quoteTrailItems and adding to quoteTrailItemsSet and comparing with the previous calls
             try {
+              if (flow !== '00B') {
                 let cancelFulfillmentsArray = _.filter(on_update.fulfillments, { type: 'Cancel' })
                 if (cancelFulfillmentsArray.length != 0) {
-                    const cancelFulfillments = cancelFulfillmentsArray[0]
-                    const quoteTrailItems = cancelFulfillments.tags.filter(
-                        (tag: any) => tag.code == 'quote_trail')
-                    if (quoteTrailItems.length != 0) {
-                        if (apiSeq == ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC) {
-                            quoteTrailItems.forEach((item: any) => {
-                                quoteTrailItemsSet.add(item)
-                            });
-                        }
-
-                        quoteTrailItemsSet.forEach((obj1: any) => {
-                            const exist = quoteTrailItems.some((obj2: any) => {
-                                return _.isEqual(obj1, obj2)
-                            });
-                            if (!exist) {
-                                onupdtObj[`message/order.fulfillments/Cancel/tags/quote_trail`] = "Missing fulfillments/Cancel/tags/quote_trail as compare to the previous calls"
-                            }
-                        });
-
+                  const cancelFulfillments = cancelFulfillmentsArray[0]
+                  const quoteTrailItems = cancelFulfillments.tags.filter((tag: any) => tag.code == 'quote_trail')
+                  if (quoteTrailItems.length != 0) {
+                    if (apiSeq == ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC) {
+                      quoteTrailItems.forEach((item: any) => {
+                        quoteTrailItemsSet.add(item)
+                      })
                     }
-                    else {
-                        onupdtObj[`message/order.fulfillments/Cancel/tags/quote_trail`] = `Fulfillments/Cancel/tags/quote_trail is missing in ${apiSeq}`
-                    }
+
+                    quoteTrailItemsSet.forEach((obj1: any) => {
+                      const exist = quoteTrailItems.some((obj2: any) => {
+                        return _.isEqual(obj1, obj2)
+                      })
+                      if (!exist) {
+                        onupdtObj[`message/order.fulfillments/Cancel/tags/quote_trail`] =
+                          'Missing fulfillments/Cancel/tags/quote_trail as compare to the previous calls'
+                      }
+                    })
+                  } else {
+                    onupdtObj[`message/ordobj1er.fulfillments/Cancel/tags/quote_trail`] =
+                      `Fulfillments/Cancel/tags/quote_trail is missing in ${apiSeq}`
+                  }
+                } else {
+                  onupdtObj[`message/order.fulfillments/Cancel`] = `Fulfillments/Cancel is missing in ${apiSeq}`
                 }
-                else {
-                    onupdtObj[`message/order.fulfillments/Cancel`] = `Fulfillments/Cancel is missing in ${apiSeq}`
-                }
+              }
             } catch (error: any) {
-                logger.error(
-                    `Error occurred while checking for quote_trail in /${apiSeq}`,
-                )
+              logger.error(`Error occurred while checking for quote_trail in /${apiSeq}`)
             }
 
             //Reason_id mapping
@@ -953,6 +1107,135 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                     `Error occurred while checking for quote_trail in /${apiSeq}`,
                 )
             }
+        }
+        if (apiSeq === ApiSequence.ON_UPDATE_REPLACEMENT || flow === '00B') {
+          try {
+            const RETobj: any = _.filter(on_update.fulfillments, { type: 'Return' })
+            console.log("RETobj",RETobj);
+            
+            const returnFulfillmentState = RETobj[0].state.descriptor.code
+            console.log("returnFulfillmentState",returnFulfillmentState);
+            
+            const updateReplaceValue = getValue('update_replace_value')
+            console.log("updateReplaceValue",updateReplaceValue);
+            
+            if (updateReplaceValue != null) {
+              if (apiSeq === ApiSequence.ON_UPDATE_REPLACEMENT) {
+                if (updateReplaceValue === 'yes') {
+                  const returnRequestTag = RETobj[0].tags.find((tag: any) => tag.code === 'return_request')
+                  console.log("returnRequestTag",returnRequestTag);
+                  
+
+                  if (returnFulfillmentState !== 'Return_Picked') {
+                    onupdtObj['replacement'] =
+                      `Invalid fulfillment state for ${flow} as fulfillment/state/descriptor/code should be 'Return_Picked'`
+                  }
+
+                  if (returnRequestTag) {
+                    const replaceEntry = returnRequestTag.list.find((entry: any) => entry.code === 'replace')
+                    const replaceRequestEntry = RETobj[0].tags.find((entry: any) => entry.code === 'replace_request')
+
+                    // Validate 'replace' field
+                    if (!replaceEntry) {
+                      onupdtObj['replace_check'] = `'replace' is missing inside return_request tag`
+                    } else if (replaceEntry.value !== updateReplaceValue) {
+                      onupdtObj['replace_check'] =
+                        `'replace' value mismatch inside return_request: expected '${updateReplaceValue}', found '${replaceEntry.value}'`
+                    }
+
+                    // Validate 'replace_request' field and corresponding fulfillment
+                    if (!replaceRequestEntry) {
+                      onupdtObj['replace_request'] = `'replace_request' is missing inside replacement fulfillment`
+                    } else {
+                      const replaceFulfillmentId = replaceRequestEntry.list.find(
+                        (item: any) => item.code === 'id',
+                      ).value
+                      console.log("replaceFulfillmentId",replaceFulfillmentId,JSON.stringify(replaceRequestEntry));
+                      
+                      const deliveryFulfillment = on_update.fulfillments.find((f: any) => f.id === replaceFulfillmentId)
+                      console.log("deliveryFulfillment",deliveryFulfillment);
+                      
+                      
+
+                      if (!deliveryFulfillment) {
+                        onupdtObj['replace_request'] =
+                          `'replace_request' ID '${replaceFulfillmentId}' not found in fulfillments list`
+                      } else if (deliveryFulfillment.type !== 'Delivery') {
+                        onupdtObj['replace_request'] =
+                          `'replace_request' ID '${replaceFulfillmentId}' is not of type 'Delivery'`
+                      }
+                      try {
+                        setValue(`replacementFulfillment`,deliveryFulfillment)
+                        if (!deliveryFulfillment['@ondc/org/TAT']) {
+                          onupdtObj[`message.order.fulfillments[${deliveryFulfillment.id}]`] =
+                            `'TAT' must be provided in message/order/fulfillments`
+                        }
+                        // Comparing on_confirm delivery fulfillment with on_update replace fulfillment
+                        const ffDesc = deliveryFulfillment.state.descriptor
+
+                        const ffStateCheck = ffDesc.hasOwnProperty('code') ? ffDesc.code === 'Pending' : false
+                        setValue(`ffIdPrecancel`, ffDesc?.code)
+                        if (!ffStateCheck) {
+                          const key = `ffState:fulfillment[id]:${deliveryFulfillment.id}`
+                          onupdtObj[key] = `default fulfillments state is missing in /${constants.ON_UPDATE_REPLACEMENT}`
+                        }
+
+                        if (!deliveryFulfillment.start || !deliveryFulfillment.end) {
+                          onupdtObj.ffstartend = `fulfillments start and end locations are mandatory for fulfillment id: ${deliveryFulfillment.id}`
+                        }
+
+                        try {
+                          if (
+                            !compareCoordinates(deliveryFulfillment.start.location.gps, getValue('providerGps'))
+                          ) {
+                            onupdtObj.sellerGpsErr = `store gps location /fulfillments/:${deliveryFulfillment.id}/start/location/gps can't change`
+                          }
+                        } catch (error: any) {
+                          logger.error(
+                            `!!Error while checking store location in /${constants.ON_UPDATE_REPLACEMENT}, ${error.stack}`,
+                          )
+                        }
+
+                        try {
+                          if (!getValue('providerName')) {
+                            onupdtObj.sellerNameErr = `Invalid store name inside fulfillments in /${constants.ON_UPDATE_REPLACEMENT}`
+                          } else if (
+                            !_.isEqual(
+                              deliveryFulfillment.start.location.descriptor.name,
+                              getValue('providerName'),
+                            )
+                          ) {
+                            onupdtObj.sellerNameErr = `store name  /fulfillments/start/location/descriptor/name can't change with fulfillment id: ${deliveryFulfillment.id}`
+                          }
+                        } catch (error: any) {
+                          logger.error(`!!Error while checking store name in /${constants.ON_CONFIRM}`)
+                        }
+
+                        if (!_.isEqual(deliveryFulfillment.end.location.gps, getValue('buyerGps'))) {
+                          onupdtObj.buyerGpsErr = `fulfillments.end.location gps with id ${deliveryFulfillment.id} is not matching with gps in /on_conifrm`
+                        }
+
+                        if (
+                          !_.isEqual(deliveryFulfillment.end.location.address.area_code, getValue('buyerAddr'))
+                        ) {
+                          onupdtObj.gpsErr = `fulfillments.end.location.address.area_code with id ${deliveryFulfillment.id} is not matching with area_code in /on_confirm`
+                        }
+                      } catch (error:any) {
+                        logger.error(`Error while comparing fulfillment obj ${apiSeq.ON_UPDATE_REPLACEMENT} and ${apiSeq.ON_CONFIRM}`,error.stack)
+                      }
+                    }
+                  } else {
+                    onupdtObj['replace_check'] = `'return_request' tag is missing in tags`
+                  }
+                } else {
+                  onupdtObj['rplcmnt'] =
+                    `Replacement not possible as expected value for replace is yes but got ${updateReplaceValue}`
+                }
+              }
+            }
+          } catch (error:any) {
+            console.error(`!!Some error occurred while checking /${apiSeq} API`, error.stack)
+          }
         }
         return onupdtObj
     } catch (error: any) {

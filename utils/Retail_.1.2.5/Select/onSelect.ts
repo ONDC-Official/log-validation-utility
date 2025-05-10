@@ -665,6 +665,7 @@ export const checkOnSelect = (data: any,flow :string) => {
 
               const minValue = parseFloat(qualifierList.find((l: any) => l.code === 'min_value')?.value) || 0
               console.log('min_value', minValue)
+              // setvalue
               const itemsOnSearch: any = getValue(`onSearchItems`)
               console.log('itemsOnSearch', JSON.stringify(itemsOnSearch))
               if (offerType === 'discount') {

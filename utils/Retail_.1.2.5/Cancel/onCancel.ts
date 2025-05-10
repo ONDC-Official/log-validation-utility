@@ -13,7 +13,8 @@ import {
   mapCancellationID,
   checkQuoteTrail,
   checkQuoteTrailSum,
-  compareQuoteObjects,
+  deepCompareObjects,
+  // compareQuoteObjects,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -57,7 +58,8 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       try {
         logger.info(`Comparing Message Ids of /${constants.CANCEL} and /${constants.ON_CANCEL}`)
         if (!_.isEqual(getValue(`${ApiSequence.CANCEL}_msgId`), context.message_id)) {
-          onCnclObj[`${ApiSequence.ON_CANCEL}_msgId`] = `Message Ids for /${constants.CANCEL} and /${constants.ON_CANCEL} api should be same`
+          onCnclObj[`${ApiSequence.ON_CANCEL}_msgId`] =
+            `Message Ids for /${constants.CANCEL} and /${constants.ON_CANCEL} api should be same`
         }
       } catch (error: any) {
         logger.error(`!!Error while checking message id for /${constants.ON_CANCEL}, ${error.stack}`)
@@ -172,111 +174,112 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
         const deliveryFFObj = _.filter(on_cancel.fulfillments, { type: 'Delivery' })
         if (deliveryFFObj.length == 0) {
           onCnclObj[`deliveryFFObj`] = `fulfillment type delivery is missing in /${constants.ON_CANCEL}`
-        }
-        else {
+        } else {
           const deliveryFF = deliveryFFObj[0]
           const deliveryFFStart = deliveryFF.start
           const deliveryFFEnd = deliveryFF.end
 
           function checkFFStartOrEnd(ffStartOrEnd: any, startOrEnd: string) {
             if (!ffStartOrEnd) {
-              onCnclObj[`deliveryFFObj${startOrEnd}`] = `fulfillment type delivery ${startOrEnd.toLowerCase()} is missing in /${constants.ON_CANCEL}`
-            }
-            else {
+              onCnclObj[`deliveryFFObj${startOrEnd}`] =
+                `fulfillment type delivery ${startOrEnd.toLowerCase()} is missing in /${constants.ON_CANCEL}`
+            } else {
               if (_.isEmpty(ffStartOrEnd.location)) {
-                onCnclObj[`deliveryFFObj/${startOrEnd}/Location`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/location is missing in /${constants.ON_CANCEL}`
-              }
-              else {
-                if (startOrEnd == "End") {
+                onCnclObj[`deliveryFFObj/${startOrEnd}/Location`] =
+                  `fulfillment type delivery ${startOrEnd.toLowerCase()}/location is missing in /${constants.ON_CANCEL}`
+              } else {
+                if (startOrEnd == 'End') {
                   if (_.isEmpty(ffStartOrEnd.location?.address)) {
-                    onCnclObj[`deliveryFFObj/${startOrEnd}/Location/Address`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/location/address is missing in /${constants.ON_CANCEL}`
-
-                  }
-                  else {
+                    onCnclObj[`deliveryFFObj/${startOrEnd}/Location/Address`] =
+                      `fulfillment type delivery ${startOrEnd.toLowerCase()}/location/address is missing in /${constants.ON_CANCEL}`
+                  } else {
                     if (_.isEmpty(ffStartOrEnd.location.address.name)) {
-                      onCnclObj[`deliveryFFObj/${startOrEnd}/Location/Address/Name`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/location/address/name is missing in /${constants.ON_CANCEL}`
+                      onCnclObj[`deliveryFFObj/${startOrEnd}/Location/Address/Name`] =
+                        `fulfillment type delivery ${startOrEnd.toLowerCase()}/location/address/name is missing in /${constants.ON_CANCEL}`
                     }
                     if (_.isEmpty(ffStartOrEnd.location.address.building)) {
-                      onCnclObj[`deliveryFFObj/${startOrEnd}/Location/Address/Building`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/location/address/building is missing in /${constants.ON_CANCEL}`
+                      onCnclObj[`deliveryFFObj/${startOrEnd}/Location/Address/Building`] =
+                        `fulfillment type delivery ${startOrEnd.toLowerCase()}/location/address/building is missing in /${constants.ON_CANCEL}`
                     }
                     if (_.isEmpty(ffStartOrEnd.location.address.country)) {
-                      onCnclObj[`deliveryFFObj/${startOrEnd}/Location/Address/Country`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/location/address/country is missing in /${constants.ON_CANCEL}`
+                      onCnclObj[`deliveryFFObj/${startOrEnd}/Location/Address/Country`] =
+                        `fulfillment type delivery ${startOrEnd.toLowerCase()}/location/address/country is missing in /${constants.ON_CANCEL}`
                     }
                   }
                 }
               }
               if (_.isEmpty(ffStartOrEnd.time)) {
-                onCnclObj[`deliveryFFObj/${startOrEnd}/time`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time is missing in /${constants.ON_CANCEL}`
-              }
-              else {
+                onCnclObj[`deliveryFFObj/${startOrEnd}/time`] =
+                  `fulfillment type delivery ${startOrEnd.toLowerCase()}/time is missing in /${constants.ON_CANCEL}`
+              } else {
                 if (_.isEmpty(ffStartOrEnd.time.range)) {
-                  onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range is missing in /${constants.ON_CANCEL}`
-                }
-                else {
+                  onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range`] =
+                    `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range is missing in /${constants.ON_CANCEL}`
+                } else {
                   if (!ffStartOrEnd.time.range.start) {
-                    onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/Start`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/start is missing in /${constants.ON_CANCEL}`
-                  }
-                  else {
-                    const date = new Date(ffStartOrEnd.time.range.start);
-                    if (String(date) == "Invalid Date") {
-                      onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/Start`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/start is not of a valid date format in /${constants.ON_CANCEL}`
+                    onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/Start`] =
+                      `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/start is missing in /${constants.ON_CANCEL}`
+                  } else {
+                    const date = new Date(ffStartOrEnd.time.range.start)
+                    if (String(date) == 'Invalid Date') {
+                      onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/Start`] =
+                        `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/start is not of a valid date format in /${constants.ON_CANCEL}`
                     }
                   }
                   if (!ffStartOrEnd.time.range.end) {
-                    onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/End`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/end is missing in /${constants.ON_CANCEL}`
-                  }
-                  else {
-                    const date = new Date(ffStartOrEnd.time.range.end);
-                    if (String(date) == "Invalid Date") {
-                      onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/End`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/end is not of a valid date format in /${constants.ON_CANCEL}`
+                    onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/End`] =
+                      `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/end is missing in /${constants.ON_CANCEL}`
+                  } else {
+                    const date = new Date(ffStartOrEnd.time.range.end)
+                    if (String(date) == 'Invalid Date') {
+                      onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/End`] =
+                        `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/end is not of a valid date format in /${constants.ON_CANCEL}`
                     }
                   }
                 }
               }
               if (_.isEmpty(ffStartOrEnd.contact)) {
-                onCnclObj[`deliveryFFObj/${startOrEnd}/Contact`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/contact is missing in /${constants.ON_CANCEL}`
-              }
-              else {
+                onCnclObj[`deliveryFFObj/${startOrEnd}/Contact`] =
+                  `fulfillment type delivery ${startOrEnd.toLowerCase()}/contact is missing in /${constants.ON_CANCEL}`
+              } else {
                 if (!ffStartOrEnd.contact.phone) {
-                  onCnclObj[`deliveryFFObj/${startOrEnd}/Contact/Phone`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/contact/phone is missing in /${constants.ON_CANCEL}`
-
-                }
-                else if (isNaN(Number(ffStartOrEnd.contact.phone))) {
-                  onCnclObj[`deliveryFFObj/${startOrEnd}/Contact/Phone`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/contact/phone is not a valid phone_number in /${constants.ON_CANCEL}`
-
+                  onCnclObj[`deliveryFFObj/${startOrEnd}/Contact/Phone`] =
+                    `fulfillment type delivery ${startOrEnd.toLowerCase()}/contact/phone is missing in /${constants.ON_CANCEL}`
+                } else if (isNaN(Number(ffStartOrEnd.contact.phone))) {
+                  onCnclObj[`deliveryFFObj/${startOrEnd}/Contact/Phone`] =
+                    `fulfillment type delivery ${startOrEnd.toLowerCase()}/contact/phone is not a valid phone_number in /${constants.ON_CANCEL}`
                 }
                 if (!ffStartOrEnd.contact.email) {
-                  onCnclObj[`deliveryFFObj/${startOrEnd}/Contact/Email`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/contact/email is missing in /${constants.ON_CANCEL}`
-                }
-                else if (typeof ffStartOrEnd.contact.email != "string") {
-                  onCnclObj[`deliveryFFObj/${startOrEnd}/Contact/Email`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/contact/email is not a type of string in /${constants.ON_CANCEL}`
-
+                  onCnclObj[`deliveryFFObj/${startOrEnd}/Contact/Email`] =
+                    `fulfillment type delivery ${startOrEnd.toLowerCase()}/contact/email is missing in /${constants.ON_CANCEL}`
+                } else if (typeof ffStartOrEnd.contact.email != 'string') {
+                  onCnclObj[`deliveryFFObj/${startOrEnd}/Contact/Email`] =
+                    `fulfillment type delivery ${startOrEnd.toLowerCase()}/contact/email is not a type of string in /${constants.ON_CANCEL}`
                 }
               }
-              if (startOrEnd == "End") {
+              if (startOrEnd == 'End') {
                 if (_.isEmpty(ffStartOrEnd.person)) {
-                  onCnclObj[`deliveryFFObj/${startOrEnd}/Person`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/person is missing in /${constants.ON_CANCEL}`
-                }
-                else {
+                  onCnclObj[`deliveryFFObj/${startOrEnd}/Person`] =
+                    `fulfillment type delivery ${startOrEnd.toLowerCase()}/person is missing in /${constants.ON_CANCEL}`
+                } else {
                   if (!ffStartOrEnd.person.name) {
-                    onCnclObj[`deliveryFFObj/${startOrEnd}/Person/Name`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/person/name is missing in /${constants.ON_CANCEL}`
-                  }
-                  else if (typeof ffStartOrEnd.person.name != "string") {
-                    onCnclObj[`deliveryFFObj/${startOrEnd}/Person`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/person/name is not a type of string in /${constants.ON_CANCEL}`
+                    onCnclObj[`deliveryFFObj/${startOrEnd}/Person/Name`] =
+                      `fulfillment type delivery ${startOrEnd.toLowerCase()}/person/name is missing in /${constants.ON_CANCEL}`
+                  } else if (typeof ffStartOrEnd.person.name != 'string') {
+                    onCnclObj[`deliveryFFObj/${startOrEnd}/Person`] =
+                      `fulfillment type delivery ${startOrEnd.toLowerCase()}/person/name is not a type of string in /${constants.ON_CANCEL}`
                   }
                 }
               }
             }
           }
-          checkFFStartOrEnd(deliveryFFStart, "Start")
-          checkFFStartOrEnd(deliveryFFEnd, "End")
+          checkFFStartOrEnd(deliveryFFStart, 'Start')
+          checkFFStartOrEnd(deliveryFFEnd, 'End')
         }
-      }
-      catch (error: any) {
+      } catch (error: any) {
         logger.error(`!!Error while checking fulfillment type delivery in  /${constants.ON_CANCEL}, ${error.stack}`)
       }
     }
-
 
     //Comparing item count in /on_cancel and /select
     const select_items: any = getValue('items')
@@ -331,7 +334,6 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
           onCnclObj[key] = `fulfillment type cancel is missing in /${constants.ON_CANCEL}`
         }
         checkQuoteTrailSum(cancelFulfillments, price, priceAtConfirm, onCnclObj, ApiSequence.ON_CANCEL)
-
       } else {
         logger.error(`The price breakdown in brakup does not match with the total_price for ${constants.ON_CANCEL}`)
       }
@@ -340,120 +342,98 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
     }
 
     try {
-      console.log("onConfirmQuote",JSON.stringify(onConfirmQuote));
-            logger.info(`Comparing Quote object for /${constants.ON_CONFIRM} and /${constants.ON_CANCEL}`)
-            const quoteErrors = compareQuoteObjects(onConfirmQuote, on_cancel.quote, constants.ON_CONFIRM, constants.ON_CANCEL)
-            if (quoteErrors) {
-              let i = 0
-              const len = quoteErrors.length
-              while (i < len) {
-                const key = `quoteErr${i}`
-                onCnclObj[key] = `${quoteErrors[i]}`
-                i++
-              }
-            }
-          
-
-    } catch (error:any) {
-      logger.error(`!!Error while Comparing Quote_Trail object for /${constants.ON_CANCEL}, ${error.stack} `)
-    }
-
-    try {
       logger.info(`Checking for Item IDs in quote object in /${constants.ON_CANCEL}`)
-      let cancelFulfillments = null
+      let cancelFulfillment = []
       if (flow === '5') {
-        cancelFulfillments = _.filter(on_cancel.fulfillments, { type: 'RTO' })
+        cancelFulfillment = _.filter(on_cancel.fulfillments, { type: 'RTO' })?.[0]
       } else {
-        cancelFulfillments = _.filter(on_cancel.fulfillments, { type: 'Cancel' })
+        cancelFulfillment = _.filter(on_cancel.fulfillments, { type: 'Cancel' })?.[0]
       }
-      for (let obj of cancelFulfillments) {
-        const offerItems = on_cancel.quote.breakup.find((item: any) => item['@ondc/org/title_type'] === 'offer')
-        const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
-        const offerBreakup = onConfirmQuote.breakup
-          .filter((item: any) => item['@ondc/org/title_type'] === 'offer')
-          .map((item: any) => ({
-            id: item['@ondc/org/item_id'],
-            value: parseFloat(item.price?.value),
-          }))
-        console.log('offerBreakupValue', JSON.stringify(offerBreakup))
 
-        if (offerItems) {
-          const offerType = offerItems?.item?.tags
-            ?.find((tag: any) => tag.code === 'offer')
-            ?.list?.find((entry: any) => entry.code === 'type')?.value
-          if (offerType === 'buyXgetY') {
-            const benefitValue = parseInt(
-              offerItems?.item?.tags
-                ?.find((tag: any) => tag.code === 'offer')
-                ?.list?.find((entry: any) => entry.code === 'item_value').value || '0',
-            )
-            if (benefitValue > 0) {
-              const quoteTrailItemOffer = quoteTrailItems.find((trail) =>
-                trail.list.some((entry: any) => entry.code === 'type' && entry.value === 'offer'),
-              )
-              if (quoteTrailItemOffer) {
-                offerBreakup.forEach((offer: any) => {
-                  const idEntry = quoteTrailItemOffer.list.find((item: any) => item.code === 'id')
-                  const valueEntry = quoteTrailItemOffer.list.find((item: any) => item.code === 'value')
+      const quoteTrailItems = _.filter(cancelFulfillment.tags, { code: 'quote_trail' })
 
-                  const actualId = idEntry?.value
-                  const quoteValue = parseFloat(valueEntry?.value || '0')
-                  const expectedValue = Math.abs(offer.value)
+      const onCancelOfferItem = on_cancel.quote.breakup.find((item: any) => item['@ondc/org/title_type'] === 'offer')
+      const onConfirmOfferItem = onConfirmQuote.breakup.find((item: any) => item['@ondc/org/title_type'] === 'offer')
+      const quoteTrailItemOffer = quoteTrailItems.find((trail) =>
+        trail.list.some((entry: any) => entry.code === 'type' && entry.value === 'offer'),
+      )
 
-                  if (actualId !== offer.id) {
-                    onCnclObj['invalidItem'] = `ID : expected '${offer.id}', got '${actualId}'`
-                  } else if (quoteValue < expectedValue) {
-                    onCnclObj['invalidItem'] =
-                      `Value mismatch for ID '${offer.id}': expected ${expectedValue}, got ${quoteValue}`
-                  }
-                })
-                const quoteTrailValue = parseInt(
-                  quoteTrailItemOffer.list.find((entry: any) => entry.code === 'value')?.value || '0',
-                )
-                console.log('quoteTrailValue', quoteTrailValue, quoteTrailItemOffer)
-              }
+      if (!_.isEqual(onConfirmOfferItem, onCancelOfferItem)) {
+        const differences = deepCompareObjects(onConfirmOfferItem, onCancelOfferItem)
+        console.log('differences: ', JSON.stringify(differences))
 
-              console.log('offerItem', JSON.stringify(offerItems), quoteTrailItemOffer)
-            }
-            console.log('benefitValue', benefitValue)
-          }
-          else{
-            const quoteTrailItemOffer = quoteTrailItems.find((trail) =>
-              trail.list.some((entry: any) => entry.code === 'type' && entry.value === 'offer'),
-            )
-            if(!quoteTrailItemOffer){
-              onCnclObj["invalidItem"] = `Quote trail with type offer not found`
-            }
-            // if (quoteTrailItemOffer) {
-              offerBreakup.forEach((offer: any) => {
-                const idEntry = quoteTrailItemOffer.list.find((item: any) => item.code === 'id')
-                const valueEntry = quoteTrailItemOffer.list.find((item: any) => item.code === 'value')
+        for (let diff of differences) {
+          const path = diff.path
+          switch (diff.path) {
+            case 'price.value':
+              {
+                const quoteTrailValue = quoteTrailItemOffer.list.find((item: any) => item.code === 'value')?.value
+                const onConfirmOfferValue = parseFloat(onConfirmOfferItem.price.value)
+                const onCancelOfferValue = parseFloat(onCancelOfferItem.price.value)
+                const quoteTrailOfferValue = parseFloat(quoteTrailValue)
 
-                const actualId = idEntry?.value
-                const quoteValue = parseFloat(valueEntry?.value || '0')
-                const expectedValue = Math.abs(offer.value)
-
-                if (actualId !== offer.id) {
-                  onCnclObj['invalidItem'] = `ID : expected '${offer.id}', got '${actualId}'`
-                } else if (quoteValue < expectedValue) {
-                  onCnclObj['invalidItem'] =
-                    `Value mismatch for ID '${offer.id}': expected ${expectedValue}, got ${quoteValue}`
+                if (isNaN(onConfirmOfferValue) || !onConfirmOfferItem?.price?.value) {
+                  onCnclObj[`offer.price.value`] = `Invalid or missing price value in ${ApiSequence.ON_CONFIRM}`
+                  break
                 }
-              })
-              const quoteTrailValue = parseInt(
-                quoteTrailItemOffer.list.find((entry: any) => entry.code === 'value')?.value || '0',
-              )
-              console.log('quoteTrailValue', quoteTrailValue, quoteTrailItemOffer)
-            // }
+                if (isNaN(onCancelOfferValue) || !onCancelOfferItem?.price?.value) {
+                  onCnclObj[`offer.price.value`] = `Invalid or missing price value in ${ApiSequence.ON_CANCEL}`
+                  break
+                }
+                if (isNaN(quoteTrailOfferValue) || !quoteTrailValue) {
+                  onCnclObj[`quote_trail.offer.value`] = `Invalid or missing quote trail value`
+                  break
+                }
+                const totalOfferValue = onConfirmOfferValue + onCancelOfferValue + quoteTrailOfferValue
+                if (totalOfferValue != 0) {
+                  onCnclObj[`offer.value`] =
+                    `The offer value is not correctly calculated as matched with the ${ApiSequence.ON_CONFIRM} and quote_trail`
+                }
+
+                if (Math.abs(onCancelOfferValue) > Math.abs(quoteTrailOfferValue))
+                  onCnclObj[`quote_trail.offer.value`] =
+                    `The offer value should not be greater than benefit value as compared with ${ApiSequence.ON_CONFIRM} and quote_trail`
+
+                if (Math.abs(onCancelOfferValue) > Math.abs(onConfirmOfferValue))
+                  onCnclObj[`quote_trail.offer.value`] =
+                    `The offer value should not be greater than benefit value as compared with ${ApiSequence.ON_CONFIRM} and ${ApiSequence.ON_CANCEL}}`
+              }
+              break
+            case '@ondc/org/item_id':
+              if (!onCancelOfferItem?.['@ondc/org/item_id']) {
+                onCnclObj[`offer.@ondc/org/item_id`] = `Missing item_id in ${ApiSequence.ON_CANCEL}`
+              } else {
+                onCnclObj[`offer.@ondc/org/item_id`] = diff.message
+              }
+              break
+            default:
+              {
+                const codeExtract = (path.match(/\[code=([^\]]+)\]/g) || []).map(
+                  (m: any) => m.match(/\[code=([^\]]+)\]/)[1],
+                )
+                const key1 = codeExtract[0]
+                const key2 = codeExtract[1]
+                switch (key2) {
+                  case 'item_id':
+                  case 'item_value':
+                  case 'auto':
+                  case 'additive':
+                  case 'type':
+                    {
+                      onCnclObj[`offer.${key1}.${key2}`] =
+                        `Mismatch found at ${key2} as compared with ${ApiSequence.ON_CONFIRM}`
+                    }
+                    break
+                  default:
+                    onCnclObj[`offer.${key1}.${key2}`] = `Unexpected ${key1}.code: ${key2} in offer comparison`
+                    break
+                }
+              }
+              break
           }
         }
-
-        // if()
-
-        console.log('quoteTrailItems', JSON.stringify(quoteTrailItems))
-
-        checkQuoteTrail(quoteTrailItems, onCnclObj, selectPriceMap, itemSet)
       }
+      checkQuoteTrail(quoteTrailItems, onCnclObj, selectPriceMap, itemSet)
     } catch (error: any) {
       logger.error(`!!Error while checking quote object in /${constants.ON_CANCEL}, ${error.stack}`)
     }
@@ -675,8 +655,8 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
           const key = `missingRTO`
           onCnclObj[key] = `RTO object is mandatory for ${constants.ON_CANCEL}`
         } else {
-        setValue('RTO_Obj', RTOobj[0])
-        setValue('cnfrmpymnt', on_cancel.payment)
+          setValue('RTO_Obj', RTOobj[0])
+          setValue('cnfrmpymnt', on_cancel.payment)
           for (let item of RTOobj) {
             const validVal = ['RTO-Initiated', 'RTO-Delivered', 'RTO-Disposed']
             if (!validVal.includes(item.state?.descriptor?.code)) {
@@ -686,8 +666,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
               const key = `invalidState`
               onCnclObj[key] =
                 `Delivery state should be one of ['RTO-Initiated','RTO-Approved','RTO-Completed'] for ${constants.ON_CANCEL}`
-            }
-            else {
+            } else {
               if (item.state.descriptor.code == validVal[1] || item.state.descriptor.code == validVal[2]) {
                 rto_delivered_or_disposed = true
               }
@@ -699,9 +678,9 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
             const rto_obj_start = RTOobj[0]?.start
             if (!_.isEmpty(rto_obj_start.location)) {
               rto_start_location = rto_obj_start.location
-            }
-            else {
-              onCnclObj['RTOfulfillment.start.location'] = `RTO fulfillment start location object is missing in ${constants.ON_CANCEL}`
+            } else {
+              onCnclObj['RTOfulfillment.start.location'] =
+                `RTO fulfillment start location object is missing in ${constants.ON_CANCEL}`
             }
           } else {
             onCnclObj['RTOfulfillment.start'] = `RTO fulfillment start object  is missing in ${constants.ON_CANCEL}`
@@ -714,29 +693,29 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
             if (rto_delivered_or_disposed) {
               if (_.isEmpty(rto_obj_end.time)) {
                 onCnclObj[`rtoFFObj/end/time`] = `fulfillment type rto end/time is missing in /${constants.ON_CANCEL}`
-              }
-              else {
+              } else {
                 if (_.isEmpty(rto_obj_end.time.timestamp)) {
-                  onCnclObj[`rtoFFObj/end/Time/timestamp`] = `fulfillment type rto end/time/timestamp is missing in /${constants.ON_CANCEL}`
-                }
-                else {
-                  const date = new Date(rto_obj_end.time.timestamp);
-                  if (String(date) == "Invalid Date") {
-                    onCnclObj[`rtoFFObj/end/Time/timestamp`] = `fulfillment type rto end/time/timestamp is not of a valid date format in /${constants.ON_CANCEL}`
+                  onCnclObj[`rtoFFObj/end/Time/timestamp`] =
+                    `fulfillment type rto end/time/timestamp is missing in /${constants.ON_CANCEL}`
+                } else {
+                  const date = new Date(rto_obj_end.time.timestamp)
+                  if (String(date) == 'Invalid Date') {
+                    onCnclObj[`rtoFFObj/end/Time/timestamp`] =
+                      `fulfillment type rto end/time/timestamp is not of a valid date format in /${constants.ON_CANCEL}`
                   }
                 }
               }
-            }
-            else {
+            } else {
               if (!_.isEmpty(rto_obj_end.time)) {
-                onCnclObj[`rtoFFObj/end/time`] = `fulfillment type rto end/time should not be present in /${constants.ON_CANCEL} when state/desc/code is RTO-Initiated`
+                onCnclObj[`rtoFFObj/end/time`] =
+                  `fulfillment type rto end/time should not be present in /${constants.ON_CANCEL} when state/desc/code is RTO-Initiated`
               }
             }
             if (!_.isEmpty(rto_obj_end?.location)) {
               rto_end_location = rto_obj_end.location
-            }
-            else {
-              onCnclObj['RTOfulfillment.end.location'] = `RTO fulfillment end location object is missing in ${constants.ON_CANCEL}`
+            } else {
+              onCnclObj['RTOfulfillment.end.location'] =
+                `RTO fulfillment end location object is missing in ${constants.ON_CANCEL}`
             }
           } else {
             onCnclObj['RTOfulfillment.end'] = `RTO fulfillment end object  is missing in ${constants.ON_CANCEL}`
@@ -756,13 +735,14 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
 
             if (!_.isEmpty(del_obj_start?.location)) {
               del_start_location = del_obj_start.location
-            }
-            else {
-              onCnclObj['Delivery.start.location'] = `Delivery fulfillment start location object is missing in ${constants.ON_CANCEL}`
+            } else {
+              onCnclObj['Delivery.start.location'] =
+                `Delivery fulfillment start location object is missing in ${constants.ON_CANCEL}`
               logger.error(`Delivery fulfillment start location is missing in ${constants.ON_CANCEL}`)
             }
           } else {
-            onCnclObj['DeliveryFulfillment.start'] = `Delivery fulfillment start object is missing in ${constants.ON_CANCEL}`
+            onCnclObj['DeliveryFulfillment.start'] =
+              `Delivery fulfillment start object is missing in ${constants.ON_CANCEL}`
           }
 
           // Checking for end object inside Delivery
@@ -770,51 +750,68 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
             const del_obj_end = DELobj[0]?.end
             if (!_.isEmpty(del_obj_end?.location)) {
               del_end_location = del_obj_end.location
-            }
-            else {
-              onCnclObj['DeliveryFulfillment.end.location'] = `Delivery fulfillment end location object is missing in ${constants.ON_CANCEL}`
+            } else {
+              onCnclObj['DeliveryFulfillment.end.location'] =
+                `Delivery fulfillment end location object is missing in ${constants.ON_CANCEL}`
             }
           } else {
-            onCnclObj['DeliveryFulfillment.end'] = `Delivery fulfillment end object  is missing in ${constants.ON_CANCEL}`
+            onCnclObj['DeliveryFulfillment.end'] =
+              `Delivery fulfillment end object  is missing in ${constants.ON_CANCEL}`
           }
         }
 
         // Comparing rto_start_location and del_end_location
         if (!_.isEmpty(rto_start_location) && !_.isEmpty(del_end_location)) {
           if (!_.isEqual(rto_start_location?.address, del_end_location?.address)) {
-            onCnclObj['RTO.start.location/DeliveryFulfillment.end.location'] = `RTO fulfillment start and Delivery fulfillment end location mismatch in ${constants.ON_CANCEL}`
+            onCnclObj['RTO.start.location/DeliveryFulfillment.end.location'] =
+              `RTO fulfillment start and Delivery fulfillment end location mismatch in ${constants.ON_CANCEL}`
           }
         } else {
-          onCnclObj['RTO.start.location/DeliveryFulfillment.end.location'] = `RTO fulfillment start or Delivery fulfillment end location is missing in ${constants.ON_CANCEL}`
+          onCnclObj['RTO.start.location/DeliveryFulfillment.end.location'] =
+            `RTO fulfillment start or Delivery fulfillment end location is missing in ${constants.ON_CANCEL}`
         }
 
         // Comparing rto_start_location and del_start_location
-        if (!_.isEmpty(rto_start_location?.address) && !_.isEmpty(del_start_location?.address) && _.isEqual(rto_start_location?.address, del_start_location?.address)) {
-          onCnclObj['RTO.start.location/DeliveryFulfillment.start.location'] = `RTO fulfillment start and Delivery fulfillment start location should not be equal in ${constants.ON_CANCEL}`
+        if (
+          !_.isEmpty(rto_start_location?.address) &&
+          !_.isEmpty(del_start_location?.address) &&
+          _.isEqual(rto_start_location?.address, del_start_location?.address)
+        ) {
+          onCnclObj['RTO.start.location/DeliveryFulfillment.start.location'] =
+            `RTO fulfillment start and Delivery fulfillment start location should not be equal in ${constants.ON_CANCEL}`
         }
 
         // Comparing rto_end_location and del_start_location
         if (!_.isEmpty(rto_end_location) && !_.isEmpty(del_start_location)) {
           if (!_.isEqual(rto_end_location?.address, del_start_location?.address)) {
-            onCnclObj['RTO.end.location/DeliveryFulfillment.start.location'] = `RTO fulfillment end and Delivery fulfillment start location mismatch in ${constants.ON_CANCEL}`
+            onCnclObj['RTO.end.location/DeliveryFulfillment.start.location'] =
+              `RTO fulfillment end and Delivery fulfillment start location mismatch in ${constants.ON_CANCEL}`
           }
           if (_.isEmpty(rto_end_location?.id)) {
             onCnclObj['RTO.end.location/id'] = `RTO fulfillment end location id missing in ${constants.ON_CANCEL}`
           }
           if (_.isEmpty(del_start_location?.id)) {
-            onCnclObj['DeliveryFulfillment.start.location/id'] = `Delivery fulfillment start location id missing in ${constants.ON_CANCEL}`
+            onCnclObj['DeliveryFulfillment.start.location/id'] =
+              `Delivery fulfillment start location id missing in ${constants.ON_CANCEL}`
           }
           if (!_.isEqual(rto_end_location?.id, del_start_location?.id)) {
-            onCnclObj['RTO.end.location/DeliveryFulfillment.start.location/id'] = `RTO fulfillment end and Delivery fulfillment start location id mismatch in ${constants.ON_CANCEL}`
+            onCnclObj['RTO.end.location/DeliveryFulfillment.start.location/id'] =
+              `RTO fulfillment end and Delivery fulfillment start location id mismatch in ${constants.ON_CANCEL}`
           }
         } else {
-          onCnclObj['RTO.end.location/DeliveryFulfillment.start.location'] = `RTO fulfillment end or Delivery fulfillment start location is missing in ${constants.ON_CANCEL}`
+          onCnclObj['RTO.end.location/DeliveryFulfillment.start.location'] =
+            `RTO fulfillment end or Delivery fulfillment start location is missing in ${constants.ON_CANCEL}`
           logger.error(`RTO end or Delivery start location is missing in ${constants.ON_CANCEL}`)
         }
 
         // Comparing rto_end_location and del_end_location
-        if (!_.isEmpty(rto_end_location?.address) && !_.isEmpty(del_end_location?.address) && _.isEqual(rto_end_location?.address, del_end_location?.address)) {
-          onCnclObj['RTO.end_location/DeliveryFulfillment_end_location'] = `RTO fulfillment end and Delivery fulfillment end location should not be equal in ${constants.ON_CANCEL}`
+        if (
+          !_.isEmpty(rto_end_location?.address) &&
+          !_.isEmpty(del_end_location?.address) &&
+          _.isEqual(rto_end_location?.address, del_end_location?.address)
+        ) {
+          onCnclObj['RTO.end_location/DeliveryFulfillment_end_location'] =
+            `RTO fulfillment end and Delivery fulfillment end location should not be equal in ${constants.ON_CANCEL}`
         }
       }
 
@@ -837,7 +834,6 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       // }
       if (flow === '4') {
         try {
-
           const Cancelobj = _.filter(on_cancel.fulfillments, { type: 'Cancel' })
           if (!Cancelobj.length) {
             logger.error(`Cancel object is mandatory for ${constants.ON_CANCEL}`)
@@ -851,36 +847,37 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
             const key = `missingDelivery`
             onCnclObj[key] = `Delivery object is mandatory for ${constants.ON_CANCEL}`
           } else {
-
             function checkFFStartEndTime(ffStartOrEnd: any, startOrEnd: string) {
               if (!ffStartOrEnd) {
-                onCnclObj[`deliveryFFObj${startOrEnd}`] = `fulfillment type delivery ${startOrEnd.toLowerCase()} is missing in /${constants.ON_CANCEL}`
-              }
-              else {
+                onCnclObj[`deliveryFFObj${startOrEnd}`] =
+                  `fulfillment type delivery ${startOrEnd.toLowerCase()} is missing in /${constants.ON_CANCEL}`
+              } else {
                 if (_.isEmpty(ffStartOrEnd.time)) {
-                  onCnclObj[`deliveryFFObj/${startOrEnd}/time`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time is missing in /${constants.ON_CANCEL}`
-                }
-                else {
+                  onCnclObj[`deliveryFFObj/${startOrEnd}/time`] =
+                    `fulfillment type delivery ${startOrEnd.toLowerCase()}/time is missing in /${constants.ON_CANCEL}`
+                } else {
                   if (_.isEmpty(ffStartOrEnd.time.range)) {
-                    onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range is missing in /${constants.ON_CANCEL}`
-                  }
-                  else {
+                    onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range`] =
+                      `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range is missing in /${constants.ON_CANCEL}`
+                  } else {
                     if (!ffStartOrEnd.time.range.start) {
-                      onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/Start`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/start is missing in /${constants.ON_CANCEL}`
-                    }
-                    else {
-                      const date = new Date(ffStartOrEnd.time.range.start);
-                      if (String(date) == "Invalid Date") {
-                        onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/Start`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/start is not of a valid date format in /${constants.ON_CANCEL}`
+                      onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/Start`] =
+                        `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/start is missing in /${constants.ON_CANCEL}`
+                    } else {
+                      const date = new Date(ffStartOrEnd.time.range.start)
+                      if (String(date) == 'Invalid Date') {
+                        onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/Start`] =
+                          `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/start is not of a valid date format in /${constants.ON_CANCEL}`
                       }
                     }
                     if (!ffStartOrEnd.time.range.end) {
-                      onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/End`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/end is missing in /${constants.ON_CANCEL}`
-                    }
-                    else {
-                      const date = new Date(ffStartOrEnd.time.range.end);
-                      if (String(date) == "Invalid Date") {
-                        onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/End`] = `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/end is not of a valid date format in /${constants.ON_CANCEL}`
+                      onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/End`] =
+                        `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/end is missing in /${constants.ON_CANCEL}`
+                    } else {
+                      const date = new Date(ffStartOrEnd.time.range.end)
+                      if (String(date) == 'Invalid Date') {
+                        onCnclObj[`deliveryFFObj/${startOrEnd}/Time/Range/End`] =
+                          `fulfillment type delivery ${startOrEnd.toLowerCase()}/time/range/end is not of a valid date format in /${constants.ON_CANCEL}`
                       }
                     }
                   }
@@ -888,16 +885,15 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
               }
             }
 
-            if (getValue('onCnfrmState') == "Accepted") {
-              checkFFStartEndTime(DELobj[0]?.start, "start")
-              checkFFStartEndTime(DELobj[0]?.end, "end")
+            if (getValue('onCnfrmState') == 'Accepted') {
+              checkFFStartEndTime(DELobj[0]?.start, 'start')
+              checkFFStartEndTime(DELobj[0]?.end, 'end')
             }
-
           }
-        }
-        catch (error: any) {
+        } catch (error: any) {
           logger.error(
-            `!!Error while checking Cancel and Delivery Fulfillment in /${constants.ON_CANCEL} api, ${error.stack}`)
+            `!!Error while checking Cancel and Delivery Fulfillment in /${constants.ON_CANCEL} api, ${error.stack}`,
+          )
         }
       }
 
@@ -950,18 +946,22 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
           onCnclObj[key] = `Pre Cancel is mandatory for ${constants.ON_CANCEL}`
         } else {
           try {
-            logger.info(`Comparing timestamp of ${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} and /${constants.ON_CANCEL} pre_cancel state updated_at timestamp`)
+            logger.info(
+              `Comparing timestamp of ${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} and /${constants.ON_CANCEL} pre_cancel state updated_at timestamp`,
+            )
             const timeStampObj = _.filter(preCancelObj[0]?.list, { code: 'updated_at' })
             if (!timeStampObj.length) {
               logger.error(`Pre Cancel timestamp is mandatory for ${constants.ON_CANCEL}`)
               const key = `missingPrecancelUpdatedAttimeStamp`
               onCnclObj[key] = `Pre Cancel Updated at timeStamp is mandatory for ${constants.ON_CANCEL}`
-            }
-            else {
+            } else {
               if (!_.isEqual(getValue('PreviousUpdatedTimestamp'), timeStampObj[0].value)) {
-                logger.error(`precancel_state.updated_at of ${constants.ON_CANCEL} is not equal with the ${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} order.updated_at`)
+                logger.error(
+                  `precancel_state.updated_at of ${constants.ON_CANCEL} is not equal with the ${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} order.updated_at`,
+                )
                 const key = `precancelState.updatedAt`
-                onCnclObj[key] = `precancel_state.updated_at of ${constants.ON_CANCEL} is not equal with the ${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} order.updated_at`
+                onCnclObj[key] =
+                  `precancel_state.updated_at of ${constants.ON_CANCEL} is not equal with the ${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} order.updated_at`
               }
             }
             const fulfillmentStateObj = _.filter(preCancelObj[0]?.list, { code: 'fulfillment_state' })
@@ -969,12 +969,14 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
               logger.error(`Pre Cancel fulfillment state is mandatory for ${constants.ON_CANCEL}`)
               const key = `missingPrecancelFulfillmentState`
               onCnclObj[key] = `Pre Cancel fulfillment state is mandatory for ${constants.ON_CANCEL}`
-            }
-            else {
+            } else {
               if (!_.isEqual(getValue('ffIdPrecancel'), fulfillmentStateObj[0].value)) {
-                logger.error(`precancel_state.fulfillment_state of ${constants.ON_CANCEL} is not equal with the ${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} fulfillment state`)
+                logger.error(
+                  `precancel_state.fulfillment_state of ${constants.ON_CANCEL} is not equal with the ${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} fulfillment state`,
+                )
                 const key = `precancelState.fulfillment_state`
-                onCnclObj[key] = `precancel_state.fulfillment_state of ${constants.ON_CANCEL} is not equal with the ${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} fulfillment state`
+                onCnclObj[key] =
+                  `precancel_state.fulfillment_state of ${constants.ON_CANCEL} is not equal with the ${flow == '4' ? constants.ON_CONFIRM : constants.ON_STATUS_OUT_FOR_DELIVERY} fulfillment state`
               }
             }
           } catch (error: any) {

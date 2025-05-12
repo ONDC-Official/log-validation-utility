@@ -12,6 +12,7 @@ import { groceryCategoryMappingWithStatutory } from '../constants/category'
 import { statutory_reqs } from './enum'
 import {  PAYMENT_STATUS } from '../constants/index'
 import { FLOW } from '../utils/enum'
+import axios from 'axios'
 export const getObjValues = (obj: any) => {
   let values = ''
   Object.values(obj).forEach((value) => {
@@ -1351,4 +1352,17 @@ export function validateBppUri(bppUri: string, bpp_id: string, errorObj: any): a
   if (!checkIdInUri(bppUri, bpp_id)) {
     errorObj['bpp_id_in_uri'] = `Bpp_id ${bpp_id} is not found in BppUri ${bppUri}`
   }
+}
+
+export const pingValidate = async (): Promise<"ok" | "fail"> => {
+  return ping(`http://localhost:3005/api/`)
+}
+
+async function ping(url: string): Promise<"ok" | "fail"> {
+	try {
+		const res = await axios.get(url, { timeout: 2000 });
+		return res.status === 200 ? "ok" : "fail";
+	} catch {
+		return "fail";
+	}
 }

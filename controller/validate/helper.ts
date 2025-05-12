@@ -227,9 +227,6 @@ const validateIGM = async (payload: string, version: string, flow?: string) => {
   return { response, success, message }
 }
 
-
-
-
 const validateRSF = async (payload: string, version: string) => {
   logger.info('Entering validateRSF function')
   let response

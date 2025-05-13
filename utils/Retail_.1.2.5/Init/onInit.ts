@@ -663,7 +663,7 @@ export const checkOnInit = (data: any, flow: string) => {
       const allItemIdsInCod = itemIds.every((id: any): any => codIds.includes(id))
       if (!allItemIdsInCod) {
         const key = `codItems`
-        onInitObj[key] = `Items in /${constants.ON_INIT} must be available for cod `
+        onInitObj[key] = `all Items in /${constants.ON_INIT} must be available for cod `
       }
     }
     return onInitObj

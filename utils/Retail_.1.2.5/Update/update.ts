@@ -398,23 +398,33 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
     if (flow === FLOW.FLOW00E) {
       const np_type = getValue(`${ApiSequence.ON_SEARCH}np_type`)
       const status = getValue('orderStatus')
-
-      if (np_type === 'ISN' && status === 'Order-picked-up') {
+      const states = ['Order-picked-up', 'Out-for-delivery', 'Order-delivered']
+      if (np_type !== 'ISN') {
+        const key = `np_type`
+        updtObj[key] = `np_type must be ISN for RET11 in  /${constants.ON_SEARCH} for FLOW00E   `
+      }
+      if (!states.includes(status)) {
+        const key = `invalidOrderStatus`
+        updtObj[key] = `orderStatus must be one of these ${states} `
+      }
+      if (np_type === 'ISN' && states.includes(status)) {
         const fulfimntObj = update?.fulfillments?.find((ele: { id: any }): any => ele.id === fulfillmentId)
-        if(!fulfimntObj){
-                      const key = `missingFulfillment`
-                    updtObj[key] = `fulfillmentObj must be present in /${constants.UPDATE} with fulfillmentId provided in /${constants.ON_STATUS}   API for /${apiSeq}`
+        if (!fulfimntObj) {
+          const key = `missingFulfillment`
+          updtObj[key] =
+            `fulfillmentObj must be present in /${constants.UPDATE} with fulfillmentId provided in /${constants.ON_STATUS}   API for /${apiSeq}`
         }
-        const invoiceTag = fulfimntObj.tags?.find((ele: { code: string }):any=> ele.code==='update_sale_invoice')
-        if(!invoiceTag){
-            const key = `missingTags`
-                    updtObj[key] = `update_sale_invoice should be present in tags  /${constants.UPDATE} API for /${apiSeq}`
+        const invoiceTag = fulfimntObj.tags?.find((ele: { code: string }): any => ele.code === 'update_sale_invoice')
+        if (!invoiceTag) {
+          const key = `missingTags`
+          updtObj[key] = `update_sale_invoice should be present in tags  /${constants.UPDATE} API for /${apiSeq}`
         }
 
-        const list = invoiceTag?.list?.find((ele: { code: string }):any=> ele.code ==='url')
-        if(!list){
-           const key = `missingUrl`
-                    updtObj[key] = `url for update_sale_invoice must be present in tag list in  /${constants.UPDATE} API for /${apiSeq}`
+        const list = invoiceTag?.list?.find((ele: { code: string }): any => ele.code === 'url')
+        if (!list) {
+          const key = `missingUrl`
+          updtObj[key] =
+            `url for update_sale_invoice must be present in tag list in  /${constants.UPDATE} API for /${apiSeq}`
         }
       }
     }

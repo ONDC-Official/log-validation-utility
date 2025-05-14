@@ -59,7 +59,7 @@ export const validateFulfillments = (
   if (loanType === 'INVOICE_BASED_LOAN') {
     if (
       !fulfillment.customer ||
-      !fulfillment.customer.organisation.address ||
+      !fulfillment.customer.organisation?.address ||
       !fulfillment.customer.organisation.state ||
       !fulfillment.customer.organisation.state.name ||
       !fulfillment.customer.organisation.city ||
@@ -547,12 +547,10 @@ export const validateXInput = (xinput: any, j: number, action: string, currIndex
         errors[`item${j}_xinput_head_descriptor`] = `descriptor is missing at items[${j}].xinput.head`
       } else if (!descriptor?.name) {
         errors[`item${j}_xinput_head_descriptor`] = `descriptor.name is missing at items[${j}].xinput.head`
+      } else if (formHeading?.length && formHeading[currIndex] != descriptor?.name) {
+        errors[`item${j}_xinput_head_descriptor`] =
+          `descriptor.name should be ${formHeading[currIndex]} at items[${j}].xinput.head form heading ${formHeading} ${formHeading?.length} ${formHeading[currIndex]} ${descriptor?.name} != ${formHeading[currIndex]}`
       }
-      // } else if (formHeading?.length && formHeading[currIndex] )
-      // {
-      //   errors[`item${j}_xinput_head_descriptor`] =
-      //     `descriptor.name should be ${formHeading[currIndex]} at items[${j}].xinput.head form heading ${formHeading} ${formHeading?.length} ${formHeading[currIndex]} ${descriptor?.name} != ${formHeading[currIndex]}`
-      // }
 
       console.log('currIndex', currIndex)
 
@@ -597,8 +595,8 @@ export const validateXInput = (xinput: any, j: number, action: string, currIndex
       } else {
         const formId: string[] | any = getValue('formId')
         if (Array.isArray(formId)) {
-          formId.push(id)
-          setValue('formId', formId)
+          // formId.push(id)
+          setValue('formId', [id])
         } else if (typeof formId === 'string') {
           const newArray: string[] = [formId, id]
           setValue('formId', newArray)

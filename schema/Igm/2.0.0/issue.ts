@@ -76,6 +76,8 @@ const newIssueSchema = {
         },
         action: { type: 'string', const: 'issue' },
         core_version: { type: 'string' },
+        version: { type: 'string' },
+        city: { type: 'string' },
         bap_id: { type: 'string' },
         bap_uri: { type: 'string' },
         bpp_id: { type: 'string' },
@@ -87,9 +89,7 @@ const newIssueSchema = {
       },
       required: [
         'domain',
-        'location',
         'action',
-        'core_version',
         'bap_id',
         'bap_uri',
         'bpp_id',
@@ -99,6 +99,49 @@ const newIssueSchema = {
         'timestamp',
         'ttl',
       ],
+      allOf: [
+        {
+          if: {
+            properties: {
+              domain: {
+                type: 'string',
+                pattern: '^(ONDC:RET.*|nic2004:60232|ONDC:AGR.*)$'
+              }
+            }
+          },
+          then: {
+            required: ['core_version', 'city']
+          }
+        },
+        {
+          if: {
+            properties: {
+              domain: {
+                type: 'string',
+                pattern: '^ONDC:(FIS|TRV|SRV).*'
+              }
+            }
+          },
+          then: {
+            required: ['version', 'location']
+          }
+        },
+        {
+          if: {
+            not: {
+              properties: {
+                domain: {
+                  type: 'string',
+                  pattern: '^(ONDC:(RET|FIS|TRV|AGR).*|nic2004:60232)$'
+                }
+              }
+            }
+          },
+          then: {
+            required: ['location', 'core_version']
+          }
+        }
+      ]
     },
     message: {
       type: 'object',
@@ -283,7 +326,7 @@ const newIssueSchema = {
                       url: { type: 'string', format: 'uri' },
                       size_type: { type: 'string' }
                     },
-                    required: ['url', 'size_type']
+                    required: ['url']
                   },
                 },
               },
@@ -313,6 +356,7 @@ const newIssueSchema = {
                           'RESOLUTION_ACCEPTED',
                           'RESOLUTION_REJECTED',
                           'RESOLUTION_CASCADED',
+                          'ESCALATED',
                         ],
                       },
                       short_desc: { type: 'string' },

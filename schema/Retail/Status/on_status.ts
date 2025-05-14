@@ -539,12 +539,6 @@ export const onStatusSchema = {
                             vehicle: {
                               type: 'object',
                               properties: {
-                                category: {
-                                  type: 'string',
-                                },
-                                size: {
-                                  type: 'string',
-                                },
                                 registration: {
                                   type: 'string',
                                 },
@@ -890,17 +884,11 @@ export const onStatusSchema = {
                         vehicle: {
                           type: 'object',
                           properties: {
-                            category: {
-                              type: 'string',
-                            },
-                            size: {
-                              type: 'string',
-                            },
                             registration: {
                               type: 'string',
                             },
                           },
-                          required: ['category', 'size', 'registration'],
+                          required: ['registration'],
                         },
                       },
                       required: [

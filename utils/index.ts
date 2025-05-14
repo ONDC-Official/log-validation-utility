@@ -14,6 +14,8 @@ import { statutory_reqs } from './enum'
 import { PAYMENT_STATUS } from '../constants/index'
 import { FLOW } from '../utils/enum'
 import { bap_features } from './bap_features'
+import { TRV14OptialCalls } from '../constants/trvFlows'
+
 export const getObjValues = (obj: any) => {
   let values = ''
   Object.values(obj).forEach((value) => {
@@ -131,7 +133,15 @@ export const checkFISContext = (
 }
 
 export const checkMobilityContext = (
-  data: { transaction_id: string; message_id: string; action: string; ttl: string; timestamp: string },
+  data: {
+    transaction_id: string
+    message_id: string
+    action: string
+    ttl: string
+    timestamp: string
+    bpp_uri?: string
+    bpp_id?: string
+  },
   path: any,
 ) => {
   if (!data) return
@@ -161,6 +171,10 @@ export const checkMobilityContext = (
     } else if (result && result.err === 'INVLD_DT') {
       errObj.timestamp_err = 'Timestamp should be in date-time format'
     }
+  }
+
+  if (data?.action == 'search' && (data?.bpp_uri || data?.bpp_id)) {
+    errObj.bpp = `bpp_id & bpp_uri shouldn't be present if action is search`
   }
 
   if (_.isEmpty(errObj)) {
@@ -231,30 +245,15 @@ export const validateSchema = (domain: string, api: string, data: any) => {
     logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
     const errObj: any = {}
 
-    const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
-    const datavld = schmaVldtr
-    if (datavld.status === 'fail') {
-      const res = datavld.errors
-      let i = 0
-      const len = res.length
-      while (i < len) {
-        const key = `schemaErr${i}`
-        errObj[key] = `${res[i].details} ${res[i].message}`
-        i++
-      }
-
-      return errObj
-    } else return 'error'
-  } catch (e: any) {
-    logger.error(`Some error occured while validating schema, ${e.stack}`)
-  }
-}
-export const validateSchemaRetailV2 = (domain: string, api: string, data: any) => {
-  try {
-    logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
-    const errObj: any = {}
-
-    const schmaVldtr = validate_schema_for_retail_json_v2(domain, api, data)
+    let schmaVldtr;
+    // Special case for TRV13 search to avoid double function calls
+    if (domain === 'TRV13' && api === 'search') {
+      schmaVldtr = (schemaValidator as any).validate_schema_search_TRV13_for_json(data);
+      console.log("Using direct TRV13 search validator");
+    } else {
+      schmaVldtr = validate_schema_for_retail_json(domain, api, data);
+    }
+    
     const datavld = schmaVldtr
     if (datavld.status === 'fail') {
       const res = datavld.errors
@@ -1599,4 +1598,13 @@ export function compareAllObjects(
     isObj2InObj1,
     isContained: isObj1InObj2 || isObj2InObj1,
   }
+}
+
+export const checkIsOptional = (apiSeq: string, flow: string): boolean => {
+  if (TRV14OptialCalls.hasOwnProperty(flow)) {
+    const api: string[] = TRV14OptialCalls[flow]
+    if (api.includes(apiSeq)) {
+      return true
+    } else return false
+  } else return false
 }

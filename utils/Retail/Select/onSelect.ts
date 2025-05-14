@@ -413,11 +413,97 @@ export const checkOnSelect = (data: any) => {
     logger.info(`-x-x-x-x-Quote Breakup ${constants.ON_SELECT} all checks-x-x-x-x`)
     const itemsIdList: any = getValue('itemsIdList')
     const itemsCtgrs: any = getValue('itemsCtgrs')
+    const providerOffers: any = getValue(`${ApiSequence.ON_SEARCH}_offers`);
+    const applicableOffers: any[] = []
+    const orderItemIds = on_select?.items?.map((item: any) => item.id) || []
+    const items:any = orderItemIds
+      .map((id:any) => {
+        const item = on_select?.quote?.breakup.find((entry:any) => entry['@ondc/org/item_id'] === id)
+        return item ? { id, price: item.price.value,quantity:item["@ondc/org/item_quantity"]?.count } : null
+      })
+      .filter((item:any) => item !== null)
+    console.log("itemPrices of found items in breakup",JSON.stringify(items));
+
+    const priceSums = items.reduce((acc: Record<string, number>, item: { id: string; price: string }) => {
+      const { id, price } = item;
+      acc[id] = (acc[id] || 0) + parseFloat(price);
+      return acc;
+    }, {});
+    console.log("priceSums",priceSums);
+    
+    
+    console.log("providerOffers",JSON.stringify(providerOffers));
     if (on_select.quote) {
+      const totalWithoutOffers = on_select?.quote?.breakup.reduce((sum:any, item:any) => {
+        if (item["@ondc/org/title_type"] !== "offer") {
+          const value = parseFloat(item.price?.value || "0");
+          return sum + value;
+        }
+        return sum;
+      }, 0);
+      
+      console.log("Total without offers:", totalWithoutOffers.toFixed(2));
+      const offers:any = on_select.quote.breakup.filter((offer:any)=>offer["@ondc/org/title_type"] === "offer");
+      const applicableOffer = getValue('selected_offer')
+      console.log("applicableOffer",applicableOffer);
+      // const deliveryCharges = Math.abs(parseFloat(on_select.quote.breakup.find((item:any)=>item["@ondc/org/title_type"] === "delivery")?.price?.value)) || 0;
+      
+      if (offers.length > 0) {
+        setValue('on_select_offers',offers)
+        const additiveOffers = offers.filter((offer: any) => {
+          const metaTag = offer?.item.tags?.find((tag: any) => tag.code === 'offer')
+          return metaTag?.list?.some((entry: any) => entry.code === 'additive' && entry.value.toLowerCase() === 'yes')
+        })
+
+        const nonAdditiveOffers = offers.filter((offer: any) => {
+          const metaTag = offer?.item.tags?.find((tag: any) => tag.code === 'offer')
+          return metaTag?.list?.some((entry: any) => entry.code === 'additive' && entry.value.toLowerCase() === 'no')
+        })
+
+        if (additiveOffers.length > 0) {
+          // offers.length = 0
+          additiveOffers.forEach((offer: any) => {
+            const providerOffer = providerOffers.find((o: any) => o.id === offer["@ondc/org/item_id"])
+            if (providerOffer) {
+              applicableOffers.push(providerOffer)
+            }
+          })
+        } else if (nonAdditiveOffers.length === 1) {
+          // Apply the single non-additive offer
+          applicableOffers.length = 0
+          const offer = nonAdditiveOffers[0]
+          const offerId = offer?.["@ondc/org/item_id"]
+          const providerOffer = providerOffers.find((o: any) => o.id === offerId)
+          if (providerOffer) {
+            applicableOffers.push(providerOffer)
+          }
+        } else if (nonAdditiveOffers.length > 1) {
+         console.log("nonAdditiveOffers",nonAdditiveOffers);
+         
+          applicableOffers.length = 0
+          nonAdditiveOffers.forEach((offer: any,index:number) => {
+            errorObj[`offer[${index}]`] =
+              `Offer ${offer["@ondc/org/item_id"]} is non-additive and cannot be combined with other non-additive offers.`
+          })
+          // setValue('Addtive-Offers',false)
+          // return
+        }
+        console.log('Applicable Offers:', applicableOffers)
+      }
       on_select.quote.breakup.forEach((element: any, i: any) => {
         const titleType = element['@ondc/org/title_type']
 
         logger.info(`Calculating quoted Price Breakup for element ${element.title}`)
+        if (titleType === "offer") {
+          const priceValue = parseFloat(element.price.value);
+        
+          if (isNaN(priceValue)) {
+            errorObj.invalidPrice = `Price for title type "offer" is not a valid number.`;
+          } 
+          // else if (priceValue >= 0 ) {
+          //   errorObj.positivePrice = `Price for title type "offer" must be negative, but got ${priceValue}.`;
+          // }
+        }
         onSelectPrice += parseFloat(element.price.value)
 
         if (titleType === 'item') {
@@ -471,6 +557,156 @@ export const checkOnSelect = (data: any) => {
               `invalid  id: ${element['@ondc/org/item_id']} in ${titleType} line item (should be a valid fulfillment_id as provided in message.items for the items)`
           }
         }
+        if (titleType === 'offer' && providerOffers.length > 0 && offers.length > 0) {
+                  try {
+                    if (applicableOffers?.length > 0) {
+                      const offerType = element?.item?.tags
+                        ?.find((tag: any) => tag.code === 'offer')
+                        ?.list?.find((entry: any) => entry.code === 'type')?.value
+                      const offerId = element?.["@ondc/org/item_id"]
+                      const onSelectOfferAutoApplicable = element?.item?.tags
+                        ?.find((tag: any) => tag.code === 'offer')
+                        ?.list?.find((entry: any) => entry.code === 'auto')?.value
+                      if (!offerId) {
+                        errorObj['inVldItemId'] = [`offerId cannot be null or empty.`]
+                        return
+                      }
+                      const quoteType =
+                        element?.item?.tags
+                          .find((tag: any) => tag.code === 'quote')
+                          ?.list?.map((type: any) => type.value)
+                          .join(',') || ''
+        
+                      console.log('quoteType', quoteType)
+                      const offerPriceValue: number = Math.abs(parseFloat(element?.price?.value))
+                      console.log('offerType', offerType)
+                      console.log('offerId', offerId)
+        
+                      // const applicableOffer = getValue('selected_offer')
+                      // console.log('applicableOffer', applicableOffer)
+                      const selectedOffer = applicableOffer?.find((offer: any) => offer?.id === offerId)
+                      if (!applicableOffer) {
+                        const providerOffer = applicableOffers?.find((p: any) => p?.id === offerId)
+                        const providerMetaTag =
+                          providerOffer?.tags
+                            ?.find((tag: any) => tag.code === 'meta')
+                            ?.list?.find((code: any) => code.code === 'auto')?.value || {}
+                        const offerAutoApplicable: boolean =
+                          providerMetaTag === onSelectOfferAutoApplicable && onSelectOfferAutoApplicable === 'yes'
+                        if (!offerAutoApplicable && offerId) {
+                          errorObj[`invalidOffer[${offerId}]`] =
+                            `Offer with id '${offerId}' is not applicable for this order as this offer cannot be auto applied but found in on select as defined in the catalog.`
+                          return
+                        }
+                        if (!selectedOffer && !offerAutoApplicable) {
+                          const key = `inVldItemId[${i}]`
+                          errorObj[key] =
+                            `item with id: ${element['@ondc/org/item_id']} in quote.breakup[${i}] does not exist in select offers id (should be a valid item id)`
+                        }
+                      }
+        
+                      const providerOffer = providerOffers?.find((p: any) => p?.id === offerId)
+                      const orderLocationIds = on_select?.provider?.locations?.map((loc: any) => loc.id) || []
+        
+                      console.log('providerOffer', JSON.stringify(providerOffer))
+        
+                      const offerLocationIds = providerOffer?.location_ids || []
+                      const locationMatch = offerLocationIds.some((id: string) => orderLocationIds.includes(id))
+        
+                      if (!locationMatch) {
+                        errorObj[`offer_location[${i}]`] =
+                          `Offer with id '${offerId}' is not applicable for any of the order's locations. \nApplicable locations in offer: [${offerLocationIds.join(', ')}], \nLocations in order: [${orderLocationIds.join(', ')}].`
+                        return
+                      }
+        
+                      const offerItemIds = providerOffer?.item_ids || []
+                      const matchingItems = offerItemIds.find((id: string) => orderItemIds.includes(id)) || []
+                      console.log("matchingItems",JSON.stringify(matchingItems));
+                      
+        
+                      if (matchingItems.length === 0 || !matchingItems) {
+                        errorObj[`offer_item[${i}]`] =
+                          `Offer with id '${offerId}' is not applicable for any of the ordered item(s). \nApplicable items in offer: [${offerItemIds.join(', ')}], \nItems in order: [${orderItemIds.join(', ')}].`
+                          return
+                      }
+        
+                      const benefitTag: any = providerOffer?.tags?.find((tag: any) => {
+                        return tag?.code === 'benefit'
+                      })
+                      // const benefitList = benefitTag?.list || []
+                      const qualifierTag: any = providerOffer?.tags?.find((tag: any) => {
+                        return tag?.code === 'qualifier'
+                      })
+                      const qualifierList: any = qualifierTag?.list || []
+                      console.log('qualifierList', qualifierList, qualifierTag)
+        
+                      const minValue = parseFloat(qualifierList.find((l: any) => l.code === 'min_value')?.value) || 0
+                      console.log('min_value', minValue)
+                      // setvalue
+                      const itemsOnSearch: any = getValue(`onSearchItems`)
+                      console.log('itemsOnSearch', JSON.stringify(itemsOnSearch))
+                      if (offerType === 'discount') {
+                        if (minValue > 0 && minValue !== null) {
+                          const qualifies: boolean = totalWithoutOffers >= minValue
+                          console.log('qualifies', qualifies, minValue)
+        
+                          if (!qualifies) {
+                            errorObj['offerNA'] =
+                              `Offer not applicable for quote with actual quote value before discount is ${totalWithoutOffers} as required  min_value for order is ${minValue}`
+                          }
+                        }
+        
+                        const benefitList = benefitTag?.list || []
+        
+                        const valueType = benefitList.find((l: any) => l?.code === 'value_type')?.value
+                        const value_cap = Math.abs(
+                          parseFloat(benefitList.find((l: any) => l?.code === 'value_cap')?.value || '0'),
+                        )
+                        const benefitValue = Math.abs(
+                          parseFloat(benefitList.find((l: any) => l.code === 'value')?.value || '0'),
+                        )
+                        const quotedPrice = parseFloat(on_select.quote.price.value || '0')
+                        let qualifies = false
+        
+                        if (valueType === 'percent') {
+                          if (value_cap === 0) {
+                            errorObj['priceErr'] = `Offer benefit value_cap cannot be equal to ${value_cap}`
+                          } else {
+                            console.log('delivery charges', offerPriceValue)
+                            let expectedDiscount = 0
+                            expectedDiscount = (benefitValue / 100) * totalWithoutOffers
+                            if (expectedDiscount > value_cap) {
+                              errorObj.invalidOfferBenefit = `offer discount ${expectedDiscount} exceeds value_cap ${value_cap}`
+                              expectedDiscount = value_cap
+                            }
+                            // if (expectedDiscount > deliveryCharges) {
+                            //   errorObj.priceMismatch = `Discount exceeds delivery charge. Discount: ₹${expectedDiscount.toFixed(2)}, Delivery Charge: ₹${deliveryCharges.toFixed(2)}`
+                            // }
+                            if (offerPriceValue !== expectedDiscount) {
+                              errorObj.priceMismatch = `Discount value mismatch. Expected: -${expectedDiscount.toFixed(2)}, Found: -${offerPriceValue.toFixed(2)}`
+                            }
+                          }
+                        } else {
+                          if (benefitValue !== offerPriceValue) {
+                            errorObj['priceErr'] =
+                              `Discount mismatch: Expected discount is -₹${benefitValue.toFixed(2)}, but found -₹${offerPriceValue.toFixed(2)}. in offer with ${offerId} in ${titleType}`
+                          }
+        
+                          const quoteAfterBenefit = totalWithoutOffers - benefitValue
+        
+                          qualifies = Math.abs(quoteAfterBenefit - quotedPrice) < 0.01
+        
+                          if (!qualifies) {
+                            errorObj['priceErr'] =
+                              `Quoted price mismatch: After ₹${benefitValue} discount on ₹${totalWithoutOffers}, expected price is ₹${quoteAfterBenefit.toFixed(2)}, but got ₹${quotedPrice.toFixed(2)}.`
+                          }
+                        }
+                      }
+                    }
+                  } catch (error:any) {
+                    logger.error(`!!Error while checking and validating the offer price in /${constants.ON_SELECT}, ${error.stack}`)
+                  }
+                }
       })
 
       setValue('onSelectPrice', on_select.quote.price.value)

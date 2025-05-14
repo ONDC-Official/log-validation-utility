@@ -1,30 +1,9 @@
 const onSelect2SchemaTRV14 = {
-  $schema: 'http://json-schema.org/draft-07/schema#',
   type: 'object',
+  required: ['context', 'message'],
   properties: {
     context: {
       type: 'object',
-      properties: {
-        location: {
-          type: 'object',
-          properties: {
-            country: { type: 'object', properties: { code: { type: 'string' } }, required: ['code'] },
-            city: { type: 'object', properties: { code: { type: 'string' } }, required: ['code'] },
-          },
-          required: ['country', 'city'],
-        },
-        domain: { type: 'string' },
-        timestamp: { type: 'string', format: 'date-time' },
-        bap_id: { type: 'string' },
-        transaction_id: { type: 'string' },
-        message_id: { type: 'string' },
-        version: { type: 'string' },
-        action: { type: 'string' },
-        bap_uri: { type: 'string' },
-        ttl: { type: 'string' },
-        bpp_id: { type: 'string' },
-        bpp_uri: { type: 'string' },
-      },
       required: [
         'location',
         'domain',
@@ -39,146 +18,179 @@ const onSelect2SchemaTRV14 = {
         'bpp_id',
         'bpp_uri',
       ],
+      properties: {
+        location: {
+          type: 'object',
+          required: ['country', 'city'],
+          properties: {
+            country: {
+              type: 'object',
+              required: ['code'],
+              properties: {
+                code: { type: 'string', enum: ['IND'] },
+              },
+            },
+            city: {
+              type: 'object',
+              required: ['code'],
+              properties: {
+                code: { type: 'string' },
+              },
+            },
+          },
+        },
+        domain: { type: 'string', enum: ['ONDC:TRV14'] },
+        timestamp: { type: 'string', format: 'date-time' },
+        bap_id: { type: 'string' },
+        transaction_id: { type: 'string' },
+        message_id: { type: 'string' },
+        version: { type: 'string', enum: ['2.0.0'] },
+        action: { type: 'string', enum: ['on_select_2'] },
+        bap_uri: { type: 'string', format: 'uri' },
+        ttl: { type: 'string', pattern: '^PT\\d+S$' },
+        bpp_id: { type: 'string' },
+        bpp_uri: { type: 'string', format: 'uri' },
+      },
     },
     message: {
       type: 'object',
+      required: ['order'],
       properties: {
         order: {
           type: 'object',
+          required: ['items', 'fulfillments', 'provider', 'quote','replacement_terms'],
           properties: {
             items: {
               type: 'array',
               items: {
                 type: 'object',
+                required: ['id', 'descriptor', 'location_ids', 'category_ids'],
                 properties: {
                   id: { type: 'string' },
                   descriptor: {
                     type: 'object',
+                    required: ['name', 'code'],
                     properties: {
                       name: { type: 'string' },
-                      code: { type: 'string' },
-                      short_desc: { type: 'string' },
-                      long_desc: { type: 'string' },
-                      images: {
-                        type: 'array',
-                        items: {
-                          type: 'object',
-                          properties: { url: { type: 'string' }, size_type: { type: 'string' } },
-                          required: ['url', 'size_type'],
-                        },
-                      },
+                      code: { type: 'string', enum:["ENTRY_PASS","ABSTRACT","ADD_ON"] },
                     },
-                    required: ['name', 'code', 'short_desc', 'long_desc', 'images'],
                   },
                   location_ids: { type: 'array', items: { type: 'string' } },
                   category_ids: { type: 'array', items: { type: 'string' } },
-                  price: {
-                    type: 'object',
-                    properties: { currency: { type: 'string' }, value: { type: 'string' } },
-                    required: ['currency', 'value'],
-                  },
-                  quantity: {
-                    type: 'object',
-                    properties: {
-                      selected: { type: 'object', properties: { count: { type: 'integer' } }, required: ['count'] },
-                    },
-                    required: ['selected'],
-                  },
-                  time: {
-                    type: 'object',
-                    properties: { label: { type: 'string' }, duration: { type: 'string' } },
-                    required: ['label', 'duration'],
-                  },
-                  fulfillment_ids: { type: 'array', items: { type: 'string' } },
-                  add_ons: {
+                },
+              },
+            },
+            fulfillments: {
+              type: 'array',
+              items: {
+                type: 'object',
+                required: ['id', 'type', 'stops',"vehicle"],
+                properties: {
+                  id: { type: 'string' },
+                  type: { type: 'string' , enum:["VISIT"] },
+                  stops: {
                     type: 'array',
                     items: {
                       type: 'object',
+                      required: ['type', 'time'],
                       properties: {
-                        id: { type: 'string' },
-                        descriptor: { type: 'object', properties: { name: { type: 'string' } }, required: ['name'] },
-                        quantity: {
+                        type: { type: 'string',enum:["START","END"] },
+                        time: {
                           type: 'object',
+                          required: ['timestamp'],
                           properties: {
-                            selected: {
-                              type: 'object',
-                              properties: { count: { type: 'integer' } },
-                              required: ['count'],
-                            },
+                            timestamp: { type: 'string', format: 'date-time' },
                           },
-                          required: ['selected'],
-                        },
-                        price: {
-                          type: 'object',
-                          properties: { value: { type: 'string' }, currency: { type: 'string' } },
-                          required: ['value', 'currency'],
                         },
                       },
-                      required: ['id', 'descriptor', 'quantity', 'price'],
                     },
                   },
-                  tags: {
-                    type: 'array',
-                    items: {
-                      type: 'object',
-                      properties: {
-                        descriptor: { type: 'object', properties: { code: { type: 'string' } }, required: ['code'] },
-                        list: {
-                          type: 'array',
-                          items: { type: 'object', properties: { value: { type: 'string' } }, required: ['value'] },
-                        },
-                      },
-                      required: ['descriptor', 'list'],
-                    },
+                  vehicle:{
+                    type: 'object',
+                    required:["category"],
+                    properties:{
+                      category:{type:"string",enum:["SITE"]}
+                    }
+                  }
+                },
+              },
+            },
+            provider: {
+              type: 'object',
+              required: ['id', 'descriptor'],
+              properties: {
+                id: { type: 'string' },
+                descriptor: {
+                  type: 'object',
+                  required: ['name'],
+                  properties: {
+                    name: { type: 'string' },
                   },
                 },
-                required: [
-                  'id',
-                  'descriptor',
-                  'location_ids',
-                  'category_ids',
-                  'price',
-                  'quantity',
-                  'time',
-                  'fulfillment_ids',
-                  'tags',
-                ],
               },
             },
             quote: {
               type: 'object',
+              required: ['breakup', 'price'],
               properties: {
                 breakup: {
                   type: 'array',
                   items: {
                     type: 'object',
+                    required: ['title', 'price'],
                     properties: {
                       title: { type: 'string' },
                       price: {
                         type: 'object',
-                        properties: { currency: { type: 'string' }, value: { type: 'string' } },
                         required: ['currency', 'value'],
+                        properties: {
+                          currency: { type: 'string' },
+                          value: { type: 'string' },
+                        },
                       },
                     },
-                    required: ['title', 'price'],
                   },
                 },
                 price: {
                   type: 'object',
-                  properties: { currency: { type: 'string' }, value: { type: 'string' } },
                   required: ['currency', 'value'],
+                  properties: {
+                    currency: { type: 'string' },
+                    value: { type: 'string' },
+                  },
                 },
               },
-              required: ['breakup', 'price'],
             },
+            replacement_terms: {
+              type: 'array',
+              items: {
+                type: 'object',
+                required: ['external_ref'],
+                properties: {
+                  external_ref: {
+                    type: 'object',
+                    required: ['mimetype', 'url'],
+                    properties: {
+                      mimetype: {
+                        type: 'string',
+                        enum: ['text/html', 'text/plain', 'application/pdf']
+                      },
+                      url: {
+                        type: 'string',
+                        format: 'uri',
+                        pattern: '^https://'
+                      }
+                    }
+                  }
+                }
+              }
+            }
           },
-          required: ['items', 'quote'],
         },
       },
-      required: ['order'],
     },
   },
-  required: ['context', 'message'],
+  additionalProperties: false,
 }
 
 export default onSelect2SchemaTRV14

@@ -57,7 +57,7 @@ const cancel2SchemaTRV14 = {
       required: ['order_id', 'cancellation_reason_id', 'descriptor'],
       properties: {
         order_id: { type: 'string' },
-        cancellation_reason_id: { type: 'string' },
+        cancellation_reason_id: { type: 'string' ,enum:["000"] },
         descriptor: {
           type: 'object',
           required: ['name', 'code'],

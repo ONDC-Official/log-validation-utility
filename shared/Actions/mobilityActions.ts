@@ -16,6 +16,14 @@ import { checkOnUpdate } from '../../utils/mobility/onUpdate'
 import { checkStatus } from '../../utils/mobility/status'
 import { checkOnStatus } from '../../utils/mobility/onStatus'
 import { checkOnCancel } from '../../utils/mobility/onCancel'
+import {
+  driverNotFound,
+  driverNotFoundPostConfirm,
+  driverOnConfirmSequence,
+  driverPostConfirmSequence,
+  driverRideCancellation,
+  rideCancellation,
+} from '../../constants/trvFlows'
 
 export function validateLogsForMobility(data: any, flow: string, version: string) {
   const msgIdSet = new Set()
@@ -35,134 +43,101 @@ export function validateLogsForMobility(data: any, flow: string, version: string
   } else setValue('flow', flow)
 
   try {
-    if (data[mobilitySequence.SEARCH]) {
-      const errors = search(data[mobilitySequence.SEARCH], msgIdSet, version)
-      if (!_.isEmpty(errors)) {
-        logReport = { ...logReport, [mobilitySequence.SEARCH]: errors }
+    const processFlowSequence = (flowSequence: any, data: any, logReport: any) => {
+      if ((flow in onDemandFlows)) {
+        flowSequence.forEach((apiSeq: any) => {
+          if (data[apiSeq]) {
+            const resp = getResponse(apiSeq, data, msgIdSet)
+            console.log('resp', resp, apiSeq)
+            if (!_.isEmpty(resp)) {
+              logReport = { ...logReport, [apiSeq]: resp }
+            }
+          } else {
+            logReport = { ...logReport, [apiSeq]: `Missing required data of : ${apiSeq}` }
+          }
+        })
+        logger.info(logReport, 'Report Generated Successfully!!')
+        return logReport
+      } else {
+        console.log('Provided flow is invalid', flow, flow in onDemandFlows, onDemandFlows)
+        return { invldFlow: 'Provided flow is invalid' }
       }
     }
 
-    if (data[mobilitySequence.ON_SEARCH]) {
-      const errors = checkOnSearch(data[mobilitySequence.ON_SEARCH], msgIdSet, version)
-      if (!_.isEmpty(errors)) {
-        logReport = { ...logReport, [mobilitySequence.ON_SEARCH]: errors }
+    const getResponse = (apiSeq: any, data: any, msgIdSet: any) => {
+      switch (apiSeq) {
+        case mobilitySequence.SEARCH:
+          return search(data[mobilitySequence.SEARCH], msgIdSet, version)
+        case mobilitySequence.ON_SEARCH:
+          return checkOnSearch(data[mobilitySequence.ON_SEARCH], msgIdSet, version)
+
+        case mobilitySequence.SELECT:
+          return checkSelect(data[mobilitySequence.SELECT], msgIdSet)
+        case mobilitySequence.ON_SELECT:
+          return checkOnSelect(data[mobilitySequence.ON_SELECT], msgIdSet, version)
+
+        case mobilitySequence.INIT:
+          return checkInit(data[mobilitySequence.INIT], msgIdSet, version)
+        case mobilitySequence.ON_INIT:
+          return checkOnInit(data[mobilitySequence.ON_INIT], msgIdSet, version)
+
+        case mobilitySequence.CONFIRM:
+          return checkConfirm(data[mobilitySequence.CONFIRM], msgIdSet, version)
+        case mobilitySequence.ON_CONFIRM:
+          return checkOnConfirm(data[mobilitySequence.ON_CONFIRM], msgIdSet, version)
+
+        case mobilitySequence.UPDATE:
+          return checkUpdate(data[mobilitySequence.UPDATE], msgIdSet)
+        case mobilitySequence.ON_UPDATE:
+          return checkOnUpdate(data[mobilitySequence.ON_UPDATE], msgIdSet, version)
+
+        case mobilitySequence.STATUS:
+          return checkStatus(data[mobilitySequence.STATUS], msgIdSet)
+        case mobilitySequence.ON_STATUS:
+          return checkOnStatus(data[mobilitySequence.ON_STATUS], msgIdSet, version)
+
+        case mobilitySequence.SOFT_CANCEL:
+          return checkCancel(data[mobilitySequence.SOFT_CANCEL], msgIdSet, mobilitySequence.SOFT_CANCEL)
+        case mobilitySequence.SOFT_ON_CANCEL:
+          return checkOnCancel(
+            data[mobilitySequence.SOFT_ON_CANCEL],
+            msgIdSet,
+            mobilitySequence.SOFT_ON_CANCEL,
+            version,
+          )
+
+        case mobilitySequence.CANCEL:
+          return checkCancel(data[mobilitySequence.CANCEL], msgIdSet, mobilitySequence.CANCEL)
+        case mobilitySequence.ON_CANCEL:
+          return checkOnCancel(data[mobilitySequence.ON_CANCEL], msgIdSet, mobilitySequence.ON_CANCEL, version)
+
+        default:
+          return null
       }
     }
 
-    if (data[mobilitySequence.SELECT]) {
-      const errors = checkSelect(data[mobilitySequence.SELECT], msgIdSet)
-      if (!_.isEmpty(errors)) {
-        logReport = { ...logReport, [mobilitySequence.SELECT]: errors }
-      }
-    }
-
-    if (data[mobilitySequence.ON_SELECT]) {
-      const errors = checkOnSelect(data[mobilitySequence.ON_SELECT], msgIdSet, version)
-      if (!_.isEmpty(errors)) {
-        logReport = { ...logReport, [mobilitySequence.ON_SELECT]: errors }
-      }
-    }
-
-    if (data[mobilitySequence.INIT]) {
-      const errors = checkInit(data[mobilitySequence.INIT], msgIdSet, version)
-      if (!_.isEmpty(errors)) {
-        logReport = { ...logReport, [mobilitySequence.INIT]: errors }
-      }
-    }
-
-    if (data[mobilitySequence.ON_INIT]) {
-      const errors = checkOnInit(data[mobilitySequence.ON_INIT], msgIdSet, version)
-      if (!_.isEmpty(errors)) {
-        logReport = { ...logReport, [mobilitySequence.ON_INIT]: errors }
-      }
-    }
-
-    if (data[mobilitySequence.CONFIRM]) {
-      const errors = checkConfirm(data[mobilitySequence.CONFIRM], msgIdSet, version)
-      if (!_.isEmpty(errors)) {
-        logReport = { ...logReport, [mobilitySequence.CONFIRM]: errors }
-      }
-    }
-
-    if (data[mobilitySequence.ON_CONFIRM]) {
-      const errors = checkOnConfirm(data[mobilitySequence.ON_CONFIRM], msgIdSet, version)
-      if (!_.isEmpty(errors)) {
-        logReport = { ...logReport, [mobilitySequence.ON_CONFIRM]: errors }
-      }
-    }
-
-    if (data[mobilitySequence.UPDATE]) {
-      const errors = checkUpdate(data[mobilitySequence.UPDATE], msgIdSet)
-      if (!_.isEmpty(errors)) {
-        logReport = { ...logReport, [mobilitySequence.UPDATE]: errors }
-      }
-    }
-
-    if (data[mobilitySequence.ON_UPDATE]) {
-      const errors = checkOnUpdate(data[mobilitySequence.ON_UPDATE], msgIdSet, version)
-      if (!_.isEmpty(errors)) {
-        logReport = { ...logReport, [mobilitySequence.ON_UPDATE]: errors }
-      }
-    }
-
-    if (data[mobilitySequence.STATUS]) {
-      const errors = checkStatus(data[mobilitySequence.STATUS], msgIdSet)
-      if (!_.isEmpty(errors)) {
-        logReport = { ...logReport, [mobilitySequence.STATUS]: errors }
-      }
-    }
-
-    if (data[mobilitySequence.ON_STATUS]) {
-      const errors = checkOnStatus(data[mobilitySequence.ON_STATUS], msgIdSet, version)
-      if (!_.isEmpty(errors)) {
-        logReport = { ...logReport, [mobilitySequence.ON_STATUS]: errors }
-      }
-    }
-
-    if (data[mobilitySequence.SOFT_CANCEL]) {
-      const errors = checkCancel(data[mobilitySequence.SOFT_CANCEL], msgIdSet, mobilitySequence.SOFT_CANCEL)
-      if (!_.isEmpty(errors)) {
-        logReport = { ...logReport, [mobilitySequence.SOFT_CANCEL]: errors }
-      }
-    }
-
-    if (data[mobilitySequence.SOFT_ON_CANCEL]) {
-      const errors = checkOnCancel(
-        data[mobilitySequence.SOFT_ON_CANCEL],
-        msgIdSet,
-        mobilitySequence.SOFT_ON_CANCEL,
-        version,
-      )
-      if (!_.isEmpty(errors)) {
-        logReport = { ...logReport, [mobilitySequence.SOFT_ON_CANCEL]: errors }
-      }
-    }
-
-    if (data[mobilitySequence.CANCEL]) {
-      const errors = checkCancel(data[mobilitySequence.CANCEL], msgIdSet, mobilitySequence.CANCEL)
-      if (!_.isEmpty(errors)) {
-        logReport = { ...logReport, [mobilitySequence.CANCEL]: errors }
-      }
-    }
-
-    if (data[mobilitySequence.ON_CANCEL]) {
-      const errors = checkOnCancel(data[mobilitySequence.ON_CANCEL], msgIdSet, mobilitySequence.ON_CANCEL, version)
-      if (!_.isEmpty(errors)) {
-        logReport = { ...logReport, [mobilitySequence.ON_CANCEL]: errors }
-      }
-    }
-
-    if (flow === 'RIDER_CANCEL') {
-      const cancelKeys = [
-        mobilitySequence.SOFT_CANCEL,
-        mobilitySequence.SOFT_ON_CANCEL,
-        mobilitySequence.CANCEL,
-        mobilitySequence.ON_CANCEL,
-      ]
-
-      if (!cancelKeys.some((key) => key in data)) {
-        logReport.error = 'RIDER_CANCEL flow calls are incomplete'
-      }
+    switch (flow) {
+      case onDemandFlows.DRIVER_ON_CONFIRM:
+        logReport = processFlowSequence(driverOnConfirmSequence, data, logReport)
+        break
+      case onDemandFlows.DRIVER_POST_CONFIRM:
+        logReport = processFlowSequence(driverPostConfirmSequence, data, logReport)
+        break
+      case onDemandFlows.RIDER_CANCEL:
+        logReport = processFlowSequence(rideCancellation, data, logReport)
+        break
+      case onDemandFlows.DRIVER_CANCEL:
+        logReport = processFlowSequence(driverRideCancellation, data, logReport)
+        break
+      case onDemandFlows.PRICE_UPDATE:
+        logReport = processFlowSequence(driverOnConfirmSequence, data, logReport)
+        break
+      case onDemandFlows.DRIVER_NOT_FOUND:
+        logReport = processFlowSequence(driverNotFound, data, logReport)
+        break
+      case onDemandFlows.DRIVER_NOT_FOUND_POST_CONFIRM:
+        logReport = processFlowSequence(driverNotFoundPostConfirm, data, logReport)
+        break
     }
 
     logger.info(logReport, 'Report Generated Successfully!!')

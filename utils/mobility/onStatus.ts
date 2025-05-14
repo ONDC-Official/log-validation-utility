@@ -62,7 +62,7 @@ export const checkOnStatus = (data: any, msgIdSet: any, version: any) => {
       on_status?.fulfillments,
       fulfillmentIdsSet,
       constants.ON_STATUS,
-      false,
+      true,
       true,
       stateCode,
     )

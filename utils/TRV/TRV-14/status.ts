@@ -20,6 +20,10 @@ export const checkStatus = (data: any, msgIdSet: any) => {
       Object.assign(rsfObj, vs)
     }
 
+      if(!message.ref_id){
+        rsfObj.ref_id=`ref_id is missing on status`
+      }
+
     setValue('status_context', context)
     setValue('status_message', message)
 

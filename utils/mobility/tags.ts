@@ -187,9 +187,9 @@ export const validatePaymentTags = (tags: Tag[], terms: any): ValidationResult =
                       break
 
                     case 'enum':
-                      if (!termDefinition?.value.includes(item.value)) {
+                      if (!termDefinition?.value.includes(item.value?.toLowerCase())) {
                         errors.push(
-                          `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid value for ${termDefinition.code}`,
+                          `SETTLEMENT_TERMS_[${index}], List item[${itemIndex}] has an invalid value for ${termDefinition.code}, ${termDefinition?.value}, ${item.value}`,
                         )
                       }
 
@@ -429,7 +429,16 @@ export const validateItemsTags = (tags: Tag[]): ValidationResult => {
           'PICKUP_CHARGE',
           'WAITING_CHARGE_PER_MIN',
           'NIGHT_CHARGE_MULTIPLIER',
+          'NIGHT_SHIFT_START_TIME',
+          'NIGHT_SHIFT_END_TIME'
         ]
+
+        const missingTags = fareDescriptors.filter(
+          (descriptor) => !tag.list.some((item) => item.descriptor.code === descriptor),
+        )
+        if (missingTags.length > 0) {
+          errors.push(`fair-policy.tag-group is missing the following tags: ${missingTags.join(', ')}`)
+        }
 
         tag.list.forEach((item, itemIndex) => {
           if (!fareDescriptors.includes(item.descriptor.code)) {

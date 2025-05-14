@@ -509,9 +509,9 @@ export const validateTermsAndFeesTags = (tags: any, sequence: string) => {
     BUYER_FINDER_FEES: ['BUYER_FINDER_FEES_PERCENTAGE'],
   }
 
-  if (sequence?.includes('_inc')) requiredTagStructure['CATALOG_INC'] = ['MODE']
+  if (sequence?.includes('_inc') || sequence === 'search_inc') requiredTagStructure['CATALOG_INC'] = ['MODE']
 
-  console.log('requiredTagStructure---', requiredTagStructure)
+  console.log('requiredTagStructure---', requiredTagStructure, 'sequence:', sequence)
 
   // Descriptors with specific validation rules
   const descriptorValidators: any = {

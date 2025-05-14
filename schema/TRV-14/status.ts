@@ -54,9 +54,9 @@ const statusSchemaTRV14 = {
     },
     message: {
       type: 'object',
-      required: ['order_id'],
+      required: ['ref_id'],
       properties: {
-        order_id: { type: 'string' },
+        ref_id: { type: 'string' },
       },
     },
   },

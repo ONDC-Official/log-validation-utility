@@ -10,12 +10,12 @@ export const checkCancel1 = (data: any, msgIdSet: any, version: any) => {
   const { message, context }: any = data
 
   if (!data || isObjectEmpty(data)) {
-    return { [TRV14ApiSequence.SOFT_CANCEL]: 'JSON cannot be empty' }
+    return { [TRV14ApiSequence.CANCEL]: 'JSON cannot be empty' }
   }
 
   try {
-    logger.info(`Validating Schema for ${TRV14ApiSequence.SOFT_CANCEL} API`)
-    const vs = validateSchema('trv14', TRV14ApiSequence.SOFT_CANCEL, data)
+    logger.info(`Validating Schema for ${TRV14ApiSequence.CANCEL} API`)
+    const vs = validateSchema('trv14', TRV14ApiSequence.CANCEL, data)
 
     if (vs != 'error') {
       Object.assign(rsfObj, vs)
@@ -27,10 +27,10 @@ export const checkCancel1 = (data: any, msgIdSet: any, version: any) => {
     return rsfObj
   } catch (err: any) {
     if (err.code === 'ENOENT') {
-      logger.info(`!!File not found for /${TRV14ApiSequence.SOFT_CANCEL} API!`)
+      logger.info(`!!File not found for /${TRV14ApiSequence.CANCEL} API!`)
     } else {
       console.log('Error occurred while checking /API:', err)
-      logger.error(`!!Some error occurred while checking /${TRV14ApiSequence.SOFT_CANCEL} API`, err)
+      logger.error(`!!Some error occurred while checking /${TRV14ApiSequence.CANCEL} API`, err)
     }
   }
 }

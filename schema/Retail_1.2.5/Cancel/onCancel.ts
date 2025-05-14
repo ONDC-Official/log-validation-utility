@@ -552,7 +552,7 @@ export const onCancelSchema = {
                         },
                       },
                     },
-                    required: ['@ondc/org/item_id', '@ondc/org/title_type', 'price'],
+                    required: ['@ondc/org/item_id', '@ondc/org/title_type'],
                   },
                 },
                 ttl: {

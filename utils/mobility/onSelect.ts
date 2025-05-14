@@ -10,6 +10,7 @@ import {
   validateStops,
   validatePayloadAgainstSchema,
   validateProviderId,
+  hasOnlyAllowedKeys,
 } from './mobilityChecks'
 import { validateItemsTags, validateRouteInfoTags } from './tags'
 import attributeConfig from './config/config2.0.1.json'
@@ -48,7 +49,9 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
     try {
       logger.info(`Checking provider id in /${constants.ON_SELECT}`)
       const providerError = validateProviderId(onSelect?.provider?.id, constants.SELECT, constants.ON_SELECT)
+      const additionalKeys = hasOnlyAllowedKeys(onSelect?.provider, ['id', 'descriptor'])
       Object.assign(errorObj, providerError)
+      errorObj.providerAddKeys = `provider obj is having additional keys ${additionalKeys.join(', ')}`
     } catch (error: any) {
       logger.error(`!!Error while checking provider id in /${constants.ON_SELECT}, ${error.stack}`)
     }
@@ -91,12 +94,14 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
           const stopsError = validateStops(fulfillment?.stops, index, otp, cancel)
           if (!stopsError?.valid) Object.assign(errorObj, stopsError.errors)
 
-          if (fulfillment.tags) {
+          if (fulfillment?.tags) {
             // Validate route info tags
             const tagsValidation = validateRouteInfoTags(fulfillment.tags)
             if (!tagsValidation.isValid) {
               Object.assign(errorObj, { routeInfoTags: tagsValidation.errors })
             }
+          } else {
+            Object.assign(errorObj, { routeInfoTags: `Missing ROUTE_INFO tag-group at ${fulfillmentKey}` })
           }
 
           const vehicleKeys = Object.keys(fulfillment?.vehicle || {})
@@ -150,11 +155,13 @@ export const checkOnSelect = (data: any, msgIdSet: any, version: any) => {
           }
 
           // FARE_POLICY & INFO checks
-          if (item.tags && Array.isArray(item?.tags)) {
+          if (item?.tags && Array.isArray(item?.tags)) {
             const tagsValidation = validateItemsTags(item.tags)
             if (!tagsValidation.isValid) {
-              Object.assign(errorObj, { tags: tagsValidation.errors })
+              Object.assign(errorObj, { itemTags: tagsValidation.errors })
             }
+          } else {
+            Object.assign(errorObj, { itemTags: `Missing tag-group at ${itemKey}` })
           }
         })
       }

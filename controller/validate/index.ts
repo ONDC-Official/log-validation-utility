@@ -10,6 +10,7 @@ import { verify, hash } from '../../shared/crypto'
 
 const controller = {
   validate: async (req: Request, res: Response): Promise<Response | void> => {
+    console.log("++++++++++++++++ Validate is called")
     try {
       const { domain, version, payload, flow, bap_id, bpp_id } = req.body
 

@@ -1,7 +1,7 @@
 import _, { isEmpty } from 'lodash'
 import { logger } from '../../../shared/logger'
 import constants, { ApiSequence, buyerReturnId } from '../../../constants'
-import { validateSchema, isObjectEmpty, checkBppIdOrBapId, checkContext, isValidUrl, timeDiff } from '../../../utils'
+import { validateSchemaRetailV2, isObjectEmpty, checkBppIdOrBapId, checkContext, isValidUrl, timeDiff } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 import { condition_id } from '../../../constants/reasonCode'
 import { FLOW } from '../../enum'
@@ -30,12 +30,9 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
       }
       msgIdSet.add(context.message_id)
       // for update and on_update_interim
-      if (flow === '6-b' && apiSeq == ApiSequence.UPDATE_REVERSE_QC) {
-        setValue(`${ApiSequence.UPDATE_REVERSE_QC}_msgId`, data.context.message_id)
-      }
-      if (flow === '6-c' && apiSeq == ApiSequence.UPDATE_LIQUIDATED) {
-        setValue(`${ApiSequence.UPDATE_LIQUIDATED}_msgId`, data.context.message_id)
-      }
+      if (flow === '6-b' && apiSeq == ApiSequence.UPDATE_REVERSE_QC) { setValue(`${ApiSequence.UPDATE_REVERSE_QC}_msgId`, data.context.message_id) }
+      if (flow === '6-c' && apiSeq == ApiSequence.UPDATE_LIQUIDATED) { setValue(`${ApiSequence.UPDATE_LIQUIDATED}_msgId`, data.context.message_id) }
+      if(flow === '00B' && apiSeq == ApiSequence.UPDATE_REPLACEMENT){ setValue(`${ApiSequence.UPDATE_REPLACEMENT}_msgId`,data.context.message_id)}
     } catch (error: any) {
       logger.error(`!!Error while checking message id for /${apiSeq}, ${error.stack}`)
     }
@@ -43,14 +40,14 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
     try {
       const timestampOnUpdatePartCancel = getValue(`${ApiSequence.ON_UPDATE_PART_CANCEL}_tmpstmp`)
       const timeDif = timeDiff(context.timestamp, timestampOnUpdatePartCancel)
-      if (timeDif <= 0) {
+      if (timeDif <= 0 && (flow !== '00B')) {
         const key = 'context/timestamp'
         updtObj[key] =
           `context/timestamp of /${apiSeq} should be greater than /${ApiSequence.ON_UPDATE_PART_CANCEL} context/timestamp`
       }
 
-      if (flow === '6-b' || flow === '6-c') {
-        if (apiSeq === ApiSequence.UPDATE_LIQUIDATED || apiSeq === ApiSequence.UPDATE_REVERSE_QC) {
+      if (flow === '6-b' || flow === '6-c' || flow === '00B') {
+        if (apiSeq === ApiSequence.UPDATE_LIQUIDATED || apiSeq === ApiSequence.UPDATE_REVERSE_QC || apiSeq === ApiSequence.UPDATE_REPLACEMENT) {
           setValue('timestamp_', [context.timestamp, apiSeq])
           const returnFulfillmentArr = _.filter(update?.fulfillments, { type: 'Return' })
           function getReturnFfIdAndQuantity(returnFulfillment: any): any {
@@ -130,10 +127,17 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
                 } else {
                   updtObj[`returnFulfillment`] = `Return fulfillment/tags/list is missing in ${apiSeq}`
                 }
+                if(flow === "00B" && replaceArr.length===0){
+                  updtObj.replaceValue = `replace' obj is required in ${apiSeq} when flow is '00b`;
+                }
+                if(flow === "00B" && replaceArr.length===0){
+                  updtObj.replaceValue = `replace' obj is required in ${apiSeq} when flow is '00b`;
+                }
                 if (replaceArr.length > 0 && replaceArr[0]?.value) {
                   replaceValue = replaceArr[0]?.value
 
                   if (replaceValue === 'yes' || replaceValue === 'no') {
+                    setValue('update_replace_value',replaceValue)
                     logger.info(`Valid replace value: ${replaceValue} for /${apiSeq}`)
                   } else {
                     updtObj['returnFulfillment/code/replace'] = `Invalid replace value: ${replaceValue} in ${apiSeq}`
@@ -193,7 +197,7 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
     }
 
     // Validating Schema
-    const schemaValidation = validateSchema(context.domain.split(':')[1], constants.UPDATE, data)
+    const schemaValidation = validateSchemaRetailV2(context.domain.split(':')[1], constants.UPDATE, data)
 
     if (schemaValidation !== 'error') {
       Object.assign(updtObj, schemaValidation)
@@ -333,6 +337,8 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
                     logger.error(`Invalid replace value: ${replaceValue} for /${apiSeq}`)
                     updtObj.replaceValue = `Invalid replace value: ${replaceValue} in ${apiSeq} (valid: 'yes' or 'no')`
                   }
+                  setValue('update_replace_value',replaceValue)
+
                 }
 
                 if (item.code === 'item_quantity') {

@@ -313,6 +313,10 @@ export const checkSelect_OOS = (data: any, msgIdSet: any) => {
   const checksOnValidProvider = (provider: any) => {
     try {
       logger.info(`Comparing provider location in /${constants.ON_SEARCH} and /${constants.SELECT}`)
+      // let providerLocation
+      // provider?.locations.forEach((location:any)=>{
+
+      // })
       if (provider?.locations[0]?.id != select_oos.provider?.locations[0]?.id) {
         errorObj.prvdLoc = `provider.locations[0].id ${provider.locations[0].id} mismatches in /${constants.ON_SEARCH} and /${constants.SELECT}`
       }

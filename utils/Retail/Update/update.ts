@@ -29,7 +29,7 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
       }
       msgIdSet.add(context.message_id)
       // for update and on_update_interim
-      if (flow === '6-b' && apiSeq == ApiSequence.UPDATE_REVERSE_QC) { setValue(`${ApiSequence.UPDATE_REVERSE_QC}_msgId`, data.context.message_id) }
+      if (flow === '006' && apiSeq == ApiSequence.UPDATE_REVERSE_QC) { setValue(`${ApiSequence.UPDATE_REVERSE_QC}_msgId`, data.context.message_id) }
       if (flow === '6-c' && apiSeq == ApiSequence.UPDATE_LIQUIDATED) { setValue(`${ApiSequence.UPDATE_LIQUIDATED}_msgId`, data.context.message_id) }
     } catch (error: any) {
       logger.error(`!!Error while checking message id for /${apiSeq}, ${error.stack}`)

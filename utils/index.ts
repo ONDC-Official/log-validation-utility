@@ -3,6 +3,7 @@ import _ from 'lodash'
 import { logger } from '../shared/logger'
 import constants, { ApiSequence, statusArray } from '../constants'
 import schemaValidator from '../shared/schemaValidator'
+import schemaValidatorV2 from '../shared/schemaValidatorV2'
 import data from '../constants/AreacodeMap.json'
 import { reasonCodes } from '../constants/reasonCode'
 import { InputObject } from '../shared/interface'
@@ -12,6 +13,7 @@ import { groceryCategoryMappingWithStatutory } from '../constants/category'
 import { statutory_reqs } from './enum'
 import { PAYMENT_STATUS } from '../constants/index'
 import { FLOW } from '../utils/enum'
+import { bap_features } from './bap_features'
 import { TRV14OptialCalls } from '../constants/trvFlows'
 
 export const getObjValues = (obj: any) => {
@@ -232,6 +234,36 @@ const validate_schema_for_retail_json = (vertical: string, api: string, data: an
   return res
 }
 
+const validate_schema_for_retail_json_v2 = (vertical: string, api: string, data: any) => {
+  console.log(`+++++++++ validate_schema_${api}_${vertical}_for_json`)
+  const res = (schemaValidatorV2 as any)[`validate_schema_${api}_${vertical}_for_json`](data)
+  return res
+}
+
+export const validateSchemaRetailV2 = (domain: string, api: string, data: any) => {
+  try {
+    logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
+    const errObj: any = {}
+
+    const schmaVldtr = validate_schema_for_retail_json_v2(domain, api, data)
+    const datavld = schmaVldtr
+    if (datavld.status === 'fail') {
+      const res = datavld.errors
+      let i = 0
+      const len = res.length
+      while (i < len) {
+        const key = `schemaErr${i}`
+        errObj[key] = `${res[i].details} ${res[i].message}`
+        i++
+      }
+
+      return errObj
+    } else return 'error'
+  } catch (e: any) {
+    logger.error(`Some error occured while validating schema, ${e.stack}`)
+  }
+}
+
 export const validateSchema = (domain: string, api: string, data: any) => {
   try {
     logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
@@ -313,6 +345,10 @@ export const checkTagConditions = (message: any, context: any, apiSeq: string) =
       (tag: { code: string; value: string }) => tag.code === 'catalog_inc',
     )
 
+    const bapFeaturesTags = message.intent.tags.find(
+      (tag: { code: string; value: string }) => tag.code === 'bap_features',
+    )
+
     if (catalogIncTags) {
       const startTimeTag = catalogIncTags.list.find((tag: { code: string; value: string }) => tag.code === 'start_time')
       const endTimeTag = catalogIncTags.list.find((tag: { code: string; value: string }) => tag.code === 'end_time')
@@ -352,6 +388,33 @@ export const checkTagConditions = (message: any, context: any, apiSeq: string) =
           )
         }
       }
+    }
+
+    if (bapFeaturesTags) {
+      const validFeatureCodes = Object.keys(bap_features)
+      const yesFeatures = new Set<string>()
+
+      bapFeaturesTags.list.forEach((tag: any) => {
+        // Check if the feature code is valid
+        if (!validFeatureCodes.includes(tag.code)) {
+          tags.push(`/message/intent/tags/list/code ${tag.code} is not a valid feature code`)
+          return
+        }
+
+        // Check if the value is either 'yes' or 'no'
+        if (tag.value !== 'yes' && tag.value !== 'no') {
+          tags.push(`/message/intent/tags/list/code ${tag.code} value must be either 'yes' or 'no'`)
+          return
+        }
+
+        // Add to yesFeatures set if value is 'yes'
+        if (tag.value === 'yes') {
+          yesFeatures.add(bap_features[tag.code])
+        }
+      })
+
+      // Stringify and set the yesFeatures set
+      setValue('bapFeatures', JSON.stringify(Array.from(yesFeatures)))
     }
   } else {
     tags.push('/message/intent should have a required property tags')
@@ -1034,8 +1097,8 @@ export const mapCancellationID = (cancelled_by: string, reason_id: string, error
 export const payment_status = (payment: any, flow: string) => {
   const errorObj: any = {}
   logger.info(`Checking payment status for flow: ${flow}`)
-  if (flow === FLOW.FLOW2A && payment.status === PAYMENT_STATUS.PAID) {
-    errorObj.message = `Cannot be ${payment.status} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
+  if ( (flow === FLOW.FLOW012) && payment.status === PAYMENT_STATUS.PAID) {
+    errorObj.message = `Cannot be ${payment.status} for ${FLOW.FLOW012} flow (Cash on Delivery)`
     return errorObj
   }
   if (payment.status === PAYMENT_STATUS.PAID) {
@@ -1056,31 +1119,34 @@ export const checkQuoteTrailSum = (
 ) => {
   let quoteTrailSum = 0
   for (const obj of fulfillmentArr) {
-    const arrType = ['misc', 'packing', 'delivery', 'tax', 'item']
+    const arrType = ['misc', 'packing', 'delivery', 'tax', 'item', 'offer']
     const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
     for (const item of quoteTrailItems) {
       for (const val of item.list) {
         if (val.code === 'type') {
           if (!arrType.includes(val.value)) {
             errorObj[`invalidQuoteTrailType${apiSeq}`] =
-              `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax' or 'item'`
+              `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax' , 'offer' or 'item'`
           }
         }
         if (val.code === 'type') {
           if (!arrType.includes(val.value)) {
             errorObj[`invalidQuoteTrailType${apiSeq}`] =
-              `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax' or 'item'`
+              `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax','offer' or 'item'`
           }
         }
         if (val.code === 'value') {
           quoteTrailSum -= val.value
+          console.log('quoteTrailSum', quoteTrailSum)
         }
       }
     }
   }
   quoteTrailSum = Number(quoteTrailSum.toFixed(2))
   if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
-    const key = `invldQuoteTrailPrices`
+    console.log('price in prince', price, priceAtConfirm)
+
+    const key = `invalidQuoteTrailPrices`
     errorObj[key] =
       `quote_trail price and item quote price sum for ${apiSeq} should be equal to the price as in ${constants.ON_CONFIRM}`
     logger.error(
@@ -1123,7 +1189,136 @@ export const checkQuoteTrail = (quoteTrailItems: any[], errorObj: any, selectPri
   }
 }
 
-function deepCompare(obj1: any, obj2: any): boolean {
+export function deepCompareObjects(obj1: any, obj2: any, path = '', differences: any = []) {
+  // Handle null or undefined cases
+  if (obj1 === null || obj2 === null || obj1 === undefined || obj2 === undefined) {
+    if (obj1 !== obj2) {
+      differences.push({
+        path,
+        actual: obj1,
+        expected: obj2,
+        message: `Mismatch at ${path}: expected ${JSON.stringify(obj2)}, got ${JSON.stringify(obj1)}`,
+      })
+    }
+    return differences
+  }
+
+  // Handle arrays
+  if (Array.isArray(obj1) && Array.isArray(obj2)) {
+    // Special handling for tags array (e.g., item.tags)
+    if (path.includes('item.tags') && !path.includes('list')) {
+      const tags1 = obj1.filter((tag) => tag.code).reduce((acc, tag) => ({ ...acc, [tag.code]: tag }), {})
+      const tags2 = obj2.filter((tag) => tag.code).reduce((acc, tag) => ({ ...acc, [tag.code]: tag }), {})
+      const allTagCodes = new Set([...Object.keys(tags1), ...Object.keys(tags2)])
+
+      for (const code of allTagCodes) {
+        if (!tags1[code]) {
+          differences.push({
+            path: `${path}[code=${code}]`,
+            actual: undefined,
+            expected: tags2[code],
+            message: `Missing tag with code "${code}" at ${path}: expected ${JSON.stringify(tags2[code])}, got undefined`,
+          })
+        } else if (!tags2[code]) {
+          differences.push({
+            path: `${path}[code=${code}]`,
+            actual: tags1[code],
+            expected: undefined,
+            message: `Extra tag with code "${code}" at ${path}: got ${JSON.stringify(tags1[code])}, expected undefined`,
+          })
+        } else {
+          deepCompareObjects(tags1[code], tags2[code], `${path}[code=${code}]`, differences)
+        }
+      }
+      return differences
+    }
+
+    // Special handling for list arrays within tags (e.g., item.tags[].list)
+    if (path.includes('item.tags') && path.includes('list')) {
+      const list1 = obj1.filter((item) => item.code).reduce((acc, item) => ({ ...acc, [item.code]: item }), {})
+      const list2 = obj2.filter((item) => item.code).reduce((acc, item) => ({ ...acc, [item.code]: item }), {})
+      const allCodes = new Set([...Object.keys(list1), ...Object.keys(list2)])
+
+      for (const code of allCodes) {
+        if (!list1[code]) {
+          differences.push({
+            path: `${path}[code=${code}]`,
+            actual: undefined,
+            expected: list2[code],
+            message: `Missing list entry with code "${code}" at ${path}: expected ${JSON.stringify(list2[code])}, got undefined`,
+          })
+        } else if (!list2[code]) {
+          differences.push({
+            path: `${path}[code=${code}]`,
+            actual: list1[code],
+            expected: undefined,
+            message: `Extra list entry with code "${code}" at ${path}: got ${JSON.stringify(list1[code])}, expected undefined`,
+          })
+        } else {
+          deepCompareObjects(list1[code], list2[code], `${path}[code=${code}]`, differences)
+        }
+      }
+      return differences
+    }
+
+    // Generic array handling
+    if (obj1.length !== obj2.length) {
+      differences.push({
+        path,
+        actual: obj1,
+        expected: obj2,
+        message: `Array length mismatch at ${path}: expected ${obj2.length}, got ${obj1.length}`,
+      })
+    }
+    const maxLength = Math.max(obj1.length, obj2.length)
+    for (let i = 0; i < maxLength; i++) {
+      deepCompareObjects(obj1[i], obj2[i], `${path}[${i}]`, differences)
+    }
+    return differences
+  }
+
+  // Handle objects
+  if (typeof obj1 === 'object' && typeof obj2 === 'object') {
+    const keys1 = Object.keys(obj1)
+    const keys2 = Object.keys(obj2)
+    const allKeys = new Set([...keys1, ...keys2])
+
+    for (const key of allKeys) {
+      if (!keys1.includes(key)) {
+        differences.push({
+          path: `${path}.${key}`,
+          actual: undefined,
+          expected: obj2[key],
+          message: `Missing key ${key} at ${path}: expected ${JSON.stringify(obj2[key])}, got undefined`,
+        })
+      } else if (!keys2.includes(key)) {
+        differences.push({
+          path: `${path}.${key}`,
+          actual: obj1[key],
+          expected: undefined,
+          message: `Extra key ${key} at ${path}: got ${JSON.stringify(obj1[key])}, expected undefined`,
+        })
+      } else {
+        deepCompareObjects(obj1[key], obj2[key], path ? `${path}.${key}` : key, differences)
+      }
+    }
+    return differences
+  }
+
+  // Handle primitive values
+  if (obj1 !== obj2) {
+    differences.push({
+      path,
+      actual: obj1,
+      expected: obj2,
+      message: `Mismatch at ${path}: expected ${JSON.stringify(obj2)}, got ${JSON.stringify(obj1)}`,
+    })
+  }
+
+  return differences
+}
+
+export function deepCompare(obj1: any, obj2: any): boolean {
   if (typeof obj1 !== 'object' || typeof obj2 !== 'object') {
     return obj1 === obj2
   }
@@ -1374,6 +1569,60 @@ export function validateBppUri(bppUri: string, bpp_id: string, errorObj: any): a
     errorObj['bpp_id_in_uri'] = `Bpp_id ${bpp_id} is not found in BppUri ${bppUri}`
   }
 }
+export interface TagListItem {
+  code: string
+  value: string
+}
+
+export interface Tag {
+  code: string
+  list: TagListItem[]
+}
+
+export interface Fulfillment {
+  id: string
+  tags?: Tag[]
+  [key: string]: any
+}
+
+export function compareAllObjects(
+  obj1: Record<string, any>,
+  obj2: Record<string, any>,
+): {
+  isEqual: boolean
+  isObj1InObj2: boolean
+  isObj2InObj1: boolean
+  isContained: boolean
+} {
+  const isEqual = JSON.stringify(obj1) === JSON.stringify(obj2)
+
+  const isSubset = (subset: Record<string, any>, superset: Record<string, any>): boolean => {
+    return Object.entries(subset).every(([key, value]) => {
+      const superValue = superset?.[key]
+
+      if (typeof value === 'object' && value !== null) {
+        if (Array.isArray(value)) {
+          if (!Array.isArray(superValue)) return false
+          return value.every((val, idx) => compareAllObjects(val, superValue[idx]).isObj1InObj2)
+        } else {
+          return compareAllObjects(value, superValue).isObj1InObj2
+        }
+      }
+
+      return superset?.hasOwnProperty(key) && superValue === value
+    })
+  }
+
+  const isObj1InObj2 = isSubset(obj1, obj2)
+  const isObj2InObj1 = isSubset(obj2, obj1)
+
+  return {
+    isEqual,
+    isObj1InObj2,
+    isObj2InObj1,
+    isContained: isObj1InObj2 || isObj2InObj1,
+  }
+}
 
 export const checkIsOptional = (apiSeq: string, flow: string): boolean => {
   if (TRV14OptialCalls.hasOwnProperty(flow)) {
@@ -1382,4 +1631,11 @@ export const checkIsOptional = (apiSeq: string, flow: string): boolean => {
       return true
     } else return false
   } else return false
+}
+
+export function getProviderId(obj: Record<string, any>): string | null {
+  if ('provider_id' in obj && obj.provider_id) {
+    return obj.provider_id;
+  }
+  return null;
 }

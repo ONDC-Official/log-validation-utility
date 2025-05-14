@@ -365,12 +365,12 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any, 
       logger.info(`Error while checking delivery timestamp in /${constants.ON_STATUS}_${state}.json`)
     }
     try {
-      if (flow === FLOW.FLOW2A) {
+      if (flow === FLOW.FLOW012) {
         logger.info('Payment status check in on status delivered call')
         const payment = on_status.payment
         if (payment.status == PAYMENT_STATUS.NOT_PAID) {
-          logger.error(`Payment status should be ${PAYMENT_STATUS.PAID} for ${FLOW.FLOW2A} flow (Item has been delivered in this state!)`);
-          onStatusObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.PAID} for ${FLOW.FLOW2A} flow since Item has been delivered in this state (Cash on Delivery)`
+          logger.error(`Payment status should be ${PAYMENT_STATUS.PAID} for ${FLOW.FLOW012} flow (Item has been delivered in this state!)`);
+          onStatusObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.PAID} for ${FLOW.FLOW012} flow since Item has been delivered in this state (Cash on Delivery)`
         }
       }
     } catch (err: any) {

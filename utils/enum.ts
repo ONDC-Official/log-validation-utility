@@ -722,3 +722,4 @@ export enum OFFERSFLOW {
   FLOW0097 = "0097",
   FLOW0098 = "0098"
 }
+export const OFFER_FLOW_VALUES: string[] = Object.values(OFFERSFLOW);

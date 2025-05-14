@@ -5,7 +5,6 @@ import { validateSchemaRetailV2, isObjectEmpty, checkContext, timeDiff, isoDurTo
 import _ from 'lodash'
 import { logger } from '../../../shared/logger'
 import { taxNotInlcusive } from '../../enum'
-// import { OFFERSFLOW } from '../../enum'
 
 interface BreakupElement {
   '@ondc/org/title_type': string
@@ -374,7 +373,7 @@ export const checkOnSelect = (data: any,flow :string) => {
 
     on_select.quote.breakup.forEach((item: { [x: string]: any; price: { value: any } }) => {
       if (item['@ondc/org/item_id'] && item.price && item.price.value && item['@ondc/org/title_type'] === 'item') {
-        itemPrices.set(item['@ondc/org/item_id'], Math.abs(item.price.value))
+        itemPrices.set(item['@ondc/org/item_id'], Math.abs(item.item.price.value))
       }
     })
     
@@ -494,16 +493,25 @@ export const checkOnSelect = (data: any,flow :string) => {
         }
         console.log('Applicable Offers:', applicableOffers)
       }
+      const offerTypesInBreakup: string[] = [];
       on_select.quote.breakup.forEach((element: any, i: any) => {
         const titleType = element['@ondc/org/title_type']
 
         console.log(`Calculating quoted Price Breakup for element ${element.title}`)
+        let offerType:string = ""
+
         if (titleType === "offer") {
           const priceValue = parseFloat(element.price.value);
         
           if (isNaN(priceValue)) {
             errorObj.invalidPrice = `Price for title type "offer" is not a valid number.`;
           } 
+           offerType = element?.item?.tags
+          ?.find((tag: any) => tag.code === 'offer')
+          ?.list?.find((entry: any) => entry.code === 'type')?.value
+          if (offerType) {
+            offerTypesInBreakup.push(offerType);
+          }
           // else if (priceValue >= 0 ) {
           //   errorObj.positivePrice = `Price for title type "offer" must be negative, but got ${priceValue}.`;
           // }
@@ -561,15 +569,12 @@ export const checkOnSelect = (data: any,flow :string) => {
               `invalid  id: ${element['@ondc/org/item_id']} in ${titleType} line item (should be a valid fulfillment_id as provided in message.items for the items)`
           }
         }
+        
+        
+// Now switch based on flow
         if (titleType === 'offer' && providerOffers.length > 0 && offers.length > 0) {
           try {
             if (applicableOffers?.length > 0) {
-              const offerType = element?.item?.tags
-                ?.find((tag: any) => tag.code === 'offer')
-                ?.list?.find((entry: any) => entry.code === 'type')?.value
-              // const offerId = element?.item?.tags
-              //   ?.find((tag: any) => tag.code === 'offer')
-              //   ?.list?.find((entry: any) => entry.code === 'id')?.value
               const offerId = element?.["@ondc/org/item_id"]
               const onSelectOfferAutoApplicable = element?.item?.tags
                 ?.find((tag: any) => tag.code === 'offer')
@@ -685,75 +690,43 @@ export const checkOnSelect = (data: any,flow :string) => {
                 const value_cap = Math.abs(
                   parseFloat(benefitList.find((l: any) => l?.code === 'value_cap')?.value || '0'),
                 )
-                const benefitAmount = Math.abs(
+                const benefitValue = Math.abs(
                   parseFloat(benefitList.find((l: any) => l.code === 'value')?.value || '0'),
                 )
                 const quotedPrice = parseFloat(on_select.quote.price.value || '0')
-
-                let benefitValue = 0
                 let qualifies = false
 
                 if (valueType === 'percent') {
-                  if (value_cap > 0) {
-                    benefitValue = (benefitAmount / 100) * value_cap
-
-                    if (offerPriceValue !== benefitValue) {
-                      errorObj['discountMismatch'] =
-                        `Discount mismatch: Expected discount is -₹${benefitValue.toFixed(2)} (i.e., ${benefitAmount}% of capped value ₹${value_cap}), but found -₹${offerPriceValue.toFixed(2)}.`
-                    }
-
-                    qualifies = Math.abs(value_cap - benefitValue - quotedPrice) < 0.01
-
-                    if (!qualifies) {
-                      errorObj['quoteMismatch'] =
-                        `Quoted price mismatch: After ${benefitAmount}% discount on ₹${value_cap}, expected price is ₹${(value_cap - benefitValue).toFixed(2)}, but got ₹${quotedPrice.toFixed(2)}.`
-                    }
+                  if (value_cap === 0) {
+                    errorObj['priceErr'] = `Offer benefit value_cap cannot be equal to ${value_cap}`
                   } else {
-                    const quotePercentageAmount = (benefitAmount / 100) * totalWithoutOffers
-
-                    if (offerPriceValue !== quotePercentageAmount) {
-                      errorObj['discountMismatch'] =
-                        `Discount mismatch: Expected discount is -₹${quotePercentageAmount.toFixed(2)} (i.e., ${benefitAmount}% of ₹${totalWithoutOffers}), but found -₹${offerPriceValue.toFixed(2)}.`
+                    console.log('delivery charges', offerPriceValue)
+                    let expectedDiscount = 0
+                    expectedDiscount = (benefitValue / 100) * totalWithoutOffers
+                    if (expectedDiscount > value_cap) {
+                      errorObj.invalidOfferBenefit = `offer discount ${expectedDiscount} exceeds value_cap ${value_cap}`
+                      expectedDiscount = value_cap
                     }
-
-                    const quoteAfterBenefit = totalWithoutOffers - quotePercentageAmount
-                    qualifies = Math.abs(quoteAfterBenefit - quotedPrice) < 0.01
-
-                    if (!qualifies) {
-                      errorObj['quoteMismatch'] =
-                        `Quoted price mismatch: After ${benefitAmount}% discount on ₹${totalWithoutOffers}, expected price is ₹${quoteAfterBenefit.toFixed(2)}, but got ₹${quotedPrice.toFixed(2)}.`
+                    // if (expectedDiscount > deliveryCharges) {
+                    //   errorObj.priceMismatch = `Discount exceeds delivery charge. Discount: ₹${expectedDiscount.toFixed(2)}, Delivery Charge: ₹${deliveryCharges.toFixed(2)}`
+                    // }
+                    if (offerPriceValue !== expectedDiscount) {
+                      errorObj.priceMismatch = `Discount value mismatch. Expected: -${expectedDiscount.toFixed(2)}, Found: -${offerPriceValue.toFixed(2)}`
                     }
                   }
-                }
-                 else {
-                  if (value_cap > 0) {
-                    benefitValue = value_cap - benefitAmount
+                } else {
+                  if (benefitValue !== offerPriceValue) {
+                    errorObj['priceErr'] =
+                      `Discount mismatch: Expected discount is -₹${benefitValue.toFixed(2)}, but found -₹${offerPriceValue.toFixed(2)}. in offer with ${offerId} in ${titleType}`
+                  }
 
-                    if (offerPriceValue !== benefitAmount) {
-                      errorObj['discountMismatch'] =
-                        `Discount mismatch: Expected discount is -₹${benefitAmount.toFixed(2)} (from capped value ₹${value_cap}), but found -₹${offerPriceValue.toFixed(2)}.`
-                    }
+                  const quoteAfterBenefit = totalWithoutOffers - benefitValue
 
-                    qualifies = Math.abs(benefitValue - quotedPrice) < 0.01
+                  qualifies = Math.abs(quoteAfterBenefit - quotedPrice) < 0.01
 
-                    if (!qualifies) {
-                      errorObj['quoteMismatch'] =
-                        `Quoted price mismatch: After applying ₹${benefitAmount} on cap ₹${value_cap}, expected price is ₹${benefitValue.toFixed(2)}, but got ₹${quotedPrice.toFixed(2)}.`
-                    }
-                  } else {
-                    const quoteAfterBenefit = totalWithoutOffers - benefitAmount
-
-                    if (offerPriceValue !== benefitAmount) {
-                      errorObj['discountMismatch'] =
-                        `Discount mismatch: Expected discount is -₹${benefitAmount.toFixed(2)}, but found -₹${offerPriceValue.toFixed(2)}.`
-                    }
-
-                    qualifies = Math.abs(quoteAfterBenefit - quotedPrice) < 0.01
-
-                    if (!qualifies) {
-                      errorObj['quoteMismatch'] =
-                        `Quoted price mismatch: After ₹${benefitAmount} discount on ₹${totalWithoutOffers}, expected price is ₹${quoteAfterBenefit.toFixed(2)}, but got ₹${quotedPrice.toFixed(2)}.`
-                    }
+                  if (!qualifies) {
+                    errorObj['priceErr'] =
+                      `Quoted price mismatch: After ₹${benefitValue} discount on ₹${totalWithoutOffers}, expected price is ₹${quoteAfterBenefit.toFixed(2)}, but got ₹${quotedPrice.toFixed(2)}.`
                   }
                 }
               }
@@ -960,11 +933,28 @@ export const checkOnSelect = (data: any,flow :string) => {
                 }
               }
               if (offerType === 'buyXgetY') {
+                const offerItemsWithQuantity = items
+                  .filter((item: any) => matchingItems.includes(item.id))
+                  .map((item: any) => ({
+                    id: item.id,
+                    quantity: item.quantity,
+                  }))
+                console.log('offerItemQuantity', offerItemsWithQuantity)
                 const offerMinItemCount =
                   parseFloat(qualifierList.find((l: any) => l.code === 'item_count')?.value) || 0
                 if (!offerMinItemCount || offerMinItemCount === 0) {
-                  errorObj.invalidItems = `Minimum Item Count required in catalog /offers/tags/qualifier/list/code:item_count or minimum item_count cannot be 0 for offer with id :${offerId}`
+                  errorObj.invalidMinCountQualifier = `Minimum Item Count required in catalog /offers/tags/qualifier/list/code:item_count or minimum item_count cannot be 0 for offer with id :${offerId}`
                 }
+                let isOfferEligible: boolean
+                offerItemsWithQuantity.forEach((item: any) => {
+      
+                  if (offerMinItemCount) {
+                    isOfferEligible = item.quantity >= offerMinItemCount
+                  }
+                  if (!isOfferEligible) {
+                    errorObj.invalidItems = `Offer with ${offerId} is not applicale as item with id: ${item?.id} and quantity: ${item.quantity} does not match with offer item_count ${offerMinItemCount}`
+                  }
+                })
                 if (minValue > 0 && minValue !== null) {
                   const qualifies: boolean = minValue >= priceSums
                   console.log('qualifies', qualifies, minValue)
@@ -998,7 +988,7 @@ export const checkOnSelect = (data: any,flow :string) => {
                   errorObj.priceMismatch = `value mismatch benefit_value for tag "item_value" in on_select ${offerItemValue} does not match with /quote/item with itemId: ${offerId}`
                 }
                 if(offerItemValue !== benefitItemValue){
-                  errorObj.benefitValueMismatch = `value mismatch benefit_value ${benefitItemValue} does not match with catalog item_value ${offerItemValue} /quote/item with itemId: ${offerId}`
+                  errorObj.benefitValueMismatch = `value mismatch benefit_value in catalog ${benefitItemValue} does not match with on_select item_value ${offerItemValue} /quote/item with itemId: ${offerId}`
                 }
                 if(!offerTag){
                   errorObj.invalidTags = `tags are required in on_select   /quote with @ondc/org/title_type:${titleType} and offerId:${offerId}`
@@ -1312,6 +1302,48 @@ export const checkOnSelect = (data: any,flow :string) => {
           }
         }
       })
+      switch (flow) {
+        case '0091':
+          if (!offerTypesInBreakup.includes('discount')) {
+            errorObj['0091'] = `Flow 0091 requires at least one 'discount' offer in the breakup.`;
+          }
+          break;
+      
+        case '0092':
+          if (!offerTypesInBreakup.includes('buyxgety')) {
+            errorObj['0092'] = `Flow 0092 requires at least one 'buyxgety' offer in the breakup.`;
+          }
+          break;
+      
+        case '0093':
+          if (!offerTypesInBreakup.includes('freebie')) {
+            errorObj['0093'] = `Flow 0093 requires at least one 'freebie' offer in the breakup.`;
+          }
+          break;
+      
+        case '0094':
+          if (!offerTypesInBreakup.includes('slab')) {
+            errorObj['0094'] = `Flow 0094 requires at least one 'slab' offer in the breakup.`;
+          }
+          break;
+      
+        case '0095':
+          if (!offerTypesInBreakup.includes('combo')) {
+            errorObj['0095'] = `Flow 0095 requires at least one 'combo' offer in the breakup.`;
+          }
+          break;
+      
+        case '0096':
+          if (!offerTypesInBreakup.includes('delivery')) {
+            errorObj['0096'] = `Flow 0096 requires at least one 'delivery' offer in the breakup.`;
+          }
+          break;
+      
+        default:
+          console.warn(`No specific validation for flow ${flow}`);
+          break;
+      }
+
 
       setValue('onSelectPrice', on_select.quote.price.value)
       onSelectPrice = onSelectPrice.toFixed(2)

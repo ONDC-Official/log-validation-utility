@@ -15,7 +15,7 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
 
     const flow = getValue('flow')
     const replaceValue = getValue('replaceValue)')
-    const replacementFulfillment = getValue('replacementFulfillmentPendingStatus')
+    const replacementFulfillment = getValue('replacementFulfillment')
     const { message, context }: any = data
     if (!message || !context || isObjectEmpty(message)) {
       return { missingFields: '/context, /message, is missing or empty' }
@@ -157,12 +157,14 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
           (fulfillment: any) => fulfillment.id === replacementFulfillment.id,
         )
         // const storedFulfillmentAction = getValue('deliveryFulfillmentAction')
-        if (!deliveryFulfillment) {
+        if (deliveryFulfillment.length === 0) {
           onStatusObj['rplcmnt-fulfillment'] =
             `Fulfillment with id :${replacementFulfillment.id} not found in ${ApiSequence.REPLACEMENT_ON_STATUS_PACKED} fulfillments`
           return onStatusObj
         }
-        if (deliveryFulfillment.state.descriptor.code !== 'Packed') {
+        console.log("delivery fulfillment in ");
+        
+        if (deliveryFulfillment[0].state.descriptor.code !== 'Packed') {
           onStatusObj['rplcmnt-fulfillment'] =
             `Fulfillment with id :${replacementFulfillment.id} should have  fulfillment/state/descriptor/code to be Packed`
           return onStatusObj

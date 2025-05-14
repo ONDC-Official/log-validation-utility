@@ -243,8 +243,8 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
       const deliveryFulfillment = on_confirm.fulfillments.filter((fulfillment: any) => fulfillment.type === 'Delivery')
 
       const { start, end } = deliveryFulfillment[0]
-      const startRange = start.time.range
-      const endRange = end.time.range
+      const startRange = start.time?.range
+      const endRange = end.time?.range
       if (startRange && endRange) {
         setValue('deliveryFulfillment', deliveryFulfillment[0])
         setValue('deliveryFulfillmentAction', ApiSequence.ON_CONFIRM)

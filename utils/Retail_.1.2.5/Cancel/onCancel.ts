@@ -343,7 +343,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
 
     try {
       logger.info(`Checking for Item IDs in quote object in /${constants.ON_CANCEL}`)
-      let cancelFulfillment = []
+      let cancelFulfillment:any = []
       if (flow === '5') {
         cancelFulfillment = _.filter(on_cancel.fulfillments, { type: 'RTO' })?.[0]
       } else {

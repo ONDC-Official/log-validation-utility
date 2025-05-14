@@ -652,14 +652,20 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
           return checkOnStatusPending(data, 'replacement_on_status_pending',msgIdSet,fulfillmentsItemsSet)
         case ApiSequence.ON_STATUS_PACKED:
           return checkOnStatusPacked(data, 'packed', msgIdSet, fulfillmentsItemsSet)
-          case ApiSequence.ON_STATUS_PACKED:
+          case ApiSequence.REPLACEMENT_ON_STATUS_PACKED:
             return checkOnStatusPacked(data, 'replacement_on_status_packed', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.ON_STATUS_PICKED:
           return checkOnStatusPicked(data, 'picked', msgIdSet, fulfillmentsItemsSet)
+        case ApiSequence.REPLACEMENT_ON_STATUS_PICKED:
+          return checkOnStatusPicked(data, 'replacement_on_status_picked', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.ON_STATUS_OUT_FOR_DELIVERY:
           return checkOnStatusOutForDelivery(data, 'out-for-delivery', msgIdSet, fulfillmentsItemsSet)
+        case ApiSequence.REPLACEMENT_ON_STATUS_OUT_FOR_DELIVERY:
+            return checkOnStatusOutForDelivery(data, 'replacement_on_status_out_for_delivery', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.ON_STATUS_DELIVERED:
           return checkOnStatusDelivered(data, 'delivered', msgIdSet, fulfillmentsItemsSet)
+        case ApiSequence.REPLACEMENT_ON_STATUS_DELIVERED:
+          return checkOnStatusDelivered(data, 'replacement_on_status_delivered', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.ON_UPDATE_PART_CANCEL:
           return checkOnUpdate(
             data,

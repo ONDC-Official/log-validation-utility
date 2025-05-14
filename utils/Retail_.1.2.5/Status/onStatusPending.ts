@@ -144,8 +144,6 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
   
       try {
         logger.info(`Storing delivery fulfillment if not present in ${constants.ON_CONFIRM} and comparing if present`)
-        const storedFulfillment = getValue(`replacementFulfillment`)
-        console.log("storedFulfillment",storedFulfillment);
         
         const deliveryFulfillment = on_status.fulfillments.find((fulfillment: any) => fulfillment.id === replacementFulfillment.id)
         console.log("deliveryFulfillment in replacement",deliveryFulfillment);
@@ -273,7 +271,7 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
           const deliveryFulfillment = on_status.fulfillments.filter((fulfillment: any) => fulfillment.type === 'Delivery')
           console.log("deliveryFulfillment",deliveryFulfillment);
           
-          if (storedFulfillment == 'undefined') {
+          if (!storedFulfillment) {
             setValue('deliveryFulfillment', deliveryFulfillment[0])
             setValue('deliveryFulfillmentAction', ApiSequence.ON_STATUS_PENDING)
           } else {

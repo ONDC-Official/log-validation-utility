@@ -1123,7 +1123,7 @@ export const checkQuoteTrailSum = (
   if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
     console.log('price in prince', price, priceAtConfirm)
 
-    const key = `invldQuoteTrailPrices`
+    const key = `invalidQuoteTrailPrices`
     errorObj[key] =
       `quote_trail price and item quote price sum for ${apiSeq} should be equal to the price as in ${constants.ON_CONFIRM}`
     logger.error(

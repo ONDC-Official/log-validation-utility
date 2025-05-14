@@ -1620,10 +1620,15 @@ export function compareAllObjects(
     isEqual,
     isObj1InObj2,
     isObj2InObj1,
-    isContained: isObj1InObj2 || isObj2InObj1,
-  }
+    isContained: isObj1InObj2 || isObj2InObj1
+  };
 }
-
+export function getProviderId(obj: Record<string, any>): string | null {
+  if ('provider_id' in obj && obj.provider_id) {
+    return obj.provider_id;
+  }
+  return null;
+}
 export const checkIsOptional = (apiSeq: string, flow: string): boolean => {
   if (TRV14OptialCalls.hasOwnProperty(flow)) {
     const api: string[] = TRV14OptialCalls[flow]
@@ -1633,9 +1638,4 @@ export const checkIsOptional = (apiSeq: string, flow: string): boolean => {
   } else return false
 }
 
-export function getProviderId(obj: Record<string, any>): string | null {
-  if ('provider_id' in obj && obj.provider_id) {
-    return obj.provider_id;
-  }
-  return null;
-}
+

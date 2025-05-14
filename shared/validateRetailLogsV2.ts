@@ -853,6 +853,26 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
             fulfillmentsItemsSet,
             flow,
           )
+        case ApiSequence.ON_UPDATE_ADDRESS:
+          return checkOnUpdate(
+            data,
+            msgIdSet,
+            ApiSequence.ON_UPDATE_ADDRESS,
+            settlementDetatilSet,
+            quoteTrailItemsSet,
+            fulfillmentsItemsSet,
+            flow,
+          )
+        case ApiSequence.ON_UPDATE_INSTRUCTIONS:
+          return checkOnUpdate(
+            data,
+            msgIdSet,
+            ApiSequence.ON_UPDATE_INSTRUCTIONS,
+            settlementDetatilSet,
+            quoteTrailItemsSet,
+            fulfillmentsItemsSet,
+            flow,
+          )
         case ApiSequence.ON_UPDATE_APPROVAL:
           return checkOnUpdate(
             data,

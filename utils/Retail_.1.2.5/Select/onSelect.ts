@@ -1299,8 +1299,10 @@ export const checkOnSelect = (data: any,flow?:string) => {
                 }
               }
             }
-          } catch (error:any) {
-            logger.error(`!!Error while checking and validating the offer price in /${constants.ON_SELECT}, ${error.stack}`)
+          } catch (error: any) {
+            logger.error(
+              `!!Error while checking and validating the offer price in /${constants.ON_SELECT}, ${error.stack}`,
+            )
           }
         }
       })

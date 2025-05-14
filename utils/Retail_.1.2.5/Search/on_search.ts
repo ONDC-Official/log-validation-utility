@@ -147,6 +147,12 @@ export const checkOnsearch = (data: any, flow?: string) => {
   try {
     const providers = data.message.catalog['bpp/providers']
     providers.forEach((provider: any) => {
+      const items = provider.items.forEach((item: any) => {
+        console.log('item inside items', item?.['@ondc/org/available_on_cod'])
+      })
+
+      console.log('items>>', items)
+      console.log('provider items', provider.items)
       const address = provider.locations[0].address
 
       if (address) {
@@ -1973,6 +1979,15 @@ export const checkOnsearch = (data: any, flow?: string) => {
 
     setValue(`${ApiSequence.ON_SEARCH}prvdrLocId`, prvdrLocId)
     setValue(`${ApiSequence.ON_SEARCH}itemsId`, itemsId)
+
+    if (flow === FLOW.FLOW012) {
+      const providers = data.message.catalog['bpp/providers']
+
+      providers.forEach((provider: any) => {
+        const codItems = provider.items.filter((item: any) => item?.['@ondc/org/available_on_cod'] === true)
+        setValue('coditems', codItems)
+      })
+    }
   } catch (error: any) {
     logger.error(`!!Error while checking Providers info in /${constants.ON_SEARCH}, ${error.stack}`)
   }

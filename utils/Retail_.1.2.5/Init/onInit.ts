@@ -635,10 +635,9 @@ export const checkOnInit = (data: any, flow: string) => {
     } catch (error: any) {
       logger.error(`Error while validating tags, ${error.stack}`)
     }
-        const fulfillmentId = on_init?.fulfillments?.[0]?.id
-      setValue('fulfillmentId', on_init?.fulfillments?.[0]?.id)
+    const fulfillmentId = on_init?.fulfillments?.[0]?.id
+    setValue('fulfillmentId', on_init?.fulfillments?.[0]?.id)
     if (flow === FLOW.FLOW003) {
-   
       const slot = getValue('fulfillmentSlots')
       const ele = on_init.fulfillments.find((ele: { id: any }): any => ele.id === fulfillmentId)
       const item = slot.find((ele: { id: any }): any => ele.id === fulfillmentId)
@@ -657,6 +656,16 @@ export const checkOnInit = (data: any, flow: string) => {
       }
     }
 
+    if (flow === FLOW.FLOW012) {
+      const codItems = getValue('coditems')
+      const codIds = codItems?.map((item: { id: any }): any => item.id)
+      const itemIds = on_init?.items?.map((item: { id: any }): any => item.id)
+      const allItemIdsInCod = itemIds.every((id: any): any => codIds.includes(id))
+      if (!allItemIdsInCod) {
+        const key = `codItems`
+        onInitObj[key] = `all Items in /${constants.ON_INIT} must be available for cod `
+      }
+    }
     return onInitObj
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.ON_INIT} API`, err)

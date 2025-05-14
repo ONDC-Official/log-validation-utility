@@ -15,8 +15,10 @@ import {
   checkQuoteTrailSum,
   deepCompareObjects,
   // compareQuoteObjects,
+  deepCompare,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
+import { FLOW } from '../../enum'
 
 export const checkOnCancel = (data: any, msgIdSet: any) => {
   const onCnclObj: any = {}
@@ -1003,6 +1005,56 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while checking Reason ID ,RTO Id and Initiated_by for ${constants.ON_CANCEL}`)
+    }
+
+    try {
+      const credsWithProviderId = getValue('credsWithProviderId')
+      const providerId = on_cancel?.provider?.id
+      const confirmCreds = on_cancel?.provider?.creds
+      const found = credsWithProviderId.find((ele: { providerId: any }) => ele.providerId === providerId)
+      const expectedCreds = found?.creds
+      if (!expectedCreds) {
+        onCnclObj['MissingCreds'] =
+          `creds must be present in /${constants.ON_CANCEL} same as in /${constants.ON_SEARCH}`
+      }
+      if (flow === FLOW.FLOW017) {
+        if (!expectedCreds) {
+          onCnclObj['MissingCreds'] = `creds must be present in /${constants.ON_CANCEL} `
+        } else if (!deepCompare(expectedCreds, confirmCreds)) {
+          console.log('here inside else')
+          onCnclObj['MissingCreds'] = `creds must be present and same as in /${constants.ON_SEARCH}`
+        }
+      }
+    } catch (err: any) {
+      logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)
+    }
+
+    if (flow === FLOW.FLOW00D) {
+      const states = ['Return_Initiated', 'Return_Approved']
+      const FulfilmtId = getValue('FulfillmentId')
+      const fulfillmentObj = on_cancel?.fulfillments?.find((ele: { id: any }): any => ele.id === FulfilmtId)
+      if (!fulfillmentObj) {
+        let key = `missingFulfillment`
+        onCnclObj[key] =
+          `fulfillment object must be present in order in ${constants.ON_CANCEL} with  fulfillment id passed in , ${constants.CANCEL}`
+      }
+      const returnState = fulfillmentObj?.tags?.find((ele: { code: string }): any => ele.code === 'precancel_state')
+      if (!returnState) {
+        let key = `missingState`
+        onCnclObj[key] = `precancel_state must be present , ${constants.ON_CANCEL}`
+      }
+      const state = returnState?.list?.find((ele: { code: string }): any => ele.code === 'fulfillment_state')
+
+      if (!state) {
+        let key = `missingState`
+        onCnclObj[key] = `fulfillment_state in precancel_state must be present , ${constants.ON_CANCEL}`
+      }
+      if (state?.value) {
+        if (!states.includes(state?.value)) {
+          let key = `returnRequest`
+          onCnclObj[key] = `Return request can not be cancelled with this fulfillment state in, ${constants.ON_CANCEL}`
+        }
+      }
     }
 
     return onCnclObj

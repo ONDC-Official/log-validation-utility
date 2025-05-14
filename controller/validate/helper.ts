@@ -2,7 +2,13 @@ import _ from 'lodash'
 import { sign, hash } from '../../shared/crypto'
 import { logger } from '../../shared/logger'
 import { DOMAIN, ERROR_MESSAGE } from '../../shared/types'
-import { IGMvalidateLogs, validateLogs, RSFvalidateLogs, RSFvalidateLogsV2, IGMvalidateLogs2 } from '../../shared/validateLogs'
+import {
+  IGMvalidateLogs,
+  validateLogs,
+  RSFvalidateLogs,
+  RSFvalidateLogsV2,
+  IGMvalidateLogs2,
+} from '../../shared/validateLogs'
 import { validateLogsRetailV2 } from '../../shared/validateRetailLogsV2'
 import { validateLogsForFIS12 } from '../../shared/Actions/FIS12Actions'
 import { validateLogsForMobility } from '../../shared/Actions/mobilityActions'
@@ -61,15 +67,15 @@ const validateRetail = async (
         message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
       }
       break
-      case '1.2.5':
-        response = await validateLogsRetailV2(payload, domain, flow)
-  
-        if (_.isEmpty(response)) {
-          success = true
-          message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
-        }
-  
-        break
+    case '1.2.5':
+      response = await validateLogsRetailV2(payload, domain, flow)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+
+      break
     default:
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
       logger.warn('Invalid Version!!')
@@ -136,7 +142,6 @@ const validateMobility = async (domain: string, payload: string, version: string
   let success = false
   let message = ERROR_MESSAGE.LOG_VERIFICATION_UNSUCCESSFUL
 
-
   if (!flow) throw new Error('Flow not defined')
   // if (version !== '2.0.0' && domain === 'ONDC:TRV10') {
   //   logger.warn('Invalid Version!!')
@@ -165,7 +170,7 @@ const validateMobility = async (domain: string, payload: string, version: string
 
       break
 
-      case 'ONDC:TRV12':
+    case 'ONDC:TRV12':
       response = validateLogsForAirline(payload, flow, version)
 
       if (_.isEmpty(response)) {
@@ -175,22 +180,22 @@ const validateMobility = async (domain: string, payload: string, version: string
 
       break
 
-      case 'ONDC:TRV13':
-        response = validateLogsForTRV13(payload, version, flow)
-  
-        if (_.isEmpty(response)) {
-          success = true
-          message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
-        }
-        break
-      case 'ONDC:TRV14':
-        response = validateLogsForTRV14(payload, flow, version)
-  
-        if (_.isEmpty(response)) {
-          success = true
-          message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
-        }
-        break
+    case 'ONDC:TRV13':
+      response = validateLogsForTRV13(payload, domain, flow)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+      break
+    case 'ONDC:TRV14':
+      response = validateLogsForTRV14(payload, flow, version)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+      break
 
     default:
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_DOMAIN
@@ -214,7 +219,7 @@ const validateIGM = async (payload: string, version: string, flow?: string) => {
       }
 
       break
-      case '2.0.0':
+    case '2.0.0':
       response = IGMvalidateLogs2(payload, flow)
 
       if (_.isEmpty(response)) {
@@ -229,13 +234,8 @@ const validateIGM = async (payload: string, version: string, flow?: string) => {
       logger.warn('Invalid Version!!')
   }
 
- 
-
   return { response, success, message }
 }
-
-
-
 
 const validateRSF = async (payload: string, version: string) => {
   logger.info('Entering validateRSF function')
@@ -250,7 +250,7 @@ const validateRSF = async (payload: string, version: string) => {
         success = true
         message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
       }
-      break;
+      break
 
     case '2.0.0':
       response = RSFvalidateLogsV2(payload)
@@ -260,7 +260,7 @@ const validateRSF = async (payload: string, version: string) => {
         success = true
         message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
       }
-      break;
+      break
 
     default:
       message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION

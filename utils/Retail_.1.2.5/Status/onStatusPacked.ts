@@ -2,7 +2,15 @@
 import _ from 'lodash'
 import constants, { ApiSequence, PAYMENT_STATUS } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchemaRetailV2, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges, compareFulfillmentObject } from '../..'
+import {
+  validateSchemaRetailV2,
+  isObjectEmpty,
+  checkContext,
+  areTimestampsLessThanOrEqualTo,
+  compareTimeRanges,
+  compareFulfillmentObject,
+  getProviderId,
+} from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
 
@@ -330,28 +338,26 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
       try {
         logger.info(`Comparing order.updated_at and context timestamp for /${constants.ON_STATUS}_${state} API`)
 
-        if (!areTimestampsLessThanOrEqualTo(on_status.updated_at, contextTime)) {
-          onStatusObj.tmpstmp2 = ` order.updated_at timestamp should be less than or eqaul to  context timestamp for /${constants.ON_STATUS}_${state} api`
-        }
-      } catch (error: any) {
-        logger.error(
-          `!!Error occurred while comparing order updated at for /${constants.ON_STATUS}_${state}, ${error.stack}`,
-        )
+      if (!areTimestampsLessThanOrEqualTo(on_status.updated_at, contextTime)) {
+        onStatusObj.tmpstmp2 = ` order.updated_at timestamp should be less than or eqaul to  context timestamp for /${constants.ON_STATUS}_${state} api`
       }
-      try {
-        if (flow === FLOW.FLOW2A) {
-          logger.info('Payment status check in on status packed call')
-          const payment = on_status.payment
-          if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
-            logger.error(
-              `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`,
-            )
-            onStatusObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
-          }
+    } catch (error: any) {
+      logger.error(
+        `!!Error occurred while comparing order updated at for /${constants.ON_STATUS}_${state}, ${error.stack}`,
+      )
+    }
+    try {
+      if (flow === FLOW.FLOW012) {
+        logger.info('Payment status check in on status packed call')
+        const payment = on_status.payment
+        if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
+          logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`);
+          onStatusObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`
         }
-      } catch (err: any) {
-        logger.error('Error while checking payment in message/order/payment: ' + err.message)
       }
+    } catch (err: any) {
+      logger.error('Error while checking payment in message/order/payment: ' + err.message)
+    }
 
       try {
         logger.info(`Checking order state in /${constants.ON_STATUS}_${state}`)
@@ -412,6 +418,23 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
           logger.error(
             `Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_PACKED}, ${error.stack}`,
           )
+        }
+      }
+      if (flow === FLOW.FLOW01C) {
+        const fulfillments = on_status.fulfillments
+        const deliveryFulfillment = fulfillments.find((f: any) => f.type === 'Delivery')
+  
+        if (!deliveryFulfillment.hasOwnProperty('provider_id')) {
+          onStatusObj['missingFulfillments'] =
+            `provider_id must be present in ${ApiSequence.ON_STATUS_PACKED} as order is accepted`
+        }
+  
+        const id = getProviderId(deliveryFulfillment)
+        const fulfillmentProviderId = getValue('fulfillmentProviderId')
+  
+        if (deliveryFulfillment.hasOwnProperty('provider_id') && id !== fulfillmentProviderId) {
+          onStatusObj['providerIdMismatch'] =
+            `provider_id in fulfillment in ${ApiSequence.ON_CONFIRM} does not match expected provider_id: expected '${fulfillmentProviderId}' in ${ApiSequence.ON_STATUS_PACKED} but got ${id}`
         }
       }
     }

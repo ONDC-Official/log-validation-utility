@@ -17,6 +17,8 @@ import {
   compareQuoteObjects,
   compareLists,
   isoDurToSec,
+  getProviderId,
+  deepCompare,
 } from '../..'
 import { FLOW } from '../../enum'
 import { getValue, setValue } from '../../../shared/dao'
@@ -41,7 +43,6 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
     } catch (error: any) {
       logger.error(`!!Error while checking message id for /${constants.ON_SEARCHINC}, ${error.stack}`)
     }
-    
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const parentItemIdSet: any = getValue(`parentItemIdSet`)
@@ -128,12 +129,16 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
           onCnfrmObj[`message.order.fulfillments[${fulfillment.id}]`] =
             `'TAT' must be provided in message/order/fulfillments`
         }
-        const on_select_fulfillment_tat_obj: any = getValue('fulfillment_tat_obj');
+        const on_select_fulfillment_tat_obj: any = getValue('fulfillment_tat_obj')
         const fulfillment_id = fulfillment.id
 
         logger.info(`Checking TAT Mistatch between  /${constants.ON_CONFIRM} & /${constants.ON_SELECT}`)
-        if (on_select_fulfillment_tat_obj !== null && on_select_fulfillment_tat_obj[fulfillment_id] !== isoDurToSec(fulfillment['@ondc/org/TAT'])) {
-          onCnfrmObj[`TAT_Mismatch`] = `TAT Mistatch between  /${constants.ON_CONFIRM} i.e ${isoDurToSec(fulfillment['@ondc/org/TAT'])} seconds & /${constants.ON_SELECT} i.e ${on_select_fulfillment_tat_obj[fulfillment_id]} seconds`
+        if (
+          on_select_fulfillment_tat_obj !== null &&
+          on_select_fulfillment_tat_obj[fulfillment_id] !== isoDurToSec(fulfillment['@ondc/org/TAT'])
+        ) {
+          onCnfrmObj[`TAT_Mismatch`] =
+            `TAT Mistatch between  /${constants.ON_CONFIRM} i.e ${isoDurToSec(fulfillment['@ondc/org/TAT'])} seconds & /${constants.ON_SELECT} i.e ${on_select_fulfillment_tat_obj[fulfillment_id]} seconds`
         }
       })
     } catch (error: any) {
@@ -153,8 +158,7 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
       logger.info(`checking created_at and updated_at timestamp in /${constants.ON_CONFIRM}`)
       const cnfrmOrdrCrtd = getValue('ordrCrtd')
       const cnfrmOrdrUpdtd = getValue('ordrUpdtd')
-      if (!_.isEmpty(on_confirm?.state))
-        setValue('orderState', on_confirm.state)
+      if (!_.isEmpty(on_confirm?.state)) setValue('orderState', on_confirm.state)
       setValue('onCnfrmState', on_confirm.state)
       if (on_confirm.state === 'Created' || on_confirm.state === 'Accepted') {
         if (cnfrmOrdrCrtd && (!on_confirm.created_at || on_confirm.created_at != cnfrmOrdrCrtd)) {
@@ -253,21 +257,29 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
       logger.error(`Error while Storing delivery fulfillment, ${error.stack}`)
     }
 
-    if (on_confirm.state === "Accepted") {
-
+    if (on_confirm.state === 'Accepted') {
       try {
         // For Delivery Object
         const fulfillments = on_confirm.fulfillments
+        if (fulfillments) {
+          const deliveryFulfillment = fulfillments.find((f: any) => f.type === 'Delivery')
+          if (!deliveryFulfillment.hasOwnProperty('provider_id')) {
+            const key = `missingFulfillments`
+            onCnfrmObj[key] = `provider_id must be present in ${ApiSequence.ON_CONFIRM} as order is accepted`
+          }
+
+          const id = getProviderId(deliveryFulfillment)
+          setValue('fulfillmentProviderId', id)
+        }
         if (!fulfillments.length) {
           const key = `missingFulfillments`
           onCnfrmObj[key] = `missingFulfillments is mandatory for ${ApiSequence.ON_CONFIRM}`
-        }
-        else {
-          const deliveryObjArr = _.filter(fulfillments, { type: "Delivery" })
+        } else {
+          const deliveryObjArr = _.filter(fulfillments, { type: 'Delivery' })
           if (!deliveryObjArr.length) {
-            onCnfrmObj[`message/order.fulfillments/`] = `Delivery fullfillment must be present in ${ApiSequence.ON_CONFIRM} if the Order.state is 'Accepted'`
-          }
-          else {
+            onCnfrmObj[`message/order.fulfillments/`] =
+              `Delivery fullfillment must be present in ${ApiSequence.ON_CONFIRM} if the Order.state is 'Accepted'`
+          } else {
             const deliverObj = deliveryObjArr[0]
             delete deliverObj?.state
             delete deliverObj?.tags
@@ -276,7 +288,6 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
             fulfillmentsItemsSet.add(deliverObj)
           }
         }
-
       } catch (error: any) {
         logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_CONFIRM}, ${error.stack}`)
       }
@@ -284,26 +295,26 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
     //Vehicle registeration for (Self-Pickup) Kerbside
     const fulfillments = on_confirm.fulfillments
     if (Array.isArray(fulfillments)) {
-        fulfillments.forEach((fulfillment, index) => {
-            const type = fulfillment.type;
-            const category = fulfillment['@ondc/org/category'];
-            const vehicle = fulfillment.vehicle;
-            const SELF_PICKUP = 'Self-Pickup'
-            const KERBSIDE = 'Kerbside'
-    
-            if (type === SELF_PICKUP && category === KERBSIDE) {
-                if (!vehicle) {
-                  onCnfrmObj[`fulfillment${index}_vehicle`] =
-                        `Vehicle is required for fulfillment ${index} with type ${SELF_PICKUP} and category ${KERBSIDE} in /${constants.CONFIRM}`;
-                } else if (!vehicle.registration) {
-                  onCnfrmObj[`fulfillment${index}_vehicle_registration`] =
-                        `Vehicle registration is required for fulfillment ${index} with type ${SELF_PICKUP} and category ${KERBSIDE} in /${constants.CONFIRM}`;
-                }
-            } else if (vehicle) {
-              onCnfrmObj[`fulfillment${index}_vehicle`] =
-                    `Vehicle should not be present in fulfillment ${index} with type ${type} and category ${category} in /${constants.CONFIRM}`;
-            }
-        });
+      fulfillments.forEach((fulfillment, index) => {
+        const type = fulfillment.type
+        const category = fulfillment['@ondc/org/category']
+        const vehicle = fulfillment.vehicle
+        const SELF_PICKUP = 'Self-Pickup'
+        const KERBSIDE = 'Kerbside'
+
+        if (type === SELF_PICKUP && category === KERBSIDE) {
+          if (!vehicle) {
+            onCnfrmObj[`fulfillment${index}_vehicle`] =
+              `Vehicle is required for fulfillment ${index} with type ${SELF_PICKUP} and category ${KERBSIDE} in /${constants.CONFIRM}`
+          } else if (!vehicle.registration) {
+            onCnfrmObj[`fulfillment${index}_vehicle_registration`] =
+              `Vehicle registration is required for fulfillment ${index} with type ${SELF_PICKUP} and category ${KERBSIDE} in /${constants.CONFIRM}`
+          }
+        } else if (vehicle) {
+          onCnfrmObj[`fulfillment${index}_vehicle`] =
+            `Vehicle should not be present in fulfillment ${index} with type ${type} and category ${category} in /${constants.CONFIRM}`
+        }
+      })
     }
 
     try {
@@ -674,16 +685,23 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
       logger.error(`Error while checking transaction is in message.order.payment`)
     }
     try {
-      if (flow === FLOW.FLOW2A) {
+      if (flow === FLOW.FLOW012) {
         logger.info('Payment status check in on confirm call')
         const payment = on_confirm.payment
+        const confirmPaymentStatus = getValue('confirmPaymentStatus')
+        if(payment.status!== confirmPaymentStatus){
+              const key = `missmatchStatus`
+                  onCnfrmObj[key] = `payment status in /${constants.ON_CONFIRM} must be same as in /${constants.CONFIRM} `
+        }
         if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
-          logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`);
-          onCnfrmObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
+          logger.error(
+            `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`,
+          )
+          onCnfrmObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`
         }
       }
     } catch (err: any) {
-      logger.error('Error while checking payment in message/order/payment: ' + err.message);
+      logger.error('Error while checking payment in message/order/payment: ' + err.message)
     }
 
     try {
@@ -720,6 +738,53 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
       }
     } catch (err: any) {
       logger.error(`Error while Checking bap_terms in ${constants.ON_CONFIRM}, ${err.stack} `)
+    }
+
+    if (flow === FLOW.FLOW003) {
+      const fulfillmentId = getValue('fulfillmentId')
+      const slot = getValue('fulfillmentSlots')
+      const ele = on_confirm.fulfillments.find((ele: { id: any }): any => ele.id === fulfillmentId)
+      const item = slot.find((ele: { id: any }): any => ele.id === fulfillmentId)
+      if (!ele || !item) {
+        const key = `fulfillments missing`
+        onCnfrmObj[key] = `fulfillments must be same as in /${constants.ON_INIT}`
+      }
+      if (item?.end?.time?.range && ele?.end?.time?.range) {
+        const itemRange = item.end.time.range
+        const eleRange = ele.end.time.range
+
+        if (itemRange.start !== eleRange.start && itemRange.end !== eleRange.end) {
+          const key = `slotsMismatch`
+          onCnfrmObj[key] = `slots in fulfillments must be same as in /${constants.ON_INIT}`
+        }
+      }
+    }
+
+    try {
+      const credsWithProviderId = getValue('credsWithProviderId')
+      const providerId = on_confirm?.provider?.id
+      const confirmCreds = on_confirm?.provider?.creds
+      const found = credsWithProviderId.find((ele: { providerId: any }) => ele.providerId === providerId)
+
+      const expectedCreds = found?.creds
+     if (flow === FLOW.FLOW017) {
+        if (!expectedCreds || !credsWithProviderId|| !confirmCreds) {
+          onCnfrmObj['MissingCreds'] = `creds must be present in /${constants.ON_SEARCH}`
+        } else if (!deepCompare(expectedCreds, confirmCreds)) {
+          onCnfrmObj['MissingCreds'] = `creds must be present and same as in /${constants.ON_SEARCH}`
+        }
+      }
+      if (credsWithProviderId && confirmCreds) {
+
+        if (expectedCreds) {
+          if (!deepCompare(expectedCreds, confirmCreds)) {
+            onCnfrmObj['MissingCreds'] = `Mismatch found in creds, it must be same as in /${constants.ON_SEARCH}`
+          }
+        }
+      }
+     
+    } catch (err: any) {
+      logger.error(`Error while Checking creds in ${constants.ON_CONFIRM}, ${err.stack} `)
     }
 
     return onCnfrmObj

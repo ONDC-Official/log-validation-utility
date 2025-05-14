@@ -1097,8 +1097,8 @@ export const mapCancellationID = (cancelled_by: string, reason_id: string, error
 export const payment_status = (payment: any, flow: string) => {
   const errorObj: any = {}
   logger.info(`Checking payment status for flow: ${flow}`)
-  if (flow === FLOW.FLOW2A && payment.status === PAYMENT_STATUS.PAID) {
-    errorObj.message = `Cannot be ${payment.status} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
+  if ( (flow === FLOW.FLOW012) && payment.status === PAYMENT_STATUS.PAID) {
+    errorObj.message = `Cannot be ${payment.status} for ${FLOW.FLOW012} flow (Cash on Delivery)`
     return errorObj
   }
   if (payment.status === PAYMENT_STATUS.PAID) {
@@ -1631,4 +1631,11 @@ export const checkIsOptional = (apiSeq: string, flow: string): boolean => {
       return true
     } else return false
   } else return false
+}
+
+export function getProviderId(obj: Record<string, any>): string | null {
+  if ('provider_id' in obj && obj.provider_id) {
+    return obj.provider_id;
+  }
+  return null;
 }

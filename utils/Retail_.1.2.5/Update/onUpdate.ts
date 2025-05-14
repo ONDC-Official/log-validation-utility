@@ -11,6 +11,7 @@ import {
   checkQuoteTrailSum,
   compareCoordinates,
   checkQuoteTrail,
+  deepCompare,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { timeDiff } from '../../index'
@@ -19,6 +20,7 @@ import {
   return_rejected_request_reasonCodes,
   return_request_reasonCodes,
 } from '../../../constants/reasonCode'
+import { FLOW } from '../../enum'
 
 export const checkOnUpdate = (
   data: any,
@@ -1363,6 +1365,60 @@ export const checkOnUpdate = (
         console.error(`!!Some error occurred while checking /${apiSeq} API`, error.stack)
       }
     }
+    const fulfillmentId = getValue('fulfillmentId')
+
+    try {
+      const res = on_update.fulfillments.find((ele: { id: any }) => ele.id === fulfillmentId)
+      const updateObj = getValue('updateObj')
+      if (!deepCompare(updateObj, res)) {
+        onupdtObj['addressUpdate'] = `Address must be updated which is given in /${constants.UPDATE}`
+      }
+    } catch (error) {
+      logger.error(`Error while checking for update_target_obj for /${apiSeq} , ${error}`)
+    }
+    try {
+      const flowChecks: Record<string, { key: string; message: string }> = {
+        [FLOW.FLOW00F]: {
+          key: 'addressUpdate',
+          message: `Address must be same as given in /${constants.UPDATE}`,
+        },
+        [FLOW.FLOW011]: {
+          key: 'buyerInstructions',
+          message: `Instructions must be same as given in /${constants.UPDATE}`,
+        },
+      }
+
+      if (flow in flowChecks) {
+        const res = on_update.fulfillments.find((ele: { id: any }) => ele.id === fulfillmentId)
+        const updateObj = getValue('updateObj')
+        const { key, message } = flowChecks[flow]
+        if (!deepCompare(updateObj, res)) {
+          onupdtObj[key] = message
+        }
+      }
+    } catch (err: any) {
+      logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)
+    }
+
+    try {
+      const credsWithProviderId = getValue('credsWithProviderId')
+      const providerId = on_update?.provider?.id
+      const confirmCreds = on_update?.provider?.creds
+      const found = credsWithProviderId.find((ele: { providerId: any }) => ele.providerId === providerId)
+      const expectedCreds = found?.creds
+      if (!expectedCreds && confirmCreds) {
+        onupdtObj['MissingCreds'] = `creds must be same as in /${constants.ON_SEARCH}`
+      }
+      if (flow === FLOW.FLOW017) {
+        if (!expectedCreds && confirmCreds) {
+          onupdtObj['MissingCreds'] = `creds must be present in /${constants.ON_SEARCH}`
+        } else if (!deepCompare(expectedCreds, confirmCreds)) {
+          onupdtObj['MissingCreds'] = `creds must be present and same as in /${constants.ON_SEARCH}`
+        }
+      }
+    } catch (err: any) {
+      logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)
+    }
     try {
       if (apiSeq == ApiSequence.ON_UPDATE_LIQUIDATED || apiSeq === ApiSequence.ON_UPDATE_PICKED) {
         //   let updatedItemID = getValue('updatedItemID')
@@ -1452,11 +1508,6 @@ export const checkOnUpdate = (
               
               const matchingItems = offerItemIds.filter((id: string) => orderItemIdList.includes(id)) || []              
               console.log("matchingItems",JSON.stringify(matchingItems));
-              if (matchingItems.length === 0 || !matchingItems) {
-                onupdtObj[`offer_item[${i}]`] =
-                  `Offer with id '${offerId}' is not applicable for any of the ordered item(s). \nApplicable items in offer: [${offerItemIds.join(', ')}], \nItems in order: [${orderItemIds.join(', ')}].`
-                  return
-              }
                 const qualifierTag: any = offerApplied?.tags?.find((tag: any) => {
                   return tag?.code === 'qualifier'
                 })

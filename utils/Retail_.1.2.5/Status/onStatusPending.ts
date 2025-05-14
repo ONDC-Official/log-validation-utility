@@ -11,6 +11,7 @@ import {
   payment_status,
   compareTimeRanges,
   compareCoordinates,
+  getProviderId,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -344,12 +345,12 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
           logger.error(`Error while checking transaction is in message.order.payment`)
         }
         try {
-          if (flow === FLOW.FLOW2A) {
+          if (flow === FLOW.FLOW012) {
             logger.info('Payment status check in on status pending call')
             const payment = on_status.payment
             if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
-              logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`);
-              onStatusObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
+              logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`);
+              onStatusObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`
             }
           }
         } catch (err: any) {
@@ -380,6 +381,23 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
     
           } catch (error: any) {
             logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_PENDING}, ${error.stack}`)
+          }
+        }
+        if (flow === FLOW.FLOW01C) {
+          const fulfillments = on_status.fulfillments
+          const deliveryFulfillment = fulfillments.find((f: any) => f.type === 'Delivery')
+    
+          if (!deliveryFulfillment.hasOwnProperty('provider_id')) {
+            onStatusObj['missingFulfillments'] =
+              `provider_id must be present in ${ApiSequence.ON_STATUS_PENDING} as order is accepted`
+          }
+    
+          const id = getProviderId(deliveryFulfillment)
+          const fulfillmentProviderId = getValue('fulfillmentProviderId')
+    
+          if (deliveryFulfillment.hasOwnProperty('provider_id') && id !== fulfillmentProviderId) {
+            onStatusObj['providerIdMismatch'] =
+              `provider_id in fulfillment in ${ApiSequence.ON_CONFIRM} does not match expected provider_id: expected '${fulfillmentProviderId}' in ${ApiSequence.ON_STATUS_PENDING} but got ${id}`
           }
         }
       } catch (err: any) {

@@ -10,6 +10,8 @@ import {
   compareTimeRanges,
   compareFulfillmentObject,
   compareAllObjects,
+  getProviderId,
+  deepCompare,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
@@ -710,12 +712,12 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
         )
       }
       try {
-        if (flow === FLOW.FLOW2A) {
+        if (flow === FLOW.FLOW012) {
           logger.info('Payment status check in on status out for delivery call')
           const payment = on_status.payment
           if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
-            logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`)
-            onStatusObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
+            logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`)
+            onStatusObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`
           }
         }
       } catch (err: any) {
@@ -785,27 +787,59 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
   
       if (flow === FLOW.FLOW020) {
         const fulfillments = on_status.fulfillments
-  
+
         fulfillments?.forEach((fulfillment: any) => {
           const tags = fulfillment.tags || []
           const delayTag = tags.find((tag: { code: string }) => tag.code === 'fulfillment_delay')
           const fulfillmentDelayTagList = getValue('fulfillmentDelayTagList')
-         
-  
-  
-  
-   const Errors = compareAllObjects(
-            delayTag.list,
-            fulfillmentDelayTagList,
-  
-          )
-          
+
+          const Errors = compareAllObjects(delayTag.list, fulfillmentDelayTagList)
+
           if (!Errors.isEqual || !Errors.isObj1InObj2 || !Errors.isObj2InObj1 || !Errors.isContained) {
             const key = `missingFulfillmentTags`
             onStatusObj[key] = `missingFulfillmentTags are mandatory for ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}`
           }
         })
       }
+      if (flow === FLOW.FLOW01C) {
+        const fulfillments = on_status.fulfillments
+        const deliveryFulfillment = fulfillments.find((f: any) => f.type === 'Delivery')
+
+        if (!deliveryFulfillment.hasOwnProperty('provider_id')) {
+          onStatusObj['missingFulfillments'] =
+            `provider_id must be present in ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY} as order is accepted`
+        }
+
+        const id = getProviderId(deliveryFulfillment)
+        const fulfillmentProviderId = getValue('fulfillmentProviderId')
+
+        if (deliveryFulfillment.hasOwnProperty('provider_id') && id !== fulfillmentProviderId) {
+          onStatusObj['providerIdMismatch'] =
+            `provider_id in fulfillment in ${ApiSequence.ON_CONFIRM} does not match expected provider_id: expected '${fulfillmentProviderId}' in ${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY} but got ${id}`
+        }
+      }
+
+      try {
+        const credsWithProviderId = getValue('credsWithProviderId')
+        const providerId = on_status?.provider?.id
+        const confirmCreds = on_status?.provider?.creds
+        const found = credsWithProviderId.find((ele: { providerId: any }) => ele.providerId === providerId)
+        const expectedCreds = found?.creds
+        if (!expectedCreds) {
+          onStatusObj['MissingCreds'] = `creds must be present in /${constants.ON_SEARCH}`
+        }
+        if (flow === FLOW.FLOW017) {
+          if (!expectedCreds) {
+            onStatusObj['MissingCreds'] = `creds must be present in /${constants.ON_SEARCH}`
+          } else if (!deepCompare(expectedCreds, confirmCreds)) {
+            console.log('here inside else')
+            onStatusObj['MissingCreds'] = `creds must be present and same as in /${constants.ON_SEARCH}`
+          }
+        }
+      } catch (err: any) {
+        logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)
+      }
+  
     }
 
     return onStatusObj

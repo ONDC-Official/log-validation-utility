@@ -47,9 +47,9 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
   }
 
   try {
-    const validFlows = ['1', '2', '2A', '3', '4', '5', '6', '7', '8', '9', ]
+    const validFlows = ['1', '2', '3', '4', '5', '6', '7', '8', '9', ]
     if (!retailDomains.includes(domain)) {
-      return 'Domain should be one of the 1.2.0 or 1.2.5 retail domains'
+      return 'Domain should be of the 1.2.0 retail domains'
     }
     const flowOneSequence = [
       ApiSequence.SEARCH,
@@ -115,7 +115,7 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
       ApiSequence.ON_STATUS_PICKED,
       ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
       ApiSequence.ON_CANCEL,
-      ApiSequence.ON_STATUS_RTO_DELIVERED
+      ApiSequence.ON_STATUS_RTO_DELIVERED,
     ]
 
     const flowSixSequence = [
@@ -347,8 +347,6 @@ export const validateLogs = async (data: any, domain: string, flow: string) => {
   return logReport
 }
 export const validateLogsRetailV2 = async (data: any, domain: string, flow: string) => {
-    console.log("in this");
-
   const msgIdSet = new Set()
   const quoteTrailItemsSet = new Set()
   const settlementDetatilSet = new Set()
@@ -363,7 +361,27 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
   }
 
   try {
-    const validFlows = ['1', '2', '2A', '3', '4', '5', '6', '7', '8', '9','0091','0092','0093','0094','0095','0096','0097','0098','020','00B']
+    const validFlows = [
+      '1',
+      '2',
+      '012',
+      '3',
+      '4',
+      '5',
+      '6',
+      '7',
+      '8',
+      '9',
+     '0091','0092','0093','0094','0095','0096','0097','0098','020','00B',
+      '01C',
+      '008',
+      '003',
+      '00F',
+      '011',
+      '017',
+      '00D',
+      '00E',
+    ]
     if (!retailDomains.includes(domain)) {
       return 'Domain should 1.2.5 retail domains'
     }
@@ -426,12 +444,14 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_INIT,
       ApiSequence.CONFIRM,
       ApiSequence.ON_CONFIRM,
+      ApiSequence.ON_UPDATE_PART_CANCEL,
+      ApiSequence.UPDATE_SETTLEMENT_PART_CANCEL,
       ApiSequence.ON_STATUS_PENDING,
       ApiSequence.ON_STATUS_PACKED,
       ApiSequence.ON_STATUS_PICKED,
       ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
       ApiSequence.ON_CANCEL,
-      ApiSequence.ON_STATUS_RTO_DELIVERED,
+      ApiSequence.ON_STATUS_RTO_DELIVERED
     ]
 
     const flowSixSequence = [
@@ -443,19 +463,11 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_INIT,
       ApiSequence.CONFIRM,
       ApiSequence.ON_CONFIRM,
-      ApiSequence.ON_UPDATE_PART_CANCEL,
-      ApiSequence.UPDATE_SETTLEMENT_PART_CANCEL,
       ApiSequence.ON_STATUS_PENDING,
       ApiSequence.ON_STATUS_PACKED,
       ApiSequence.ON_STATUS_PICKED,
       ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
       ApiSequence.ON_STATUS_DELIVERED,
-      ApiSequence.UPDATE_REVERSE_QC,
-      ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC,
-      ApiSequence.ON_UPDATE_APPROVAL,
-      ApiSequence.ON_UPDATE_PICKED,
-      ApiSequence.UPDATE_SETTLEMENT_REVERSE_QC,
-      ApiSequence.ON_UPDATE_DELIVERED,
       ApiSequence.UPDATE_LIQUIDATED,
       ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED,
       ApiSequence.ON_UPDATE_LIQUIDATED,
@@ -585,6 +597,129 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.REPLACEMENT_ON_STATUS_OUT_FOR_DELIVERY,
       ApiSequence.REPLACEMENT_ON_STATUS_DELIVERED,
     ]
+    const flow01CSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+      ApiSequence.ON_STATUS_PENDING,
+      ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
+      ApiSequence.ON_STATUS_DELIVERED,
+    ]
+    const flow008Sequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+    ]
+    const flow003Sequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+      ApiSequence.ON_STATUS_PENDING,
+      ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_PICKED,
+    ]
+    const flow00FSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+      ApiSequence.UPDATE_ADDRESS,
+      ApiSequence.ON_UPDATE_ADDRESS,
+    ]
+    const flow011Sequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+      ApiSequence.UPDATE_INSTRUCTIONS,
+      ApiSequence.ON_UPDATE_INSTRUCTIONS,
+    ]
+    const flow017Sequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+      ApiSequence.ON_STATUS_PENDING,
+      ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
+      ApiSequence.ON_STATUS_DELIVERED,
+      ApiSequence.ON_UPDATE,
+      ApiSequence.ON_CANCEL,
+    ]
+    const flow00DSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+      ApiSequence.ON_STATUS_PENDING,
+      ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
+      ApiSequence.ON_STATUS_DELIVERED,
+      ApiSequence.CANCEL,
+      ApiSequence.ON_CANCEL,
+    ]
+    const flow00ESequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+      ApiSequence.ON_STATUS_PENDING,
+      ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.UPDATE,
+    ]
+    const flow012Sequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+      ApiSequence.ON_STATUS_PENDING,
+      ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
+      ApiSequence.ON_STATUS_DELIVERED,
+    ]
 
     const processApiSequence = (apiSequence: any, data: any, logReport: any, msgIdSet: any, flow: string) => {
       if (validFlows.includes(flow)) {
@@ -612,9 +747,9 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
           if (domain === 'ONDC:RET11') {
             return checkOnsearchFullCatalogRefresh(data)
           } else {
-            return checkOnsearch(data)
+            return checkOnsearch(data, flow)
           }
-        case ApiSequence.INC_SEARCH:
+        case ApiSequence.INC_SEARCH: 
           return checkSearchIncremental(data, msgIdSet)
         case ApiSequence.INC_ONSEARCH:
           return checkOnsearchIncremental(data, msgIdSet)
@@ -639,7 +774,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
         case ApiSequence.ON_CONFIRM:
           return checkOnConfirm(data, fulfillmentsItemsSet, flow)
         case ApiSequence.CANCEL:
-          return checkCancel(data, msgIdSet)
+          return checkCancel(data, msgIdSet, flow)
         case ApiSequence.ON_CANCEL:
           return checkOnCancel(data, msgIdSet)
         case ApiSequence.ON_STATUS_RTO_DELIVERED:
@@ -666,6 +801,12 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
           return checkOnStatusDelivered(data, 'delivered', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.REPLACEMENT_ON_STATUS_DELIVERED:
           return checkOnStatusDelivered(data, 'replacement_on_status_delivered', msgIdSet, fulfillmentsItemsSet)
+        case ApiSequence.UPDATE:
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE, settlementDetatilSet, flow)
+        case ApiSequence.UPDATE_ADDRESS:
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_ADDRESS, settlementDetatilSet, flow)
+        case ApiSequence.UPDATE_INSTRUCTIONS:
+          return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_INSTRUCTIONS, settlementDetatilSet, flow)
         case ApiSequence.ON_UPDATE_PART_CANCEL:
           return checkOnUpdate(
             data,
@@ -691,6 +832,26 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
             quoteTrailItemsSet,
             fulfillmentsItemsSet,
             '6-b',
+          )
+        case ApiSequence.ON_UPDATE_ADDRESS:
+          return checkOnUpdate(
+            data,
+            msgIdSet,
+            ApiSequence.ON_UPDATE_ADDRESS,
+            settlementDetatilSet,
+            quoteTrailItemsSet,
+            fulfillmentsItemsSet,
+            flow,
+          )
+        case ApiSequence.ON_UPDATE_INSTRUCTIONS:
+          return checkOnUpdate(
+            data,
+            msgIdSet,
+            ApiSequence.ON_UPDATE_INSTRUCTIONS,
+            settlementDetatilSet,
+            quoteTrailItemsSet,
+            fulfillmentsItemsSet,
+            flow,
           )
         case ApiSequence.ON_UPDATE_APPROVAL:
           return checkOnUpdate(
@@ -734,6 +895,16 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
             fulfillmentsItemsSet,
             '6-b',
           )
+        case ApiSequence.ON_UPDATE:
+          return checkOnUpdate(
+            data,
+            msgIdSet,
+            ApiSequence.ON_UPDATE,
+            settlementDetatilSet,
+            quoteTrailItemsSet,
+            fulfillmentsItemsSet,
+            flow,
+          )
         case ApiSequence.UPDATE_LIQUIDATED:
           return checkUpdate(data, msgIdSet, ApiSequence.UPDATE_LIQUIDATED, settlementDetatilSet, '6-c')
         case ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED:
@@ -774,6 +945,9 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
         break
       case FLOW.FLOW2:
         logReport = processApiSequence(flowTwoSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW012:
+        logReport = processApiSequence(flow012Sequence, data, logReport, msgIdSet, flow)
         break
       case FLOW.FLOW3:
         logReport = processApiSequence(flowThreeSequence, data, logReport, msgIdSet, flow)
@@ -824,7 +998,35 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
         logReport = processApiSequence(flow020Sequence, data, logReport, msgIdSet, flow)
         break
       case FLOW.FLOW00B:
-        logReport = processApiSequence(flowReplacementSequence,data,logReport,msgIdSet,flow)  
+        logReport = processApiSequence(flowReplacementSequence,data,logReport,msgIdSet,flow) 
+        break
+      case FLOW.FLOW01C:
+        logReport = processApiSequence(flow01CSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW008:
+        logReport = processApiSequence(flow008Sequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW003:
+        logReport = processApiSequence(flow003Sequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW00F:
+        logReport = processApiSequence(flow00FSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW011:
+        logReport = processApiSequence(flow011Sequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW017:
+        logReport = processApiSequence(flow017Sequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW00D:
+        logReport = processApiSequence(flow00DSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW00E:
+        logReport = processApiSequence(flow00ESequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW012:
+        logReport = processApiSequence(flow012Sequence, data, logReport, msgIdSet, flow)
+        break
     }
   } catch (error: any) {
     logger.error(error.message)

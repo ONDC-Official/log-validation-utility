@@ -695,7 +695,7 @@ export enum DOMAIN {
 export enum FLOW {
   FLOW1 = '1',
   FLOW2 = '2',
-  FLOW2A = '2A',
+  FLOW012 = '012',
   FLOW3 = '3',
   FLOW4 = '4',
   FLOW5 = '5',
@@ -704,7 +704,15 @@ export enum FLOW {
   FLOW8 = '8',
   FLOW9 = '9',
   FLOW020 = '020',
-  FLOW00B = "00B"
+  FLOW00B = "00B",
+  FLOW01C = '01C',
+  FLOW008 = '008',
+  FLOW003 = '003',
+  FLOW00F = '00F',
+  FLOW011 = '011',
+  FLOW017 = '017',
+  FLOW00D = '00D',
+  FLOW00E = '00E'
 }
 
 export enum statutory_reqs {

@@ -15,7 +15,7 @@ export const checkCancel1 = (data: any, msgIdSet: any, version: any) => {
 
   try {
     logger.info(`Validating Schema for ${TRV14ApiSequence.CANCEL} API`)
-    const vs = validateSchema('trv14', TRV14ApiSequence.CANCEL, data)
+    const vs = validateSchema('trv14', TRV14ApiSequence.CANCEL, data,1)
 
     if (vs != 'error') {
       Object.assign(rsfObj, vs)

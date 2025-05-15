@@ -2,21 +2,21 @@ import { logger } from '../../../shared/logger'
 import { TRV14ApiSequence } from '../../../constants'
 import { isObjectEmpty, validateSchema } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
-import { compareFulfillments, compareItems, comparePayments, compareProviders, compareReplacementTerms, validateTagsStructure } from './TRV14checks'
+import { compareFulfillments, compareItems, comparePayments, compareProviders, compareReplacementTerms, timeStampCompare, validateTagsStructure } from './TRV14checks'
 
 // @ts-ignore
 export const checkOnCancel1 = (data: any, msgIdSet: any, version: any) => {
   const rsfObj: any = {}
 
-  const { message, context }: any = data
+  const { message,error, context }: any = data
 
   if (!data || isObjectEmpty(data)) {
     return { [TRV14ApiSequence.CANCEL]: 'JSON cannot be empty' }
   }
 
   try {
-    logger.info(`Validating Schema for ${TRV14ApiSequence.CANCEL} API`)
-    const vs = validateSchema('trv14', TRV14ApiSequence.CANCEL, data)
+    logger.info(`Validating Schema for ${TRV14ApiSequence.ON_CANCEL} API`)
+    const vs = validateSchema('trv14', TRV14ApiSequence.ON_CANCEL, data, 1)
 
     if (vs != 'error') {
       Object.assign(rsfObj, vs)
@@ -29,7 +29,19 @@ export const checkOnCancel1 = (data: any, msgIdSet: any, version: any) => {
     const provider = getValue(`onStatusprovider`)
     const items=  getValue(`onStatusItems`)
     const Map = getValue(`myMap`)
+    const Cancel = getValue(`soft_cancel_context`)
     // const quote = getValue(`onStatusquote`)
+
+    //comparing timestamp
+    try {
+      const timestamp = timeStampCompare(Cancel.timestamp,context.timestamp)
+      if(!timestamp){
+        rsfObj.timestamp =  `cancel timestamp can't be greater than timestamp`
+      }
+    } catch (error) {
+      logger.error(error)
+    }
+
 
     //comparing provider
     try {
@@ -39,6 +51,10 @@ export const checkOnCancel1 = (data: any, msgIdSet: any, version: any) => {
       logger.error(error)
     }
 
+    if(error && message){
+      rsfObj.message = `error and message can't exist at the same time`
+    }
+    
     //comparingitems
     try {
       const itemError = compareItems(onCancel.items,items)
@@ -157,13 +173,13 @@ export const checkOnCancel1 = (data: any, msgIdSet: any, version: any) => {
     }
     
 
-    setValue(`onCancel1items`,onCancel.items)
-    setValue(`onCancel1provider`,onCancel.provider)
-    setValue(`onCancel1fulfillment`,onCancel.fulfillments)
-    setValue(`onCancel1payments`,onCancel.payments)
-    setValue(`onCancel1quote`,onCancel.quote)
-    setValue(`onCancel1replacementterms`,onCancel.replacement_terms)
-    setValue(`onCancel1tags`,onCancel.tags)
+    setValue(`onCancel1items`,onCancel?.items)
+    setValue(`onCancel1provider`,onCancel?.provider)
+    setValue(`onCancel1fulfillment`,onCancel?.fulfillments)
+    setValue(`onCancel1payments`,onCancel?.payments)
+    setValue(`onCancel1quote`,onCancel?.quote)
+    setValue(`onCancel1replacementterms`,onCancel?.replacement_terms)
+    setValue(`onCancel1tags`,onCancel?.tags)
     
     setValue(`context`,context)
     return rsfObj

@@ -226,13 +226,13 @@ export const checkMetroContext = (
   }
 }
 
-const validate_schema_for_retail_json = (vertical: string, api: string, data: any) => {
+const validate_schema_for_retail_json = (vertical: string, api: string, data: any,flag? :any) => {
   console.log(`+++++++++ validate_schema_${api}_${vertical}_for_json`)
-  const res = (schemaValidator as any)[`validate_schema_${api}_${vertical}_for_json`](data)
+  const res = (schemaValidator as any)[`validate_schema_${api}${flag?`_${flag}`:null}_${vertical}_for_json`](data)
   return res
 }
 
-export const validateSchema = (domain: string, api: string, data: any) => {
+export const validateSchema = (domain: string, api: string, data: any ,flag? :any) => {
   try {
     logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
     const errObj: any = {}
@@ -243,7 +243,7 @@ export const validateSchema = (domain: string, api: string, data: any) => {
       schmaVldtr = (schemaValidator as any).validate_schema_search_TRV13_for_json(data);
       console.log("Using direct TRV13 search validator");
     } else {
-      schmaVldtr = validate_schema_for_retail_json(domain, api, data);
+      schmaVldtr = validate_schema_for_retail_json(domain, api, data, flag);
     }
     
     const datavld = schmaVldtr

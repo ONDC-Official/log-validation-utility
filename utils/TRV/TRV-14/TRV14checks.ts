@@ -1125,4 +1125,13 @@ export const validateQuote = (quote: any, action: string): Record<string, string
     }
   }
  
-  
+  export function timeStampCompare(timestamp:any,timestamp2:any){
+    const date1 = new Date(timestamp);
+    const date2 = new Date(timestamp2);
+   if (date1 >  date2 ){
+    return false }
+    else{
+      return true
+      }
+
+  }

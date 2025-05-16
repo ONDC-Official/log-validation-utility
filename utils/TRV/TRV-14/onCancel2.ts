@@ -27,7 +27,7 @@ export const checkOnCancel2 = (data: any, msgIdSet: any, version: any) => {
       const replacement_terms = getValue(`onCancel1replacementterms`)  
 
     logger.info(`Validating Schema for ${TRV14ApiSequence.ON_CANCEL} API`)
-    const vs = validateSchema('trv14', TRV14ApiSequence.ON_CANCEL, data)
+    const vs = validateSchema('trv14', TRV14ApiSequence.ON_CANCEL, data,2)
 
     if (vs != 'error') {
       Object.assign(rsfObj, vs)

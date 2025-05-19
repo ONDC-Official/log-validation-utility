@@ -230,8 +230,36 @@ export const checkOnsearch = (data: any, flow?: string) => {
   try {
     const domain = context.domain.split(':')[1]
     logger.info(`Checking for item tags in bpp/providers[0].items.tags in ${domain}`)
+    const isoDurationRegex = /^P(?=\d|T\d)(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?$/;
     for (let i in onSearchCatalog['bpp/providers']) {
       const items = onSearchCatalog['bpp/providers'][i].items
+      items.forEach((item: any) => {
+        const replacementTerms = item.replacement_terms
+
+        if (replacementTerms !== undefined) {
+          if (!Array.isArray(replacementTerms) || replacementTerms.length === 0) {
+            errorObj['on_search_full_catalog_refresh'] =
+              `replacement_terms must be a non-empty array if present for item ID '${item.id}'`;
+            return;
+          }
+  
+          for (const term of replacementTerms) {
+            if (!term.hasOwnProperty('replace_within')) {
+              errorObj['on_search_full_catalog_refresh'] =
+                `Missing 'replace_within' in replacement_terms for item ID '${item.id}'`;
+              
+            }
+  
+            const duration = term.replace_within?.duration;
+  
+            if (!duration || !isoDurationRegex.test(duration)) {
+              errorObj['on_search_full_catalog_refresh'] =
+                `Invalid or missing ISO 8601 duration in replacement_terms for item ID '${item.id}'. Found: '${duration}'`;
+              
+            }
+          }
+        }
+      })
       let errors: any
       switch (domain) {
         case DOMAIN.RET10:

@@ -63,6 +63,7 @@ import cancel2SchemaTRV14 from '../schema/TRV-14/cancel2'
 import onCancel2SchemaTRV14 from '../schema/TRV-14/onCancel2'
 import updateSchemaTRV14 from '../schema/TRV-14/update'
 import onUpdateSchemaTRV14 from '../schema/TRV-14/onUpdate'
+import onSearchSchemaTRV14 from '../schema/TRV-14/onSearch'
 import onSearch1SchemaTRV14 from '../schema/TRV-14/onSearch1'
 import onSearch2SchemaTRV14 from '../schema/TRV-14/onSearch2'
 import newIssueSchema from '../schema/Igm/2.0.0/issue'
@@ -87,6 +88,48 @@ import {confirmFIS14Schema} from '../schema/FIS/Mutual_Funds/confirm'
 import {onConfirmFIS14Schema} from '../schema/FIS/Mutual_Funds/on_confirm'
 // import { onStatusFIS14Schema } from '../schema/FIS/Mutual_Funds/on_status'
 import { onUpdateFIS14Schema } from '../schema/FIS/Mutual_Funds/on_update'
+import {searchSchemaTRV13} from '../schema/TRV-13/search'
+import onSearchSchemaTRV13 from '../schema/TRV-13/onSearch'
+import searchIncSchemaTRV13 from '../schema/TRV-13/searchInc'
+import onSearchIncSchemaTRV13 from '../schema/TRV-13/onSearchInc'
+import searchTimeSchemaTRV13 from '../schema/TRV-13/searchTime'
+import onSearchTimeSchemaTRV13 from '../schema/TRV-13/onSearchTime'
+import selectSchemaTRV13 from '../schema/TRV-13/select'
+import onSelectSchemaTRV13 from '../schema/TRV-13/onSelect'
+import initSchemaTRV13 from '../schema/TRV-13/init'
+import onInitSchemaTRV13 from '../schema/TRV-13/onInit'
+import confirmSchemaTRV13 from '../schema/TRV-13/confirm'
+import onConfirmSchemaTRV13 from '../schema/TRV-13/onConfirm'
+import statusSchemaTRV13 from '../schema/TRV-13/status'
+import onStatusSchemaTRV13 from '../schema/TRV-13/onStatus'
+import updateSchemaTRV13 from '../schema/TRV-13/update'
+import onUpdateSchemaTRV13 from '../schema/TRV-13/onUpdate'
+import cancelSchemaTRV13 from '../schema/TRV-13/cancel'
+import onCancelSchemaTRV13 from '../schema/TRV-13/onCancel'
+import { searchFIS12WCLSchema } from '../schema/FIS/WCL/search'
+import { onSearchFIS12WCLSchema } from '../schema/FIS/WCL/on_search'
+import { onCancelFISWCLSchema } from '../schema/FIS/WCL/on_cancel'
+import { cancelFISWCLSchema } from '../schema/FIS/WCL/cancel'
+import { onUpdateFIS12WCLSchema } from '../schema/FIS/WCL/on_update'
+import { updateFISWCLSchema } from '../schema/FIS/WCL/update'
+import { onStatusFISWCLSchema } from '../schema/FIS/WCL/on_status'
+import { onConfirmFISWCLSchema } from '../schema/FIS/WCL/on_confirm'
+import { confirmFIS12WCLSchema } from '../schema/FIS/WCL/confirm'
+import { onInitFIS12WCLSchema } from '../schema/FIS/WCL/on_init'
+import { initFIS12Schema } from '../schema/FIS/WCL/init'
+import { onSelectFIS12WCLSchema } from '../schema/FIS/WCL/on_select'
+import { selectFIS12WCLSchema } from '../schema/FIS/WCL/select'
+import { onUpdateFIS12FlowSchema } from '../schema/FIS/WCL/on_update_flow'
+import { searchFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/search'
+import { onSearchFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/on_search'
+import { selectFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/select'
+import { onSelectFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/on_select'
+import { initFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/init'
+import { onInitFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/on_init'
+import { confirmFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/confirm'
+import { onConfirmFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/on_confirm'
+import { updateFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/update'
+import { onUpdateFIS12PurchaseFinanceSchema } from '../schema/FIS/Purchase_Finance/on_update'
 
 const ajv = new Ajv({
   allErrors: true,
@@ -299,6 +342,11 @@ const validate_schema_search_trv14_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 // On search
+
+const validate_schema_on_search_trv14_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSearchSchemaTRV14)
+  return formatted_error(error_list)
+}
 
 const validate_schema_on_search_1_trv14_for_json = (data: any) => {
   const error_list = validate_schema(data, onSearch1SchemaTRV14)
@@ -1155,7 +1203,100 @@ const validate_schema_on_cancel_TRV12_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
-//________________________________________________________________________________________________
+// TRV-13 Schema Validation Functions
+const validate_schema_search_TRV13_for_json = (data: any) => {
+  console.log("+++++++++ data", data)
+  const error_list = validate_schema(data, searchSchemaTRV13)
+  console.log("+++++++++ error_list", error_list)
+  return formatted_error(error_list)
+}
+
+
+const validate_schema_on_search_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSearchSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_search_inc_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchIncSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_search_inc_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSearchIncSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_search_time_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchTimeSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_search_time_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSearchTimeSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_select_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, selectSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_select_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSelectSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_init_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, initSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_init_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onInitSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_confirm_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, confirmSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_confirm_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onConfirmSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_status_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, statusSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_status_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_update_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, updateSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_update_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_cancel_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancelSchemaTRV13)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_cancel_TRV13_for_json = (data: any) => {
+  const error_list = validate_schema(data, onCancelSchemaTRV13)
+  return formatted_error(error_list)
+}
+
 
 const validate_schema_for_json = (data: any, schemaPath: any) => {
   let error_list
@@ -1235,6 +1376,11 @@ const validate_schema_on_confirm_FIS14_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+const validate_schema_search_TRV1_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchSchemaTRV13)
+  return formatted_error(error_list)
+}
+
 // const validate_schema_on_status_FIS14_for_json = (data: any) => {
 //   const error_list = validate_schema(data, onStatusFIS14Schema)
 //   return formatted_error(error_list)
@@ -1244,6 +1390,139 @@ const validate_schema_on_update_FIS14_for_json = (data: any) => {
   const error_list = validate_schema(data, onUpdateFIS14Schema)
   return formatted_error(error_list)
 }
+
+//validate schema for FIS 12 Working capital
+const validate_schema_search_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchFIS12WCLSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_search_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSearchFIS12WCLSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_select_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, selectFIS12WCLSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_select_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSelectFIS12WCLSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_init_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, initFIS12Schema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_init_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, onInitFIS12WCLSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_confirm_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, confirmFIS12WCLSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_confirm_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, onConfirmFISWCLSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_status_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, onStatusFISWCLSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_update_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, updateFISWCLSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_update_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateFIS12WCLSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_cancel_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancelFISWCLSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_on_cancel_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, onCancelFISWCLSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_update_foreclosure_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateFIS12FlowSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_update_flow_FIS_WCL_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateFIS12FlowSchema)
+  return formatted_error(error_list)
+}
+
+// Purchase Finance Schema
+
+const validate_schema_search_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, searchFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_search_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSearchFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_select_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, selectFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_select_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, onSelectFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_init_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, initFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_init_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, onInitFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_confirm_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, confirmFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_confirm_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, onConfirmFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+// const validate_schema_status_FIS12_for_json = (data: any) => {
+//   // Using the generic FIS status schema from FISValidator
+//   return validate_schema_for_json(data, 'schema/FIS/status.yaml')
+// }
+
+// const validate_schema_on_status_FIS12_for_json = (data: any) => {
+//   const error_list = validate_schema(data, onStatusFISWCLSchema)
+//   return formatted_error(error_list)
+// }
+
+const validate_schema_update_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, updateFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+const validate_schema_on_update_FIS12_PF_for_json = (data: any) => {
+  const error_list = validate_schema(data, onUpdateFIS12PurchaseFinanceSchema)
+  return formatted_error(error_list)
+}
+
+
 
 const TRVValidator = {
   validate_schema_search_TRV_for_json: (data: any) => validate_schema_for_json(data, 'schema/FIS/search.yaml'),
@@ -1312,7 +1591,29 @@ const validate_schema_on_recon_rsf_for_json = (data: any) => {
   return formatted_error(error_list)
 }
 
+// Create TRV13Validator object
+
+
 export default {
+  validate_schema_search_TRV1_for_json,
+  validate_schema_search_TRV13_for_json,
+  validate_schema_on_search_TRV13_for_json,
+  validate_schema_search_inc_TRV13_for_json,
+  validate_schema_on_search_inc_TRV13_for_json,
+  validate_schema_search_time_TRV13_for_json,
+  validate_schema_on_search_time_TRV13_for_json,
+  validate_schema_select_TRV13_for_json,
+  validate_schema_on_select_TRV13_for_json,
+  validate_schema_init_TRV13_for_json,
+  validate_schema_on_init_TRV13_for_json,
+  validate_schema_confirm_TRV13_for_json,
+  validate_schema_on_confirm_TRV13_for_json,
+  validate_schema_status_TRV13_for_json,
+  validate_schema_on_status_TRV13_for_json,
+  validate_schema_update_TRV13_for_json,
+  validate_schema_on_update_TRV13_for_json,
+  validate_schema_cancel_TRV13_for_json,
+  validate_schema_on_cancel_TRV13_for_json,
   validate_schema_catalog_rejection_RET10_for_json,
   validate_schema_catalog_rejection_RET11_for_json,
   validate_schema_catalog_rejection_RET12_for_json,
@@ -1325,6 +1626,7 @@ export default {
   validate_schema_catalog_rejection_AGR10_for_json,
   validate_schema_catalog_rejection_RET1A_for_json,
   validate_schema_search_trv14_for_json,
+  validate_schema_on_search_trv14_for_json,
   validate_schema_on_search_1_trv14_for_json,
   validate_schema_on_search_2_trv14_for_json,
   validate_schema_select_1_trv14_for_json,
@@ -1575,6 +1877,36 @@ export default {
   // validate_schema_on_status_FIS14_for_json ,
   validate_schema_on_update_FIS14_for_json,
 
+  // FIS 12 : WCL
+  validate_schema_search_FIS_WCL_for_json,
+  validate_schema_on_search_FIS_WCL_for_json,
+  validate_schema_select_FIS_WCL_for_json,
+  validate_schema_on_select_FIS_WCL_for_json,
+  validate_schema_init_FIS_WCL_for_json,
+  validate_schema_on_init_FIS_WCL_for_json,
+  validate_schema_confirm_FIS_WCL_for_json,
+  validate_schema_on_confirm_FIS_WCL_for_json,
+  validate_schema_on_status_FIS_WCL_for_json,
+  validate_schema_update_FIS_WCL_for_json,
+  validate_schema_on_update_FIS_WCL_for_json,
+  validate_schema_on_update_foreclosure_FIS_WCL_for_json,
+  validate_schema_on_update_flow_FIS_WCL_for_json,
+  validate_schema_cancel_FIS_WCL_for_json,
+  validate_schema_on_cancel_FIS_WCL_for_json,
+
+  //FIS 12 : Purchase Finance
+  validate_schema_search_FIS12_PF_for_json,
+  validate_schema_on_search_FIS12_PF_for_json,
+  validate_schema_on_confirm_FIS12_PF_for_json,
+  validate_schema_on_update_FIS12_PF_for_json,
+  validate_schema_select_FIS12_PF_for_json,
+  validate_schema_on_select_FIS12_PF_for_json,
+  validate_schema_init_FIS12_PF_for_json,
+  validate_schema_on_init_FIS12_PF_for_json,
+  validate_schema_confirm_FIS12_PF_for_json,
+  validate_schema_update_FIS12_PF_for_json,
+
   ...TRVValidator,
   ...FISValidator,
+  // ...TRV13Validator,
 }

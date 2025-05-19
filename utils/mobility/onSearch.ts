@@ -106,6 +106,8 @@ export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
               'GPS coordinates must be specified with at least six decimal places of precision'
           }
         })
+      } else {
+        errorObj[`provider_${i}_locations`] = 'Missing or empty locations in provider'
       }
 
       //items checks
@@ -148,6 +150,8 @@ export const checkOnSearch = (data: any, msgIdSet: any, version: any) => {
               errorObj[`${itemKey}.code`] =
                 `descriptor.code must be RIDE at item.index ${index} in /${constants.ON_SEARCH}`
             }
+
+            if (item?.tags) errorObj[`${itemKey}.tags`] = `tags shouldn't be present, at item.index ${index} `
           })
         }
       } catch (error: any) {

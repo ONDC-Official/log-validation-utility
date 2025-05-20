@@ -573,8 +573,6 @@ export const checkOnSelect = (data: any,flow?:string) => {
           }
         }
         
-        
-// Now switch based on flow
         if (titleType === 'offer' && providerOffers.length > 0 && offers.length > 0) {
           try {
             if (applicableOffers?.length > 0) {

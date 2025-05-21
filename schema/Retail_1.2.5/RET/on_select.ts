@@ -390,7 +390,7 @@ export const onSelectSchema = {
                           },
                           tags: {
                             type: 'array',
-                            minItems: 2,
+                            minItems: 1,
                             items: {
                               oneOf: [
                                 {

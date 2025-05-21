@@ -45,11 +45,34 @@ export const TRV14FLOWS: any = {
   PAGINATION: 'PAGINATION',
   PURCHASE_OF_SINGLE_TICKET_WITH_ADD_ON: 'PURCHASE_OF_SINGLE_TICKET_WITH_ADD_ON',
   PURCHASE_OF_MULTIPLE_TICKET_WITH_ADD_ON: 'PURCHASE_OF_MULTIPLE_TICKET_WITH_ADD_ON',
+  PURCHASE_JOURNEY:'PURCHASE_JOURNEY',
   TECHNICAL_CANCELLATION: 'TECHNICAL_CANCELLATION',
   USER_CANCELLATION: 'USER_CANCELLATION',
   PARTIAL_CANCELLATION: 'PARTIAL_CANCELLATION',
   CANCELLATION_REJECTED: 'CANCELLATION_REJECTED',
 }
+
+export const purchaseofsingleticketwithaddon=[
+  TRV14ApiSequence.SEARCH,
+  TRV14ApiSequence.ON_SEARCH,
+  TRV14ApiSequence.SELECT,
+  TRV14ApiSequence.ON_SELECT,
+  TRV14ApiSequence.INIT,
+  TRV14ApiSequence.ON_INIT,
+  TRV14ApiSequence.CONFIRM,
+  TRV14ApiSequence.ON_CONFIRM,
+  TRV14ApiSequence.STATUS,
+  TRV14ApiSequence.ON_STATUS,
+]
+
+export const purchasewithoutaddon=[
+  TRV14ApiSequence.SELECT_1,
+  TRV14ApiSequence.ON_SELECT_1,
+  TRV14ApiSequence.INIT,
+  TRV14ApiSequence.ON_INIT,
+  TRV14ApiSequence.CONFIRM,
+  TRV14ApiSequence.ON_CONFIRM
+]
 
 export const searchAndRegisterforIncrementalPull = [
   TRV14ApiSequence.SEARCH,
@@ -59,8 +82,6 @@ export const searchAndRegisterforIncrementalPull = [
 ]
 
 export const purchaseJourney = [
-  TRV14ApiSequence.SEARCH,
-  TRV14ApiSequence.ON_SEARCH,
   TRV14ApiSequence.SELECT,
   TRV14ApiSequence.ON_SELECT,
   TRV14ApiSequence.SELECT_1,

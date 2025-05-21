@@ -45,7 +45,7 @@ const onSelect1SchemaTRV14 = {
         transaction_id: { type: 'string' },
         message_id: { type: 'string' },
         version: { type: 'string', enum: ['2.0.0'] },
-        action: { type: 'string', enum: ['on_select_1'] },
+        action: { type: 'string', enum: ['on_select'] },
         bap_uri: { type: 'string', format: 'uri' },
         ttl: { type: 'string', pattern: '^PT\\d+S$' },
         bpp_id: { type: 'string' },
@@ -85,6 +85,7 @@ const onSelect1SchemaTRV14 = {
               items: {
                 type: 'object',
                 required: ['id', 'type', 'stops',"vehicle"],
+                additionalProperties: false,
                 properties: {
                   id: { type: 'string' },
                   type: { type: 'string' , enum:["VISIT"] },
@@ -105,6 +106,25 @@ const onSelect1SchemaTRV14 = {
                       },
                     },
                   },
+                  agent: {
+                    type: 'object',
+                    properties: {
+                      organization: {
+                        type: 'object',
+                        properties: {
+                          contact: {
+                            type: 'object',
+                            required: ['phone', 'email'],
+                            additionalProperties: false,
+                            properties: {
+                              phone: { type: 'string' },
+                              email: { type: 'string' }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
                   vehicle:{
                     type: 'object',
                     required:["category"],
@@ -118,6 +138,7 @@ const onSelect1SchemaTRV14 = {
             provider: {
               type: 'object',
               required: ['id', 'descriptor'],
+              additionalProperties: false,
               properties: {
                 id: { type: 'string' },
                 descriptor: {
@@ -184,7 +205,47 @@ const onSelect1SchemaTRV14 = {
                   }
                 }
               }
-            }
+            },
+            cancellation_terms: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  cancellation_fee: {
+                    type: "object",
+                    properties: {
+                      percentage: { type: "string" }
+                    }
+                  },
+                  fulfillment_state: {
+                    type: "object",
+                    properties: {
+                      descriptor: {
+                        type: "object",
+                        properties: {
+                          code: { type: "string" }
+                        }
+                      }
+                    }
+                  },
+                  cancel_by: {
+                    type: "object",
+                    properties: {
+                      label: { type: "string" },
+                      duration: { type: "string" }
+                    }
+                  },
+                  cancellation_eligible: { type: "boolean" },
+                  external_ref: {
+                    type: "object",
+                    properties: {
+                      mimetype: { type: "string" },
+                      url: { type: "string" }
+                    }
+                  }
+                }
+              }
+            },
           },
         },
       },

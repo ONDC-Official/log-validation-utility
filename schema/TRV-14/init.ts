@@ -112,6 +112,7 @@ const initSchemaTRV14 = {
               items: {
                 type: 'object',
                 required: ['id', 'stops'],
+                additionalProperties: false,
                 properties: {
                   id: { type: 'string' },
                   stops: {
@@ -119,6 +120,7 @@ const initSchemaTRV14 = {
                     items: {
                       type: 'object',
                       required: ['type', 'time'],
+                      additionalProperties: false,
                       properties: {
                         type: { type: 'string',enum:["START"] },
                         time: {
@@ -137,6 +139,7 @@ const initSchemaTRV14 = {
             billing: {
               type: 'object',
               required: ['name', 'email', 'phone'],
+              additionalProperties: false,
               properties: {
                 name: { type: 'string' },
                 email: { type: 'string', format: 'email' },
@@ -146,6 +149,7 @@ const initSchemaTRV14 = {
             provider: {
               type: 'object',
               required: ['id'],
+              additionalProperties: false,
               properties: {
                 id: { type: 'string' },
               },
@@ -155,6 +159,7 @@ const initSchemaTRV14 = {
               items: {
                 type: 'object',
                 required: ['collected_by', 'status', 'type'],
+                additionalProperties: false,
                 properties: {
                   collected_by: { type: 'string',enum:["BAP"] },
                   status: { type: 'string',enum:["PAID","NOT-PAID"] },

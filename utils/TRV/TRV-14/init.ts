@@ -22,17 +22,31 @@ export const checkInit = (data: any, msgIdSet: any, version: any) => {
       Object.assign(rsfObj, vs)
     }
 
+ 
+
     //checking providerid
      const init =message.order
      const prvdrid =  getValue(`select2prvdrId`)
      const fulfillment = getValue(`select2fulfillment`)
      const items = getValue(`select2items`)
+     const select2Context = getValue('select2_context')
+
 
      if(init.provider.id !== prvdrid ){
       rsfObj.prvdrid = `provider id mismatches in init and on_select`
      }
 
+    //comparing message_id
+    try {
+      if(context.message_id === select2Context.message_id){
+        rsfObj.msgId = `init and select2 message id cant be the same`
+      }
+    } catch (error) {
+      logger.error(error)
+    }
+
      //init items
+     try {
      init.items.forEach((itm:any) => {
       if(!itemMap.has(itm.id) ){
         rsfObj.itm = `${itm.id} was not in select call  `
@@ -41,6 +55,10 @@ export const checkInit = (data: any, msgIdSet: any, version: any) => {
         rsfObj.itm = `${itm.id} quantity changed from previous call  `
       }
      })
+     } catch (error) {
+      logger.error(error)
+     }
+
 
      //compareItems
      try {
@@ -59,11 +77,17 @@ export const checkInit = (data: any, msgIdSet: any, version: any) => {
      }
 
      //init tags
-    const tagsError =  validateTagsStructure(init.tags)
-     Object.assign(rsfObj,tagsError)
+     try {
+      const tagsError =  validateTagsStructure(init.tags)
+      Object.assign(rsfObj,tagsError)
+     } catch (error) {
+      logger.error(error)
+     }
+
 
     setValue('initpayments',init.payments) 
     setValue('initfullfilments',init.fulfillments)
+    setValue('initprvdrId',init.provider.id)
     setValue('init_context', context)
     setValue('init_message', message)
 

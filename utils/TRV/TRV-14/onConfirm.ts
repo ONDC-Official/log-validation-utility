@@ -7,7 +7,7 @@ import { comparePayments ,compareReplacementTerms , validateTagsStructure ,compa
 export const checkOnConfirm = (data: any, msgIdSet: any, version: any, Flag: any) => {
   const rsfObj: any = {}
 
-  const { message }: any = data
+  const { context,message }: any = data
 
   if (!data || isObjectEmpty(data)) {
     return { [TRV14ApiSequence.ON_CONFIRM]: 'JSON cannot be empty' }
@@ -37,7 +37,52 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any, Flag: any
       }catch(error){
         logger.error(error)
       }
-  
+      
+
+      try {
+        onConfirm.items.forEach((itm:any)=>{
+          if(itm.descriptor.code === 'ABSTRACT'){
+            if(itm.price){
+              rsfObj[`${itm.id}_price`] = `itm price should not be there` 
+            }
+            if(itm.quantity){
+              rsfObj[`${itm.id}_quantity`] = `itm quantity should not be there` 
+            }
+          
+           if(itm.parent_item_id === ''){
+            rsfObj.parent_item_id = ` parent_item_id can't be empty string `
+          }
+            
+          if(!itm.tags){
+            rsfObj.parentitmtags = `parent item tags is missing`
+          }
+          else{
+            itm.tags.forEach((itm: any)=>{
+              const tags= ["INCLUSIONS","EXCLUSIONS"]
+              if(!tags.includes(itm.descriptor.code)){
+                rsfObj.tagsdescriptorcode =  `parent tags descriptior code is not valid`
+              }
+              let list =itm.list
+              list.forEach((itm :any)=>{
+                if(itm.value === '' ){
+                  rsfObj.list[`${itm}`] = `itm value can be empty string`
+                }
+              })
+            })
+          }
+          }
+          if(itm.descriptor.code === 'ENTRY_PASS'){
+            if(itm.parent_item_id === ''){
+              rsfObj[`${itm.id}`] = `${itm.id} can't have empty string parent_item_id`
+            }
+            if(!itm.parent_item_id){
+              rsfObj[`${itm.id}`] = `${itm.id} should have parent_item_id`
+            }
+          }    
+        })
+      } catch (error) {
+        logger.error(error)
+      }
   
       //checking replacement terms
       try{
@@ -63,6 +108,23 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any, Flag: any
         logger.error(error)
       }
   
+      try {
+        if(!onConfirm.created_at){
+          rsfObj.created_at = `created at is missing`
+        }
+        if(!onConfirm.updated_at){
+          rsfObj.updated_at = `updated at is missing`
+        }
+        if(onConfirm.created_at !== context.timestamp){
+          rsfObj.created_at = `created should match with timestamp`
+        }
+        if(onConfirm.updated_at !== context.timestamp){
+          rsfObj.updated_at = `updated should match with timestamp`
+        }
+      } catch (error) {
+        logger.error(error)
+      }
+
       //comparing fulfillments
       try {
         const fulfillmentError = compareFulfillments(onConfirm.fulfillments,fulfillment)
@@ -79,13 +141,39 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any, Flag: any
         logger.error(error)
       }
   
-      //compare quote
-      try {
-        const quoteError = compareQuote(onConfirm.quote,quote)
-        Object.assign(rsfObj,quoteError)
-      } catch (error) {
-        logger.error(error)
+      //validating quote
+    try {
+
+      const quoteErr = validateQuote(onConfirm.quote,'on_confirm')
+       Object.assign(rsfObj,quoteErr)
+       let totalsum = 0
+ 
+      // ✅ Ensure rsfObj.quote is initialized
+      if (!rsfObj.quote || typeof rsfObj.quote !== 'object') {
+        rsfObj.quote = {}
       }
+ 
+      onConfirm.quote.breakup.forEach((itm: any) => {
+        const expectedValue = Number(itm.item.price.value) * Number(itm.item.quantity.selected.count)
+        const actualValue = Number(itm.price.value)
+ 
+        if (actualValue !== expectedValue) {
+          rsfObj.quote[`${itm.item.id}`] = `${itm.item.id} ${expectedValue} value is not correct `
+        } else {
+          totalsum += expectedValue
+        }
+      })
+ 
+      if (totalsum !== Number(onConfirm.quote.price.value)) {
+        // ✅ Overwrite quote only if it's an object
+        rsfObj.quote[`price`] = `quote breakup summation is not correct`
+      }
+
+      const quoteCompareError = compareQuote(onConfirm.quote,quote)
+      Object.assign(rsfObj,quoteCompareError)
+     } catch (error) {
+       logger.error(error)
+     }
       setValue(`onConfirmOrder`,message.order)
       setValue('onConfirmItems',onConfirm.items)
       setValue(`onConfirmfulfillments`,onConfirm.fulfillments)
@@ -115,18 +203,101 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any, Flag: any
   
       const onConfirm = message.order
       
-  
+      try {
+        onConfirm.items.forEach((itm:any)=>{
+          if(itm.descriptor.code === 'ABSTRACT'){
+            if(itm.price){
+              rsfObj[`${itm.id}_price`] = `itm price should not be there` 
+            }
+            if(itm.quantity){
+              rsfObj[`${itm.id}_quantity`] = `itm quantity should not be there` 
+            }
+          
+           if(itm.parent_item_id === ''){
+            rsfObj.parent_item_id = ` parent_item_id can't be empty string `
+          }
+            
+          if(!itm.tags){
+            rsfObj.parentitmtags = `parent item tags is missing`
+          }
+          else{
+            itm.tags.forEach((itm: any)=>{
+              const tags= ["INCLUSIONS","EXCLUSIONS"]
+              if(!tags.includes(itm.descriptor.code)){
+                rsfObj.tagsdescriptorcode =  `parent tags descriptior code is not valid`
+              }
+              let list =itm.list
+              list.forEach((itm :any)=>{
+                if(itm.value === '' ){
+                  rsfObj.list[`${itm}`] = `itm value can be empty string`
+                }
+              })
+            })
+          }
+          }
+          if(itm.descriptor.code === 'ENTRY_PASS'){
+            if(itm.parent_item_id === ''){
+              rsfObj[`${itm.id}`] = `${itm.id} can't have empty string parent_item_id`
+            }
+            if(!itm.parent_item_id){
+              rsfObj[`${itm.id}`] = `${itm.id} should have parent_item_id`
+            }
+          }    
+        })
+      } catch (error) {
+        logger.error(error)
+      }
       
   
   
     //validating quote
     try {
-      const quoteError =  validateQuote(onConfirm.quote,"on_confirm")
-      Object.assign(rsfObj,quoteError)
+
+     const quoteErr = validateQuote(onConfirm.quote,'on_confirm')
+      Object.assign(rsfObj,quoteErr)
+      let totalsum = 0
+
+     // ✅ Ensure rsfObj.quote is initialized
+     if (!rsfObj.quote || typeof rsfObj.quote !== 'object') {
+       rsfObj.quote = {}
+     }
+
+     onConfirm.quote.breakup.forEach((itm: any) => {
+       const expectedValue = Number(itm.item.price.value) * Number(itm.item.quantity.selected.count)
+       const actualValue = Number(itm.price.value)
+
+       if (actualValue !== expectedValue) {
+         rsfObj.quote[`${itm.item.id}`] = `${itm.id} ${expectedValue} value is not correct `
+       } else {
+         totalsum += expectedValue
+       }
+     })
+
+     if (totalsum !== Number(onConfirm.quote.price.value)) {
+       // ✅ Overwrite quote only if it's an object
+       rsfObj.quote[`price`] = `final value of quote is not correct`
+     }
     } catch (error) {
       logger.error(error)
     }
+     
   
+    try {
+      if(!onConfirm.created_at){
+        rsfObj.created_at = `created at is missing`
+      }
+      if(!onConfirm.updated_at){
+        rsfObj.updated_at = `updated at is missing`
+      }
+      if(onConfirm.created_at !== context.timestamp){
+        rsfObj.created_at = `created should match with timestamp`
+      }
+      if(onConfirm.updated_at !== context.timestamp){
+        rsfObj.updated_at = `updated should match with timestamp`
+      }
+    } catch (error) {
+      logger.error(error)
+    }
     
   
      //validating tags

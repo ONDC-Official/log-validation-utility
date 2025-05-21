@@ -57,6 +57,12 @@ export const checkOnSelect2 = (data: any, msgIdSet: any, version: any) => {
       if(!fulfillmentids.includes(itm.id)){
         errorObj.fulfmentId = `fulfillment id mismatched on select and on_select`
       }
+      if(itm.agent.organization.contact.phone === '' ){
+        errorObj.contact.phone = ` phone cant be empty string`
+      }
+      if(itm.agent.organization.contact.email === '' ){
+        errorObj.contact.email = ` email cant be empty string`
+      }
     })
 
     //quote checking
@@ -67,6 +73,51 @@ export const checkOnSelect2 = (data: any, msgIdSet: any, version: any) => {
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking Quote in /${constants.ON_SELECT},  ${error.message}`)
       return { error: error.message }
+    }
+
+    try {
+      onSelect.items.forEach((itm:any)=>{
+        if(itm.descriptor.code === 'ABSTRACT'){
+          if(itm.price){
+            rsfObj[`${itm.id}_price`] = `itm price should not be there` 
+          }
+          if(itm.quantity){
+            rsfObj[`${itm.id}_quantity`] = `itm quantity should not be there` 
+          }
+        
+         if(itm.parent_item_id === ''){
+          rsfObj.parent_item_id = ` parent_item_id can't be empty string `
+        }
+          
+        if(!itm.tags){
+          rsfObj.parentitmtags = `parent item tags is missing`
+        }
+        else{
+          itm.tags.forEach((itm: any)=>{
+            const tags= ["INCLUSIONS","EXCLUSIONS"]
+            if(!tags.includes(itm.descriptor.code)){
+              rsfObj.tagsdescriptorcode =  `parent tags descriptior code is not valid`
+            }
+            let list =itm.list
+            list.forEach((itm :any)=>{
+              if(itm.value === '' ){
+                rsfObj.list[`${itm}`] = `itm value can be empty string`
+              }
+            })
+          })
+        }
+        }
+        if(itm.descriptor.code === 'ENTRY_PASS'){
+          if(itm.parent_item_id === ''){
+            rsfObj[`${itm.id}`] = `${itm.id} can't have empty string parent_item_id`
+          }
+          if(!itm.parent_item_id){
+            rsfObj[`${itm.id}`] = `${itm.id} should have parent_item_id`
+          }
+        }    
+      })
+    } catch (error) {
+      logger.error(error)
     }
 
     // comparinf quote breakup

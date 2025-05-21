@@ -333,6 +333,8 @@ export const TRV14ApiSequence = {
   ON_CANCEL: 'on_cancel',
   CANCEL_1: 'cancel_1',
   ON_CANCEL_1: 'on_cancel_1',
+  CANCEL_2: 'cancel_2',
+  ON_CANCEL_2: 'on_cancel_2',
   STATUS: 'status',
   ON_STATUS: 'on_status',
   STATUS_1: 'status_1',

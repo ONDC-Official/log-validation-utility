@@ -249,8 +249,8 @@ const onConfirmSchemaTRV14 = {
                             contact: {
                               type: "object",
                               properties: {
-                                phone: { type: "string" },
-                                email: { type: "string" }
+                                phone: { type: "string" ,minlength:1 },
+                                email: { type: "string" ,minlength:1}
                               }
                             }
                           }

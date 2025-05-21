@@ -24,6 +24,7 @@ export const checkConfirm = (data: any, msgIdSet: any, version: any) => {
 
       //checking providerid
       const confirm =message.order
+      const init_Context = getValue('init_context')
       const payments = getValue(`initpayments`)
       const prvdrid =  getValue(`oninitprvdrid`)
       const itemMap = getValue(`items`)
@@ -32,7 +33,16 @@ export const checkConfirm = (data: any, msgIdSet: any, version: any) => {
       if(confirm.provider.id !== prvdrid ){
        rsfObj.prvdrid = `provider id mismatches in init and on_select`
       }
- 
+
+      //checking messageId
+      try {
+        if(context.message_id === init_Context.message_id){
+          rsfObj.msgId = `confirm and init message id cant be the same`
+        }
+      } catch (error) {
+        logger.error(error)
+      }
+
       //confirm items
       confirm.items.forEach((itm:any) => {
        if(!itemMap.has(itm.id) ){

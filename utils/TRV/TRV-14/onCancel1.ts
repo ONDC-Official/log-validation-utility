@@ -15,8 +15,8 @@ export const checkOnCancel1 = (data: any, msgIdSet: any, version: any) => {
   }
 
   try {
-    logger.info(`Validating Schema for ${TRV14ApiSequence.ON_CANCEL} API`)
-    const vs = validateSchema('trv14', TRV14ApiSequence.ON_CANCEL, data, 1)
+    logger.info(`Validating Schema for ${TRV14ApiSequence.ON_CANCEL_1} API`)
+    const vs = validateSchema('trv14', TRV14ApiSequence.ON_CANCEL_1, data)
 
     if (vs != 'error') {
       Object.assign(rsfObj, vs)
@@ -30,13 +30,12 @@ export const checkOnCancel1 = (data: any, msgIdSet: any, version: any) => {
     const items=  getValue(`onStatusItems`)
     const Map = getValue(`myMap`)
     const Cancel = getValue(`soft_cancel_context`)
-    // const quote = getValue(`onStatusquote`)
 
     //comparing timestamp
     try {
       const timestamp = timeStampCompare(Cancel.timestamp,context.timestamp)
       if(!timestamp){
-        rsfObj.timestamp =  `cancel timestamp can't be greater than timestamp`
+        rsfObj.timestamp =  `cancel timestamp can't be greater or equal to on_cancel timestamp`
       }
     } catch (error) {
       logger.error(error)

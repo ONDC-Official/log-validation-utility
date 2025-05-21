@@ -85,6 +85,7 @@ const onSelect2SchemaTRV14 = {
               items: {
                 type: 'object',
                 required: ['id', 'type', 'stops',"vehicle"],
+                additionalProperties: false,
                 properties: {
                   id: { type: 'string' },
                   type: { type: 'string' , enum:["VISIT"] },
@@ -93,6 +94,7 @@ const onSelect2SchemaTRV14 = {
                     items: {
                       type: 'object',
                       required: ['type', 'time'],
+                      additionalProperties: false,
                       properties: {
                         type: { type: 'string',enum:["START","END"] },
                         time: {
@@ -104,6 +106,25 @@ const onSelect2SchemaTRV14 = {
                         },
                       },
                     },
+                  },
+                  agent: {
+                    type: 'object',
+                    properties: {
+                      organization: {
+                        type: 'object',
+                        properties: {
+                          contact: {
+                            type: 'object',
+                            required: ['phone', 'email'],
+                            additionalProperties: false,
+                            properties: {
+                              phone: { type: 'string' },
+                              email: { type: 'string' }
+                            }
+                          }
+                        }
+                      }
+                    }
                   },
                   vehicle:{
                     type: 'object',
@@ -184,7 +205,47 @@ const onSelect2SchemaTRV14 = {
                   }
                 }
               }
-            }
+            },
+            cancellation_terms: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  cancellation_fee: {
+                    type: "object",
+                    properties: {
+                      percentage: { type: "string" }
+                    }
+                  },
+                  fulfillment_state: {
+                    type: "object",
+                    properties: {
+                      descriptor: {
+                        type: "object",
+                        properties: {
+                          code: { type: "string" }
+                        }
+                      }
+                    }
+                  },
+                  cancel_by: {
+                    type: "object",
+                    properties: {
+                      label: { type: "string" },
+                      duration: { type: "string" }
+                    }
+                  },
+                  cancellation_eligible: { type: "boolean" },
+                  external_ref: {
+                    type: "object",
+                    properties: {
+                      mimetype: { type: "string" },
+                      url: { type: "string" }
+                    }
+                  }
+                }
+              }
+            },
           },
         },
       },

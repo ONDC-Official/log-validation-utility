@@ -493,7 +493,7 @@ export const FnBonSearchSchema = {
                           type: 'string',
                         },
                         rating: {
-                          type: ['number','null'],
+                          type: "string",
                           minimum: 1,
                           maximum: 5,
                           default: null,
@@ -872,9 +872,7 @@ export const FnBonSearchSchema = {
                                   properties: {
                                     code: {
                                       type: 'string',
-                                      enum: ['location', 'category', 'type', 'val', 'unit'],
-                                      errorMessage:
-                                        "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit'",
+                                      enum: ['location', 'category', 'type', 'val', 'unit','day_from','day_to','time_from','time_to'],
                                     },
                                     value: {
                                       type: 'string',
@@ -884,11 +882,10 @@ export const FnBonSearchSchema = {
                                   additionalProperties: false,
                                 },
                                 minItems: 5,
-                                maxItems: 5,
+                                maxItems: 9,
                                 uniqueItems: true,
                                 errorMessage: {
                                   minItems: 'Serviceability must have minimum 5 values',
-                                  maxItems: 'Serviceability must have maximum 5 values',
                                   uniqueItems: 'Serviceability must have unique items',
                                   _: "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit' and no duplicacy or other elements allowed",
                                 },

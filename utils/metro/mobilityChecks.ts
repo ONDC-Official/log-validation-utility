@@ -1,6 +1,6 @@
 import { logger } from '../../shared/logger'
 import { getValue, setValue } from '../../shared/dao'
-import { checkGpsPrecision, checkIdAndUri, checkMobilityContext, timestampCheck } from '../../utils'
+import { checkSixDigitGpsPrecision, checkIdAndUri, checkMobilityContext, timestampCheck } from '../../utils'
 import _, { isNil } from 'lodash'
 
 export const validateContext = (
@@ -177,7 +177,7 @@ export const validateStops = (stops: any, index: number, otp: boolean, cancel: b
     }
 
     // Check if GPS coordinates are valid
-    if (stop.location?.gps && !checkGpsPrecision(stop.location.gps)) {
+    if (stop.location?.gps && !checkSixDigitGpsPrecision(stop.location.gps)) {
       errorObj[`fulfillment_${index}_stop_${l}_gpsPrecision`] =
         'GPS coordinates must be specifieddddd with at least six decimal places of precision'
     }

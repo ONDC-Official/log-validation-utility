@@ -769,3 +769,7 @@ export const PAYMENT_STATUS = {
   PAID: 'PAID',
   NOT_PAID: 'NOT-PAID',
 }
+export const PAYMENT_COLLECTED_BY = {
+  BPP: 'BPP',
+  BAP : 'BAP'
+}

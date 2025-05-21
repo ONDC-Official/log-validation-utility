@@ -3,8 +3,9 @@ import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
 import { validateSchemaRetailV2, isObjectEmpty, checkContext, checkItemTag, checkBppIdOrBapId } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
+import { FLOW, OFFERSFLOW } from '../../../utils/enum'
 
-export const checkInit = (data: any, msgIdSet: any) => {
+export const checkInit = (data: any, msgIdSet: any,flow:string) => {
   const initObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -386,6 +387,43 @@ export const checkInit = (data: any, msgIdSet: any) => {
       }
     } catch (error: any) {
       logger.error(`!!Error while checking fulfillments object in /${constants.INIT}, ${error.stack}`)
+    }
+
+    try {
+      const collect_payment = getValue('collect_payment')
+      if (init?.offers && init?.offers.length > 0 || flow === OFFERSFLOW.FLOW0098){
+        const providerOffers: any = getValue(`${ApiSequence.ON_SEARCH}_offers`)
+        init.offers.forEach((offer: any, index: number) => {
+          const providerOffer = providerOffers?.find((providedOffer: any) => providedOffer?.id.toLowerCase() === offer?.id.toLowerCase())
+          console.log('providerOffer in select call', JSON.stringify(providerOffer))
+
+          if (!providerOffer) {
+            initObj[`offer[${index}]`] = `Offer with id ${offer.id} is not available for the provider.`
+            return
+          }
+        })
+      }
+      // if()
+      if (flow === FLOW.FLOW0099 || collect_payment === 'N') {
+        const bapTermsTag = init.tags.find((tag:any)=>tag.code === "bap_terms")
+        if (bapTermsTag?.code !== "bap_terms" || !Array.isArray(bapTermsTag.list)) {
+          initObj["bap_terms"] = "'bap_terms' tag must have a valid 'list' array.";
+          return;
+        }
+      
+        const typeEntry = bapTermsTag.list.find((item: any) => item.code === "finance_cost_type");
+        const valueEntry = bapTermsTag.list.find((item: any) => item.code === "finance_cost_value");
+      
+        if (!typeEntry || !["percent", "amount"].includes(typeEntry.value)) {
+          initObj["bap_terms_type"] = "'finance_cost_type' must be present and one of 'percent' or 'amount'";
+        }
+      
+        if (!valueEntry || isNaN(Number(valueEntry.value))) {
+          initObj["bap_terms_value"] = "'finance_cost_value' must be a valid number";
+        }        
+      }
+    } catch (error) {
+      
     }
 
     return initObj

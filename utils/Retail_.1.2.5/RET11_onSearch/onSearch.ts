@@ -20,6 +20,7 @@ import {
   validateObjectString,
   validateBapUri,
   validateBppUri,
+  validateMetaTags,
 } from '../..'
 import _, { isEmpty } from 'lodash'
 import {
@@ -1032,6 +1033,16 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
                     )
                     return
                   }
+                  const metaTagsError = validateMetaTags(tags);
+                  if (metaTagsError) {
+                    let i = 0
+                    const len = metaTagsError.length
+                    while (i < len) {
+                      const key = `fulfilmntRngErr${i}`
+                      errorObj[key] = `${metaTagsError[i]}`
+                      i++
+                    }
+                  }
 
                   // Validate based on offer type
                   switch (offer.descriptor?.code) {
@@ -1206,8 +1217,8 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
                       break
 
                     // case 'exchange':
-                    // case 'financing':
-                    //   // Validate 'qualifier'
+                    case 'financing':
+                      // Validate 'qualifier'
                     //   const qualifierExchangeFinancing = tags.find((tag: any) => tag.code === 'qualifier');
                     //   if (!qualifierExchangeFinancing || !qualifierExchangeFinancing.list.some((item: any) => item.code === 'min_value')) {
                     //     const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`;
@@ -1215,14 +1226,14 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
                     //     logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`);
                     //   }
 
-                    // Validate that benefits should not exist or should be empty
+                    // // Validate that benefits should not exist or should be empty
                     // const benefitExchangeFinancing = tags.find((tag: any) => tag.code === 'benefit');
                     // if (benefitExchangeFinancing && benefitExchangeFinancing.list.length > 0) {
                     //   const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`;
                     //   errorObj[key] = `'benefit' tag must not include any values for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
                     //   logger.error(`'benefit' tag must not include any values for offers[${offerIndex}]`);
                     // }
-                    // break;
+                    break;
 
                     // No validation for benefits as it is not required
                     // break;

@@ -1637,5 +1637,216 @@ export const checkIsOptional = (apiSeq: string, flow: string): boolean => {
     } else return false
   } else return false
 }
+export function validateMetaTags(tags: any[]): string[] {
+  
+  const errors: string[] = [];
+
+  if (!Array.isArray(tags)) {
+    return ['tags must be an array'];
+  }
+
+  const metaTag = tags.find(tag => tag.code === 'meta');
+
+  if (!metaTag) {
+    errors.push('tags must contain a tag with code "meta"');
+  } else {
+    if (!Array.isArray(metaTag.list)) {
+      errors.push('"meta" tag must have a "list" array');
+    } else {
+      const additiveEntry = metaTag.list.find((item:any) => item.code === 'additive');
+      const autoEntry = metaTag.list.find((item:any) => item.code === 'auto');
+
+      if (!additiveEntry) {
+        errors.push('"meta" list must contain an entry with code "additive"');
+      } else if (!['yes', 'no'].includes(additiveEntry.value)) {
+        errors.push('"additive" value must be "yes" or "no"');
+      }
+
+      if (!autoEntry) {
+        errors.push('"meta" list must contain an entry with code "auto"');
+      } else if (!['yes', 'no'].includes(autoEntry.value)) {
+        errors.push('"auto" value must be "yes" or "no"');
+      }
+    }
+  }
+
+  return errors;
+}
+export function validateFinanceTags(tags: any[]): string[] {
+  const errors: string[] = [];
+
+  if (!Array.isArray(tags)) {
+    return ['tags must be an array'];
+  }
+
+  // --- Validate `finance_terms` tag
+  const financeTag = tags.find(tag => tag.code === 'finance_terms');
+  if (!financeTag) {
+    errors.push('tags must contain a tag with code "finance_terms"');
+  } else {
+    if (!Array.isArray(financeTag.list)) {
+      errors.push('"finance_terms" tag must have a "list" array');
+    } else {
+      const typeEntry = financeTag.list.find((item:any) => item.code === 'subvention_type');
+      const amountEntry = financeTag.list.find((item:any) => item.code === 'subvention_amount');
+
+      if (!typeEntry) {
+        errors.push('"finance_terms" list must contain an entry with code "subvention_type"');
+      } else if (!['percent', 'amount'].includes(typeEntry.value)) {
+        errors.push('"subvention_type" must be either "percent" or "amount"');
+      }
+
+      if (!amountEntry) {
+        errors.push('"finance_terms" list must contain an entry with code "subvention_amount"');
+      } else if (isNaN(parseFloat(amountEntry.value))) {
+        errors.push('"subvention_amount" must be a numeric value');
+      }
+    }
+  }
+
+  return errors;
+}
+
+export function validateFinanceTermsTag(tag: any): string[] {
+  const errors: string[] = [];
+
+  if (tag.code !== 'finance_terms') {
+    errors.push(`Tag code must be "finance_terms"`);
+    return errors;
+  }
+
+  const list = tag.list;
+  if (!Array.isArray(list)) {
+    errors.push(`"list" must be an array`);
+    return errors;
+  }
+
+  const requiredCodes = [
+    'subvention_type',
+    'subvention_amount',
+    'provider_tax_number',
+    'bank_account_no',
+    'ifsc_code'
+  ];
+
+  const listMap: Record<string, string> = {};
+  for (const item of list) {
+    if (item.code && typeof item.value === 'string') {
+      listMap[item.code] = item.value;
+    }
+  }
+
+  for (const code of requiredCodes) {
+    if (!(code in listMap)) {
+      errors.push(`Missing required code: ${code}`);
+    } else if (!listMap[code].trim()) {
+      errors.push(`Value for code "${code}" cannot be empty`);
+    }
+  }
+
+  const subventionType = listMap['subvention_type'];
+  if (subventionType && !['percent', 'value'].includes(subventionType)) {
+    errors.push(`Invalid value for subvention_type: ${subventionType}. Allowed: "percent" or "value"`);
+  }
+
+  const subventionAmount = listMap['subvention_amount'];
+  if (subventionAmount && isNaN(Number(subventionAmount))) {
+    errors.push(`Invalid number format for subvention_amount: ${subventionAmount}`);
+  }
+
+  return errors;
+}
+
+export function normalizeTagList(tagList: any[]): Record<string, string> {
+  const result: Record<string, string> = {};
+  for (const item of tagList) {
+    if (item.code && typeof item.value === 'string') {
+      result[item.code] = item.value.trim();
+    }
+  }
+  return result;
+}
+
+export function compareFinanceTermsTags(onInitTag: any, confirmTag: any): string[] {
+  const errors: string[] = [];
+
+  // Check top-level tag code
+  if (onInitTag.code !== 'finance_terms' || confirmTag.code !== 'finance_terms') {
+    errors.push('Both tags must have code "finance_terms"');
+    return errors;
+  }
+
+  const onInitMap = normalizeTagList(onInitTag.list);
+  const confirmMap = normalizeTagList(confirmTag.list);
+
+  const allKeys = new Set([...Object.keys(onInitMap), ...Object.keys(confirmMap)]);
+  for (const key of allKeys) {
+    const onInitVal = onInitMap[key];
+    const confirmVal = confirmMap[key];
+
+    if (onInitVal !== confirmVal) {
+      errors.push(`Mismatch in "${key}": on_init = "${onInitVal}", confirm = "${confirmVal}"`);
+    }
+  }
+
+  return errors;
+}
+export function validateFinanceTxnTag(tag: any): string[] {
+  const errors: string[] = [];
+
+  if (tag.code !== 'finance_txn') {
+    errors.push(`Expected tag code "finance_txn", found "${tag.code}"`);
+    return errors;
+  }
+
+  const requiredFields = [
+    'loan_completed',
+    'down_payment',
+    'loan_amount',
+    'loan_provider',
+    'transaction_id',
+    'timestamp'
+  ];
+
+  const fieldMap: Record<string, string> = {};
+  for (const entry of tag.list || []) {
+    if (entry.code && typeof entry.value === 'string') {
+      fieldMap[entry.code] = entry.value.trim();
+    }
+  }
+
+  for (const field of requiredFields) {
+    if (!(field in fieldMap)) {
+      errors.push(`Missing field "${field}" in finance_txn tag`);
+    }
+  }
+
+  // Specific validations
+  if (fieldMap.loan_completed && !['yes', 'no'].includes(fieldMap.loan_completed.toLowerCase())) {
+    errors.push(`"loan_completed" must be either "yes" or "no"`);
+  }
+
+  if (fieldMap.down_payment && isNaN(Number(fieldMap.down_payment))) {
+    errors.push(`"down_payment" must be a valid number`);
+  }
+
+  if (fieldMap.loan_amount && isNaN(Number(fieldMap.loan_amount))) {
+    errors.push(`"loan_amount" must be a valid number`);
+  }
+
+  if (fieldMap.timestamp) {
+    const date = new Date(fieldMap.timestamp);
+    if (isNaN(date.getTime())) {
+      errors.push(`"timestamp" must be a valid ISO date string`);
+    }
+  }
+
+  return errors;
+}
+
+
+
+
+
 
 

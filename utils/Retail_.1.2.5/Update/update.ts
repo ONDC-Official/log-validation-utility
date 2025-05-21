@@ -4,7 +4,7 @@ import constants, { ApiSequence, buyerReturnId } from '../../../constants'
 import { validateSchemaRetailV2, isObjectEmpty, checkBppIdOrBapId, checkContext, isValidUrl, timeDiff } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 import { condition_id } from '../../../constants/reasonCode'
-import { FLOW } from '../../enum'
+import { FLOW, OFFERSFLOW } from '../../enum'
 
 export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDetatilSet: any, flow: any) => {
   const updtObj: any = {}
@@ -353,6 +353,19 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
                   if (!buyerReturnId.has(reasonId)) {
                     logger.error(`reason_id should be a valid cancellation id (buyer app initiated)`)
                     updtObj.updateRid = `reason_id is not a valid reason id (buyer app initiated)`
+                  }
+                }
+                if(flow === FLOW.FLOW00C || flow === OFFERSFLOW.FLOW0097){
+                  // const exchangeTag = item.code
+                  if(item.code !== "exchange"){
+                    updtObj.error = `exchange tag is required for flow: ${flow}`
+                  }else if (item.code === "exchange") {
+                    const exchangeValue = item.value
+                    !['yes', 'no'].includes(exchangeValue)
+                    updtObj["exchangeNA"] = '"exchange" value must be "yes" or "no"';
+                    if(exchangeValue === "no"){
+                      updtObj["exchangeNA"] = `"exchange" value must be "yes" for flow: ${flow}`;
+                    }
                   }
                 }
 

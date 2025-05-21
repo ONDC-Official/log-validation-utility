@@ -19,8 +19,10 @@ import {
   isoDurToSec,
   getProviderId,
   deepCompare,
+  compareFinanceTermsTags,
+  validateFinanceTxnTag,
 } from '../..'
-import { FLOW } from '../../enum'
+import { FLOW, OFFERSFLOW } from '../../enum'
 import { getValue, setValue } from '../../../shared/dao'
 export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: string) => {
   const onCnfrmObj: any = {}
@@ -543,6 +545,56 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
         onCnfrmObj[key] = `item quote breakup prices for ${constants.ON_CONFIRM} should be equal to the total price.`
         logger.error(`item quote breakup prices for ${constants.ON_CONFIRM} should be equal to the total price`)
       }
+      const collect_payment = getValue('collect_payment')
+      if (flow === FLOW.FLOW0099 || collect_payment === 'N' || flow === OFFERSFLOW.FLOW0098) {
+        let offers = on_confirm.quote.breakup.filter((item: any) => item['@ondc/org/title_type'] === 'offer')
+        if (offers.length === 0) {
+          onCnfrmObj['offer-not-found'] = `Offer is required for the flow: ${flow}`
+        } else if (offers.length > 0) {
+          const providerOffers: any = getValue(`${ApiSequence.ON_SEARCH}_offers`)
+          offers.forEach((offer: any, index: number) => {
+            const providerOffer = providerOffers?.find(
+              (providedOffer: any) => providedOffer?.id.toLowerCase() === offer['@ondc/org/item_id'].toLowerCase(),
+            )
+            console.log('providerOffer in select call', JSON.stringify(providerOffer))
+
+            if (!providerOffer) {
+              onCnfrmObj[`offer[${index}]`] = `Offer with id ${offer.id} is not available for the provider.`
+              return
+            }
+            const offerType = providerOffer.descriptor.code
+            if (offerType === 'financing') {
+              const finance_tags = offer.item.tags.find((tag: any) => tag.code === 'finance_terms')
+              const finance_txn = offer.item.tags.find((tag: any) => tag.code === 'finance_txn')
+              if (finance_tags) {
+                const on_init_finance_tags = getValue(`finance_terms${constants.ON_INIT}`)
+                const financeTagsError = compareFinanceTermsTags(on_init_finance_tags,finance_tags)
+                if (financeTagsError) {
+                  let i = 0
+                  const len = financeTagsError.length
+                  while (i < len) {
+                    const key = `financeTagsError${i}`
+                    onCnfrmObj[key] = `${financeTagsError[i]}`
+                    i++
+                  }
+                }
+              }
+              if(finance_txn){
+                const financeTxnError = validateFinanceTxnTag(finance_txn)
+                if (financeTxnError) {
+                  let i = 0
+                  const len = financeTxnError.length
+                  while (i < len) {
+                    const key = `financeTagsError${i}`
+                    onCnfrmObj[key] = `${financeTxnError[i]}`
+                    i++
+                  }
+                }
+              }
+            }
+          })
+        }
+      }
     } catch (error: any) {
       logger.error(`!!Error while Comparing Quote object for /${constants.ON_CONFIRM}`)
     }
@@ -551,6 +603,7 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
       logger.info(`Comparing Quote object for /${constants.ON_SELECT} and /${constants.ON_CONFIRM}`)
 
       const on_select_quote: any = getValue('quoteObj')
+       if (flow !== FLOW.FLOW0099 && flow != OFFERSFLOW.FLOW0098) {
       const quoteErrors = compareQuoteObjects(
         on_select_quote,
         on_confirm.quote,
@@ -572,6 +625,7 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
           i++
         }
       }
+    }
     } catch (error: any) {
       logger.error(`!!Error while comparing quote in /${constants.ON_SELECT} and /${constants.ON_CONFIRM}`)
     }

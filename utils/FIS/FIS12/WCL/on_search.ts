@@ -2,6 +2,7 @@ import { logger } from '../../../../shared/logger'
 import { setValue } from '../../../../shared/dao'
 import constants from '../../../../constants'
 import { validateSchema, isObjectEmpty, checkFISContext } from '../../../../utils'
+import { validateTransactionIdConsistency, validateMessageIdPair } from './commonValidations'
 
 export const checkon_searchWCL = (data: any, msgIdSet: any, flow: string, sequence: string) => {
   const errorObj: any = {}
@@ -26,6 +27,14 @@ export const checkon_searchWCL = (data: any, msgIdSet: any, flow: string, sequen
 
     const schemaValidation = validateSchema('FIS_WCL', constants.ON_SEARCH, data)
     const contextRes: any = checkFISContext(data.context, constants.ON_SEARCH)
+    
+    // Add transaction ID consistency check
+    const transactionIdConsistency = validateTransactionIdConsistency(data.context)
+    Object.assign(errorObj, transactionIdConsistency)
+    
+    // Add message ID pair validation - this is an on_action call
+    const messageIdPair = validateMessageIdPair(data.context, constants.ON_SEARCH, true)
+    Object.assign(errorObj, messageIdPair)
     
     setValue(`${constants.ON_SEARCH}_context`, data.context)
     msgIdSet.add(data.context.message_id)

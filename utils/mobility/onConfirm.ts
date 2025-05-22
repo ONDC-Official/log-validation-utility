@@ -13,6 +13,7 @@ import {
   validateProviderId,
   validateItems,
   validateFulfillments,
+  hasOnlyAllowedKeys,
 } from './mobilityChecks'
 import attributeConfig from './config/config2.0.1.json'
 import _ from 'lodash'
@@ -58,7 +59,9 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any) => {
     try {
       logger.info(`Checking provider id in /${constants.ON_CONFIRM}`)
       const providerError = validateProviderId(on_confirm?.provider?.id, constants.CONFIRM, constants.ON_CONFIRM)
+      const additionalKeys = hasOnlyAllowedKeys(on_confirm?.provider, ['id', 'descriptor'])
       Object.assign(errorObj, providerError)
+      errorObj.providerAddKeys = `provider obj is having additional keys ${additionalKeys.join(', ')}`
     } catch (error: any) {
       logger.error(`!!Error while checking provider id in /${constants.ON_CONFIRM}, ${error.stack}`)
     }
@@ -69,11 +72,13 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any) => {
     if (flow == 'DRIVER_POST_CONFIRM') {
       stateCode = 'RIDE_CONFIRMED'
     }
+
+    const isDriverAssgined= flow.includes('ON_CONFIRM')
     const fulfillmentError = validateFulfillments(
       on_confirm?.fulfillments,
       fulfillmentIdsSet,
       constants.ON_CONFIRM,
-      false,
+      isDriverAssgined,
       true,
       stateCode,
     )

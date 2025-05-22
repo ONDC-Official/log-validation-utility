@@ -32,7 +32,7 @@ export const checkInit = (data: any, msgIdSet: any, version: any) => {
      const select2Context = getValue('select2_context')
 
 
-     if(init.provider.id !== prvdrid ){
+     if(prvdrid && init.provider.id !== prvdrid ){
       rsfObj.prvdrid = `provider id mismatches in init and on_select`
      }
 

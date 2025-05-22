@@ -55,8 +55,8 @@ export const TRV14FLOWS: any = {
 export const purchaseofsingleticketwithaddon=[
   TRV14ApiSequence.SEARCH,
   TRV14ApiSequence.ON_SEARCH,
-  TRV14ApiSequence.SELECT,
-  TRV14ApiSequence.ON_SELECT,
+  TRV14ApiSequence.SELECT_1,
+  TRV14ApiSequence.ON_SELECT_1,
   TRV14ApiSequence.INIT,
   TRV14ApiSequence.ON_INIT,
   TRV14ApiSequence.CONFIRM,
@@ -82,8 +82,8 @@ export const searchAndRegisterforIncrementalPull = [
 ]
 
 export const purchaseJourney = [
-  TRV14ApiSequence.SELECT,
-  TRV14ApiSequence.ON_SELECT,
+  TRV14ApiSequence.SELECT_1,
+  TRV14ApiSequence.ON_SELECT_1,
   TRV14ApiSequence.SELECT_1,
   TRV14ApiSequence.ON_SELECT_1,
   TRV14ApiSequence.INIT,

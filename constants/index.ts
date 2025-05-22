@@ -319,8 +319,6 @@ export const TRV14ApiSequence = {
   ON_SEARCH: 'on_search',
   ON_SEARCH_1: 'on_search_1',
   ON_SEARCH_2: 'on_search_2',
-  SELECT: 'select',
-  ON_SELECT: 'on_select',
   SELECT_1: 'select_1',
   ON_SELECT_1: 'on_select_1',
   SELECT_2: 'select_2',

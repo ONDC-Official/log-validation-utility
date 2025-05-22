@@ -2,7 +2,7 @@ import { logger } from '../../../shared/logger'
 import { TRV14ApiSequence } from '../../../constants'
 import { isObjectEmpty, validateSchema } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
-import { comparePayments ,compareReplacementTerms , validateTagsStructure ,compareFulfillments, compareProviders, compareQuote, validateQuote, compareonItems } from './TRV14checks'
+import { comparePayments ,compareReplacementTerms , validateTagsStructure ,compareFulfillments, compareProviders, compareQuote, validateQuote, compareonItems, validateOnItemTagsStructure } from './TRV14checks'
 // @ts-ignore
 export const checkOnConfirm = (data: any, msgIdSet: any, version: any, Flag: any) => {
   const rsfObj: any = {}
@@ -26,6 +26,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any, Flag: any
       const confirmpayment = getValue(`confirmpayment`)
       const replacementTerms = getValue(`replacementterms`)
       const fulfillment = getValue(`onInitfulfilments`)
+      const itemAddOn = getValue(`addOnItems`)
       const provider = getValue(`onInitProvider`)
       const items =  getValue(`onInitItems`)
       const quote = getValue(`onInitquote`)
@@ -39,50 +40,117 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any, Flag: any
       }
       
 
-      try {
-        onConfirm.items.forEach((itm:any)=>{
-          if(itm.descriptor.code === 'ABSTRACT'){
-            if(itm.price){
-              rsfObj[`${itm.id}_price`] = `itm price should not be there` 
-            }
-            if(itm.quantity){
-              rsfObj[`${itm.id}_quantity`] = `itm quantity should not be there` 
-            }
-          
-           if(itm.parent_item_id === ''){
+     //checking items that they dont contain extra property
+    
+     try {
+      let ABSTRACT_FLAG = false
+      let ENTRY_PASS_FLAG = false
+
+      onConfirm.items.forEach((itm: any) => {
+        if (itm.descriptor.code === 'ABSTRACT') {
+          ABSTRACT_FLAG = true
+          const allowedKeys = ['id', 'descriptor', 'location_ids', 'category_ids', 'time', 'fulfillment_ids', 'tags']
+          if (itm.price) {
+            rsfObj[`${itm.id}_price`] = `itm price should not be there`
+          }
+          if (itm.quantity) {
+            rsfObj[`${itm.id}_quantity`] = `itm quantity should not be there`
+          }
+
+          if (itm.parent_item_id === '') {
             rsfObj.parent_item_id = ` parent_item_id can't be empty string `
           }
-            
-          if(!itm.tags){
+
+          if (!itm.tags) {
             rsfObj.parentitmtags = `parent item tags is missing`
-          }
-          else{
-            itm.tags.forEach((itm: any)=>{
-              const tags= ["INCLUSIONS","EXCLUSIONS"]
-              if(!tags.includes(itm.descriptor.code)){
-                rsfObj.tagsdescriptorcode =  `parent tags descriptior code is not valid`
+          } else {
+            itm.tags.forEach((itm: any) => {
+              const tags = ['INCLUSIONS', 'EXCLUSIONS']
+              if (!tags.includes(itm.descriptor.code)) {
+                rsfObj.tagsdescriptorcode = `parent tags descriptior code is not valid`
               }
-              let list =itm.list
-              list.forEach((itm :any)=>{
-                if(itm.value === '' ){
-                  rsfObj.list[`${itm}`] = `itm value can be empty string`
+              let list = itm.list
+              list.forEach((itm: any) => {
+                if (itm.value === '') {
+                  rsfObj.list[`${itm}`] = `itm/list  value can be empty string`
                 }
               })
             })
           }
+          Object.keys(itm).forEach((key) => {
+            if (!allowedKeys.includes(key)) {
+              rsfObj[`Addon${itm.id}_${key}`] = ` '${key}' is not required in item obj with id:${itm.id}`
+            }
+          })
+        }
+        if (itm.descriptor.code === 'ENTRY_PASS') {
+          ENTRY_PASS_FLAG = true  
+          const allowedKeys = [
+            'id',
+            'descriptor',
+            'parent_item_id',
+            'location_ids',
+            'category_ids',
+            'price',
+            'quantity',
+            'time',
+            'fulfillment_ids',
+            'add_ons',
+            'xinput',
+            'tags',
+          ]
+          if (itm.parent_item_id === '') {
+            rsfObj[`${itm.id}`] = `parent_item_id can't have empty values for item with id:${itm.id} `
           }
-          if(itm.descriptor.code === 'ENTRY_PASS'){
-            if(itm.parent_item_id === ''){
-              rsfObj[`${itm.id}`] = `${itm.id} can't have empty string parent_item_id`
+          if (!itm.parent_item_id) {
+            rsfObj[`${itm.id}`] = `parent_item_id is missing in item obj with id:${itm.id} `
+          }
+          Object.keys(itm).forEach((key) => {
+            if (!allowedKeys.includes(key)) {
+              rsfObj[`${itm.id}_${key}`] = `'${key}' is not required in item obj with id:${itm.id}`
             }
-            if(!itm.parent_item_id){
-              rsfObj[`${itm.id}`] = `${itm.id} should have parent_item_id`
+          })
+
+          const tagsError = validateOnItemTagsStructure(itm.tags,itm.id)
+          Object.assign(rsfObj,tagsError)
+        }
+        if (itm.descriptor.code === 'ADD_ON') {
+          if(itemAddOn.length <= 0){
+            rsfObj[`Addons`] = `No items were selected for Add-ons`
+          }
+          else{
+            const allowedKeys = ['id', 'descriptor', 'parent_item_id', 'price', 'quantity'];
+          if(itm.parent_item_id === ''){
+            rsfObj[`Addon${itm.id}`] = `${itm.id} can't have empty string parent_item_id`
+          }
+          if(!itm.parent_item_id){
+            rsfObj[`Addon${itm.id}`] = `parent_item_id is missing in item obj with id:${itm.id}`
+          }
+          if(!itm.price){
+            rsfObj[`Addon${itm.id}`] = `${itm.id} should have price object`
+          }
+          if(!itm.quantity){
+            rsfObj[`Addon${itm.id}`] = `${itm.id} should have quantity object`
+          }
+
+          Object.keys(itm).forEach((key) => {
+            if (!allowedKeys.includes(key)) {
+              rsfObj[`Addon${itm.id}_${key}`] = `'${key}' is not required in item obj with id:${itm.id}`;
             }
-          }    
-        })
-      } catch (error) {
-        logger.error(error)
+          });
+          }
+        }
+      })
+      if(!ABSTRACT_FLAG && ENTRY_PASS_FLAG){
+        rsfObj[`parent_item`]= `parent item not found having descriptor.code as ABSTRACT`
       }
+      else if(ABSTRACT_FLAG && !ENTRY_PASS_FLAG){
+        rsfObj[`child_item`]= `child_item does not found having descriptor.code as ENTRY_PASS`
+      }
+    } catch (error) {
+      logger.error(error)
+    }
+
   
       //checking replacement terms
       try{
@@ -144,7 +212,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any, Flag: any
       //validating quote
     try {
 
-      const quoteErr = validateQuote(onConfirm.quote,'on_confirm')
+      const quoteErr = validateQuote(onConfirm.quote,'on_confirm',itemAddOn)
        Object.assign(rsfObj,quoteErr)
        let totalsum = 0
  
@@ -158,7 +226,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any, Flag: any
         const actualValue = Number(itm.price.value)
  
         if (actualValue !== expectedValue) {
-          rsfObj.quote[`${itm.item.id}`] = `${itm.item.id} ${expectedValue} value is not correct `
+          rsfObj.quote[`${itm.item.id}`] = ` itm id ${itm.item.id} with price expected  ${expectedValue} this but got ${actualValue}  `
         } else {
           totalsum += expectedValue
         }
@@ -174,6 +242,19 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any, Flag: any
      } catch (error) {
        logger.error(error)
      }
+
+       //checking cancellation_terms
+       try {
+        onConfirm.cancellation_terms.forEach((itm:any,index:number)=>{
+          if(!itm.cancellation_eligible){
+            rsfObj[`cancellation_eligible`] = `Cancellation_eligible is missing at index: ${index}`
+          }
+        })
+      } catch (error) {
+        logger.error(error)
+      }
+
+
       setValue(`onConfirmOrder`,message.order)
       setValue('onConfirmItems',onConfirm.items)
       setValue(`onConfirmfulfillments`,onConfirm.fulfillments)
@@ -202,58 +283,126 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any, Flag: any
       }
   
       const onConfirm = message.order
+      const itemAddOn = getValue(`addOnItems`)
+
       
-      try {
-        onConfirm.items.forEach((itm:any)=>{
-          if(itm.descriptor.code === 'ABSTRACT'){
-            if(itm.price){
-              rsfObj[`${itm.id}_price`] = `itm price should not be there` 
-            }
-            if(itm.quantity){
-              rsfObj[`${itm.id}_quantity`] = `itm quantity should not be there` 
-            }
-          
-           if(itm.parent_item_id === ''){
-            rsfObj.parent_item_id = ` parent_item_id can't be empty string `
-          }
-            
-          if(!itm.tags){
-            rsfObj.parentitmtags = `parent item tags is missing`
-          }
-          else{
-            itm.tags.forEach((itm: any)=>{
-              const tags= ["INCLUSIONS","EXCLUSIONS"]
-              if(!tags.includes(itm.descriptor.code)){
-                rsfObj.tagsdescriptorcode =  `parent tags descriptior code is not valid`
+        //checking items that they dont contain extra property
+    
+        try {
+          let ABSTRACT_FLAG = false
+          let ENTRY_PASS_FLAG = false
+    
+          onConfirm.items.forEach((itm: any) => {
+            if (itm.descriptor.code === 'ABSTRACT') {
+              ABSTRACT_FLAG = true
+              const allowedKeys = ['id', 'descriptor', 'location_ids', 'category_ids', 'time', 'fulfillment_ids', 'tags']
+              if (itm.price) {
+                rsfObj[`${itm.id}_price`] = `itm price should not be there`
               }
-              let list =itm.list
-              list.forEach((itm :any)=>{
-                if(itm.value === '' ){
-                  rsfObj.list[`${itm}`] = `itm value can be empty string`
+              if (itm.quantity) {
+                rsfObj[`${itm.id}_quantity`] = `itm quantity should not be there`
+              }
+    
+              if (itm.parent_item_id === '') {
+                rsfObj.parent_item_id = ` parent_item_id can't be empty string `
+              }
+    
+              if (!itm.tags) {
+                rsfObj.parentitmtags = `parent item tags is missing`
+              } else {
+                itm.tags.forEach((itm: any) => {
+                  const tags = ['INCLUSIONS', 'EXCLUSIONS']
+                  if (!tags.includes(itm.descriptor.code)) {
+                    rsfObj.tagsdescriptorcode = `parent tags descriptior code is not valid`
+                  }
+                  let list = itm.list
+                  list.forEach((itm: any) => {
+                    if (itm.value === '') {
+                      rsfObj.list[`${itm}`] = `itm value can be empty string`
+                    }
+                  })
+                })
+              }
+              Object.keys(itm).forEach((key) => {
+                if (!allowedKeys.includes(key)) {
+                  rsfObj[`Addon${itm.id}_${key}`] = `'${key}' is not required in item obj with id:${itm.id}`
                 }
               })
-            })
-          }
-          }
-          if(itm.descriptor.code === 'ENTRY_PASS'){
-            if(itm.parent_item_id === ''){
-              rsfObj[`${itm.id}`] = `${itm.id} can't have empty string parent_item_id`
             }
-            if(!itm.parent_item_id){
-              rsfObj[`${itm.id}`] = `${itm.id} should have parent_item_id`
+            if (itm.descriptor.code === 'ENTRY_PASS') {
+              ENTRY_PASS_FLAG = true  
+              const allowedKeys = [
+                'id',
+                'descriptor',
+                'parent_item_id',
+                'location_ids',
+                'category_ids',
+                'price',
+                'quantity',
+                'time',
+                'fulfillment_ids',
+                'add_ons',
+                'xinput',
+                'tags',
+              ]
+              if (itm.parent_item_id === '') {
+                rsfObj[`${itm.id}`] = `parent_item_id can't have empty values for item with id:${itm.id} `
+              }
+              if (!itm.parent_item_id) {
+                rsfObj[`${itm.id}`] = `parent_item_id is missing in item obj with id:${itm.id}`
+              }
+              Object.keys(itm).forEach((key) => {
+                if (!allowedKeys.includes(key)) {
+                  rsfObj[`${itm.id}_${key}`] = `'${key}' is not required in item obj with id:${itm.id}`
+                }
+              })
+    
+              const tagsError = validateOnItemTagsStructure(itm.tags,itm.id)
+              Object.assign(rsfObj,tagsError)
             }
-          }    
-        })
-      } catch (error) {
-        logger.error(error)
-      }
+            if (itm.descriptor.code === 'ADD_ON') {
+              if(itemAddOn.length <= 0){
+                rsfObj[`Addons`] = `No items were selected for Add-ons`
+              }
+              else{
+                const allowedKeys = ['id', 'descriptor', 'parent_item_id', 'price', 'quantity'];
+              if(itm.parent_item_id === ''){
+                rsfObj[`Addon${itm.id}`] = `${itm.id} can't have empty string parent_item_id`
+              }
+              if(!itm.parent_item_id){
+                rsfObj[`Addon${itm.id}`] = `parent_item_id is missing in item obj with id:${itm.id}`
+              }
+              if(!itm.price){
+                rsfObj[`Addon${itm.id}`] = `${itm.id} should have price object`
+              }
+              if(!itm.quantity){
+                rsfObj[`Addon${itm.id}`] = `${itm.id} should have quantity object`
+              }
+    
+              Object.keys(itm).forEach((key) => {
+                if (!allowedKeys.includes(key)) {
+                  rsfObj[`Addon${itm.id}_${key}`] = `'${key}' is not required in item obj with id:${itm.id}`;
+                }
+              });
+              }
+            }
+          })
+          if(!ABSTRACT_FLAG && ENTRY_PASS_FLAG){
+            rsfObj[`parent_item`]= `parent item not found having descriptor.code as ABSTRACT`
+          }
+          else if(ABSTRACT_FLAG && !ENTRY_PASS_FLAG){
+            rsfObj[`child_item`]= `child_item does not found having descriptor.code as ENTRY_PASS`
+          }
+        } catch (error) {
+          logger.error(error)
+        }
       
   
   
     //validating quote
     try {
 
-     const quoteErr = validateQuote(onConfirm.quote,'on_confirm')
+     const quoteErr = validateQuote(onConfirm.quote,'on_confirm',itemAddOn)
       Object.assign(rsfObj,quoteErr)
       let totalsum = 0
 
@@ -267,14 +416,13 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any, Flag: any
        const actualValue = Number(itm.price.value)
 
        if (actualValue !== expectedValue) {
-         rsfObj.quote[`${itm.item.id}`] = `${itm.id} ${expectedValue} value is not correct `
+         rsfObj.quote[`${itm.item.id}`] = `${itm.id} with price expected  ${expectedValue} this but got ${actualValue} this `
        } else {
          totalsum += expectedValue
        }
      })
 
      if (totalsum !== Number(onConfirm.quote.price.value)) {
-       // ✅ Overwrite quote only if it's an object
        rsfObj.quote[`price`] = `final value of quote is not correct`
      }
     } catch (error) {
@@ -307,6 +455,18 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any, Flag: any
      }catch(error){
       logger.error(error)
      }
+
+        //checking cancellation_terms
+        try {
+          onConfirm.cancellation_terms.forEach((itm:any,index:number)=>{
+            if(!itm.cancellation_eligible){
+              rsfObj[`cancellation_terms[${index}].cancellation_eligible`] = `Cancellation_eligible is missing at index: ${index}`
+            }
+          })
+        } catch (error) {
+          logger.error(error)
+        }
+
       setValue(`onConfirmOrder`,message.order)
       setValue('onConfirmItems',onConfirm.items)
       setValue(`onConfirmfulfillments`,onConfirm.fulfillments)

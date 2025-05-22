@@ -7,9 +7,9 @@ import { setValue } from '../../../shared/dao'
 export const checkSelect1 = (data: any, msgIdSet: any) => {
   const rsfObj: any = {}
   const fulfillmentIdsSet = new Set()
-  const ItemMap = new Map();
-  const itemAddOn =  new Map()
-  const { context,message }: any = data
+  const ItemMap = new Map()
+  const itemAddOn = new Map()
+  const { context, message }: any = data
 
   if (!data || isObjectEmpty(data)) {
     return { [TRV14ApiSequence.SELECT_1]: 'JSON cannot be empty' }
@@ -24,40 +24,39 @@ export const checkSelect1 = (data: any, msgIdSet: any) => {
     }
 
     const select = message.order
-    //checking provider       
-    setValue('prvdrId',select.provider.id)
-      
-      //checking items
-      try {
-        select.items.forEach((itm: any )=>{
-          if(itm.parent_item_id === ''){
-            rsfObj[itm.id] = `${itm.id}  cant have empty parent_item_id`
-          }
-          ItemMap.set(itm.id,itm.quantity.selected.count)
-          if(itm.add_ons){
-            itemAddOn.set(itm.id,itm.add_ons[0].id)
-          }
-        })
-        setValue(`items`,ItemMap)
-        setValue(`addOnItems`,itemAddOn)
-      } catch (error) {
-        logger.error(error)
-      }
+    //checking provider
+    setValue('prvdrId', select.provider.id)
 
-      
-      //fulfillment
-      try {
-        select.fulfillments.forEach((itm: any)=>{
-          fulfillmentIdsSet.add(itm.id)
-        })
-        setValue(`fulfillmentids`,fulfillmentIdsSet)
-      } catch (error) {
-        logger.error(error)
-      }
-     
+    //checking items
+    try {
+      select.items.forEach((itm: any) => {
+        if (itm.parent_item_id === '') {
+          rsfObj[itm.id] = `parent_item_id can't have empty values for item with id:${itm.id} `
+        }
+        ItemMap.set(itm.id, itm.quantity.selected.count)
+        if (itm.add_ons) {
+          itemAddOn.set(itm.id, itm.add_ons[0].id)
+        }
+      })
+      setValue(`items`, ItemMap)
+      setValue(`addOnItems`, itemAddOn)
 
-    setValue('select1items',select.items)
-    setValue('select1fulfillments',select.fulfillments)
+    } catch (error) {
+      logger.error(error)
+    }
+
+    //fulfillment
+    try {
+      select.fulfillments.forEach((itm: any) => {
+        fulfillmentIdsSet.add(itm.id)
+      })
+      setValue(`fulfillmentids`, fulfillmentIdsSet)
+    } catch (error) {
+      logger.error(error)
+    }
+
+    setValue('select1items', select.items)
+    setValue('select1fulfillments', select.fulfillments)
     setValue('select1prvdrid', select.provider.id)
     setValue('select1msgId', context.message_id)
 

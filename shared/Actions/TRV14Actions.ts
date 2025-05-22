@@ -36,7 +36,7 @@ import { checkOnSearch } from '../../utils/TRV/TRV-14/onSearch'
 export function validateLogsForTRV14(data: any, _flow: string, version: string) {
   const msgIdSet = new Set()
   let logReport: any = {}
-  console.log('The DATA IS: ', data)
+  // console.log('The DATA IS: ', data)
   let Flag = false
   if (data[`cancel`] || data[`cancel_1`]) {
     Flag = true

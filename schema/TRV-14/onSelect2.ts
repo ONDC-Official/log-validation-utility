@@ -148,6 +148,42 @@ const onSelect2SchemaTRV14 = {
                     name: { type: 'string' },
                   },
                 },
+                locations:{
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      id: { type: "string" },
+                      gps: { type: "string" },
+                      descriptor: {
+                        type: "object",
+                        properties: {
+                          name: { type: "string" },
+                          short_desc: { type: "string" },
+                          additional_desc: {
+                            type: "object",
+                            properties: {
+                              url: { type: "string" },
+                              content_type: { type: "string" }
+                            }
+                          },
+                          images: {
+                            type: "array",
+                            items: {
+                              type: "object",
+                              properties: {
+                                url: { type: "string" },
+                                size_type: { type: "string" }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      rating: { type: "string" }
+                    },
+                    required: ["id", "gps", "descriptor"]
+                  }
+                }
               },
             },
             quote: {

@@ -65,6 +65,7 @@ const onSelect1SchemaTRV14 = {
               items: {
                 type: 'object',
                 required: ['id', 'descriptor', 'location_ids', 'category_ids'],
+                additionalProperties: false,
                 properties: {
                   id: { type: 'string' },
                   descriptor: {
@@ -77,6 +78,13 @@ const onSelect1SchemaTRV14 = {
                   },
                   location_ids: { type: 'array', items: { type: 'string' } },
                   category_ids: { type: 'array', items: { type: 'string' } },
+                  time:{},
+                  fulfillment_ids:{},
+                  tags:{},
+                  price:{},
+                  quantity:{},
+                  add_ons:{},
+                  xinput:{}
                 },
               },
             },
@@ -148,6 +156,42 @@ const onSelect1SchemaTRV14 = {
                     name: { type: 'string' },
                   },
                 },
+                locations:{
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      id: { type: "string" },
+                      gps: { type: "string" },
+                      descriptor: {
+                        type: "object",
+                        properties: {
+                          name: { type: "string" },
+                          short_desc: { type: "string" },
+                          additional_desc: {
+                            type: "object",
+                            properties: {
+                              url: { type: "string" },
+                              content_type: { type: "string" }
+                            }
+                          },
+                          images: {
+                            type: "array",
+                            items: {
+                              type: "object",
+                              properties: {
+                                url: { type: "string" },
+                                size_type: { type: "string" }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      rating: { type: "string" }
+                    },
+                    required: ["id", "gps", "descriptor"]
+                  }
+                }
               },
             },
             quote: {

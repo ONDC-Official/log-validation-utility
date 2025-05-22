@@ -1,4 +1,4 @@
-import { validateQuote, validateXInput } from './TRV14checks'
+import { validateOnItemTagsStructure, validateQuote, validateXInput } from './TRV14checks'
 import constants, { TRV14ApiSequence } from '../../../constants'
 import { getValue, setValue } from '../../../shared/dao'
 import { logger } from '../../../shared/logger'
@@ -36,9 +36,15 @@ export const checkOnSelect1 = (data: any, msgIdSet: any, version: any) => {
       logger.error(error)
     }
 
+    //checking items that they dont contain extra property
     try {
+      let ABSTRACT_FLAG = false
+      let ENTRY_PASS_FLAG = false
+
       onSelect.items.forEach((itm:any)=>{
         if(itm.descriptor.code === 'ABSTRACT'){
+          ABSTRACT_FLAG = true
+          const allowedKeys = ['id', 'descriptor', 'location_ids', 'category_ids', 'time', 'fulfillment_ids', 'tags']
           if(itm.price){
             rsfObj[`${itm.id}_price`] = `itm price should not be there` 
           }
@@ -67,16 +73,62 @@ export const checkOnSelect1 = (data: any, msgIdSet: any, version: any) => {
             })
           })
         }
+        Object.keys(itm).forEach((key) => {
+          if (!allowedKeys.includes(key)) {
+            rsfObj[`Addon${itm.id}_${key}`] = `'${key}' is not required in item obj with id:${itm.id}`;
+          }
+        });
         }
         if(itm.descriptor.code === 'ENTRY_PASS'){
+          ENTRY_PASS_FLAG = true
+          const allowedKeys = ['id','descriptor','parent_item_id', 'location_ids', 'category_ids', 'price', 'quantity', 'time', 'fulfillment_ids', 'add_ons', 'xinput', 'tags']
           if(itm.parent_item_id === ''){
-            rsfObj[`${itm.id}`] = `${itm.id} can't have empty string parent_item_id`
+            rsfObj[`${itm.id}`] = `parent_item_id can't have empty values for item with id: ${itm.id}  `
           }
           if(!itm.parent_item_id){
-            rsfObj[`${itm.id}`] = `${itm.id} should have parent_item_id`
+            rsfObj[`${itm.id}`] = `parent_item_id is missing in item obj with id:${itm.id}`
           }
-        }    
+          Object.keys(itm).forEach((key) => {
+            if (!allowedKeys.includes(key)) {
+              rsfObj[`${itm.id}_${key}`] = `'${key}' is not required in item obj with id:${itm.id}`;
+            }
+          });
+          const tagsError = validateOnItemTagsStructure(itm.tags,itm.id)
+          Object.assign(rsfObj,tagsError)
+        } 
+        if(itm.descriptor.code === 'ADD_ON'){
+          if(itemAddOn.length <= 0){
+            rsfObj[`Addons`] = `No items were selected for Add-ons`
+          }
+          else{
+            const allowedKeys = ['id', 'descriptor', 'parent_item_id', 'price', 'quantity'];
+          if(itm.parent_item_id === ''){
+            rsfObj[`Addon${itm.id}`] = `${itm.id} can't have empty string parent_item_id`
+          }
+          if(!itm.parent_item_id){
+            rsfObj[`Addon${itm.id}`] = `parent_item_id is missing in item obj with id:${itm.id}`
+          }
+          if(!itm.price){
+            rsfObj[`Addon${itm.id}`] = `${itm.id} should have price object`
+          }
+          if(!itm.quantity){
+            rsfObj[`Addon${itm.id}`] = `${itm.id} should have quantity object`
+          }
+
+          Object.keys(itm).forEach((key) => {
+            if (!allowedKeys.includes(key)) {
+              rsfObj[`Addon${itm.id}_${key}`] = `'${key}' is not required in item obj with id:${itm.id}`;
+            }
+          });
+          }
+        }  
       })
+      if(!ABSTRACT_FLAG && ENTRY_PASS_FLAG){
+        rsfObj[`parent_item`]= `parent item not found having descriptor.code as ABSTRACT`
+      }
+      else if(ABSTRACT_FLAG && !ENTRY_PASS_FLAG){
+        rsfObj[`child_item`]= `child_item does not exist for the parent item`
+      }
     } catch (error) {
       logger.error(error)
     }
@@ -100,10 +152,10 @@ export const checkOnSelect1 = (data: any, msgIdSet: any, version: any) => {
           errorObj.fulfmentId = `fulfillment id mismatched on select and on_select`
         }
         if(itm.agent.organization.contact.phone === '' ){
-          errorObj.contact.phone = ` phone cant be empty string`
+          errorObj[`contact/phone`] = ` phone cant be empty string`
         }
         if(itm.agent.organization.contact.email === '' ){
-          errorObj.contact.email = ` email cant be empty string`
+          errorObj[`contact/email`] = ` email cant be empty string`
         }
       })
     } catch (error) {
@@ -114,7 +166,7 @@ export const checkOnSelect1 = (data: any, msgIdSet: any, version: any) => {
     //quote checking
     try {
       logger.info(`Checking quote details in /${constants.ON_SELECT}`)
-      const quoteErrors = validateQuote(onSelect.quote, constants.ON_SELECT)
+      const quoteErrors = validateQuote(onSelect.quote, constants.ON_SELECT,itemAddOn)
       Object.assign(errorObj, quoteErrors)
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking Quote in /${constants.ON_SELECT},  ${error.message}`)
@@ -144,6 +196,10 @@ export const checkOnSelect1 = (data: any, msgIdSet: any, version: any) => {
             rsfObj.item[itm.item.id] = `${itm.item.id} selected quantity mismatches`
           }
         }
+
+        if(Object.keys(rsfObj.item).length === 0){
+          delete rsfObj.item
+        }
       })
     } catch (error) {
       logger.error(error)
@@ -159,6 +215,17 @@ export const checkOnSelect1 = (data: any, msgIdSet: any, version: any) => {
           Xinputmap.set(itm.id, itm.xinput)
         }
         Object.assign(rsfObj, validateXinput)
+      })
+    } catch (error) {
+      logger.error(error)
+    }
+
+    //checking cancellation_terms
+    try {
+      onSelect.cancellation_terms.forEach((itm:any,index:number)=>{
+        if(!itm.cancellation_eligible){
+          rsfObj[`cancellation_terms[${index}].cancellation_eligible`] = `Cancellation_eligible is missing at index: ${index}`
+        }
       })
     } catch (error) {
       logger.error(error)

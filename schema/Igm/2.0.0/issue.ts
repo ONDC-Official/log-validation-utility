@@ -146,7 +146,7 @@ const newIssueSchema = {
     message: {
       type: 'object',
       properties: {
-        updated_target: {
+        update_target: {
           type: 'array',
           items: {
             type: 'object',
@@ -196,7 +196,7 @@ const newIssueSchema = {
                     enum: [
                       'ORDER',
                       'PROVIDER',
-                      'FULFILMENT',
+                      'FULFILLMENT',
                       'ITEM',
                       'AGENT',
                       'TRANSACTION',
@@ -254,6 +254,7 @@ const newIssueSchema = {
                   type: {
                     type: 'string',
                     enum: [
+                      'CUSTOMER',
                       'CONSUMER',
                       'INTERFACING_NP',
                       'COUNTERPARTY_NP',
@@ -304,7 +305,7 @@ const newIssueSchema = {
               type: 'array',
               items: { type: 'string' },
             },
-            description: {
+            descriptor: {
               type: 'object',
               properties: {
                 code: { type: 'string' },
@@ -339,7 +340,7 @@ const newIssueSchema = {
                 type: 'object',
                 properties: {
                   id: { type: 'string' },
-                  description: {
+                  descriptor: {
                     type: 'object',
                     properties: {
                       code: {
@@ -373,7 +374,7 @@ const newIssueSchema = {
                     required: ['name'],
                   },
                 },
-                required: ['id', 'description', 'updated_at', 'action_by', 'actor_details'],
+                required: ['id', 'descriptor', 'updated_at', 'action_by', 'actor_details'],
               },
             },
           },
@@ -389,7 +390,7 @@ const newIssueSchema = {
             'actors',
             'source_id',
             'complainant_id',
-            'description',
+            'descriptor',
             'last_action_id',
             'actions',
           ],

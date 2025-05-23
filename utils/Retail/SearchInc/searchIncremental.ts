@@ -80,7 +80,7 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
         if (gps) {
           if (!checkGpsPrecision(gps)) {
             errorObj['gpsPrecision'] =
-              'fulfillment/end/location/gps coordinates must be specified with at least six decimal places of precision.'
+              'fulfillment/end/location/gps coordinates must be specified with at least 4 decimal places of precision.'
           }
         } else {
           errorObj['fulfillmentLocation'] = 'fulfillment/end/location should have a required property gps'

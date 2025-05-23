@@ -2695,6 +2695,345 @@ export const onSearchSchema = {
 
                     required: ['id', 'descriptor', 'location_ids', 'item_ids', 'time', 'tags'],
                   },
+                  tags: {
+                    type: 'array',
+                    items: {
+                      allOf: [
+                        {
+                          if: {
+                            properties: {
+                              code: {
+                                const: 'timing',
+                              },
+                            },
+                          },
+                          then: {
+                            properties: {
+                              list: {
+                                type: 'array',
+                                items: {
+                                  allOf: [
+                                    {
+                                      if: {
+                                        properties: {
+                                          code: {
+                                            const: 'type',
+                                          },
+                                        },
+                                      },
+                                      then: {
+                                        properties: {
+                                          value: {
+                                            type: 'string',
+                                            enum: ['Self-Pickup', 'Order', 'Delivery', 'All'],
+                                            errorMessage:
+                                              "timing for fulfillment type, enum - 'Order' (online order processing timings 'Delivery' (order shipment timings, will be same as delivery timings for hyperlocal), 'Self-Pickup' (self-pickup timings)",
+                                          },
+                                        },
+                                        required: ['code', 'value'],
+                                      },
+                                    },
+                                    {
+                                      if: {
+                                        properties: {
+                                          code: {
+                                            const: 'location',
+                                          },
+                                        },
+                                      },
+                                      then: {
+                                        properties: {
+                                          value: {
+                                            type: 'string',
+                                          },
+                                        },
+                                        required: ['code', 'value'],
+                                      },
+                                    },
+                                    {
+                                      if: {
+                                        properties: {
+                                          code: {
+                                            const: 'day_from',
+                                          },
+                                        },
+                                      },
+                                      then: {
+                                        properties: {
+                                          value: {
+                                            type: 'string',
+                                            pattern: '^[1-7]$',
+                                            errorMessage:
+                                              "Value for 'day_from' must be numeric characters only from 1 to 7",
+                                          },
+                                        },
+                                        required: ['code', 'value'],
+                                      },
+                                    },
+                                    {
+                                      if: {
+                                        properties: {
+                                          code: {
+                                            const: 'day_to',
+                                          },
+                                        },
+                                      },
+                                      then: {
+                                        properties: {
+                                          value: {
+                                            type: 'string',
+                                            pattern: '^[1-7]$',
+                                            errorMessage:
+                                              "Value for 'day_to' must be numeric characters only from 1 to 7",
+                                          },
+                                        },
+                                        required: ['code', 'value'],
+                                      },
+                                    },
+                                    {
+                                      if: {
+                                        properties: {
+                                          code: {
+                                            const: 'time_from',
+                                          },
+                                        },
+                                      },
+                                      then: {
+                                        properties: {
+                                          value: {
+                                            type: 'string',
+                                            pattern: '^([01][0-9]|2[0-3])[0-5][0-9]$',
+                                            errorMessage:
+                                              "Value for 'time_from' must be a 4-digit numeric value in HHMM format",
+                                          },
+                                        },
+                                        required: ['code', 'value'],
+                                      },
+                                    },
+                                    {
+                                      if: {
+                                        properties: {
+                                          code: {
+                                            const: 'time_to',
+                                          },
+                                        },
+                                      },
+                                      then: {
+                                        properties: {
+                                          value: {
+                                            type: 'string',
+                                            pattern: '^(2[0-3]|[01]?[0-9]|24)[0-5]?[0-9]$',
+                                            errorMessage:
+                                              "Value for 'time_to' must be a 4-digit numeric value in HHMM format",
+                                          },
+                                        },
+                                        required: ['code', 'value'],
+                                      },
+                                    },
+                                  ],
+                                },
+                              },
+                            },
+                          },
+                        },
+                        {
+                          if: {
+                            properties: {
+                              code: {
+                                const: 'serviceability',
+                              },
+                            },
+                          },
+                          then: {
+                            properties: {
+                              list: {
+                                type: 'array',
+                                items: {
+                                  type: 'object',
+                                  properties: {
+                                    code: {
+                                      type: 'string',
+                                      enum: ['location', 'category', 'type', 'val', 'unit','day_from','day_to','time_from','time_to'],
+                                     },
+                                    value: {
+                                      type: 'string',
+                                    },
+                                  },
+                                  required: ['code', 'value'],
+                                  additionalProperties: false,
+                                },
+                                minItems: 5,
+                                maxItems: 9,
+                                uniqueItems: true,
+                                errorMessage: {
+                                  minItems: 'Serviceability must have minimum 5 values',
+                                  uniqueItems: 'Serviceability must have unique items',
+                                  _: "Serviceability must have these values 'location', 'category', 'type', 'val', 'unit' and no duplicacy or other elements allowed",
+                                },
+                              },
+                            },
+                          },
+                        },
+                        {
+                          if: {
+                            properties: {
+                              code: {
+                                const: 'catalog_link',
+                              },
+                            },
+                          },
+                          then: {
+                            properties: {
+                              list: {
+                                type: 'array',
+                                items: {
+                                  allOf: [
+                                    {
+                                      if: {
+                                        properties: {
+                                          code: {
+                                            const: 'type_validity',
+                                          },
+                                        },
+                                        required: ['code'],
+                                      },
+                                      then: {
+                                        properties: {
+                                          value: {
+                                            format: 'duration',
+                                            errorMessage: 'Duration must be RFC3339 duration.',
+                                          },
+                                        },
+                                        required: ['value'],
+                                      },
+                                    },
+                                    {
+                                      if: {
+                                        properties: {
+                                          code: {
+                                            const: 'last_update',
+                                          },
+                                        },
+                                        required: ['code'],
+                                      },
+                                      then: {
+                                        properties: {
+                                          value: {
+                                            description: 'RFC3339 UTC timestamp format',
+                                            format: 'rfc3339-date-time',
+                                            errorMessage: 'Time must be RFC3339 UTC timestamp format.',
+                                          },
+                                        },
+                                        required: ['value'],
+                                      },
+                                    },
+                                    {
+                                      if: {
+                                        properties: {
+                                          code: {
+                                            const: 'type_value',
+                                          },
+                                        },
+                                        required: ['code'],
+                                      },
+                                      then: {
+                                        properties: {
+                                          value: {
+                                            format: 'url',
+                                            errorMessage: 'Type value must be url',
+                                          },
+                                        },
+                                        required: ['value'],
+                                      },
+                                    },
+                                    {
+                                      if: {
+                                        properties: {
+                                          code: {
+                                            const: 'last_update',
+                                          },
+                                        },
+                                        required: ['code'],
+                                      },
+                                      then: {
+                                        properties: {
+                                          value: {
+                                            description: 'RFC3339 UTC timestamp format',
+                                            format: 'rfc3339-date-time',
+                                            errorMessage: 'Time must be RFC3339 UTC timestamp format.',
+                                          },
+                                        },
+                                        required: ['value'],
+                                      },
+                                    },
+                                    {
+                                      if: {
+                                        properties: {
+                                          code: {
+                                            const: 'type',
+                                          },
+                                        },
+                                        required: ['code'],
+                                      },
+                                      then: {
+                                        properties: {
+                                          value: {
+                                            enum: ['inline', 'link'],
+                                            errorMessage:
+                                              "Type value must be 'inline'(items array in inline response, which is the default today) or 'link'(link to zip file for items array for the provider)",
+                                          },
+                                        },
+                                        required: ['value'],
+                                      },
+                                    },
+                                  ],
+                                },
+                              },
+                            },
+                          },
+                        },
+                        {
+                          if: {
+                            properties: {
+                              code: {
+                                const: 'order_value',
+                              },
+                            },
+                          },
+                          then: {
+                            properties: {
+                              list: {
+                                type: 'array',
+                                items: {
+                                  allOf: [
+                                    {
+                                      if: {
+                                        properties: {
+                                          code: {
+                                            const: 'min_value',
+                                          },
+                                        },
+                                        required: ['code'],
+                                      },
+                                      then: {
+                                        properties: {
+                                          value: {
+                                            pattern: '^[0-9]+(?:\.[0-9]{1,2})?$',
+                                            errorMessage: 'min_value must be number with exactly two decimal places',
+                                          },
+                                        },
+                                        required: ['value'],
+                                      },
+                                    },
+                                  ],
+                                },
+                              },
+                            },
+                          },
+                        },
+                      ],
+                    },
+                  },
                   required: ['id', 'time', 'fulfillments', 'descriptor', 'ttl', 'locations', 'items', 'tags', 'rating'],
                 },
               },

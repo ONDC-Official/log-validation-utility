@@ -13,6 +13,8 @@ import {
   mapCancellationID,
   checkQuoteTrail,
   checkQuoteTrailSum,
+  deepCompareObjects,
+  // compareQuoteObjects,
   deepCompare,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
@@ -20,6 +22,7 @@ import { FLOW } from '../../enum'
 
 export const checkOnCancel = (data: any, msgIdSet: any) => {
   const onCnclObj: any = {}
+  const onConfirmQuote = getValue(`${constants.ON_CONFIRM}/quote`)
   try {
     if (!data || isObjectEmpty(data)) {
       return { [ApiSequence.ON_CANCEL]: 'JSON cannot be empty' }
@@ -342,16 +345,97 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
 
     try {
       logger.info(`Checking for Item IDs in quote object in /${constants.ON_CANCEL}`)
-      let cancelFulfillments = null
+      let cancelFulfillment:any = []
       if (flow === '5') {
-        cancelFulfillments = _.filter(on_cancel.fulfillments, { type: 'RTO' })
+        cancelFulfillment = _.filter(on_cancel.fulfillments, { type: 'RTO' })?.[0]
       } else {
-        cancelFulfillments = _.filter(on_cancel.fulfillments, { type: 'Cancel' })
+        cancelFulfillment = _.filter(on_cancel.fulfillments, { type: 'Cancel' })?.[0]
       }
-      for (let obj of cancelFulfillments) {
-        const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
-        checkQuoteTrail(quoteTrailItems, onCnclObj, selectPriceMap, itemSet)
+
+      const quoteTrailItems = _.filter(cancelFulfillment.tags, { code: 'quote_trail' })
+
+      const onCancelOfferItem = on_cancel.quote.breakup.find((item: any) => item['@ondc/org/title_type'] === 'offer')
+      const onConfirmOfferItem = onConfirmQuote.breakup.find((item: any) => item['@ondc/org/title_type'] === 'offer')
+      const quoteTrailItemOffer = quoteTrailItems.find((trail) =>
+        trail.list.some((entry: any) => entry.code === 'type' && entry.value === 'offer'),
+      )
+
+      if (!_.isEqual(onConfirmOfferItem, onCancelOfferItem)) {
+        const differences = deepCompareObjects(onConfirmOfferItem, onCancelOfferItem)
+        console.log('differences: ', JSON.stringify(differences))
+
+        for (let diff of differences) {
+          const path = diff.path
+          switch (diff.path) {
+            case 'price.value':
+              {
+                const quoteTrailValue = quoteTrailItemOffer.list.find((item: any) => item.code === 'value')?.value
+                const onConfirmOfferValue = parseFloat(onConfirmOfferItem.price.value)
+                const onCancelOfferValue = parseFloat(onCancelOfferItem.price.value)
+                const quoteTrailOfferValue = parseFloat(quoteTrailValue)
+
+                if (isNaN(onConfirmOfferValue) || !onConfirmOfferItem?.price?.value) {
+                  onCnclObj[`offer.price.value`] = `Invalid or missing price value in ${ApiSequence.ON_CONFIRM}`
+                  break
+                }
+                if (isNaN(onCancelOfferValue) || !onCancelOfferItem?.price?.value) {
+                  onCnclObj[`offer.price.value`] = `Invalid or missing price value in ${ApiSequence.ON_CANCEL}`
+                  break
+                }
+                if (isNaN(quoteTrailOfferValue) || !quoteTrailValue) {
+                  onCnclObj[`quote_trail.offer.value`] = `Invalid or missing quote trail value`
+                  break
+                }
+                const totalOfferValue = onConfirmOfferValue + onCancelOfferValue + quoteTrailOfferValue
+                if (totalOfferValue != 0) {
+                  onCnclObj[`offer.value`] =
+                    `The offer value is not correctly calculated as matched with the ${ApiSequence.ON_CONFIRM} and quote_trail`
+                }
+
+                if (Math.abs(onCancelOfferValue) > Math.abs(quoteTrailOfferValue))
+                  onCnclObj[`quote_trail.offer.value`] =
+                    `The offer value should not be greater than benefit value as compared with ${ApiSequence.ON_CONFIRM} and quote_trail`
+
+                if (Math.abs(onCancelOfferValue) > Math.abs(onConfirmOfferValue))
+                  onCnclObj[`quote_trail.offer.value`] =
+                    `The offer value should not be greater than benefit value as compared with ${ApiSequence.ON_CONFIRM} and ${ApiSequence.ON_CANCEL}}`
+              }
+              break
+            case '@ondc/org/item_id':
+              if (!onCancelOfferItem?.['@ondc/org/item_id']) {
+                onCnclObj[`offer.@ondc/org/item_id`] = `Missing item_id in ${ApiSequence.ON_CANCEL}`
+              } else {
+                onCnclObj[`offer.@ondc/org/item_id`] = diff.message
+              }
+              break
+            default:
+              {
+                const codeExtract = (path.match(/\[code=([^\]]+)\]/g) || []).map(
+                  (m: any) => m.match(/\[code=([^\]]+)\]/)[1],
+                )
+                const key1 = codeExtract[0]
+                const key2 = codeExtract[1]
+                switch (key2) {
+                  case 'item_id':
+                  case 'item_value':
+                  case 'auto':
+                  case 'additive':
+                  case 'type':
+                    {
+                      onCnclObj[`offer.${key1}.${key2}`] =
+                        `Mismatch found at ${key2} as compared with ${ApiSequence.ON_CONFIRM}`
+                    }
+                    break
+                  default:
+                    onCnclObj[`offer.${key1}.${key2}`] = `Unexpected ${key1}.code: ${key2} in offer comparison`
+                    break
+                }
+              }
+              break
+          }
+        }
       }
+      checkQuoteTrail(quoteTrailItems, onCnclObj, selectPriceMap, itemSet)
     } catch (error: any) {
       logger.error(`!!Error while checking quote object in /${constants.ON_CANCEL}, ${error.stack}`)
     }

@@ -4,7 +4,7 @@ import constants, { metroSequence } from '../../../constants'
 import {
   validateSchema,
   isObjectEmpty,
-  checkGpsPrecision,
+  checkSixDigitGpsPrecision,
   // checkMetroContext,
   // checkBppIdOrBapId,
   // timeDiff,
@@ -98,7 +98,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
               fulfillmentErrors[`${stopKey}.type`] = `${stopKey}/type is required`
             }
 
-            if (checkGpsPrecision(stop?.location.gps)) {
+            if (checkSixDigitGpsPrecision(stop?.location.gps)) {
               fulfillmentErrors[`${stopKey}.gps`] =
                 'gps must be specified with at least six decimal places of precision.'
             }

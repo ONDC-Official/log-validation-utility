@@ -21,6 +21,8 @@ import {
   checkForStatutory,
   validateBppUri,
   validateBapUri,
+  validateMetaTags,
+  validateFinanceTags,
 } from '../..'
 import _, { isEmpty } from 'lodash'
 import { compareSTDwithArea } from '../../index'
@@ -28,7 +30,7 @@ import { BPCJSON, agriJSON, groceryJSON, healthJSON, homeJSON } from '../../../c
 import { electronicsData } from '../../../constants/electronics'
 import { applianceData } from '../../../constants/appliance'
 import { fashion } from '../../../constants/fashion'
-import { DOMAIN, FLOW, statutory_reqs } from '../../enum'
+import { DOMAIN, FLOW, OFFERSFLOW, statutory_reqs } from '../../enum'
 import { ret1aJSON } from '../../../constants/ret1a'
 export const checkOnsearch = (data: any, flow?: string) => {
   console.log('in this on_search 1.2.5')
@@ -43,6 +45,7 @@ export const checkOnsearch = (data: any, flow?: string) => {
     return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
   }
   const schemaValidation = validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_SEARCH, data)
+  let collect_payment_tags:any = {}
 
   setValue(`${ApiSequence.ON_SEARCH}_context`, context)
   setValue(`${ApiSequence.ON_SEARCH}_message`, message)
@@ -230,8 +233,36 @@ export const checkOnsearch = (data: any, flow?: string) => {
   try {
     const domain = context.domain.split(':')[1]
     logger.info(`Checking for item tags in bpp/providers[0].items.tags in ${domain}`)
+    const isoDurationRegex = /^P(?=\d|T\d)(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?$/;
     for (let i in onSearchCatalog['bpp/providers']) {
       const items = onSearchCatalog['bpp/providers'][i].items
+      items.forEach((item: any) => {
+        const replacementTerms = item.replacement_terms
+
+        if (replacementTerms !== undefined) {
+          if (!Array.isArray(replacementTerms) || replacementTerms.length === 0) {
+            errorObj['on_search_full_catalog_refresh'] =
+              `replacement_terms must be a non-empty array if present for item ID '${item.id}'`;
+            return;
+          }
+  
+          for (const term of replacementTerms) {
+            if (!term.hasOwnProperty('replace_within')) {
+              errorObj['on_search_full_catalog_refresh'] =
+                `Missing 'replace_within' in replacement_terms for item ID '${item.id}'`;
+              
+            }
+  
+            const duration = term.replace_within?.duration;
+  
+            if (!duration || !isoDurationRegex.test(duration)) {
+              errorObj['on_search_full_catalog_refresh'] =
+                `Invalid or missing ISO 8601 duration in replacement_terms for item ID '${item.id}'. Found: '${duration}'`;
+              
+            }
+          }
+        }
+      })
       let errors: any
       switch (domain) {
         case DOMAIN.RET10:
@@ -445,6 +476,45 @@ export const checkOnsearch = (data: any, flow?: string) => {
       `!!Errors while checking image array for bpp/providers/[]/categories/[]/descriptor/images[], ${error.stack}`,
     )
   }
+
+  try {
+    logger.info(`Checking for np_type in bpp/descriptor`)
+    const descriptor = onSearchCatalog['bpp/descriptor']
+    descriptor?.tags.map((tag: { code: any; list: any[] }) => {
+      if (tag.code === 'bpp_terms') {
+        const npType = tag.list.find((item) => item.code === 'np_type')
+        if (!npType) {
+          errorObj['bpp/descriptor'] = `Missing np_type in bpp/descriptor`
+          setValue(`${ApiSequence.ON_SEARCH}np_type`, '')
+        } else {
+          setValue(`${ApiSequence.ON_SEARCH}np_type`, npType.value)
+        }
+        const accept_bap_terms = tag.list.find((item) => item.code === 'accept_bap_terms')
+        if (accept_bap_terms) {
+          errorObj['bpp/descriptor/accept_bap_terms'] =
+            `accept_bap_terms is not required in bpp/descriptor/tags for now `
+        }
+        // const collect_payment = tag.list.find((item) => item.code === 'collect_payment')
+        // if (collect_payment) {
+        //   errorObj['bpp/descriptor/collect_payment'] = `collect_payment is not required in bpp/descriptor/tags for now `
+        // }
+      }
+      if(flow === FLOW.FLOW007 || flow === FLOW.FLOW0099 || flow === OFFERSFLOW.FLOW0098){
+        collect_payment_tags = tag.list.find((item) => item.code === 'collect_payment')
+        if(!collect_payment_tags){
+          errorObj['bpp/descriptor/tags/collect_payment'] = `collect_payment is required in bpp/descriptor/tags for on_search catalogue for flow: ${flow} `
+        }
+        if (!['Y', 'N'].includes(collect_payment_tags.value)) {
+          errorObj['bpp/descriptor/tags/collect_payment'] =  `value must be "Y" or "N" for flow: ${flow}`;
+        }
+        setValue(collect_payment_tags.value,"collect_payment")
+      }
+    })
+  } catch (error: any) {
+    logger.error(`Error while checking np_type in bpp/descriptor for /${constants.ON_SEARCH}, ${error.stack}`)
+  }
+
+
   //Validating Offers
   try {
     logger.info(`Checking offers under bpp/providers`)
@@ -499,6 +569,16 @@ export const checkOnsearch = (data: any, flow?: string) => {
             `Tags must be provided for offers[${offerIndex}] with descriptor code '${offer.descriptor?.code}'`,
           )
           return
+        }
+        const metaTagsError = validateMetaTags(tags)
+        if (metaTagsError) {
+          let i = 0
+          const len = metaTagsError.length
+          while (i < len) {
+            const key = `metaTagsError${i}`
+            errorObj[key] = `${metaTagsError[i]}`
+            i++
+          }
         }
 
         // Validate based on offer type
@@ -694,26 +774,40 @@ export const checkOnsearch = (data: any, flow?: string) => {
             }
             break
 
-          case 'exchange':
-            // Validate 'qualifier'
-            const qualifierExchange = tags.find((tag: any) => tag.code === 'qualifier')
-            if (!qualifierExchange || !qualifierExchange.list.some((item: any) => item.code === 'min_value')) {
-              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`
-              errorObj[key] =
-                `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
-              logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`)
-            }
+          // case 'exchange':
+          //   // Validate 'qualifier'
+          //   const qualifierExchange = tags.find((tag: any) => tag.code === 'qualifier')
+          //   if (!qualifierExchange || !qualifierExchange.list.some((item: any) => item.code === 'min_value')) {
+          //     const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`
+          //     errorObj[key] =
+          //       `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
+          //     logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`)
+          //   }
 
-            // Validate that benefits should not exist or should be empty
-            const benefitExchange = tags.find((tag: any) => tag.code === 'benefit')
-            if (benefitExchange && benefitExchange.list.length > 0) {
-              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`
-              errorObj[key] =
-                `'benefit' tag must not include any values for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
-              logger.error(`'benefit' tag must not include any values for offers[${offerIndex}]`)
+          //   // Validate that benefits should not exist or should be empty
+          //   const benefitExchange = tags.find((tag: any) => tag.code === 'benefit')
+          //   if (benefitExchange && benefitExchange.list.length > 0) {
+          //     const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`
+          //     errorObj[key] =
+          //       `'benefit' tag must not include any values for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
+          //     logger.error(`'benefit' tag must not include any values for offers[${offerIndex}]`)
+          //   }
+          //   break
+          case 'financing':
+            let collect_payment_value = collect_payment_tags?.value
+            if (flow === FLOW.FLOW0099 || collect_payment_value === 'no') {
+              const financeTagsError = validateFinanceTags(tags)
+              if (financeTagsError) {
+                let i = 0
+                const len = financeTagsError.length
+                while (i < len) {
+                  const key = `financeTagsError${i}`
+                  errorObj[key] = `${financeTagsError[i]}`
+                  i++
+                }
+              }
             }
             break
-
           default:
             logger.info(`No specific validation required for offer type: ${offer.descriptor?.code}`)
         }
@@ -884,32 +978,7 @@ export const checkOnsearch = (data: any, flow?: string) => {
   // } catch (error: any) {
   //   logger.error(`!!Errors while checking parent_item_id in bpp/providers/[]/items/[]/parent_item_id/, ${error.stack}`)
   // }
-  try {
-    logger.info(`Checking for np_type in bpp/descriptor`)
-    const descriptor = onSearchCatalog['bpp/descriptor']
-    descriptor?.tags.map((tag: { code: any; list: any[] }) => {
-      if (tag.code === 'bpp_terms') {
-        const npType = tag.list.find((item) => item.code === 'np_type')
-        if (!npType) {
-          errorObj['bpp/descriptor'] = `Missing np_type in bpp/descriptor`
-          setValue(`${ApiSequence.ON_SEARCH}np_type`, '')
-        } else {
-          setValue(`${ApiSequence.ON_SEARCH}np_type`, npType.value)
-        }
-        const accept_bap_terms = tag.list.find((item) => item.code === 'accept_bap_terms')
-        if (accept_bap_terms) {
-          errorObj['bpp/descriptor/accept_bap_terms'] =
-            `accept_bap_terms is not required in bpp/descriptor/tags for now `
-        }
-        const collect_payment = tag.list.find((item) => item.code === 'collect_payment')
-        if (collect_payment) {
-          errorObj['bpp/descriptor/collect_payment'] = `collect_payment is not required in bpp/descriptor/tags for now `
-        }
-      }
-    })
-  } catch (error: any) {
-    logger.error(`Error while checking np_type in bpp/descriptor for /${constants.ON_SEARCH}, ${error.stack}`)
-  }
+  
 
   try {
     logger.info(`Checking Providers info (bpp/providers) in /${constants.ON_SEARCH}`)
@@ -948,7 +1017,7 @@ export const checkOnsearch = (data: any, flow?: string) => {
           const has = Object.prototype.hasOwnProperty
           if (has.call(loc, 'gps')) {
             if (!checkGpsPrecision(loc.gps)) {
-              errorObj.gpsPrecision = `/bpp/providers[${i}]/locations[${iter}]/gps coordinates must be specified with at least six decimal places of precision.`
+              errorObj.gpsPrecision = `/bpp/providers[${i}]/locations[${iter}]/gps coordinates must be specified with at least 4 decimal places of precision.`
             }
           }
         } catch (error) {
@@ -1601,7 +1670,7 @@ export const checkOnsearch = (data: any, flow?: string) => {
 
             serviceabilitySet.add(JSON.stringify(sc))
             if ('list' in sc) {
-              if (sc.list.length != 5) {
+              if (sc.list.length < 5) {
                 const key = `prvdr${i}tags${t}`
                 errorObj[key] =
                   `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract`

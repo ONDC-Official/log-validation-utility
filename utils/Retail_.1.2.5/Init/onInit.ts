@@ -13,9 +13,11 @@ import {
   compareObjects,
   payment_status,
   compareQuoteObjects,
+  validateFinanceTermsTag,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
-import { FLOW } from '../../enum'
+import { FLOW, OFFERSFLOW } from '../../enum'
+import { PAYMENT_COLLECTED_BY } from '../../../constants'
 
 export const checkOnInit = (data: any, flow: string) => {
   try {
@@ -406,6 +408,80 @@ export const checkOnInit = (data: any, flow: string) => {
       if (!on_init.payment) {
         onInitObj.pymntOnInitObj = `Payment Object can't be null in /${constants.ON_INIT}`
       }
+      if (!on_init.payment.collected_by) {
+        onInitObj[`payment_collected_by`] = `payments.collected_by must be present in ${constants.ON_INIT}`
+      }
+        const collectedBy = on_init.payment.collected_by.includes(PAYMENT_COLLECTED_BY)
+        const collect_payment = getValue('collect_payment')
+        if (flow === FLOW.FLOW007 || collect_payment === 'Y') {
+          if (collectedBy !== PAYMENT_COLLECTED_BY.BPP) {
+            onInitObj['invaliedPaymentCollectedBy'] =
+              `Payment collected_by should be ${PAYMENT_COLLECTED_BY.BPP} for flow: ${flow}`
+          }
+          const payment_uri = on_init.payment?.uri
+          if (!payment_uri || payment_uri.trim().length === 0) {
+            onInitObj['PaymentUri'] =
+              `Payment uri should be present when payment collect_by: ${PAYMENT_COLLECTED_BY.BPP} for flow: ${flow}`
+          }
+          const tags = on_init.payment.tags
+          const bpp_collect_tag = tags.find((tag: any) => tag.code === 'bpp_collect')
+          if (!bpp_collect_tag || !Array.isArray(bpp_collect_tag.list)) {
+            onInitObj['bpp_collect'] = "Tag 'bpp_collect' must have a valid 'list' array."
+          }
+
+          const successEntry = bpp_collect_tag.list.find((item: any) => item.code === 'success')
+          const errorEntry = bpp_collect_tag.list.find((item: any) => item.code === 'error')
+
+          if (!successEntry || !['Y', 'N'].includes(successEntry.value)) {
+            onInitObj['bpp_collect_success'] =
+              "'success' code in 'bpp_collect' must be present and have value 'Y' or 'N'"
+          }
+
+          if (successEntry?.value === 'N') {
+            if (!errorEntry || typeof errorEntry.value !== 'string' || errorEntry.value.trim().length === 0) {
+              onInitObj['bpp_collect_error'] = "'error' must be present with a non-empty value when 'success' is 'N'"
+            }
+          } else if (successEntry?.value === 'Y' && errorEntry) {
+            onInitObj['bpp_collect_error_unexpected'] = "'error' should not be present when 'success' is 'Y'"
+          }
+        } else if (flow === FLOW.FLOW0099 || collect_payment === 'N' || flow === OFFERSFLOW.FLOW0098) {
+          let offers = on_init.quote.breakup.filter((item:any)=>item["@ondc/org/title_type"] === "offer")
+          if (offers.length === 0) {
+            onInitObj['offer-not-found'] = `Offer is required for the flow: ${flow}`
+          } else if (offers.length > 0) {
+            const providerOffers: any = getValue(`${ApiSequence.ON_SEARCH}_offers`)
+            offers.forEach((offer: any, index: number) => {
+              const providerOffer = providerOffers?.find(
+                (providedOffer: any) => providedOffer?.id.toLowerCase() === offer["@ondc/org/item_id"].toLowerCase(),
+              )
+              console.log('providerOffer in select call', JSON.stringify(providerOffer))
+
+              if (!providerOffer) {
+                onInitObj[`offer[${index}]`] = `Offer with id ${offer.id} is not available for the provider.`
+                return
+              }
+              const offerType = providerOffer.descriptor.code
+              if(offerType === "financing"){
+               const finance_tags = offer.item.tags.find((tag:any)=>tag.code === "finance_terms")
+               if(finance_tags){
+                setValue(`finance_terms${constants.ON_INIT}`,finance_tags)
+                const financeTagsError = validateFinanceTermsTag(finance_tags)
+                if (financeTagsError) {
+                  let i = 0
+                  const len = financeTagsError.length
+                  while (i < len) {
+                    const key = `financeTagsError${i}`
+                    onInitObj[key] = `${financeTagsError[i]}`
+                    i++
+                  }
+                }
+               } 
+              }
+            })
+
+          }
+        }
+      
     } catch (error: any) {
       logger.error(`!!Error while checking /${constants.ON_INIT} Quoted Price and Net Price Breakup, ${error.stack}`)
     }
@@ -427,19 +503,21 @@ export const checkOnInit = (data: any, flow: string) => {
     try {
       logger.info(`Checking Quote Object in /${constants.ON_SELECT} and /${constants.ON_INIT}`)
       const on_select_quote: any = getValue('quoteObj')
-      const quoteErrors = compareQuoteObjects(on_select_quote, on_init.quote, constants.ON_SELECT, constants.ON_INIT)
-      const hasItemWithQuantity = _.some(on_init.quote.breakup, (item) => _.has(item, 'item.quantity'))
-      if (hasItemWithQuantity) {
-        const key = `quantErr`
-        onInitObj[key] =
-          `Extra attribute Quantity provided in quote object i.e not supposed to be provided after on_select so invalid quote object`
-      } else if (quoteErrors) {
-        let i = 0
-        const len = quoteErrors.length
-        while (i < len) {
-          const key = `quoteErr${i}`
-          onInitObj[key] = `${quoteErrors[i]}`
-          i++
+      if (flow !== FLOW.FLOW0099 && flow != OFFERSFLOW.FLOW0098) {
+        const quoteErrors = compareQuoteObjects(on_select_quote, on_init.quote, constants.ON_SELECT, constants.ON_INIT)
+        const hasItemWithQuantity = _.some(on_init.quote.breakup, (item) => _.has(item, 'item.quantity'))
+        if (hasItemWithQuantity) {
+          const key = `quantErr`
+          onInitObj[key] =
+            `Extra attribute Quantity provided in quote object i.e not supposed to be provided after on_select so invalid quote object`
+        } else if (quoteErrors) {
+          let i = 0
+          const len = quoteErrors.length
+          while (i < len) {
+            const key = `quoteErr${i}`
+            onInitObj[key] = `${quoteErrors[i]}`
+            i++
+          }
         }
       }
     } catch (error: any) {

@@ -11,6 +11,7 @@ import {
   payment_status,
   compareTimeRanges,
   getProviderId,
+  deepCompare,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
@@ -255,6 +256,26 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
         )
       }
     }
+     try {
+          const credsWithProviderId = getValue('credsWithProviderId')
+          const providerId = on_status?.provider?.id
+          const confirmCreds = on_status?.provider?.creds
+          const found = credsWithProviderId.find((ele: { providerId: any }) => ele.providerId === providerId)
+          const expectedCreds = found?.creds
+          if (!expectedCreds) {
+            onStatusObj['MissingCreds'] =
+              `creds must be present in /${constants.ON_CANCEL} same as in /${constants.ON_SEARCH}`
+          }
+          if (flow === FLOW.FLOW017) {
+            if (!expectedCreds) {
+              onStatusObj['MissingCreds'] = `creds must be present in /${constants.ON_STATUS_PENDING} `
+            } else if (!deepCompare(expectedCreds, confirmCreds)) {
+              onStatusObj['MissingCreds'] = `creds must be present and same as in /${constants.ON_SEARCH}`
+            }
+          }
+        } catch (err: any) {
+          logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)
+        }
 
     if (flow === FLOW.FLOW01C) {
       const fulfillments = on_status.fulfillments

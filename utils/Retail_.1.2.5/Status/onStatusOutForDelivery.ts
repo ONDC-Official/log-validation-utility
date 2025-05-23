@@ -517,7 +517,7 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
           const found = credsWithProviderId.find((ele: { providerId: any }) => ele.providerId === providerId)
           const expectedCreds = found?.creds
            if (!expectedCreds) {
-            onStatusObj['MissingCreds'] = `creds must be present in /${constants.ON_SEARCH}`
+            onStatusObj['MissingCreds'] = `creds must be present in /${constants.ON_STATUS_OUT_FOR_DELIVERY}`
           }
            if (flow === FLOW.FLOW017) {
      

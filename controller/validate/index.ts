@@ -25,7 +25,7 @@ const controller = {
               domain,
               payload,
               version,
-              flow.toString(),
+              flow,
               bap_id,
               bpp_id,
             )
@@ -80,7 +80,8 @@ const controller = {
       }
 
       const { signature, currentDate } = await helper.createSignature({ message: JSON.stringify(httpResponse) })
-
+      if (response && !success)
+        return res.status(200).send({ success, response: httpResponse, signature, signTimestamp: currentDate })
       if (!success)
         return res.status(400).send({ success, response: httpResponse, signature, signTimestamp: currentDate })
 
@@ -93,22 +94,22 @@ const controller = {
 
   validateToken: async (req: Request, res: Response): Promise<Response | void> => {
     try {
-      const { success, response, signature, signTimestamp } = req.body;
-      
+      const { success, response, signature, signTimestamp } = req.body
+
       // Validate required fields exist
       if (
-        signature === undefined || 
-        signTimestamp === undefined || 
-        response === undefined || 
+        signature === undefined ||
+        signTimestamp === undefined ||
+        response === undefined ||
         success === undefined ||
-        response.payload === undefined  // Check payload inside response
+        response.payload === undefined // Check payload inside response
       ) {
-        throw new Error('Payload must contain: signature, signTimestamp, success, response (with payload)');
+        throw new Error('Payload must contain: signature, signTimestamp, success, response (with payload)')
       }
 
-      const publicKey = process.env.SIGN_PUBLIC_KEY as string;
+      const publicKey = process.env.SIGN_PUBLIC_KEY as string
       if (!publicKey) {
-        throw new Error('Server configuration error: SIGN_PUBLIC_KEY not set');
+        throw new Error('Server configuration error: SIGN_PUBLIC_KEY not set')
       }
 
       // Create httpResponse from the response object
@@ -118,34 +119,34 @@ const controller = {
         bpp_id: response.bpp_id,
         bap_id: response.bap_id,
         domain: response.domain,
-        payload: response.payload,  // Get payload from response
+        payload: response.payload, // Get payload from response
         reportTimestamp: response.reportTimestamp,
-      };
+      }
 
-      const hashString = await hash({ message: JSON.stringify(httpResponse) });
-      const signingString = `${hashString}|${signTimestamp}`;
+      const hashString = await hash({ message: JSON.stringify(httpResponse) })
+      const signingString = `${hashString}|${signTimestamp}`
 
-      const isVerified = await verify({ 
-        signedMessage: signature, 
-        message: signingString, 
-        publicKey 
-      });
+      const isVerified = await verify({
+        signedMessage: signature,
+        message: signingString,
+        publicKey,
+      })
 
-      return res.status(200).send({ 
-        success: true, 
-        response: { 
+      return res.status(200).send({
+        success: true,
+        response: {
           message: isVerified ? 'Signature verification successful' : 'Invalid signature',
-          verified: isVerified 
-        } 
-      });
+          verified: isVerified,
+        },
+      })
     } catch (error: any) {
-      logger.error('Signature verification failed:', error);
-      return res.status(400).send({ 
-        success: false, 
-        response: { 
-          message: error?.message || 'Signature verification failed' 
-        } 
-      });
+      logger.error('Signature verification failed:', error)
+      return res.status(400).send({
+        success: false,
+        response: {
+          message: error?.message || 'Signature verification failed',
+        },
+      })
     }
   },
 

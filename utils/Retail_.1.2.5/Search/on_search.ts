@@ -1988,6 +1988,64 @@ export const checkOnsearch = (data: any, flow?: string) => {
         setValue('coditems', codItems)
       })
     }
+    if (flow === FLOW.FLOW01F) {
+      const descriptor = data.message.catalog['bpp/descriptor']?.tags
+      const termsObj = descriptor.find((ele: { code: string }): any => ele.code === 'bpp_terms')
+      setValue('bppTerms', termsObj.list)
+    }
+    if (flow === FLOW.FLOW016) {
+       // Flow 016 specific validation - check for custom group in categories
+       try {
+         logger.info(`Checking for custom group categories in /${constants.ON_SEARCH} for flow 016`)
+         const providers = message.catalog['bpp/providers']
+         const customGroups: any[] = []
+         
+         if (!providers || !Array.isArray(providers) || providers.length === 0) {
+           errorObj.missingProviders = `No providers found in /${constants.ON_SEARCH} for flow 016`
+         } else {
+           let customGroupFound = false
+     
+           for (const provider of providers) {
+             if (provider.categories && Array.isArray(provider.categories)) {
+               for (const category of provider.categories) {
+                 // Check if the category has the required structure for custom_group
+                 const isTypeCustomGroup = category.tags?.some((tag: any) => 
+                   tag.code === 'type' && 
+                   tag.list?.some((item: any) => item.code === 'type' && item.value === 'custom_group')
+                 )
+     
+                 const hasConfigInput = category.tags?.some((tag: any) => 
+                   tag.code === 'config' && 
+                   tag.list?.some((item: any) => item.code === 'input' && item.value === 'text')
+                 )
+     
+                 if (isTypeCustomGroup && hasConfigInput) {
+                   customGroupFound = true
+                   // Save the custom group for later validation
+                   customGroups.push({
+                     id: category.id,
+                     descriptor: category.descriptor,
+                     tags: category.tags
+                   })
+                   logger.info(`Found valid custom group category: ${category.id}`)
+                 }
+               }
+             }
+           }
+     
+           if (!customGroupFound) {
+             errorObj.missingCustomGroup = `No custom_group category with input type 'text' found in /${constants.ON_SEARCH} for flow 016`
+           } else {
+             // Save custom groups to DAO for later validation in SELECT
+             setValue('flow016_custom_groups', customGroups)
+             logger.info(`Saved ${customGroups.length} custom groups for flow 016`)
+           }
+         }
+       } catch (error: any) {
+         logger.error(`Error while checking custom group categories in /${constants.ON_SEARCH} for flow 016, ${error.stack}`)
+         errorObj.customGroupCheckError = `Error validating custom group categories: ${error.message}`
+       }
+    }
   } catch (error: any) {
     logger.error(`!!Error while checking Providers info in /${constants.ON_SEARCH}, ${error.stack}`)
   }

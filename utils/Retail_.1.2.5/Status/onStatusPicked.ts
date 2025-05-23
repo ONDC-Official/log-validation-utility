@@ -569,7 +569,7 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
       const found = credsWithProviderId.find((ele: { providerId: any }) => ele.providerId === providerId)
       const expectedCreds = found?.creds
       if (!expectedCreds) {
-        onStatusObj['MissingCreds'] = `creds must be present in /${constants.ON_SEARCH}`
+        onStatusObj['MissingCreds'] = `creds must be present in /${constants.ON_STATUS_PICKED}`
       }
       if (flow === FLOW.FLOW017) {
         if (!expectedCreds) {

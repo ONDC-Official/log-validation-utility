@@ -688,9 +688,9 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
         logger.info('Payment status check in on confirm call')
         const payment = on_confirm.payment
         const confirmPaymentStatus = getValue('confirmPaymentStatus')
-        if(payment.status!== confirmPaymentStatus){
-              const key = `missmatchStatus`
-                  onCnfrmObj[key] = `payment status in /${constants.ON_CONFIRM} must be same as in /${constants.CONFIRM} `
+        if (payment.status !== confirmPaymentStatus) {
+          const key = `missmatchStatus`
+          onCnfrmObj[key] = `payment status in /${constants.ON_CONFIRM} must be same as in /${constants.CONFIRM} `
         }
         if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
           logger.error(
@@ -766,25 +766,32 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
       const found = credsWithProviderId.find((ele: { providerId: any }) => ele.providerId === providerId)
 
       const expectedCreds = found?.creds
-     if (flow === FLOW.FLOW017) {
-        if (!expectedCreds || !credsWithProviderId|| !confirmCreds) {
+      if (flow === FLOW.FLOW017) {
+        if (!expectedCreds || !credsWithProviderId || !confirmCreds) {
           onCnfrmObj['MissingCreds'] = `creds must be present in /${constants.ON_SEARCH}`
         } else if (!deepCompare(expectedCreds, confirmCreds)) {
           onCnfrmObj['MissingCreds'] = `creds must be present and same as in /${constants.ON_SEARCH}`
         }
       }
       if (credsWithProviderId && confirmCreds) {
-
         if (expectedCreds) {
           if (!deepCompare(expectedCreds, confirmCreds)) {
             onCnfrmObj['MissingCreds'] = `Mismatch found in creds, it must be same as in /${constants.ON_SEARCH}`
           }
         }
       }
-     
     } catch (err: any) {
       logger.error(`Error while Checking creds in ${constants.ON_CONFIRM}, ${err.stack} `)
     }
+
+   if (flow === FLOW.FLOW01F) {
+  const bppTerms = getValue('bppTerms');
+  const list = message.order.tags?.find((item: any) => item?.code === 'bpp_terms')?.list;
+  if (!deepCompare(list, bppTerms)) {
+    onCnfrmObj['missingbppTerms'] = `bppTerms must be same as provided in /${constants.ON_SEARCH} call`;
+  }
+}
+
 
     return onCnfrmObj
   } catch (err: any) {

@@ -1292,6 +1292,96 @@ export const checkOnSelect = (data: any,flow?:string) => {
 
   }
 
+   if (flow === FLOW.FLOW016) {
+        // Flow 016 specific validation - check for customization items and their relationships
+        try {
+          logger.info(`Checking for customization items in /${constants.SELECT} for flow 016`)
+          
+          const items = on_select.items
+          if (!items || !Array.isArray(items) || items.length === 0) {
+            errorObj.missingItems = `No items found in /${constants.SELECT} for flow 016`
+            return isObjectEmpty(errorObj) ? {} : errorObj
+          }
+          
+          // Get the custom groups saved from ON_SEARCH
+          const customGroups = getValue('flow016_custom_groups')
+          if (!customGroups || !Array.isArray(customGroups) || customGroups.length === 0) {
+            errorObj.missingCustomGroups = `No custom groups were found in previous /${constants.ON_SEARCH} for flow 016`
+            return isObjectEmpty(errorObj) ? {} : errorObj
+          }
+          
+          // Find the regular item (type: item)
+          const regularItem = items.find((item: any) => {
+            return item.tags?.some((tag: any) => 
+              tag.code === 'type' && 
+              tag.list?.some((listItem: any) => listItem.code === 'type' && listItem.value === 'item')
+            )
+          })
+          
+          if (!regularItem) {
+            errorObj.missingRegularItem = `No item with type 'item' found in /${constants.SELECT} for flow 016`
+            return isObjectEmpty(errorObj) ? {} : errorObj
+          }
+          
+          // Find the customization item (type: customization)
+          const customizationItem = items.find((item: any) => {
+            return item.tags?.some((tag: any) => 
+              tag.code === 'type' && 
+              tag.list?.some((listItem: any) => listItem.code === 'type' && listItem.value === 'customization')
+            )
+          })
+          
+          if (!customizationItem) {
+            errorObj.missingCustomizationItem = `No item with type 'customization' found in /${constants.SELECT} for flow 016`
+            return isObjectEmpty(errorObj) ? {} : errorObj
+          }
+          
+          // Check if the customization item has the parent_item_id linked to the regular item
+          if (customizationItem.parent_item_id !== regularItem.id) {
+            errorObj.incorrectParentLink = `Customization item's parent_item_id '${customizationItem.parent_item_id}' doesn't match the regular item id '${regularItem.id}'`
+          }
+          
+          // Check if the customization item has the descriptor with input_text
+          const hasInputText = customizationItem.descriptor?.tags?.some((tag: any) => 
+            tag.code === 'customization' && 
+            tag.list?.some((listItem: any) => listItem.code === 'input_text' && listItem.value)
+          )
+          console.log('hasInputText', hasInputText)
+          
+          if (!hasInputText) {
+            errorObj.missingInputText = `Customization item is missing descriptor.tags with code 'customization' and list with code 'input_text'`
+          }
+          
+          // Check if the customization item parent matches a custom_group from ON_SEARCH
+          let parentMatch = false
+          const parentId = customizationItem.tags?.find((tag: any) => 
+            tag.code === 'parent' && 
+            tag.list?.some((listItem: any) => listItem.code === 'id')
+          )?.list?.find((listItem: any) => listItem.code === 'id')?.value
+          
+          if (!parentId) {
+            errorObj.missingParentId = `Customization item is missing parent.id tag reference in tags`
+          } else {
+            // Check if this parent id matches any custom group id from ON_SEARCH
+            parentMatch = customGroups.some((group: any) => group.id === parentId)
+            
+            if (!parentMatch) {
+              errorObj.invalidParentId = `Customization item parent id '${parentId}' doesn't match any custom_group id from ON_SEARCH`
+            } else {
+              logger.info(`Found valid customization item with parent id: ${parentId} matching a custom_group from ON_SEARCH`)
+            }
+          }
+          
+          // Save the validation result for reference in subsequent API calls
+          setValue('flow016_customization_valid', !isObjectEmpty(errorObj))
+          
+        } catch (error: any) {
+          logger.error(`Error while checking customization items in /${constants.SELECT} for flow 016, ${error.stack}`)
+          errorObj.customizationCheckError = `Error validating customization items: ${error.message}`
+        }
+    }
+  
+  
 
   return Object.keys(errorObj).length > 0 && errorObj
 }

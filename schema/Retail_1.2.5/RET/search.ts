@@ -22,7 +22,7 @@ export const searchSchema = {
         },
         core_version: {
           type: 'string',
-          enum: ['1.2.5'],
+          const: '1.2.5',
           minLength: 1,
         },
         bap_id: {
@@ -64,6 +64,7 @@ export const searchSchema = {
         'timestamp',
         'ttl',
       ],
+      additionalProperties: false,
     },
     message: {
       type: 'object',
@@ -215,6 +216,7 @@ export const searchSchema = {
                           type: 'string',
                         },
                       },
+                          additionalProperties: false,
                       required: ['code', 'value'],
                     },
                     minItems: 1,
@@ -412,7 +414,9 @@ export const searchSchema = {
         },
       },
       required: ['intent'],
+      additionalProperties: false,
     },
   },
   required: ['context', 'message'],
+  additionalProperties: false,
 }

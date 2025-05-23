@@ -1,6 +1,6 @@
 import { logger } from "../../../shared/logger"
 
-export const validateQuote = (quote: any, action: string): Record<string, string> => {
+export const validateQuote = (quote: any, action: string,itemAddOn:any): Record<string, string> => {
   const errorObj: Record<string, string> = {};
   try {
     logger.info(`Checking quote details in /${action}`);
@@ -15,7 +15,14 @@ export const validateQuote = (quote: any, action: string): Record<string, string
     if (!quoteBreakup) {
       errorObj["quoteBreakup"] = "Quote.breakup is missing";
     } else {
-      const validBreakupItems = ['BASE_FARE', 'TAX', 'ADD_ONS'];
+      let validBreakupItems: string[]=[]
+      if(itemAddOn.size >0){
+        validBreakupItems = ['BASE_FARE', 'TAX', 'ADD_ONS'];
+      }
+      else{
+        validBreakupItems = ['BASE_FARE', 'TAX'];
+      }
+       
 
       // Add cancellation charges if action is soft_on_cancel
       if (action === 'soft_on_cancel') {
@@ -549,8 +556,7 @@ export const validateQuote = (quote: any, action: string): Record<string, string
     }
   
     return errors;
-  }
-  
+  } 
 
   export function compareQuote(actual: any, expected: any): Record<string, string> {
     const errors: Record<string, string> = {};
@@ -707,14 +713,14 @@ export const validateQuote = (quote: any, action: string): Record<string, string
     const errors: Record<string, string> = {};
   
     if (!xinput || typeof xinput !== 'object') {
-      errors['xinput'] = 'xinput is not a valid object';
+      errors['xinput'] = 'xinput is missing';
       return errors;
     }
   
     // Validate head
     const head = xinput.head;
-    if (head || typeof head !== 'object') {
-      errors['xinput.head'] = "Missing or invalid 'head'";
+    if (!head ) {
+      errors['xinput.head'] = "Missing 'head' in xinput";
     } else {
       const name = head.descriptor?.name;
       if (typeof name !== 'string' || !name.trim()) {
@@ -769,7 +775,6 @@ export const validateQuote = (quote: any, action: string): Record<string, string
     return errors;
   }
   
-
   export function compareProvidersArray(providers1: any[], providers2: any[]): Record<string, string[]> {
     const errorObj: Record<string, string[]> = {};
   
@@ -1125,4 +1130,77 @@ export const validateQuote = (quote: any, action: string): Record<string, string
     }
   }
  
+  export function timeStampCompare(timestamp:any,timestamp2:any){
+    const date1 = new Date(timestamp);
+    const date2 = new Date(timestamp2);
+   if (date1 >= date2 ){
+    return false }
+    else{
+      return true
+      }
+
+  }
+
+  export function validateOnItemTagsStructure(tags: any[],index: number): Record<string, string> {
+    const errors: Record<string, string> = {};
+  
+    const allowedTopLevelCodes = ['FARE_POLICY', 'INCLUSIONS', 'EXCLUSIONS'];
+    const allowedFarePolicyCodes = ['MIN_AGE', 'MAX_AGE', 'GENDER', 'NATIONALITY'];
+
+    if(!tags){
+      errors[`${index}tag`]=`tags is missing for item id :${index}`
+      return errors;
+    }
+
+    if (!Array.isArray(tags)) {
+      errors['tags'] = 'tags must be an array';
+      return errors;
+    }
+  
+    tags.forEach((tag, tagIndex) => {
+      const tagPath = `tags[${tagIndex}]`;
+  
+      if (!tag.descriptor || !tag.descriptor.code) {
+        errors[`${tagPath}.descriptor.code`] = `Missing 'descriptor.code'`;
+        return;
+      }
+  
+      const code = tag.descriptor.code;
+  
+      if (!allowedTopLevelCodes.includes(code)) {
+        errors[`${tagPath}.descriptor.code`] = `'${code}' is not a valid descriptor.code`;
+      }
+  
+      if (!Array.isArray(tag.list)) {
+        errors[`${tagPath}.list`] = `'list' must be an array`;
+        return;
+      }
+  
+      tag.list.forEach((item: any, listIndex: number) => {
+        const itemPath = `${tagPath}.list[${listIndex}]`;
+  
+        if (code === 'FARE_POLICY') {
+          if (!item.descriptor || !item.descriptor.code) {
+            errors[`${itemPath}.descriptor.code`] = `'descriptor.code' is required for FARE_POLICY items`;
+          } else if (!allowedFarePolicyCodes.includes(item.descriptor.code)) {
+            errors[`${itemPath}.descriptor.code`] = `'${item.descriptor.code}' is not allowed for FARE_POLICY`;
+          }
+  
+          if (item.value === undefined || item.value === '') {
+            errors[`${itemPath}.value`] = `'value' is required for FARE_POLICY items`;
+          }
+        } else if (code === 'INCLUSIONS' || code === 'EXCLUSIONS') {
+          if (!('value' in item)) {
+            errors[`${itemPath}.value`] = `'value' is required for ${code}`;
+          }
+  
+          if ('descriptor' in item) {
+            errors[`${itemPath}.descriptor`] = `'descriptor' is not allowed in ${code}`;
+          }
+        }
+      });
+    });
+  
+    return errors;
+  }
   

@@ -2,13 +2,13 @@ import { logger } from '../../../shared/logger'
 import { TRV14ApiSequence } from '../../../constants'
 import { isObjectEmpty, validateSchema } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
-import { checkingPagenumber, compareCategories, compareLocations, compareProvidersArray, onSearchCompareDescriptors, onSearchCompareTags } from './TRV14checks'
+import { checkingPagenumber, compareCategories, compareLocations, compareProvidersArray, onSearchCompareDescriptors, onSearchCompareTags, timeStampCompare } from './TRV14checks'
 
 // @ts-ignore
 export const checkOnSearch1 = (data: any, msgIdSet: any, version: any,action:any) => {
   const rsfObj: any = {}
 
-  const { message }: any = data
+  const { message,context }: any = data
 
   if (!data || isObjectEmpty(data)) {
     return { [TRV14ApiSequence.ON_SEARCH_1]: 'JSON cannot be empty' }
@@ -27,8 +27,28 @@ export const checkOnSearch1 = (data: any, msgIdSet: any, version: any,action:any
     const tags =  getValue('onSearchTags')
     const descriptor = getValue('onSearchdescriptors')
     const existingItemMap =  getValue("itemMap")
-
+    const onSearch1_context = getValue('onSearch1_context')
     const itemcurentmap= new Map()
+
+    //comparing message_id
+    try {
+      if(onSearch1_context.message_id === context.message_id){
+        rsfObj.msgid=`onSearch and Onsearch1 cant have the same message id`
+      }
+    } catch (error) {
+      logger.error(error)
+    }
+
+    //comparing Timestamp
+    try {
+      const timestamp =  timeStampCompare(onSearch1_context.timestamp,context.timestamp)
+      if(!timestamp){
+        rsfObj.timestamp = "timestamp of on_Search can't be greater or equal to on_Search_1"
+      }
+        } catch (error) {
+          logger.error(error)
+          }
+
     //comparing provider
     try{
       const providerError = compareProvidersArray(onSearch.providers,provider)

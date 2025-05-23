@@ -36,7 +36,7 @@ import { checkOnSearch } from '../../utils/TRV/TRV-14/onSearch'
 export function validateLogsForTRV14(data: any, _flow: string, version: string) {
   const msgIdSet = new Set()
   let logReport: any = {}
-  console.log('The DATA IS: ', data)
+  // console.log('The DATA IS: ', data)
   let Flag = false
   if (data[`cancel`] || data[`cancel_1`]) {
     Flag = true
@@ -141,6 +141,9 @@ export function validateLogsForTRV14(data: any, _flow: string, version: string) 
     case TRV14FLOWS.PURCHASE_OF_MULTIPLE_TICKET_WITH_ADD_ON:
       logReport = processTRV14ApiSequence(purchaseJourney, data, logReport, flowName)
       break
+    case TRV14FLOWS.PURCHASE_JOURNEY:
+        logReport = processTRV14ApiSequence(purchaseJourney, data, logReport, flowName)
+        break
     case TRV14FLOWS.TECHNICAL_CANCELLATION:
       logReport = processTRV14ApiSequence(technicalCancellation, data, logReport, flowName)
       break

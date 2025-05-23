@@ -55,14 +55,14 @@ const onInitSchemaTRV14 = {
                 items: {
                   type: "object",
                   properties: {
-                    id: { type: "string" },
+                    id: { type: "string",minLength:1  },
                     descriptor: {
                       type: "object",
                       properties: {
-                        name: { type: "string" },
-                        code: { type: "string" },
-                        short_desc: { type: "string" },
-                        long_desc: { type: "string" },
+                        name: { type: "string" ,minLength:1  },
+                        code: { type: "string" ,minLength:1 },
+                        short_desc: { type: "string" ,minLength:1  },
+                        long_desc: { type: "string" ,minLength:1  },
                         images: {
                           type: "array",
                           items: {
@@ -77,20 +77,20 @@ const onInitSchemaTRV14 = {
                       },
                       required: ["name", "code"]
                     },
-                    parent_item_id: { type: "string" },
+                    parent_item_id: { type: "string" ,minLength:1 },
                     location_ids: {
                       type: "array",
-                      items: { type: "string" }
+                      items: { type: "string" ,minLength:1 }
                     },
                     category_ids: {
                       type: "array",
-                      items: { type: "string" }
+                      items: { type: "string" ,minLength:1 }
                     },
                     price: {
                       type: "object",
                       properties: {
                         currency: { type: "string" },
-                        value: { type: "string" }
+                        value: { type: "string" ,minLength:1 }
                       },
                       required: ["currency", "value"]
                     },
@@ -116,18 +116,18 @@ const onInitSchemaTRV14 = {
                     },
                     fulfillment_ids: {
                       type: "array",
-                      items: { type: "string" }
+                      items: { type: "string" ,minLength:1 }
                     },
                     add_ons: {
                       type: "array",
                       items: {
                         type: "object",
                         properties: {
-                          id: { type: "string" },
+                          id: { type: "string" ,minLength:1 },
                           descriptor: {
                             type: "object",
                             properties: {
-                              name: { type: "string" }
+                              name: { type: "string" ,minLength:1 }
                             }
                           },
                           quantity: {
@@ -189,12 +189,13 @@ const onInitSchemaTRV14 = {
                 items: {
                   type: "object",
                   properties: {
-                    id: { type: "string" },
-                    type: { type: "string" },
+                    id: { type: "string" ,minLength:1 },
+                    type: { type: "string" , enum:["VISIT"] },
                     stops: {
                       type: "array",
                       items: {
                         type: "object",
+                        additionalProperties: false,
                         properties: {
                           type: { type: "string" },
                           instructions: {
@@ -220,15 +221,18 @@ const onInitSchemaTRV14 = {
                     },
                     agent: {
                       type: "object",
+                      required:["organization"],
                       properties: {
                         organization: {
                           type: "object",
+                          required:["contact"],
                           properties: {
                             contact: {
                               type: "object",
+                              required:["phone","email"],
                               properties: {
                                 phone: { type: "string" , minlength:1},
-                                email: { type: "string" ,minlength:1 }
+                                email: { type: "string" , minlength:1 }
                               }
                             }
                           }
@@ -238,22 +242,22 @@ const onInitSchemaTRV14 = {
                     vehicle: {
                       type: "object",
                       properties: {
-                        category: { type: "string" }
+                        category: { type: "string" ,minLength:1 }
                       }
                     }
                   },
-                  required: ["id", "type"],
+                  required: ["id", "type","agent","vehicle"],
                   additionalProperties: false,
                 }
               },
               provider: {
                 type: "object",
                 properties: {
-                  id: { type: "string" },
+                  id: { type: "string" ,minLength:1 },
                   descriptor: {
                     type: "object",
                     properties: {
-                      name: { type: "string" },
+                      name: { type: "string" ,minLength:1 },
                       images: {
                         type: "array",
                         items: {
@@ -271,7 +275,7 @@ const onInitSchemaTRV14 = {
                     items: {
                       type: "object",
                       properties: {
-                        id: { type: "string" },
+                        id: { type: "string" ,minLength:1 },
                         gps: { type: "string" },
                         descriptor: {
                           type: "object",
@@ -372,7 +376,7 @@ const onInitSchemaTRV14 = {
                         item: {
                           type: "object",
                           properties: {
-                            id: { type: "string" },
+                            id: { type: "string" ,minLength:1 },
                             price: {
                               type: "object",
                               properties: {
@@ -425,9 +429,9 @@ const onInitSchemaTRV14 = {
               billing: {
                 type: "object",
                 properties: {
-                  name: { type: "string" },
-                  email: { type: "string" },
-                  phone: { type: "string" }
+                  name: { type: "string" ,minLength:1 },
+                  email: { type: "string" ,minLength:1 },
+                  phone: { type: "string" ,minLength:1 }
                 }
               },
               payments: {
@@ -435,7 +439,7 @@ const onInitSchemaTRV14 = {
                 items: {
                   type: "object",
                   properties: {
-                    id: { type: "string" },
+                    id: { type: "string" ,minLength:1 },
                     collected_by: { type: "string",enum:["BAP","BPP"] },
                     status: { type: "string" ,enum:["PAID","NOT-PAID"]},
                     type: { type: "string",enum:["PRE-ORDER","POST-FULFILLMENT","ON-FUlFILLMENT"] }

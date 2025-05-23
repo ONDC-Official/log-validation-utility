@@ -52,8 +52,8 @@ export const checkOnSelect1 = (data: any, msgIdSet: any, version: any) => {
             rsfObj[`${itm.id}_quantity`] = `itm quantity should not be there` 
           }
         
-         if(itm.parent_item_id === ''){
-          rsfObj.parent_item_id = ` parent_item_id can't be empty string `
+         if(itm.parent_item_id){
+          rsfObj[`${itm.id}`] = `item with id:${itm.id} with descriptor code as ABSTRACT should not have parent_item_id`
         }
           
         if(!itm.tags){
@@ -75,7 +75,7 @@ export const checkOnSelect1 = (data: any, msgIdSet: any, version: any) => {
         }
         Object.keys(itm).forEach((key) => {
           if (!allowedKeys.includes(key)) {
-            rsfObj[`Addon${itm.id}_${key}`] = `'${key}' is not required in item obj with id:${itm.id}`;
+            rsfObj[`${itm.id}_${key}`] = `'${key}' is not required in item obj with id:${itm.id}`;
           }
         });
         }
@@ -133,17 +133,22 @@ export const checkOnSelect1 = (data: any, msgIdSet: any, version: any) => {
       logger.error(error)
     }
 
-    onSelect.items.forEach((itm: any) => {
-      if (itm.parent_item_id) {
-        if (ItemMap.has(itm.id)) {
-          if (itm.quantity.selected.count !== ItemMap.get(itm.id)) {
-            rsfObj.item[itm.id] = `${itm.id} selected quantity mismatches on select and on_select`
+    try {
+      onSelect.items.forEach((itm: any) => {
+        if (itm.parent_item_id) {
+          if (ItemMap.has(itm.id)) {
+            if (itm.quantity.selected.count !== ItemMap.get(itm.id)) {
+              rsfObj.item[itm.id] = `${itm.id} selected quantity mismatches on select and on_select`
+            }
+          } else {
+            rsfObj.item[itm.id] = `${itm.id} does not exist in select`
           }
-        } else {
-          rsfObj.item[itm.id] = `${itm.id} does not exist in select`
         }
-      }
-    })
+      })
+  
+    } catch (error) {
+      logger.error(error)
+    }
 
     //checking fulfillments id
     try {
@@ -208,13 +213,14 @@ export const checkOnSelect1 = (data: any, msgIdSet: any, version: any) => {
     //validating xinput
     try {
       onSelect.items.forEach((itm: any) => {
+       if(itm.descriptor.code === 'ENTRY_PASS'){ 
         const validateXinput = validateXInput(itm?.xinput)
         if (Xinputmap.get(itm.id)) {
           rsfObj.itm.id = `${itm.id} has been already in items`
         } else {
           Xinputmap.set(itm.id, itm.xinput)
         }
-        Object.assign(rsfObj, validateXinput)
+        Object.assign(rsfObj, validateXinput)}
       })
     } catch (error) {
       logger.error(error)

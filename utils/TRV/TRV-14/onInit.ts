@@ -8,13 +8,13 @@ import {
   compareQuote,
   compareReplacementTerms,
   validateOnItemTagsStructure,
+  validateQuote,
   validateTagsStructure,
 } from './TRV14checks'
 
 // @ts-ignore
 export const checkOnInit = (data: any, msgIdSet: any, version: any) => {
   const rsfObj: any = {}
-
   const { message, context }: any = data
 
   if (!data || isObjectEmpty(data)) {
@@ -50,6 +50,58 @@ export const checkOnInit = (data: any, msgIdSet: any, version: any) => {
     }
 
     try {
+      const quoteErr = validateQuote(oninit.quote,"onInit",itemAddOn)
+      Object.assign(rsfObj,quoteErr)
+    } catch (error) {
+      logger.error(error)
+    }
+
+    //validating fulfillments
+    try {
+      oninit.fulfillments.forEach((itm:any,index:Number)=>{
+        if(!itm.agent){
+          rsfObj[`fulfillment${index}agent`]= `fulfillment index:${index} agent is missing`
+        }
+        else{
+          const agent = itm.agent
+          if(!agent.organization){
+            rsfObj[`fulfillment${index}agentOrg`]= `fulfillment index:${index} agent organization is missing`
+          }
+          if(!agent.organization.contact){
+            rsfObj[`fulfillment${index}agentOrgContact`]= `fulfillment index:${index} agent organization contact is missing`
+          }
+          if(!agent.organization.contact.phone){
+            rsfObj[`fulfillment${index}agent/Org/Contact.Phone`]= `fulfillment index:${index} agent/organization/contact.phone is missing`
+            }
+            if(agent.organization.contact.phone === ''){
+              rsfObj[`fulfillment${index}agent/Org/Contact.Phone`]= `fulfillment index:${index} agent/organization/contact.phone cant be empty string`
+              }
+              if(!agent.organization.contact.email){
+                rsfObj[`fulfillment${index}agent/Org/Contact/Email`]= `fulfillment index:${index} agent/organization/contact.email is missing`
+                }
+                if(agent.organization.contact.email === ''){
+                  rsfObj[`fulfillment${index}agent/Org/Contact/Email`]= `fulfillment index:${index} agent/organization/contact.email cant be empty string`
+                  }
+        }
+
+        if(!itm.vehicle){
+          rsfObj[`fulfillment${index}vehicle`]= `fulfillment index:${index} vehicle is missing`
+        }
+        else{
+          const vehicle = itm.vehicle
+          if(!vehicle.category){
+            rsfObj[`fulfillment${index}vehicleCategory`]= `fulfillment index:${index} vehicle.category is missing`
+          }
+          if(vehicle.category === ''){
+            rsfObj[`fulfillment${index}vehicleCategory`]= `fulfillment index:${index} vehicle.category cant be empty string`
+          }
+        }
+      })
+    } catch (error) {
+      logger.error(error)
+    }
+
+    try {
       //validate replacementterms
       const replacementerror = compareReplacementTerms(oninit.replacement_terms, replacement_terms)
       Object.assign(rsfObj, replacementerror)
@@ -79,7 +131,7 @@ export const checkOnInit = (data: any, msgIdSet: any, version: any) => {
         const actualValue = Number(itm.price.value)
 
         if (actualValue !== expectedValue) {
-          rsfObj.quote[`${itm.item.id}`] = `${itm.id} with price expected  ${expectedValue} this but got ${actualValue} this `
+          rsfObj.quote[`${itm.item.id}`] = `itm id ${itm.item.id} with price expected  ${expectedValue} this but got ${actualValue}  `
         } else {
           totalsum += expectedValue
         }

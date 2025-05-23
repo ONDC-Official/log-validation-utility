@@ -48,6 +48,14 @@ export const checkInit = (data: any, msgIdSet: any, version: any) => {
      //init items
      try {
      init.items.forEach((itm:any) => {
+      if(!itm.parent_item_id){
+        rsfObj[`${itm.id}`]=`item with id:${itm.id} missing parent_item_id`
+      }
+
+      if(itm.parent_item_id === ''){
+        rsfObj[`${itm.id}`]=`item with id:${itm.id} can't have empty parent_item_id`
+      }
+
       if(!itemMap.has(itm.id) ){
         rsfObj.itm = `${itm.id} was not in select call  `
       }

@@ -39,6 +39,58 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any, Flag: any
         logger.error(error)
       }
       
+      try {
+        logger.info("Validating Quote")
+        const quoteErr =  validateQuote(onConfirm.quote,"onConfirm",itemAddOn)
+        Object.assign(rsfObj,quoteErr)
+      } catch (error) {
+        logger.error(error)
+      }
+
+          //validating fulfillments
+    try {
+      onConfirm.fulfillments.forEach((itm:any,index:Number)=>{
+        if(!itm.agent){
+          rsfObj[`fulfillment${index}agent`]= `fulfillment index:${index} agent is missing`
+        }
+        else{
+          const agent = itm.agent
+          if(!agent.organization){
+            rsfObj[`fulfillment${index}agentOrg`]= `fulfillment index:${index} agent organization is missing`
+          }
+          if(!agent.organization.contact){
+            rsfObj[`fulfillment${index}agentOrgContact`]= `fulfillment index:${index} agent organization contact is missing`
+          }
+          if(!agent.organization.contact.name){
+            rsfObj[`fulfillment${index}agent/Org/Contact.Phone`]= `fulfillment index:${index} agent/organization/contact.Phone is missing`
+            }
+            if(agent.organization.contact.name === ''){
+              rsfObj[`fulfillment${index}agent/Org/Contact.Phone`]= `fulfillment index:${index} agent/organization/contact.Phone cant be empty string`
+              }
+              if(!agent.organization.contact.email){
+                rsfObj[`fulfillment${index}agent/Org/Contact.Email`]= `fulfillment index:${index} agent/organization/contact.email is missing`
+                }
+                if(agent.organization.contact.email === ''){
+                  rsfObj[`fulfillment${index}agent/Org/Contact.Email`]= `fulfillment index:${index} agent/organization/contact.email cant be empty string`
+                  }
+        }
+
+        if(!itm.vehicle){
+          rsfObj[`fulfillment${index}vehicle`]= `fulfillment index:${index} vehicle is missing`
+        }
+        else{
+          const vehicle = itm.vehicle
+          if(!vehicle.category){
+            rsfObj[`fulfillment${index}vehicle.Category`]= `fulfillment index:${index} vehicle.category is missing`
+          }
+          if(vehicle.category === ''){
+            rsfObj[`fulfillment${index}vehicle.Category`]= `fulfillment index:${index} vehicle.category  cant be empty string`
+          }
+        }
+      })
+    } catch (error) {
+      logger.error(error)
+    }
 
      //checking items that they dont contain extra property
     
@@ -285,7 +337,53 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any, Flag: any
       const onConfirm = message.order
       const itemAddOn = getValue(`addOnItems`)
 
+
+
+      try {
+        onConfirm.fulfillments.forEach((itm:any,index:Number)=>{
+          if(!itm.agent){
+            rsfObj[`fulfillment${index}agent`]= `fulfillment index:${index} agent is missing`
+          }
+          else{
+            const agent = itm.agent
+            if(!agent.organization){
+              rsfObj[`fulfillment${index}agentOrg`]= `fulfillment index:${index} agent organization is missing`
+            }
+            if(!agent.organization.contact){
+              rsfObj[`fulfillment${index}agentOrgContact`]= `fulfillment index:${index} agent organization contact is missing`
+            }
+            if(!agent.organization.contact.name){
+              rsfObj[`fulfillment${index}agent/Org/Contact.Phone`]= `fulfillment index:${index} agent/organization/contact.Phone is missing`
+              }
+              if(agent.organization.contact.name === ''){
+                rsfObj[`fulfillment${index}agent/Org/Contact.Phone`]= `fulfillment index:${index} agent/organization/contact.Phone cant be empty string`
+                }
+                if(!agent.organization.contact.email){
+                  rsfObj[`fulfillment${index}agent/Org/Contact.Email`]= `fulfillment index:${index} agent/organization/contact.email is missing`
+                  }
+                  if(agent.organization.contact.email === ''){
+                    rsfObj[`fulfillment${index}agent/Org/Contact.Email`]= `fulfillment index:${index} agent/organization/contact.email cant be empty string`
+                    }
+          }
+  
+          if(!itm.vehicle){
+            rsfObj[`fulfillment${index}vehicle`]= `fulfillment index:${index} vehicle is missing`
+          }
+          else{
+            const vehicle = itm.vehicle
+            if(!vehicle.category){
+              rsfObj[`fulfillment${index}vehicleCategory`]= `fulfillment index:${index} vehicle category is missing`
+            }
+            if(vehicle.category === ''){
+              rsfObj[`fulfillment${index}vehicleCategory`]= `fulfillment index:${index} cant be empty string`
+            }
+          }
+        })
+      } catch (error) {
+        logger.error(error)
+      }
       
+
         //checking items that they dont contain extra property
     
         try {
@@ -416,7 +514,7 @@ export const checkOnConfirm = (data: any, msgIdSet: any, version: any, Flag: any
        const actualValue = Number(itm.price.value)
 
        if (actualValue !== expectedValue) {
-         rsfObj.quote[`${itm.item.id}`] = `${itm.id} with price expected  ${expectedValue} this but got ${actualValue} this `
+         rsfObj.quote[`${itm.item.id}`] = `itm id ${itm.item.id} with price expected  ${expectedValue} this but got ${actualValue} `
        } else {
          totalsum += expectedValue
        }

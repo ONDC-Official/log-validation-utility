@@ -16,7 +16,7 @@ export const validateQuote = (quote: any, action: string,itemAddOn:any): Record<
       errorObj["quoteBreakup"] = "Quote.breakup is missing";
     } else {
       let validBreakupItems: string[]=[]
-      if(itemAddOn.length >0){
+      if(itemAddOn.size >0){
         validBreakupItems = ['BASE_FARE', 'TAX', 'ADD_ONS'];
       }
       else{
@@ -719,8 +719,8 @@ export const validateQuote = (quote: any, action: string,itemAddOn:any): Record<
   
     // Validate head
     const head = xinput.head;
-    if (head || typeof head !== 'object') {
-      errors['xinput.head'] = "Missing or invalid 'head'";
+    if (!head ) {
+      errors['xinput.head'] = "Missing 'head' in xinput";
     } else {
       const name = head.descriptor?.name;
       if (typeof name !== 'string' || !name.trim()) {

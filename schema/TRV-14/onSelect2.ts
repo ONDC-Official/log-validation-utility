@@ -66,7 +66,7 @@ const onSelect2SchemaTRV14 = {
                 type: 'object',
                 required: ['id', 'descriptor', 'location_ids', 'category_ids'],
                 properties: {
-                  id: { type: 'string' },
+                  id: { type: 'string' ,minLength:1 },
                   descriptor: {
                     type: 'object',
                     required: ['name', 'code'],
@@ -87,7 +87,7 @@ const onSelect2SchemaTRV14 = {
                 required: ['id', 'type', 'stops',"vehicle"],
                 additionalProperties: false,
                 properties: {
-                  id: { type: 'string' },
+                  id: { type: 'string' ,minLength:1 },
                   type: { type: 'string' , enum:["VISIT"] },
                   stops: {
                     type: 'array',
@@ -118,8 +118,8 @@ const onSelect2SchemaTRV14 = {
                             required: ['phone', 'email'],
                             additionalProperties: false,
                             properties: {
-                              phone: { type: 'string' },
-                              email: { type: 'string' }
+                              phone: { type: 'string',minLength:1  },
+                              email: { type: 'string',minLength:1  }
                             }
                           }
                         }
@@ -140,12 +140,12 @@ const onSelect2SchemaTRV14 = {
               type: 'object',
               required: ['id', 'descriptor'],
               properties: {
-                id: { type: 'string' },
+                id: { type: 'string' ,minLength:1 },
                 descriptor: {
                   type: 'object',
                   required: ['name'],
                   properties: {
-                    name: { type: 'string' },
+                    name: { type: 'string',minLength:1  },
                   },
                 },
                 locations:{
@@ -201,7 +201,7 @@ const onSelect2SchemaTRV14 = {
                         type: 'object',
                         required: ['currency', 'value'],
                         properties: {
-                          currency: { type: 'string' },
+                          currency: { type: 'string',minLength:1  },
                           value: { type: 'string' },
                         },
                       },

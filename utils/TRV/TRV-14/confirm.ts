@@ -45,6 +45,15 @@ export const checkConfirm = (data: any, msgIdSet: any, version: any) => {
 
       //confirm items
       confirm.items.forEach((itm:any) => {
+        
+        if(!itm.parent_item_id){
+          rsfObj[`${itm.id}`]=`item with id:${itm.id} missing parent_item_id`
+        }
+  
+        if(itm.parent_item_id === ''){
+          rsfObj[`${itm.id}`]=`item with id:${itm.id} can't have empty parent_item_id`
+        }
+
        if(!itemMap.has(itm.id) ){
          rsfObj[itm.id] = `${itm.id} was not in select call  `
        }

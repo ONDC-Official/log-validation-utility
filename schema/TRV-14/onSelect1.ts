@@ -58,7 +58,7 @@ const onSelect1SchemaTRV14 = {
       properties: {
         order: {
           type: 'object',
-          required: ['items', 'fulfillments', 'provider', 'quote','replacement_terms'],
+          required: ['items', 'fulfillments', 'provider', 'quote', 'replacement_terms'],
           properties: {
             items: {
               type: 'array',
@@ -67,24 +67,77 @@ const onSelect1SchemaTRV14 = {
                 required: ['id', 'descriptor', 'location_ids', 'category_ids'],
                 additionalProperties: false,
                 properties: {
-                  id: { type: 'string' },
+                  id: { type: 'string',minLength: 1 },
                   descriptor: {
                     type: 'object',
                     required: ['name', 'code'],
                     properties: {
                       name: { type: 'string' },
-                      code: { type: 'string' , enum:["ENTRY_PASS","ABSTRACT","ADD_ON"]},
+                      code: { type: 'string', enum: ['ENTRY_PASS', 'ABSTRACT', 'ADD_ON'] },
                     },
                   },
                   location_ids: { type: 'array', items: { type: 'string' } },
                   category_ids: { type: 'array', items: { type: 'string' } },
-                  time:{},
-                  fulfillment_ids:{},
-                  tags:{},
-                  price:{},
-                  quantity:{},
-                  add_ons:{},
-                  xinput:{}
+                  time: {},
+                  parent_item_id: { type: 'string' },
+                  fulfillment_ids: {
+                    type:"array",
+                    items: {
+                      type: "string"
+                      }
+                  },
+                  tags: {
+                    type: 'array',
+                    items: {
+                      type: 'object',
+                      descriptor: {
+                        type: 'object',
+                        properties: {
+                          code: { type: 'string' },
+                        },
+                      },
+                      list: {
+                        type: 'array',
+                        items: {
+                          type: 'object',
+                          properties: {
+                            descriptor: {
+                              type: 'object',
+                              properties: {
+                                code: { type: 'string' },
+                              },
+                            },
+                            value: {
+                              type: 'string',
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                  price: {
+                    type: 'object',
+                    required: ['value', 'currency'],
+                    properties: {
+                      curreny: { type: 'string', enum: ['INR'] },
+                      value: { type: 'string', minlength: 1 },
+                    },
+                  },
+                  quantity: {
+                    type: 'object',
+                    properties: {
+                      selected: {
+                        type: 'object',
+                        properties: {
+                          count: { type: 'integer' },
+                        },
+                        required: ['count'],
+                      },
+                    },
+                    required: ['selected'],
+                  },
+                  add_ons: {},
+                  xinput: {},
                 },
               },
             },
@@ -92,18 +145,18 @@ const onSelect1SchemaTRV14 = {
               type: 'array',
               items: {
                 type: 'object',
-                required: ['id', 'type', 'stops',"vehicle"],
+                required: ['id', 'type', 'stops', 'vehicle'],
                 additionalProperties: false,
                 properties: {
-                  id: { type: 'string' },
-                  type: { type: 'string' , enum:["VISIT"] },
+                  id: { type: 'string',minLength:1 },
+                  type: { type: 'string', enum: ['VISIT'] },
                   stops: {
                     type: 'array',
                     items: {
                       type: 'object',
                       required: ['type', 'time'],
                       properties: {
-                        type: { type: 'string',enum:["START","END"] },
+                        type: { type: 'string', enum: ['START', 'END'] },
                         time: {
                           type: 'object',
                           required: ['timestamp'],
@@ -125,21 +178,21 @@ const onSelect1SchemaTRV14 = {
                             required: ['phone', 'email'],
                             additionalProperties: false,
                             properties: {
-                              phone: { type: 'string' },
-                              email: { type: 'string' }
-                            }
-                          }
-                        }
-                      }
-                    }
+                              phone: { type: 'string',minLength:1 },
+                              email: { type: 'string',minLength:1 },
+                            },
+                          },
+                        },
+                      },
+                    },
                   },
-                  vehicle:{
+                  vehicle: {
                     type: 'object',
-                    required:["category"],
-                    properties:{
-                      category:{type:"string",enum:["SITE"]}
-                    }
-                  }
+                    required: ['category'],
+                    properties: {
+                      category: { type: 'string', enum: ['SITE'] },
+                    },
+                  },
                 },
               },
             },
@@ -148,50 +201,50 @@ const onSelect1SchemaTRV14 = {
               required: ['id', 'descriptor'],
               additionalProperties: false,
               properties: {
-                id: { type: 'string' },
+                id: { type: 'string',minLength:1 },
                 descriptor: {
                   type: 'object',
                   required: ['name'],
                   properties: {
-                    name: { type: 'string' },
+                    name: { type: 'string',minLength:1 },
                   },
                 },
-                locations:{
-                  type: "array",
+                locations: {
+                  type: 'array',
                   items: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      id: { type: "string" },
-                      gps: { type: "string" },
+                      id: { type: 'string' ,minLength:1},
+                      gps: { type: 'string' ,minLength:1},
                       descriptor: {
-                        type: "object",
+                        type: 'object',
                         properties: {
-                          name: { type: "string" },
-                          short_desc: { type: "string" },
+                          name: { type: 'string' ,minLength:1 },
+                          short_desc: { type: 'string' ,minLength:1 },
                           additional_desc: {
-                            type: "object",
+                            type: 'object',
                             properties: {
-                              url: { type: "string" },
-                              content_type: { type: "string" }
-                            }
+                              url: { type: 'string' },
+                              content_type: { type: 'string' },
+                            },
                           },
                           images: {
-                            type: "array",
+                            type: 'array',
                             items: {
-                              type: "object",
+                              type: 'object',
                               properties: {
-                                url: { type: "string" },
-                                size_type: { type: "string" }
-                              }
-                            }
-                          }
-                        }
+                                url: { type: 'string' },
+                                size_type: { type: 'string' },
+                              },
+                            },
+                          },
+                        },
                       },
-                      rating: { type: "string" }
+                      rating: { type: 'string' ,minLength:1},
                     },
-                    required: ["id", "gps", "descriptor"]
-                  }
-                }
+                    required: ['id', 'gps', 'descriptor'],
+                  },
+                },
               },
             },
             quote: {
@@ -204,13 +257,13 @@ const onSelect1SchemaTRV14 = {
                     type: 'object',
                     required: ['title', 'price'],
                     properties: {
-                      title: { type: 'string' },
+                      title: { type: 'string' ,minLength:1 },
                       price: {
                         type: 'object',
                         required: ['currency', 'value'],
                         properties: {
                           currency: { type: 'string' },
-                          value: { type: 'string' },
+                          value: { type: 'string' ,minLength:1 },
                         },
                       },
                     },
@@ -238,57 +291,57 @@ const onSelect1SchemaTRV14 = {
                     properties: {
                       mimetype: {
                         type: 'string',
-                        enum: ['text/html', 'text/plain', 'application/pdf']
+                        enum: ['text/html', 'text/plain', 'application/pdf'],
                       },
                       url: {
                         type: 'string',
                         format: 'uri',
-                        pattern: '^https://'
-                      }
-                    }
-                  }
-                }
-              }
+                        pattern: '^https://',
+                      },
+                    },
+                  },
+                },
+              },
             },
             cancellation_terms: {
-              type: "array",
+              type: 'array',
               items: {
-                type: "object",
+                type: 'object',
                 properties: {
                   cancellation_fee: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      percentage: { type: "string" }
-                    }
+                      percentage: { type: 'string' },
+                    },
                   },
                   fulfillment_state: {
-                    type: "object",
+                    type: 'object',
                     properties: {
                       descriptor: {
-                        type: "object",
+                        type: 'object',
                         properties: {
-                          code: { type: "string" }
-                        }
-                      }
-                    }
+                          code: { type: 'string' },
+                        },
+                      },
+                    },
                   },
                   cancel_by: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      label: { type: "string" },
-                      duration: { type: "string" }
-                    }
+                      label: { type: 'string' },
+                      duration: { type: 'string' },
+                    },
                   },
-                  cancellation_eligible: { type: "boolean" },
+                  cancellation_eligible: { type: 'boolean' },
                   external_ref: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      mimetype: { type: "string" },
-                      url: { type: "string" }
-                    }
-                  }
-                }
-              }
+                      mimetype: { type: 'string' },
+                      url: { type: 'string' },
+                    },
+                  },
+                },
+              },
             },
           },
         },

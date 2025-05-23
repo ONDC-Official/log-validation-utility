@@ -819,16 +819,17 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
         }
       }
 
-      try {
-        const credsWithProviderId = getValue('credsWithProviderId')
-        const providerId = on_status?.provider?.id
-        const confirmCreds = on_status?.provider?.creds
-        const found = credsWithProviderId.find((ele: { providerId: any }) => ele.providerId === providerId)
-        const expectedCreds = found?.creds
-        if (!expectedCreds) {
-          onStatusObj['MissingCreds'] = `creds must be present in /${constants.ON_SEARCH}`
-        }
-        if (flow === FLOW.FLOW017) {
+     try {
+          const credsWithProviderId = getValue('credsWithProviderId')
+          const providerId = on_status?.provider?.id
+          const confirmCreds = on_status?.provider?.creds
+          const found = credsWithProviderId.find((ele: { providerId: any }) => ele.providerId === providerId)
+          const expectedCreds = found?.creds
+           if (!expectedCreds) {
+            onStatusObj['MissingCreds'] = `creds must be present in /${constants.ON_STATUS_OUT_FOR_DELIVERY}`
+          }
+           if (flow === FLOW.FLOW017) {
+     
           if (!expectedCreds) {
             onStatusObj['MissingCreds'] = `creds must be present in /${constants.ON_SEARCH}`
           } else if (!deepCompare(expectedCreds, confirmCreds)) {

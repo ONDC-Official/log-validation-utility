@@ -1,10 +1,11 @@
 import _, { isEmpty } from 'lodash'
 import { logger } from '../../../shared/logger'
 import constants, { ApiSequence, buyerReturnId } from '../../../constants'
-import { validateSchemaRetailV2, isObjectEmpty, checkBppIdOrBapId, checkContext, isValidUrl, timeDiff } from '../../../utils'
+import { validateSchemaRetailV2, isObjectEmpty, checkBppIdOrBapId, checkContext, isValidUrl, timeDiff, extractValidFieldsForCategory } from '../../../utils'
 import { getValue, setValue } from '../../../shared/dao'
 import { condition_id } from '../../../constants/reasonCode'
 import { FLOW, OFFERSFLOW } from '../../enum'
+import { electronicsData } from '../../../constants/electronics'
 
 export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDetatilSet: any, flow: any) => {
   const updtObj: any = {}
@@ -16,6 +17,9 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
     const { message, context }: any = data
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const select: any = getValue(`${ApiSequence.SELECT}`)
+    const allOnSearchItems: any = getValue('onSearchItems')
+    let onSearchItems = allOnSearchItems.flat()
+    let exchangeItem:any = {}
     if (!message || !context || isObjectEmpty(message)) {
       return { missingFields: '/context, /message, is missing or empty' }
     }
@@ -306,6 +310,7 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
                 return
               }
               let key: any = null
+              exchangeItem = tag.list.find((item:any)=>item.code === "exchange")
               tag.list.forEach((item: any) => {
                 if (item.code === 'item_id') {
                   key = item.value
@@ -322,7 +327,9 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
                 }
 
                 if (item.code === 'id') {
-                  const valuesArray = Object.values((itemFlfllmnts as { values: any }).values)
+                  console.log("itemFlfllmnts",itemFlfllmnts);
+                  
+                  const valuesArray = Object.values((itemFlfllmnts))
                   if (valuesArray.includes(item.value)) {
                     updtObj.nonUniqueReturnFulfillment = `${item.value} is not a unique fulfillment`
                   } else {
@@ -355,22 +362,12 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
                     updtObj.updateRid = `reason_id is not a valid reason id (buyer app initiated)`
                   }
                 }
-                if(flow === FLOW.FLOW00C || flow === OFFERSFLOW.FLOW0097){
-                  // const exchangeTag = item.code
-                  if(item.code !== "exchange"){
-                    updtObj.error = `exchange tag is required for flow: ${flow}`
-                  }else if (item.code === "exchange") {
-                    const exchangeValue = item.value
-                    !['yes', 'no'].includes(exchangeValue)
-                    updtObj["exchangeNA"] = '"exchange" value must be "yes" or "no"';
-                    if(exchangeValue === "no"){
-                      updtObj["exchangeNA"] = `"exchange" value must be "yes" for flow: ${flow}`;
-                    }
-                  }
-                }
 
                 if (item.code === 'images') {
-                  const images = item.value
+                  // const images = item.value
+                  const images:any = []
+                  images.push(item.value)
+                  
                   const allurls = images?.every((img: string) => isValidUrl(img))
                   if (!allurls) {
                     logger.error(
@@ -446,6 +443,68 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
             `url for update_sale_invoice must be present in tag list in  /${constants.UPDATE} API for /${apiSeq}`
         }
       }
+    }
+
+    try {
+      if(flow === FLOW.FLOW00C || flow === OFFERSFLOW.FLOW0097){
+
+        console.log("onSearchItems",onSearchItems);
+        if(context.domain !== "ONDC:RET14" || context.domain !== "ONDC:RET15"){
+          updtObj['unsupportedType'] = `exchange is not possible for ${context.domain} as supported domains are 'ONDC:RET14','ONDC:RET15' is required for flow: ${flow}`
+        }
+
+        let returnFulfillment = update.fulfillments.filter((fulfillment:any)=>fulfillment.type === "Return")
+        console.log("returnFulfillment",returnFulfillment);
+        
+        returnFulfillment.forEach((fulfillment:any)=>{
+          fulfillment.tags?.forEach((tag: any) => {
+            if (tag.code === 'return_request') {
+
+              if (!Array.isArray(tag.list)) {
+                logger.error(`tag.list is missing or not an array in ${apiSeq}`)
+                return
+              }
+              // let key: any = null
+              exchangeItem = tag.list.find((item:any)=>item.code === "exchange")
+              if(!exchangeItem){
+                updtObj.error = `exchange tag is required for flow: ${flow}`
+                return 
+              }else{
+                const exchangeValue = exchangeItem.value
+                !['yes', 'no'].includes(exchangeValue)
+                updtObj["exchangeNA"] = '"exchange" value must be "yes" or "no"';
+                if(exchangeValue === "no"){
+                  updtObj["exchangeNA"] = `"exchange" value must be "yes" for flow: ${flow}`;
+                  return 
+                }
+                else{
+                  const returnItem = tag.list.find((item:any)=>item.code === "item_id").value;
+                  console.log("returnItem",returnItem);
+                  
+                  let itemEligible = onSearchItems.find((item:any)=>item.id === returnItem)
+                  console.log("itemEligible",itemEligible);
+                  if(!itemEligible){
+                    updtObj["itemNA"] = `Item with id: ${returnItem} not eligible for exchange as not found in on_search catalogue`
+                    return
+                  }
+                  const {category_id} = itemEligible
+                  const { result, missingMandatoryFields } = extractValidFieldsForCategory(
+                    category_id,
+                    tag.list,
+                    electronicsData
+                  );
+                  console.log("result, missingMandatoryFields ",result, missingMandatoryFields );
+                  
+                }
+              }
+            }
+          })
+        })
+        
+
+      }
+    } catch (error) {
+      
     }
 
     return updtObj

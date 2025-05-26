@@ -309,11 +309,11 @@ export const checkGpsPrecision = (coordinates: string) => {
   try {
     const [lat, long] = coordinates.split(',')
     const latPrecision = getDecimalPrecision(lat)
-
     const longPrecision = getDecimalPrecision(long)
-    const decimalPrecision = constants.DECIMAL_PRECISION
+    const decimalPrecision = constants.FOUR_DECIMAL_PRECISION
 
-    return latPrecision === decimalPrecision && longPrecision === decimalPrecision ? 1 : { latPrecision, longPrecision }
+    // Changed comparison from === to >= to check for minimum precision
+    return latPrecision >= decimalPrecision && longPrecision >= decimalPrecision ? 1 : { latPrecision, longPrecision }
   } catch (error) {
     logger.error(error)
     return error

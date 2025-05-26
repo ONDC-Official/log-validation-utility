@@ -360,12 +360,28 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
 
         default_selection.forEach(({ base_item, default_selection_calculated, default_selection_actual }) => {
           if (
+            !default_selection_calculated ||
+            !default_selection_actual ||
+            default_selection_calculated.min === undefined ||
+            default_selection_actual.min === undefined ||
+            default_selection_calculated.max === undefined ||
+            default_selection_actual.max === undefined
+          ) {
+            const errorMessage = `Missing or invalid default_selection values for base_item ${base_item}.
+            Calculated: ${JSON.stringify(default_selection_calculated)}, 
+            Actual: ${JSON.stringify(default_selection_actual)}.`
+
+            logger.error(`Error in base_item ${base_item}: ${errorMessage}`)
+            errorObj[`providers[${i}][${base_item}]`] = errorMessage
+            return
+          }
+          if (
             default_selection_calculated.min !== default_selection_actual.min ||
             default_selection_calculated.max !== default_selection_actual.max
           ) {
             const errorMessage = `Provided default_selection calculated incorrectly,
-    Calculated: min=${default_selection_calculated.min}, max=${default_selection_calculated.max}. 
-    Given: min=${default_selection_actual.min}, max=${default_selection_actual.max}.`
+            Calculated: min=${default_selection_calculated.min}, max=${default_selection_calculated.max}. 
+            Given: min=${default_selection_actual.min}, max=${default_selection_actual.max}.`
 
             logger.error(`Error in base_item ${base_item}: ${errorMessage}`)
 
@@ -381,39 +397,39 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
         logger.info(`Error while Calculating Default Selection in /${constants.ON_SEARCH}, ${error.stack}`)
       }
       // commented price range calculation
-//       try {
-//         // Parse raw data
-//         const parsedCategories = CatalogParser.parseCategories(categories)
-//         const menuItems = CatalogParser.parseMenuItems(items)
-//         const customizations = CatalogParser.parseCustomizations(items)
+      //       try {
+      //         // Parse raw data
+      //         const parsedCategories = CatalogParser.parseCategories(categories)
+      //         const menuItems = CatalogParser.parseMenuItems(items)
+      //         const customizations = CatalogParser.parseCustomizations(items)
 
-//         // Build menu trees with price calculations
-//         const treeBuilder = new MenuTreeBuilder(menuItems, parsedCategories, customizations)
-//         const itemsWithPricesAndLogs = treeBuilder.buildTrees()
+      //         // Build menu trees with price calculations
+      //         const treeBuilder = new MenuTreeBuilder(menuItems, parsedCategories, customizations)
+      //         const itemsWithPricesAndLogs = treeBuilder.buildTrees()
 
-//         itemsWithPricesAndLogs.items.forEach((item: any) => {
-//           console.log("itemOkay", item)
-//           const calculatedPriceRange = item.priceRange
-//           const givenPriceRange = item.priceRangeGiven
+      //         itemsWithPricesAndLogs.items.forEach((item: any) => {
+      //           console.log("itemOkay", item)
+      //           const calculatedPriceRange = item.priceRange
+      //           const givenPriceRange = item.priceRangeGiven
 
-//           if (
-//             calculatedPriceRange.lower !== givenPriceRange.lower ||
-//             calculatedPriceRange.upper !== givenPriceRange.upper
-//           ) {
-//             const itemLog = CatalogParser.extractLogsForItem(itemsWithPricesAndLogs.logs, item.id)
+      //           if (
+      //             calculatedPriceRange.lower !== givenPriceRange.lower ||
+      //             calculatedPriceRange.upper !== givenPriceRange.upper
+      //           ) {
+      //             const itemLog = CatalogParser.extractLogsForItem(itemsWithPricesAndLogs.logs, item.id)
 
-//             errorObj[`providers[${i}][lower_upper_range-(${item.id})`] =
-//               `Provided price range calculated incorrectly for ${item.id},
-// Calculated: lower=${calculatedPriceRange.lower}, upper=${calculatedPriceRange.upper}. 
-// Given: lower=${givenPriceRange.lower}, upper=${givenPriceRange.upper}. 
-// Calculation: ${itemLog}`
-//           }
-//         })
-//       } catch (error: any) {
-//         errorObj[`providers[${i}][lower_upper_range`] =
-//           `Error while Calculating Lower Upper Range in /${constants.ON_SEARCH}, ${error.stack}`
-//         logger.info(`Error while Calculating Lower Upper Range in /${constants.ON_SEARCH}, ${error.stack}`)
-//       }
+      //             errorObj[`providers[${i}][lower_upper_range-(${item.id})`] =
+      //               `Provided price range calculated incorrectly for ${item.id},
+      // Calculated: lower=${calculatedPriceRange.lower}, upper=${calculatedPriceRange.upper}.
+      // Given: lower=${givenPriceRange.lower}, upper=${givenPriceRange.upper}.
+      // Calculation: ${itemLog}`
+      //           }
+      //         })
+      //       } catch (error: any) {
+      //         errorObj[`providers[${i}][lower_upper_range`] =
+      //           `Error while Calculating Lower Upper Range in /${constants.ON_SEARCH}, ${error.stack}`
+      //         logger.info(`Error while Calculating Lower Upper Range in /${constants.ON_SEARCH}, ${error.stack}`)
+      //       }
 
       try {
         logger.info(`Checking length of strings provided in descriptor /${constants.ON_SEARCH}`)
@@ -521,7 +537,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
           const has = Object.prototype.hasOwnProperty
           if (has.call(loc, 'gps')) {
             if (!checkGpsPrecision(loc.gps)) {
-              errorObj.gpsPrecision = `/bpp/providers[${i}]/locations[${iter}]/gps coordinates must be specified with at least six decimal places of precision.`
+              errorObj.gpsPrecision = `/bpp/providers[${i}]/locations[${iter}]/gps coordinates must be specified with at least 4 decimal places of precision.`
             }
           }
         } catch (error) {
@@ -1532,7 +1548,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
 
             serviceabilitySet.add(JSON.stringify(sc))
             if ('list' in sc) {
-              if (sc.list.length != 5) {
+              if (sc.list.length < 5) {
                 const key = `prvdr${i}tags${t}`
                 errorObj[key] =
                   `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract`
@@ -1690,8 +1706,99 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
                             `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract (value is missing for code "unit")`
                         }
                       }
+                      break
+                    case '13': {
+                      // Polygon-based serviceability
+
+                      // Validate 'val' (GeoJSON)
+                      const val = sc.list.find((elem: any) => elem.code === 'val') || ''
+                      if ('value' in val) {
+                        let geojson
+                        try {
+                          geojson = JSON.parse(val.value)
+
+                          const isFeatureCollection =
+                            geojson.type === 'FeatureCollection' && Array.isArray(geojson.features)
+                          if (!isFeatureCollection) {
+                            throw new Error('Invalid GeoJSON type or missing features array')
+                          }
+
+                          for (const feature of geojson.features) {
+                            const geom = feature.geometry
+                            if (!geom || !geom.type || !Array.isArray(geom.coordinates)) {
+                              throw new Error('Invalid feature geometry')
+                            }
+
+                            const checkCoordinates = (coords: any) => {
+                              for (const polygon of coords) {
+                                if (!Array.isArray(polygon)) throw new Error('Invalid coordinate set')
+                                const [first, last] = [polygon[0], polygon[polygon.length - 1]]
+
+                                // Check closure
+                                if (JSON.stringify(first) !== JSON.stringify(last)) {
+                                  throw new Error('Polygon is not closed')
+                                }
+
+                                // Check precision
+                                for (const [lng, lat] of polygon) {
+                                  if (typeof lng !== 'number' || typeof lat !== 'number') {
+                                    throw new Error('Coordinates must be numbers')
+                                  }
+
+                                  const getDecimalPlaces = (num: number) => {
+                                    const parts = num.toString().split('.')
+                                    return parts[1]?.length || 0
+                                  }
+
+                                  if (getDecimalPlaces(lng) < 4 || getDecimalPlaces(lat) < 4) {
+                                    throw new Error('Coordinates must have at least 4 decimal places')
+                                  }
+                                }
+                              }
+                            }
+
+                            if (geom.type === 'Polygon') {
+                              checkCoordinates(geom.coordinates)
+                            } else if (geom.type === 'MultiPolygon') {
+                              for (const coords of geom.coordinates) {
+                                checkCoordinates(coords)
+                              }
+                            } else {
+                              throw new Error('Unsupported geometry type')
+                            }
+                          }
+                        } catch (e) {
+                          const key = `prvdr${i}tags${t}valvalue`
+                          if (e instanceof Error) {
+                            errorObj[key] =
+                              `value should be a valid GeoJSON (code:"val") for type 13 (polygon) in /bpp/providers[${i}]/tags[${t}]. Error: ${e.message}`
+                          } else {
+                            errorObj[key] =
+                              `value should be a valid GeoJSON (code:"val") for type 13 (polygon) in /bpp/providers[${i}]/tags[${t}]. Unknown error occurred.`
+                          }
+                        }
+                      } else {
+                        const key = `prvdr${i}tags${t}val`
+                        errorObj[key] =
+                          `value is missing for code "val" in type 13 (polygon) at /bpp/providers[${i}]/tags[${t}]`
+                      }
+
+                      // Validate 'unit'
+                      const unit = sc.list.find((elem: any) => elem.code === 'unit') || ''
+                      if ('value' in unit) {
+                        if (unit.value !== 'geojson') {
+                          const key = `prvdr${i}tags${t}unitvalue`
+                          errorObj[key] =
+                            `value should be "geojson" (code:"unit") for type 13 (polygon) in /bpp/providers[${i}]/tags[${t}]`
+                        }
+                      } else {
+                        const key = `prvdr${i}tags${t}unit`
+                        errorObj[key] =
+                          `value is missing for code "unit" in type 13 (polygon) at /bpp/providers[${i}]/tags[${t}]`
+                      }
 
                       break
+                    }
                     default: {
                       const key = `prvdr${i}tags${t}type`
                       errorObj[key] =
@@ -1996,257 +2103,280 @@ export const checkOnsearchFullCatalogRefresh = (data: any) => {
 
   //Validating Offers
   try {
-    logger.info(`Checking offers under bpp/providers`);
+    logger.info(`Checking offers under bpp/providers`)
 
     // Iterate through bpp/providers
     for (let i in onSearchCatalog['bpp/providers']) {
-      const offers = onSearchCatalog['bpp/providers'][i]?.offers ?? [];
+      const offers = onSearchCatalog['bpp/providers'][i]?.offers ?? []
       if (!offers || !Array.isArray(offers)) {
-        const key = `bpp/providers[${i}]/offers`;
-        errorObj[key] = `Offers must be an array in bpp/providers[${i}]`;
-        continue;
+        const key = `bpp/providers[${i}]/offers`
+        errorObj[key] = `Offers must be an array in bpp/providers[${i}]`
+        continue
       }
 
       offers.forEach((offer: any, offerIndex: number) => {
         // Validate mandatory fields
         if (!offer.id) {
-          const key = `bpp/providers[${i}]/offers[${offerIndex}]/id`;
-          errorObj[key] = `Offer ID is mandatory for offers[${offerIndex}]`;
-          logger.error(`Offer ID is mandatory for offers[${offerIndex}]`);
+          const key = `bpp/providers[${i}]/offers[${offerIndex}]/id`
+          errorObj[key] = `Offer ID is mandatory for offers[${offerIndex}]`
+          logger.error(`Offer ID is mandatory for offers[${offerIndex}]`)
         }
 
         if (!offer.descriptor || !offer.descriptor.code) {
-          const key = `bpp/providers[${i}]/offers[${offerIndex}]/descriptor`;
-          errorObj[key] = `Descriptor with code is mandatory for offers[${offerIndex}]`;
-          logger.error(`Descriptor with code is mandatory for offers[${offerIndex}]`);
+          const key = `bpp/providers[${i}]/offers[${offerIndex}]/descriptor`
+          errorObj[key] = `Descriptor with code is mandatory for offers[${offerIndex}]`
+          logger.error(`Descriptor with code is mandatory for offers[${offerIndex}]`)
         }
 
         if (!offer.location_ids || !Array.isArray(offer.location_ids) || offer.location_ids.length === 0) {
-          const key = `bpp/providers[${i}]/offers[${offerIndex}]/location_ids`;
-          errorObj[key] = `Location IDs array is mandatory for offers[${offerIndex}]`;
-          logger.error(`Location IDs array is mandatory for offers[${offerIndex}]`);
+          const key = `bpp/providers[${i}]/offers[${offerIndex}]/location_ids`
+          errorObj[key] = `Location IDs array is mandatory for offers[${offerIndex}]`
+          logger.error(`Location IDs array is mandatory for offers[${offerIndex}]`)
         }
 
         if (!offer.item_ids || !Array.isArray(offer.item_ids) || offer.item_ids.length === 0) {
-          const key = `bpp/providers[${i}]/offers[${offerIndex}]/item_ids`;
-          errorObj[key] = `Item IDs array is mandatory for offers[${offerIndex}]`;
-          logger.error(`Item IDs array is mandatory for offers[${offerIndex}]`);
+          const key = `bpp/providers[${i}]/offers[${offerIndex}]/item_ids`
+          errorObj[key] = `Item IDs array is mandatory for offers[${offerIndex}]`
+          logger.error(`Item IDs array is mandatory for offers[${offerIndex}]`)
         }
 
         if (!offer.time || !offer.time.label || !offer.time.range || !offer.time.range.start || !offer.time.range.end) {
-          const key = `bpp/providers[${i}]/offers[${offerIndex}]/time`;
-          errorObj[key] = `Time object with label and range (start/end) is mandatory for offers[${offerIndex}]`;
-          logger.error(`Time object with label and range (start/end) is mandatory for offers[${offerIndex}]`);
+          const key = `bpp/providers[${i}]/offers[${offerIndex}]/time`
+          errorObj[key] = `Time object with label and range (start/end) is mandatory for offers[${offerIndex}]`
+          logger.error(`Time object with label and range (start/end) is mandatory for offers[${offerIndex}]`)
         }
 
-        const tags = offer.tags;
+        const tags = offer.tags
         if (!tags || !Array.isArray(tags)) {
-          const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags`;
-          errorObj[key] = `Tags must be provided for offers[${offerIndex}] with descriptor code '${offer.descriptor?.code}'`;
-          logger.error(`Tags must be provided for offers[${offerIndex}] with descriptor code '${offer.descriptor?.code}'`);
-          return;
+          const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags`
+          errorObj[key] =
+            `Tags must be provided for offers[${offerIndex}] with descriptor code '${offer.descriptor?.code}'`
+          logger.error(
+            `Tags must be provided for offers[${offerIndex}] with descriptor code '${offer.descriptor?.code}'`,
+          )
+          return
         }
 
         // Validate based on offer type
         switch (offer.descriptor?.code) {
           case 'discount':
             // Validate 'qualifier'
-            const qualifierDiscount = tags.find((tag: any) => tag.code === 'qualifier');
+            const qualifierDiscount = tags.find((tag: any) => tag.code === 'qualifier')
             if (!qualifierDiscount || !qualifierDiscount.list.some((item: any) => item.code === 'min_value')) {
-              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`;
-              errorObj[key] = `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
-              logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`);
+              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`
+              errorObj[key] =
+                `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
+              logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`)
             }
 
             // Validate 'benefit'
-            const benefitDiscount = tags.find((tag: any) => tag.code === 'benefit');
+            const benefitDiscount = tags.find((tag: any) => tag.code === 'benefit')
             if (!benefitDiscount) {
-              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`;
-              errorObj[key] = `'benefit' tag is required for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
-              logger.error(`'benefit' tag is required for offers[${offerIndex}]`);
+              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`
+              errorObj[key] =
+                `'benefit' tag is required for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
+              logger.error(`'benefit' tag is required for offers[${offerIndex}]`)
             } else {
-              const valueTypeItem = benefitDiscount.list.find((item: any) => item.code === 'value_type');
-              const valueItem = benefitDiscount.list.find((item: any) => item.code === 'value');
-              const valueCapItem = benefitDiscount.list.find((item: any) => item.code === 'value_cap');
-              
+              const valueTypeItem = benefitDiscount.list.find((item: any) => item.code === 'value_type')
+              const valueItem = benefitDiscount.list.find((item: any) => item.code === 'value')
+              const valueCapItem = benefitDiscount.list.find((item: any) => item.code === 'value_cap')
+
               if (!valueTypeItem) {
-                const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]/value_type`;
-                errorObj[key] = `'value_type' is required in benefit tag for offers[${offerIndex}]`;
-                logger.error(`'value_type' is required in benefit tag for offers[${offerIndex}]`);
+                const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]/value_type`
+                errorObj[key] = `'value_type' is required in benefit tag for offers[${offerIndex}]`
+                logger.error(`'value_type' is required in benefit tag for offers[${offerIndex}]`)
               }
-              
+
               if (!valueItem) {
-                const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]/value`;
-                errorObj[key] = `'value' is required in benefit tag for offers[${offerIndex}]`;
-                logger.error(`'value' is required in benefit tag for offers[${offerIndex}]`);
+                const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]/value`
+                errorObj[key] = `'value' is required in benefit tag for offers[${offerIndex}]`
+                logger.error(`'value' is required in benefit tag for offers[${offerIndex}]`)
               } else {
                 // Validate value is a proper number
-                const value = valueItem.value;
+                const value = valueItem.value
                 if (isNaN(parseFloat(value)) || !/^-?\d+(\.\d+)?$/.test(value)) {
-                  const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]/value`;
-                  errorObj[key] = `'value' in benefit tag must be a valid number for offers[${offerIndex}]`;
-                  logger.error(`'value' in benefit tag must be a valid number for offers[${offerIndex}]`);
+                  const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]/value`
+                  errorObj[key] = `'value' in benefit tag must be a valid number for offers[${offerIndex}]`
+                  logger.error(`'value' in benefit tag must be a valid number for offers[${offerIndex}]`)
                 } else if (parseFloat(value) >= 0) {
-                  const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]/value`;
-                  errorObj[key] = `'value' in 'benefit' tag must be a negative amount for offers[${offerIndex}]`;
-                  logger.error(`'value' in 'benefit' tag must be a negative amount for offers[${offerIndex}]`);
+                  const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]/value`
+                  errorObj[key] = `'value' in 'benefit' tag must be a negative amount for offers[${offerIndex}]`
+                  logger.error(`'value' in 'benefit' tag must be a negative amount for offers[${offerIndex}]`)
                 }
               }
 
               // Validate value_cap if present
               if (valueCapItem) {
-                const valueCap = valueCapItem.value;
+                const valueCap = valueCapItem.value
                 if (isNaN(parseFloat(valueCap)) || !/^-?\d+(\.\d+)?$/.test(valueCap)) {
-                  const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]/value_cap`;
-                  errorObj[key] = `'value_cap' in benefit tag must be a valid number for offers[${offerIndex}]`;
-                  logger.error(`'value_cap' in benefit tag must be a valid number for offers[${offerIndex}]`);
+                  const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]/value_cap`
+                  errorObj[key] = `'value_cap' in benefit tag must be a valid number for offers[${offerIndex}]`
+                  logger.error(`'value_cap' in benefit tag must be a valid number for offers[${offerIndex}]`)
                 }
               }
             }
-            break;
+            break
 
           case 'buyXgetY':
             // Validate 'qualifier'
-            const qualifierBuyXgetY = tags.find((tag: any) => tag.code === 'qualifier');
+            const qualifierBuyXgetY = tags.find((tag: any) => tag.code === 'qualifier')
             if (
               !qualifierBuyXgetY ||
               !qualifierBuyXgetY.list.some((item: any) => item.code === 'min_value') ||
               !qualifierBuyXgetY.list.some((item: any) => item.code === 'item_count')
             ) {
-              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`;
-              errorObj[key] = `'qualifier' tag must include 'min_value' and 'item_count' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
-              logger.error(`'qualifier' tag must include 'min_value' and 'item_count' for offers[${offerIndex}]`);
+              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`
+              errorObj[key] =
+                `'qualifier' tag must include 'min_value' and 'item_count' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
+              logger.error(`'qualifier' tag must include 'min_value' and 'item_count' for offers[${offerIndex}]`)
             }
 
             // Validate 'benefit'
-            const benefitBuyXgetY = tags.find((tag: any) => tag.code === 'benefit');
+            const benefitBuyXgetY = tags.find((tag: any) => tag.code === 'benefit')
             if (!benefitBuyXgetY || !benefitBuyXgetY.list.some((item: any) => item.code === 'item_count')) {
-              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`;
-              errorObj[key] = `'benefit' tag must include 'item_count' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
-              logger.error(`'benefit' tag must include 'item_count' for offers[${offerIndex}]`);
+              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`
+              errorObj[key] =
+                `'benefit' tag must include 'item_count' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
+              logger.error(`'benefit' tag must include 'item_count' for offers[${offerIndex}]`)
             }
-            break;
+            break
 
           case 'freebie':
             // Validate 'qualifier'
-            const qualifierFreebie = tags.find((tag: any) => tag.code === 'qualifier');
+            const qualifierFreebie = tags.find((tag: any) => tag.code === 'qualifier')
             if (!qualifierFreebie || !qualifierFreebie.list.some((item: any) => item.code === 'min_value')) {
-              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`;
-              errorObj[key] = `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
-              logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`);
+              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`
+              errorObj[key] =
+                `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
+              logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`)
             }
 
             // Validate 'benefit'
-            const benefitFreebie = tags.find((tag: any) => tag.code === 'benefit');
+            const benefitFreebie = tags.find((tag: any) => tag.code === 'benefit')
             if (
               !benefitFreebie ||
               !benefitFreebie.list.some((item: any) => item.code === 'item_count') ||
               !benefitFreebie.list.some((item: any) => item.code === 'item_id') ||
               !benefitFreebie.list.some((item: any) => item.code === 'item_value')
             ) {
-              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`;
-              errorObj[key] = `'benefit' tag must include 'item_count', 'item_id', and 'item_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
-              logger.error(`'benefit' tag must include 'item_count', 'item_id', and 'item_value' for offers[${offerIndex}]`);
+              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`
+              errorObj[key] =
+                `'benefit' tag must include 'item_count', 'item_id', and 'item_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
+              logger.error(
+                `'benefit' tag must include 'item_count', 'item_id', and 'item_value' for offers[${offerIndex}]`,
+              )
             }
-            break;
+            break
 
           case 'slab':
             // Validate 'qualifier'
-            const qualifierSlab = tags.find((tag: any) => tag.code === 'qualifier');
+            const qualifierSlab = tags.find((tag: any) => tag.code === 'qualifier')
             if (!qualifierSlab || !qualifierSlab.list.some((item: any) => item.code === 'min_value')) {
-              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`;
-              errorObj[key] = `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
-              logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`);
+              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`
+              errorObj[key] =
+                `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
+              logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`)
             }
 
             // Validate 'benefit'
-            const benefitSlab = tags.find((tag: any) => tag.code === 'benefit');
+            const benefitSlab = tags.find((tag: any) => tag.code === 'benefit')
             if (
               !benefitSlab ||
               !benefitSlab.list.some((item: any) => item.code === 'value') ||
               !benefitSlab.list.some((item: any) => item.code === 'value_type') ||
               !benefitSlab.list.some((item: any) => item.code === 'value_cap')
             ) {
-              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`;
-              errorObj[key] = `'benefit' tag must include 'value', 'value_type', and 'value_cap' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
-              logger.error(`'benefit' tag must include 'value', 'value_type', and 'value_cap' for offers[${offerIndex}]`);
+              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`
+              errorObj[key] =
+                `'benefit' tag must include 'value', 'value_type', and 'value_cap' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
+              logger.error(
+                `'benefit' tag must include 'value', 'value_type', and 'value_cap' for offers[${offerIndex}]`,
+              )
             }
-            break;
+            break
 
           case 'combo':
             // Validate 'qualifier'
-            const qualifierCombo = tags.find((tag: any) => tag.code === 'qualifier');
+            const qualifierCombo = tags.find((tag: any) => tag.code === 'qualifier')
             if (
               !qualifierCombo ||
               !qualifierCombo.list.some((item: any) => item.code === 'min_value') ||
               !qualifierCombo.list.some((item: any) => item.code === 'item_id')
             ) {
-              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`;
-              errorObj[key] = `'qualifier' tag must include 'min_value' and 'item_id' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
-              logger.error(`'qualifier' tag must include 'min_value' and 'item_id' for offers[${offerIndex}]`);
+              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`
+              errorObj[key] =
+                `'qualifier' tag must include 'min_value' and 'item_id' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
+              logger.error(`'qualifier' tag must include 'min_value' and 'item_id' for offers[${offerIndex}]`)
             }
 
             // Validate 'benefit'
-            const benefitCombo = tags.find((tag: any) => tag.code === 'benefit');
+            const benefitCombo = tags.find((tag: any) => tag.code === 'benefit')
             if (
               !benefitCombo ||
               !benefitCombo.list.some((item: any) => item.code === 'value') ||
               !benefitCombo.list.some((item: any) => item.code === 'value_type') ||
               !benefitCombo.list.some((item: any) => item.code === 'value_cap')
             ) {
-              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`;
-              errorObj[key] = `'benefit' tag must include 'value', 'value_type', and 'value_cap' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
-              logger.error(`'benefit' tag must include 'value', 'value_type', and 'value_cap' for offers[${offerIndex}]`);
+              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`
+              errorObj[key] =
+                `'benefit' tag must include 'value', 'value_type', and 'value_cap' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
+              logger.error(
+                `'benefit' tag must include 'value', 'value_type', and 'value_cap' for offers[${offerIndex}]`,
+              )
             }
-            break;
+            break
 
           case 'delivery':
             // Validate 'qualifier'
-            const qualifierDelivery = tags.find((tag: any) => tag.code === 'qualifier');
+            const qualifierDelivery = tags.find((tag: any) => tag.code === 'qualifier')
             if (!qualifierDelivery || !qualifierDelivery.list.some((item: any) => item.code === 'min_value')) {
-              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`;
-              errorObj[key] = `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
-              logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`);
+              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`
+              errorObj[key] =
+                `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
+              logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`)
             }
 
             // Validate 'benefit'
-            const benefitDelivery = tags.find((tag: any) => tag.code === 'benefit');
+            const benefitDelivery = tags.find((tag: any) => tag.code === 'benefit')
             if (
               !benefitDelivery ||
               !benefitDelivery.list.some((item: any) => item.code === 'value') ||
               !benefitDelivery.list.some((item: any) => item.code === 'value_type')
             ) {
-              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`;
-              errorObj[key] = `'benefit' tag must include 'value' and 'value_type' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
-              logger.error(`'benefit' tag must include 'value' and 'value_type' for offers[${offerIndex}]`);
+              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`
+              errorObj[key] =
+                `'benefit' tag must include 'value' and 'value_type' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
+              logger.error(`'benefit' tag must include 'value' and 'value_type' for offers[${offerIndex}]`)
             }
-            break;
+            break
 
           case 'exchange':
             // Validate 'qualifier'
-            const qualifierExchange = tags.find((tag: any) => tag.code === 'qualifier');
+            const qualifierExchange = tags.find((tag: any) => tag.code === 'qualifier')
             if (!qualifierExchange || !qualifierExchange.list.some((item: any) => item.code === 'min_value')) {
-              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`;
-              errorObj[key] = `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
-              logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`);
+              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`
+              errorObj[key] =
+                `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
+              logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`)
             }
 
             // Validate that benefits should not exist or should be empty
-            const benefitExchange = tags.find((tag: any) => tag.code === 'benefit');
+            const benefitExchange = tags.find((tag: any) => tag.code === 'benefit')
             if (benefitExchange && benefitExchange.list.length > 0) {
-              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`;
-              errorObj[key] = `'benefit' tag must not include any values for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`;
-              logger.error(`'benefit' tag must not include any values for offers[${offerIndex}]`);
+              const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`
+              errorObj[key] =
+                `'benefit' tag must not include any values for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
+              logger.error(`'benefit' tag must not include any values for offers[${offerIndex}]`)
             }
-            break;
+            break
 
           default:
-            logger.info(`No specific validation required for offer type: ${offer.descriptor?.code}`);
+            logger.info(`No specific validation required for offer type: ${offer.descriptor?.code}`)
         }
-      });
+      })
     }
   } catch (error: any) {
-    logger.error(`Error while checking offers under bpp/providers: ${error.stack}`);
+    logger.error(`Error while checking offers under bpp/providers: ${error.stack}`)
   }
 
   return Object.keys(errorObj).length > 0 && errorObj

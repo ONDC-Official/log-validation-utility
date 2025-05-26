@@ -2,6 +2,7 @@ export default Object.freeze({
   RET_CONTEXT_TTL: 'PT30S',
   CONTEXT_ACTION: 'action',
   DB_PATH: 'dbfiles',
+  FOUR_DECIMAL_PRECISION: 4,
   DECIMAL_PRECISION: 6,
   ORDER_PICKED: 'Order-picked-up',
   ORDER_PACKED: 'Packed',

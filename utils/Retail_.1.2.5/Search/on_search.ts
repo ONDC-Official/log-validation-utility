@@ -1021,7 +1021,7 @@ export const checkOnsearch = (data: any, flow?: string) => {
           const has = Object.prototype.hasOwnProperty
           if (has.call(loc, 'gps')) {
             if (!checkGpsPrecision(loc.gps)) {
-              errorObj.gpsPrecision = `/bpp/providers[${i}]/locations[${iter}]/gps coordinates must be specified with at least six decimal places of precision.`
+              errorObj.gpsPrecision = `/bpp/providers[${i}]/locations[${iter}]/gps coordinates must be specified with at least 4 decimal places of precision.`
             }
           }
         } catch (error) {
@@ -1674,7 +1674,7 @@ export const checkOnsearch = (data: any, flow?: string) => {
 
             serviceabilitySet.add(JSON.stringify(sc))
             if ('list' in sc) {
-              if (sc.list.length != 5) {
+              if (sc.list.length < 5) {
                 const key = `prvdr${i}tags${t}`
                 errorObj[key] =
                   `serviceability construct /bpp/providers[${i}]/tags[${t}] should be defined as per the API contract`

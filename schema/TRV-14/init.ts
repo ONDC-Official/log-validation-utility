@@ -66,8 +66,8 @@ const initSchemaTRV14 = {
                 type: 'object',
                 required: ['id', 'parent_item_id', 'quantity'],
                 properties: {
-                  id: { type: 'string' },
-                  parent_item_id: { type: 'string' },
+                  id: { type: 'string',minLength:1  },
+                  parent_item_id: { type: 'string',minLength:1  },
                   quantity: {
                     type: 'object',
                     required: ['selected'],
@@ -87,7 +87,7 @@ const initSchemaTRV14 = {
                       type: 'object',
                       required: ['id', 'quantity'],
                       properties: {
-                        id: { type: 'string' },
+                        id: { type: 'string' ,minLength:1 },
                         quantity: {
                           type: 'object',
                           required: ['selected'],
@@ -112,13 +112,15 @@ const initSchemaTRV14 = {
               items: {
                 type: 'object',
                 required: ['id', 'stops'],
+                additionalProperties: false,
                 properties: {
-                  id: { type: 'string' },
+                  id: { type: 'string',minLength:1  },
                   stops: {
                     type: 'array',
                     items: {
                       type: 'object',
                       required: ['type', 'time'],
+                      additionalProperties: false,
                       properties: {
                         type: { type: 'string',enum:["START"] },
                         time: {
@@ -137,17 +139,19 @@ const initSchemaTRV14 = {
             billing: {
               type: 'object',
               required: ['name', 'email', 'phone'],
+              additionalProperties: false,
               properties: {
-                name: { type: 'string' },
-                email: { type: 'string', format: 'email' },
-                phone: { type: 'string' },
+                name: { type: 'string' ,minLength:1 },
+                email: { type: 'string', format: 'email',minLength:1  },
+                phone: { type: 'string' ,minLength:1 },
               },
             },
             provider: {
               type: 'object',
               required: ['id'],
+              additionalProperties: false,
               properties: {
-                id: { type: 'string' },
+                id: { type: 'string',minLength:1  },
               },
             },
             payments: {
@@ -155,6 +159,7 @@ const initSchemaTRV14 = {
               items: {
                 type: 'object',
                 required: ['collected_by', 'status', 'type'],
+                additionalProperties: false,
                 properties: {
                   collected_by: { type: 'string',enum:["BAP"] },
                   status: { type: 'string',enum:["PAID","NOT-PAID"] },

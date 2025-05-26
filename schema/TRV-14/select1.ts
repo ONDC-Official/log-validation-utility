@@ -45,7 +45,7 @@ const select1SchemaTRV14 = {
         transaction_id: { type: 'string' },
         message_id: { type: 'string' },
         version: { type: 'string', enum: ['2.0.0'] },
-        action: { type: 'string', enum: ['select_1'] },
+        action: { type: 'string', enum: ['select'] },
         bap_uri: { type: 'string', format: 'uri' },
         ttl: { type: 'string', pattern: '^PT\\d+S$' },
         bpp_id: { type: 'string' },
@@ -67,7 +67,7 @@ const select1SchemaTRV14 = {
                 required: ['id', 'parent_item_id', 'quantity'],
                 properties: {
                   id: { type: 'string' },
-                  parent_item_id: { type: 'string' },
+                  parent_item_id: { type: 'string'},
                   quantity: {
                     type: 'object',
                     required: ['selected'],
@@ -112,6 +112,7 @@ const select1SchemaTRV14 = {
               items: {
                 type: 'object',
                 required: ['id', 'stops'],
+                additionalProperties: false,
                 properties: {
                   id: { type: 'string' },
                   stops: {
@@ -119,6 +120,7 @@ const select1SchemaTRV14 = {
                     items: {
                       type: 'object',
                       required: ['type', 'time'],
+                      additionalProperties: false,
                       properties: {
                         type: { type: 'string', enum: ['START'] },
                         time: {
@@ -146,6 +148,6 @@ const select1SchemaTRV14 = {
       },
     },
   },
-  additionalProperties: false,
+  additionalProperties: true,
 }
 export default select1SchemaTRV14

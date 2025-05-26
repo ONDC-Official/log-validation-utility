@@ -66,7 +66,7 @@ const onSelect2SchemaTRV14 = {
                 type: 'object',
                 required: ['id', 'descriptor', 'location_ids', 'category_ids'],
                 properties: {
-                  id: { type: 'string' },
+                  id: { type: 'string' ,minLength:1 },
                   descriptor: {
                     type: 'object',
                     required: ['name', 'code'],
@@ -85,14 +85,16 @@ const onSelect2SchemaTRV14 = {
               items: {
                 type: 'object',
                 required: ['id', 'type', 'stops',"vehicle"],
+                additionalProperties: false,
                 properties: {
-                  id: { type: 'string' },
+                  id: { type: 'string' ,minLength:1 },
                   type: { type: 'string' , enum:["VISIT"] },
                   stops: {
                     type: 'array',
                     items: {
                       type: 'object',
                       required: ['type', 'time'],
+                      additionalProperties: false,
                       properties: {
                         type: { type: 'string',enum:["START","END"] },
                         time: {
@@ -104,6 +106,25 @@ const onSelect2SchemaTRV14 = {
                         },
                       },
                     },
+                  },
+                  agent: {
+                    type: 'object',
+                    properties: {
+                      organization: {
+                        type: 'object',
+                        properties: {
+                          contact: {
+                            type: 'object',
+                            required: ['phone', 'email'],
+                            additionalProperties: false,
+                            properties: {
+                              phone: { type: 'string',minLength:1  },
+                              email: { type: 'string',minLength:1  }
+                            }
+                          }
+                        }
+                      }
+                    }
                   },
                   vehicle:{
                     type: 'object',
@@ -119,14 +140,50 @@ const onSelect2SchemaTRV14 = {
               type: 'object',
               required: ['id', 'descriptor'],
               properties: {
-                id: { type: 'string' },
+                id: { type: 'string' ,minLength:1 },
                 descriptor: {
                   type: 'object',
                   required: ['name'],
                   properties: {
-                    name: { type: 'string' },
+                    name: { type: 'string',minLength:1  },
                   },
                 },
+                locations:{
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      id: { type: "string" },
+                      gps: { type: "string" },
+                      descriptor: {
+                        type: "object",
+                        properties: {
+                          name: { type: "string" },
+                          short_desc: { type: "string" },
+                          additional_desc: {
+                            type: "object",
+                            properties: {
+                              url: { type: "string" },
+                              content_type: { type: "string" }
+                            }
+                          },
+                          images: {
+                            type: "array",
+                            items: {
+                              type: "object",
+                              properties: {
+                                url: { type: "string" },
+                                size_type: { type: "string" }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      rating: { type: "string" }
+                    },
+                    required: ["id", "gps", "descriptor"]
+                  }
+                }
               },
             },
             quote: {
@@ -144,7 +201,7 @@ const onSelect2SchemaTRV14 = {
                         type: 'object',
                         required: ['currency', 'value'],
                         properties: {
-                          currency: { type: 'string' },
+                          currency: { type: 'string',minLength:1  },
                           value: { type: 'string' },
                         },
                       },
@@ -184,7 +241,47 @@ const onSelect2SchemaTRV14 = {
                   }
                 }
               }
-            }
+            },
+            cancellation_terms: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  cancellation_fee: {
+                    type: "object",
+                    properties: {
+                      percentage: { type: "string" }
+                    }
+                  },
+                  fulfillment_state: {
+                    type: "object",
+                    properties: {
+                      descriptor: {
+                        type: "object",
+                        properties: {
+                          code: { type: "string" }
+                        }
+                      }
+                    }
+                  },
+                  cancel_by: {
+                    type: "object",
+                    properties: {
+                      label: { type: "string" },
+                      duration: { type: "string" }
+                    }
+                  },
+                  cancellation_eligible: { type: "boolean" },
+                  external_ref: {
+                    type: "object",
+                    properties: {
+                      mimetype: { type: "string" },
+                      url: { type: "string" }
+                    }
+                  }
+                }
+              }
+            },
           },
         },
       },

@@ -232,7 +232,7 @@ const validate_schema_for_retail_json = (vertical: string, api: string, data: an
   return res
 }
 
-export const validateSchema = (domain: string, api: string, data: any) => {
+export const validateSchema = (domain: string, api: string, data: any ) => {
   try {
     logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
     const errObj: any = {}

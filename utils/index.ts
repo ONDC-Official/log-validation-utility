@@ -1844,6 +1844,58 @@ export function validateFinanceTxnTag(tag: any): string[] {
   return errors;
 }
 
+export function extractValidFieldsForCategory(
+  categoryId: string,
+  dataList: { code: string; value: string }[],
+  schema: any
+) {
+  const categorySchema = schema[categoryId];
+  console.log("categorySchema", categorySchema);
+
+  if (!categorySchema) {
+    throw new Error(`Invalid category: ${categoryId}`);
+  }
+
+  const result: Record<string, string> = {};
+  const foundCodes = new Set(dataList.map((item) => item.code));
+
+  const missingMandatoryFields = Object.entries(categorySchema)
+    .filter(([code, field]) => (field as { mandatory: boolean }).mandatory && !foundCodes.has(code))
+    .map(([code]) => code);
+
+  for (const item of dataList) {
+    if (categorySchema[item.code]) {
+      result[item.code] = item.value;
+    }
+  }
+
+  return {
+    result,
+    missingMandatoryFields,
+  };
+}
+export function findMissingTags(
+  updtObj: { code: string; value: string }[],
+  onUpdtObj: { code: string; value: string }[]
+) {
+  const referenceCodes = new Set(
+    updtObj
+      .map((item) => item.code)
+      .filter((code) => code !== "id") // skip "id"
+  );
+
+  const presentCodes = new Set(onUpdtObj.map((item) => item.code));
+
+  const missingTags = Array.from(referenceCodes).filter(
+    (code) => !presentCodes.has(code)
+  );
+
+  return missingTags;
+}
+
+
+
+
 
 
 

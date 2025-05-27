@@ -1355,7 +1355,7 @@ export function validateBppUri(bppUri: string, bpp_id: string, errorObj: any): a
 }
 
 export const pingValidate = async (): Promise<"ok" | "fail"> => {
-  return ping(`http://localhost:3005/api/`)
+  return ping(`https://log-validation.ondc.org/api/`)
 }
 
 async function ping(url: string): Promise<"ok" | "fail"> {

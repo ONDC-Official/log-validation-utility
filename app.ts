@@ -7,7 +7,8 @@ import path from 'path';
 import cors from 'cors'
 const createServer = (): express.Application => {
   const app: Application = express()
- const allowedOrigins = ['https://resolved-relieved-snake.ngrok-free.app', 'http://localhost:3008']
+  const port = process.env.PORT || 3008
+ const allowedOrigins = ['https://resolved-relieved-snake.ngrok-free.app', `http://localhost:${port}`]
 
   app.use(
     cors({

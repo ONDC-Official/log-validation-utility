@@ -381,6 +381,8 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       '017',
       '00D',
       '00E',
+      '016',
+      '01F'
     ]
     if (!retailDomains.includes(domain)) {
       return 'Domain should 1.2.5 retail domains'
@@ -720,6 +722,28 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
       ApiSequence.ON_STATUS_DELIVERED,
     ]
+    const flow016Sequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+     
+    ]
+    const flow01FSequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+    
+    ]
 
     const processApiSequence = (apiSequence: any, data: any, logReport: any, msgIdSet: any, flow: string) => {
       if (validFlows.includes(flow)) {
@@ -749,7 +773,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
           } else {
             return checkOnsearch(data, flow)
           }
-        case ApiSequence.INC_SEARCH: 
+        case ApiSequence.INC_SEARCH:
           return checkSearchIncremental(data, msgIdSet)
         case ApiSequence.INC_ONSEARCH:
           return checkOnsearchIncremental(data, msgIdSet)
@@ -1046,6 +1070,12 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
         break
       case FLOW.FLOW012:
         logReport = processApiSequence(flow012Sequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW016:
+        logReport = processApiSequence(flow016Sequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW01F:
+        logReport = processApiSequence(flow01FSequence, data, logReport, msgIdSet, flow)
         break
     }
   } catch (error: any) {

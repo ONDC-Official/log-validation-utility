@@ -11,6 +11,7 @@ import {
   compareFulfillmentObject,
   compareAllObjects,
   getProviderId,
+  deepCompare,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
@@ -495,6 +496,30 @@ export const checkOnStatusDelivered = (data: any, state: string, msgIdSet: any, 
         }
       })
     }
+
+
+     try {
+              const credsWithProviderId = getValue('credsWithProviderId')
+              const providerId = on_status?.provider?.id
+              const confirmCreds = on_status?.provider?.creds
+              const found = credsWithProviderId.find((ele: { providerId: any }) => ele.providerId === providerId)
+              const expectedCreds = found?.creds
+               if (!expectedCreds) {
+                onStatusObj['MissingCreds'] = `creds must be present in /${constants.ON_STATUS_DELIVERED}`
+              }
+               if (flow === FLOW.FLOW017) {
+         
+              if (!expectedCreds) {
+                onStatusObj['MissingCreds'] = `creds must be present in /${constants.ON_SEARCH}`
+              } else if (!deepCompare(expectedCreds, confirmCreds)) {
+                console.log('here inside else')
+                onStatusObj['MissingCreds'] = `creds must be present and same as in /${constants.ON_SEARCH}`
+              }
+            }
+              
+            } catch (err: any) {
+            logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)
+            }
     if (flow === FLOW.FLOW01C) {
       const fulfillments = on_status.fulfillments
       const deliveryFulfillment = fulfillments.find((f: any) => f.type === 'Delivery')

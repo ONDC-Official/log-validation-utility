@@ -23,12 +23,11 @@ const createServer = (): express.Application => {
   )
   // Body parsing Middleware
   app.use(express.json({ limit: '50mb' }))
-  app.use(express.static(path.join(__dirname, 'ui')))
+  app.use(express.static(path.join(__dirname, 'frontend')))
 
   // For all other routes, serve index.html (React Router support)
-  app.get('/', (req, res) => {
-    req
-    res.sendFile(path.join(__dirname, 'ui', 'index.html'))
+  app.get('/', (_, res) => {
+    res.sendFile(path.join(__dirname, 'frontend', 'index.html'))
   })
   app.use('/health', healthRoutes)
   app.use('/api', validateRoutes)

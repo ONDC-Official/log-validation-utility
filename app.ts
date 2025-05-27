@@ -7,14 +7,13 @@ import path from 'path';
 import cors from 'cors'
 const createServer = (): express.Application => {
   const app: Application = express()
-  const port = process.env.PORT || 3008
- const allowedOrigins = ['https://resolved-relieved-snake.ngrok-free.app', `http://localhost:${port}`]
+ const allowedOrigins = process.env.ALLOWED_ORIGINS
 
   app.use(
     cors({
       origin: function (origin, callback) {
         if (!origin) return callback(null, true)
-        if (allowedOrigins.indexOf(origin) === -1) {
+        if (allowedOrigins?.indexOf(origin) === -1) {
           const msg = 'The CORS policy for this site does not allow access from the specified Origin.'
           return callback(new Error(msg), false)
         }
@@ -27,11 +26,11 @@ const createServer = (): express.Application => {
   app.use(express.static(path.join(__dirname, 'ui')))
 
   // For all other routes, serve index.html (React Router support)
-  app.get('/ui', (req, res) => {
+  app.get('/', (req, res) => {
     req
     res.sendFile(path.join(__dirname, 'ui', 'index.html'))
   })
-  app.use('/', healthRoutes)
+  app.use('/health', healthRoutes)
   app.use('/api', validateRoutes)
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
   return app

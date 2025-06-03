@@ -226,9 +226,6 @@ const validateIGM = async (payload: string, version: string, flow?: string) => {
   return { response, success, message }
 }
 
-
-
-
 const validateRSF = async (payload: string, version: string) => {
   logger.info('Entering validateRSF function')
   let response
@@ -237,7 +234,6 @@ const validateRSF = async (payload: string, version: string) => {
   switch (version) {
     case '1.0.0':
       response = RSFvalidateLogs(payload)
-
       if (_.isEmpty(response)) {
         success = true
         message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL

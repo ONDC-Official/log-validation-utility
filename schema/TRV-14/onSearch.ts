@@ -65,7 +65,7 @@ const onSearchSchemaTRV14 ={
                     }
                   }
                 },
-                required: ["name", "short_desc", "long_desc", "images"]
+                required: ["name", "images"]
               },
               providers: {
                 type: "array",
@@ -90,7 +90,7 @@ const onSearchSchemaTRV14 ={
                           }
                         }
                       },
-                      required: ["name", "short_desc", "images"]
+                      required: ["name", "images"]
                     },
                     categories: {
                       type: "array",
@@ -158,7 +158,7 @@ const onSearchSchemaTRV14 ={
                                 }
                               }
                             },
-                            required: ["name", "short_desc", "additional_desc", "images"]
+                            required: ["name", "images"]
                           }
                         },
                         required: ["id", "gps", "descriptor", "rating"]

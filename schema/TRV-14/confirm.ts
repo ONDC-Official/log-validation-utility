@@ -120,9 +120,16 @@ const confirmSchemaTRV14 = {
                         type: { type: 'string', enum: ['START'] },
                         time: {
                           type: 'object',
-                          required: ['timestamp'],
                           properties: {
                             timestamp: { type: 'string', format: 'date-time' },
+                            range: {
+                              type: 'object',
+                              required: ['start', 'end'],
+                              properties: {
+                                start: { type: 'string', format: 'date-time' },
+                                end: { type: 'string', format: 'date-time' },
+                              },
+                            },
                           },
                         },
                       },

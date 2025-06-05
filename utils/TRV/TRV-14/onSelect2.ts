@@ -2,7 +2,13 @@ import constants, { TRV14ApiSequence } from '../../../constants'
 import { getValue, setValue } from '../../../shared/dao'
 import { logger } from '../../../shared/logger'
 import { isObjectEmpty, validateSchema } from '../../../utils'
-import { compareonItems, compareQuote, compareReplacementTerms, validateOnItemTagsStructure, validateQuote } from './TRV14checks'
+import {
+  compareonItems,
+  compareQuote,
+  compareReplacementTerms,
+  validateOnItemTagsStructure,
+  validateQuote,
+} from './TRV14checks'
 
 // @ts-ignore
 export const checkOnSelect2 = (data: any, msgIdSet: any, version: any) => {
@@ -60,38 +66,38 @@ export const checkOnSelect2 = (data: any, msgIdSet: any, version: any) => {
     } catch (error) {
       logger.error(error)
     }
-    
 
     //quote checking
     try {
       logger.info(`Checking quote details in /${constants.ON_SELECT}`)
 
-       //checking quote calculation
-       let totalsum = 0
+      //checking quote calculation
+      let totalsum = 0
 
-       // ✅ Ensure rsfObj.quote is initialized
-       if (!rsfObj.quote || typeof rsfObj.quote !== 'object') {
-         rsfObj.quote = {}
-       }
- 
-       onSelect.quote.breakup.forEach((itm: any) => {
-         const expectedValue = Number(itm.item.price.value) * Number(itm.item.quantity.selected.count)
-         const actualValue = Number(itm.price.value)
- 
-         if (actualValue !== expectedValue) {
-           rsfObj.quote[`${itm.item.id}`] = `${itm.id} with price expected  ${expectedValue} this but got ${actualValue} this `
-         } else {
-           totalsum += expectedValue
-         }
-       })
- 
-       if (totalsum !== Number(onSelect.quote.price.value)) {
-         rsfObj.quote[`price`] = `quote breakup summation is not correct`
-       }
+      // ✅ Ensure rsfObj.quote is initialized
+      if (!rsfObj.quote || typeof rsfObj.quote !== 'object') {
+        rsfObj.quote = {}
+      }
 
-       //validating quote structure
+      onSelect.quote.breakup.forEach((itm: any) => {
+        const expectedValue = Number(itm.item.price.value) * Number(itm.item.quantity.selected.count)
+        const actualValue = Number(itm.price.value)
 
-      const quoteErrors = validateQuote(onSelect.quote, constants.ON_SELECT,itemAddOn)
+        if (actualValue !== expectedValue) {
+          rsfObj.quote[`${itm.item.id}`] =
+            `${itm.id} with price expected  ${expectedValue} this but got ${actualValue} this `
+        } else {
+          totalsum += expectedValue
+        }
+      })
+
+      if (totalsum !== Number(onSelect.quote.price.value)) {
+        rsfObj.quote[`price`] = `quote breakup summation is not correct`
+      }
+
+      //validating quote structure
+
+      const quoteErrors = validateQuote(onSelect.quote, constants.ON_SELECT, itemAddOn)
       Object.assign(errorObj, quoteErrors)
     } catch (error: any) {
       logger.error(`!!Error occcurred while checking Quote in /${constants.ON_SELECT},  ${error.message}`)
@@ -166,41 +172,39 @@ export const checkOnSelect2 = (data: any, msgIdSet: any, version: any) => {
             }
           })
 
-          const tagsError = validateOnItemTagsStructure(itm.tags,itm.id)
-          Object.assign(rsfObj,tagsError)
+          const tagsError = validateOnItemTagsStructure(itm.tags, itm.id)
+          Object.assign(rsfObj, tagsError)
         }
         if (itm.descriptor.code === 'ADD_ON') {
-          if(itemAddOn.length <= 0){
+          if (itemAddOn.length <= 0) {
             rsfObj[`Addons`] = `No items were selected for Add-ons`
-          }
-          else{
-            const allowedKeys = ['id', 'descriptor', 'parent_item_id', 'price', 'quantity'];
-          if(itm.parent_item_id === ''){
-            rsfObj[`Addon${itm.id}`] = `${itm.id} can't have empty string parent_item_id`
-          }
-          if(!itm.parent_item_id){
-            rsfObj[`Addon${itm.id}`] = `parent_item_id is missing in item obj with id:${itm.id}`
-          }
-          if(!itm.price){
-            rsfObj[`Addon${itm.id}`] = `${itm.id} should have price object`
-          }
-          if(!itm.quantity){
-            rsfObj[`Addon${itm.id}`] = `${itm.id} should have quantity object`
-          }
-
-          Object.keys(itm).forEach((key) => {
-            if (!allowedKeys.includes(key)) {
-              rsfObj[`Addon${itm.id}_${key}`] = `'${key}' is not required in item obj with id:${itm.id}`;
+          } else {
+            const allowedKeys = ['id', 'descriptor', 'parent_item_id', 'price', 'quantity']
+            if (itm.parent_item_id === '') {
+              rsfObj[`Addon${itm.id}`] = `${itm.id} can't have empty string parent_item_id`
             }
-          });
+            if (!itm.parent_item_id) {
+              rsfObj[`Addon${itm.id}`] = `parent_item_id is missing in item obj with id:${itm.id}`
+            }
+            if (!itm.price) {
+              rsfObj[`Addon${itm.id}`] = `${itm.id} should have price object`
+            }
+            if (!itm.quantity) {
+              rsfObj[`Addon${itm.id}`] = `${itm.id} should have quantity object`
+            }
+
+            Object.keys(itm).forEach((key) => {
+              if (!allowedKeys.includes(key)) {
+                rsfObj[`Addon${itm.id}_${key}`] = `'${key}' is not required in item obj with id:${itm.id}`
+              }
+            })
           }
         }
       })
-      if(!ABSTRACT_FLAG && ENTRY_PASS_FLAG){
-        rsfObj[`parent_item`]= `parent item not found having descriptor.code as ABSTRACT`
-      }
-      else if(ABSTRACT_FLAG && !ENTRY_PASS_FLAG){
-        rsfObj[`child_item`]= `child_item does not found having descriptor.code as ENTRY_PASS`
+      if (!ABSTRACT_FLAG && ENTRY_PASS_FLAG) {
+        rsfObj[`parent_item`] = `parent item object having descriptor.code as ABSTRACT was not found in items array`
+      } else if (ABSTRACT_FLAG && !ENTRY_PASS_FLAG) {
+        rsfObj[`child_item`] = `child_item does not found having descriptor.code as ENTRY_PASS`
       }
     } catch (error) {
       logger.error(error)
@@ -248,18 +252,17 @@ export const checkOnSelect2 = (data: any, msgIdSet: any, version: any) => {
     } catch (error) {
       logger.error(error)
     }
-  
 
-     //checking cancellation_terms
-     try {
-      onSelect.cancellation_terms.forEach((itm:any,index:number)=>{
-        if(!itm.cancellation_eligible){
-          rsfObj[`cancellation_terms[${index}].cancellation_eligible`] = `Cancellation_eligible is missing at index: ${index}`
-        }
-      })
-    } catch (error) {
-      logger.error(error)
-    }
+    //checking cancellation_terms
+    //  try {
+    //   onSelect.cancellation_terms.forEach((itm:any,index:number)=>{
+    //     if(!itm.cancellation_eligible){
+    //       rsfObj[`cancellation_terms[${index}].cancellation_eligible`] = `Cancellation_eligible is missing at index: ${index}`
+    //     }
+    //   })
+    // } catch (error) {
+    //   logger.error(error)
+    // }
 
     setValue('onSelectquote', onSelect.quote)
     setValue('onSelect2items', onSelect.items)

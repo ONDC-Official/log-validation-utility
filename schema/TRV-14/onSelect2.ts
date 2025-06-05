@@ -58,7 +58,7 @@ const onSelect2SchemaTRV14 = {
       properties: {
         order: {
           type: 'object',
-          required: ['items', 'fulfillments', 'provider', 'quote','replacement_terms'],
+          required: ['items', 'fulfillments', 'provider', 'quote'],
           properties: {
             items: {
               type: 'array',

@@ -172,6 +172,7 @@ const initSchemaTRV14 = {
                   collected_by: { type: 'string',enum:["BAP"] },
                   status: { type: 'string',enum:["PAID","NOT-PAID"] },
                   type: { type: 'string' },
+                  id: { type: 'string'},
                 },
               },
             },

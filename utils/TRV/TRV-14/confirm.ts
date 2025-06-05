@@ -58,7 +58,7 @@ export const checkConfirm = (data: any, msgIdSet: any, version: any) => {
          rsfObj[itm.id] = `${itm.id} was not in select call  `
        }
        if(itm.quantity.selected.count !== itemMap.get(itm.id) ){
-         rsfObj[itm.id] = `${itm.id} quantity changed from previous call  `
+         rsfObj[itm.id] = `${itm.id} quantity is changed from previous call's selected quantity`
        }
       })
 

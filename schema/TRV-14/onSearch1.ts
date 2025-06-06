@@ -73,7 +73,7 @@ const onSearch1SchemaTRV14 = {
                   id: { type: 'string' },
                   descriptor: {
                     type: 'object',
-                    required: ['name', 'short_desc', 'images'],
+                    required: ['name', 'images'],
                     properties: {
                       name: { type: 'string' },
                       short_desc: { type: 'string' },
@@ -130,7 +130,7 @@ const onSearch1SchemaTRV14 = {
                         gps: { type: 'string' },
                         descriptor: {
                           type: 'object',
-                          required: ['name', 'short_desc', 'images', 'additional_desc'],
+                          required: ['name', 'images'],
                           properties: {
                             name: { type: 'string' },
                             short_desc: { type: 'string' },

@@ -60,7 +60,7 @@ export const checkInit = (data: any, msgIdSet: any, version: any) => {
         rsfObj.itm = `${itm.id} was not in select call  `
       }
       if(itm.quantity.selected.count !== itemMap.get(itm.id) ){
-        rsfObj.itm = `${itm.id} quantity changed from previous call  `
+        rsfObj.itm = `${itm.id} quantity is changed from previous call's selected quantity  `
       }
      })
      } catch (error) {

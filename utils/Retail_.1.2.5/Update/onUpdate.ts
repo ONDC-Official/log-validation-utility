@@ -20,7 +20,7 @@ import {
   return_rejected_request_reasonCodes,
   return_request_reasonCodes,
 } from '../../../constants/reasonCode'
-import { FLOW } from '../../enum'
+import { FLOW, OFFERSFLOW } from '../../enum'
 
 export const checkOnUpdate = (
   data: any,
@@ -2122,6 +2122,13 @@ export const checkOnUpdate = (
     } catch (error: any) {
       console.error(`!!Some error occurred while checking /${apiSeq} API`, error.stack)
     }
+    // try {
+    //   if(flow === FLOW.FLOW00C || flow === OFFERSFLOW.FLOW0097){
+        
+    //   }
+    // } catch (error) {
+      
+    // }
     return onupdtObj
   } catch (error: any) {
     logger.error(`!!Some error occurred while checking /${apiSeq} API`, error.stack)

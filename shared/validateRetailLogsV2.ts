@@ -383,6 +383,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       '00E',
       '016',
       '01F'
+      '00C'
     ]
     if (!retailDomains.includes(domain)) {
       return 'Domain should 1.2.5 retail domains'
@@ -744,6 +745,30 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_CONFIRM,
     
     ]
+    const flow00CSequence= [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+      ApiSequence.ON_STATUS_PENDING,
+      ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
+      ApiSequence.ON_STATUS_DELIVERED,
+      ApiSequence.UPDATE,
+      // ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC,
+      // ApiSequence.ON_UPDATE_APPROVAL,
+      // ApiSequence.ON_UPDATE_REPLACEMENT,
+      // ApiSequence.REPLACEMENT_ON_STATUS_PENDING,
+      // ApiSequence.REPLACEMENT_ON_STATUS_PACKED,
+      // ApiSequence.REPLACEMENT_ON_STATUS_PICKED,
+      // ApiSequence.REPLACEMENT_ON_STATUS_OUT_FOR_DELIVERY,
+      // ApiSequence.REPLACEMENT_ON_STATUS_DELIVERED,
+    ]
 
     const processApiSequence = (apiSequence: any, data: any, logReport: any, msgIdSet: any, flow: string) => {
       if (validFlows.includes(flow)) {
@@ -1077,6 +1102,8 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       case FLOW.FLOW01F:
         logReport = processApiSequence(flow01FSequence, data, logReport, msgIdSet, flow)
         break
+      case FLOW.FLOW00C:
+        logReport = processApiSequence(flow00CSequence,data,logReport,msgIdSet,'00C')
     }
   } catch (error: any) {
     logger.error(error.message)

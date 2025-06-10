@@ -774,25 +774,28 @@ export const checkOnsearch = (data: any, flow?: string) => {
             }
             break
 
-          // case 'exchange':
-          //   // Validate 'qualifier'
-          //   const qualifierExchange = tags.find((tag: any) => tag.code === 'qualifier')
-          //   if (!qualifierExchange || !qualifierExchange.list.some((item: any) => item.code === 'min_value')) {
-          //     const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`
-          //     errorObj[key] =
-          //       `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
-          //     logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`)
-          //   }
+          case 'exchange':
+            // Validate 'qualifier'
+            // const qualifierExchange = tags.find((tag: any) => tag.code === 'qualifier')
+            // if (!qualifierExchange || !qualifierExchange.list.some((item: any) => item.code === 'min_value')) {
+            //   const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[qualifier]`
+            //   errorObj[key] =
+            //     `'qualifier' tag must include 'min_value' for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
+            //   logger.error(`'qualifier' tag must include 'min_value' for offers[${offerIndex}]`)
+            // }
 
-          //   // Validate that benefits should not exist or should be empty
-          //   const benefitExchange = tags.find((tag: any) => tag.code === 'benefit')
-          //   if (benefitExchange && benefitExchange.list.length > 0) {
-          //     const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`
-          //     errorObj[key] =
-          //       `'benefit' tag must not include any values for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
-          //     logger.error(`'benefit' tag must not include any values for offers[${offerIndex}]`)
-          //   }
-          //   break
+            // // Validate that benefits should not exist or should be empty
+            // const benefitExchange = tags.find((tag: any) => tag.code === 'benefit')
+            // if (benefitExchange && benefitExchange.list.length > 0) {
+            //   const key = `bpp/providers[${i}]/offers[${offerIndex}]/tags[benefit]`
+            //   errorObj[key] =
+            //     `'benefit' tag must not include any values for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
+            //   logger.error(`'benefit' tag must not include any values for offers[${offerIndex}]`)
+            // }
+            if(context.domain !== "ONDC:RET14" || context.domain !== "ONDC:RET15"){
+              errorObj["unsupportedDomain"]= `exchange is not possible for ${context.domain} as supported domains are 'ONDC:RET14','ONDC:RET15' is required for flow: ${flow}`
+            }
+            break
           case 'financing':
             let collect_payment_value = collect_payment_tags?.value
             if (flow === FLOW.FLOW0099 || collect_payment_value === 'no') {
@@ -912,6 +915,7 @@ export const checkOnsearch = (data: any, flow?: string) => {
         const items = provider.items
         items.forEach((item: any, j: number) => {
           if (!_.isEmpty(item?.category_id)) {
+
             const statutoryRequirement: any = getStatutoryRequirement(item.category_id)
             let errors: any
             switch (statutoryRequirement) {

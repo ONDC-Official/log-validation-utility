@@ -10,3 +10,4 @@ dbfiles
 .DS_Store
 package-lock.json
 .vscode/extensions.json
+ui/*

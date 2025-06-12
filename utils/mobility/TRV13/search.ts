@@ -1,9 +1,9 @@
 import { logger } from '../../../shared/logger'
-import { setValue } from '../../../shared/dao'
-import constants, { mobilitySequence } from '../../../constants'
+import { setValue, getValue } from '../../../shared/dao'
+import constants, { mobilitySequence, TRV13ApiSequence, TRV13Flows } from '../../../constants'
 import { validateSchema, isObjectEmpty, checkMobilityContext } from '../../../utils'
 // import { validatePaymentTags } from './../tags'
-import { validateDescriptor, validateStops } from './TRV13Checks'
+import { validateDescriptor } from './TRV13Checks'
 import { validateTermsAndFeesTags } from './tags'
 
 // interface AdditionalAttributes {
@@ -13,12 +13,30 @@ import { validateTermsAndFeesTags } from './tags'
 export const search = (data: any, msgIdSet: any, version: any, sequence: string) => {
   const errorObj: any = {}
   try {
+    // Helper function to get the appropriate error key based on sequence
+    const getErrorKey = () => {
+      switch(sequence) {
+        case TRV13ApiSequence.SEARCH:
+          return TRV13ApiSequence.SEARCH;
+        case TRV13ApiSequence.SEARCH_INC:
+          return TRV13ApiSequence.SEARCH_INC;
+        case TRV13ApiSequence.SEARCH_TIME:
+          return TRV13ApiSequence.SEARCH_TIME;
+        default:
+          return mobilitySequence.SEARCH;
+      }
+    };
+
     if (!data || isObjectEmpty(data)) {
-      errorObj[mobilitySequence.SEARCH] = 'JSON cannot be empty'
-      return
+      const errorKey = getErrorKey();
+      errorObj[errorKey] = 'JSON cannot be empty'
+      return errorObj;
     }
 
     console.log('version', version)
+
+    // Flow-specific validation for search_time
+    const flow = getValue('flow')
 
     if (
       !data.message ||
@@ -31,9 +49,9 @@ export const search = (data: any, msgIdSet: any, version: any, sequence: string)
       return Object.keys(errorObj).length > 0 && errorObj
     }
 
-    const schemaValidation = validateSchema('TRV', constants.SEARCH, data)
+    const schemaValidation = validateSchema('TRV13', constants.SEARCH, data)
     const contextRes: any = checkMobilityContext(data.context, constants.SEARCH)
-    setValue(`${mobilitySequence.SEARCH}_context`, data.context)
+    setValue(`${getErrorKey()}_context`, data.context)
     msgIdSet.add(data.context.message_id)
 
     if (schemaValidation !== 'error') {
@@ -51,6 +69,15 @@ export const search = (data: any, msgIdSet: any, version: any, sequence: string)
 
     if (context?.location?.country?.code !== 'IND') {
       errorObj.city = `Country code must be IND`
+    }
+
+    // Validate TTL for search_time
+    if (sequence === TRV13ApiSequence.SEARCH_TIME) {
+      if (!context?.ttl) {
+        errorObj.ttl = 'TTL is required for search_time'
+      } else if (!context.ttl.startsWith('P')) {
+        errorObj.ttl = 'TTL must be in ISO 8601 duration format (e.g., P7D)'
+      }
     }
 
     const search = data.message.intent
@@ -85,6 +112,29 @@ export const search = (data: any, msgIdSet: any, version: any, sequence: string)
             const hasTimeRangeEnd = time?.range?.end
             if (!hasTimeRangeStart) errorObj['range.start'] = `range.start is missing at intent.category.time`
             if (!hasTimeRangeEnd) errorObj['range.end'] = `range.end is missing at intent.category.time`
+
+            // Additional validations for FLOW2 only
+            if (flow === TRV13Flows.FLOW2) {
+              // Validate TTL for FLOW2
+              if (!context?.ttl) {
+                errorObj.ttl = 'TTL is required for FLOW2 search_time'
+              } else if (!context.ttl.startsWith('P')) {
+                errorObj.ttl = 'TTL must be in ISO 8601 duration format (e.g., P7D)'
+              }
+
+              // Validate time range format for FLOW2
+              if (hasTimeRangeStart && !isValidISODate(time.range.start)) {
+                errorObj['range.start'] = `range.start must be a valid ISO date string`
+              }
+              if (hasTimeRangeEnd && !isValidISODate(time.range.end)) {
+                errorObj['range.end'] = `range.end must be a valid ISO date string`
+              }
+
+              // Validate time range order for FLOW2
+              if (hasTimeRangeStart && hasTimeRangeEnd && new Date(time.range.start) >= new Date(time.range.end)) {
+                errorObj['range'] = `range.start must be before range.end`
+              }
+            }
           }
         } catch (error: any) {
           logger.info(`Error while validating intent.category for /${constants.ON_SEARCH}, ${error.stack}`)
@@ -104,58 +154,16 @@ export const search = (data: any, msgIdSet: any, version: any, sequence: string)
       logger.info(`Error while validating tags for /${constants.ON_SEARCH}, ${error.stack}`)
     }
 
-    try {
-      logger.info(`Validating fulfillments object for /${constants.SEARCH}`)
-      if (!search?.fulfillment) {
-        errorObj['fulfillment'] = `fulfillment is missing in ${mobilitySequence.SEARCH}`
-      } else {
-        // Check stops for START and END, or time range with valid timestamp and GPS
-        const otp = false
-        const cancel = false
-        const stopsError = validateStops(search?.fulfillment?.stops, 0, otp, cancel)
-        if (!stopsError?.valid) Object.assign(errorObj, stopsError.errors)
-      }
-    } catch (error: any) {
-      logger.error(`!!Error occcurred while checking fulfillments info in /${constants.SEARCH},  ${error.message}`)
-      return { error: error.message }
-    }
-
-    // validate payments
-    // try {
-    //   logger.info(`Validating payments in /${constants.SEARCH}`)
-    //   const payment = search?.payment
-    //   const collectedBy = payment?.collected_by
-    //   const allowedCollectedByValues = ['BPP', 'BAP']
-    //   const terms: any = [
-    //     { code: 'STATIC_TERMS', type: 'url' },
-    //     { code: 'DELAY_INTEREST', type: 'amount' },
-    //   ]
-
-    //   if (!collectedBy) {
-    //     errorObj[`collected_by`] = `payment.collected_by must be present in /${constants.SEARCH}`
-    //   } else if (!allowedCollectedByValues.includes(collectedBy)) {
-    //     errorObj['collected_by'] = `Invalid value for collected_by, should be either of ${allowedCollectedByValues}`
-    //   } else {
-    //     setValue(`collected_by`, collectedBy)
-    //   }
-
-    //   // Validate payment tags
-    //   const tagsValidation = validatePaymentTags(payment.tags, terms)
-    //   if (!tagsValidation.isValid) {
-    //     Object.assign(errorObj, { tags: tagsValidation.errors })
-    //   }
-    // } catch (error: any) {
-    //   logger.error(`!!Error occcurred while validating payments in //${constants.SEARCH},  ${error.message}`)
-    // }
-
-    // if (version === '2.0.1') {
-    //   const additionalAttributes: any = attributeConfig.search
-    //   validatePayloadAgainstSchema(additionalAttributes, data, errorObj, '', '')
-    // }
-
     return Object.keys(errorObj).length > 0 && errorObj
   } catch (error: any) {
     logger.error(error.message)
-    return { error: error.message }
+    const errorKey = sequence || mobilitySequence.SEARCH;
+    return { [errorKey]: error.message }
   }
+}
+
+// Helper function to validate ISO date string
+function isValidISODate(dateString: string): boolean {
+  const date = new Date(dateString)
+  return date instanceof Date && !isNaN(date.getTime())
 }

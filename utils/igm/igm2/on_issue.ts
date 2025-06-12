@@ -107,21 +107,21 @@ const validateLastAction = (message: any, errorObj: any) => {
 }
 
 /**
- * Validates description object
+ * Validates descriptor object
  */
-// const validateDescription = (message: any, errorObj: any) => {
-//   if (!message.issue.description) return
+// const validatedescriptor = (message: any, errorObj: any) => {
+//   if (!message.issue.descriptor) return
   
-//   if (!message.issue.description.code || !message.issue.description.short_desc) {
-//     errorObj.description = 'description must contain code and short_desc'
+//   if (!message.issue.descriptor.code || !message.issue.descriptor.short_desc) {
+//     errorObj.descriptor = 'descriptor must contain code and short_desc'
 //   }
   
-//   if (message.issue.description.images) {
-//     if (!Array.isArray(message.issue.description.images)) {
+//   if (message.issue.descriptor.images) {
+//     if (!Array.isArray(message.issue.descriptor.images)) {
 //       errorObj.images = 'images must be an array'
 //     } else {
 //       // Validate each image URL
-//       message.issue.description.images.forEach((url: string, index: number) => {
+//       message.issue.descriptor.images.forEach((url: string, index: number) => {
 //         try {
 //           new URL(url)
 //         } catch (error) {
@@ -143,9 +143,9 @@ const validateResolution = (message: any, errorObj: any) => {
   }
   
   if (message.issue.resolution.selected_reason_code && 
-      message.issue.description && 
-      message.issue.resolution.selected_reason_code !== message.issue.description.code) {
-    errorObj.selected_reason_code = `selected_reason_code (${message.issue.resolution.selected_reason_code}) should match description code (${message.issue.description.code})`
+      message.issue.descriptor && 
+      message.issue.resolution.selected_reason_code !== message.issue.descriptor.code) {
+    errorObj.selected_reason_code = `selected_reason_code (${message.issue.resolution.selected_reason_code}) should match descriptor code (${message.issue.descriptor.code})`
   }
 }
 
@@ -178,33 +178,33 @@ const validateActorRelationships = (message: any, errorObj: any) => {
 };
 
 /**
- * Validates updated_target if present
+ * Validates update_target if present
  */
 const validateUpdatedTarget = (message: any, errorObj: any) => {
-  if (!message.issue.updated_target) return;
+  if (!message.issue.update_target) return;
   
-  // Validate updated_target array
-  if (!Array.isArray(message.issue.updated_target)) {
-    errorObj.updated_target = 'updated_target must be an array';
+  // Validate update_target array
+  if (!Array.isArray(message.issue.update_target)) {
+    errorObj.update_target = 'update_target must be an array';
     return;
   }
 
-  message.issue.updated_target.forEach((target: any, index: number) => {
+  message.issue.update_target.forEach((target: any, index: number) => {
     // Check if target has required fields
     if (!target.path || !target.action) {
-      errorObj[`updated_target_${index}`] = 'Each updated_target must have path and action fields';
+      errorObj[`update_target_${index}`] = 'Each update_target must have path and action fields';
       return;
     }
 
     // Validate action type
     const validActions = ['APPENDED', 'REMOVED', 'MODIFIED'];
     if (!validActions.includes(target.action)) {
-      errorObj[`updated_target_${index}_action`] = `action must be one of: ${validActions.join(', ')}`;
+      errorObj[`update_target_${index}_action`] = `action must be one of: ${validActions.join(', ')}`;
     }
 
     // Validate path format (should be dot-notation path to a field)
     if (typeof target.path !== 'string' || !target.path.startsWith('issue.')) {
-      errorObj[`updated_target_${index}_path`] = 'path must be a string starting with "issue."';
+      errorObj[`update_target_${index}_path`] = 'path must be a string starting with "issue."';
     }
   });
 };
@@ -249,7 +249,6 @@ const checkOnIssueV2 = (data: any, apiSequence:string, flow: any) => {
       validateTimestamps(message, context, onIssueObj)
       validateStatus(message, onIssueObj)
       validateConsistency(context, message, onIssueObj)
-      validateMessageIdUniqueness(context, onIssueObj)
       validateLastAction(message, onIssueObj)
       validateRespondentIds(message, onIssueObj)
       
@@ -268,7 +267,7 @@ const checkOnIssueV2 = (data: any, apiSequence:string, flow: any) => {
       Object.assign(onIssueObj, validateRefs(message.issue.refs, flow))
       Object.assign(onIssueObj, validateActions(message.issue.actions, message))
       Object.assign(onIssueObj, validateActors(message.issue.actors, context, flow))
-      //validateDescription(message, onIssueObj)
+      //validatedescriptor(message, onIssueObj)
       validateResolution(message, onIssueObj)
 
       if (message.issue.updated_at <= message.issue.created_at) {
@@ -284,7 +283,10 @@ const checkOnIssueV2 = (data: any, apiSequence:string, flow: any) => {
           break;
 
         case IGM2FlowSequence.FLOW_1.ON_ISSUE_INFO_REQUIRED_1:
+          validateMessageIdUniqueness(context, onIssueObj)
+          break;
         case IGM2FlowSequence.FLOW_1.ON_ISSUE_INFO_REQUIRED_2:
+          validateMessageIdUniqueness(context, onIssueObj)
           // if (message.issue.status !== 'PROCESSING') {
           //   onIssueObj.status_info_required = `For ${apiSequence}, status should be PROCESSING, found: ${message.issue.status}`
           // }

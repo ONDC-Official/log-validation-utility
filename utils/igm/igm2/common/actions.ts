@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import { logger } from '../../../../shared/logger'
 
-export enum ActionDescriptionCodes {
+export enum ActiondescriptorCodes {
   RESOLUTION_PROPOSED = 'RESOLUTION_PROPOSED',
   RESOLUTION_ACCEPTED = 'RESOLUTION_ACCEPTED',
   RESOLVED = 'RESOLVED',
@@ -23,7 +23,7 @@ export const validateActions = (actions: any[], message: any) => {
     actions.forEach((action, index) => {
       validateActionUpdatedBy(action, index, errors)
       validateActionUpdatedTime(action, index, errors)
-      validateActionDescriptionCode(action, index, message, errors)
+      validateActiondescriptorCode(action, index, message, errors)
     })
 
     return errors
@@ -52,15 +52,15 @@ function validateActionUpdatedTime(action: any, index: number, errors: Record<st
 }
 
 /**
- * Validates action description code and related requirements
+ * Validates action descriptor code and related requirements
  */
-function validateActionDescriptionCode(action: any, index: number, message: any, errors: Record<string, string>): void {
-  if (!action.description || !action.description.code) {
-    errors[`action_${index}_description_code`] = 'action description.code is required'
+function validateActiondescriptorCode(action: any, index: number, message: any, errors: Record<string, string>): void {
+  if (!action.descriptor || !action.descriptor.code) {
+    errors[`action_${index}_descriptor_code`] = 'action descriptor.code is required'
     return
   }
 
-  const code = action.description.code
+  const code = action.descriptor.code
 
   // Check for resolution-related codes that require message/issue/resolutions
   if (isResolutionRelatedCode(code)) {
@@ -68,7 +68,7 @@ function validateActionDescriptionCode(action: any, index: number, message: any,
   }
 
   // Check for CLOSE action that requires tags
-  if (code === ActionDescriptionCodes.CLOSE) {
+  if (code === ActiondescriptorCodes.CLOSE) {
     validateCloseActionTags(action, index, errors)
   }
 }
@@ -78,11 +78,11 @@ function validateActionDescriptionCode(action: any, index: number, message: any,
  */
 function isResolutionRelatedCode(code: string): boolean {
   return [
-    ActionDescriptionCodes.RESOLUTION_PROPOSED,
-    ActionDescriptionCodes.RESOLUTION_ACCEPTED,
-    ActionDescriptionCodes.RESOLVED,
-    ActionDescriptionCodes.CLOSED,
-  ].includes(code as ActionDescriptionCodes)
+    ActiondescriptorCodes.RESOLUTION_PROPOSED,
+    ActiondescriptorCodes.RESOLUTION_ACCEPTED,
+    ActiondescriptorCodes.RESOLVED,
+    ActiondescriptorCodes.CLOSED,
+  ].includes(code as ActiondescriptorCodes)
 }
 
 /**
@@ -97,7 +97,7 @@ function validateResolutionsExist(message: any, index: number, code: string, err
     message.issue.resolutions.length === 0
   ) {
     errors[`action_${index}_resolutions`] =
-      `For action description.code "${code}", message.issue.resolutions is required`
+      `For action descriptor.code "${code}", message.issue.resolutions is required`
   }
 }
 

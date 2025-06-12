@@ -108,7 +108,6 @@ const validateFinance = async (domain: string, payload: string, version: string,
       break
 
     case 'ONDC:FIS14':
-      console.log('flow hello', flow)
       response = validateLogsForFIS14(payload, flow, version)
 
       if (_.isEmpty(response)) {
@@ -131,11 +130,11 @@ const validateMobility = async (domain: string, payload: string, version: string
 
 
   if (!flow) throw new Error('Flow not defined')
-  if (version !== '2.0.0' && domain === 'ONDC:TRV10') {
-    logger.warn('Invalid Version!!')
-    message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
-    return { response, success, message }
-  }
+  // if (version !== '2.0.0' && domain === 'ONDC:TRV10') {
+  //   logger.warn('Invalid Version!!')
+  //   message = ERROR_MESSAGE.LOG_VERIFICATION_INVALID_VERSION
+  //   return { response, success, message }
+  // }
 
   switch (domain) {
     case 'ONDC:TRV10':
@@ -169,7 +168,7 @@ const validateMobility = async (domain: string, payload: string, version: string
       break
 
       case 'ONDC:TRV13':
-        response = validateLogsForTRV13(payload, domain, flow)
+        response = validateLogsForTRV13(payload, version, flow)
   
         if (_.isEmpty(response)) {
           success = true
@@ -235,7 +234,6 @@ const validateRSF = async (payload: string, version: string) => {
   switch (version) {
     case '1.0.0':
       response = RSFvalidateLogs(payload)
-
       if (_.isEmpty(response)) {
         success = true
         message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL

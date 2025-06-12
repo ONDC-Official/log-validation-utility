@@ -148,13 +148,13 @@ const checkIssueV2 = (data: any, apiSequence:string, flow: any) => {
       const actorsErrors = validateActors(message.issue.actors, context, flow)
       Object.assign(issueObj, actorsErrors)
 
-      // Validate description
-      if (message.issue.description) {
-        if (!message.issue.description.code || !message.issue.description.short_desc) {
-          issueObj.description = 'description must contain code and short_desc'
+      // Validate descriptor
+      if (message.issue.descriptor) {
+        if (!message.issue.descriptor.code || !message.issue.descriptor.short_desc) {
+          issueObj.descriptor = 'descriptor must contain code and short_desc'
         }
         
-        if (message.issue.description.images && !Array.isArray(message.issue.description.images)) {
+        if (message.issue.descriptor.images && !Array.isArray(message.issue.descriptor.images)) {
           issueObj.images = 'images must be an array'
         }
       }
@@ -186,36 +186,36 @@ const checkIssueV2 = (data: any, apiSequence:string, flow: any) => {
 }
 
 /**
- * Validates updated_target if present
+ * Validates update_target if present
  */
 const validateUpdatedTarget = (message: any, apiSequence: string, errorObj: any) => {
   // Skip validation for ISSUE_OPEN
   if (apiSequence === IGM2FlowSequence.FLOW_1.ISSUE_OPEN) return;
   
-  if (!message.issue.updated_target) return;
+  if (!message.issue.update_target) return;
   
-  // Validate updated_target array
-  if (!Array.isArray(message.issue.updated_target)) {
-    errorObj.updated_target = 'updated_target must be an array';
+  // Validate update_target array
+  if (!Array.isArray(message.issue.update_target)) {
+    errorObj.update_target = 'update_target must be an array';
     return;
   }
 
-  message.issue.updated_target.forEach((target: any, index: number) => {
+  message.issue.update_target.forEach((target: any, index: number) => {
     // Check if target has required fields
     if (!target.path || !target.action) {
-      errorObj[`updated_target_${index}`] = 'Each updated_target must have path and action fields';
+      errorObj[`update_target_${index}`] = 'Each update_target must have path and action fields';
       return;
     }
 
     // Validate action type
     const validActions = ['APPENDED', 'REMOVED', 'MODIFIED'];
     if (!validActions.includes(target.action)) {
-      errorObj[`updated_target_${index}_action`] = `action must be one of: ${validActions.join(', ')}`;
+      errorObj[`update_target_${index}_action`] = `action must be one of: ${validActions.join(', ')}`;
     }
 
     // Validate path format (should be dot-notation path to a field)
     if (typeof target.path !== 'string' || !target.path.startsWith('issue.')) {
-      errorObj[`updated_target_${index}_path`] = 'path must be a string starting with "issue."';
+      errorObj[`update_target_${index}_path`] = 'path must be a string starting with "issue."';
     }
   });
 };

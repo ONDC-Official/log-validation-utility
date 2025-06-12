@@ -45,7 +45,7 @@ const cancel2SchemaTRV14 = {
         transaction_id: { type: 'string' },
         message_id: { type: 'string' },
         version: { type: 'string', enum: ['2.0.0'] },
-        action: { type: 'string', enum: ['cancel_2'] },
+        action: { type: 'string', enum: ['cancel'] },
         bap_uri: { type: 'string', format: 'uri' },
         ttl: { type: 'string', pattern: '^PT\\d+S$' },
         bpp_id: { type: 'string' },
@@ -57,7 +57,7 @@ const cancel2SchemaTRV14 = {
       required: ['order_id', 'cancellation_reason_id', 'descriptor'],
       properties: {
         order_id: { type: 'string' },
-        cancellation_reason_id: { type: 'string' },
+        cancellation_reason_id: { type: 'string' ,enum:["000"] },
         descriptor: {
           type: 'object',
           required: ['name', 'code'],

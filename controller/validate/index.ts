@@ -10,6 +10,7 @@ import { verify, hash } from '../../shared/crypto'
 
 const controller = {
   validate: async (req: Request, res: Response): Promise<Response | void> => {
+    console.log("++++++++++++++++ Validate is called")
     try {
       const { domain, version, payload, flow, bap_id, bpp_id } = req.body
 
@@ -81,6 +82,7 @@ const controller = {
 
       const { signature, currentDate } = await helper.createSignature({ message: JSON.stringify(httpResponse) })
 
+     if(!success && response)return res.status(200).send({ success, response: httpResponse, signature, signTimestamp: currentDate })
       if (!success)
         return res.status(400).send({ success, response: httpResponse, signature, signTimestamp: currentDate })
 

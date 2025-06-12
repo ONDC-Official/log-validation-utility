@@ -10,9 +10,11 @@ import { setValue } from '../shared/dao'
 export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
 import { groceryCategoryMappingWithStatutory } from '../constants/category'
 import { statutory_reqs } from './enum'
-import {  PAYMENT_STATUS } from '../constants/index'
+import { PAYMENT_STATUS } from '../constants/index'
 import { FLOW } from '../utils/enum'
 import axios from 'axios'
+import { TRV14OptialCalls } from '../constants/trvFlows'
+
 export const getObjValues = (obj: any) => {
   let values = ''
   Object.values(obj).forEach((value) => {
@@ -97,7 +99,7 @@ export const checkFISContext = (
     errObj.id_err = "transaction_id and message id can't be same"
   }
 
-  if (data.action != path.replace(/_unsolicated|_1|_2/,'')) {
+  if (data.action != path.replace(/_unsolicated|_1|_2/, '')) {
     errObj.action_err = `context.action should be ${path}`
   }
 
@@ -130,7 +132,15 @@ export const checkFISContext = (
 }
 
 export const checkMobilityContext = (
-  data: { transaction_id: string; message_id: string; action: string; ttl: string; timestamp: string },
+  data: {
+    transaction_id: string
+    message_id: string
+    action: string
+    ttl: string
+    timestamp: string
+    bpp_uri?: string
+    bpp_id?: string
+  },
   path: any,
 ) => {
   if (!data) return
@@ -160,6 +170,10 @@ export const checkMobilityContext = (
     } else if (result && result.err === 'INVLD_DT') {
       errObj.timestamp_err = 'Timestamp should be in date-time format'
     }
+  }
+
+  if (data?.action == 'search' && (data?.bpp_uri || data?.bpp_id)) {
+    errObj.bpp = `bpp_id & bpp_uri shouldn't be present if action is search`
   }
 
   if (_.isEmpty(errObj)) {
@@ -219,12 +233,20 @@ const validate_schema_for_retail_json = (vertical: string, api: string, data: an
   return res
 }
 
-export const validateSchema = (domain: string, api: string, data: any) => {
+export const validateSchema = (domain: string, api: string, data: any ) => {
   try {
     logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
     const errObj: any = {}
 
-    const schmaVldtr = validate_schema_for_retail_json(domain, api, data)
+    let schmaVldtr;
+    // Special case for TRV13 search to avoid double function calls
+    if (domain === 'TRV13' && api === 'search') {
+      schmaVldtr = (schemaValidator as any).validate_schema_search_TRV13_for_json(data);
+      console.log("Using direct TRV13 search validator");
+    } else {
+      schmaVldtr = validate_schema_for_retail_json(domain, api, data);
+    }
+    
     const datavld = schmaVldtr
     if (datavld.status === 'fail') {
       const res = datavld.errors
@@ -1013,7 +1035,7 @@ export const mapCancellationID = (cancelled_by: string, reason_id: string, error
 export const payment_status = (payment: any, flow: string) => {
   const errorObj: any = {}
   logger.info(`Checking payment status for flow: ${flow}`)
-  if ( (flow === FLOW.FLOW2A) && payment.status === PAYMENT_STATUS.PAID) {
+  if (flow === FLOW.FLOW2A && payment.status === PAYMENT_STATUS.PAID) {
     errorObj.message = `Cannot be ${payment.status} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
     return errorObj
   }
@@ -1365,4 +1387,12 @@ async function ping(url: string): Promise<"ok" | "fail"> {
 	} catch {
 		return "fail";
 	}
+}
+export const checkIsOptional = (apiSeq: string, flow: string): boolean => {
+  if (TRV14OptialCalls.hasOwnProperty(flow)) {
+    const api: string[] = TRV14OptialCalls[flow]
+    if (api.includes(apiSeq)) {
+      return true
+    } else return false
+  } else return false
 }

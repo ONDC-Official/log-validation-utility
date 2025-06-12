@@ -132,21 +132,13 @@ const receiverReconSchema = {
                   payment: {
                     type: 'object',
                     required: [
-                      'uri',
-                      'tl_method',
                       'params',
                       'type',
                       'status',
                       'collected_by',
-                      '@ondc/org/collected_by_status',
                       '@ondc/org/buyer_app_finder_fee_type',
                       '@ondc/org/buyer_app_finder_fee_amount',
-                      '@ondc/org/withholding_amount',
-                      '@ondc/org/withholding_amount_status',
-                      '@ondc/org/return_window',
-                      '@ondc/org/return_window_status',
                       '@ondc/org/settlement_details',
-                      '@ondc/org/settlement_basis_status',
                       '@ondc/org/settlement_basis',
                     ],
                     properties: {
@@ -262,15 +254,11 @@ const receiverReconSchema = {
                         items: {
                           type: 'object',
                           required: [
-                            'bank_name',
-                            'branch_name',
                             'settlement_counterparty',
-                            'settlement_phase',
                             'settlement_amount',
                             'settlement_type',
                             'settlement_status',
                             'settlement_timestamp',
-                            'beneficiary_address',
                             'settlement_ifsc_code',
                             'settlement_reference',
                             'settlement_bank_account_no',

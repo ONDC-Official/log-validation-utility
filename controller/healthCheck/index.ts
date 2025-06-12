@@ -11,10 +11,12 @@ const controller = {
   healthCheck: async (req: Request, res: Response): Promise<void> => {
     try {
       logger.info(req)
-      let responseText = ''
-      responseText += `Server is UP\n`
-      responseText += `TIME=${new Date().toISOString()}\n`
-      responseText += `uptime:${process.uptime()}`
+      const responseText = [
+        'Server is UP',
+        `TIME=${new Date().toISOString()}`,
+        `uptime=${process.uptime()}`
+      ].join('\n')
+
       res.status(200).send(responseText)
     } catch (error) {
       logger.error('Error in health check', error)

@@ -12,6 +12,7 @@ import { groceryCategoryMappingWithStatutory } from '../constants/category'
 import { statutory_reqs } from './enum'
 import { PAYMENT_STATUS } from '../constants/index'
 import { FLOW } from '../utils/enum'
+import axios from 'axios'
 import { TRV14OptialCalls } from '../constants/trvFlows'
 
 export const getObjValues = (obj: any) => {
@@ -1375,6 +1376,18 @@ export function validateBppUri(bppUri: string, bpp_id: string, errorObj: any): a
   }
 }
 
+export const pingValidate = async (): Promise<"ok" | "fail"> => {
+  return ping(`https://log-validation.ondc.org/api/`)
+}
+
+async function ping(url: string): Promise<"ok" | "fail"> {
+	try {
+		const res = await axios.get(url, { timeout: 2000 });
+		return res.status === 200 ? "ok" : "fail";
+	} catch {
+		return "fail";
+	}
+}
 export const checkIsOptional = (apiSeq: string, flow: string): boolean => {
   if (TRV14OptialCalls.hasOwnProperty(flow)) {
     const api: string[] = TRV14OptialCalls[flow]

@@ -729,8 +729,8 @@ export const validateQuote = (quote: any, action: string,itemAddOn:any): Record<
   
       const index = head.index;
       ['min', 'cur', 'max'].forEach(k => {
-        if (typeof index?.[k] !== 'number') {
-          errors[`xinput.head.index.${k}`] = `'head.index.${k}' must be a number`;
+        if (typeof index?.[k] !== 'string') {
+          errors[`xinput.head.index.${k}`] = `'head.index.${k}' must be a string`;
         }
       });
   
@@ -1145,7 +1145,7 @@ export const validateQuote = (quote: any, action: string,itemAddOn:any): Record<
     const errors: Record<string, string> = {};
   
     const allowedTopLevelCodes = ['FARE_POLICY', 'INCLUSIONS', 'EXCLUSIONS'];
-    const allowedFarePolicyCodes = ['MIN_AGE', 'MAX_AGE', 'GENDER', 'NATIONALITY'];
+    const allowedFarePolicyCodes = ['MIN_AGE', 'MAX_AGE', 'GENDER', 'NATIONALITY', 'ENTRY_ELIGIBILITY'];
 
     if(!tags){
       errors[`${index}tag`]=`tags is missing for item id :${index}`

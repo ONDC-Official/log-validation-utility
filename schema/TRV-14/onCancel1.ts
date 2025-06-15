@@ -1,547 +1,561 @@
 const onCancel1SchemaTRV14 = {
-  type: "object",
+  type: 'object',
   properties: {
     context: {
-      type: "object",
+      type: 'object',
       properties: {
         location: {
-          type: "object",
+          type: 'object',
           properties: {
             country: {
-              type: "object",
+              type: 'object',
               properties: {
-                code: { type: "string" }
+                code: { type: 'string' },
               },
-              required: ["code"]
+              required: ['code'],
             },
             city: {
-              type: "object",
+              type: 'object',
               properties: {
-                code: { type: "string" }
+                code: { type: 'string' },
               },
-              required: ["code"]
-            }
+              required: ['code'],
+            },
           },
-          required: ["country", "city"]
+          required: ['country', 'city'],
         },
-        domain: { type: "string" },
-        timestamp: { type: "string" },
-        bap_id: { type: "string" },
-        transaction_id: { type: "string" },
-        message_id: { type: "string" },
-        version: { type: "string" },
-        action: { 
-          type: "string",
-          enum: ["on_cancel"]
+        domain: { type: 'string' },
+        timestamp: { type: 'string' },
+        bap_id: { type: 'string' },
+        transaction_id: { type: 'string' },
+        message_id: { type: 'string' },
+        version: { type: 'string' },
+        action: {
+          type: 'string',
+          enum: ['on_cancel'],
         },
-        bap_uri: { type: "string" },
-        ttl: { type: "string" },
-        bpp_id: { type: "string" },
-        bpp_uri: { type: "string" }
+        bap_uri: { type: 'string' },
+        ttl: { type: 'string' },
+        bpp_id: { type: 'string' },
+        bpp_uri: { type: 'string' },
       },
       required: [
-        "location", "domain", "timestamp", "bap_id", 
-        "transaction_id", "message_id", "version", 
-        "action", "bap_uri", "ttl", "bpp_id", "bpp_uri"
-      ]
+        'location',
+        'domain',
+        'timestamp',
+        'bap_id',
+        'transaction_id',
+        'message_id',
+        'version',
+        'action',
+        'bap_uri',
+        'ttl',
+        'bpp_id',
+        'bpp_uri',
+      ],
     },
     message: {
-      type: "object",
+      type: 'object',
       properties: {
         order: {
-          type: "object",
+          type: 'object',
           properties: {
-            id: { type: "string" },
-            status: { 
-              type: "string",
-              enum: ["SOFT_CANCEL"]
+            id: { type: 'string' },
+            status: {
+              type: 'string',
+              enum: ['SOFT_CANCEL'],
             },
             items: {
-              type: "array",
+              type: 'array',
               items: {
-                type: "object",
+                type: 'object',
                 properties: {
-                  id: { type: "string" },
+                  id: { type: 'string' },
                   descriptor: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      name: { type: "string" },
-                      code: { type: "string" },
-                      short_desc: { type: "string" },
-                      long_desc: { type: "string" },
+                      name: { type: 'string' },
+                      code: { type: 'string' },
+                      short_desc: { type: 'string' },
+                      long_desc: { type: 'string' },
                       images: {
-                        type: "array",
+                        type: 'array',
                         items: {
-                          type: "object",
+                          type: 'object',
                           properties: {
-                            url: { type: "string" },
-                            size_type: { type: "string" }
-                          }
-                        }
-                      }
+                            url: { type: 'string' },
+                            size_type: { type: 'string' },
+                          },
+                        },
+                      },
                     },
-                    required: ["name", "code"]
+                    required: ['name', 'code'],
                   },
-                  parent_item_id: { type: "string" },
+                  parent_item_id: { type: 'string' },
                   location_ids: {
-                    type: "array",
-                    items: { type: "string" }
+                    type: 'array',
+                    items: { type: 'string' },
                   },
                   category_ids: {
-                    type: "array",
-                    items: { type: "string" }
+                    type: 'array',
+                    items: { type: 'string' },
                   },
                   price: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      currency: { type: "string" },
-                      value: { type: "string" }
-                    }
+                      currency: { type: 'string' },
+                      value: { type: 'string' },
+                    },
                   },
                   quantity: {
-                    type: "object",
+                    type: 'object',
                     properties: {
                       selected: {
-                        type: "object",
+                        type: 'object',
                         properties: {
-                          count: { type: "number" }
-                        }
-                      }
-                    }
+                          count: { type: 'number' },
+                        },
+                      },
+                    },
                   },
                   time: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      label: { type: "string" },
-                      duration: { type: "string" }
-                    }
+                      label: { type: 'string' },
+                      duration: { type: 'string' },
+                    },
                   },
                   fulfillment_ids: {
-                    type: "array",
-                    items: { type: "string" }
+                    type: 'array',
+                    items: { type: 'string' },
                   },
                   add_ons: {
-                    type: "array",
+                    type: 'array',
                     items: {
-                      type: "object",
+                      type: 'object',
                       properties: {
-                        id: { type: "string" },
+                        id: { type: 'string' },
                         descriptor: {
-                          type: "object",
+                          type: 'object',
                           properties: {
-                            name: { type: "string" }
-                          }
+                            name: { type: 'string' },
+                          },
                         },
                         quantity: {
-                          type: "object",
+                          type: 'object',
                           properties: {
                             selected: {
-                              type: "object",
+                              type: 'object',
                               properties: {
-                                count: { type: "number" }
-                              }
-                            }
-                          }
+                                count: { type: 'number' },
+                              },
+                            },
+                          },
                         },
                         price: {
-                          type: "object",
+                          type: 'object',
                           properties: {
-                            value: { type: "string" },
-                            currency: { type: "string" }
-                          }
-                        }
-                      }
-                    }
+                            value: { type: 'string' },
+                            currency: { type: 'string' },
+                          },
+                        },
+                      },
+                    },
                   },
                   tags: {
-                    type: "array",
+                    type: 'array',
                     items: {
-                      type: "object",
+                      type: 'object',
                       properties: {
                         descriptor: {
-                          type: "object",
+                          type: 'object',
                           properties: {
-                            code: { type: "string" }
-                          }
+                            code: { type: 'string' },
+                          },
                         },
                         list: {
-                          type: "array",
+                          type: 'array',
                           items: {
-                            type: "object",
+                            type: 'object',
                             properties: {
                               descriptor: {
-                                type: "object",
+                                type: 'object',
                                 properties: {
-                                  code: { type: "string" }
-                                }
+                                  code: { type: 'string' },
+                                },
                               },
-                              value: { type: "string" }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                              value: { type: 'string' },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
                 },
-                required: ["id", "descriptor"]
-              }
+                required: ['id', 'descriptor'],
+              },
             },
             fulfillments: {
-              type: "array",
+              type: 'array',
               items: {
-                type: "object",
+                type: 'object',
                 properties: {
-                  id: { type: "string" },
-                  type: { type: "string" },
+                  id: { type: 'string' },
+                  type: { type: 'string' },
                   state: {
-                    type: "object",
+                    type: 'object',
                     properties: {
                       descriptor: {
-                        type: "object",
+                        type: 'object',
                         properties: {
-                          code: { type: "string" }
-                        }
-                      }
-                    }
+                          code: { type: 'string' },
+                        },
+                      },
+                    },
                   },
                   stops: {
-                    type: "array",
+                    type: 'array',
                     items: {
-                      type: "object",
+                      type: 'object',
                       properties: {
-                        type: { type: "string" },
+                        type: { type: 'string' },
                         instructions: {
-                          type: "object",
+                          type: 'object',
                           properties: {
                             additional_desc: {
-                              type: "object",
+                              type: 'object',
                               properties: {
-                                url: { type: "string" },
-                                content_type: { type: "string" }
-                              }
-                            }
-                          }
+                                url: { type: 'string' },
+                                content_type: { type: 'string' },
+                              },
+                            },
+                          },
                         },
                         time: {
-                          type: "object",
+                          type: 'object',
                           properties: {
-                            timestamp: { type: "string" }
-                          }
+                            timestamp: { type: 'string', format: 'date-time' },
+                            range: {
+                              type: 'object',
+                              required: ['start', 'end'],
+                              properties: {
+                                start: { type: 'string', format: 'date-time' },
+                                end: { type: 'string', format: 'date-time' },
+                              },
+                            },
+                          },
                         },
                         authorization: {
-                          type: "object",
+                          type: 'object',
                           properties: {
-                            type: { type: "string" },
-                            token: { type: "string" },
-                            valid_to: { type: "string" },
-                            status: { type: "string" }
-                          }
-                        }
-                      }
-                    }
+                            type: { type: 'string' },
+                            token: { type: 'string' },
+                            valid_to: { type: 'string' },
+                            status: { type: 'string' },
+                          },
+                        },
+                      },
+                    },
                   },
                   agent: {
-                    type: "object",
+                    type: 'object',
                     properties: {
                       organization: {
-                        type: "object",
+                        type: 'object',
                         properties: {
                           contact: {
-                            type: "object",
+                            type: 'object',
                             properties: {
-                              phone: { type: "string" },
-                              email: { type: "string" }
-                            }
-                          }
-                        }
-                      }
-                    }
+                              phone: { type: 'string' },
+                              email: { type: 'string' },
+                            },
+                          },
+                        },
+                      },
+                    },
                   },
                   vehicle: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      category: { type: "string" }
-                    }
-                  }
+                      category: { type: 'string' },
+                    },
+                  },
                 },
-                required: ["id", "type", "state"]
-              }
+                required: ['id', 'type', 'state'],
+              },
             },
             provider: {
-              type: "object",
+              type: 'object',
               properties: {
-                id: { type: "string" },
+                id: { type: 'string' },
                 descriptor: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    name: { type: "string" },
+                    name: { type: 'string' },
                     images: {
-                      type: "array",
+                      type: 'array',
                       items: {
-                        type: "object",
+                        type: 'object',
                         properties: {
-                          url: { type: "string" },
-                          size_type: { type: "string" }
-                        }
-                      }
-                    }
-                  }
+                          url: { type: 'string' },
+                          size_type: { type: 'string' },
+                        },
+                      },
+                    },
+                  },
                 },
                 locations: {
-                  type: "array",
+                  type: 'array',
                   items: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      id: { type: "string" },
-                      gps: { type: "string" },
+                      id: { type: 'string' },
+                      gps: { type: 'string' },
                       descriptor: {
-                        type: "object",
+                        type: 'object',
                         properties: {
-                          name: { type: "string" },
-                          short_desc: { type: "string" },
+                          name: { type: 'string' },
+                          short_desc: { type: 'string' },
                           additional_desc: {
-                            type: "object",
+                            type: 'object',
                             properties: {
-                              url: { type: "string" },
-                              content_type: { type: "string" }
-                            }
+                              url: { type: 'string' },
+                              content_type: { type: 'string' },
+                            },
                           },
                           images: {
-                            type: "array",
+                            type: 'array',
                             items: {
-                              type: "object",
+                              type: 'object',
                               properties: {
-                                url: { type: "string" },
-                                size_type: { type: "string" }
-                              }
-                            }
-                          }
-                        }
+                                url: { type: 'string' },
+                                size_type: { type: 'string' },
+                              },
+                            },
+                          },
+                        },
                       },
-                      rating: { type: "string" }
-                    }
-                  }
-                }
+                      rating: { type: 'string' },
+                    },
+                  },
+                },
               },
-              required: ["id", "descriptor"]
+              required: ['id', 'descriptor'],
             },
             cancellation_terms: {
-              type: "array",
+              type: 'array',
               items: {
-                type: "object",
+                type: 'object',
                 properties: {
                   cancellation_fee: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      percentage: { type: "string" }
-                    }
+                      percentage: { type: 'string' },
+                    },
                   },
                   fulfillment_state: {
-                    type: "object",
+                    type: 'object',
                     properties: {
                       descriptor: {
-                        type: "object",
+                        type: 'object',
                         properties: {
-                          code: { type: "string" }
-                        }
-                      }
-                    }
+                          code: { type: 'string' },
+                        },
+                      },
+                    },
                   },
                   cancel_by: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      label: { type: "string" },
-                      duration: { type: "string" }
-                    }
+                      label: { type: 'string' },
+                      duration: { type: 'string' },
+                    },
                   },
-                  cancellation_eligible: { type: "boolean" },
+                  cancellation_eligible: { type: 'boolean' },
                   external_ref: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      mimetype: { type: "string" },
-                      url: { type: "string" }
-                    }
-                  }
-                }
-              }
+                      mimetype: { type: 'string' },
+                      url: { type: 'string' },
+                    },
+                  },
+                },
+              },
             },
             replacement_terms: {
-              type: "array",
+              type: 'array',
               items: {
-                type: "object",
+                type: 'object',
                 properties: {
                   external_ref: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      mimetype: { type: "string" },
-                      url: { type: "string" }
-                    }
-                  }
-                }
-              }
+                      mimetype: { type: 'string' },
+                      url: { type: 'string' },
+                    },
+                  },
+                },
+              },
             },
             quote: {
-              type: "object",
+              type: 'object',
               properties: {
                 breakup: {
-                  type: "array",
+                  type: 'array',
                   items: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      title: { type: "string" },
+                      title: { type: 'string' },
                       item: {
-                        type: "object",
+                        type: 'object',
                         properties: {
-                          id: { type: "string" },
+                          id: { type: 'string' },
                           price: {
-                            type: "object",
+                            type: 'object',
                             properties: {
-                              currency: { type: "string" },
-                              value: { type: "string" }
-                            }
+                              currency: { type: 'string' },
+                              value: { type: 'string' },
+                            },
                           },
                           quantity: {
-                            type: "object",
+                            type: 'object',
                             properties: {
                               selected: {
-                                type: "object",
+                                type: 'object',
                                 properties: {
-                                  count: { type: "number" }
-                                }
-                              }
-                            }
+                                  count: { type: 'number' },
+                                },
+                              },
+                            },
                           },
                           add_ons: {
-                            type: "array",
+                            type: 'array',
                             items: {
-                              type: "object",
+                              type: 'object',
                               properties: {
-                                id: { type: "string" },
+                                id: { type: 'string' },
                                 price: {
-                                  type: "object",
+                                  type: 'object',
                                   properties: {
-                                    currency: { type: "string" },
-                                    value: { type: "string" }
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
+                                    currency: { type: 'string' },
+                                    value: { type: 'string' },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
                       },
                       price: {
-                        type: "object",
+                        type: 'object',
                         properties: {
-                          currency: { type: "string" },
-                          value: { type: "string" }
-                        }
-                      }
-                    }
-                  }
+                          currency: { type: 'string' },
+                          value: { type: 'string' },
+                        },
+                      },
+                    },
+                  },
                 },
                 price: {
-                  type: "object",
+                  type: 'object',
                   properties: {
-                    currency: { type: "string" },
-                    value: { type: "string" }
-                  }
-                }
-              }
+                    currency: { type: 'string' },
+                    value: { type: 'string' },
+                  },
+                },
+              },
             },
             payments: {
-              type: "array",
+              type: 'array',
               items: {
-                type: "object",
+                type: 'object',
                 properties: {
-                  id: { type: "string" },
-                  collected_by: { type: "string" ,enum:["BAP","BPP"]},
-                  status: { type: "string", enum: ["PAID","NOT-PAID"] },
-                  type: { type: "string", enum: ["PRE-ORDER","ON-FULFILLMENT","POST-FULFILLMENT"] },
+                  id: { type: 'string' },
+                  collected_by: { type: 'string', enum: ['BAP', 'BPP'] },
+                  status: { type: 'string', enum: ['PAID', 'NOT-PAID'] },
+                  type: { type: 'string', enum: ['PRE-ORDER', 'ON-FULFILLMENT', 'POST-FULFILLMENT'] },
                   params: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      transaction_id: { type: "string" },
-                      amount: { type: "string" },
-                      currency: { type: "string" }
-                    }
-                  }
-                }
-              }
+                      transaction_id: { type: 'string' },
+                      amount: { type: 'string' },
+                      currency: { type: 'string' },
+                    },
+                  },
+                },
+              },
             },
             tags: {
-              type: "array",
+              type: 'array',
               items: {
-                type: "object",
+                type: 'object',
                 properties: {
                   descriptor: {
-                    type: "object",
+                    type: 'object',
                     properties: {
-                      code: { type: "string" },
-                      name: { type: "string" }
-                    }
+                      code: { type: 'string' },
+                      name: { type: 'string' },
+                    },
                   },
-                  display: { type: "boolean" },
+                  display: { type: 'boolean' },
                   list: {
-                    type: "array",
+                    type: 'array',
                     items: {
-                      type: "object",
+                      type: 'object',
                       properties: {
                         descriptor: {
-                          type: "object",
+                          type: 'object',
                           properties: {
-                            code: { type: "string" }
-                          }
+                            code: { type: 'string' },
+                          },
                         },
-                        value: { type: "string" }
-                      }
-                    }
-                  }
-                }
-              }
+                        value: { type: 'string' },
+                      },
+                    },
+                  },
+                },
+              },
             },
             cancellation: {
-              type: "object",
+              type: 'object',
               properties: {
-                cancelled_by: { type: "string" },
+                cancelled_by: { type: 'string' },
                 reason: {
-                  type: "object",
+                  type: 'object',
                   properties: {
                     descriptor: {
-                      type: "object",
+                      type: 'object',
                       properties: {
-                        code: { type: "string" ,enum:["000"]}
-                      }
-                    }
-                  }
-                }
+                        code: { type: 'string', enum: ['000'] },
+                      },
+                    },
+                  },
+                },
               },
-              required: ["cancelled_by", "reason"]
+              required: ['cancelled_by', 'reason'],
             },
-            created_at: { type: "string" },
-            updated_at: { type: "string" }
+            created_at: { type: 'string' },
+            updated_at: { type: 'string' },
           },
-          required: [
-            "id", "status", "items", "fulfillments", 
-            "provider", "payments", "quote", "cancellation"
-          ]
-        }
+          required: ['id', 'status', 'items', 'fulfillments', 'provider', 'payments', 'quote', 'cancellation'],
+        },
       },
-      required: ["order"]
+      required: ['order'],
     },
     error: {
-      type: "object",
+      type: 'object',
       properties: {
-        code: { type: "string" },
-        message: { type: "string" }
+        code: { type: 'string' },
+        message: { type: 'string' },
       },
-      required: ["code", "message"]
-    }
+      required: ['code', 'message'],
+    },
   },
-  required: ["context"],
+  required: ['context'],
   oneOf: [
-    { required: ["message"], not: { required: ["error"] } },
-    { required: ["error"], not: { required: ["message"] } }
-  ]
+    { required: ['message'], not: { required: ['error'] } },
+    { required: ['error'], not: { required: ['message'] } },
+  ],
 }
 
 export default onCancel1SchemaTRV14

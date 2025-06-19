@@ -277,7 +277,7 @@ export const FnBonSelectSchema = {
                           },
                           tags: {
                             type: 'array',
-                            minItems: 2,
+                            minItems: 1,
                             items: {
                               oneOf: [
                                 {

@@ -82,7 +82,7 @@ const onSearch2SchemaTRV14 = {
                         },
                       },
                     },
-                    required: ['name', 'short_desc', 'images'],
+                    required: ['name', 'images'],
                   },
                   categories: {
                     type: 'array',
@@ -121,7 +121,7 @@ const onSearch2SchemaTRV14 = {
                               },
                             },
                           },
-                          required: ['name', 'short_desc', 'images'],
+                          required: ['name', 'images'],
                         },
                       },
                       required: ['id', 'gps', 'descriptor'],

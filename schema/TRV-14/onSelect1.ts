@@ -58,7 +58,7 @@ const onSelect1SchemaTRV14 = {
       properties: {
         order: {
           type: 'object',
-          required: ['items', 'fulfillments', 'provider', 'quote', 'replacement_terms'],
+          required: ['items', 'fulfillments', 'provider', 'quote'],
           properties: {
             items: {
               type: 'array',
@@ -67,7 +67,7 @@ const onSelect1SchemaTRV14 = {
                 required: ['id', 'descriptor', 'location_ids', 'category_ids'],
                 additionalProperties: false,
                 properties: {
-                  id: { type: 'string',minLength: 1 },
+                  id: { type: 'string', minLength: 1 },
                   descriptor: {
                     type: 'object',
                     required: ['name', 'code'],
@@ -81,10 +81,10 @@ const onSelect1SchemaTRV14 = {
                   time: {},
                   parent_item_id: { type: 'string' },
                   fulfillment_ids: {
-                    type:"array",
+                    type: 'array',
                     items: {
-                      type: "string"
-                      }
+                      type: 'string',
+                    },
                   },
                   tags: {
                     type: 'array',
@@ -148,7 +148,7 @@ const onSelect1SchemaTRV14 = {
                 required: ['id', 'type', 'stops', 'vehicle'],
                 additionalProperties: false,
                 properties: {
-                  id: { type: 'string',minLength:1 },
+                  id: { type: 'string', minLength: 1 },
                   type: { type: 'string', enum: ['VISIT'] },
                   stops: {
                     type: 'array',
@@ -159,9 +159,16 @@ const onSelect1SchemaTRV14 = {
                         type: { type: 'string', enum: ['START', 'END'] },
                         time: {
                           type: 'object',
-                          required: ['timestamp'],
                           properties: {
                             timestamp: { type: 'string', format: 'date-time' },
+                            range: {
+                              type: 'object',
+                              required: ['start', 'end'],
+                              properties: {
+                                start: { type: 'string', format: 'date-time' },
+                                end: { type: 'string', format: 'date-time' },
+                              },
+                            },
                           },
                         },
                       },
@@ -178,8 +185,8 @@ const onSelect1SchemaTRV14 = {
                             required: ['phone', 'email'],
                             additionalProperties: false,
                             properties: {
-                              phone: { type: 'string',minLength:1 },
-                              email: { type: 'string',minLength:1 },
+                              phone: { type: 'string', minLength: 1 },
+                              email: { type: 'string', minLength: 1 },
                             },
                           },
                         },
@@ -201,12 +208,12 @@ const onSelect1SchemaTRV14 = {
               required: ['id', 'descriptor'],
               additionalProperties: false,
               properties: {
-                id: { type: 'string',minLength:1 },
+                id: { type: 'string', minLength: 1 },
                 descriptor: {
                   type: 'object',
                   required: ['name'],
                   properties: {
-                    name: { type: 'string',minLength:1 },
+                    name: { type: 'string', minLength: 1 },
                   },
                 },
                 locations: {
@@ -214,13 +221,13 @@ const onSelect1SchemaTRV14 = {
                   items: {
                     type: 'object',
                     properties: {
-                      id: { type: 'string' ,minLength:1},
-                      gps: { type: 'string' ,minLength:1},
+                      id: { type: 'string', minLength: 1 },
+                      gps: { type: 'string', minLength: 1 },
                       descriptor: {
                         type: 'object',
                         properties: {
-                          name: { type: 'string' ,minLength:1 },
-                          short_desc: { type: 'string' ,minLength:1 },
+                          name: { type: 'string', minLength: 1 },
+                          short_desc: { type: 'string', minLength: 1 },
                           additional_desc: {
                             type: 'object',
                             properties: {
@@ -240,7 +247,7 @@ const onSelect1SchemaTRV14 = {
                           },
                         },
                       },
-                      rating: { type: 'string' ,minLength:1},
+                      rating: { type: 'string', minLength: 1 },
                     },
                     required: ['id', 'gps', 'descriptor'],
                   },
@@ -257,13 +264,13 @@ const onSelect1SchemaTRV14 = {
                     type: 'object',
                     required: ['title', 'price'],
                     properties: {
-                      title: { type: 'string' ,minLength:1 },
+                      title: { type: 'string', minLength: 1 },
                       price: {
                         type: 'object',
                         required: ['currency', 'value'],
                         properties: {
                           currency: { type: 'string' },
-                          value: { type: 'string' ,minLength:1 },
+                          value: { type: 'string', minLength: 1 },
                         },
                       },
                     },

@@ -3,6 +3,7 @@ import { sign, hash } from '../../shared/crypto'
 import { logger } from '../../shared/logger'
 import { DOMAIN, ERROR_MESSAGE } from '../../shared/types'
 import { IGMvalidateLogs, validateLogs, RSFvalidateLogs, RSFvalidateLogsV2, IGMvalidateLogs2 } from '../../shared/validateLogs'
+import { validateLogsRetailV2 } from '../../shared/validateRetailLogsV2'
 import { validateLogsForFIS12 } from '../../shared/Actions/FIS12Actions'
 import { validateLogsForMobility } from '../../shared/Actions/mobilityActions'
 import { validateLogsForMetro } from '../../shared/Actions/metroActions'
@@ -53,8 +54,15 @@ const validateRetail = async (
 
   switch (version) {
     case '1.2.0':
-    case '1.2.5':
       response = await validateLogs(payload, domain, flow)
+
+      if (_.isEmpty(response)) {
+        success = true
+        message = ERROR_MESSAGE.LOG_VERIFICATION_SUCCESSFUL
+      }
+      break
+    case '1.2.5':
+      response = await validateLogsRetailV2(payload, domain, flow)
 
       if (_.isEmpty(response)) {
         success = true

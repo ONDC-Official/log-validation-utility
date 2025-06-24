@@ -2,6 +2,7 @@ export default Object.freeze({
   RET_CONTEXT_TTL: 'PT30S',
   CONTEXT_ACTION: 'action',
   DB_PATH: 'dbfiles',
+  FOUR_DECIMAL_PRECISION: 4,
   DECIMAL_PRECISION: 6,
   ORDER_PICKED: 'Order-picked-up',
   ORDER_PACKED: 'Packed',
@@ -25,12 +26,18 @@ export default Object.freeze({
   ON_UPDATE_FLOW: 'on_update_flow',
   ON_UPDATE_FORECLOSURE:'on_update_foreclosure',
   ON_UPDATE_INTERIM: 'on_update_interim',
+  ON_UPDATE_REPLACEMENT: 'on_update_replacement',
   ON_STATUS: 'on_status',
   ON_STATUS_PENDING: 'on_status_pending',
   ON_STATUS_PACKED: 'on_status_packed',
   ON_STATUS_PICKED: 'on_status_picked',
   ON_STATUS_OUT_FOR_DELIVERY: 'on_status_out_for_delivery',
   ON_STATUS_DELIVERED: 'on_status_delivered',
+  REPLACEMENT_ON_STATUS_PENDING: 'replacement_on_status_pending',
+  REPLACEMENT_ON_STATUS_PACKED: 'replacement_on_status_packed',
+  REPLACEMENT_ON_STATUS_PICKED: 'replacement_on_status_picked',
+  REPLACEMENT_ON_STATUS_OUT_FOR_DELIVERY: 'replacement_on_status_out_for_delivery',
+  REPLACEMENT_ON_STATUS_DELIVERED: 'replacement_on_status_delivered',
   ON_STATUS_RTO_DELIVERED: 'on_status_rto_delivered/disposed',
   CANCEL: 'cancel',
   ON_CANCEL: 'on_cancel',
@@ -88,9 +95,15 @@ export const ApiSequence = {
   ON_STATUS_OUT_FOR_DELIVERY: 'on_status_out_for_delivery',
   ON_STATUS_DELIVERED: 'on_status_delivered',
   ON_STATUS_RTO_DELIVERED: 'on_status_rto_delivered/disposed',
+  REPLACEMENT_ON_STATUS_PENDING:"replacement_on_status_pending",
+  REPLACEMENT_ON_STATUS_PACKED:"replacement_on_status_packed",
+  REPLACEMENT_ON_STATUS_PICKED:"replacement_on_status_picked",
+  REPLACEMENT_ON_STATUS_OUT_FOR_DELIVERY:"replacement_on_status_out_for_delivery",
+  REPLACEMENT_ON_STATUS_DELIVERED:"replacement_on_status_delivered",
   ON_UPDATE_PART_CANCEL: 'on_update_part_cancel',
   UPDATE: 'update',
   UPDATE_REVERSE_QC: 'update_reverse_qc',
+  UPDATE_REPLACEMENT: 'update_replacement',
   UPDATE_LIQUIDATED: 'update_liquidated',
   UPDATE_SETTLEMENT: 'update_settlement',
   UPDATE_SETTLEMENT_PART_CANCEL: 'update_settlement_part_cancel',
@@ -104,9 +117,14 @@ export const ApiSequence = {
   ON_UPDATE_DELIVERED: 'on_update_delivered',
   ON_UPDATE_APPROVAL: 'on_update_approval',
   ON_UPDATE_LIQUIDATED: 'on_update_liquidated',
+  ON_UPDATE_REPLACEMENT: 'on_update_replacement',
   SELECT_OUT_OF_STOCK: 'select_out_of_stock',
   ON_SELECT_OUT_OF_STOCK: 'on_select_out_of_stock',
-  CATALOG_REJECTION: 'catalog_rejection',
+  CATALOG_REJECTION:'catalog_rejection',
+  UPDATE_ADDRESS:'update_address',
+  ON_UPDATE_ADDRESS:'on_update_address',
+  UPDATE_INSTRUCTIONS:'update_instructions',
+  ON_UPDATE_INSTRUCTIONS:'on_update_instructions',
 }
 
 export const FisApiSequence = {
@@ -750,4 +768,8 @@ export const ffCategory = [
 export const PAYMENT_STATUS = {
   PAID: 'PAID',
   NOT_PAID: 'NOT-PAID',
+}
+export const PAYMENT_COLLECTED_BY = {
+  BPP: 'BPP',
+  BAP : 'BAP'
 }

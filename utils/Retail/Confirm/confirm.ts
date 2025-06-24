@@ -449,7 +449,7 @@ if (Array.isArray(fulfillments)) {
       if (cnfrmObj['message/order/transaction_id']) {
         cnfrmObj['message/order/transaction_id'] = 'Unexpected txn_id found in message/order/confirm'
       } else {
-        if (flow === FLOW.FLOW2A ) {
+        if (flow === FLOW.FLOW012 ) {
           logger.info('Skipping transaction_id check for 2A flow')
           // Skip the transaction_id check for 2A flow
         } else {
@@ -463,12 +463,12 @@ if (Array.isArray(fulfillments)) {
       logger.error('Error while checking transaction in message/order/payment: ' + err.message)
     }
     try {
-      if (flow === FLOW.FLOW2A){
+      if (flow === FLOW.FLOW012){
       logger.info('Payment status check in confirm call')
       const payment = confirm.payment
       if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
-        logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`);
-        cnfrmObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
+        logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`);
+        cnfrmObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`
       } 
     }
     } catch (err: any) {
@@ -477,7 +477,7 @@ if (Array.isArray(fulfillments)) {
   
     //Payment details for 2A Flow
     try {
-      if (flow === FLOW.FLOW2A) {
+      if (flow === FLOW.FLOW012) {
         logger.info(`checking payment object in /${constants.CONFIRM}`)
         if (confirm.payment['@ondc/org/settlement_details'][0]['settlement_counterparty'] != 'buyer-app') {
           cnfrmObj.sttlmntcntrparty = `settlement_counterparty is expected to be 'buyer-app' in @ondc/org/settlement_details`
@@ -536,7 +536,7 @@ if (Array.isArray(fulfillments)) {
     }
 
     try {
-      if (FLOW.FLOW2A === flow) {
+      if (FLOW.FLOW012 === flow) {
         logger.info(`storing payment settlement details in /${constants.CONFIRM}`)
         if (confirm.payment.hasOwnProperty('@ondc/org/settlement_details')) {
           setValue('sttlmntdtls', confirm.payment['@ondc/org/settlement_details'][0])

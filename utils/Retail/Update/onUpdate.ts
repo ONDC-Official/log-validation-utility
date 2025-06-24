@@ -45,7 +45,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
 
         // have to change here as well for flow 6-a and 6-b
         try {
-            if ((flow === '006' && apiSeq == ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC) || (flow === '6-c' && apiSeq == ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED)) {
+            if ((flow === '6-b' && apiSeq == ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC) || (flow === '6-c' && apiSeq == ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED)) {
                 if (apiSeq == ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC) {
                     logger.info(`Comparing Message Ids of /${ApiSequence.UPDATE_REVERSE_QC} and /${ApiSequence.ON_UPDATE_INTERIM_REVERSE_QC}`)
                     if (!_.isEqual(getValue(`${ApiSequence.UPDATE_REVERSE_QC}_msgId`), context.message_id)) {
@@ -197,7 +197,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
         try {
             logger.info(`Checking for settlement_details in /message/order/payment and comparing previous settlement_details`)
             const settlement_details: any = on_update.payment['@ondc/org/settlement_details']
-            if (flow === '5') {
+            if (flow === '6-a') {
                 settlementDetatilSet.add(settlement_details[0])
             }
             else {
@@ -205,6 +205,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                 settlementDetatilSet.forEach((obj1: any) => {
                     const exist = settlement_details.some((obj2: any) => {
                         return _.isEqual(obj1, obj2)
+
                     });
                     if (!exist) {
                         onupdtObj[`message/order.payment/@ondc/org/settlement_details/${i++}`] = `Missing payment/@ondc/org/settlement_details as compare to the previous calls or not captured correctly i.e. ${JSON.stringify(obj1)}`
@@ -227,7 +228,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                 }
             })
             let updateItemList: any = null
-            if (flow === '5') {
+            if (flow === '6-a') {
                 updateItemList = getValue('SelectItemList')
             } else {
                 updateItemList = getValue('updateItemList')
@@ -488,7 +489,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
             logger.info(`Error while checking fulfillments id, type and tracking in /${constants.ON_STATUS}`)
         }
 
-        if (flow === '006') {
+        if (flow === '6-b' || flow === '6-c') {
             try {
                 const timestampOnUpdatePartCancel = getValue(`${ApiSequence.ON_UPDATE_PART_CANCEL}_tmpstmp`)
                 const timeDif = timeDiff(context.timestamp, timestampOnUpdatePartCancel)
@@ -567,7 +568,7 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
                     }
 
                     let updateReturnFfIdAndQuantiy: any = "";
-                    if (flow === '006') {
+                    if (flow === '6-b') {
                         updateReturnFfIdAndQuantiy = getValue(`${ApiSequence.UPDATE_REVERSE_QC}_ffId_itemQuantiy`)
                     }
                     else {
@@ -602,10 +603,11 @@ export const checkOnUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementD
 
         }
 
-        if (flow === '5') {
+        if (flow === '6-a') {
             flowSixAChecks(message.order)
         }
-        if (flow === '006') {
+        if (flow === '6-b') {
+
             // Checking for location and time id is there or not in start/end object of return fulfillment
             if (apiSeq == ApiSequence.ON_UPDATE_APPROVAL || apiSeq == ApiSequence.ON_UPDATE_PICKED || apiSeq == ApiSequence.ON_UPDATE_DELIVERED) {
                 try {

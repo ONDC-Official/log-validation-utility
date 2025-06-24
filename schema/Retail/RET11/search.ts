@@ -20,7 +20,7 @@ export const FnBsearchSchema = {
         },
         core_version: {
           type: 'string',
-          enum: ['1.2.0'],
+          enum: ['1.2.0', '1.2.5'],
           minLength: 1,
         },
         bap_id: {
@@ -143,7 +143,7 @@ export const FnBsearchSchema = {
                 properties: {
                   code: {
                     type: 'string',
-                    enum: ['catalog_inc', 'bap_terms', 'catalog_full', 'bap_features'],
+                    enum: ['catalog_inc', 'bap_terms', 'catalog_full', 'bnp_features'],
                   },
                   list: {
                     type: 'array',
@@ -217,7 +217,7 @@ export const FnBsearchSchema = {
                 anyOf: [
                   {
                     properties: {
-                      code: { const: 'bap_features' },
+                      code: { const: 'bnp_features' },
                     },
                     then: {
                       properties: {
@@ -348,7 +348,7 @@ export const FnBsearchSchema = {
               contains: {
                 type: 'object',
                properties: {
-                  code: { enum: ['bap_features', 'catalog_full', 'catalog_inc', 'bap_terms'] },
+                  code: { enum: ['bnp_features', 'catalog_full', 'catalog_inc', 'bap_terms'] },
                 },
                 required: ['code', 'list'],
               },

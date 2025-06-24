@@ -28,7 +28,7 @@ export const FnBonSearchSchema = {
         },
         core_version: {
           type: 'string',
-          enum: ['1.2.0'],
+          enum: ['1.2.0', '1.2.5'],
           minLength: 1,
         },
         bap_id: {
@@ -217,7 +217,7 @@ export const FnBonSearchSchema = {
                     type: 'string',
                   },
                   rating: {
-                    type: 'string',
+                    type: ['number','null'],
                     minimum: 1,
                     maximum: 5,
                     default: null,

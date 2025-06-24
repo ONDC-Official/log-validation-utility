@@ -88,7 +88,7 @@ const onReceiverReconSchema = {
                         required: ['currency', 'value'],
                         properties: {
                           currency: { type: 'string', enum: ['INR'] },
-                          value: { type: 'number', multipleOf: 1 },
+                          value: { type: 'string'},
                         },
                       },
                       {

@@ -1,7 +1,7 @@
 import { logger } from '../../shared/logger'
 import { getValue, setValue } from '../../shared/dao'
 import constants, { metroSequence } from '../../constants'
-import { validateSchema, isObjectEmpty, checkSixDigitGpsPrecision } from '..'
+import { validateSchema, isObjectEmpty, checkGpsPrecision } from '..'
 import { validateContext } from './metroChecks'
 import { validateDomain } from './validate/helper'
 import { METRODOMAIN } from './validate/functions/constant'
@@ -97,7 +97,7 @@ export const checkSelect = (data: any, msgIdSet: any) => {
               fulfillmentErrors[`${stopKey}.type`] = `${stopKey}/type is required`
             }
 
-            if (checkSixDigitGpsPrecision(stop?.location.gps)) {
+            if (checkGpsPrecision(stop?.location.gps)) {
               fulfillmentErrors[`${stopKey}.gps`] =
                 'gps must be specified with at least six decimal places of precision.'
             }

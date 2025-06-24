@@ -22,7 +22,7 @@ export const searchSchema = {
         },
         core_version: {
           type: 'string',
-          enum: ['1.2.0'],
+          enum: ['1.2.0', '1.2.5'],
           minLength: 1,
         },
         bap_id: {
@@ -149,7 +149,7 @@ export const searchSchema = {
                 properties: {
                   code: {
                     type: 'string',
-                    enum: ['catalog_inc', 'bap_terms', 'catalog_full', 'bap_features'],
+                    enum: ['catalog_inc', 'bap_terms', 'catalog_full', 'bnp_features'],
                   },
                   list: {
                     type: 'array',
@@ -166,6 +166,49 @@ export const searchSchema = {
                             'effective_date',
                             'static_terms_new',
                             'payload_type',
+                            '000',
+                            '001',
+                            '002',
+                            '003',
+                            '004',
+                            '005',
+                            '006',
+                            '007',
+                            '008',
+                            '0091',
+                            '0092',
+                            '0093',
+                            '0094',
+                            '0095',
+                            '0096',
+                            '0097',
+                            '0098',
+                            '0099',
+                            '009A',
+                            '009B',
+                            '009C',
+                            '009D',
+                            '009E',
+                            '00A',
+                            '00B',
+                            '00C',
+                            '00D',
+                            '00E',
+                            '00F',
+                            '010',
+                            '011',
+                            '012',
+                            '013',
+                            '014',
+                            '015',
+                            '016',
+                            '017',
+                            '018',
+                            '019',
+                            '01A',
+                            '01B',
+                            '01C',
+                            '01D',
                           ],
                         },
                         value: {
@@ -181,7 +224,7 @@ export const searchSchema = {
                 anyOf: [
                   {
                     properties: {
-                      code: { const: 'bap_features' },
+                      code: { const: 'bnp_features' },
                     },
                     then: {
                       properties: {
@@ -312,7 +355,7 @@ export const searchSchema = {
               contains: {
                 type: 'object',
                 properties: {
-                  code: { enum: ['bap_features', 'catalog_full', 'catalog_inc', 'bap_terms'] },
+                  code: { enum: ['bnp_features', 'catalog_full', 'catalog_inc', 'bap_terms'] },
                 },
                 required: ['code', 'list'],
               },

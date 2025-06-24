@@ -77,7 +77,6 @@ const receiverReconSchema = {
                 type: 'object',
                 required: [
                   'id',
-                  'invoice_no',
                   'collector_app_id',
                   'receiver_app_id',
                   'state',
@@ -133,21 +132,13 @@ const receiverReconSchema = {
                   payment: {
                     type: 'object',
                     required: [
-                      'uri',
-                      'tl_method',
                       'params',
                       'type',
                       'status',
                       'collected_by',
-                      '@ondc/org/collected_by_status',
                       '@ondc/org/buyer_app_finder_fee_type',
                       '@ondc/org/buyer_app_finder_fee_amount',
-                      '@ondc/org/withholding_amount',
-                      '@ondc/org/withholding_amount_status',
-                      '@ondc/org/return_window',
-                      '@ondc/org/return_window_status',
                       '@ondc/org/settlement_details',
-                      '@ondc/org/settlement_basis_status',
                       '@ondc/org/settlement_basis',
                     ],
                     properties: {
@@ -171,9 +162,7 @@ const receiverReconSchema = {
                             enum: ['PAID'],
                           },
                           amount: {
-                            type: 'number',
-                            minimum: 0,
-                            exclusiveMinimum: 0,
+                            type: 'string',
                           },
                           currency: {
                             type: 'string',
@@ -205,7 +194,7 @@ const receiverReconSchema = {
                       '@ondc/org/buyer_app_finder_fee_amount': {
                         oneOf: [
                           {
-                            type: 'number',
+                            type: 'string',
                             when: {
                               properties: {
                                 '@ondc/org/buyer_app_finder_fee_type': {
@@ -214,10 +203,9 @@ const receiverReconSchema = {
                               },
                               required: ['@ondc/org/buyer_app_finder_fee_type'],
                             },
-                            maximum: 100,
                           },
                           {
-                            type: 'number',
+                            type: 'string',
                             minimum: 0,
                           },
                         ],
@@ -266,15 +254,11 @@ const receiverReconSchema = {
                         items: {
                           type: 'object',
                           required: [
-                            'bank_name',
-                            'branch_name',
                             'settlement_counterparty',
-                            'settlement_phase',
                             'settlement_amount',
                             'settlement_type',
                             'settlement_status',
                             'settlement_timestamp',
-                            'beneficiary_address',
                             'settlement_ifsc_code',
                             'settlement_reference',
                             'settlement_bank_account_no',
@@ -285,13 +269,27 @@ const receiverReconSchema = {
                               type: 'string',
                               enum: ['buyer-app', 'seller-app'],
                             },
+                            if: {
+                              properties: {
+                                collected_by: { const: 'BAP' },
+                              },
+                            },
+                            then: {
+                              properties: {
+                                settlement_counterparty: { const: 'seller-app' },
+                              },
+                            },
+                            else: {
+                              properties: {
+                                settlement_counterparty: { const: 'buyer-app' },
+                              },
+                            },
                             settlement_phase: {
                               type: 'string',
                               enum: ['sale-amount', 'withholding-amount', 'refund'],
                             },
                             settlement_amount: {
-                              type: 'number',
-                              minimum: 0,
+                              type: 'string',
                             },
                             settlement_type: {
                               type: 'string',
@@ -346,8 +344,7 @@ const receiverReconSchema = {
                             enum: ['INR'],
                           },
                           value: {
-                            type: 'number',
-                            minimum: 0,
+                            type: 'string',
                           },
                         },
                       },
@@ -436,7 +433,7 @@ const receiverReconSchema = {
                   created_at: {
                     type: 'string',
                     format: 'date-time',
-                    // maximum: { $data: '1/receiver_recon/context/timestamp' },
+                    // exclusiveMaximum: { $data: '1/context/timestamp' },
                   },
                   updated_at: {
                     type: 'string',
@@ -453,9 +450,7 @@ const receiverReconSchema = {
                         enum: ['INR'],
                       },
                       value: {
-                        type: 'number',
-                        minimum: 0,
-                        multipleOf: 0.01,
+                        type: 'string'
                       },
                     },
                   },
@@ -468,9 +463,7 @@ const receiverReconSchema = {
                         enum: ['INR'],
                       },
                       value: {
-                        type: 'number',
-                        minimum: 0,
-                        multipleOf: 0.01,
+                        type: 'string'
                       },
                     },
                   },
@@ -483,9 +476,7 @@ const receiverReconSchema = {
                         enum: ['INR'],
                       },
                       value: {
-                        type: 'number',
-                        minimum: 0,
-                        multipleOf: 0.01,
+                        type: 'string',
                       },
                     },
                   },

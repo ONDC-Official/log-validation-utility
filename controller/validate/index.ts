@@ -81,8 +81,8 @@ const controller = {
       }
 
       const { signature, currentDate } = await helper.createSignature({ message: JSON.stringify(httpResponse) })
-      if (response && !success)
-        return res.status(200).send({ success, response: httpResponse, signature, signTimestamp: currentDate })
+
+     if(!success && response)return res.status(200).send({ success, response: httpResponse, signature, signTimestamp: currentDate })
       if (!success)
         return res.status(400).send({ success, response: httpResponse, signature, signTimestamp: currentDate })
 
@@ -209,6 +209,16 @@ const controller = {
       return res.status(500).send({ success: false, error: error })
     }
   },
+  healthCheck: async(req: Request, res: Response): Promise<Response |void> =>{
+    try {
+      logger.info(req)
+     return res.status(200).send({success: true, status:"OK"})
+    }
+    catch(error){
+      logger.error(error)
+      return res.status(500).send({success: false, status:"fail"})
+    }
+  }
 }
 
 export default controller

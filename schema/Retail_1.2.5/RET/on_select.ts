@@ -390,7 +390,7 @@ export const onSelectSchema = {
                           },
                           tags: {
                             type: 'array',
-                            minItems: 2,
+                            minItems: 1,
                             items: {
                               oneOf: [
                                 {
@@ -450,32 +450,6 @@ export const onSelectSchema = {
                                         required: ['code', 'value'],
                                       },
                                       uniqueItems: true,
-                                    },
-                                  },
-                                  required: ['code', 'list'],
-                                },
-                                {
-                                  type: 'object',
-                                  properties: {
-                                    code: {
-                                      type: 'string',
-                                      const: 'item',
-                                    },
-                                    list: {
-                                      type: 'array',
-                                      items: {
-                                        type: 'object',
-                                        properties: {
-                                          code: {
-                                            type: 'string',
-                                          },
-                                          value: {
-                                            type: 'string',
-                                          },
-                                        },
-                                        required: ['code', 'value'],
-                                      },
-                                      minItems: 1,
                                     },
                                   },
                                   required: ['code', 'list'],

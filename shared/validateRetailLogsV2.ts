@@ -382,7 +382,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       '00D',
       '00E',
       '016',
-      '01F'
+      '01F',
       '00C'
     ]
     if (!retailDomains.includes(domain)) {

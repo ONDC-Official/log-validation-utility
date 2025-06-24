@@ -26,10 +26,20 @@ export const checkSelect2 = (data: any, msgIdSet: any) => {
 
     const select = message.order
     const Xinputmap = getValue(`xinputmap`)
-
+    const selectMsgId = getValue('select1msgId')
     const items = getValue(`select1items`)
     const fulfillments = getValue(`select1fulfillments`)
     const prvdrid = getValue(`select1prvdrid`)
+
+    //comparing messageid
+    try{
+      if(context.message_id === selectMsgId){
+      rsfObj.msgId =  `select_1 and select_2 message id can't be same`
+      }
+    }catch(error){
+      logger.error(error)
+    }
+
     //checking provider       
       try {
         if(select.provider.id === prvdrid){

@@ -117,10 +117,22 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
 
     try {
       logger.info(`Checking Cancellation terms for /${constants.ON_CONFIRM}`)
-      if (message.order.cancellation_terms && message.order.cancellation_terms.length > 0) {
-        onCnfrmObj[`message.order`] =
-          `'cancellation_terms' in /message/order should not be provided as those are not enabled yet`
+      const OnInitCancellationTerms = getValue('OnInitCancellationTerms')
+      const Errors = compareObjects(OnInitCancellationTerms,message.order.cancellation_terms)
+         if (Errors) {
+        let i = 0
+        const len = Errors.length
+        while (i < len) {
+          const key = `cancellationTermsErr${i}`
+          console.log('Errors[i]', Errors[i])
+          onCnfrmObj[key] = `${Errors[i]} when compared with on_init Cancellation terms`
+          i++
+        }
       }
+      // if (message.order.cancellation_terms && message.order.cancellation_terms.length > 0) {
+      //   onCnfrmObj[`message.order`] =
+      //     `'cancellation_terms' in /message/order should not be provided as those are not enabled yet`
+      // }
     } catch (error: any) {
       logger.error(`!!Error while checking Cancellation terms for /${constants.ON_CONFIRM}, ${error.stack}`)
     }

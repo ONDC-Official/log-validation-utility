@@ -119,10 +119,11 @@ export const checkOnInit = (data: any, flow: string) => {
 
     try {
       logger.info(`Checking Cancellation terms for /${constants.ON_INIT}`)
-      if (message.order.cancellation_terms && message.order.cancellation_terms.length > 0) {
-        onInitObj[`message.order`] =
-          `'cancellation_terms' in /message/order should not be provided as those are not enabled yet`
-      }
+      setValue('OnInitCancellationTerms',message.order.cancellation_terms )
+      // if (message.order.cancellation_terms && message.order.cancellation_terms.length > 0) {
+      //   onInitObj[`message.order`] =
+      //     `'cancellation_terms' in /message/order should not be provided as those are not enabled yet`
+      // }
     } catch (error: any) {
       logger.error(`!!Error while checking Cancellation terms for /${constants.ON_INIT}, ${error.stack}`)
     }

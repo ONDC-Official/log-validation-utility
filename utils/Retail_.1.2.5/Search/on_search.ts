@@ -45,7 +45,7 @@ export const checkOnsearch = (data: any, flow?: string) => {
     return { missingFields: '/context, /message, /catalog or /message/catalog is missing or empty' }
   }
   const schemaValidation = validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_SEARCH, data)
-  let collect_payment_tags:any = {}
+  let collect_payment_tags: any = {}
 
   setValue(`${ApiSequence.ON_SEARCH}_context`, context)
   setValue(`${ApiSequence.ON_SEARCH}_message`, message)
@@ -229,11 +229,52 @@ export const checkOnsearch = (data: any, flow?: string) => {
     )
   }
 
+  // fulfillment type checking
+  try {
+    if(flow===FLOW.FLOW004){
+    logger.info(`fulfillment type in bpp/providers in fulfillmentArray for  /${constants.ON_SEARCH}`)
+    const providers = onSearchCatalog['bpp/providers']
+    providers.forEach((provider: any) => {
+     
+      provider.fulfillments.forEach((item: any) => {
+        if(item.type!== "Buyer-Delivery"){
+          errorObj['missingFulfillmentType'] = `Fulfillment Type should be "Buyer-Delivery" for flow004 `
+        }
+        
+    
+
+      })
+    })
+  }
+  } catch (error: any) {
+    logger.error(
+      `Error while storing items of bpp/providers in itemsArray for  /${constants.ON_SEARCH}, ${error.stack}`,
+    )
+  }
+
+  //Checking item availability timings
+
+  try {
+    if (flow === FLOW.FLOW001) {
+      logger.info(`Checking item availability timings in tags in items in bpp/providers  for  /${constants.ON_SEARCH}`)
+    const providers = onSearchCatalog['bpp/providers']
+    providers.forEach((provider: any) => {
+      const items = provider.items
+      items.forEach((it: any) => {
+        const timingTags = it.tags.find((item: any) => item.code === 'timing')
+        if (timingTags) {
+          errorObj['missingAvailabilityTimings'] = `Item availability timings should be present in items tags with code as 'timing' /${constants.ON_SEARCH}`
+        }
+      })
+    })}
+  } catch (error: any) {
+    logger.error(`Error while Checking item availability timings for  /${constants.ON_SEARCH}, ${error.stack}`)
+  }
   // Checking for mandatory Items in provider IDs
   try {
     const domain = context.domain.split(':')[1]
     logger.info(`Checking for item tags in bpp/providers[0].items.tags in ${domain}`)
-    const isoDurationRegex = /^P(?=\d|T\d)(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?$/;
+    const isoDurationRegex = /^P(?=\d|T\d)(\d+D)?(T(\d+H)?(\d+M)?(\d+S)?)?$/
     for (let i in onSearchCatalog['bpp/providers']) {
       const items = onSearchCatalog['bpp/providers'][i].items
       items.forEach((item: any) => {
@@ -242,23 +283,21 @@ export const checkOnsearch = (data: any, flow?: string) => {
         if (replacementTerms !== undefined) {
           if (!Array.isArray(replacementTerms) || replacementTerms.length === 0) {
             errorObj['on_search_full_catalog_refresh'] =
-              `replacement_terms must be a non-empty array if present for item ID '${item.id}'`;
-            return;
+              `replacement_terms must be a non-empty array if present for item ID '${item.id}'`
+            return
           }
-  
+
           for (const term of replacementTerms) {
             if (!term.hasOwnProperty('replace_within')) {
               errorObj['on_search_full_catalog_refresh'] =
-                `Missing 'replace_within' in replacement_terms for item ID '${item.id}'`;
-              
+                `Missing 'replace_within' in replacement_terms for item ID '${item.id}'`
             }
-  
-            const duration = term.replace_within?.duration;
-  
+
+            const duration = term.replace_within?.duration
+
             if (!duration || !isoDurationRegex.test(duration)) {
               errorObj['on_search_full_catalog_refresh'] =
-                `Invalid or missing ISO 8601 duration in replacement_terms for item ID '${item.id}'. Found: '${duration}'`;
-              
+                `Invalid or missing ISO 8601 duration in replacement_terms for item ID '${item.id}'. Found: '${duration}'`
             }
           }
         }
@@ -499,21 +538,21 @@ export const checkOnsearch = (data: any, flow?: string) => {
         //   errorObj['bpp/descriptor/collect_payment'] = `collect_payment is not required in bpp/descriptor/tags for now `
         // }
       }
-      if(flow === FLOW.FLOW007 || flow === FLOW.FLOW0099 || flow === OFFERSFLOW.FLOW0098){
+      if (flow === FLOW.FLOW007 || flow === FLOW.FLOW0099 || flow === OFFERSFLOW.FLOW0098) {
         collect_payment_tags = tag.list.find((item) => item.code === 'collect_payment')
-        if(!collect_payment_tags){
-          errorObj['bpp/descriptor/tags/collect_payment'] = `collect_payment is required in bpp/descriptor/tags for on_search catalogue for flow: ${flow} `
+        if (!collect_payment_tags) {
+          errorObj['bpp/descriptor/tags/collect_payment'] =
+            `collect_payment is required in bpp/descriptor/tags for on_search catalogue for flow: ${flow} `
         }
         if (!['Y', 'N'].includes(collect_payment_tags.value)) {
-          errorObj['bpp/descriptor/tags/collect_payment'] =  `value must be "Y" or "N" for flow: ${flow}`;
+          errorObj['bpp/descriptor/tags/collect_payment'] = `value must be "Y" or "N" for flow: ${flow}`
         }
-        setValue(collect_payment_tags.value,"collect_payment")
+        setValue(collect_payment_tags.value, 'collect_payment')
       }
     })
   } catch (error: any) {
     logger.error(`Error while checking np_type in bpp/descriptor for /${constants.ON_SEARCH}, ${error.stack}`)
   }
-
 
   //Validating Offers
   try {
@@ -792,8 +831,9 @@ export const checkOnsearch = (data: any, flow?: string) => {
             //     `'benefit' tag must not include any values for offers[${offerIndex}] when offer.descriptor.code = ${offer.descriptor.code}`
             //   logger.error(`'benefit' tag must not include any values for offers[${offerIndex}]`)
             // }
-            if(context.domain !== "ONDC:RET14" || context.domain !== "ONDC:RET15"){
-              errorObj["unsupportedDomain"]= `exchange is not possible for ${context.domain} as supported domains are 'ONDC:RET14','ONDC:RET15' is required for flow: ${flow}`
+            if (context.domain !== 'ONDC:RET14' || context.domain !== 'ONDC:RET15') {
+              errorObj['unsupportedDomain'] =
+                `exchange is not possible for ${context.domain} as supported domains are 'ONDC:RET14','ONDC:RET15' is required for flow: ${flow}`
             }
             break
           case 'financing':
@@ -915,7 +955,6 @@ export const checkOnsearch = (data: any, flow?: string) => {
         const items = provider.items
         items.forEach((item: any, j: number) => {
           if (!_.isEmpty(item?.category_id)) {
-
             const statutoryRequirement: any = getStatutoryRequirement(item.category_id)
             let errors: any
             switch (statutoryRequirement) {
@@ -982,7 +1021,6 @@ export const checkOnsearch = (data: any, flow?: string) => {
   // } catch (error: any) {
   //   logger.error(`!!Errors while checking parent_item_id in bpp/providers/[]/items/[]/parent_item_id/, ${error.stack}`)
   // }
-  
 
   try {
     logger.info(`Checking Providers info (bpp/providers) in /${constants.ON_SEARCH}`)
@@ -2067,57 +2105,61 @@ export const checkOnsearch = (data: any, flow?: string) => {
       setValue('bppTerms', termsObj.list)
     }
     if (flow === FLOW.FLOW016) {
-       // Flow 016 specific validation - check for custom group in categories
-       try {
-         logger.info(`Checking for custom group categories in /${constants.ON_SEARCH} for flow 016`)
-         const providers = message.catalog['bpp/providers']
-         const customGroups: any[] = []
-         
-         if (!providers || !Array.isArray(providers) || providers.length === 0) {
-           errorObj.missingProviders = `No providers found in /${constants.ON_SEARCH} for flow 016`
-         } else {
-           let customGroupFound = false
-     
-           for (const provider of providers) {
-             if (provider.categories && Array.isArray(provider.categories)) {
-               for (const category of provider.categories) {
-                 // Check if the category has the required structure for custom_group
-                 const isTypeCustomGroup = category.tags?.some((tag: any) => 
-                   tag.code === 'type' && 
-                   tag.list?.some((item: any) => item.code === 'type' && item.value === 'custom_group')
-                 )
-     
-                 const hasConfigInput = category.tags?.some((tag: any) => 
-                   tag.code === 'config' && 
-                   tag.list?.some((item: any) => item.code === 'input' && item.value === 'text')
-                 )
-     
-                 if (isTypeCustomGroup && hasConfigInput) {
-                   customGroupFound = true
-                   // Save the custom group for later validation
-                   customGroups.push({
-                     id: category.id,
-                     descriptor: category.descriptor,
-                     tags: category.tags
-                   })
-                   logger.info(`Found valid custom group category: ${category.id}`)
-                 }
-               }
-             }
-           }
-     
-           if (!customGroupFound) {
-             errorObj.missingCustomGroup = `No custom_group category with input type 'text' found in /${constants.ON_SEARCH} for flow 016`
-           } else {
-             // Save custom groups to DAO for later validation in SELECT
-             setValue('flow016_custom_groups', customGroups)
-             logger.info(`Saved ${customGroups.length} custom groups for flow 016`)
-           }
-         }
-       } catch (error: any) {
-         logger.error(`Error while checking custom group categories in /${constants.ON_SEARCH} for flow 016, ${error.stack}`)
-         errorObj.customGroupCheckError = `Error validating custom group categories: ${error.message}`
-       }
+      // Flow 016 specific validation - check for custom group in categories
+      try {
+        logger.info(`Checking for custom group categories in /${constants.ON_SEARCH} for flow 016`)
+        const providers = message.catalog['bpp/providers']
+        const customGroups: any[] = []
+
+        if (!providers || !Array.isArray(providers) || providers.length === 0) {
+          errorObj.missingProviders = `No providers found in /${constants.ON_SEARCH} for flow 016`
+        } else {
+          let customGroupFound = false
+
+          for (const provider of providers) {
+            if (provider.categories && Array.isArray(provider.categories)) {
+              for (const category of provider.categories) {
+                // Check if the category has the required structure for custom_group
+                const isTypeCustomGroup = category.tags?.some(
+                  (tag: any) =>
+                    tag.code === 'type' &&
+                    tag.list?.some((item: any) => item.code === 'type' && item.value === 'custom_group'),
+                )
+
+                const hasConfigInput = category.tags?.some(
+                  (tag: any) =>
+                    tag.code === 'config' &&
+                    tag.list?.some((item: any) => item.code === 'input' && item.value === 'text'),
+                )
+
+                if (isTypeCustomGroup && hasConfigInput) {
+                  customGroupFound = true
+                  // Save the custom group for later validation
+                  customGroups.push({
+                    id: category.id,
+                    descriptor: category.descriptor,
+                    tags: category.tags,
+                  })
+                  logger.info(`Found valid custom group category: ${category.id}`)
+                }
+              }
+            }
+          }
+
+          if (!customGroupFound) {
+            errorObj.missingCustomGroup = `No custom_group category with input type 'text' found in /${constants.ON_SEARCH} for flow 016`
+          } else {
+            // Save custom groups to DAO for later validation in SELECT
+            setValue('flow016_custom_groups', customGroups)
+            logger.info(`Saved ${customGroups.length} custom groups for flow 016`)
+          }
+        }
+      } catch (error: any) {
+        logger.error(
+          `Error while checking custom group categories in /${constants.ON_SEARCH} for flow 016, ${error.stack}`,
+        )
+        errorObj.customGroupCheckError = `Error validating custom group categories: ${error.message}`
+      }
     }
   } catch (error: any) {
     logger.error(`!!Error while checking Providers info in /${constants.ON_SEARCH}, ${error.stack}`)

@@ -382,8 +382,14 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       '00D',
       '00E',
       '016',
-      '01F'
-      '00C'
+      '01F',
+      '00C',
+      '01E',
+      '001',
+      '025',
+      '022',
+      '004',
+      '01D'
     ]
     if (!retailDomains.includes(domain)) {
       return 'Domain should 1.2.5 retail domains'
@@ -745,6 +751,18 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_CONFIRM,
     
     ]
+    const flow01ESequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+    
+    ]
+   
     const flow00CSequence= [
       ApiSequence.SEARCH,
       ApiSequence.ON_SEARCH,
@@ -769,7 +787,60 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       // ApiSequence.REPLACEMENT_ON_STATUS_OUT_FOR_DELIVERY,
       // ApiSequence.REPLACEMENT_ON_STATUS_DELIVERED,
     ]
-
+ const flow001Sequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+    
+    ]
+ const flow025Sequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+    
+    ]
+ const flow022Sequence = [
+      ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+    
+    
+    ]
+ const flow004Sequence = [
+       ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+      ApiSequence.ON_STATUS_PENDING,
+      ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
+      ApiSequence.ON_STATUS_DELIVERED,
+  
+    
+    ]
+ const flow01DSequence = [
+       ApiSequence.SEARCH,
+      ApiSequence.ON_SEARCH,
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+     
+  
+    
+    ]
     const processApiSequence = (apiSequence: any, data: any, logReport: any, msgIdSet: any, flow: string) => {
       if (validFlows.includes(flow)) {
         apiSequence.forEach((apiSeq: any) => {
@@ -791,7 +862,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
     const getResponse = (apiSeq: any, data: any, msgIdSet: any, flow: string) => {
       switch (apiSeq) {
         case ApiSequence.SEARCH:
-          return checkSearch(data, msgIdSet)
+          return checkSearch(data, msgIdSet,flow)
         case ApiSequence.ON_SEARCH:
           if (domain === 'ONDC:RET11') {
             return checkOnsearchFullCatalogRefresh(data)
@@ -1101,6 +1172,24 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
         break
       case FLOW.FLOW01F:
         logReport = processApiSequence(flow01FSequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW01E:
+        logReport = processApiSequence(flow01ESequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW001:
+        logReport = processApiSequence(flow001Sequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW022:
+        logReport = processApiSequence(flow022Sequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW025:
+        logReport = processApiSequence(flow025Sequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW004:
+        logReport = processApiSequence(flow004Sequence, data, logReport, msgIdSet, flow)
+        break
+      case FLOW.FLOW01D:
+        logReport = processApiSequence(flow01DSequence, data, logReport, msgIdSet, flow)
         break
       case FLOW.FLOW00C:
         logReport = processApiSequence(flow00CSequence,data,logReport,msgIdSet,'00C')

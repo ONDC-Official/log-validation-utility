@@ -668,5 +668,22 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
       }
   }
 
+
+  try {
+    if(flow===FLOW.FLOW025){
+        logger.info(`Checking for bnp_demand_signal  in /${constants.SELECT} for flow 025`)
+      const tags = select.tags
+      const tag = tags.find((item:any)=> item.code==='bnp_demand_signal')
+        if (!tag) {
+            errorObj["missingBnpDemandSignal"] = `BnpDemandSignal must be present in /${constants.SELECT} for flow025`
+          }
+    }
+
+    
+  } catch (error:any) {
+           errorObj.customizationCheckError = `Error validating customization items: ${error.message}`
+    
+  }
+
   return Object.keys(errorObj).length > 0 && errorObj
 }

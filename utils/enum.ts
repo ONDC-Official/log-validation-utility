@@ -717,7 +717,14 @@ export enum FLOW {
   FLOW01F = '01F',
   FLOW007 = '007',
   FLOW0099 = '0099',
-  FLOW00C = '00C'
+  FLOW00C = '00C',
+  FLOW01E = '01E',
+  FLOW001 = '001',
+  FLOW025 = '025',
+  FLOW022 = '022',
+  FLOW004 = '004',
+  FLOW01D = '01D'
+  
 }
 
 export enum statutory_reqs {

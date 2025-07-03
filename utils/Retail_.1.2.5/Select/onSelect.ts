@@ -21,12 +21,10 @@ const retailPymntTtl: { [key: string]: string } = {
   'convenience fee': 'misc',
   offer: 'offer',
 }
-export const checkOnSelect = (data: any,flow?:string) => {
+export const checkOnSelect = (data: any, flow?: string) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.ON_SELECT]: 'JSON cannot be empty' }
   }
-  console.log(flow);
-  
 
   const { message, context } = data
   if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
@@ -136,6 +134,23 @@ export const checkOnSelect = (data: any,flow?:string) => {
     setValue('fulfillment_tat_obj', fulfillment_tat_obj)
   } catch (error: any) {
     logger.error(`Error while checking for fulfillment IDs for /${constants.ON_SELECT}`, error.stack)
+  }
+  if (flow === FLOW.FLOW01D) {
+    try {
+      const fulfillmentsWithItems = message.order.items
+      const fulfillment_item_obj: any[] = []
+      fulfillmentsWithItems.forEach((item: any) => {
+        const itemId = item.id
+        fulfillment_item_obj.push({
+          id: itemId,
+          fulfillment_id: item.fulfillment_ids,
+        })
+      })
+
+      setValue('fulfillment_item_obj', fulfillment_item_obj)
+    } catch (error: any) {
+      logger.error(`Error while checking for fulfillment IDs for /${constants.ON_SELECT}`, error.stack)
+    }
   }
 
   try {
@@ -417,23 +432,22 @@ export const checkOnSelect = (data: any,flow?:string) => {
     const providerOffers: any = getValue(`${ApiSequence.ON_SEARCH}_offers`)
     const applicableOffers: any[] = []
     const orderItemIds = on_select?.items?.map((item: any) => item.id) || []
-    const items:any = orderItemIds
-      .map((id:any) => {
-        const item = on_select?.quote?.breakup.find((entry:any) => entry['@ondc/org/item_id'] === id)
-        return item ? { id, price: item.price.value,quantity:item["@ondc/org/item_quantity"]?.count } : null
+    const items: any = orderItemIds
+      .map((id: any) => {
+        const item = on_select?.quote?.breakup.find((entry: any) => entry['@ondc/org/item_id'] === id)
+        return item ? { id, price: item.price.value, quantity: item['@ondc/org/item_quantity']?.count } : null
       })
       .filter((item: any) => item !== null)
     console.log('itemPrices of found items in breakup', JSON.stringify(items))
 
     const priceSums = items.reduce((acc: Record<string, number>, item: { id: string; price: string }) => {
-      const { id, price } = item;
-      acc[id] = (acc[id] || 0) + parseFloat(price);
-      return acc;
-    }, {});
-    console.log("priceSums",priceSums);
-    
-    
-    console.log("providerOffers",JSON.stringify(providerOffers));
+      const { id, price } = item
+      acc[id] = (acc[id] || 0) + parseFloat(price)
+      return acc
+    }, {})
+    console.log('priceSums', priceSums)
+
+    console.log('providerOffers', JSON.stringify(providerOffers))
     if (on_select.quote) {
       const totalWithoutOffers = on_select?.quote?.breakup.reduce((sum: any, item: any) => {
         if (item['@ondc/org/title_type'] !== 'offer') {
@@ -469,7 +483,7 @@ export const checkOnSelect = (data: any,flow?:string) => {
         if (additiveOffers.length > 0) {
           // offers.length = 0
           additiveOffers.forEach((offer: any) => {
-            const providerOffer = providerOffers.find((o: any) => o.id === offer["@ondc/org/item_id"])
+            const providerOffer = providerOffers.find((o: any) => o.id === offer['@ondc/org/item_id'])
             if (providerOffer) {
               applicableOffers.push(providerOffer)
             }
@@ -478,7 +492,7 @@ export const checkOnSelect = (data: any,flow?:string) => {
           // Apply the single non-additive offer
           applicableOffers.length = 0
           const offer = nonAdditiveOffers[0]
-          const offerId = offer?.["@ondc/org/item_id"]
+          const offerId = offer?.['@ondc/org/item_id']
           const providerOffer = providerOffers.find((o: any) => o.id === offerId)
           if (providerOffer) {
             applicableOffers.push(providerOffer)
@@ -487,33 +501,33 @@ export const checkOnSelect = (data: any,flow?:string) => {
           console.log('nonAdditiveOffers', nonAdditiveOffers)
 
           applicableOffers.length = 0
-          nonAdditiveOffers.forEach((offer: any,index:number) => {
+          nonAdditiveOffers.forEach((offer: any, index: number) => {
             errorObj[`offer[${index}]`] =
-              `Offer ${offer["@ondc/org/item_id"]} is non-additive and cannot be combined with other non-additive offers.`
+              `Offer ${offer['@ondc/org/item_id']} is non-additive and cannot be combined with other non-additive offers.`
           })
           // setValue('Addtive-Offers',false)
           // return
         }
         console.log('Applicable Offers:', applicableOffers)
       }
-      const offerTypesInBreakup: string[] = [];
+      const offerTypesInBreakup: string[] = []
       on_select.quote.breakup.forEach((element: any, i: any) => {
         const titleType = element['@ondc/org/title_type']
 
         console.log(`Calculating quoted Price Breakup for element ${element.title}`)
-        let offerType:string = ""
+        let offerType: string = ''
 
-        if (titleType === "offer") {
-          const priceValue = parseFloat(element.price.value);
-        
+        if (titleType === 'offer') {
+          const priceValue = parseFloat(element.price.value)
+
           if (isNaN(priceValue)) {
-            errorObj.invalidPrice = `Price for title type "offer" is not a valid number.`;
-          } 
-           offerType = element?.item?.tags
-          ?.find((tag: any) => tag.code === 'offer')
-          ?.list?.find((entry: any) => entry.code === 'type')?.value
+            errorObj.invalidPrice = `Price for title type "offer" is not a valid number.`
+          }
+          offerType = element?.item?.tags
+            ?.find((tag: any) => tag.code === 'offer')
+            ?.list?.find((entry: any) => entry.code === 'type')?.value
           if (offerType) {
-            offerTypesInBreakup.push(offerType);
+            offerTypesInBreakup.push(offerType)
           }
           // else if (priceValue >= 0 ) {
           //   errorObj.positivePrice = `Price for title type "offer" must be negative, but got ${priceValue}.`;
@@ -572,11 +586,11 @@ export const checkOnSelect = (data: any,flow?:string) => {
               `invalid  id: ${element['@ondc/org/item_id']} in ${titleType} line item (should be a valid fulfillment_id as provided in message.items for the items)`
           }
         }
-        
+
         if (titleType === 'offer' && providerOffers.length > 0 && offers.length > 0) {
           try {
             if (applicableOffers?.length > 0) {
-              const offerId = element?.["@ondc/org/item_id"]
+              const offerId = element?.['@ondc/org/item_id']
               const onSelectOfferAutoApplicable = element?.item?.tags
                 ?.find((tag: any) => tag.code === 'offer')
                 ?.list?.find((entry: any) => entry.code === 'auto')?.value
@@ -650,13 +664,12 @@ export const checkOnSelect = (data: any,flow?:string) => {
 
               const offerItemIds = providerOffer?.item_ids || []
               const matchingItems = offerItemIds.find((id: string) => orderItemIds.includes(id)) || []
-              console.log("matchingItems",JSON.stringify(matchingItems));
-              
+              console.log('matchingItems', JSON.stringify(matchingItems))
 
               if (matchingItems.length === 0 || !matchingItems) {
                 errorObj[`offer_item[${i}]`] =
                   `Offer with id '${offerId}' is not applicable for any of the ordered item(s). \nApplicable items in offer: [${offerItemIds.join(', ')}], \nItems in order: [${orderItemIds.join(', ')}].`
-                  return
+                return
               }
 
               const benefitTag: any = providerOffer?.tags?.find((tag: any) => {
@@ -771,8 +784,8 @@ export const checkOnSelect = (data: any,flow?:string) => {
                   }
 
                   const offerItemId = offerTag?.list?.find((entry: any) => entry.code === 'item_id')?.value || ''
-                  console.log("offerItemId",offerItemId);
-                  
+                  console.log('offerItemId', offerItemId)
+
                   const offerItemCount = parseInt(
                     offerTag?.list?.find((entry: any) => entry.code === 'item_count')?.value || '0',
                   )
@@ -794,13 +807,12 @@ export const checkOnSelect = (data: any,flow?:string) => {
                   const itemIds = offerItemId.split(',').map((id: string) => id.trim())
 
                   const matchedItems = itemsOnSearch[0].filter((item: any) => itemIds.includes(item.id))
-                  console.log("matchedItems",matchedItems);
+                  console.log('matchedItems', matchedItems)
                   if (matchedItems.length === 0) {
                     errorObj[`offer_item[${i}]`] =
                       `Item(s) with ID(s) ${itemIds.join(', ')} not found in catalog  for offer ID: ${offerId}`
-                      return
+                    return
                   }
-                  
 
                   const priceMismatchItems: string[] = []
                   let totalExpectedOfferValue: number = 0
@@ -947,7 +959,6 @@ export const checkOnSelect = (data: any,flow?:string) => {
                 }
                 let isOfferEligible: boolean
                 offerItemsWithQuantity.forEach((item: any) => {
-      
                   if (offerMinItemCount) {
                     isOfferEligible = item.quantity >= offerMinItemCount
                   }
@@ -975,22 +986,22 @@ export const checkOnSelect = (data: any,flow?:string) => {
 
                 const offerTag = itemTags.find((tag: any) => tag.code === 'offer')
                 const offerItemValue = offerTag?.list?.find((entry: any) => entry.code === 'item_value')?.value || ''
-                const quotedPrice = (parseFloat(element?.price?.value || '0'))
-                if(quotedPrice<0){
+                const quotedPrice = parseFloat(element?.price?.value || '0')
+                if (quotedPrice < 0) {
                   errorObj.invalidPrice = `Price for Item with id: ${offerId} cannot be negative.`
                 }
-                if(benefitItemValue<0){
+                if (benefitItemValue < 0) {
                   errorObj.invalidPrice = `Benefit Value for tag benefit and item with id: ${offerId} cannot be negative.`
                 }
-                console.log("quotedPrice",quotedPrice,benefitItemValue);
-                
-                if(quotedPrice !== offerItemValue){
+                console.log('quotedPrice', quotedPrice, benefitItemValue)
+
+                if (quotedPrice !== offerItemValue) {
                   errorObj.priceMismatch = `value mismatch benefit_value for tag "item_value" in on_select ${offerItemValue} does not match with /quote/item with itemId: ${offerId}`
                 }
-                if(offerItemValue !== benefitItemValue){
+                if (offerItemValue !== benefitItemValue) {
                   errorObj.benefitValueMismatch = `value mismatch benefit_value in catalog ${benefitItemValue} does not match with on_select item_value ${offerItemValue} /quote/item with itemId: ${offerId}`
                 }
-                if(!offerTag){
+                if (!offerTag) {
                   errorObj.invalidTags = `tags are required in on_select   /quote with @ondc/org/title_type:${titleType} and offerId:${offerId}`
                 }
 
@@ -1126,18 +1137,18 @@ export const checkOnSelect = (data: any,flow?:string) => {
                 }
               }
               if (offerType === 'combo') {
-                const qualifierItems = qualifierList.find((item:any)=>item.code === "item_id").value
-                console.log("qualifierItems",qualifierItems);
+                const qualifierItems = qualifierList.find((item: any) => item.code === 'item_id').value
+                console.log('qualifierItems', qualifierItems)
                 const itemIds = qualifierItems.split(',').map((id: string) => id.trim())
-                if(!itemIds){
+                if (!itemIds) {
                   errorObj.invalidItems = `item_id is required in catalog for code:qualifier /offers/tags/list/value @ondc/org/title_type:${titleType} with  offer_id:${offerId}`
                 }
 
-                  const matchedItems = itemsOnSearch[0].filter((item: any) => itemIds.includes(item.id))
-                  if (matchedItems.length !== itemIds.length) {
-                    errorObj.invalidItems = `One or more item IDs are missing in the search results`
-                  }
-                
+                const matchedItems = itemsOnSearch[0].filter((item: any) => itemIds.includes(item.id))
+                if (matchedItems.length !== itemIds.length) {
+                  errorObj.invalidItems = `One or more item IDs are missing in the search results`
+                }
+
                 if (minValue > 0 && minValue !== null) {
                   const qualifies: boolean = totalWithoutOffers >= minValue
 
@@ -1307,45 +1318,44 @@ export const checkOnSelect = (data: any,flow?:string) => {
       switch (flow) {
         case '0091':
           if (!offerTypesInBreakup.includes('discount')) {
-            errorObj['0091'] = `Flow 0091 requires at least one 'discount' offer in the breakup.`;
+            errorObj['0091'] = `Flow 0091 requires at least one 'discount' offer in the breakup.`
           }
-          break;
-      
+          break
+
         case '0092':
           if (!offerTypesInBreakup.includes('buyxgety')) {
-            errorObj['0092'] = `Flow 0092 requires at least one 'buyxgety' offer in the breakup.`;
+            errorObj['0092'] = `Flow 0092 requires at least one 'buyxgety' offer in the breakup.`
           }
-          break;
-      
+          break
+
         case '0093':
           if (!offerTypesInBreakup.includes('freebie')) {
-            errorObj['0093'] = `Flow 0093 requires at least one 'freebie' offer in the breakup.`;
+            errorObj['0093'] = `Flow 0093 requires at least one 'freebie' offer in the breakup.`
           }
-          break;
-      
+          break
+
         case '0094':
           if (!offerTypesInBreakup.includes('slab')) {
-            errorObj['0094'] = `Flow 0094 requires at least one 'slab' offer in the breakup.`;
+            errorObj['0094'] = `Flow 0094 requires at least one 'slab' offer in the breakup.`
           }
-          break;
-      
+          break
+
         case '0095':
           if (!offerTypesInBreakup.includes('combo')) {
-            errorObj['0095'] = `Flow 0095 requires at least one 'combo' offer in the breakup.`;
+            errorObj['0095'] = `Flow 0095 requires at least one 'combo' offer in the breakup.`
           }
-          break;
-      
+          break
+
         case '0096':
           if (!offerTypesInBreakup.includes('delivery')) {
-            errorObj['0096'] = `Flow 0096 requires at least one 'delivery' offer in the breakup.`;
+            errorObj['0096'] = `Flow 0096 requires at least one 'delivery' offer in the breakup.`
           }
-          break;
-      
-        default:
-          console.warn(`No specific validation for flow ${flow}`);
-          break;
-      }
+          break
 
+        default:
+          console.warn(`No specific validation for flow ${flow}`)
+          break
+      }
 
       setValue('onSelectPrice', on_select.quote.price.value)
       onSelectPrice = onSelectPrice.toFixed(2)
@@ -1523,102 +1533,102 @@ export const checkOnSelect = (data: any,flow?:string) => {
       errorObj[key] = `Order value must be greater or equal to Minimum Order Value`
     }
   }
-  if(flow===FLOW.FLOW003){
+  if (flow === FLOW.FLOW003) {
     const fulfillments = on_select.fulfillments
-  setValue('fulfillmentSlots',fulfillments)
-
+    setValue('fulfillmentSlots', fulfillments)
   }
 
-   if (flow === FLOW.FLOW016) {
-        // Flow 016 specific validation - check for customization items and their relationships
-        try {
-          logger.info(`Checking for customization items in /${constants.SELECT} for flow 016`)
-          
-          const items = on_select.items
-          if (!items || !Array.isArray(items) || items.length === 0) {
-            errorObj.missingItems = `No items found in /${constants.SELECT} for flow 016`
-            return isObjectEmpty(errorObj) ? {} : errorObj
-          }
-          
-          // Get the custom groups saved from ON_SEARCH
-          const customGroups = getValue('flow016_custom_groups')
-          if (!customGroups || !Array.isArray(customGroups) || customGroups.length === 0) {
-            errorObj.missingCustomGroups = `No custom groups were found in previous /${constants.ON_SEARCH} for flow 016`
-            return isObjectEmpty(errorObj) ? {} : errorObj
-          }
-          
-          // Find the regular item (type: item)
-          const regularItem = items.find((item: any) => {
-            return item.tags?.some((tag: any) => 
-              tag.code === 'type' && 
-              tag.list?.some((listItem: any) => listItem.code === 'type' && listItem.value === 'item')
-            )
-          })
-          
-          if (!regularItem) {
-            errorObj.missingRegularItem = `No item with type 'item' found in /${constants.SELECT} for flow 016`
-            return isObjectEmpty(errorObj) ? {} : errorObj
-          }
-          
-          // Find the customization item (type: customization)
-          const customizationItem = items.find((item: any) => {
-            return item.tags?.some((tag: any) => 
-              tag.code === 'type' && 
-              tag.list?.some((listItem: any) => listItem.code === 'type' && listItem.value === 'customization')
-            )
-          })
-          
-          if (!customizationItem) {
-            errorObj.missingCustomizationItem = `No item with type 'customization' found in /${constants.SELECT} for flow 016`
-            return isObjectEmpty(errorObj) ? {} : errorObj
-          }
-          
-          // Check if the customization item has the parent_item_id linked to the regular item
-          if (customizationItem.parent_item_id !== regularItem.id) {
-            errorObj.incorrectParentLink = `Customization item's parent_item_id '${customizationItem.parent_item_id}' doesn't match the regular item id '${regularItem.id}'`
-          }
-          
-          // Check if the customization item has the descriptor with input_text
-          const hasInputText = customizationItem.descriptor?.tags?.some((tag: any) => 
-            tag.code === 'customization' && 
-            tag.list?.some((listItem: any) => listItem.code === 'input_text' && listItem.value)
+  if (flow === FLOW.FLOW016) {
+    // Flow 016 specific validation - check for customization items and their relationships
+    try {
+      logger.info(`Checking for customization items in /${constants.SELECT} for flow 016`)
+
+      const items = on_select.items
+      if (!items || !Array.isArray(items) || items.length === 0) {
+        errorObj.missingItems = `No items found in /${constants.SELECT} for flow 016`
+        return isObjectEmpty(errorObj) ? {} : errorObj
+      }
+
+      // Get the custom groups saved from ON_SEARCH
+      const customGroups = getValue('flow016_custom_groups')
+      if (!customGroups || !Array.isArray(customGroups) || customGroups.length === 0) {
+        errorObj.missingCustomGroups = `No custom groups were found in previous /${constants.ON_SEARCH} for flow 016`
+        return isObjectEmpty(errorObj) ? {} : errorObj
+      }
+
+      // Find the regular item (type: item)
+      const regularItem = items.find((item: any) => {
+        return item.tags?.some(
+          (tag: any) =>
+            tag.code === 'type' &&
+            tag.list?.some((listItem: any) => listItem.code === 'type' && listItem.value === 'item'),
+        )
+      })
+
+      if (!regularItem) {
+        errorObj.missingRegularItem = `No item with type 'item' found in /${constants.SELECT} for flow 016`
+        return isObjectEmpty(errorObj) ? {} : errorObj
+      }
+
+      // Find the customization item (type: customization)
+      const customizationItem = items.find((item: any) => {
+        return item.tags?.some(
+          (tag: any) =>
+            tag.code === 'type' &&
+            tag.list?.some((listItem: any) => listItem.code === 'type' && listItem.value === 'customization'),
+        )
+      })
+
+      if (!customizationItem) {
+        errorObj.missingCustomizationItem = `No item with type 'customization' found in /${constants.SELECT} for flow 016`
+        return isObjectEmpty(errorObj) ? {} : errorObj
+      }
+
+      // Check if the customization item has the parent_item_id linked to the regular item
+      if (customizationItem.parent_item_id !== regularItem.id) {
+        errorObj.incorrectParentLink = `Customization item's parent_item_id '${customizationItem.parent_item_id}' doesn't match the regular item id '${regularItem.id}'`
+      }
+
+      // Check if the customization item has the descriptor with input_text
+      const hasInputText = customizationItem.descriptor?.tags?.some(
+        (tag: any) =>
+          tag.code === 'customization' &&
+          tag.list?.some((listItem: any) => listItem.code === 'input_text' && listItem.value),
+      )
+      console.log('hasInputText', hasInputText)
+
+      if (!hasInputText) {
+        errorObj.missingInputText = `Customization item is missing descriptor.tags with code 'customization' and list with code 'input_text'`
+      }
+
+      // Check if the customization item parent matches a custom_group from ON_SEARCH
+      let parentMatch = false
+      const parentId = customizationItem.tags
+        ?.find((tag: any) => tag.code === 'parent' && tag.list?.some((listItem: any) => listItem.code === 'id'))
+        ?.list?.find((listItem: any) => listItem.code === 'id')?.value
+
+      if (!parentId) {
+        errorObj.missingParentId = `Customization item is missing parent.id tag reference in tags`
+      } else {
+        // Check if this parent id matches any custom group id from ON_SEARCH
+        parentMatch = customGroups.some((group: any) => group.id === parentId)
+
+        if (!parentMatch) {
+          errorObj.invalidParentId = `Customization item parent id '${parentId}' doesn't match any custom_group id from ON_SEARCH`
+        } else {
+          logger.info(
+            `Found valid customization item with parent id: ${parentId} matching a custom_group from ON_SEARCH`,
           )
-          console.log('hasInputText', hasInputText)
-          
-          if (!hasInputText) {
-            errorObj.missingInputText = `Customization item is missing descriptor.tags with code 'customization' and list with code 'input_text'`
-          }
-          
-          // Check if the customization item parent matches a custom_group from ON_SEARCH
-          let parentMatch = false
-          const parentId = customizationItem.tags?.find((tag: any) => 
-            tag.code === 'parent' && 
-            tag.list?.some((listItem: any) => listItem.code === 'id')
-          )?.list?.find((listItem: any) => listItem.code === 'id')?.value
-          
-          if (!parentId) {
-            errorObj.missingParentId = `Customization item is missing parent.id tag reference in tags`
-          } else {
-            // Check if this parent id matches any custom group id from ON_SEARCH
-            parentMatch = customGroups.some((group: any) => group.id === parentId)
-            
-            if (!parentMatch) {
-              errorObj.invalidParentId = `Customization item parent id '${parentId}' doesn't match any custom_group id from ON_SEARCH`
-            } else {
-              logger.info(`Found valid customization item with parent id: ${parentId} matching a custom_group from ON_SEARCH`)
-            }
-          }
-          
-          // Save the validation result for reference in subsequent API calls
-          setValue('flow016_customization_valid', !isObjectEmpty(errorObj))
-          
-        } catch (error: any) {
-          logger.error(`Error while checking customization items in /${constants.SELECT} for flow 016, ${error.stack}`)
-          errorObj.customizationCheckError = `Error validating customization items: ${error.message}`
         }
+      }
+
+      // Save the validation result for reference in subsequent API calls
+      setValue('flow016_customization_valid', !isObjectEmpty(errorObj))
+    } catch (error: any) {
+      logger.error(`Error while checking customization items in /${constants.SELECT} for flow 016, ${error.stack}`)
+      errorObj.customizationCheckError = `Error validating customization items: ${error.message}`
     }
-  
-  
+  }
 
   return Object.keys(errorObj).length > 0 && errorObj
 }

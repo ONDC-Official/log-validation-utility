@@ -702,7 +702,26 @@ export enum FLOW {
   FLOW6 = '6',
   FLOW7 = '7',
   FLOW8 = '8',
+<<<<<<< HEAD
+  FLOW9 = '9',
+  FLOW020 = '020',
+  FLOW00B = "00B",
+  FLOW01C = '01C',
+  FLOW008 = '008',
+  FLOW003 = '003',
+  FLOW00F = '00F',
+  FLOW011 = '011',
+  FLOW017 = '017',
+  FLOW00D = '00D',
+  FLOW00E = '00E',
+  FLOW016 = '016',
+  FLOW01F = '01F',
+  FLOW007 = '007',
+  FLOW0099 = '0099',
+  FLOW00C = '00C'
+=======
   FLOW9 = '9'
+>>>>>>> e1d6dda602b94015e70d25b983d8c5cda043a12f
 }
 
 export enum statutory_reqs {

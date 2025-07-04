@@ -1293,6 +1293,149 @@ curl --location 'https://log-validation.ondc.org/api/validate/trv' \
 }'
 ```
 
+### For TRV14 (Unreserved Tickets) Sample Curl Request (Server)
+###PAGINATION
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/trv' \
+--header 'Content-Type: application/json' \
+--data '{
+ "domain": "ONDC:TRV14",
+ "version": "2.0.0",
+ "flow": "PAGINATION",
+ "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+ "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+ "payload": {
+   "search": {},
+   "on_search": {},
+   "on_search1": {}
+ }
+}
+'
+```
+
+###INCREMENTAL PULL
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/trv' \
+--header 'Content-Type: application/json' \
+--data '{
+   "domain": "ONDC:TRV14",
+   "version": "2.0.0",
+   "flow": "INCREMENTAL_PULL",
+   "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+   "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+   "payload": {
+       "search": {},
+       "on_search": {},
+       "on_search1": {},
+   }
+}'
+```
+
+###PURCHASE JOURNEY
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/trv' \
+--header 'Content-Type: application/json' \
+--data '{
+   "domain": "ONDC:TRV14",
+   "version": "2.0.0",
+   "flow": "PURCHASE_JOURNEY",
+   "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+   "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+   "payload": {
+       "select": {},
+       "on_select": {},
+       "select1": {},
+       "on_select1": {},
+       "init": {},
+       "on_init": {},
+       "confirm": {},
+       "on_confirm": {},
+       "status": {},
+       "on_status": {},
+   }
+}'
+```
+###USER CANCELLATION
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/trv' \
+--header 'Content-Type: application/json' \
+--data '{
+   "domain": "ONDC:TRV14",
+   "version": "2.0.0",
+   "flow": "USER_CANCELLATION",
+   "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+   "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+   "payload": {
+       "onconfirm":{},
+       "cancel":{},
+       "on_cancel":{},
+       "cancel1":{},
+       "on_cancel":{}
+   }
+}'
+```
+###TECHNICAL CANCELLATION
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/trv' \
+--header 'Content-Type: application/json' \
+--data '{
+   "domain": "ONDC:TRV14",
+   "version": "2.0.0",
+   "flow": "TECHNICAL_CANCELLATION",
+   "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+   "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+   "payload": {
+       "onconfirm":{},
+       "status":{},
+       "on_status":{},
+       "cancel":{},
+       "on_cancel":{},
+       "cancel1":{},
+       "on_cancel":{}
+   }
+}'
+```
+###PARTIAL CANCELLATION
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/trv' \
+--header 'Content-Type: application/json' \
+--data '{
+   "domain": "ONDC:TRV14",
+   "version": "2.0.0",
+   "flow": "PARTIAL_CANCELLATION",
+   "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+   "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+   "payload": {
+       "update":{},
+       "on_update":{},
+       "update1":{},
+       "on_updatel":{}
+   }
+}'
+```
+###CANCELLATION_REJECTED
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate/trv' \
+--header 'Content-Type: application/json' \
+--data '{
+   "domain": "ONDC:TRV14",
+   "version": "2.0.0",
+   "flow": "CANCELLATION_REJECTED",
+   "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+   "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+   "payload": {
+       "cancel":{},
+       "on_cancel":{},
+   }
+}'
+```
+
 
 ### For TRV11 (INTRACITY-BUS) Sample Curl Request (Server)
 
@@ -1359,12 +1502,38 @@ curl --location 'https://log-validation.ondc.org/api/validate/trv' \
     }
 }'
 ```
+### For RSF V1 Sample Curl Request (Local)
+
+### For FLOW_1
+```shell
+curl --location 'http://localhost:3008/api/validate/rsf' \
+--header 'Content-Type: application/json' \
+--data '{
+   "domain": "ONDC:NTS10",
+"version": "1.0.0",
+"flow": "SUCCESS_FLOW",
+"bap_id": "apidev.outpathprod.com",
+"bpp_id": "uat.kanpurmetrogosmartcard.com",
+"payload": { "receiver_recon":{}, "on_receiver_recon":{}, } }`
+
+```
+
+### For FLOW_2
+```shell
+curl --location 'http://localhost:3008/api/validate/rsf' \
+--header 'Content-Type: application/json' \
+--data '{
+"domain": "ONDC:NTS10",
+"version": "1.0.0",
+"flow": "CORRECTION_FLOW",
+"bap_id": "apidev.outpathprod.com",
+"bpp_id": "uat.kanpurmetrogosmartcard.com",
+"payload": { "receiver_recon":{}, "on_receiver_recon":{}, } }
+
+```
 
 
-
-
-### For RSF V2 Sample Curl Request (Local)
-
+### For FLOW_2
 ```shell
 curl --location 'http://localhost:3008/api/validate/rsf' \
 --header 'Content-Type: application/json' \
@@ -1380,7 +1549,109 @@ curl --location 'http://localhost:3008/api/validate/rsf' \
         "report":{},
         "on_report":{},
         "recon":{},
+        "on_recon":{},
+        "settle1":{},
+        "on_settle1":{},
+                }
+        }'
+
+```
+
+
+
+### For RSF V2 Sample Curl Request (Local)
+
+### For FLOW_1
+```shell
+curl --location 'http://localhost:3008/api/validate/rsf' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:NTS10",
+    "version": "2.0.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "settle":{},
+        "on_settle":{},
+        "report":{},
+        "on_report":{},
+        }'
+
+```
+
+### For FLOW_2
+```shell
+curl --location 'http://localhost:3008/api/validate/rsf' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:NTS10",
+    "version": "2.0.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+
+        "settle":{},
+        "on_settle":{},
+        "report":{},
+        "on_report":{},
+        "recon":{},
+        "on_recon":{},
+        "settle1":{},
+        "on_settle1":{},
+                }
+        }'
+
+```
+
+### For FLOW_3
+```shell
+curl --location 'http://localhost:3008/api/validate/rsf' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:NTS10",
+    "version": "2.0.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "settle":{},
+        "on_settle":{},
+        "report":{},
+        "on_report":{},
+        "recon":{},
         "on_recon":{}
+                }
+        }'
+
+```
+### For FLOW_4
+```shell
+curl --location 'http://localhost:3008/api/validate/rsf' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:NTS10",
+    "version": "2.0.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+
+        "settle":{},
+        "on_settle":{}
+                }
+        }'
+
+```
+### For FLOW_5
+```shell
+curl --location 'http://localhost:3008/api/validate/rsf' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:NTS10",
+    "version": "2.0.0",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "settle":{},
+        "on_settle":{}
                 }
         }'
 

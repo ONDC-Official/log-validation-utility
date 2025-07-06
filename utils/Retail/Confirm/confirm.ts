@@ -450,8 +450,8 @@ if (Array.isArray(fulfillments)) {
         cnfrmObj['message/order/transaction_id'] = 'Unexpected txn_id found in message/order/confirm'
       } else {
         if (flow === FLOW.FLOW012 ) {
-          logger.info('Skipping transaction_id check for 012 flow')
-          // Skip the transaction_id check for 012 flow
+          logger.info('Skipping transaction_id check for 2A flow')
+          // Skip the transaction_id check for 2A flow
         } else {
           const status = payment_status(payment,flow)
           if (!status) {
@@ -475,7 +475,7 @@ if (Array.isArray(fulfillments)) {
       logger.error('Error while checking payment in message/order/payment: ' + err.message);
     }
   
-    //Payment details for 012 Flow
+    //Payment details for 2A Flow
     try {
       if (flow === FLOW.FLOW012) {
         logger.info(`checking payment object in /${constants.CONFIRM}`)
@@ -529,7 +529,7 @@ if (Array.isArray(fulfillments)) {
           }
         }
       } else {
-        logger.info('Not in 012 flow, skipping payment details checks')
+        logger.info('Not in 2A flow, skipping payment details checks')
       }
     } catch (error: any) {
       logger.error(`!!Error while checking payment object in /${constants.CONFIRM}`)
@@ -544,7 +544,7 @@ if (Array.isArray(fulfillments)) {
           cnfrmObj.pymntSttlmntObj = `payment settlement_details missing in /${constants.CONFIRM}`
         }
       } else {
-        logger.info('Not in 012 flow, skipping storing payment settlement details')
+        logger.info('Not in 2A flow, skipping storing payment settlement details')
       }
     } catch (error: any) {
       logger.error(`!!Error while storing payment settlement details in /${constants.CONFIRM}`)

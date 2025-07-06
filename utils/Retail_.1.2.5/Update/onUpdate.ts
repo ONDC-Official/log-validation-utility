@@ -20,7 +20,7 @@ import {
   return_rejected_request_reasonCodes,
   return_request_reasonCodes,
 } from '../../../constants/reasonCode'
-import { FLOW, OFFERSFLOW } from '../../enum'
+import { FLOW } from '../../enum'
 
 export const checkOnUpdate = (
   data: any,

@@ -45,7 +45,7 @@ const select2SchemaTRV14 = {
         transaction_id: { type: 'string' },
         message_id: { type: 'string' },
         version: { type: 'string', enum: ['2.0.0'] },
-        action: { type: 'string', enum: ['select_2'] },
+        action: { type: 'string', enum: ['select'] },
         bap_uri: { type: 'string', format: 'uri' },
         ttl: { type: 'string', pattern: '^PT\\d+S$' },
         bpp_id: { type: 'string' },
@@ -59,12 +59,14 @@ const select2SchemaTRV14 = {
         order: {
           type: 'object',
           required: ['items', 'fulfillments', 'provider'],
+          additionalProperties: false,
           properties: {
             items: {
               type: 'array',
               items: {
                 type: 'object',
                 required: ['id', 'parent_item_id', 'quantity'],
+                additionalProperties: false,
                 properties: {
                   id: { type: 'string' },
                   parent_item_id: { type: 'string' },
@@ -133,6 +135,7 @@ const select2SchemaTRV14 = {
               items: {
                 type: 'object',
                 required: ['id', 'stops'],
+                additionalProperties: false,
                 properties: {
                   id: { type: 'string' },
                   stops: {
@@ -140,13 +143,22 @@ const select2SchemaTRV14 = {
                     items: {
                       type: 'object',
                       required: ['type', 'time'],
+                      additionalProperties: false,
                       properties: {
                         type: { type: 'string' },
                         time: {
                           type: 'object',
-                          required: ['timestamp'],
+                          required: [],
                           properties: {
                             timestamp: { type: 'string', format: 'date-time' },
+                            range: {
+                              type: 'object',
+                              required: ['start', 'end'],
+                              properties: {
+                                start: { type: 'string', format: 'date-time' },
+                                end: { type: 'string', format: 'date-time' },
+                              },
+                            },
                           },
                         },
                       },
@@ -158,6 +170,7 @@ const select2SchemaTRV14 = {
             provider: {
               type: 'object',
               required: ['id'],
+              additionalProperties: false,
               properties: {
                 id: { type: 'string' },
               },

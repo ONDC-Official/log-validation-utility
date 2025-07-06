@@ -4,7 +4,7 @@ import constants, { ApiSequence, ffCategory } from '../../../constants'
 import { validateSchemaRetailV2, isObjectEmpty, checkContext, timeDiff, isoDurToSec, checkBppIdOrBapId } from '../..'
 import _ from 'lodash'
 import { logger } from '../../../shared/logger'
-import { FLOW, taxNotInlcusive } from '../../enum'
+import { FLOW, taxNotInlcusive,fulfillment_tax } from '../../enum'
 
 interface BreakupElement {
   '@ondc/org/title_type': string
@@ -555,6 +555,45 @@ export const checkOnSelect = (data: any,flow?:string) => {
             errorObj[brkupitemsid] =
               `item with id: ${element['@ondc/org/item_id']} in quote.breakup[${i}] does not exist in items[] (should be a valid item id)`
           }
+        }
+        if (flow === FLOW.FLOW015) {
+          if (titleType === 'tax') {
+            if (!element.item || !Array.isArray(element.item.tags) || element.item.tags.length === 0) {
+              errorObj['missingTags'] = `item.tags is required and must be a non-empty array for flow: ${flow}`
+              return Object.keys(errorObj).length > 0 && errorObj
+            }
+
+            let hasList = false
+            let hasValidSubtype = false;
+            const validSubtypes = Object.values(fulfillment_tax)
+
+            for (const tag of element.item.tags) {
+              if (Array.isArray(tag.list)) {
+                for (const entry of tag.list) {
+                  if (
+                    entry.code === 'subtype' &&
+                    typeof entry.value === 'string' &&
+                    validSubtypes.includes(entry.value)
+                  ) {
+                    hasValidSubtype = true
+                    break
+                  }
+                }
+              }
+            }
+
+            if (!hasList) {
+              errorObj['missingList'] = `Each tag in item.tags must have a list array`
+            }
+
+            if (!hasValidSubtype) {
+              errorObj['missingSubtype'] = `At least one tag.list must include subtype for flow: ${flow}`
+            }
+          } else {
+            errorObj['missingQuote'] = `Title Type tax is required for flow: ${flow}`
+            return Object.keys(errorObj).length > 0 && errorObj
+          }
+          console.log('')
         }
 
         // TODO:
@@ -1454,6 +1493,12 @@ export const checkOnSelect = (data: any,flow?:string) => {
       if (!ff.id) {
         logger.info(`Fulfillment Id must be present `)
         errorObj['ffId'] = `Fulfillment Id must be present`
+      }
+      if(flow === FLOW.FLOW002){
+        if(ff.type !== "Self-Pickup"){
+        logger.info(`Fulfillment Type must be present `)
+        errorObj['ff'] = `Fulfillment Type Self-Pickup must be present for flow : ${flow}`
+        }
       }
 
       ffId = ff.id

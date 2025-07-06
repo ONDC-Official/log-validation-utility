@@ -444,35 +444,38 @@ export const checkOnInit = (data: any, flow:string) => {
     } catch (error: any) {
       logger.error(`!!Error while checking quote object in /${constants.ON_SELECT} and /${constants.ON_INIT}`)
     }
-    try {
-      logger.info(`Checking Settlement basis in /${constants.ON_INIT}`)
+    if (on_init.payment.collected_by === 'BPP') {
+      try {
+        setValue('paymentCollectedBy',on_init.payment.collected_by)
+        logger.info(`Checking Settlement basis in /${constants.ON_INIT}`)
 
-      const validSettlementBasis = ['delivery', 'shipment'] // Enums (as per API Contract)
+        const validSettlementBasis = ['delivery', 'shipment'] // Enums (as per API Contract)
 
-      const settlementBasis = on_init.payment['@ondc/org/settlement_basis']
+        const settlementBasis = on_init.payment['@ondc/org/settlement_basis']
 
-      if (!validSettlementBasis.includes(settlementBasis)) {
-        onInitObj.settlementBasis = `Invalid settlement basis in /${constants.ON_INIT}. Expected one of: ${validSettlementBasis.join(', ')}`
+        if (!validSettlementBasis.includes(settlementBasis)) {
+          onInitObj.settlementBasis = `Invalid settlement basis in /${constants.ON_INIT}. Expected one of: ${validSettlementBasis.join(', ')}`
+        }
+      } catch (error: any) {
+        logger.error(`!!Error while checking settlement basis in /${constants.ON_INIT}, ${error.stack}`)
       }
-    } catch (error: any) {
-      logger.error(`!!Error while checking settlement basis in /${constants.ON_INIT}, ${error.stack}`)
-    }
-    try {
-      logger.info(`Checking Settlement Window in /${constants.ON_INIT}`)
+      try {
+        logger.info(`Checking Settlement Window in /${constants.ON_INIT}`)
 
-      const validSettlementWindow = {
-        code: 'SETTLEMENT_WINDOW',
-        type: 'time',
-        value: /^PT\d+[MH]$/,
+        const validSettlementWindow = {
+          code: 'SETTLEMENT_WINDOW',
+          type: 'time',
+          value: /^PT\d+[MH]$/,
+        }
+
+        const settlementWindow = on_init.payment['@ondc/org/settlement_window']
+
+        if (!validSettlementWindow.value.test(settlementWindow)) {
+          onInitObj.settlementWindow = `Invalid settlement window in /${constants.ON_INIT}. Expected format: PTd+[MH] (e.g., PT1H, PT30M).`
+        }
+      } catch (err: any) {
+        logger.error('Error while checking settlement window: ' + err.message)
       }
-
-      const settlementWindow = on_init.payment['@ondc/org/settlement_window']
-
-      if (!validSettlementWindow.value.test(settlementWindow)) {
-        onInitObj.settlementWindow = `Invalid settlement window in /${constants.ON_INIT}. Expected format: PTd+[MH] (e.g., PT1H, PT30M).`
-      }
-    } catch (err: any) {
-      logger.error('Error while checking settlement window: ' + err.message)
     }
 
     try {

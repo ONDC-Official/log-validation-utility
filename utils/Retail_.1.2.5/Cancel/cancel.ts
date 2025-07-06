@@ -5,6 +5,7 @@ import { logger } from '../../../shared/logger'
 import { validateSchemaRetailV2, isObjectEmpty, checkContext, checkBppIdOrBapId } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
+import {isValidISO8601Duration} from '../../index'
 
 export const checkCancel = (data: any, msgIdSet: any,flow?:string) => {
   const cnclObj: any = {}
@@ -128,6 +129,41 @@ export const checkCancel = (data: any, msgIdSet: any,flow?:string) => {
     } catch (err: any) {
       logger.error(`!!Some error occurred while checking /${constants.CANCEL} API`, err)
     }
+    try {
+      if (flow === FLOW.FLOW005) {
+        // Validate tags array
+        if (!cancel.tags || !Array.isArray(cancel.tags) || cancel.tags.length === 0) {
+          cnclObj['invldTags'] = `message/descriptor/tags is missing or invalid in /${constants.CANCEL}`
+        } else {
+          const paramsTag = cancel.tags.find((tag: any) => tag.code === 'params')
+          if (!paramsTag || !paramsTag.list || !Array.isArray(paramsTag.list)) {
+            cnclObj['missingParamsTag'] =
+              `message/descriptor/tags must contain a 'params' tag with a valid list in /${constants.CANCEL}`
+          } else {
+            const forceParam = paramsTag.list.find((item: any) => item.code === 'force')
+            const ttlResponseParam = paramsTag.list.find((item: any) => item.code === 'ttl_response')
+
+            // Validate force parameter
+            if (!forceParam || !forceParam.code) {
+              cnclObj['missingForceParam'] =
+                `message/descriptor/tags/params must contain a 'force' parameter in /${constants.CANCEL}`
+            } else if (!['yes', 'no'].includes(forceParam.value)) {
+              cnclObj['invalidForceValue'] =
+                `message/descriptor/tags/params/force must be 'yes' or 'no' in /${constants.CANCEL}`
+            }
+
+            // Validate ttl_response parameter
+            if (!ttlResponseParam || !ttlResponseParam.value) {
+              cnclObj['missingTtlResponse'] =
+                `message/descriptor/tags/params must contain a 'ttl_response' parameter in /${constants.CANCEL}`
+            } else if (!isValidISO8601Duration(ttlResponseParam.value)) {
+              cnclObj['invalidTtlResponseValue'] =
+                `message/descriptor/tags/params/ttl_response must be a valid ISO8601 duration in /${constants.CANCEL}`
+            }
+          }
+        }
+      }
+    } catch (error) {}
 
     return cnclObj
   } catch (err: any) {

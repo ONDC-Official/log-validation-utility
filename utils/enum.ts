@@ -732,6 +732,7 @@ export enum statutory_reqs {
   PackagedCommodities = '@ondc/org/statutory_reqs_packaged_commodities',
   None = 'None'
 }
+
 export enum OFFERSFLOW { 
   FLOW0091 = '0091',
   FLOW0092 = '0092',
@@ -742,4 +743,3 @@ export enum OFFERSFLOW {
   FLOW0097 = '0097',
   FLOW0098 = '0098'
 }
-// export const OFFER_FLOW_VALUES: string[] = Object.values(OFFERSFLOW);

@@ -15,7 +15,7 @@ export const FnBconfirmSchema = {
         },
         core_version: {
           type: 'string',
-          enum: ['1.2.0'],
+          enum: ['1.2.0', '1.2.5'],
           minLength: 1,
         },
         bap_id: {

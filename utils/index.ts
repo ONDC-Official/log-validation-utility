@@ -3,7 +3,6 @@ import _ from 'lodash'
 import { logger } from '../shared/logger'
 import constants, { ApiSequence, statusArray } from '../constants'
 import schemaValidator from '../shared/schemaValidator'
-import schemaValidatorV2 from '../shared/schemaValidatorV2'
 import data from '../constants/AreacodeMap.json'
 import { reasonCodes } from '../constants/reasonCode'
 import { InputObject } from '../shared/interface'
@@ -13,8 +12,10 @@ import { groceryCategoryMappingWithStatutory } from '../constants/category'
 import { statutory_reqs } from './enum'
 import { PAYMENT_STATUS } from '../constants/index'
 import { FLOW } from '../utils/enum'
-import { bap_features } from './bap_features'
+import axios from 'axios'
 import { TRV14OptialCalls } from '../constants/trvFlows'
+import { bap_features } from './bap_features'
+import schemaValidatorV2 from '../shared/schemaValidatorV2'
 
 export const getObjValues = (obj: any) => {
   let values = ''
@@ -264,7 +265,7 @@ export const validateSchemaRetailV2 = (domain: string, api: string, data: any) =
   }
 }
 
-export const validateSchema = (domain: string, api: string, data: any) => {
+export const validateSchema = (domain: string, api: string, data: any ) => {
   try {
     logger.info(`Inside Schema Validation for domain: ${domain}, api: ${api}`)
     const errObj: any = {}
@@ -309,11 +310,11 @@ export const checkGpsPrecision = (coordinates: string) => {
   try {
     const [lat, long] = coordinates.split(',')
     const latPrecision = getDecimalPrecision(lat)
-    const longPrecision = getDecimalPrecision(long)
-    const decimalPrecision = constants.FOUR_DECIMAL_PRECISION
 
-    // Changed comparison from === to >= to check for minimum precision
-    return latPrecision >= decimalPrecision && longPrecision >= decimalPrecision ? 1 : { latPrecision, longPrecision }
+    const longPrecision = getDecimalPrecision(long)
+    const decimalPrecision = constants.DECIMAL_PRECISION
+
+    return latPrecision === decimalPrecision && longPrecision === decimalPrecision ? 1 : { latPrecision, longPrecision }
   } catch (error) {
     logger.error(error)
     return error
@@ -1117,7 +1118,7 @@ export const mapCancellationID = (cancelled_by: string, reason_id: string, error
 export const payment_status = (payment: any, flow: string) => {
   const errorObj: any = {}
   logger.info(`Checking payment status for flow: ${flow}`)
-  if ( (flow === FLOW.FLOW012) && payment.status === PAYMENT_STATUS.PAID) {
+  if (flow === FLOW.FLOW012 && payment.status === PAYMENT_STATUS.PAID) {
     errorObj.message = `Cannot be ${payment.status} for ${FLOW.FLOW012} flow (Cash on Delivery)`
     return errorObj
   }
@@ -1139,34 +1140,31 @@ export const checkQuoteTrailSum = (
 ) => {
   let quoteTrailSum = 0
   for (const obj of fulfillmentArr) {
-    const arrType = ['misc', 'packing', 'delivery', 'tax', 'item', 'offer']
+    const arrType = ['misc', 'packing', 'delivery', 'tax', 'item']
     const quoteTrailItems = _.filter(obj.tags, { code: 'quote_trail' })
     for (const item of quoteTrailItems) {
       for (const val of item.list) {
         if (val.code === 'type') {
           if (!arrType.includes(val.value)) {
             errorObj[`invalidQuoteTrailType${apiSeq}`] =
-              `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax' , 'offer' or 'item'`
+              `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax' or 'item'`
           }
         }
         if (val.code === 'type') {
           if (!arrType.includes(val.value)) {
             errorObj[`invalidQuoteTrailType${apiSeq}`] =
-              `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax','offer' or 'item'`
+              `Invalid Quote Trail Type '${val.value}'. It should be equal to one of the given value in small_case 'misc', 'packing', 'delivery', 'tax' or 'item'`
           }
         }
         if (val.code === 'value') {
           quoteTrailSum -= val.value
-          console.log('quoteTrailSum', quoteTrailSum)
         }
       }
     }
   }
   quoteTrailSum = Number(quoteTrailSum.toFixed(2))
   if (Math.round(priceAtConfirm) != Math.round(price + quoteTrailSum)) {
-    console.log('price in prince', price, priceAtConfirm)
-
-    const key = `invalidQuoteTrailPrices`
+    const key = `invldQuoteTrailPrices`
     errorObj[key] =
       `quote_trail price and item quote price sum for ${apiSeq} should be equal to the price as in ${constants.ON_CONFIRM}`
     logger.error(
@@ -1589,6 +1587,20 @@ export function validateBppUri(bppUri: string, bpp_id: string, errorObj: any): a
     errorObj['bpp_id_in_uri'] = `Bpp_id ${bpp_id} is not found in BppUri ${bppUri}`
   }
 }
+
+export const pingValidate = async (): Promise<"ok" | "fail"> => {
+  return ping(`https://log-validation.ondc.org/api/`)
+}
+
+async function ping(url: string): Promise<"ok" | "fail"> {
+	try {
+		const res = await axios.get(url, { timeout: 2000 });
+		return res.status === 200 ? "ok" : "fail";
+	} catch {
+		return "fail";
+	}
+}
+
 export interface TagListItem {
   code: string
   value: string
@@ -1912,13 +1924,3 @@ export function findMissingTags(
 
   return missingTags;
 }
-
-
-
-
-
-
-
-
-
-

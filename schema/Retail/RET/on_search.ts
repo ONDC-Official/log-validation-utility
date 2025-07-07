@@ -29,7 +29,7 @@ export const onSearchSchema = {
         },
         core_version: {
           type: 'string',
-          enum: ['1.2.0'],
+          enum: ['1.2.0', '1.2.5'],
           minLength: 1,
         },
         bap_id: {
@@ -930,7 +930,7 @@ export const onSearchSchema = {
                             code: {
                               type: 'string',
                               description: 'Type of the offer (e.g., discount, buyXgetY, freebie).',
-                              enum: ['discount', 'buyXgetY', 'freebie', 'slab', 'combo', 'delivery', 'exchange', 'financing']
+                              enums: ['discount', 'buyXgetY', 'freebie', 'slab', 'combo', 'delivery', 'exchange', 'financing']
                             },
                             images: {
                               type: 'array',
@@ -991,7 +991,7 @@ export const onSearchSchema = {
                               code: {
                                 type: 'string',
                                 description: 'Type of the tag (e.g., qualifier, benefit, meta).',
-                                enum: ['qualifier', 'benefit', 'meta']
+                                enums: ['qualifier', 'benefit', 'meta']
                               },
                               list: {
                                 type: 'array',
@@ -1001,7 +1001,7 @@ export const onSearchSchema = {
                                     code: {
                                       type: 'string',
                                       description: 'Code representing the specific tag property.',
-                                      enum: ['min_value', 'value_type', 'value', 'additive', 'item_count', 'item_id', 'item_value']
+                                      enums: ['min_value', 'value_type', 'value', 'additive', 'item_count', 'item_id', 'item_value']
                                     },
                                     value: {
                                       type: 'string',

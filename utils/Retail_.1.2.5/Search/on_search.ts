@@ -1271,6 +1271,76 @@ export const checkOnsearch = (data: any, flow?: string) => {
       } catch (error: any) {
         logger.error(`!!Errors while checking categories in bpp/providers[${i}], ${error.stack}`)
       }
+      try {
+        const fulfillments:any = onSearchCatalog['bpp/providers'][i]['fulfillments']
+        fulfillments.forEach((fulfillment:any) => {
+
+          const hasSelfPickupFulfillment = fulfillments.some((f:any) => f.type === 'Self-Pickup')
+
+          const selfPickupTag = fulfillment.tags?.find(
+            (tag:any) =>
+              tag.code === 'timing' && tag.list?.some((item:any) => item.code === 'type' && item.value === 'Self-Pickup'),
+          )
+
+          if (flow === '002') {
+            // Flow is 002 => Self-Pickup fulfillment is required
+            if (!hasSelfPickupFulfillment) {
+              const key = `prvdr${i}fulfillment_self_pickup_required`
+              errorObj[key] = `Provider[${i}] with flow=002 must have at least one fulfillment of type 'Self-Pickup'`
+            }
+          } else {
+            // For all other flows => Self-Pickup timing tag is required and must be valid
+            if (!selfPickupTag) {
+              const key = `prvdr${i}tag_self_pickup_required`
+              errorObj[key] = `Provider[${i}] with flow≠002 must have a 'timing' tag with list.type='Self-Pickup'`
+            } else {
+              // const timingKeys = ['day_from', 'day_to', 'time_from', 'time_to']
+              const tagListMap = Object.fromEntries(selfPickupTag.list.map((t: any) => [t.code, t.value]))
+              const locationId = tagListMap['location']
+
+              if (locationId) {
+
+                if (!prvdrLocId.has(locationId)) {
+                  const key = `prvdr${i}tag_timing_invalid_location`
+                  errorObj[key] =
+                    `'location' in Self-Pickup timing tag must match one of the provider[${i}]'s location ids`
+                }
+              } else {
+                const key = `prvdr${i}tag_timing_missing_location`
+                errorObj[key] = `'location' is missing in Self-Pickup timing tag for provider[${i}]`
+              }
+
+              // Validate day_from/to are between 1 and 7
+              ;['day_from', 'day_to'].forEach((code) => {
+                const val = parseInt(tagListMap[code])
+                if (isNaN(val) || val < 1 || val > 7) {
+                  const key = `prvdr${i}tag_timing_invalid_${code}`
+                  errorObj[key] = `Invalid value for ${code}: ${tagListMap[code]} in Self-Pickup timing tag`
+                }
+              })
+
+              // Validate time_from/to format
+              ;['time_from', 'time_to'].forEach((code) => {
+                const val = tagListMap[code]
+                if (!/^([01]\d|2[0-3])[0-5]\d$/.test(val)) {
+                  const key = `prvdr${i}tag_timing_invalid_${code}`
+                  errorObj[key] = `Invalid format for ${code}: ${val} in Self-Pickup timing tag (expected HHMM)`
+                }
+              })
+
+              // Additional validation: time_to > time_from
+              const tFrom = parseInt(tagListMap['time_from'])
+              const tTo = parseInt(tagListMap['time_to'])
+              if (!isNaN(tFrom) && !isNaN(tTo) && tTo <= tFrom) {
+                const key = `prvdr${i}tag_timing_time_order`
+                errorObj[key] = `'time_to' (${tTo}) must be greater than 'time_from' (${tFrom}) for Self-Pickup`
+              }
+            }
+          }
+        })
+      } catch (error:any) {
+        logger.error(`!!Errors while checking fulfillments in bpp/providers[${i}], ${error.stack}`)
+      }
 
       try {
         logger.info(`Checking items for provider (${prvdr.id}) in bpp/providers[${i}]`)

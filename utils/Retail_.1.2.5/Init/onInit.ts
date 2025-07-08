@@ -277,12 +277,18 @@ export const checkOnInit = (data: any, flow: string) => {
       logger.info(`Validating fulfillments`)
       on_init?.fulfillments.forEach((fulfillment: any) => {
         const { type } = fulfillment
-        if (type == 'Delivery') {
+        if(flow === FLOW.FLOW002){
+          if(type !== "Self-Pickup"){
+             onInitObj[`fulfillments[${fulfillment.id}]`] = `Fulfillment type should be 'Self-Pickup' for flow: ${flow}`
+          }
+        }
+        if (type == 'Delivery' || type == "Self-Pickup") {
           if (fulfillment.tags && fulfillment.tags.length > 0) {
             onInitObj[`fulfillments[${fulfillment.id}]`] =
-              `/message/order/fulfillment of type 'delivery' should not have tags `
+              `/message/order/fulfillment of type ${type} should not have tags `
           }
-        } else if (type !== 'Delivery') {
+        }
+        else if (type !== 'Delivery') {
           onInitObj[`fulfillments[${fulfillment.id}]`] = `Fulfillment type should be 'Delivery' (case-sensitive)`
         }
       })
@@ -523,15 +529,21 @@ export const checkOnInit = (data: any, flow: string) => {
     } catch (error: any) {
       logger.error(`!!Error while checking quote object in /${constants.ON_SELECT} and /${constants.ON_INIT}`)
     }
+
     try {
       logger.info(`Checking Settlement basis in /${constants.ON_INIT}`)
-
-      const validSettlementBasis = ['delivery', 'shipment'] // Enums (as per API Contract)
+      if(on_init.payment.collected_by === "BPP"){
+        const validSettlementBasis = ['delivery', 'shipment'] // Enums (as per API Contract)
 
       const settlementBasis = on_init.payment['@ondc/org/settlement_basis']
-
-      if (!validSettlementBasis.includes(settlementBasis)) {
+      if(settlementBasis){
+        if (!validSettlementBasis.includes(settlementBasis)) {
         onInitObj.settlementBasis = `Invalid settlement basis in /${constants.ON_INIT}. Expected one of: ${validSettlementBasis.join(', ')}`
+      }
+      }
+      else{
+        onInitObj.settlementBasis = `settlement basis is required in /${constants.ON_INIT} when payment.collected_by is : ${on_init.payment.collected_by}`
+      }
       }
     } catch (error: any) {
       logger.error(`!!Error while checking settlement basis in /${constants.ON_INIT}, ${error.stack}`)
@@ -546,9 +558,12 @@ export const checkOnInit = (data: any, flow: string) => {
       }
 
       const settlementWindow = on_init.payment['@ondc/org/settlement_window']
-
-      if (!validSettlementWindow.value.test(settlementWindow)) {
-        onInitObj.settlementWindow = `Invalid settlement window in /${constants.ON_INIT}. Expected format: PTd+[MH] (e.g., PT1H, PT30M).`
+      if (on_init.payment.collected_by === 'BPP') {
+        if (settlementWindow) {
+          if (!validSettlementWindow.value.test(settlementWindow)) {
+            onInitObj.settlementWindow = `Invalid settlement window in /${constants.ON_INIT}. Expected format: PTd+[MH] (e.g., PT1H, PT30M).`
+          }
+        }
       }
     } catch (err: any) {
       logger.error('Error while checking settlement window: ' + err.message)

@@ -22,7 +22,7 @@ export const searchSchema = {
         },
         core_version: {
           type: 'string',
-          enum: ['1.2.5'],
+          const: '1.2.5',
           minLength: 1,
         },
         bap_id: {
@@ -64,6 +64,7 @@ export const searchSchema = {
         'timestamp',
         'ttl',
       ],
+      additionalProperties: false,
     },
     message: {
       type: 'object',
@@ -149,7 +150,7 @@ export const searchSchema = {
                 properties: {
                   code: {
                     type: 'string',
-                    enum: ['catalog_inc', 'bap_terms', 'catalog_full', 'bap_features'],
+                    enum: ['catalog_inc', 'bap_terms', 'catalog_full', 'bap_features','bnp_demand_signal','bap_promos'],
                   },
                   list: {
                     type: 'array',
@@ -212,12 +213,17 @@ export const searchSchema = {
                             '023',
                             '024',
                             '025',
+                            'search_term',
+                            'category',
+                            'from',
+                            'to',
                           ],
                         },
                         value: {
                           type: 'string',
                         },
                       },
+                          additionalProperties: false,
                       required: ['code', 'value'],
                     },
                     minItems: 1,
@@ -399,13 +405,73 @@ export const searchSchema = {
                       },
                     },
                   },
+                  {
+                    properties: {
+                      code: { const: 'bnp_demand_signal' },
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          contains: {
+                            allOf: [
+                              {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'category' },
+                                },
+                                required: ['code'],
+                              },
+                             
+                            ],
+                          },
+                        },
+                      },
+                    },
+                  },
+                  {
+                    properties: {
+                      code: { const: 'bap_promos' },
+                    },
+                    then: {
+                      properties: {
+                        list: {
+                          contains: {
+                            allOf: [
+                              {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'category' },
+                                },
+                                required: ['code'],
+                              },
+                              {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'from' },
+                                },
+                                required: ['code'],
+                              },
+                              {
+                                type: 'object',
+                                properties: {
+                                  code: { const: 'to' },
+                                },
+                                required: ['code'],
+                              },
+                             
+                            ],
+                          },
+                        },
+                      },
+                    },
+                  },
                 ],
               },
               minItems: 1,
               contains: {
                 type: 'object',
                 properties: {
-                  code: { enum: ['bap_features', 'catalog_full', 'catalog_inc', 'bap_terms'] },
+                  code: { enum: ['bap_features', 'catalog_full', 'catalog_inc', 'bap_terms','bnp_demand_signal','bap_promos'] },
                 },
                 required: ['code', 'list'],
               },
@@ -415,7 +481,9 @@ export const searchSchema = {
         },
       },
       required: ['intent'],
+      additionalProperties: false,
     },
   },
   required: ['context', 'message'],
+  additionalProperties: false,
 }

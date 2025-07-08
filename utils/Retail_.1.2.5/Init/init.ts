@@ -5,7 +5,7 @@ import { validateSchemaRetailV2, isObjectEmpty, checkContext, checkItemTag, chec
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW, OFFERSFLOW } from '../../../utils/enum'
 
-export const checkInit = (data: any, msgIdSet: any,flow:string) => {
+export const checkInit = (data: any, msgIdSet: any, flow: string) => {
   const initObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -99,6 +99,23 @@ export const checkInit = (data: any, msgIdSet: any,flow:string) => {
     }
 
     const init = message.order
+    try {
+      const on_selectFulfillment = getValue('fulfillment_item_obj')
+      if (flow === FLOW.FLOW01D) {
+        const isValid = init.items.every((item: any) => {
+          return on_selectFulfillment.some(
+            (entry: any) => entry.id === item.id && entry.fulfillment_id === item.fulfillment_id,
+          )
+        })
+
+        if (!isValid) {
+          initObj['mismatchFulfillmentId'] =
+            `item Id with Respective Fulfillment_id mismatches in /${constants.ON_SELECT} and /${constants.INIT}`
+        }
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking items object in /${constants.SELECT} and /${constants.INIT}, ${error.stack}`)
+    }
 
     try {
       logger.info(`Comparing provider object in /${constants.SELECT} and /${constants.INIT}`)
@@ -217,7 +234,9 @@ export const checkInit = (data: any, msgIdSet: any,flow:string) => {
         const orderLocationIds = init?.provider?.locations?.map((item: any) => item.id) || []
 
         init.offers.forEach((offer: any, index: number) => {
-          const providerOffer = providerOffers?.find((providedOffer: any) => providedOffer?.id.toLowerCase() === offer?.id.toLowerCase())
+          const providerOffer = providerOffers?.find(
+            (providedOffer: any) => providedOffer?.id.toLowerCase() === offer?.id.toLowerCase(),
+          )
           console.log('providerOffer in select call', JSON.stringify(providerOffer))
 
           if (!providerOffer) {
@@ -310,16 +329,16 @@ export const checkInit = (data: any, msgIdSet: any,flow:string) => {
           return
         }
         console.log('Applicable Offers:', applicableOffers)
-        setValue('init_offer',applicableOffers)
+        setValue('init_offer', applicableOffers)
       }
       const applicableOfferIds = applicableOffers.map((offer: any) => offer.id.toLowerCase())
-      const initOffersIds = init?.offers?.map((offer: any) => offer.id.toLowerCase())  
+      const initOffersIds = init?.offers?.map((offer: any) => offer.id.toLowerCase())
       const selectOffers = getValue('selected_offer')
       console.log('select offers', JSON.stringify(selectOffers))
-      if (selectOffers &&  !initOffersIds) {
+      if (selectOffers && !initOffersIds) {
         initObj['offers'] = `Offers are required in init call when given in select call`
       }
-      if (selectOffers && initOffersIds.length>0) {
+      if (selectOffers && initOffersIds.length > 0) {
         selectOffers.forEach((offer: any) => {
           const offerTagId = offer?.id
 
@@ -391,10 +410,12 @@ export const checkInit = (data: any, msgIdSet: any,flow:string) => {
 
     try {
       const collect_payment = getValue('collect_payment')
-      if (init?.offers && init?.offers.length > 0 || flow === OFFERSFLOW.FLOW0098){
+      if ((init?.offers && init?.offers.length > 0) || flow === OFFERSFLOW.FLOW0098) {
         const providerOffers: any = getValue(`${ApiSequence.ON_SEARCH}_offers`)
         init.offers.forEach((offer: any, index: number) => {
-          const providerOffer = providerOffers?.find((providedOffer: any) => providedOffer?.id.toLowerCase() === offer?.id.toLowerCase())
+          const providerOffer = providerOffers?.find(
+            (providedOffer: any) => providedOffer?.id.toLowerCase() === offer?.id.toLowerCase(),
+          )
           console.log('providerOffer in select call', JSON.stringify(providerOffer))
 
           if (!providerOffer) {
@@ -405,30 +426,27 @@ export const checkInit = (data: any, msgIdSet: any,flow:string) => {
       }
       // if()
       if (flow === FLOW.FLOW0099 || collect_payment === 'N') {
-        const bapTermsTag = init.tags.find((tag:any)=>tag.code === "bap_terms")
-        if (bapTermsTag?.code !== "bap_terms" || !Array.isArray(bapTermsTag.list)) {
-          initObj["bap_terms"] = "'bap_terms' tag must have a valid 'list' array.";
-          return;
+        const bapTermsTag = init.tags.find((tag: any) => tag.code === 'bap_terms')
+        if (bapTermsTag?.code !== 'bap_terms' || !Array.isArray(bapTermsTag.list)) {
+          initObj['bap_terms'] = "'bap_terms' tag must have a valid 'list' array."
+          return
         }
-      
-        const typeEntry = bapTermsTag.list.find((item: any) => item.code === "finance_cost_type");
-        const valueEntry = bapTermsTag.list.find((item: any) => item.code === "finance_cost_value");
-      
-        if (!typeEntry || !["percent", "amount"].includes(typeEntry.value)) {
-          initObj["bap_terms_type"] = "'finance_cost_type' must be present and one of 'percent' or 'amount'";
+
+        const typeEntry = bapTermsTag.list.find((item: any) => item.code === 'finance_cost_type')
+        const valueEntry = bapTermsTag.list.find((item: any) => item.code === 'finance_cost_value')
+
+        if (!typeEntry || !['percent', 'amount'].includes(typeEntry.value)) {
+          initObj['bap_terms_type'] = "'finance_cost_type' must be present and one of 'percent' or 'amount'"
         }
-      
+
         if (!valueEntry || isNaN(Number(valueEntry.value))) {
-          initObj["bap_terms_value"] = "'finance_cost_value' must be a valid number";
-        }        
+          initObj['bap_terms_value'] = "'finance_cost_value' must be a valid number"
+        }
       }
-    } catch (error) {
-      
-    }
+    } catch (error) {}
 
     return initObj
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.INIT} API`, err)
   }
 }
-

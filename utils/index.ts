@@ -349,6 +349,26 @@ export const checkTagConditions = (message: any, context: any, apiSeq: string) =
     const bapFeaturesTags = message.intent.tags.find(
       (tag: { code: string; value: string }) => tag.code === 'bap_features',
     )
+    const bnpDemandSignals = message.intent.tags.find(
+      (tag: { code: string; value: string }) => tag.code === 'bnp_demand_signal',
+    )
+    if(bnpDemandSignals){
+      bnpDemandSignals.list.forEach((tag: any) => {
+
+
+        if (tag.code!=='search_term') {
+          tags.push(`/message/intent/tags/list/code ${tag.code} is not a valid code`)
+          return
+        }
+         if (!tag.value ) {
+          tags.push(`/message/intent/tags/list/code ${tag.code} value must be stringified formatted json`)
+          return
+        }
+
+       
+      })
+
+    }
 
     if (catalogIncTags) {
       const startTimeTag = catalogIncTags.list.find((tag: { code: string; value: string }) => tag.code === 'start_time')

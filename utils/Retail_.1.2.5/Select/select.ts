@@ -107,7 +107,6 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
   const itemMap: any = {}
   const itemMapper: any = {}
 
-
   try {
     logger.info(`Comparing city of /${constants.ON_SEARCH} and /${constants.SELECT}`)
     if (!_.isEqual(onSearchContext.city, context.city)) {
@@ -414,8 +413,8 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
     }
     try {
       logger.info(`Checking or offers in /${constants.SELECT}`)
-      console.log("offers in select call",JSON.stringify(select.offers));
-      
+      console.log('offers in select call', JSON.stringify(select.offers))
+
       if (select?.offers && select?.offers.length > 0) {
         const providerOffers: any = getValue(`${ApiSequence.ON_SEARCH}_offers`)
         const applicableOffers: any[] = []
@@ -424,8 +423,8 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
 
         select.offers.forEach((offer: any, index: number) => {
           const providerOffer = providerOffers?.find((providedOffer: any) => providedOffer?.id === offer?.id)
-          console.log("providerOffer in select call",JSON.stringify(providerOffer));
-          
+          console.log('providerOffer in select call', JSON.stringify(providerOffer))
+
           if (!providerOffer) {
             errorObj[`offer[${index}]`] = `Offer with id ${offer.id} is not available for the provider.`
             return
@@ -474,8 +473,7 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
           }
 
           applicableOffers.push({ ...providerOffer, index })
-          console.log("applicableOffers",JSON.stringify(applicableOffers));
-          
+          console.log('applicableOffers', JSON.stringify(applicableOffers))
         })
 
         // Additive validation
@@ -516,13 +514,10 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
           // setValue('Addtive-Offers',false)
           return
         }
-          console.log('Applicable Offers in select:', applicableOffers)
-          setValue('selected_offer', applicableOffers)
+        console.log('Applicable Offers in select:', applicableOffers)
+        setValue('selected_offer', applicableOffers)
       }
-      
-      
-      
-    } catch (error:any) {
+    } catch (error: any) {
       logger.error(`Error while checking for offers in /${constants.SELECT}, ${error.stack}`)
     }
   }
@@ -533,41 +528,162 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
     errorObj.providerChecks = `Warning: Missed checks for provider as provider with  ID: ${select.provider.id} does not exist on ${constants.ON_SEARCH} API`
   }
 
-  let minVal: any = null;
+  let minVal: any = null
 
-try {
-  const providers = onSearch?.message?.catalog['bpp/providers'];
-  const getAllTags = (providers: any[]) => {
-    return providers.flatMap((provider) => {
-    
-      return provider.tags;
-    });
-  };
+  try {
+    const providers = onSearch?.message?.catalog['bpp/providers']
+    const getAllTags = (providers: any[]) => {
+      return providers.flatMap((provider) => {
+        return provider.tags
+      })
+    }
 
-  const tagList = getAllTags(providers);
-  const tag = tagList.find((ele): any => ele.code === 'order_value');
-  minVal = tag.list.find((ele: { code: string }) => ele.code === 'min_value');
-  if(minVal.value)setValue('MinOrderValue', minVal.value);
-} catch (error: any) {
-  logger.error(`!!Error while extracting MinOrderValue in ${constants.SELECT}`, error);
-}
-
-const validDomains = ['ONDC:RET10', 'ONDC:RET13', 'ONDC:RET18'];
-if (flow === FLOW.FLOW008 && validDomains.includes(context.domain)) {
- if (!minVal ) {
-   const key = `order_value`;
-    errorObj[key] = `Tags must contain "order_value" with Minimum Order Value`;
+    const tagList = getAllTags(providers)
+    const tag = tagList.find((ele): any => ele.code === 'order_value')
+    minVal = tag.list.find((ele: { code: string }) => ele.code === 'min_value')
+    if (minVal.value) setValue('MinOrderValue', minVal.value)
+  } catch (error: any) {
+    logger.error(`!!Error while extracting MinOrderValue in ${constants.SELECT}`, error)
   }
-  if (minVal) {
-    const price = getValue('selectedPrice');
-    if (_.lt(price, minVal.value)) {
-      const key = `minimum_order_value`;
-      errorObj[key] = `Order value must be greater or equal to Minimum Order Value`;
+
+  const validDomains = ['ONDC:RET10', 'ONDC:RET13', 'ONDC:RET18']
+  if (flow === FLOW.FLOW008 && validDomains.includes(context.domain)) {
+    if (!minVal) {
+      const key = `order_value`
+      errorObj[key] = `Tags must contain "order_value" with Minimum Order Value`
+    }
+    if (minVal) {
+      const price = getValue('selectedPrice')
+      if (_.lt(price, minVal.value)) {
+        const key = `minimum_order_value`
+        errorObj[key] = `Order value must be greater or equal to Minimum Order Value`
+      }
     }
   }
-}
+
+  try {
+    const domains = ['ONDC:RET14', 'ONDC:RET15']
+    if (flow === FLOW.FLOW016 && domains.includes(context.domain)) {
+      const provider = onSearch?.message?.catalog['bpp/providers'].find(
+        (provider: { id: any }) => provider.id === select.provider.id,
+      )
+
+      const getCategories = provider.categories.find((ele: any) => ele.id === 'CG1')
+      const inputType = getCategories.tags
+        .find((ele: any) => ele.code === 'config')
+        .list?.find((ele: { code: string }): any => ele.code === 'input')
+      if (inputType.value !== 'text') {
+        const key = `customization`
+        errorObj[key] = `customization input type must be text for Free text customizations flow`
+      }
+    }
+  } catch (error: any) {
+    logger.error(`!!Error while checking customization ${constants.SELECT}`, error)
+  }
+ if (flow === FLOW.FLOW016) {
+      // Flow 016 specific validation - check for customization items and their relationships
+      try {
+        logger.info(`Checking for customization items in /${constants.SELECT} for flow 016`)
+        
+        const items = select.items
+        if (!items || !Array.isArray(items) || items.length === 0) {
+          errorObj.missingItems = `No items found in /${constants.SELECT} for flow 016`
+          return isObjectEmpty(errorObj) ? {} : errorObj
+        }
+        
+        // Get the custom groups saved from ON_SEARCH
+        const customGroups = getValue('flow016_custom_groups')
+        if (!customGroups || !Array.isArray(customGroups) || customGroups.length === 0) {
+          errorObj.missingCustomGroups = `No custom groups were found in previous /${constants.ON_SEARCH} for flow 016`
+          return isObjectEmpty(errorObj) ? {} : errorObj
+        }
+        
+        // Find the regular item (type: item)
+        const regularItem = items.find((item: any) => {
+          return item.tags?.some((tag: any) => 
+            tag.code === 'type' && 
+            tag.list?.some((listItem: any) => listItem.code === 'type' && listItem.value === 'item')
+          )
+        })
+        
+        if (!regularItem) {
+          errorObj.missingRegularItem = `No item with type 'item' found in /${constants.SELECT} for flow 016`
+          return isObjectEmpty(errorObj) ? {} : errorObj
+        }
+        
+        // Find the customization item (type: customization)
+        const customizationItem = items.find((item: any) => {
+          return item.tags?.some((tag: any) => 
+            tag.code === 'type' && 
+            tag.list?.some((listItem: any) => listItem.code === 'type' && listItem.value === 'customization')
+          )
+        })
+        
+        if (!customizationItem) {
+          errorObj.missingCustomizationItem = `No item with type 'customization' found in /${constants.SELECT} for flow 016`
+          return isObjectEmpty(errorObj) ? {} : errorObj
+        }
+        
+        // Check if the customization item has the parent_item_id linked to the regular item
+        if (customizationItem.parent_item_id !== regularItem.id) {
+          errorObj.incorrectParentLink = `Customization item's parent_item_id '${customizationItem.parent_item_id}' doesn't match the regular item id '${regularItem.id}'`
+        }
+        
+        // Check if the customization item has the descriptor with input_text
+        const hasInputText = customizationItem.descriptor?.tags?.some((tag: any) => 
+          tag.code === 'customization' && 
+          tag.list?.some((listItem: any) => listItem.code === 'input_text' && listItem.value)
+        )
+        
+        if (!hasInputText) {
+          errorObj.missingInputText = `Customization item is missing descriptor.tags with code 'customization' and list with code 'input_text'`
+        }
+        
+        // Check if the customization item parent matches a custom_group from ON_SEARCH
+        let parentMatch = false
+        const parentId = customizationItem.tags?.find((tag: any) => 
+          tag.code === 'parent' && 
+          tag.list?.some((listItem: any) => listItem.code === 'id')
+        )?.list?.find((listItem: any) => listItem.code === 'id')?.value
+        
+        if (!parentId) {
+          errorObj.missingParentId = `Customization item is missing parent.id tag reference in tags`
+        } else {
+          // Check if this parent id matches any custom group id from ON_SEARCH
+          parentMatch = customGroups.some((group: any) => group.id === parentId)
+          
+          if (!parentMatch) {
+            errorObj.invalidParentId = `Customization item parent id '${parentId}' doesn't match any custom_group id from ON_SEARCH`
+          } else {
+            logger.info(`Found valid customization item with parent id: ${parentId} matching a custom_group from ON_SEARCH`)
+          }
+        }
+        
+        // Save the validation result for reference in subsequent API calls
+        setValue('flow016_customization_valid', !isObjectEmpty(errorObj))
+        
+      } catch (error: any) {
+        logger.error(`Error while checking customization items in /${constants.SELECT} for flow 016, ${error.stack}`)
+        errorObj.customizationCheckError = `Error validating customization items: ${error.message}`
+      }
+  }
 
 
+  try {
+    if(flow===FLOW.FLOW025){
+        logger.info(`Checking for bnp_demand_signal  in /${constants.SELECT} for flow 025`)
+      const tags = select.tags
+      const tag = tags.find((item:any)=> item.code==='bnp_demand_signal')
+        if (!tag) {
+            errorObj["missingBnpDemandSignal"] = `BnpDemandSignal must be present in /${constants.SELECT} for flow025`
+          }
+    }
+
+    
+  } catch (error:any) {
+           errorObj.customizationCheckError = `Error validating customization items: ${error.message}`
+    
+  }
 
   return Object.keys(errorObj).length > 0 && errorObj
 }

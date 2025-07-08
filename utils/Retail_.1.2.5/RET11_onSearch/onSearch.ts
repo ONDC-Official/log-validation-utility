@@ -289,7 +289,7 @@ export const checkOnsearchFullCatalogRefresh = (data: any,flow:string) => {
           setValue(`${ApiSequence.ON_SEARCH}np_type`, '')
         } else {
           setValue(`${ApiSequence.ON_SEARCH}np_type`, npType.value)
-          const npTypeValue = npType.value.toUpperCase()
+          const npTypeValue = npType.value
           if (npTypeValue !== 'ISN' && npTypeValue !== 'MSN') {
             errorObj['bpp/descriptor/np_type'] =
               `Invalid value '${npType.value}' for np_type. It should be either 'ISN' or 'MSN' in uppercase.`

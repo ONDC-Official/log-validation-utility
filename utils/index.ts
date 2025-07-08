@@ -9,7 +9,7 @@ import { InputObject } from '../shared/interface'
 import { setValue } from '../shared/dao'
 export const isoUTCTimestamp = '^d{4}-d{2}-d{2}Td{2}:d{2}:d{2}(.d{1,3})?Z$'
 import { groceryCategoryMappingWithStatutory } from '../constants/category'
-import { statutory_reqs } from './enum'
+import { buyer_instructions, statutory_reqs } from './enum'
 import { PAYMENT_STATUS } from '../constants/index'
 import { FLOW } from '../utils/enum'
 import axios from 'axios'
@@ -1924,3 +1924,84 @@ export function findMissingTags(
 
   return missingTags;
 }
+export function validateAuthorization(auth: any, errorObj: any, path = 'authorization') {
+  if (!auth) {
+    errorObj[path] = "Missing authorization object";
+    return;
+  }
+
+  // Type check
+  if (!Object.values(buyer_instructions).includes(auth.type)) {
+    errorObj[`${path}.type`] = `Invalid type: ${auth.type}. Must be one of ${Object.values(buyer_instructions).join(', ')}`;
+  }
+
+  // Token check
+  if (!auth.token || typeof auth.token !== 'string' || auth.token.trim() === '') {
+    errorObj[`${path}.token`] = "Authorization token must be a non-empty string";
+  }
+
+  // Date checks
+  const validFrom = Date.parse(auth.valid_from);
+  const validTo = Date.parse(auth.valid_to);
+
+  if (isNaN(validFrom)) {
+    errorObj[`${path}.valid_from`] = `Invalid valid_from date: ${auth.valid_from}`;
+  }
+
+  if (isNaN(validTo)) {
+    errorObj[`${path}.valid_to`] = `Invalid valid_to date: ${auth.valid_to}`;
+  }
+
+  if (!isNaN(validFrom) && !isNaN(validTo) && validTo <= validFrom) {
+    errorObj[`${path}.time_range`] = `'valid_to' must be after 'valid_from'`;
+  }
+}
+export async function validateNpFees(
+  item: any,
+  categories: any,
+  provider: any,
+  flow: string,
+  errorObj: Record<string, string>,
+  i: number,
+  j: number
+): Promise<Tag | undefined> {
+  function getNpFeesTag(tags?: Tag[]) {
+    return tags?.find(tag => tag.code === 'np_fees');
+  }
+
+  let npFeesTag = getNpFeesTag(item.tags);
+
+  // Check categories if not present at item level
+  if (!npFeesTag && Array.isArray(item.category_ids)) {
+    for (const categoryId of item.category_ids) {
+      const category = categories.find((cat:any) => cat.id === categoryId);
+      if (category) {
+        npFeesTag = getNpFeesTag(category.tags);
+        if (npFeesTag) break;
+      }
+    }
+  }
+
+  // Check provider level if still not found
+  if (!npFeesTag) {
+    npFeesTag = getNpFeesTag(provider.tags);
+  }
+
+  // Throw error if np_fees not found and flow is 00A
+  if (!npFeesTag && flow === '00A') {
+    errorObj[`prvdr${i}item${j}_np_fees_missing`] =
+      `For flow=00A, 'np_fees' is required at item/category/provider level for item_id: ${item.id}`;
+  }
+
+  return npFeesTag;
+}
+
+
+
+
+
+
+
+
+
+

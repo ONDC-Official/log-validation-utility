@@ -2,9 +2,9 @@
 import _ from 'lodash'
 import constants, { ApiSequence, PAYMENT_STATUS } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges, compareFulfillmentObject } from '../..'
+import { validateSchema, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo, compareTimeRanges, compareFulfillmentObject, validateAuthorization } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
-import { FLOW } from '../../../utils/enum'
+import { buyer_instructions, FLOW } from '../../../utils/enum'
 
 export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, fulfillmentsItemsSet: any) => {
   const onStatusObj: any = {}
@@ -261,6 +261,46 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
         logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_PACKED}, ${error.stack}`)
       }
     }
+
+    try {
+      const deliveryFulfillment = on_status.fulfillments.find((fulfillment: any) => fulfillment.type === 'Delivery')
+
+      console.log('deliveryFulfillment', deliveryFulfillment)
+
+      if (flow === FLOW.FLOW010) {
+        if (!deliveryFulfillment || !deliveryFulfillment.end) {
+          onStatusObj['dlvryFulfillment'] = `Missing delivery fulfillment details for flow: ${flow}`
+        } else {
+          const delivery_instructions = deliveryFulfillment.end.instructions
+
+          // Check if delivery instructions exist
+          if (!delivery_instructions) {
+            onStatusObj['dlvryInstructions'] = `Delivery instructions are required for flow: ${flow}`
+          } else {
+            // Validate instruction code
+            const instructionCode = delivery_instructions.code
+            const isValidCode = Object.values(buyer_instructions).includes(instructionCode)
+
+            if (!isValidCode) {
+              onStatusObj['instructionCodeInvld'] = `Delivery instruction code '${instructionCode}' is invalid`
+            }
+            const instructionCodeValue =  delivery_instructions.short_desc
+            setValue(instructionCodeValue,"otpToken")
+
+            // If code is "OTP", validate authorization
+            if (instructionCode === buyer_instructions.CODE1) {
+              const authorization = deliveryFulfillment.end.authorization
+              validateAuthorization(authorization, onStatusObj, 'authorization')
+              const otpToken = authorization["token"]
+              setValue(otpToken,"otpToken")
+            }
+          }
+        }
+      }
+    } catch (error: any) {
+      console.error('Error while validating delivery instructions:', error.message)
+    }
+
 
     return onStatusObj
   } catch (err: any) {

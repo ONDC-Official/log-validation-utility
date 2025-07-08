@@ -12,6 +12,7 @@ import {
   compareCoordinates,
   checkQuoteTrail,
   deepCompare,
+  validateAuthorization,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { timeDiff } from '../../index'
@@ -20,7 +21,7 @@ import {
   return_rejected_request_reasonCodes,
   return_request_reasonCodes,
 } from '../../../constants/reasonCode'
-import { FLOW } from '../../enum'
+import { buyer_instructions, FLOW } from '../../enum'
 
 export const checkOnUpdate = (
   data: any,
@@ -1419,6 +1420,46 @@ export const checkOnUpdate = (
     } catch (err: any) {
       logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)
     }
+    try {
+      const previousToken = getValue('otpToken')
+       const deliveryFulfillment = on_update.fulfillments.find((f: any) => f.type === "Delivery")
+      if (flow === FLOW.FLOW010) {
+        if (!deliveryFulfillment || !deliveryFulfillment.end) {
+          onupdtObj['dlvryFulfillment'] = `Missing delivery fulfillment details for flow: ${flow}`
+        } else {
+          const delivery_instructions = deliveryFulfillment.end.instructions
+
+          // Check if delivery instructions exist
+          if (!delivery_instructions) {
+            onupdtObj['dlvryInstructions'] = `Delivery instructions are required for flow: ${flow}`
+          } else {
+            // Validate instruction code
+            const instructionCode = delivery_instructions.code
+            const isValidCode = Object.values(buyer_instructions).includes(instructionCode)
+
+            if (!isValidCode) {
+              onupdtObj['instructionCodeInvld'] = `Delivery instruction code '${instructionCode}' is invalid`
+            }
+            const instructionCodeValue = delivery_instructions.short_desc
+
+            // If code is "OTP", validate authorization
+            if (instructionCode === buyer_instructions.CODE1) {
+              const authorization = deliveryFulfillment.end.authorization
+              validateAuthorization(authorization, onupdtObj, 'authorization')
+              const updatedToken = authorization['token']
+              if(previousToken == updatedToken){
+                onupdtObj["invldToken"] = `Otp should be different for the flow: ${flow}`
+              }
+            }
+            else{
+              if(previousToken === instructionCodeValue){
+                onupdtObj["invldToken"] = `Otp should be different for the flow: ${flow}`
+              }
+            }
+          }
+        }
+      }
+    } catch (error) {}
     try {
       if (apiSeq == ApiSequence.ON_UPDATE_LIQUIDATED || apiSeq === ApiSequence.ON_UPDATE_PICKED) {
         //   let updatedItemID = getValue('updatedItemID')

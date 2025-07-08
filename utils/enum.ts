@@ -724,7 +724,13 @@ export enum FLOW {
   FLOW022 = '022',
   FLOW004 = '004',
   FLOW01D = '01D'
-  
+  FLOW019 = '019',
+  FLOW015 = '015',
+  FLOW005 = '005',
+  FLOW001 = '001',
+  FLOW002 = '002',
+  FLOW010 = '010',
+  FLOW00A = '00A'
 }
 
 export enum statutory_reqs {
@@ -743,3 +749,15 @@ export enum OFFERSFLOW {
   FLOW0097 = '0097',
   FLOW0098 = '0098'
 }
+export enum fulfillment_tax{
+  DELIVERY = 'delivery',
+  PACKAGING = 'packaging',
+  MISC = 'misc'
+}
+export enum buyer_instructions{
+  CODE1 = "OTP",
+  CODE2 = "other DCC",
+  CODE3 = "no delivery code",
+  CODE5 = "static OTP"
+}
+// export const OFFER_FLOW_VALUES: string[] = Object.values(OFFERSFLOW);

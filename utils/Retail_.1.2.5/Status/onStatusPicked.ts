@@ -89,7 +89,7 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
     }
 
     const on_status = message.order
-    if(ApiSequence.REPLACEMENT_ON_STATUS_PICKED === "replacement_on_status_picked"){
+    if(state === ApiSequence.REPLACEMENT_ON_STATUS_PICKED){
       try {
         logger.info(`Comparing order Id in /${constants.ON_CONFIRM} and /${constants.REPLACEMENT_ON_STATUS_PICKED}`)
         if (on_status.id != getValue('cnfrmOrdrId')) {
@@ -333,7 +333,7 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
         )
       }
     }
-    if (ApiSequence.ON_STATUS_PICKED === 'picked') {
+    if (state === "picked") {
       try {
         logger.info(`Comparing order Id in /${constants.ON_CONFIRM} and /${constants.ON_STATUS}_${state}`)
         if (on_status.id != getValue('cnfrmOrdrId')) {

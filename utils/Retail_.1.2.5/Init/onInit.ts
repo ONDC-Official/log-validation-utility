@@ -415,8 +415,8 @@ export const checkOnInit = (data: any, flow: string) => {
       if (!on_init.payment) {
         onInitObj.pymntOnInitObj = `Payment Object can't be null in /${constants.ON_INIT}`
       }
-      if (!on_init.payment.collected_by) {
-        onInitObj[`payment_collected_by`] = `payments.collected_by must be present in ${constants.ON_INIT}`
+      if (on_init.payment.collected_by === PAYMENT_COLLECTED_BY.BAP) {
+        onInitObj[`payment_collected_by`] = `payments.collected_by not allowed in ${constants.ON_INIT} when ${PAYMENT_COLLECTED_BY.BAP}`
       }
         const collectedBy = on_init.payment.collected_by.includes(PAYMENT_COLLECTED_BY)
         const collect_payment = getValue('collect_payment')

@@ -190,6 +190,12 @@ if (Array.isArray(fulfillments)) {
         const vehicle = fulfillment.vehicle;
         const SELF_PICKUP = 'Self-Pickup'
         const KERBSIDE = 'Kerbside'
+      if (flow === FLOW.FLOW002) {
+        if (fulfillment.type !== "Self-Pickup") {
+          logger.info(`Fulfillment Type must be present `)
+          cnfrmObj['ff'] = `Fulfillment Type Self-Pickup must be present for flow : ${flow}`
+        }
+      }
 
         if (type === SELF_PICKUP && category === KERBSIDE) {
             if (!vehicle) {

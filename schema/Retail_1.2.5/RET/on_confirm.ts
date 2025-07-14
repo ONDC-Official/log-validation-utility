@@ -86,7 +86,8 @@ export const onConfirmSchema = {
             },
             state: {
               type: 'string',
-              enum: ['Created', 'Accepted', 'Cancelled'],
+              // enum: ['Created', 'Accepted', 'Cancelled'],
+              enum: ['Created'],
             },
             provider: {
               type: 'object',

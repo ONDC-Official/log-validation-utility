@@ -1996,6 +1996,73 @@ export async function validateNpFees(
   return npFeesTag;
 }
 
+type TermItem = {
+  code: 'static_terms' | 'static_terms_new' | 'effective_date';
+  value: string;
+};
+
+type ValidationResult = {
+  isValid: boolean;
+  errors: string[];
+};
+
+export function validateTermsList(list: TermItem[]): ValidationResult {
+  const expectedCodes: TermItem['code'][] = ['static_terms', 'static_terms_new', 'effective_date'];
+  const urlPattern = /^https?:\/\/[^\s]+$/;
+  const now = new Date();
+
+  const result: ValidationResult = {
+    isValid: true,
+    errors: []
+  };
+
+  const entries: Record<string, string> = {};
+
+  for (const code of expectedCodes) {
+    const item = list.find(i => i.code === code);
+
+    if (!item) {
+      result.isValid = false;
+      result.errors.push(`Missing required code: ${code}`);
+      continue;
+    }
+
+    entries[code] = item.value;
+
+    switch (code) {
+      case 'static_terms':
+      case 'static_terms_new':
+        if (!urlPattern.test(item.value)) {
+          result.isValid = false;
+          result.errors.push(`Invalid URL in ${code}`);
+        }
+        break;
+
+      case 'effective_date':
+        const date = new Date(item.value);
+        if (isNaN(date.getTime())) {
+          result.isValid = false;
+          result.errors.push('Invalid effective_date format');
+        } else if (date <= now) {
+          result.isValid = false;
+          result.errors.push('effective_date must be in the future');
+        }
+        break;
+    }
+  }
+
+  if (
+    entries.static_terms &&
+    entries.static_terms_new &&
+    entries.static_terms === entries.static_terms_new
+  ) {
+    result.isValid = false;
+    result.errors.push('static_terms and static_terms_new must be different URLs');
+  }
+
+  return result;
+}
+
 
 
 

@@ -1459,7 +1459,9 @@ export const checkOnUpdate = (
           }
         }
       }
-    } catch (error) {}
+    } catch (error: any) {
+      console.error('Error while validating delivery instructions:', error.message)
+    }
     try {
       if (apiSeq == ApiSequence.ON_UPDATE_LIQUIDATED || apiSeq === ApiSequence.ON_UPDATE_PICKED) {
         //   let updatedItemID = getValue('updatedItemID')

@@ -73,6 +73,7 @@ export default Object.freeze({
   ISSUE_4: 'issue_4',
   ON_ISSUE_7: 'on_issue_7',
   ISSUE_5: 'issue_5',
+  FORCE_CANCEL:'force_cancel'
 })
 
 export const ApiSequence = {
@@ -130,6 +131,7 @@ export const ApiSequence = {
   ON_UPDATE_ADDRESS:'on_update_address',
   UPDATE_INSTRUCTIONS:'update_instructions',
   ON_UPDATE_INSTRUCTIONS:'on_update_instructions',
+  FORCE_CANCEL:'force_cancel'
 }
 
 export const FisApiSequence = {

@@ -415,12 +415,12 @@ export const checkOnInit = (data: any, flow: string) => {
       if (!on_init.payment) {
         onInitObj.pymntOnInitObj = `Payment Object can't be null in /${constants.ON_INIT}`
       }
-      if (!on_init.payment.collected_by) {
-        onInitObj[`payment_collected_by`] = `payments.collected_by must be present in ${constants.ON_INIT}`
+      if (on_init.payment.collected_by === PAYMENT_COLLECTED_BY.BAP) {
+        onInitObj[`payment_collected_by`] = `payments.collected_by not allowed in ${constants.ON_INIT} when ${PAYMENT_COLLECTED_BY.BAP}`
       }
         const collectedBy = on_init.payment.collected_by.includes(PAYMENT_COLLECTED_BY)
         const collect_payment = getValue('collect_payment')
-        if (flow === FLOW.FLOW007 || collect_payment === 'Y') {
+        if (flow === FLOW.FLOW007 || collect_payment === 'Y' || flow === FLOW.FLOW012) {
           if (collectedBy !== PAYMENT_COLLECTED_BY.BPP) {
             onInitObj['invaliedPaymentCollectedBy'] =
               `Payment collected_by should be ${PAYMENT_COLLECTED_BY.BPP} for flow: ${flow}`
@@ -626,10 +626,12 @@ export const checkOnInit = (data: any, flow: string) => {
     }
     try {
       logger.info(`storing payment settlement details in /${constants.ON_INIT}`)
-      if (on_init.payment.hasOwnProperty('@ondc/org/settlement_details'))
+      if(on_init.payment.collected_by === PAYMENT_COLLECTED_BY.BAP){
+        if (on_init.payment.hasOwnProperty('@ondc/org/settlement_details'))
         setValue('sttlmntdtls', on_init.payment['@ondc/org/settlement_details'][0])
       else {
         onInitObj.pymntSttlmntObj = `payment settlement_details missing in /${constants.ON_INIT}`
+      }
       }
     } catch (error: any) {
       logger.error(`!!Error while storing payment settlement details in /${constants.ON_INIT}`)

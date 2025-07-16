@@ -8,6 +8,7 @@ import {
   hasProperty,
   checkContext,
   checkTagConditions,
+  validateTermsList,
 } from '../..'
 import _ from 'lodash'
 import { FLOW } from '../../enum'
@@ -109,6 +110,12 @@ export const checkSearch = (data: any, msgIdSet: any, flow: any) => {
     try {
       logger.info(`Checking for tags in /message/intent for ${constants.SEARCH} API`)
       if (data.message.intent?.tags) {
+        const bap_terms = data.message.intent.tags.find((tag: any) => tag.code === "bap_terms")
+        const termsError = validateTermsList(bap_terms?.list ?? []);
+
+        if (!termsError.isValid) {
+          errorObj['bap_terms'] = termsError.errors;
+        }
         if (flow === FLOW.FLOW025) {
           const tags = data.message.intent?.tags
 

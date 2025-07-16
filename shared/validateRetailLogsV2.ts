@@ -414,6 +414,8 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_STATUS_PENDING,
       ApiSequence.ON_STATUS_PACKED,
       ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.TRACK,
+      ApiSequence.ON_TRACK,
       ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
       ApiSequence.ON_STATUS_DELIVERED,
     ]
@@ -433,6 +435,8 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_STATUS_PICKED,
       ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
       ApiSequence.ON_STATUS_DELIVERED,
+      ApiSequence.TRACK,
+      ApiSequence.ON_TRACK
     ]
     const flowFourSequence = [
       ApiSequence.SEARCH,
@@ -728,6 +732,8 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_STATUS_PENDING,
       ApiSequence.ON_STATUS_PACKED,
       ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.TRACK,
+      ApiSequence.ON_TRACK,
       ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
       ApiSequence.ON_STATUS_DELIVERED,
     ]
@@ -802,6 +808,8 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_STATUS_PACKED,
       ApiSequence.ON_STATUS_AT_PICKUP,
       ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.TRACK,
+      ApiSequence.ON_TRACK,
       ApiSequence.ON_STATUS_AT_DELIVERY,
       ApiSequence.ON_STATUS_DELIVERED,
     ]
@@ -833,6 +841,10 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_INIT,
       ApiSequence.CONFIRM,
       ApiSequence.ON_CONFIRM,
+      ApiSequence.ON_STATUS_PENDING,
+      ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
       ApiSequence.CANCEL,
       ApiSequence.CANCEL,
       ApiSequence.ON_CANCEL,
@@ -851,6 +863,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_STATUS_PACKED,
       ApiSequence.ON_STATUS_PICKED
     ]
+    
 
     const flow010Sequence = [
        ApiSequence.SEARCH,

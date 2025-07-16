@@ -1423,11 +1423,12 @@ export const checkOnUpdate = (
     try {
       const previousToken = getValue('otpToken')
        const deliveryFulfillment = on_update.fulfillments.find((f: any) => f.type === "Delivery")
+      //  Will use this in future
+       const delivery_instructions = deliveryFulfillment.end.instructions 
       if (flow === FLOW.FLOW010) {
         if (!deliveryFulfillment || !deliveryFulfillment.end) {
           onupdtObj['dlvryFulfillment'] = `Missing delivery fulfillment details for flow: ${flow}`
         } else {
-          const delivery_instructions = deliveryFulfillment.end.instructions
 
           // Check if delivery instructions exist
           if (!delivery_instructions) {
@@ -1459,7 +1460,9 @@ export const checkOnUpdate = (
           }
         }
       }
-    } catch (error) {}
+    } catch (error: any) {
+      console.error('Error while validating delivery instructions:', error.message)
+    }
     try {
       if (apiSeq == ApiSequence.ON_UPDATE_LIQUIDATED || apiSeq === ApiSequence.ON_UPDATE_PICKED) {
         //   let updatedItemID = getValue('updatedItemID')

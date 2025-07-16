@@ -841,6 +841,10 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_INIT,
       ApiSequence.CONFIRM,
       ApiSequence.ON_CONFIRM,
+      ApiSequence.ON_STATUS_PENDING,
+      ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
       ApiSequence.CANCEL,
       ApiSequence.CANCEL,
       ApiSequence.ON_CANCEL,
@@ -859,6 +863,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_STATUS_PACKED,
       ApiSequence.ON_STATUS_PICKED
     ]
+    
 
     const flow010Sequence = [
        ApiSequence.SEARCH,

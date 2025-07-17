@@ -340,6 +340,8 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
     try {
       logger.info(`Checking for valid items for provider in /${constants.SELECT}`)
       const itemProviderMap: any = getValue(`itemProviderMap`)
+      console.log("itemProviderMap",itemProviderMap);
+      
       const providerID = select.provider.id
       const items = select.items
       items.forEach((item: any, index: number) => {

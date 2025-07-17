@@ -392,7 +392,8 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       '022',
       '004',
       '01D',
-      '005'
+      '005',
+      '002'
     ]
     if (!retailDomains.includes(domain)) {
       return 'Domain should 1.2.5 retail domains'
@@ -833,7 +834,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.UPDATE_SETTLEMENT_LIQUIDATED,
     ]
     const flow005Sequence = [
-      ApiSequence.SEARCH,
+       ApiSequence.SEARCH,
       ApiSequence.ON_SEARCH,
       ApiSequence.SELECT,
       ApiSequence.ON_SELECT,
@@ -843,8 +844,9 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_CONFIRM,
       ApiSequence.ON_STATUS_PENDING,
       ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_AT_PICKUP,
       ApiSequence.ON_STATUS_PICKED,
-      ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
+      // ApiSequence.ON_STATUS_AT_DELIVERY,
       ApiSequence.CANCEL,
       ApiSequence.FORCE_CANCEL,
       ApiSequence.ON_CANCEL,
@@ -976,7 +978,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
           if (domain === 'ONDC:RET11') {
             return checkOnsearchFullCatalogRefresh(data, flow)
           } else {
-            return checkOnsearch(data, flow)
+            return checkOnsearch(data,flow)
           }
         case ApiSequence.INC_SEARCH:
           return checkSearchIncremental(data, msgIdSet)
@@ -1001,7 +1003,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
         case ApiSequence.CONFIRM:
           return checkConfirm(data, msgIdSet, flow)
         case ApiSequence.ON_CONFIRM:
-          return checkOnConfirm(data, fulfillmentsItemsSet, flow)
+          return checkOnConfirm(data, flow)
         case ApiSequence.CANCEL:
           return checkCancel(data, msgIdSet,'cancel',flow)
         case ApiSequence.CANCEL:

@@ -149,14 +149,18 @@ export const checkConfirm = (data: any, msgIdSet: any, flow :string) => {
             `items[${i}].parent_item_id mismatches for Item ${itemId} in /${constants.ON_SEARCH} and /${constants.CONFIRM}`
         }
         if (itemId in itemFlfllmnts) {
-          if (confirm.items[i].fulfillment_id != itemFlfllmnts[itemId]) {
-            const itemkey = `item_FFErr${i}`
+          const validFfIds = Array.isArray(itemFlfllmnts[itemId])
+            ? itemFlfllmnts[itemId]
+            : [itemFlfllmnts[itemId]];
+
+          if (!validFfIds.includes(confirm.items[i].fulfillment_id)) {
+            const itemkey = `item_FFErr${i}`;
             cnfrmObj[itemkey] =
-              `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.CONFIRM}`
+              `items[${i}].fulfillment_id (${confirm.items[i].fulfillment_id}) does not match any valid fulfillment_id for Item ${itemId} in /${constants.ON_SELECT}`;
           }
         } else {
-          const itemkey = `item_FFErr${i}`
-          cnfrmObj[itemkey] = `Item Id ${itemId} does not exist in /${constants.ON_SELECT}`
+          const itemkey = `item_FFErr${i}`;
+          cnfrmObj[itemkey] = `Item Id ${itemId} does not exist in /on_select`;
         }
 
         if (itemId in itemsIdList) {

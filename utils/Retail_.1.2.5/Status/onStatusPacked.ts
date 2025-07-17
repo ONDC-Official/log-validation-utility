@@ -287,11 +287,11 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
         const deliveryFulfillment = on_status.fulfillments.filter((fulfillment: any) => fulfillment.type === 'Delivery')
         const storedFulfillmentAction = getValue('deliveryFulfillmentAction')
         const fulfillmentRangeerrors = compareTimeRanges(
-          storedFulfillment,
-          storedFulfillmentAction,
+              storedFulfillment,
+              storedFulfillmentAction,
           deliveryFulfillment[0],
           ApiSequence.ON_STATUS_PACKED,
-        )
+            )
         if (fulfillmentRangeerrors) {
           let i = 0
           const len = fulfillmentRangeerrors.length
@@ -302,8 +302,10 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
           }
         }
       } catch (error: any) {
-        logger.error(`Error while comparing fulfillment ranges , ${error.stack}`)
+        logger.error(`Error while processing fulfillment(s): ${error.stack}`)
       }
+
+
 
       try {
         // Checking fulfillment.id, fulfillment.type and tracking

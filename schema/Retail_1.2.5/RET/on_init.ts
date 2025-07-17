@@ -231,7 +231,7 @@ export const onInitSchema = {
                   },
                   type: {
                     type: 'string',
-                    const: 'Delivery',
+                    enum: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
                   },
                   tracking: {
                     type: 'boolean',
@@ -242,35 +242,17 @@ export const onInitSchema = {
                       location: {
                         type: 'object',
                         properties: {
-                          gps: {
-                            type: 'string',
-                          },
+                          gps: { type: 'string' },
                           address: {
                             type: 'object',
                             properties: {
-                              name: {
-                                type: 'string',
-                              },
-                              building: {
-                                type: 'string',
-                              },
-                              locality: {
-                                type: 'string',
-                              },
-                              city: {
-                                type: 'string',
-                              },
-                              state: {
-                                type: 'string',
-                              },
-                              country: {
-                                type: 'string',
-                              },
-                              area_code: {
-                                type: 'string',
-                                minLength: 1,
-                                maxLength: 6,
-                              },
+                              name: { type: 'string' },
+                              building: { type: 'string' },
+                              locality: { type: 'string' },
+                              city: { type: 'string' },
+                              state: { type: 'string' },
+                              country: { type: 'string' },
+                              area_code: { type: 'string', minLength: 1, maxLength: 6 },
                             },
                             required: ['name', 'building', 'locality', 'city', 'state', 'country', 'area_code'],
                           },
@@ -280,11 +262,7 @@ export const onInitSchema = {
                       contact: {
                         type: 'object',
                         properties: {
-                          phone: {
-                            type: 'string',
-                            minLength: 10,
-                            maxLength: 11,
-                          },
+                          phone: { type: 'string', minLength: 10, maxLength: 11 },
                         },
                         required: ['phone'],
                       },
@@ -292,9 +270,24 @@ export const onInitSchema = {
                     required: ['location', 'contact'],
                   },
                 },
-                required: ['id', 'type', 'end'],
-              },
-            },
+                required: ['id', 'type'],
+
+                allOf: [
+                  {
+                    if: {
+                      properties: { type: { const: 'Self-Pickup' } }
+                    },
+                    then: {
+                      required: ['id', 'type']  // don't require `end`
+                    },
+                    else: {
+                      required: ['id', 'type', 'end']  // require `end` if not 'Self-Pickup'
+                    }
+                  }
+                ]
+              }
+            }
+            ,
             offers: {
               type: 'array',
               items: {

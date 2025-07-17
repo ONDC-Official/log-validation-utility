@@ -152,6 +152,8 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
   try {
     logger.info(`Storing item IDs and thier count in /${constants.SELECT}`)
     const itemsOnSearch: any = getValue(`${ApiSequence.ON_SEARCH}itemsId`)
+    console.log("itemsOnSearch",JSON.stringify(itemsOnSearch));
+    
 
     if (!itemsOnSearch?.length) {
       errorObj.invalidItems = `No Items found on ${constants.ON_SEARCH} API`

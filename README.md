@@ -652,7 +652,983 @@ curl --location 'http://localhost:3008/api/validate' \
 }'
 ```
 
+## FLOW 020
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {}
+    },
+    "flow": "020"
+}'
 ```
+
+---
+
+## FLOW 00B (Replacement)
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {},
+        "update_replacement": {},
+        "on_update_interim_reverse_qc": {},
+        "on_update_approval": {},
+        "on_update_replacement": {},
+        "replacement_on_status_pending": {},
+        "replacement_on_status_packed": {},
+        "replacement_on_status_picked": {},
+        "replacement_on_status_out_for_delivery": {},
+        "replacement_on_status_delivered": {}
+    },
+    "flow": "00B"
+}'
+```
+
+---
+
+## FLOW 01C
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {}
+    },
+    "flow": "01C"
+}'
+```
+
+---
+
+## FLOW 008
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {}
+    },
+    "flow": "008"
+}'
+```
+
+---
+
+## FLOW 003
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {}
+    },
+    "flow": "003"
+}'
+```
+
+---
+
+## FLOW 00F
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "update_address": {},
+        "on_update_address": {}
+    },
+    "flow": "00F"
+}'
+```
+
+---
+
+## FLOW 011
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "update_instructions": {},
+        "on_update_instructions": {}
+    },
+    "flow": "011"
+}'
+```
+
+---
+
+## FLOW 017
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {},
+        "on_update": {},
+        "on_cancel": {}
+    },
+    "flow": "017"
+}'
+```
+
+---
+
+## FLOW 00D
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {},
+        "cancel": {},
+        "on_cancel": {}
+    },
+    "flow": "00D"
+}'
+```
+
+---
+
+## FLOW 00E
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "update": {}
+    },
+    "flow": "00E"
+}'
+```
+
+---
+
+## FLOW 012
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "track": {},
+        "on_track": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {}
+    },
+    "flow": "012"
+}' 
+
+---
+
+## FLOW 0091 (Offer Type Discount)
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "cancel": {},
+        "on_cancel": {}
+    },
+    "flow": "0091"
+}'
+```
+
+---
+
+## FLOW 0092 (Offer Type BuyXGetY)
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {}
+    },
+    "flow": "0092"
+}'
+```
+
+---
+
+## FLOW 0093 (Offer Type Freebie)
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {}
+    },
+    "flow": "0093"
+}'
+```
+
+---
+
+## FLOW 0094 (Offer Type Slab)
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {}
+    },
+    "flow": "0094"
+}'
+```
+
+---
+
+## FLOW 0095 (Offer Type Combo)
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {}
+    },
+    "flow": "0095"
+}'
+```
+
+---
+
+## FLOW 0096 (Offer Type Delivery)
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {}
+    },
+    "flow": "0096"
+}'
+```
+
+---
+
+## FLOW 0097 (Offer Type Exchange)
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {}
+    },
+    "flow": "0097"
+}'
+```
+
+---
+
+## FLOW 0098 (Offer Type Financing)
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {}
+    },
+    "flow": "0098"
+}'
+```
+
+---
+
+## FLOW 016
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {}
+    },
+    "flow": "016"
+}'
+```
+
+---
+
+## FLOW 01F
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {}
+    },
+    "flow": "01F"
+}'
+```
+
+---
+
+## FLOW 01E
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {}
+    },
+    "flow": "01E"
+}'
+```
+
+---
+
+## FLOW 001
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {}
+    },
+    "flow": "001"
+}'
+```
+
+---
+
+## FLOW 025
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {}
+    },
+    "flow": "025"
+}'
+```
+
+---
+
+## FLOW 022
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {}
+    },
+    "flow": "022"
+}'
+```
+
+---
+
+## FLOW 004
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {}
+    },
+    "flow": "004"
+}'
+```
+
+---
+
+## FLOW 01D
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {}
+    },
+    "flow": "01D"
+}'
+```
+
+---
+
+## FLOW 005
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "cancel": {},
+        "force_cancel": {},
+        "on_cancel": {}
+    },
+    "flow": "005"
+}'
+```
+
+---
+
+## FLOW 002
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {}
+    },
+    "flow": "002"
+}'
+```
+
+---
+
+## FLOW 010
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_update_delivery_auth": {},
+        "on_status_delivered": {}
+    },
+    "flow": "010"
+}'
+```
+
+---
+
+## FLOW 00A
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {}
+    },
+    "flow": "00A"
+}'
+```
+
+---
+
+## FLOW 019
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_at_pickup": {},
+        "on_status_picked": {},
+        "track": {},
+        "on_track": {},
+        "on_status_at_delivery": {},
+        "on_status_delivered": {}
+    },
+    "flow": "019"
+}'
+```
+
+---
+
+## FLOW 015
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {},
+        "update_liquidated": {},
+        "on_update_interim_liquidated": {},
+        "on_update_liquidated": {},
+        "update_settlement_liquidated": {}
+    },
+    "flow": "015"
+}'
+```
+
+---
+
+## FLOW 00C
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {},
+        "update": {}
+    },
+    "flow": "00C"
+}'
+``` 
+---
 ### For IGM Sample Curl Request (Local)
 
 ```shell

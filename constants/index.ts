@@ -73,6 +73,7 @@ export default Object.freeze({
   ISSUE_4: 'issue_4',
   ON_ISSUE_7: 'on_issue_7',
   ISSUE_5: 'issue_5',
+  FORCE_CANCEL:'force_cancel'
 })
 
 export const ApiSequence = {
@@ -130,6 +131,7 @@ export const ApiSequence = {
   ON_UPDATE_ADDRESS:'on_update_address',
   UPDATE_INSTRUCTIONS:'update_instructions',
   ON_UPDATE_INSTRUCTIONS:'on_update_instructions',
+  FORCE_CANCEL:'force_cancel'
 }
 
 export const FisApiSequence = {
@@ -716,25 +718,22 @@ export const statusArray = [
   'Cancelled',
 ]
 
-export const buyerCancellationRid = new Set(['001', '003', '006', '009', '010'])
+export const buyerCancellationRid = new Set(['051', '052', '053', '999', '010'])
 export const buyerReturnId = new Set(['001', '002', '003', '004', '005'])
-export const rtoCancellationRid = new Set(['003', '006', '009', '010', '011', '012', '013', '014', '015', '016', '017'])
+export const rtoCancellationRid = new Set(['011', '013', '014', '016', '052', '012', '013', '014', '015', '016', '017'])
 
 export const sellerCancellationRid = new Set([
   '002',
-  '005',
-  '008',
   '011',
-  '012',
   '013',
   '014',
-  '015',
   '016',
-  '017',
   '018',
-  '019',
-  '020',
   '021',
+  '022',
+  '023',
+  '024',
+  '998'
 ])
 
 export const retailDomains = [

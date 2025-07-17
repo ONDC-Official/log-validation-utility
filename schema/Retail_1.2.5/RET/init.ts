@@ -337,6 +337,59 @@ export const initSchema = {
                 required: ['id', 'type', 'end'],
               },
             },
+            cancellation_terms: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  fulfillment_state: {
+                    type: "object",
+                    properties: {
+                      descriptor: {
+                        type: "object",
+                        properties: {
+                          code: {
+                            type: "string",
+                            minLength: 1
+                          },
+                          short_desc: {
+                            type: "string",
+                            minLength: 1
+                          }
+                        },
+                        required: ["code", "short_desc"]
+                      }
+                    },
+                    required: ["descriptor"]
+                  },
+                  cancellation_fee: {
+                    type: "object",
+                    properties: {
+                      percentage: {
+                        type: "string",
+                        pattern: "^(100(\\.00?)?|\\d{1,2}(\\.\\d{1,2})?)$"
+                      },
+                      amount: {
+                        type: "object",
+                        properties: {
+                          currency: {
+                            type: "string",
+                            enum: ["INR"]
+                          },
+                          value: {
+                            type: "string",
+                            pattern: "^\\d+(\\.\\d{1,2})?$"
+                          }
+                        },
+                        required: ["currency", "value"]
+                      }
+                    },
+                    required: ["percentage", "amount"]
+                  }
+                },
+                required: ["fulfillment_state", "cancellation_fee"]
+              }
+            }
           },
           required: ['provider', 'items', 'billing', 'fulfillments'],
         },

@@ -16,6 +16,7 @@ import {
   deepCompareObjects,
   // compareQuoteObjects,
   deepCompare,
+  calculateCancellationFee,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
@@ -1055,6 +1056,19 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
           onCnclObj[key] = `Return request can not be cancelled with this fulfillment state in, ${constants.ON_CANCEL}`
         }
       }
+    }
+
+    try {
+      const cancellation_terms = getValue('OnInitCancellationTerms')
+      const orderAmount = getValue('quotePrice')
+      const applicable = calculateCancellationFee(cancellation_terms,'Out-for-delivery',orderAmount)
+      console.log("applicable",applicable)
+      if(flow === FLOW.FLOW005){
+
+        if(cancellation_terms){}
+      }
+    } catch (error) {
+      
     }
 
     return onCnclObj

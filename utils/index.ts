@@ -2062,6 +2062,39 @@ export function validateTermsList(list: TermItem[]): ValidationResult {
 
   return result;
 }
+export function calculateCancellationFee(cancellationTerms:any, fulfillmentCode:any, orderAmount:any) {
+  // Try exact match for 'Out-for-delivery'
+  const exact = cancellationTerms.find(
+    (t:any) => t.fulfillment_state.descriptor.code === fulfillmentCode
+  );
+
+  // If not found, try wildcard '*'
+  const fallback = cancellationTerms.find(
+    (t:any) => t.fulfillment_state.descriptor.code === '*'
+  );
+
+  const matchedTerm = exact || fallback;
+
+  if (!matchedTerm) {
+    return {
+      applicable: false,
+      reason: "No applicable cancellation terms found",
+      fee_amount: 0
+    };
+  }
+
+  const percentage = parseFloat(matchedTerm.cancellation_fee.percentage || "0");
+  const fee_amount = parseFloat((orderAmount * (percentage / 100)).toFixed(2));
+
+  return {
+    applicable: true,
+    fulfillment_code: matchedTerm.fulfillment_state.descriptor.code,
+    percentage,
+    fee_amount
+  };
+}
+
+
 
 
 

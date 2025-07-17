@@ -246,7 +246,7 @@ export const confirmSchema = {
                   },
                   type: {
                     type: 'string',
-                    const: 'Delivery',
+                    enum: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
                   },
                   tracking: {
                     type: 'boolean',
@@ -257,66 +257,32 @@ export const confirmSchema = {
                       person: {
                         type: 'object',
                         properties: {
-                          name: {
-                            type: 'string',
-                          },
+                          name: { type: 'string' },
                         },
                         required: ['name'],
                       },
                       contact: {
                         type: 'object',
                         properties: {
-                          email: {
-                            type: 'string',
-                            format: 'email',
-                          },
-                          phone: {
-                            type: 'string',
-                            minLength: 10,
-                            maxLength: 11,
-                          },
+                          email: { type: 'string', format: 'email' },
+                          phone: { type: 'string', minLength: 10, maxLength: 11 },
                         },
                         required: ['phone'],
                       },
                       location: {
                         type: 'object',
                         properties: {
-                          gps: {
-                            type: 'string',
-                            minLength: 1,
-                          },
+                          gps: { type: 'string', minLength: 1 },
                           address: {
                             type: 'object',
                             properties: {
-                              name: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              building: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              locality: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              city: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              state: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              country: {
-                                type: 'string',
-                                minLength: 1,
-                              },
-                              area_code: {
-                                type: 'string',
-                                maxLength: 6,
-                                minLength: 1,
-                              },
+                              name: { type: 'string', minLength: 1 },
+                              building: { type: 'string', minLength: 1 },
+                              locality: { type: 'string', minLength: 1 },
+                              city: { type: 'string', minLength: 1 },
+                              state: { type: 'string', minLength: 1 },
+                              country: { type: 'string', minLength: 1 },
+                              area_code: { type: 'string', minLength: 1, maxLength: 6 },
                             },
                             required: ['name', 'building', 'locality', 'city', 'state', 'country', 'area_code'],
                           },
@@ -327,9 +293,25 @@ export const confirmSchema = {
                     required: ['person', 'contact', 'location'],
                   },
                 },
-                required: ['id', 'type', 'tracking', 'end'],
-              },
-            },
+
+                required: ['id', 'type', 'tracking'],
+
+                allOf: [
+                  {
+                    if: {
+                      properties: { type: { const: 'Self-Pickup' } }
+                    },
+                    then: {
+                      required: ['id', 'type', 'tracking'] // exclude 'end'
+                    },
+                    else: {
+                      required: ['id', 'type', 'tracking', 'end'] // require 'end' if not Self-Pickup
+                    }
+                  }
+                ]
+              }
+            }
+            ,
             quote: {
               type: 'object',
               properties: {

@@ -250,14 +250,18 @@ export const checkOnInit = (data: any, flow: string) => {
         }
 
         if (itemId in itemFlfllmnts) {
-          if (on_init.items[i].fulfillment_id != itemFlfllmnts[itemId]) {
-            const itemkey = `item_FFErr${i}`
+          const validFfIds = Array.isArray(itemFlfllmnts[itemId])
+            ? itemFlfllmnts[itemId]
+            : [itemFlfllmnts[itemId]];
+
+          if (!validFfIds.includes(on_init.items[i].fulfillment_id)) {
+            const itemkey = `item_FFErr${i}`;
             onInitObj[itemkey] =
-              `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_INIT}`
+              `items[${i}].fulfillment_id (${on_init.items[i].fulfillment_id}) does not match any valid fulfillment_id for Item ${itemId} in /${constants.ON_SELECT}`;
           }
         } else {
-          const itemkey = `item_FFErr${i}`
-          onInitObj[itemkey] = `Item Id ${itemId} does not exist in /on_select`
+          const itemkey = `item_FFErr${i}`;
+          onInitObj[itemkey] = `Item Id ${itemId} does not exist in /on_select`;
         }
 
         if (itemId in itemsIdList) {
@@ -357,25 +361,37 @@ export const checkOnInit = (data: any, flow: string) => {
 
         if (on_init.fulfillments[i].id) {
           const id = on_init.fulfillments[i].id
-          if (!Object.values(itemFlfllmnts).includes(id)) {
-            const key = `ffID ${id}`
-            //MM->Mismatch
-            onInitObj[key] = `fulfillment id ${id} does not exist in /${constants.ON_SELECT}`
+          if (flow === FLOW.FLOW002) {
+            const onSelectSelfPickupFulfillment = getValue('selfPickupFulfillment')
+            if (id !== onSelectSelfPickupFulfillment.id) {
+              onInitObj['invldFlmntId'] = `Mismatch in on_init fulfillment.id: ${id} with on_select Self-Pickup fulfillment id: ${onSelectSelfPickupFulfillment.id}  for Flow: ${FLOW.FLOW002}`
+            }
+            if (on_init.fulfillments[i].type !== onSelectSelfPickupFulfillment.type) {
+              onInitObj['invldFlmntId'] = `Mismatch in on_init fulfillment.type: ${on_init.fulfillments[i].type} with on_select fulfillment.type: ${onSelectSelfPickupFulfillment.type}  for Flow: ${FLOW.FLOW002}`
+            }
+          }
+          else {
+            if (!Object.values(itemFlfllmnts).includes(id)) {
+              const key = `ffID ${id}`
+              //MM->Mismatch
+              onInitObj[key] = `fulfillment id ${id} does not exist in /${constants.ON_SELECT}`
+            }
           }
         } else {
           onInitObj.ffId = `fulfillments[].id is missing in /${constants.ON_INIT}`
         }
+        if (on_init.fulfillments[i].type !== "Self-Pickup") {
+          if (!_.isEqual(on_init.fulfillments[i].end.location.gps, getValue('buyerGps'))) {
+            const gpskey = `ff/end/location/gpsKey${i}`
+            onInitObj[gpskey] =
+              `gps coordinates in fulfillments[${i}].end.location mismatch in /${constants.SELECT} & /${constants.ON_INIT}`
+          }
 
-        if (!_.isEqual(on_init.fulfillments[i].end.location.gps, getValue('buyerGps'))) {
-          const gpskey = `ff/end/location/gpsKey${i}`
-          onInitObj[gpskey] =
-            `gps coordinates in fulfillments[${i}].end.location mismatch in /${constants.SELECT} & /${constants.ON_INIT}`
-        }
-
-        if (!_.isEqual(on_init.fulfillments[i].end.location.address.area_code, getValue('buyerAddr'))) {
-          const addrkey = `addrKey${i}`
-          onInitObj[addrkey] =
-            `address.area_code in fulfillments[${i}].end.location mismatch in /${constants.SELECT} & /${constants.ON_INIT}`
+          if (!_.isEqual(on_init.fulfillments[i].end.location.address.area_code, getValue('buyerAddr'))) {
+            const addrkey = `addrKey${i}`
+            onInitObj[addrkey] =
+              `address.area_code in fulfillments[${i}].end.location mismatch in /${constants.SELECT} & /${constants.ON_INIT}`
+          }
         }
 
         i++

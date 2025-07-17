@@ -263,6 +263,8 @@ export const initSchema = {
             },
             fulfillments: {
               type: 'array',
+               minItems: 1,
+               maxItems: 1,
               items: {
                 type: 'object',
                 properties: {
@@ -272,7 +274,7 @@ export const initSchema = {
                   },
                   type: {
                     type: 'string',
-                    const: 'Delivery',
+                    enum: ['Delivery','Self-Pickup','Buyer-Delivery']
                   },
                   end: {
                     type: 'object',

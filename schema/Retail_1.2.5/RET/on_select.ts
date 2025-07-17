@@ -111,7 +111,7 @@ export const onSelectSchema = {
                     minLength: 1,
                   },
                   fulfillment_id: {
-                    type: 'string',
+                    // type: 'string',
                     minLength: 1,
                   },
                   parent_item_id: {
@@ -405,12 +405,8 @@ export const onSelectSchema = {
                                       items: {
                                         type: 'object',
                                         properties: {
-                                          code: {
-                                            type: 'string',
-                                          },
-                                          value: {
-                                            type: 'string',
-                                          },
+                                          code: { type: 'string' },
+                                          value: { type: 'string' },
                                         },
                                         required: ['code', 'value'],
                                       },
@@ -443,9 +439,7 @@ export const onSelectSchema = {
                                               'item_count',
                                             ],
                                           },
-                                          value: {
-                                            type: 'string',
-                                          },
+                                          value: { type: 'string' },
                                         },
                                         required: ['code', 'value'],
                                       },
@@ -466,12 +460,8 @@ export const onSelectSchema = {
                                       items: {
                                         type: 'object',
                                         properties: {
-                                          code: {
-                                            type: 'string',
-                                          },
-                                          value: {
-                                            type: 'string',
-                                          },
+                                          code: { type: 'string' },
+                                          value: { type: 'string' },
                                         },
                                         required: ['code', 'value'],
                                       },
@@ -480,28 +470,50 @@ export const onSelectSchema = {
                                   },
                                   required: ['code', 'list'],
                                 },
+                                {
+                                  type: 'object',
+                                  properties: {
+                                    code: {
+                                      type: 'string',
+                                      const: 'np_fees',
+                                    },
+                                    list: {
+                                      type: 'array',
+                                      items: {
+                                        type: 'object',
+                                        properties: {
+                                          code: { type: 'string' },
+                                          value: { type: 'string' },
+                                        },
+                                        required: ['code', 'value'],
+                                      },
+                                      minItems: 1,
+                                    },
+                                  },
+                                  required: ['code', 'list'],
+                                }
                               ],
                             },
                           },
-                        },
-                      },
-                      ttl: {
-                        type: 'string',
-                        format: 'duration',
                       },
                     },
-                    required: ['@ondc/org/item_id', 'title', '@ondc/org/title_type', 'price'],
+                    ttl: {
+                      type: 'string',
+                      format: 'duration',
+                    },
                   },
+                  required: ['@ondc/org/item_id', 'title', '@ondc/org/title_type', 'price'],
                 },
               },
-              required: ['price', 'breakup'],
             },
+            required: ['price', 'breakup'],
           },
-          required: ['provider', 'items', 'fulfillments', 'quote'],
         },
+        required: ['provider', 'items', 'fulfillments', 'quote'],
       },
-      required: ['order'],
     },
+    required: ['order'],
   },
+},
   required: ['context', 'message'],
 }

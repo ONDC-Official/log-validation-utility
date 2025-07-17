@@ -17,14 +17,14 @@ import {
   compareQuoteObjects,
   compareLists,
   isoDurToSec,
-  getProviderId,
+  // getProviderId,
   deepCompare,
   compareFinanceTermsTags,
   validateFinanceTxnTag,
 } from '../..'
 import { FLOW, OFFERSFLOW } from '../../enum'
 import { getValue, setValue } from '../../../shared/dao'
-export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: string) => {
+export const checkOnConfirm = (data: any, flow: string) => {
   const onCnfrmObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -232,14 +232,18 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
         }
 
         if (itemId in itemFlfllmnts) {
-          if (on_confirm.items[i].fulfillment_id != itemFlfllmnts[itemId]) {
-            const itemkey = `item_FFErr${i}`
+          const validFfIds = Array.isArray(itemFlfllmnts[itemId])
+            ? itemFlfllmnts[itemId]
+            : [itemFlfllmnts[itemId]];
+
+          if (!validFfIds.includes(on_confirm.items[i].fulfillment_id)) {
+            const itemkey = `item_FFErr${i}`;
             onCnfrmObj[itemkey] =
-              `items[${i}].fulfillment_id mismatches for Item ${itemId} in /${constants.ON_SELECT} and /${constants.ON_CONFIRM}`
+              `items[${i}].fulfillment_id (${on_confirm.items[i].fulfillment_id}) does not match any valid fulfillment_id for Item ${itemId} in /${constants.ON_SELECT}`;
           }
         } else {
-          const itemkey = `item_FFErr${i}`
-          onCnfrmObj[itemkey] = `Item Id ${itemId} does not exist in /${constants.ON_SELECT}`
+          const itemkey = `item_FFErr${i}`;
+          onCnfrmObj[itemkey] = `Item Id ${itemId} does not exist in /on_select`;
         }
 
         if (itemId in itemsIdList) {
@@ -257,55 +261,74 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
     }
 
     try {
-      logger.info(`Storing delivery fulfillment if provided in ${constants.ON_CONFIRM}`)
-      const deliveryFulfillment = on_confirm.fulfillments.filter((fulfillment: any) => fulfillment.type === 'Delivery')
+      logger.info(`Storing fulfillment from ${constants.ON_CONFIRM}`)
 
-      const { start, end } = deliveryFulfillment[0]
-      const startRange = start.time?.range
-      const endRange = end.time?.range
-      if (startRange && endRange) {
-        setValue('deliveryFulfillment', deliveryFulfillment[0])
-        setValue('deliveryFulfillmentAction', ApiSequence.ON_CONFIRM)
+      const fulfillmentTypes = ['Delivery', 'Buyer-Delivery']
+
+      const fulfillments = on_confirm.fulfillments || []
+      const foundType:any = fulfillmentTypes.find(type => fulfillments.some((f: any) => f.type === type))
+
+
+      const matchingFulfillments = fulfillments.filter((f: any) => f.type === foundType)
+
+      console.log("Matching fulfillments:", JSON.stringify(matchingFulfillments))
+
+      const validFulfillment = matchingFulfillments.find((f: any) => {
+        const startRange = f.start?.time?.range
+        const endRange = f.end?.time?.range
+        return startRange && endRange
+      })
+
+      if (validFulfillment) {
+        const keyBase = foundType.replace(/[-\s]/g, '')
+        setValue(`${keyBase}Fulfillment`, validFulfillment)
+        setValue(`${keyBase}FulfillmentAction`, ApiSequence.ON_CONFIRM)
+        logger.info(`Stored valid fulfillment of type ${foundType}`)
+      } else {
+        logger.warn(`${foundType} fulfillment(s) found but no valid time range`)
       }
+
     } catch (error: any) {
-      logger.error(`Error while Storing delivery fulfillment, ${error.stack}`)
+      logger.error(`Error while storing fulfillment: ${error.stack}`)
     }
 
-    if (on_confirm.state === 'Accepted') {
-      try {
-        // For Delivery Object
-        const fulfillments = on_confirm.fulfillments
-        if (fulfillments) {
-          const deliveryFulfillment = fulfillments.find((f: any) => f.type === 'Delivery')
-          if (!deliveryFulfillment.hasOwnProperty('provider_id')) {
-            const key = `missingFulfillments`
-            onCnfrmObj[key] = `provider_id must be present in ${ApiSequence.ON_CONFIRM} as order is accepted`
-          }
 
-          const id = getProviderId(deliveryFulfillment)
-          setValue('fulfillmentProviderId', id)
-        }
-        if (!fulfillments.length) {
-          const key = `missingFulfillments`
-          onCnfrmObj[key] = `missingFulfillments is mandatory for ${ApiSequence.ON_CONFIRM}`
-        } else {
-          const deliveryObjArr = _.filter(fulfillments, { type: 'Delivery' })
-          if (!deliveryObjArr.length) {
-            onCnfrmObj[`message/order.fulfillments/`] =
-              `Delivery fullfillment must be present in ${ApiSequence.ON_CONFIRM} if the Order.state is 'Accepted'`
-          } else {
-            const deliverObj = deliveryObjArr[0]
-            delete deliverObj?.state
-            delete deliverObj?.tags
-            delete deliverObj?.start?.instructions
-            delete deliverObj?.end?.instructions
-            fulfillmentsItemsSet.add(deliverObj)
-          }
-        }
-      } catch (error: any) {
-        logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_CONFIRM}, ${error.stack}`)
-      }
-    }
+
+    // if (on_confirm.state === 'Accepted') {
+    //   try {
+    //     // For Delivery Object
+    //     const fulfillments = on_confirm.fulfillments
+    //     if (fulfillments) {
+    //       const deliveryFulfillment = fulfillments.find((f: any) => f.type === 'Delivery')
+    //       if (!deliveryFulfillment.hasOwnProperty('provider_id')) {
+    //         const key = `missingFulfillments`
+    //         onCnfrmObj[key] = `provider_id must be present in ${ApiSequence.ON_CONFIRM} as order is accepted`
+    //       }
+
+    //       const id = getProviderId(deliveryFulfillment)
+    //       setValue('fulfillmentProviderId', id)
+    //     }
+    //     if (!fulfillments.length) {
+    //       const key = `missingFulfillments`
+    //       onCnfrmObj[key] = `missingFulfillments is mandatory for ${ApiSequence.ON_CONFIRM}`
+    //     } else {
+    //       const deliveryObjArr = _.filter(fulfillments, { type: 'Delivery' })
+    //       if (!deliveryObjArr.length) {
+    //         onCnfrmObj[`message/order.fulfillments/`] =
+    //           `Delivery fullfillment must be present in ${ApiSequence.ON_CONFIRM} if the Order.state is 'Accepted'`
+    //       } else {
+    //         const deliverObj = deliveryObjArr[0]
+    //         delete deliverObj?.state
+    //         delete deliverObj?.tags
+    //         delete deliverObj?.start?.instructions
+    //         delete deliverObj?.end?.instructions
+    //         fulfillmentsItemsSet.add(deliverObj)
+    //       }
+    //     }
+    //   } catch (error: any) {
+    //     logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_CONFIRM}, ${error.stack}`)
+    //   }
+    // }
     //Vehicle registeration for (Self-Pickup) Kerbside
     const fulfillments = on_confirm.fulfillments
     if (Array.isArray(fulfillments)) {
@@ -502,8 +525,16 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
           onCnfrmObj[key] = `default fulfillments state is missing in /${constants.ON_CONFIRM}`
         }
 
-        if (!on_confirm.fulfillments[i].start || !on_confirm.fulfillments[i].end) {
-          onCnfrmObj.ffstartend = `fulfillments[${i}] start and end locations are mandatory`
+        if (on_confirm.fulfillments[i].type === "Self-Pickup") {
+          if (!on_confirm.fulfillments[i].start) {
+            onCnfrmObj.ffstart = `fulfillments[${i}] start location is mandatory`
+          }
+        }
+
+        else {
+          if(!on_confirm.fulfillments[i].start || !on_confirm.fulfillments[i].end){
+            onCnfrmObj.ffstartend = `fulfillments[${i}] start and end locations are mandatory`
+          }
         }
 
         try {
@@ -523,13 +554,14 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
         } catch (error: any) {
           logger.error(`!!Error while checking store name in /${constants.ON_CONFIRM}`)
         }
+        if (on_confirm.fulfillments[i].type !== "Self-Pickup") {
+          if (!_.isEqual(on_confirm.fulfillments[i].end.location.gps, getValue('buyerGps'))) {
+            onCnfrmObj.buyerGpsErr = `fulfillments[${i}].end.location gps is not matching with gps in /select`
+          }
 
-        if (!_.isEqual(on_confirm.fulfillments[i].end.location.gps, getValue('buyerGps'))) {
-          onCnfrmObj.buyerGpsErr = `fulfillments[${i}].end.location gps is not matching with gps in /select`
-        }
-
-        if (!_.isEqual(on_confirm.fulfillments[i].end.location.address.area_code, getValue('buyerAddr'))) {
-          onCnfrmObj.gpsErr = `fulfillments[${i}].end.location.address.area_code is not matching with area_code in /select`
+          if (!_.isEqual(on_confirm.fulfillments[i].end.location.address.area_code, getValue('buyerAddr'))) {
+            onCnfrmObj.gpsErr = `fulfillments[${i}].end.location.address.area_code is not matching with area_code in /select`
+          }
         }
 
         i++

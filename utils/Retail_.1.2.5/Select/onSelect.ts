@@ -1,8 +1,8 @@
 /* eslint-disable no-prototype-builtins */
 import { getValue, setValue } from '../../../shared/dao'
-import constants, { ApiSequence, ffCategory } from '../../../constants'
+import constants, { ApiSequence, ffCategory, offersApplicableDomains } from '../../../constants'
 import { validateSchemaRetailV2, isObjectEmpty, checkContext, timeDiff, isoDurToSec, checkBppIdOrBapId } from '../..'
-import _ from 'lodash'
+import _, { isArray } from 'lodash'
 import { logger } from '../../../shared/logger'
 import { FLOW, taxNotInlcusive,fulfillment_tax } from '../../enum'
 
@@ -215,11 +215,24 @@ export const checkOnSelect = (data: any, flow?: string) => {
     let i = 0
     const len = on_select.items.length
     while (i < len) {
-      const found = on_select.fulfillments.some((fId: { id: any }) => fId.id === on_select.items[i].fulfillment_id)
-      if (!found) {
-        const key = `fId${i}`
-        errorObj[key] = `fulfillment_id for item ${on_select.items[i].id} does not exist in order.fulfillments[]`
+      const fulfillments: any = on_select.items[i].fulfillment_id
+      if (isArray(fulfillments)) {
+        for (let j of fulfillments){
+          const found = on_select.fulfillments.some((fId: { id: any }) => fId.id === j)
+          if (!found) {
+          const key = `fId${i}`
+          errorObj[key] = `fulfillment_id for item ${on_select.items[i].id} does not exist in order.fulfillments[]`
+        }
+        }
       }
+      else {
+        const found = on_select.fulfillments.some((fId: { id: any }) => fId.id === on_select.items[i].fulfillment_id)
+        if (!found) {
+          const key = `fId${i}`
+          errorObj[key] = `fulfillment_id for item ${on_select.items[i].id} does not exist in order.fulfillments[]`
+        }
+      }
+
 
       i++
     }
@@ -237,6 +250,7 @@ export const checkOnSelect = (data: any, flow?: string) => {
       i++
     }
     setValue('itemFlfllmnts', itemFlfllmnts)
+    console.log("itemFlfllmnts",itemFlfllmnts)
   } catch (error: any) {
     logger.error(`!!Error occurred while mapping and storing item Id and fulfillment Id, ${error.stack}`)
   }
@@ -518,6 +532,11 @@ export const checkOnSelect = (data: any, flow?: string) => {
         let offerType: string = ''
 
         if (titleType === 'offer') {
+          if (!offersApplicableDomains.includes(context.domain)) {
+            const key = 'unsupportedDomain'
+            errorObj[key] = `Offers validation is only supported for domains: ${offersApplicableDomains.join(', ')}. Found: ${context.domain}`
+            return
+          }
           const priceValue = parseFloat(element.price.value)
 
           if (isNaN(priceValue)) {
@@ -564,12 +583,21 @@ export const checkOnSelect = (data: any, flow?: string) => {
         }
 
         if (titleType === 'tax' || titleType === 'discount') {
-          if (!(element['@ondc/org/item_id'] in itemFlfllmnts)) {
+          const itemId = element['@ondc/org/item_id']
+
+          const isItemIdPresent = Object.values(itemFlfllmnts).some((val) => {
+            if (Array.isArray(val)) {
+              return val.includes(itemId)
+            }
+            return val === itemId
+          })
+
+          if (!isItemIdPresent) {
             const brkupitemsid = `brkupitemstitles${i}`
-            errorObj[brkupitemsid] =
-              `item with id: ${element['@ondc/org/item_id']} in quote.breakup[${i}] does not exist in items[] (should be a valid item id)`
+            errorObj[brkupitemsid] = `item with id: ${itemId} in quote.breakup[${i}] does not exist in any fulfillment mapping (expected one of: ${Object.values(itemFlfllmnts).flat().join(', ')})`;
           }
         }
+
         if (flow === FLOW.FLOW015) {
           if (titleType === 'tax') {
             if (!element.item || !Array.isArray(element.item.tags) || element.item.tags.length === 0) {
@@ -619,10 +647,18 @@ export const checkOnSelect = (data: any, flow?: string) => {
         // }
 
         if (titleType === 'packing' || titleType === 'delivery' || titleType === 'misc') {
-          if (!Object.values(itemFlfllmnts).includes(element['@ondc/org/item_id'])) {
-            const brkupffid = `brkupfftitles${i}`
-            errorObj[brkupffid] =
-              `invalid  id: ${element['@ondc/org/item_id']} in ${titleType} line item (should be a valid fulfillment_id as provided in message.items for the items)`
+          const itemId = element['@ondc/org/item_id']
+
+          const isItemIdPresent = Object.values(itemFlfllmnts).some((val) => {
+            if (Array.isArray(val)) {
+              return val.includes(itemId)
+            }
+            return val === itemId
+          })
+
+          if (!isItemIdPresent) {
+            const brkupitemsid = `brkupitemstitles${i}`
+            errorObj[brkupitemsid] = `item with id: ${itemId} in quote.breakup[${i}] does not exist in any fulfillment mapping (expected one of: ${Object.values(itemFlfllmnts).flat().join(', ')})`;
           }
         }
 
@@ -1504,12 +1540,6 @@ export const checkOnSelect = (data: any, flow?: string) => {
         logger.info(`Fulfillment Id must be present `)
         errorObj['ffId'] = `Fulfillment Id must be present`
       }
-      if(flow === FLOW.FLOW002){
-        if(ff.type !== "Self-Pickup"){
-        logger.info(`Fulfillment Type must be present `)
-        errorObj['ff'] = `Fulfillment Type Self-Pickup must be present for flow : ${flow}`
-        }
-      }
 
       ffId = ff.id
 
@@ -1522,6 +1552,16 @@ export const checkOnSelect = (data: any, flow?: string) => {
         }
       }
     })
+    if (flow === FLOW.FLOW002) {
+      const hasSelfPickup = on_select.fulfillments.find((fulfillment:any) => fulfillment.type === 'Self-Pickup')
+      setValue("selfPickupFulfillment",hasSelfPickup)
+
+      if (!hasSelfPickup) {
+        logger.info(`Fulfillment Type must be present`)
+        errorObj['ff'] = `Fulfillment Type Self-Pickup must be present for flow : ${flow}`
+      }
+      
+    }
   } catch (error: any) {
     logger.info(`Error while checking fulfillments id, type and tracking in /${constants.ON_SELECT}`)
   }

@@ -210,7 +210,7 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
       }
 
     }
-    if(state === "pending"){
+    if (state === "pending") {
       try {
         const onConfirmOrderState = getValue('onCnfrmState')
         if (!data || isObjectEmpty(data)) {
@@ -218,9 +218,9 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
             return
           return { [ApiSequence.ON_STATUS_PENDING]: 'JSON cannot be empty' }
         }
-    
-        if (onConfirmOrderState === "Accepted")
-          return { errmsg: "When the onConfirm Order State is 'Accepted', the on_status_pending is not required!" }
+
+        // if (onConfirmOrderState === "Accepted")
+        //   return { errmsg: "When the onConfirm Order State is 'Accepted', the on_status_pending is not required!" }
         const on_status = message.order
         try {
           logger.info(`Comparing order Id in /${constants.ON_CONFIRM} and /${constants.ON_STATUS}_${state}`)
@@ -234,18 +234,18 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
             error,
           )
         }
-    
+
         try {
           // Checking fulfillment.id, fulfillment.type and tracking
           logger.info('Checking fulfillment.id, fulfillment.type and tracking')
           on_status.fulfillments.forEach((ff: any) => {
             let ffId = ''
-    
+
             if (!ff.id) {
               logger.info(`Fulfillment Id must be present `)
               onStatusObj['ffId'] = `Fulfillment Id must be present`
             }
-    
+
             ffId = ff.id
             if (ff.type != "Cancel") {
               if (getValue(`${ffId}_tracking`)) {
@@ -264,22 +264,22 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
         } catch (error: any) {
           logger.info(`Error while checking fulfillments id, type and tracking in /${constants.ON_STATUS}`)
         }
-    
+
         try {
           logger.info(`Storing delivery fulfillment if not present in ${constants.ON_CONFIRM} and comparing if present`)
           const storedFulfillment = getValue(`deliveryFulfillment`)
           console.log("storedFulfillment in on_status pending",storedFulfillment,);
-          
+
           const deliveryFulfillment = on_status.fulfillments.filter((fulfillment: any) => fulfillment.type === 'Delivery')
           console.log("deliveryFulfillment",deliveryFulfillment);
-          
+
           if (!storedFulfillment) {
             setValue('deliveryFulfillment', deliveryFulfillment[0])
             setValue('deliveryFulfillmentAction', ApiSequence.ON_STATUS_PENDING)
           } else {
             const storedFulfillmentAction = getValue('deliveryFulfillmentAction')
             const fulfillmentRangeerrors = compareTimeRanges(storedFulfillment, storedFulfillmentAction, deliveryFulfillment[0], ApiSequence.ON_STATUS_PENDING)
-    
+
             if (fulfillmentRangeerrors) {
               let i = 0
               const len = fulfillmentRangeerrors.length
@@ -291,9 +291,11 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
             }
           }
         } catch (error: any) {
-          logger.error(`Error while Storing delivery fulfillment, ${error.stack}`)
+          logger.error(`Error while processing fulfillment(s): ${error.stack}`)
         }
-    
+
+
+
         try {
           logger.info(`Validating order state`)
           setValue('orderState', on_status.state)
@@ -304,7 +306,7 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
         } catch (error: any) {
           logger.error(`Error while validating order state, ${error.stack}`)
         }
-    
+
         try {
           if (!_.isEqual(getValue(`cnfrmTmpstmp`), on_status.created_at)) {
             onStatusObj.tmpstmp = `Created At timestamp for /${constants.ON_STATUS}_${state} should be equal to context timestamp at ${constants.CONFIRM}`
@@ -312,7 +314,7 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
         } catch (error: any) {
           logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
         }
-    
+
         try {
           logger.info(`Comparing timestamp of /${constants.ON_CONFIRM} and /${constants.ON_STATUS}_${state} API`)
           if (_.gte(getValue('onCnfrmtmpstmp'), context.timestamp)) {
@@ -322,11 +324,11 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
         } catch (error: any) {
           logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${state}, ${error.stack}`)
         }
-    
+
         const contextTime = context.timestamp
         try {
           logger.info(`Comparing order.updated_at and context timestamp for /${constants.ON_STATUS}_${state} API`)
-    
+
           if (!areTimestampsLessThanOrEqualTo(on_status.updated_at, contextTime)) {
             onStatusObj.tmpstmp2 = `order.updated_at timestamp should be less than or eqaul to  context timestamp for /${constants.ON_STATUS}_${state} api`
           }
@@ -379,12 +381,12 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
                 fulfillmentsItemsSet.add(deliverObj)
               }
             }
-    
+
           } catch (error: any) {
             logger.error(`Error while checking Fulfillments Delivery Obj in /${ApiSequence.ON_STATUS_PENDING}, ${error.stack}`)
           }
         }
-     try {
+        try {
           const credsWithProviderId = getValue('credsWithProviderId')
           const providerId = on_status?.provider?.id
           const confirmCreds = on_status?.provider?.creds
@@ -407,15 +409,15 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
         if (flow === FLOW.FLOW01C) {
           const fulfillments = on_status.fulfillments
           const deliveryFulfillment = fulfillments.find((f: any) => f.type === 'Delivery')
-    
+
           if (!deliveryFulfillment.hasOwnProperty('provider_id')) {
             onStatusObj['missingFulfillments'] =
               `provider_id must be present in ${ApiSequence.ON_STATUS_PENDING} as order is accepted`
           }
-    
+
           const id = getProviderId(deliveryFulfillment)
           const fulfillmentProviderId = getValue('fulfillmentProviderId')
-    
+
           if (deliveryFulfillment.hasOwnProperty('provider_id') && id !== fulfillmentProviderId) {
             onStatusObj['providerIdMismatch'] =
               `provider_id in fulfillment in ${ApiSequence.ON_CONFIRM} does not match expected provider_id: expected '${fulfillmentProviderId}' in ${ApiSequence.ON_STATUS_PENDING} but got ${id}`

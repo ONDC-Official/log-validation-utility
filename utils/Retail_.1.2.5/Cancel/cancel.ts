@@ -9,6 +9,7 @@ import {isValidISO8601Duration} from '../../index'
 
 export const checkCancel = (data: any, msgIdSet: any,action:string,flow?:string) => {
   const cnclObj: any = {}
+  // const forceCnclObj:any = {}
   try {
     if (!data || isObjectEmpty(data)) {
       return { [ApiSequence.CANCEL]: 'JSON cannot be empty' }
@@ -131,15 +132,17 @@ export const checkCancel = (data: any, msgIdSet: any,action:string,flow?:string)
     }
     try {
       if (flow === FLOW.FLOW005) {
+        console.log("cancel.tags",JSON.stringify(cancel.tags));
+        
         if (cancel.cancellation_reason_id !== '052') {
           cnclObj['invalidCancellationReasonId'] =
             `In /${constants.FORCE_CANCEL}, cancellation_reason_id must be '052'`
         }
         // Validate tags array
-        if (!cancel.tags || !Array.isArray(cancel.tags) || cancel.tags.length === 0) {
+        if (!cancel.descriptor.tags || !Array.isArray(cancel.descriptor.tags) || cancel.descriptor.tags.length === 0) {
           cnclObj['invldTags'] = `message/descriptor/tags is missing or invalid in /${constants.FORCE_CANCEL}`
         } else {
-          const paramsTag = cancel.tags.find((tag: any) => tag.code === 'params')
+          const paramsTag = cancel.descriptor.tags.find((tag: any) => tag.code === 'params')
           if (!paramsTag || !paramsTag.list || !Array.isArray(paramsTag.list)) {
             cnclObj['missingParamsTag'] =
               `message/descriptor/tags must contain a 'params' tag with a valid list in /${constants.FORCE_CANCEL}`

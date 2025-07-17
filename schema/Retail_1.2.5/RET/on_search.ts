@@ -222,7 +222,7 @@ export const onSearchSchema = {
                     additionalProperties: false,
                   },
                 },
-                required: ['name', 'symbol','short_desc', 'long_desc'],
+                required: ['name', 'symbol', 'short_desc', 'long_desc'],
                 additionalProperties: true,
               },
             },
@@ -235,9 +235,8 @@ export const onSearchSchema = {
                     type: 'string',
                   },
                   rating: {
-                    type: 'number',
-                    minimum: 1,
-                    maximum: 5,
+                    type: 'string',
+                    enum: ['1', '2', '3', '4', '5'],
                     default: null,
                   },
                   time: {
@@ -555,10 +554,8 @@ export const onSearchSchema = {
                           optional: true,
                         },
                         rating: {
-                          type: 'number',
-
-                          minimum: 1,
-                          maximum: 5,
+                          type: 'string',
+                          enum: ['1', '2', '3', '4', '5'],
                           default: null,
                         },
                         time: {
@@ -2853,8 +2850,8 @@ export const onSearchSchema = {
                                   properties: {
                                     code: {
                                       type: 'string',
-                                      enum: ['location', 'category', 'type', 'val', 'unit','day_from','day_to','time_from','time_to'],
-                                     },
+                                      enum: ['location', 'category', 'type', 'val', 'unit', 'day_from', 'day_to', 'time_from', 'time_to'],
+                                    },
                                     value: {
                                       type: 'string',
                                     },

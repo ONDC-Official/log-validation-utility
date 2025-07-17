@@ -16,7 +16,7 @@ import {
   deepCompareObjects,
   // compareQuoteObjects,
   deepCompare,
-  calculateCancellationFee,
+  // calculateCancellationFee,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
@@ -1058,18 +1058,18 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
       }
     }
 
-    try {
-      const cancellation_terms = getValue('OnInitCancellationTerms')
-      const orderAmount = getValue('quotePrice')
-      const applicable = calculateCancellationFee(cancellation_terms,'Out-for-delivery',orderAmount)
-      console.log("applicable",applicable)
-      if(flow === FLOW.FLOW005){
+    // try {
+    //   const cancellation_terms = getValue('OnInitCancellationTerms')
+    //   const orderAmount = getValue('quotePrice')
+    //   const applicable = calculateCancellationFee(cancellation_terms,'Out-for-delivery',orderAmount)
+    //   console.log("applicable",applicable)
+    //   // if(flow === FLOW.FLOW005){
 
-        if(cancellation_terms){}
-      }
-    } catch (error) {
-      
-    }
+    //   //   if(cancellation_terms){}
+    //   // }
+    // } catch (error:any) {
+    //   logger.error(`!!Some error occurred while checking /${constants.ON_CANCEL} API`, error)
+    // }
 
     return onCnclObj
   } catch (err: any) {

@@ -366,43 +366,53 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
       }
 
       try {
-        // For Delivery Object
-        const DELobj = _.filter(on_status.fulfillments, { type: 'Delivery' })
-        if (!DELobj.length) {
-          logger.error(`Delivery object is mandatory for ${ApiSequence.ON_STATUS_PICKED}`)
-          const key = `missingDelivery`
-          onStatusObj[key] = `Delivery object is mandatory for ${ApiSequence.ON_STATUS_PICKED}`
-        } else {
-          const deliveryObj = DELobj[0]
-          if (!deliveryObj.tags) {
-            const key = `missingTags`
-            onStatusObj[key] = `Tags are mandatory in Delivery Fulfillment for ${ApiSequence.ON_STATUS_PICKED}`
+        const selfPickUpObj = _.filter(on_status.fulfillments, { type: 'Self-Pickup' })
+        if (flow === FLOW.FLOW002 || selfPickUpObj) {
+          if (!selfPickUpObj.length) {
+            logger.error(`Self-Pickup object is mandatory for ${ApiSequence.ON_STATUS_PICKED}`)
+            const key = `missingSelf-Pickup`
+            onStatusObj[key] = `Self-Pickup object is mandatory for ${ApiSequence.ON_STATUS_PICKED}`
+          }
+        }
+        else {
+          // For Delivery Object
+          const DELobj = _.filter(on_status.fulfillments, { type: 'Delivery' })
+          if (!DELobj.length) {
+            logger.error(`Delivery object is mandatory for ${ApiSequence.ON_STATUS_PICKED}`)
+            const key = `missingDelivery`
+            onStatusObj[key] = `Delivery object is mandatory for ${ApiSequence.ON_STATUS_PICKED}`
           } else {
-            const tags = deliveryObj.tags
-            const routingTagArr = _.filter(tags, { code: 'routing' })
-            if (!routingTagArr.length) {
-              const key = `missingRouting/Tag`
-              onStatusObj[key] =
-                `RoutingTag object is mandatory in Tags of Delivery Object for ${ApiSequence.ON_STATUS_PICKED}`
+            const deliveryObj = DELobj[0]
+            if (!deliveryObj.tags) {
+              const key = `missingTags`
+              onStatusObj[key] = `Tags are mandatory in Delivery Fulfillment for ${ApiSequence.ON_STATUS_PICKED}`
             } else {
-              const routingTag = routingTagArr[0]
-              const routingTagList = routingTag.list
-              if (!routingTagList) {
-                const key = `missingRouting/Tag/List`
+              const tags = deliveryObj.tags
+              const routingTagArr = _.filter(tags, { code: 'routing' })
+              if (!routingTagArr.length) {
+                const key = `missingRouting/Tag`
                 onStatusObj[key] =
-                  `RoutingTagList is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_PICKED}`
+                  `RoutingTag object is mandatory in Tags of Delivery Object for ${ApiSequence.ON_STATUS_PICKED}`
               } else {
-                const routingTagTypeArr = _.filter(routingTagList, { code: 'type' })
-                if (!routingTagTypeArr.length) {
-                  const key = `missingRouting/Tag/List/Type`
+                const routingTag = routingTagArr[0]
+                const routingTagList = routingTag.list
+                if (!routingTagList) {
+                  const key = `missingRouting/Tag/List`
                   onStatusObj[key] =
-                    `RoutingTagListType object is mandatory in RoutingTag/List of Delivery Object for ${ApiSequence.ON_STATUS_PICKED}`
+                    `RoutingTagList is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_PICKED}`
                 } else {
-                  const routingTagType = routingTagTypeArr[0]
-                  if (!ROUTING_ENUMS.includes(routingTagType.value)) {
-                    const key = `missingRouting/Tag/List/Type/Value`
+                  const routingTagTypeArr = _.filter(routingTagList, { code: 'type' })
+                  if (!routingTagTypeArr.length) {
+                    const key = `missingRouting/Tag/List/Type`
                     onStatusObj[key] =
-                      `RoutingTagListType Value is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_PICKED} and should be equal to 'P2P' or 'P2H2P'`
+                      `RoutingTagListType object is mandatory in RoutingTag/List of Delivery Object for ${ApiSequence.ON_STATUS_PICKED}`
+                  } else {
+                    const routingTagType = routingTagTypeArr[0]
+                    if (!ROUTING_ENUMS.includes(routingTagType.value)) {
+                      const key = `missingRouting/Tag/List/Type/Value`
+                      onStatusObj[key] =
+                        `RoutingTagListType Value is mandatory in RoutingTag of Delivery Object for ${ApiSequence.ON_STATUS_PICKED} and should be equal to 'P2P' or 'P2H2P'`
+                    }
                   }
                 }
               }
@@ -433,7 +443,12 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
 
       try {
         logger.info(`Checking order state in /${constants.ON_STATUS}_${state}`)
-        if (on_status.state != 'In-progress') {
+        const fulfillments = on_status.fulfillments.filter((fulfillment:any)=>fulfillment.type !== "Cancel")
+        if(fulfillments[0].type === "Self-Pickup"){
+          if(on_status.state != 'Completed')
+           onStatusObj.ordrState = `order/state should be "Completed" for /${constants.ON_STATUS}_${state} when fulfilment.type = "Self-Pickup"`
+        }
+        else{
           onStatusObj.ordrState = `order/state should be "In-progress" for /${constants.ON_STATUS}_${state}`
         }
       } catch (error: any) {
@@ -450,12 +465,14 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
         while (i < noOfFulfillments) {
           const fulfillment = on_status.fulfillments[i]
           const ffState = fulfillment.state.descriptor.code
+          console.log("ffState",ffState);
+          
 
           //type should be Delivery
-          if (fulfillment.type != 'Delivery') {
-            i++
-            continue
-          }
+          // if (fulfillment.type != 'Delivery') {
+          //   i++
+          //   continue
+          // }
 
           if (ffState === constants.ORDER_PICKED) {
             orderPicked = true
@@ -535,8 +552,10 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
             }
           }
         } catch (error: any) {
-          logger.error(`Error while Storing delivery fulfillment, ${error.stack}`)
+          logger.error(`Error while storing/validating fulfillment: ${error.stack}`);
         }
+
+
         try {
           // Checking fulfillment.id, fulfillment.type and tracking
           logger.info('Checking fulfillment.id, fulfillment.type and tracking')
@@ -842,6 +861,38 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
         }
       } catch (err: any) {
         logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)
+      }
+      try {
+        const selfPickUpObj = _.filter(on_status.fulfillments, { type: 'Self-Pickup' })
+        if (flow === FLOW.FLOW002 || selfPickUpObj) {
+          const instructions = selfPickUpObj[0]?.start?.instructions;
+          const contactPhone = on_status.billing[0]?.phone;
+
+          if (instructions) {
+            const { code, short_desc } = instructions;
+
+            if (!['1', '2'].includes(code)) {
+              onStatusObj[`fulfillment.${selfPickUpObj[0]?.id}.instructions.code`] =
+                `Invalid instruction code "${code}". Expected '1' or '2'.`;
+            }
+
+            if (code === '1') {
+              if (short_desc !== contactPhone) {
+                onStatusObj[`fulfillment.${selfPickUpObj[0]?.id}.instructions.short_desc`] =
+                  `Instruction code '1' requires short_desc to match contact phone (${contactPhone}), but got "${short_desc}".`;
+              }
+            } else if (code === '2') {
+              // Example validation: OTP should be 4–6 digit numeric
+              const otpRegex = /^\d{4,6}$/;
+              if (!otpRegex.test(short_desc)) {
+                onStatusObj[`fulfillment.${selfPickUpObj[0]?.id}.instructions.short_desc`] =
+                  `Instruction code '2' requires a valid OTP (4-6 digits), but got "${short_desc}".`;
+              }
+            }
+          }
+        }
+      } catch (error:any) {
+        logger.error(`Error validating fulfillment instructions: ${error.stack}`);
       }
     }
     

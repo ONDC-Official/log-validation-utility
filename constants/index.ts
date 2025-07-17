@@ -718,25 +718,22 @@ export const statusArray = [
   'Cancelled',
 ]
 
-export const buyerCancellationRid = new Set(['001', '003', '006', '009', '010'])
+export const buyerCancellationRid = new Set(['051', '052', '053', '999', '010'])
 export const buyerReturnId = new Set(['001', '002', '003', '004', '005'])
-export const rtoCancellationRid = new Set(['003', '006', '009', '010', '011', '012', '013', '014', '015', '016', '017'])
+export const rtoCancellationRid = new Set(['011', '013', '014', '016', '052', '012', '013', '014', '015', '016', '017'])
 
 export const sellerCancellationRid = new Set([
   '002',
-  '005',
-  '008',
   '011',
-  '012',
   '013',
   '014',
-  '015',
   '016',
-  '017',
   '018',
-  '019',
-  '020',
   '021',
+  '022',
+  '023',
+  '024',
+  '998'
 ])
 
 export const retailDomains = [

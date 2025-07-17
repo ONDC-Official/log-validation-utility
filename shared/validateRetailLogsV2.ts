@@ -769,7 +769,6 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_INIT,
       ApiSequence.CONFIRM,
       ApiSequence.ON_CONFIRM,
-
     ]
 
     const flow00CSequence = [
@@ -885,18 +884,17 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
     const flow00ASequence = [
       ApiSequence.SEARCH,
       ApiSequence.ON_SEARCH,
-      // ApiSequence.SELECT,
-      // ApiSequence.ON_SELECT,
-      // ApiSequence.INIT,
-      // ApiSequence.ON_INIT,
-      // ApiSequence.CONFIRM,
-      // ApiSequence.ON_CONFIRM,
-      // ApiSequence.ON_STATUS_PENDING,
-      // ApiSequence.ON_STATUS_PACKED,
-      // ApiSequence.ON_STATUS_PICKED,
-      // ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
-      // ApiSequence.ON_UPDATE_DELIVERY_AUTH,
-      // ApiSequence.ON_STATUS_DELIVERED
+      ApiSequence.SELECT,
+      ApiSequence.ON_SELECT,
+      ApiSequence.INIT,
+      ApiSequence.ON_INIT,
+      ApiSequence.CONFIRM,
+      ApiSequence.ON_CONFIRM,
+      ApiSequence.ON_STATUS_PENDING,
+      ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
+      ApiSequence.ON_STATUS_DELIVERED
     ]
 
     const flow001Sequence = [
@@ -951,6 +949,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_CONFIRM,
       ApiSequence.ON_STATUS_PENDING
     ]
+    // const flow
     const processApiSequence = (apiSequence: any, data: any, logReport: any, msgIdSet: any, flow: string) => {
       if (validFlows.includes(flow)) {
         apiSequence.forEach((apiSeq: any) => {
@@ -1004,7 +1003,9 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
         case ApiSequence.ON_CONFIRM:
           return checkOnConfirm(data, fulfillmentsItemsSet, flow)
         case ApiSequence.CANCEL:
-          return checkCancel(data, msgIdSet, flow)
+          return checkCancel(data, msgIdSet,'cancel',flow)
+        case ApiSequence.CANCEL:
+          return checkCancel(data, msgIdSet,'force_cancel',flow)
         case ApiSequence.ON_CANCEL:
           return checkOnCancel(data, msgIdSet)
         case ApiSequence.ON_STATUS_RTO_DELIVERED:

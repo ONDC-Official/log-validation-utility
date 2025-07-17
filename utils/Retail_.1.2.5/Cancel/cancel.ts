@@ -7,7 +7,7 @@ import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
 import {isValidISO8601Duration} from '../../index'
 
-export const checkCancel = (data: any, msgIdSet: any,flow?:string) => {
+export const checkCancel = (data: any, msgIdSet: any,action:string,flow?:string) => {
   const cnclObj: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -131,6 +131,10 @@ export const checkCancel = (data: any, msgIdSet: any,flow?:string) => {
     }
     try {
       if (flow === FLOW.FLOW005) {
+        if (cancel.cancellation_reason_id !== '052') {
+          cnclObj['invalidCancellationReasonId'] =
+            `In /${constants.FORCE_CANCEL}, cancellation_reason_id must be '052'`
+        }
         // Validate tags array
         if (!cancel.tags || !Array.isArray(cancel.tags) || cancel.tags.length === 0) {
           cnclObj['invldTags'] = `message/descriptor/tags is missing or invalid in /${constants.FORCE_CANCEL}`
@@ -160,11 +164,17 @@ export const checkCancel = (data: any, msgIdSet: any,flow?:string) => {
               cnclObj['invalidTtlResponseValue'] =
                 `message/descriptor/tags/params/ttl_response must be a valid ISO8601 duration in /${constants.FORCE_CANCEL}`
             }
+            if (action === constants.FORCE_CANCEL) {
+              if (forceParam?.value !== 'yes') {
+                cnclObj['forceParamMustBeYes'] = `In /${constants.FORCE_CANCEL}, force must be 'yes'`
+              }
+
+            }
           }
         }
       }
-    } catch (error:any) {
-       logger.error(`!!Some error occurred while checking /${constants.FORCE_CANCEL} API`, error)
+    } catch (error: any) {
+      logger.error(`!!Some error occurred while checking /${constants.FORCE_CANCEL} API`, error)
     }
 
     return cnclObj

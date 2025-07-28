@@ -31,7 +31,7 @@ const createServer = (): express.Application => {
   })
   app.use('/health', healthRoutes)
   app.use('/api', validateRoutes)
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
   return app
 }
 

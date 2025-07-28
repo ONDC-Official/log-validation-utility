@@ -95,9 +95,16 @@ const searchSchemaTRV14 = {
                       },
                       time: {
                         type: 'object',
-                        required: ['timestamp'],
+                        required: ['range'],
                         properties: {
-                          timestamp: { type: 'string', format: 'date-time' },
+                          range: {
+                            type: 'object',
+                            required: ['start', 'end'],
+                            properties: {
+                              start: { type: 'string', format: 'date-time' },
+                              end: { type: 'string', format: 'date-time' },
+                            },
+                          },
                         },
                       },
                     },

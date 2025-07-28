@@ -673,12 +673,12 @@ export const checkOnConfirm = (data: any, fulfillmentsItemsSet: any, flow: strin
       logger.error(`Error while checking transaction is in message.order.payment`)
     }
     try {
-      if (flow === FLOW.FLOW012) {
+      if (flow === FLOW.FLOW2A) {
         logger.info('Payment status check in on confirm call')
         const payment = on_confirm.payment
         if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
-          logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`);
-          onCnfrmObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`
+          logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`);
+          onCnfrmObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW2A} flow (Cash on Delivery)`
         }
       }
     } catch (err: any) {

@@ -44,11 +44,6 @@ export const checkOnsearch = (data: any) => {
 
   setValue(`${ApiSequence.ON_SEARCH}_context`, context)
   setValue(`${ApiSequence.ON_SEARCH}_message`, message)
-  const providerOffers: any[] = message?.catalog["bpp/providers"]
-  ?.flatMap((provider:any) => provider?.offers || []);
-  if(providerOffers && providerOffers.length > 0){
-    setValue(`${ApiSequence.ON_SEARCH}_offers`,providerOffers)
-  }
   let errorObj: any = {}
 
   if (schemaValidation !== 'error') {
@@ -846,7 +841,7 @@ export const checkOnsearch = (data: any) => {
           const has = Object.prototype.hasOwnProperty
           if (has.call(loc, 'gps')) {
             if (!checkGpsPrecision(loc.gps)) {
-              errorObj.gpsPrecision = `/bpp/providers[${i}]/locations[${iter}]/gps coordinates must be specified with at least 4 decimal places of precision.`
+              errorObj.gpsPrecision = `/bpp/providers[${i}]/locations[${iter}]/gps coordinates must be specified with at least six decimal places of precision.`
             }
           }
         } catch (error) {

@@ -33,7 +33,7 @@ const onSearch1SchemaTRV14 = {
         transaction_id: { type: 'string' },
         message_id: { type: 'string' },
         version: { type: 'string', enum: ['2.0.0'] },
-        action: { type: 'string', enum: ['on_search_1'] },
+        action: { type: 'string', enum: ['on_search'] },
         bap_uri: { type: 'string', format: 'uri' },
         ttl: { type: 'string', pattern: '^PT\\d+S$' },
         bpp_id: { type: 'string' },
@@ -73,7 +73,7 @@ const onSearch1SchemaTRV14 = {
                   id: { type: 'string' },
                   descriptor: {
                     type: 'object',
-                    required: ['name', 'short_desc', 'images'],
+                    required: ['name', 'images'],
                     properties: {
                       name: { type: 'string' },
                       short_desc: { type: 'string' },
@@ -130,7 +130,7 @@ const onSearch1SchemaTRV14 = {
                         gps: { type: 'string' },
                         descriptor: {
                           type: 'object',
-                          required: ['name', 'short_desc', 'images', 'additional_desc'],
+                          required: ['name', 'images'],
                           properties: {
                             name: { type: 'string' },
                             short_desc: { type: 'string' },

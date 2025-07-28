@@ -695,27 +695,14 @@ export enum DOMAIN {
 export enum FLOW {
   FLOW1 = '1',
   FLOW2 = '2',
-  FLOW012 = '012',
+  FLOW2A = '2A',
   FLOW3 = '3',
   FLOW4 = '4',
   FLOW5 = '5',
   FLOW6 = '6',
   FLOW7 = '7',
   FLOW8 = '8',
-  FLOW9 = '9',
-  FLOW020 = '020',
-  FLOW00B = "00B",
-  FLOW01C = '01C',
-  FLOW008 = '008',
-  FLOW003 = '003',
-  FLOW00F = '00F',
-  FLOW011 = '011',
-  FLOW017 = '017',
-  FLOW00D = '00D',
-  FLOW00E = '00E',
-  FLOW007 = '007',
-  FLOW0099 = '0099',
-  FLOW00C = '00C'
+  FLOW9 = '9'
 }
 
 export enum statutory_reqs {
@@ -723,14 +710,3 @@ export enum statutory_reqs {
   PackagedCommodities = '@ondc/org/statutory_reqs_packaged_commodities',
   None = 'None'
 }
-export enum OFFERSFLOW { 
-  FLOW0091 = '0091',
-  FLOW0092 = '0092',
-  FLOW0093 = '0093',
-  FLOW0094 = '0094',
-  FLOW0095 = '0095',
-  FLOW0096 = '0096',
-  FLOW0097 = '0097',
-  FLOW0098 = '0098'
-}
-// export const OFFER_FLOW_VALUES: string[] = Object.values(OFFERSFLOW);

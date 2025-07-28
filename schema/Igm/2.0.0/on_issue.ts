@@ -87,9 +87,7 @@ const newOnIssueSchema = {
       },
       required: [
         'domain',
-        'location',
         'action',
-        'core_version',
         'bap_id',
         'bap_uri',
         'bpp_id',
@@ -98,11 +96,54 @@ const newOnIssueSchema = {
         'message_id',
         'timestamp'
       ],
+      allOf: [
+        {
+          if: {
+            properties: {
+              domain: {
+                type: 'string',
+                pattern: '^(ONDC:RET.*|nic2004:60232|ONDC:AGR.*)$'
+              }
+            }
+          },
+          then: {
+            required: ['core_version', 'city']
+          }
+        },
+        {
+          if: {
+            properties: {
+              domain: {
+                type: 'string',
+                pattern: '^ONDC:(FIS|TRV|SRV).*'
+              }
+            }
+          },
+          then: {
+            required: ['version', 'location']
+          }
+        },
+        {
+          if: {
+            not: {
+              properties: {
+                domain: {
+                  type: 'string',
+                  pattern: '^(ONDC:(RET|FIS|TRV|AGR).*|nic2004:60232)$'
+                }
+              }
+            }
+          },
+          then: {
+            required: ['location', 'core_version']
+          }
+        }
+      ]
     },
     message: {
       type: 'object',
       properties: {
-        updated_target: {
+        update_target: {
           type: 'array',
           items: {
             type: 'object',
@@ -152,13 +193,14 @@ const newOnIssueSchema = {
                     enum: [
                       'ORDER',
                       'PROVIDER',
-                      'FULFILMENT',
+                      'FULFILLMENT',
                       'ITEM',
                       'AGENT',
                       'TRANSACTION',
                       'MESSAGE_ID',
                       'COMPLAINT',
                       'CUSTOMER',
+                      'CONSUMER',
                       'PAYMENT',
                       'ACTION',
                     ],
@@ -259,7 +301,7 @@ const newOnIssueSchema = {
               type: 'array',
               items: { type: 'string' },
             },
-            description: {
+            descriptor: {
               type: 'object',
               properties: {
                 code: { type: 'string' },
@@ -294,7 +336,7 @@ const newOnIssueSchema = {
                 type: 'object',
                 properties: {
                   id: { type: 'string' },
-                  description: {
+                  descriptor: {
                     type: 'object',
                     properties: {
                       code: {
@@ -327,7 +369,7 @@ const newOnIssueSchema = {
                     required: ['name'],
                   },
                 },
-                required: ['id', 'description', 'updated_at', 'action_by', 'actor_details'],
+                required: ['id', 'descriptor', 'updated_at', 'action_by', 'actor_details'],
               },
             },
           },
@@ -344,13 +386,13 @@ const newOnIssueSchema = {
             'source_id',
             'complainant_id',
             'respondent_ids',
-            'description',
+            'descriptor',
             'last_action_id',
             'actions',
           ],
         },
       },
-      required: ['updated_target', 'issue'],
+      required: ['update_target', 'issue'],
     },
   },
   required: ['context', 'message'],

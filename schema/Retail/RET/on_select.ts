@@ -14,7 +14,7 @@ export const onSelectSchema = {
         },
         core_version: {
           type: 'string',
-          enum: ['1.2.0'],
+          enum: ['1.2.0', '1.2.5'],
           minLength: 1,
         },
         bap_id: {
@@ -134,7 +134,7 @@ export const onSelectSchema = {
                 properties: {
                   type: {
                     type: 'string',
-                    enum: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
+                    enums: ['Delivery', 'Self-Pickup', 'Buyer-Delivery'],
                   },
                   id: {
                     type: 'string',

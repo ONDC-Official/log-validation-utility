@@ -24,6 +24,7 @@ export const checkConfirm = (data: any, msgIdSet: any, version: any) => {
 
       //checking providerid
       const confirm =message.order
+      const init_Context = getValue('init_context')
       const payments = getValue(`initpayments`)
       const prvdrid =  getValue(`oninitprvdrid`)
       const itemMap = getValue(`items`)
@@ -32,14 +33,32 @@ export const checkConfirm = (data: any, msgIdSet: any, version: any) => {
       if(confirm.provider.id !== prvdrid ){
        rsfObj.prvdrid = `provider id mismatches in init and on_select`
       }
- 
+
+      //checking messageId
+      try {
+        if(context.message_id === init_Context.message_id){
+          rsfObj.msgId = `confirm and init message id cant be the same`
+        }
+      } catch (error) {
+        logger.error(error)
+      }
+
       //confirm items
       confirm.items.forEach((itm:any) => {
+        
+        if(!itm.parent_item_id){
+          rsfObj[`${itm.id}`]=`item with id:${itm.id} missing parent_item_id`
+        }
+  
+        if(itm.parent_item_id === ''){
+          rsfObj[`${itm.id}`]=`item with id:${itm.id} can't have empty parent_item_id`
+        }
+
        if(!itemMap.has(itm.id) ){
          rsfObj[itm.id] = `${itm.id} was not in select call  `
        }
        if(itm.quantity.selected.count !== itemMap.get(itm.id) ){
-         rsfObj[itm.id] = `${itm.id} quantity changed from previous call  `
+         rsfObj[itm.id] = `${itm.id} quantity is changed from previous call's selected quantity`
        }
       })
 

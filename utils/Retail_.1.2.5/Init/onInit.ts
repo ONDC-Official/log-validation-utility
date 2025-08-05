@@ -119,11 +119,16 @@ export const checkOnInit = (data: any, flow: string) => {
 
     try {
       logger.info(`Checking Cancellation terms for /${constants.ON_INIT}`)
-      setValue('OnInitCancellationTerms',message.order.cancellation_terms )
-      // if (message.order.cancellation_terms && message.order.cancellation_terms.length > 0) {
-      //   onInitObj[`message.order`] =
-      //     `'cancellation_terms' in /message/order should not be provided as those are not enabled yet`
-      // }
+      
+      // Flow 01E requires cancellation_terms
+      if (flow === FLOW.FLOW01E && !message.order.cancellation_terms) {
+        onInitObj.cancellationTerms = `cancellation_terms are mandatory for flow ${FLOW.FLOW01E} in /${constants.ON_INIT}`
+      }
+      
+      // Store cancellation_terms only if provided
+      if (message.order.cancellation_terms) {
+        setValue('OnInitCancellationTerms', message.order.cancellation_terms)
+      }
     } catch (error: any) {
       logger.error(`!!Error while checking Cancellation terms for /${constants.ON_INIT}, ${error.stack}`)
     }
@@ -642,13 +647,15 @@ export const checkOnInit = (data: any, flow: string) => {
     }
     try {
       logger.info(`storing payment settlement details in /${constants.ON_INIT}`)
-      if(on_init.payment.collected_by === PAYMENT_COLLECTED_BY.BAP){
-        if (on_init.payment.hasOwnProperty('@ondc/org/settlement_details'))
-        setValue('sttlmntdtls', on_init.payment['@ondc/org/settlement_details'][0])
-      else {
-        onInitObj.pymntSttlmntObj = `payment settlement_details missing in /${constants.ON_INIT}`
+      if (flow !== FLOW.FLOW012) {
+        // Non-COD flow - settlement details required
+        if (on_init.payment.hasOwnProperty('@ondc/org/settlement_details')) {
+          setValue('sttlmntdtls', on_init.payment['@ondc/org/settlement_details'][0])
+        } else {
+          onInitObj.pymntSttlmntObj = `payment settlement_details missing in /${constants.ON_INIT}`
+        }
       }
-      }
+      // For COD flow (012), skip settlement details validation as they will be provided in confirm
     } catch (error: any) {
       logger.error(`!!Error while storing payment settlement details in /${constants.ON_INIT}`)
     }

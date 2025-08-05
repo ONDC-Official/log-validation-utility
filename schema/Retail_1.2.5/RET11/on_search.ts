@@ -487,143 +487,150 @@ export const FnBonSearchSchema = {
                   items: {
                     type: 'array',
                     items: {
-                      type: 'object',
-                      properties: {
-                        id: {
-                          type: 'string',
-                        },
-                        rating: {
-                          type: "string",
-                          minimum: 1,
-                          maximum: 5,
-                          default: null,
-                        },
-                        time: {
-                          type: 'object',
-                          properties: {
-                            label: {
-                              type: 'string',
-                              enum: ['enable', 'disable'],
-                            },
-                            timestamp: {
-                              type: 'string',
-                              format: 'rfc3339-date-time',
-                            },
+                      if: {
+                        // Check if this item is a customization by looking for type="customization" in tags
+                        properties: {
+                          tags: {
+                            type: 'array',
+                            contains: {
+                              type: 'object',
+                              properties: {
+                                code: { const: 'type' },
+                                list: {
+                                  type: 'array',
+                                  contains: {
+                                    type: 'object',
+                                    properties: {
+                                      code: { const: 'type' },
+                                      value: { const: 'customization' }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      then: {
+                        // Schema for customization items - minimal requirements
+                        type: 'object',
+                        properties: {
+                          id: {
+                            type: 'string',
                           },
-                          required: ['label', 'timestamp'],
-                        },
-                        descriptor: {
-                          type: 'object',
-                          properties: {
-                            name: {
-                              type: 'string',
-                            },
-                            symbol: {
-                              type: 'string',
-                            },
-                            short_desc: {
-                              type: 'string',
-                            },
-                            long_desc: {
-                              type: 'string',
-                            },
-                            images: {
-                              type: 'array',
-                              items: {
+                          descriptor: {
+                            type: 'object',
+                            properties: {
+                              name: {
                                 type: 'string',
                               },
-                            },
-                          },
-                          required: ['name'],
-                        },
-                        quantity: {
-                          type: 'object',
-                          properties: {
-                            unitized: {
-                              type: 'object',
-                              properties: {
-                                measure: {
-                                  type: 'object',
-                                  properties: {
-                                    unit: {
-                                      type: 'string',
-                                      enum: ['unit', 'dozen', 'gram', 'kilogram', 'tonne', 'litre', 'millilitre'],
-                                    },
-                                    value: {
-                                      type: 'string',
-                                      pattern: '^[0-9]+(.[0-9]+)?$',
-                                      errorMessage: 'enter a valid number',
-                                    },
-                                  },
-                                  required: ['unit', 'value'],
-                                },
+                              symbol: {
+                                type: 'string',
                               },
-                              required: ['measure'],
-                            },
-                            available: {
-                              type: 'object',
-                              properties: {
-                                count: {
+                              short_desc: {
+                                type: 'string',
+                              },
+                              long_desc: {
+                                type: 'string',
+                              },
+                              images: {
+                                type: 'array',
+                                items: {
                                   type: 'string',
-                                  enum: ['99', '0'],
-                                  errorMessage: 'available count must be either 99 or 0 only',
                                 },
                               },
-                              required: ['count'],
                             },
-                            maximum: {
-                              type: 'object',
-                              properties: {
-                                count: {
-                                  type: 'string',
-                                  pattern: '^[0-9]+$',
-                                  errorMessage: 'maximum count must be in stringified number format. ',
-                                },
-                              },
-                              required: ['count'],
-                            },
+                            required: ['name'],
                           },
-                          required: ['available', 'maximum'],
-                        },
-                        price: {
-                          type: 'object',
-                          properties: {
-                            currency: {
-                              type: 'string',
-                              const: 'INR',
-                            },
-                            value: {
-                              type: 'string',
-                              pattern: '^[-+]?[0-9]+(\.[0-9]{1,2})?$',
-                              errorMessage: 'Price value should be a number in string with upto 2 decimal places',
-                            },
-                            maximum_value: {
-                              type: 'string',
-                              pattern: '^[0-9]+(\.[0-9]{1,2})?$',
-                              errorMessage: 'Price value should be a number in string with upto 2 decimal places',
-                            },
-                            tags: {
-                              type: 'array',
-                              items: {
+                          quantity: {
+                            type: 'object',
+                            properties: {
+                              unitized: {
                                 type: 'object',
                                 properties: {
-                                  code: {
-                                    type: 'string',
-                                    enum: ['range', 'default_selection'],
+                                  measure: {
+                                    type: 'object',
+                                    properties: {
+                                      unit: {
+                                        type: 'string',
+                                        enum: ['unit', 'dozen', 'gram', 'kilogram', 'tonne', 'litre', 'millilitre'],
+                                      },
+                                      value: {
+                                        type: 'string',
+                                        pattern: '^[0-9]+(.[0-9]+)?$',
+                                        errorMessage: 'enter a valid number',
+                                      },
+                                    },
+                                    required: ['unit', 'value'],
                                   },
-                                  list: {
-                                    type: 'array',
-                                    items: {
-                                      type: 'object',
-                                      properties: {
-                                        code: {
-                                          type: 'string',
-                                          enum: ['lower', 'upper', 'value', 'maximum_value'],
-                                        },
-                                        value: {
-                                          type: 'string',
-                                          pattern: '^[0-9]+(\.[0-9]{1,2})?$',
-                                          errorMessage: 'enter a valid number with exactly two decimal places.',
+                                },
+                                required: ['measure'],
+                              },
+                              available: {
+                                type: 'object',
+                                properties: {
+                                  count: {
+                                    type: 'string',
+                                    enum: ['99', '0'],
+                                    errorMessage: 'available count must be either 99 or 0 only',
+                                  },
+                                },
+                                required: ['count'],
+                              },
+                              maximum: {
+                                type: 'object',
+                                properties: {
+                                  count: {
+                                    type: 'string',
+                                    pattern: '^[0-9]+$',
+                                    errorMessage: 'maximum count must be in stringified number format. ',
+                                  },
+                                },
+                                required: ['count'],
+                              },
+                            },
+                            required: ['available', 'maximum'],
+                          },
+                          price: {
+                            type: 'object',
+                            properties: {
+                              currency: {
+                                type: 'string',
+                                const: 'INR',
+                              },
+                              value: {
+                                type: 'string',
+                                pattern: '^[-+]?[0-9]+(\.[0-9]{1,2})?$',
+                                errorMessage: 'Price value should be a number in string with upto 2 decimal places',
+                              },
+                              maximum_value: {
+                                type: 'string',
+                                pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                                errorMessage: 'Price value should be a number in string with upto 2 decimal places',
+                              },
+                              tags: {
+                                type: 'array',
+                                items: {
+                                  type: 'object',
+                                  properties: {
+                                    code: {
+                                      type: 'string',
+                                      enum: ['range', 'default_selection'],
+                                    },
+                                    list: {
+                                      type: 'array',
+                                      items: {
+                                        type: 'object',
+                                        properties: {
+                                          code: {
+                                            type: 'string',
+                                            enum: ['lower', 'upper', 'value', 'maximum_value'],
+                                          },
+                                          value: {
+                                            type: 'string',
+                                            pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                                            errorMessage: 'enter a valid number with exactly two decimal places.',
+                                          },
                                         },
                                       },
                                     },
@@ -631,87 +638,318 @@ export const FnBonSearchSchema = {
                                 },
                               },
                             },
+                            required: ['currency', 'value', 'maximum_value'],
                           },
-                          required: ['currency', 'value', 'maximum_value'],
-                        },
-                        category_id: {
-                          type: 'string',
-                          enum: fnbCategories,
-                          errorMessage: 'Invalid category ID found for item for on_search ',
-                        },
-                        category_ids: {
-                          type: 'array',
-                          items: {
+                          // category_id and category_ids are NOT required for customization items
+                          category_id: {
                             type: 'string',
-                            pattern: '^[a-zA-Z0-9]{1,12}:[a-zA-Z0-9]{1,12}$',
-                            errorMessage: 'format of category_ids must be followed as per API contract',
+                            enum: fnbCategories,
+                            errorMessage: 'Invalid category ID found for item for on_search ',
+                          },
+                          category_ids: {
+                            type: 'array',
+                            items: {
+                              type: 'string',
+                              pattern: '^[a-zA-Z0-9]{1,12}:[a-zA-Z0-9]{1,12}$',
+                              errorMessage: 'format of category_ids must be followed as per API contract',
+                            },
+                          },
+                          fulfillment_id: {
+                            type: 'string',
+                          },
+                          location_id: {
+                            type: 'string',
+                          },
+                          related: {
+                            type: 'boolean',
+                          },
+                          recommended: {
+                            type: 'boolean',
+                          },
+                          '@ondc/org/returnable': {
+                            type: 'boolean',
+                          },
+                          '@ondc/org/cancellable': {
+                            type: 'boolean',
+                          },
+                          '@ondc/org/return_window': {
+                            type: ['string', 'null'],
+                            format: 'duration',
+                          },
+                          '@ondc/org/seller_pickup_return': {
+                            type: 'boolean',
+                          },
+                          '@ondc/org/time_to_ship': {
+                            type: 'string',
+                            pattern: '^PT(?:(?:60|[1-5]?[0-9]|60)M|1H)$',
+                            errorMessage: 'time to ship should be within PT0M-PT59M or PT1H',
+                          },
+                          '@ondc/org/available_on_cod': {
+                            type: 'boolean',
+                          },
+                          '@ondc/org/contact_details_consumer_care': {
+                            type: 'string',
+                          },
+                          tags: {
+                            type: 'array',
+                            items: {
+                              type: 'object',
+                              properties: {
+                                code: {
+                                  type: 'string',
+                                },
+                                list: {
+                                  type: 'array',
+                                  items: {
+                                    type: 'object',
+                                    properties: {
+                                      code: {
+                                        type: 'string',
+                                      },
+                                      value: {
+                                        type: 'string',
+                                      },
+                                    },
+                                    required: ['code', 'value'],
+                                  },
+                                },
+                              },
+                              required: ['code', 'list'],
+                            },
                           },
                         },
-                        fulfillment_id: {
-                          type: 'string',
-                        },
-                        location_id: {
-                          type: 'string',
-                        },
-                        related: {
-                          type: 'boolean',
-                        },
-                        recommended: {
-                          type: 'boolean',
-                        },
-                        '@ondc/org/returnable': {
-                          type: 'boolean',
-                        },
-                        '@ondc/org/cancellable': {
-                          type: 'boolean',
-                        },
-                        '@ondc/org/return_window': {
-                          type: ['string', 'null'],
-                          format: 'duration',
-                        },
-                        '@ondc/org/seller_pickup_return': {
-                          type: 'boolean',
-                        },
-                        '@ondc/org/time_to_ship': {
-                          type: 'string',
-                          pattern: '^PT(?:(?:60|[1-5]?[0-9]|60)M|1H)$',
-                          errorMessage: 'time to ship should be within PT0M-PT59M or PT1H',
-                        },
-                        '@ondc/org/available_on_cod': {
-                          type: 'boolean',
-                        },
-                        '@ondc/org/contact_details_consumer_care': {
-                          type: 'string',
-                        },
-                        tags: {
-                          type: 'array',
-                          items: {
+                        // Required fields for customization items - excluding category_id
+                        required: ['id', 'descriptor', 'quantity', 'price', 'tags'],
+                      },
+                      else: {
+                        // Schema for regular (non-customization) items
+                        type: 'object',
+                        properties: {
+                          id: {
+                            type: 'string',
+                          },
+                          rating: {
+                            type: "string",
+                            minimum: 1,
+                            maximum: 5,
+                            default: null,
+                          },
+                          time: {
                             type: 'object',
                             properties: {
-                              code: {
+                              label: {
+                                type: 'string',
+                                enum: ['enable', 'disable'],
+                              },
+                              timestamp: {
+                                type: 'string',
+                                format: 'rfc3339-date-time',
+                              },
+                            },
+                            required: ['label', 'timestamp'],
+                          },
+                          descriptor: {
+                            type: 'object',
+                            properties: {
+                              name: {
                                 type: 'string',
                               },
-                              list: {
+                              symbol: {
+                                type: 'string',
+                              },
+                              short_desc: {
+                                type: 'string',
+                              },
+                              long_desc: {
+                                type: 'string',
+                              },
+                              images: {
+                                type: 'array',
+                                items: {
+                                  type: 'string',
+                                },
+                              },
+                            },
+                            required: ['name'],
+                          },
+                          quantity: {
+                            type: 'object',
+                            properties: {
+                              unitized: {
+                                type: 'object',
+                                properties: {
+                                  measure: {
+                                    type: 'object',
+                                    properties: {
+                                      unit: {
+                                        type: 'string',
+                                        enum: ['unit', 'dozen', 'gram', 'kilogram', 'tonne', 'litre', 'millilitre'],
+                                      },
+                                      value: {
+                                        type: 'string',
+                                        pattern: '^[0-9]+(.[0-9]+)?$',
+                                        errorMessage: 'enter a valid number',
+                                      },
+                                    },
+                                    required: ['unit', 'value'],
+                                  },
+                                },
+                                required: ['measure'],
+                              },
+                              available: {
+                                type: 'object',
+                                properties: {
+                                  count: {
+                                    type: 'string',
+                                    enum: ['99', '0'],
+                                    errorMessage: 'available count must be either 99 or 0 only',
+                                  },
+                                },
+                                required: ['count'],
+                              },
+                              maximum: {
+                                type: 'object',
+                                properties: {
+                                  count: {
+                                    type: 'string',
+                                    pattern: '^[0-9]+$',
+                                    errorMessage: 'maximum count must be in stringified number format. ',
+                                  },
+                                },
+                                required: ['count'],
+                              },
+                            },
+                            required: ['available', 'maximum'],
+                          },
+                          price: {
+                            type: 'object',
+                            properties: {
+                              currency: {
+                                type: 'string',
+                                const: 'INR',
+                              },
+                              value: {
+                                type: 'string',
+                                pattern: '^[-+]?[0-9]+(\.[0-9]{1,2})?$',
+                                errorMessage: 'Price value should be a number in string with upto 2 decimal places',
+                              },
+                              maximum_value: {
+                                type: 'string',
+                                pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                                errorMessage: 'Price value should be a number in string with upto 2 decimal places',
+                              },
+                              tags: {
                                 type: 'array',
                                 items: {
                                   type: 'object',
                                   properties: {
                                     code: {
                                       type: 'string',
+                                      enum: ['range', 'default_selection'],
                                     },
-                                    value: {
-                                      type: 'string',
+                                    list: {
+                                      type: 'array',
+                                      items: {
+                                        type: 'object',
+                                        properties: {
+                                          code: {
+                                            type: 'string',
+                                            enum: ['lower', 'upper', 'value', 'maximum_value'],
+                                          },
+                                          value: {
+                                            type: 'string',
+                                            pattern: '^[0-9]+(\.[0-9]{1,2})?$',
+                                            errorMessage: 'enter a valid number with exactly two decimal places.',
+                                          },
+                                        },
+                                      },
                                     },
                                   },
-                                  required: ['code', 'value'],
                                 },
                               },
                             },
-                            required: ['code', 'list'],
+                            required: ['currency', 'value', 'maximum_value'],
+                          },
+                          category_id: {
+                            type: 'string',
+                            enum: fnbCategories,
+                            errorMessage: 'Invalid category ID found for item for on_search ',
+                          },
+                          category_ids: {
+                            type: 'array',
+                            items: {
+                              type: 'string',
+                              pattern: '^[a-zA-Z0-9]{1,12}:[a-zA-Z0-9]{1,12}$',
+                              errorMessage: 'format of category_ids must be followed as per API contract',
+                            },
+                          },
+                          fulfillment_id: {
+                            type: 'string',
+                          },
+                          location_id: {
+                            type: 'string',
+                          },
+                          related: {
+                            type: 'boolean',
+                          },
+                          recommended: {
+                            type: 'boolean',
+                          },
+                          '@ondc/org/returnable': {
+                            type: 'boolean',
+                          },
+                          '@ondc/org/cancellable': {
+                            type: 'boolean',
+                          },
+                          '@ondc/org/return_window': {
+                            type: ['string', 'null'],
+                            format: 'duration',
+                          },
+                          '@ondc/org/seller_pickup_return': {
+                            type: 'boolean',
+                          },
+                          '@ondc/org/time_to_ship': {
+                            type: 'string',
+                            pattern: '^PT(?:(?:60|[1-5]?[0-9]|60)M|1H)$',
+                            errorMessage: 'time to ship should be within PT0M-PT59M or PT1H',
+                          },
+                          '@ondc/org/available_on_cod': {
+                            type: 'boolean',
+                          },
+                          '@ondc/org/contact_details_consumer_care': {
+                            type: 'string',
+                          },
+                          tags: {
+                            type: 'array',
+                            items: {
+                              type: 'object',
+                              properties: {
+                                code: {
+                                  type: 'string',
+                                },
+                                list: {
+                                  type: 'array',
+                                  items: {
+                                    type: 'object',
+                                    properties: {
+                                      code: {
+                                        type: 'string',
+                                      },
+                                      value: {
+                                        type: 'string',
+                                      },
+                                    },
+                                    required: ['code', 'value'],
+                                  },
+                                },
+                              },
+                              required: ['code', 'list'],
+                            },
                           },
                         },
-                      },
-                      required: ['id', 'descriptor', 'quantity', 'price', 'category_id', 'tags'],
+                        // Required fields for regular items - including category_id
+                        required: ['id', 'descriptor', 'quantity', 'price', 'category_id', 'tags'],
+                      }
                     },
                   },
                   tags: {

@@ -15,6 +15,7 @@ import {
   compareQuoteObjects,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
+import { FLOW } from '../../../utils/enum'
 
 export const checkOnInit = (data: any, flow:string) => {
   try {
@@ -534,11 +535,15 @@ export const checkOnInit = (data: any, flow:string) => {
     }
     try {
       logger.info(`storing payment settlement details in /${constants.ON_INIT}`)
-      if (on_init.payment.hasOwnProperty('@ondc/org/settlement_details'))
-        setValue('sttlmntdtls', on_init.payment['@ondc/org/settlement_details'][0])
-      else {
-        onInitObj.pymntSttlmntObj = `payment settlement_details missing in /${constants.ON_INIT}`
+      if (flow !== FLOW.FLOW012) {
+        // Non-COD flow - settlement details required
+        if (on_init.payment.hasOwnProperty('@ondc/org/settlement_details')) {
+          setValue('sttlmntdtls', on_init.payment['@ondc/org/settlement_details'][0])
+        } else {
+          onInitObj.pymntSttlmntObj = `payment settlement_details missing in /${constants.ON_INIT}`
+        }
       }
+      // For COD flow (012), skip settlement details validation as they will be provided in confirm
     } catch (error: any) {
       logger.error(`!!Error while storing payment settlement details in /${constants.ON_INIT}`)
     }

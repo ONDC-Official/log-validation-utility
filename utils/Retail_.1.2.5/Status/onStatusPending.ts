@@ -9,12 +9,13 @@ import {
   checkContext,
   areTimestampsLessThanOrEqualTo,
   payment_status,
-  compareTimeRanges,
   compareCoordinates,
+  compareTimeRanges,
   getProviderId,
   deepCompare,
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
+import { extractRoutingType, getDefaultRouting, isValidRoutingType } from '../common/routingValidator'
 
 export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fulfillmentsItemsSet: any) => {
   const onStatusObj: any = {}
@@ -422,6 +423,43 @@ export const checkOnStatusPending = (data: any, state: string, msgIdSet: any, fu
             onStatusObj['providerIdMismatch'] =
               `provider_id in fulfillment in ${ApiSequence.ON_CONFIRM} does not match expected provider_id: expected '${fulfillmentProviderId}' in ${ApiSequence.ON_STATUS_PENDING} but got ${id}`
           }
+        }
+        
+        // Validate routing type for retail 1.2.5
+        try {
+          logger.info(`Checking routing type in /${constants.ON_STATUS_PENDING}`)
+          const onConfirmOrderState = getValue('onCnfrmState')
+          const storedRoutingType = getValue('routingType')
+          const domain = getValue('domain')
+          
+          // If order state was 'Created' in on_confirm, routing must be provided in on_status_pending
+          if (onConfirmOrderState === 'Created') {
+            const routingType = extractRoutingType(on_status.fulfillments)
+            
+            if (!routingType) {
+              onStatusObj.routingType = `Routing type tag is mandatory in delivery fulfillment when order.state was 'Created' in /${constants.ON_CONFIRM}`
+            } else if (!isValidRoutingType(routingType)) {
+              onStatusObj.routingType = `Invalid routing type '${routingType}'. Must be one of: P2P, P2H2P`
+            } else {
+              // If routing was already stored (from on_confirm), check for consistency
+              if (storedRoutingType && storedRoutingType !== routingType) {
+                onStatusObj.routingTypeMismatch = `Routing type mismatch: '${routingType}' in /${constants.ON_STATUS_PENDING} does not match '${storedRoutingType}' from /${constants.ON_CONFIRM}`
+              } else if (!storedRoutingType) {
+                // Store routing type for subsequent validations
+                setValue('routingType', routingType)
+                logger.info(`Stored routing type: ${routingType} for domain: ${domain}`)
+              }
+            }
+          }
+          
+          // If no routing type has been stored yet, use default based on domain
+          if (!getValue('routingType')) {
+            const defaultRouting = getDefaultRouting(domain)
+            setValue('routingType', defaultRouting)
+            logger.info(`No routing type found, using default: ${defaultRouting} for domain: ${domain}`)
+          }
+        } catch (error: any) {
+          logger.error(`Error while checking routing type in /${constants.ON_STATUS_PENDING}: ${error.stack}`)
         }
       } catch (err: any) {
         logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)

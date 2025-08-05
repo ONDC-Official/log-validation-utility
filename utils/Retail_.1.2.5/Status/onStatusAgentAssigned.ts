@@ -18,26 +18,18 @@ import {
   validateOrderUpdatedAt
 } from '../common/statusValidationHelpers'
 
-export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, _fulfillmentsItemsSet: any, flow?: string) => {
+export const checkOnStatusAgentAssigned = (data: any, _state: string, msgIdSet: any, _fulfillmentsItemsSet: any, flow?: string) => {
   const onStatusObj: any = {}
-  const EXPECTED_STATE = 'At-pickup'
+  const EXPECTED_STATE = 'Agent-assigned'
   
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.ON_STATUS_AT_PICKUP]: 'JSON cannot be empty' }
+      return { [ApiSequence.ON_STATUS_AGENT_ASSIGNED]: 'JSON cannot be empty' }
     }
     
     const { message, context }: any = data
     if (!message || !context || isObjectEmpty(message)) {
       return { missingFields: '/context, /message, is missing or empty' }
-    }
-
-    // Check if routing type is P2P
-    const routingType = getValue('routingType')
-    if (routingType && routingType !== 'P2P') {
-      return { 
-        routingError: `/${constants.ON_STATUS}_${EXPECTED_STATE} is only valid for P2P routing, but current routing is ${routingType}` 
-      }
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
@@ -55,7 +47,7 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
     try {
       logger.info(`Adding Message Id /${constants.ON_STATUS}_${EXPECTED_STATE}`)
       if (msgIdSet.has(context.message_id)) {
-        onStatusObj[`${ApiSequence.ON_STATUS_AT_PICKUP}_msgId`] = `Message id should not be same with previous calls`
+        onStatusObj[`${ApiSequence.ON_STATUS_AGENT_ASSIGNED}_msgId`] = `Message id should not be same with previous calls`
       }
       msgIdSet.add(context.message_id)
     } catch (error: any) {
@@ -66,7 +58,7 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
       onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
-    setValue(`${ApiSequence.ON_STATUS_AT_PICKUP}`, data)
+    setValue(`${ApiSequence.ON_STATUS_AGENT_ASSIGNED}`, data)
 
     try {
       logger.info(`Checking context for /${constants.ON_STATUS}_${EXPECTED_STATE} API`)
@@ -140,6 +132,12 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
       }
     } catch (error: any) {
       logger.error(`!!Error occurred while checking order state for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
+    }
+
+    // Validate routing type - Agent-assigned is valid for both P2P and P2H2P
+    const routingType = getValue('routingType')
+    if (routingType && !['P2P', 'P2H2P'].includes(routingType)) {
+      onStatusObj.routingTypeInvalid = `Invalid routing type '${routingType}' for /${constants.ON_STATUS}_${EXPECTED_STATE}. Must be P2P or P2H2P`
     }
 
     // Validate order.updated_at timestamp
@@ -221,8 +219,9 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
             onStatusObj[`fulfillmentState[${ff.id}]`] = `Fulfillment state should be '${EXPECTED_STATE}' for /${constants.ON_STATUS}_${EXPECTED_STATE} but found '${ffDesc.code}'`
           }
 
-          // Validate state is allowed for routing type (should always be P2P here)
-          if (routingType && routingType === 'P2P') {
+          // Validate state is allowed for routing type
+          const routingType = getValue('routingType')
+          if (routingType) {
             const validationError = isStateForbiddenForRouting(ffDesc.code, routingType)
             if (validationError) {
               onStatusObj[`fulfillmentStateRouting[${ff.id}]`] = `Fulfillment state '${ffDesc.code}' is not allowed for ${routingType} routing`
@@ -236,7 +235,7 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
         try {
           const routingTagErrors = validateRoutingTagStructure(
             ff,
-            routingType || 'P2P',
+            routingType,
             `/${constants.ON_STATUS}_${EXPECTED_STATE}`
           )
           Object.assign(onStatusObj, routingTagErrors)
@@ -265,16 +264,20 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
 
     try {
       // Checking for fulfillment timestamps
+      const pending_timestamp = getValue(`${ApiSequence.ON_STATUS_PENDING}_timestamp`)
       const DeliveryFulfillment = getValue('DeliveryFulfillment')
       const currentFulfillment = on_status.fulfillments.find((f: any) => f.id === DeliveryFulfillment?.id)
 
       if (currentFulfillment) {
-        const prevTimestamp = DeliveryFulfillment?.['@ondc/org/state_updated_at']
+        const pendingTimestamp = currentFulfillment.state?.descriptor?.code === 'Pending' 
+          ? pending_timestamp 
+          : DeliveryFulfillment?.['@ondc/org/state_updated_at']
+        
         const currentTimestamp = currentFulfillment['@ondc/org/state_updated_at']
         
         if (!currentTimestamp) {
           onStatusObj[`fulfillmentTimestamp[${currentFulfillment.id}]`] = `'@ondc/org/state_updated_at' is required for fulfillment state updates`
-        } else if (prevTimestamp && !areTimestampsLessThanOrEqualTo(prevTimestamp, currentTimestamp)) {
+        } else if (pendingTimestamp && !areTimestampsLessThanOrEqualTo(pendingTimestamp, currentTimestamp)) {
           onStatusObj[`fulfillmentTimestampOrder[${currentFulfillment.id}]`] = `'@ondc/org/state_updated_at' should be greater than or equal to the previous state timestamp`
         }
       }
@@ -289,7 +292,7 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
         const currentFulfillment = on_status.fulfillments.find((f: any) => f.id === DeliveryFulfillment.id)
         if (currentFulfillment) {
           setValue('DeliveryFulfillment', currentFulfillment)
-          setValue('DeliveryFulfillmentAction', ApiSequence.ON_STATUS_AT_PICKUP)
+          setValue('DeliveryFulfillmentAction', ApiSequence.ON_STATUS_AGENT_ASSIGNED)
         }
       }
     } catch (error: any) {

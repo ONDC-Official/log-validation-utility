@@ -40,6 +40,8 @@ curl --location --request POST 'https://log-validation.ondc.org/api/validate' \
 
 The table below outlines the payload structure for various transaction flows in the Retail Log Validation Utility. Each flow corresponds to specific actions within the ONDC network, and the payload structure provides a clear representation of the data expected for each action. This comprehensive reference assists developers in constructing accurate and valid JSON payloads for their transactions.
 
+**Note for Version 1.2.5**: Starting from retail version 1.2.5, all flows that include fulfillment states should include ALL possible `on_status_*` calls in their payload (pending, packed, agent_assigned, at_pickup, out_for_pickup, pickup_failed, picked, at_delivery, in_transit, at_destination_hub, out_for_delivery, delivery_failed, delivered). The validation utility will automatically validate only the required states based on the routing type (P2P or P2H2P) specified in the order.
+
 | Flow 1        | Flow 2                     | Flow 3                     | Flow 4     | Flow 5                           | Flow 6                        | Flow 7            | Flow 8    | Flow 9            |
 | ------------- | -------------------------- | -------------------------- | ---------- | -------------------------------- | ----------------------------- | ----------------- | --------- | ----------------- |
 | search        | search                     | search                     | search     | search                           | search                        | search            | search    | search_inc        |
@@ -67,6 +69,75 @@ The table below outlines the payload structure for various transaction flows in 
 |               |                            |                            |            |                                  | on_update_interim_liquidated  |                   |           |                   |
 |               |                            |                            |            |                                  | on_update_liquidated          |                   |           |                   |
 |               |                            |                            |            |                                  | update_settlement_liquidated  |                   |           |                   |
+
+## Retail 1.2.5 Routing Types and Fulfillment States
+
+Starting from retail version 1.2.5, the ONDC network supports two routing types for order fulfillment:
+
+### P2P (Point-to-Point) - Hyperlocal Delivery
+P2P routing is used for hyperlocal deliveries where orders are delivered directly from pickup to delivery location without intermediate hubs.
+
+**Required States:**
+- `Pending` - Order is confirmed and pending processing
+- `Packed` - Order items are packed and ready
+- `Order-picked-up` - Order has been picked up by delivery agent
+- `Order-delivered` - Order has been delivered to customer
+
+**Optional States:**
+- `Agent-assigned` - Delivery agent has been assigned
+- `At-pickup` - Delivery agent has arrived at pickup location
+- `At-delivery` - Delivery agent has arrived at delivery location
+
+**Forbidden States:**
+- `Out-for-pickup`, `Pickup-failed`, `In-transit`, `At-destination-hub`, `Out-for-delivery`, `Delivery-failed`
+
+### P2H2P (Point-to-Hub-to-Point) - Intercity Delivery
+P2H2P routing is used for intercity deliveries where orders go through intermediate hubs.
+
+**Required States:**
+- `Pending` - Order is confirmed and pending processing
+- `Packed` - Order items are packed and ready
+- `Order-picked-up` - Order has been picked up from seller
+- `In-transit` - Order is in transit to destination hub
+- `At-destination-hub` - Order has reached destination hub
+- `Out-for-delivery` - Order is out for final delivery
+- `Order-delivered` - Order has been delivered to customer
+
+**Optional States:**
+- `Agent-assigned` - Delivery agent has been assigned
+- `Out-for-pickup` - Agent is out to pickup the order
+- `Pickup-failed` - Pickup attempt failed
+- `Delivery-failed` - Delivery attempt failed
+
+**Forbidden States:**
+- `At-pickup`, `At-delivery`
+
+### Routing Type Determination
+The routing type is extracted from the delivery fulfillment's tags:
+```json
+{
+  "fulfillments": [{
+    "type": "Delivery",
+    "tags": [{
+      "code": "routing",
+      "list": [{
+        "code": "type",
+        "value": "P2P"  // or "P2H2P"
+      }]
+    }]
+  }]
+}
+```
+
+**Default Routing:**
+- **RET11 (Food & Beverage):** Defaults to P2P (hyperlocal)
+- **All other retail domains:** Default to P2H2P (intercity)
+
+### Important Notes for Version 1.2.5:
+1. All flows include all possible `on_status` calls in the payload
+2. The validation utility will validate only the required states based on the routing type
+3. Routing type must be specified in `on_confirm` when order.state is "Accepted"
+4. Once set, routing type must remain consistent throughout the order lifecycle
 
 ### Sample Postman Request/Response
 
@@ -673,8 +744,16 @@ curl --location 'http://localhost:3008/api/validate' \
         "on_confirm": {},
         "on_status_pending": {},
         "on_status_packed": {},
+        "on_status_agent_assigned": {},
+        "on_status_at_pickup": {},
+        "on_status_out_for_pickup": {},
+        "on_status_pickup_failed": {},
         "on_status_picked": {},
+        "on_status_at_delivery": {},
+        "on_status_in_transit": {},
+        "on_status_at_destination_hub": {},
         "on_status_out_for_delivery": {},
+        "on_status_delivery_failed": {},
         "on_status_delivered": {}
     },
     "flow": "020"
@@ -704,8 +783,16 @@ curl --location 'http://localhost:3008/api/validate' \
         "on_confirm": {},
         "on_status_pending": {},
         "on_status_packed": {},
+        "on_status_agent_assigned": {},
+        "on_status_at_pickup": {},
+        "on_status_out_for_pickup": {},
+        "on_status_pickup_failed": {},
         "on_status_picked": {},
+        "on_status_at_delivery": {},
+        "on_status_in_transit": {},
+        "on_status_at_destination_hub": {},
         "on_status_out_for_delivery": {},
+        "on_status_delivery_failed": {},
         "on_status_delivered": {},
         "update_replacement": {},
         "on_update_interim_reverse_qc": {},
@@ -744,8 +831,16 @@ curl --location 'http://localhost:3008/api/validate' \
         "on_confirm": {},
         "on_status_pending": {},
         "on_status_packed": {},
+        "on_status_agent_assigned": {},
+        "on_status_at_pickup": {},
+        "on_status_out_for_pickup": {},
+        "on_status_pickup_failed": {},
         "on_status_picked": {},
+        "on_status_at_delivery": {},
+        "on_status_in_transit": {},
+        "on_status_at_destination_hub": {},
         "on_status_out_for_delivery": {},
+        "on_status_delivery_failed": {},
         "on_status_delivered": {}
     },
     "flow": "01C"
@@ -799,7 +894,14 @@ curl --location 'http://localhost:3008/api/validate' \
         "on_confirm": {},
         "on_status_pending": {},
         "on_status_packed": {},
-        "on_status_picked": {}
+        "on_status_agent_assigned": {},
+        "on_status_at_pickup": {},
+        "on_status_out_for_pickup": {},
+        "on_status_pickup_failed": {},
+        "on_status_picked": {},
+        "on_status_at_delivery": {},
+        "on_status_in_transit": {},
+        "on_status_at_destination_hub": {}
     },
     "flow": "003"
 }'
@@ -1368,8 +1470,16 @@ curl --location 'http://localhost:3008/api/validate' \
         "on_confirm": {},
         "on_status_pending": {},
         "on_status_packed": {},
+        "on_status_agent_assigned": {},
+        "on_status_at_pickup": {},
+        "on_status_out_for_pickup": {},
+        "on_status_pickup_failed": {},
         "on_status_picked": {},
+        "on_status_at_delivery": {},
+        "on_status_in_transit": {},
+        "on_status_at_destination_hub": {},
         "on_status_out_for_delivery": {},
+        "on_status_delivery_failed": {},
         "on_status_delivered": {}
     },
     "flow": "004"
@@ -2746,3 +2856,109 @@ Using Postman, you can import the above `curl` command into Postman and replace 
 With these instructions, you can start using the Retail Logs Validation Utility for local log validation.
 
 Feel free to reach out if you have any questions or need further assistance.
+
+## Retail 1.2.5 Routing Examples
+
+### P2P (Hyperlocal) Example - Food Delivery
+
+This example shows a typical P2P flow for RET11 (Food & Beverage) domain where delivery happens directly from restaurant to customer:
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET11",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {
+            "message": {
+                "order": {
+                    "fulfillments": [{
+                        "type": "Delivery",
+                        "tags": [{
+                            "code": "routing",
+                            "list": [{
+                                "code": "type",
+                                "value": "P2P"
+                            }]
+                        }]
+                    }]
+                }
+            }
+        },
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_agent_assigned": {},
+        "on_status_at_pickup": {},
+        "on_status_picked": {},
+        "on_status_at_delivery": {},
+        "on_status_delivered": {}
+    },
+    "flow": "2"
+}'
+```
+
+**Note for P2P**: The validation will accept `At-pickup` and `At-delivery` states but will reject `Out-for-pickup`, `Pickup-failed`, `In-transit`, `At-destination-hub`, `Out-for-delivery`, and `Delivery-failed` states.
+
+### P2H2P (Intercity) Example - Fashion/Electronics Delivery
+
+This example shows a typical P2H2P flow for RET12 (Fashion) or RET13 (Electronics) domain where delivery goes through hubs:
+
+```shell
+curl --location 'http://localhost:3008/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET12",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search": {},
+        "on_search": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {
+            "message": {
+                "order": {
+                    "fulfillments": [{
+                        "type": "Delivery",
+                        "tags": [{
+                            "code": "routing",
+                            "list": [{
+                                "code": "type",
+                                "value": "P2H2P"
+                            }]
+                        }]
+                    }]
+                }
+            }
+        },
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_agent_assigned": {},
+        "on_status_out_for_pickup": {},
+        "on_status_pickup_failed": {},
+        "on_status_picked": {},
+        "on_status_in_transit": {},
+        "on_status_at_destination_hub": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivery_failed": {},
+        "on_status_delivered": {}
+    },
+    "flow": "2"
+}'
+```
+
+**Note for P2H2P**: The validation will accept `Out-for-pickup`, `Pickup-failed`, `In-transit`, `At-destination-hub`, `Out-for-delivery`, and `Delivery-failed` states but will reject `At-pickup` and `At-delivery` states.

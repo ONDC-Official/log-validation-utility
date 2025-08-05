@@ -528,6 +528,332 @@ export const onSearchSchema = {
                   items: {
                     type: 'array',
                     items: {
+                      if: {
+                        // Check if this item is a customization by looking for type="customization" in tags
+                        properties: {
+                          tags: {
+                            type: 'array',
+                            contains: {
+                              type: 'object',
+                              properties: {
+                                code: { const: 'type' },
+                                list: {
+                                  type: 'array',
+                                  contains: {
+                                    type: 'object',
+                                    properties: {
+                                      code: { const: 'type' },
+                                      value: { const: 'customization' }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      },
+                      then: {
+                        // Schema for customization items - minimal requirements
+                        type: 'object',
+                        properties: {
+                        id: {
+                          type: 'string',
+                        },
+                        replacement_terms: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              replace_within: {
+                                type: 'object',
+                                properties: {
+                                  duration: {
+                                    type: 'string',
+                                    pattern: '^P(\\d+D|\\d+W|\\d+M|\\d+Y)$',
+                                  },
+                                },
+                                required: ['duration'],
+                              },
+                            },
+                            required: ['replace_within'],
+                          },
+                          optional: true,
+                        },
+                        rating: {
+                          type: 'string',
+                          enum: ['1', '2', '3', '4', '5'],
+                          default: null,
+                        },
+                        time: {
+                          type: 'object',
+                          properties: {
+                            label: {
+                              type: 'string',
+                              enum: ['enable', 'disable'],
+                            },
+                            timestamp: {
+                              type: 'string',
+                              format: 'rfc3339-date-time',
+                            },
+                          },
+                          required: ['label', 'timestamp'],
+                        },
+                        parent_item_id: {
+                          type: 'string',
+                        },
+                        descriptor: {
+                          type: 'object',
+                          properties: {
+                            name: {
+                              type: 'string',
+                            },
+                            code: {
+                              type: 'string',
+                              oneOf: [
+                                {
+                                  type: 'string',
+                                  pattern: '^(1|2|3|4|5):[a-zA-Z0-9]+$',
+                                  errorMessage:
+                                    'item/descriptor/code should be in this format - "type:code" where type is 1 - EAN, 2 - ISBN, 3 - GTIN, 4 - HSN, 5 - others',
+                                },
+                                {
+                                  if: {
+                                    type: 'object',
+                                    properties: { domain: { enum: ['ONDC:RET1A', 'ONDC:AGR10'] } },
+                                  },
+                                  then: {
+                                    type: 'string',
+                                  },
+                                },
+                              ],
+                            },
+                            symbol: {
+                              type: 'string',
+                            },
+                            short_desc: {
+                              type: 'string',
+                            },
+                            long_desc: {
+                              type: 'string',
+                            },
+                            images: {
+                              type: 'array',
+                              items: {
+                                type: 'string',
+                              },
+                            },
+                          },
+                          required: ['name', 'symbol', 'short_desc', 'long_desc', 'images'],
+                        },
+                        quantity: {
+                          type: 'object',
+                          properties: {
+                            unitized: {
+                              type: 'object',
+                              properties: {
+                                measure: {
+                                  type: 'object',
+                                  properties: {
+                                    unit: {
+                                      type: 'string',
+                                      enum: ['unit', 'dozen', 'gram', 'kilogram', 'tonne', 'litre', 'millilitre'],
+                                    },
+                                    value: {
+                                      type: 'string',
+                                      pattern: '^[0-9]+(.[0-9]+)?$',
+                                      errorMessage: 'value should be stringified number',
+                                    },
+                                  },
+                                  required: ['unit', 'value'],
+                                },
+                              },
+                              required: ['measure'],
+                            },
+                            available: {
+                              type: 'object',
+                              properties: {
+                                count: {
+                                  type: 'string',
+                                  enum: ['99', '0'],
+                                  errorMessage: 'available count must be either 99 or 0 only',
+                                },
+                              },
+                              required: ['count'],
+                            },
+                            maximum: {
+                              type: 'object',
+                              properties: {
+                                count: {
+                                  type: 'string',
+                                  pattern: '^[0-9]+$',
+                                  errorMessage: 'maximum count must be in stringified number format. ',
+                                },
+                              },
+                              required: ['count'],
+                            },
+                          },
+                          required: ['unitized', 'available', 'maximum'],
+                        },
+                        price: {
+                          type: 'object',
+                          properties: {
+                            currency: {
+                              type: 'string',
+                            },
+                            value: {
+                              type: 'string',
+                              pattern: '^[0-9]+(.[0-9]{1,2})?$',
+                              errorMessage: 'Price value should be a number in string with upto 2 decimal places',
+                            },
+                            maximum_value: {
+                              type: 'string',
+                            },
+                          },
+                          required: ['currency', 'value', 'maximum_value'],
+                        },
+                        category_id: {
+                          type: 'string',
+                          enum: combinedCategory,
+                          errorMessage: `Invalid category ID found for item for on_search`,
+                        },
+                        fulfillment_id: {
+                          type: 'string',
+                        },
+                        location_id: {
+                          type: 'string',
+                        },
+                        '@ondc/org/returnable': {
+                          type: 'boolean',
+                        },
+                        '@ondc/org/cancellable': {
+                          type: 'boolean',
+                        },
+                        '@ondc/org/return_window': {
+                          type: ['string', 'null'],
+                          format: 'duration',
+                        },
+                        '@ondc/org/seller_pickup_return': {
+                          type: 'boolean',
+                        },
+                        '@ondc/org/time_to_ship': {
+                          type: 'string',
+                          format: 'duration',
+                        },
+                        '@ondc/org/available_on_cod': {
+                          type: 'boolean',
+                        },
+                        '@ondc/org/contact_details_consumer_care': {
+                          type: 'string',
+                        },
+                        '@ondc/org/statutory_reqs_packaged_commodities': {
+                          type: 'object',
+                          properties: {
+                            manufacturer_or_packer_name: {
+                              type: 'string',
+                            },
+                            manufacturer_or_packer_address: {
+                              type: 'string',
+                            },
+                            common_or_generic_name_of_commodity: {
+                              type: 'string',
+                            },
+                            month_year_of_manufacture_packing_import: {
+                              type: 'string',
+                            },
+                          },
+                          required: [
+                            'manufacturer_or_packer_name',
+                            'manufacturer_or_packer_address',
+                            'common_or_generic_name_of_commodity',
+                            'month_year_of_manufacture_packing_import',
+                          ],
+                        },
+                        '@ondc/org/statutory_reqs_prepackaged_food': {
+                          type: 'object',
+                          properties: {
+                            nutritional_info: {
+                              type: 'string',
+                            },
+                            additives_info: {
+                              type: 'string',
+                            },
+                            brand_owner_FSSAI_license_no: {
+                              type: 'string',
+                            },
+                            other_FSSAI_license_no: {
+                              type: 'string',
+                            },
+                            importer_FSSAI_license_no: {
+                              type: 'string',
+                            },
+                            ingredients_info: {
+                              type: 'string',
+                            },
+                          },
+                        },
+                        tags: {
+                          type: 'array',
+                          items: {
+                            type: 'object',
+                            properties: {
+                              code: {
+                                type: 'string',
+                              },
+                              list: {
+                                type: 'array',
+                                items: {
+                                  type: 'object',
+                                  properties: {
+                                    code: {
+                                      type: 'string',
+                                    },
+                                    value: {
+                                      type: 'string',
+                                    },
+                                  },
+                                  required: ['code', 'value'],
+                                },
+                              },
+                            },
+                            required: ['code', 'list'],
+                            if: {
+                              type: 'object',
+                              properties: { code: { const: 'origin' } },
+                            },
+                            then: {
+                              type: 'object',
+                              properties: {
+                                list: {
+                                  type: 'array',
+                                  items: {
+                                    type: 'object',
+                                    properties: {
+                                      value: {
+                                        type: 'string',
+                                        pattern:
+                                          '/^A(BW|FG|GO|IA|L[AB]|ND|R[EGM]|SM|T[AFG]|U[ST]|ZE)|B(DI|E[LNS]|FA|G[DR]|H[RS]|IH|L[MRZ]|MU|OL|R[ABN]|TN|VT|WA)|C(A[FN]|CK|H[ELN]|IV|MR|O[DGKLM]|PV|RI|U[BW]|XR|Y[MP]|ZE)|D(EU|JI|MA|NK|OM|ZA)|E(CU|GY|RI|S[HPT]|TH)|F(IN|JI|LK|R[AO]|SM)|G(AB|BR|EO|GY|HA|I[BN]|LP|MB|N[BQ]|R[CDL]|TM|U[FMY])|H(KG|MD|ND|RV|TI|UN)|I(DN|MN|ND|OT|R[LNQ]|S[LR]|TA)|J(AM|EY|OR|PN)|K(AZ|EN|GZ|HM|IR|NA|OR|WT)|L(AO|B[NRY]|CA|IE|KA|SO|TU|UX|VA)|M(A[CFR]|CO|D[AGV]|EX|HL|KD|L[IT]|MR|N[EGP]|OZ|RT|SR|TQ|US|WI|Y[ST])|N(AM|CL|ER|FK|GA|I[CU]|LD|OR|PL|RU|ZL)|OMN|P(A[KN]|CN|ER|HL|LW|NG|OL|R[IKTY]|SE|YF)|QAT|R(EU|OU|US|WA)|S(AU|DN|EN|G[PS]|HN|JM|L[BEV]|MR|OM|PM|RB|SD|TP|UR|V[KN]|W[EZ]|XM|Y[CR])|T(C[AD]|GO|HA|JK|K[LM]|LS|ON|TO|U[NRV]|WN|ZA)|U(GA|KR|MI|RY|SA|ZB)|V(AT|CT|EN|GB|IR|NM|UT)|W(LF|SM)|YEM|Z(AF|MB|WE)$/ix',
+                                        errorMessage:
+                                          'Country must be in ISO 3166-1 format (three-letter country code)',
+                                      },
+                                    },
+                                  },
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                      // Required fields for customization items - excluding many fields
+                      required: [
+                        'id',
+                        'descriptor',
+                        'quantity',
+                        'price',
+                        'tags',
+                      ],
+                    },
+                    else: {
+                      // Schema for regular (non-customization) items
                       type: 'object',
                       properties: {
                         id: {
@@ -817,6 +1143,7 @@ export const onSearchSchema = {
                           },
                         },
                       },
+                      // Required fields for regular items - including all fields
                       required: [
                         'id',
                         'time',
@@ -836,6 +1163,7 @@ export const onSearchSchema = {
                         'rating',
                         'tags',
                       ],
+                    }
                     },
                   },
                   creds: {

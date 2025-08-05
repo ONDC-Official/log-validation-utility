@@ -936,8 +936,22 @@ export const compareSTDwithArea = (pincode: number, std: string): boolean => {
   return data.some((e: any) => e.Pincode === pincode && e['STD Code'] === std)
 }
 
+export const isCustomizationItem = (item: any): boolean => {
+  if (!item.tags || !Array.isArray(item.tags)) return false
+  
+  return item.tags.some((tag: any) => {
+    if (tag.code !== 'type' || !Array.isArray(tag.list)) return false
+    return tag.list.some((listItem: any) => 
+      listItem.code === 'type' && listItem.value === 'customization'
+    )
+  })
+}
+
 export const checkMandatoryTags = (i: string, items: any, errorObj: any, categoryJSON: any, categoryName: string) => {
   items.forEach((item: any, index: number) => {
+    // Check if this is a customization item
+    const isCustomization = isCustomizationItem(item)
+    
     let attributeTag = null
     let originTag = null
     for (const tag of item.tags) {
@@ -945,13 +959,15 @@ export const checkMandatoryTags = (i: string, items: any, errorObj: any, categor
       attributeTag = tag.code === 'attribute' ? tag : attributeTag
     }
 
-    if (!originTag) {
+    // Skip origin tag validation for customization items
+    if (!originTag && !isCustomization) {
       logger.error(`Origin tag fields are missing for ${categoryName} item[${index}]`)
       const key = `missingOriginTag[${i}][${index}]`
       errorObj[key] = `Origin tag fields are missing for ${categoryName} item[${index}]`
     }
 
-    if (!attributeTag && categoryName !== 'Grocery') {
+    // Skip attribute tag validation for customization items
+    if (!attributeTag && categoryName !== 'Grocery' && !isCustomization) {
       logger.error(`Attribute tag fields are missing for ${categoryName} item[${index}]`)
       const key = `missingAttributeTag[${i}][${index}]`
       errorObj[key] = `Attribute tag fields are missing for ${categoryName} item[${index}]`

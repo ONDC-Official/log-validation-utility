@@ -307,7 +307,7 @@ if (Array.isArray(fulfillments)) {
         cnfrmObj.confirmedAmount = "Quoted price (/confirm) doesn't match with the amount in payment.params"
       }
 
-      if (!_.isEqual(confirm.payment['@ondc/org/settlement_details'][0], getValue('sttlmntdtls'))) {
+      if (flow !== FLOW.FLOW012 && !_.isEqual(confirm.payment['@ondc/org/settlement_details'][0], getValue('sttlmntdtls'))) {
         cnfrmObj.sttlmntdtls = `payment settlement_details mismatch in /${constants.ON_INIT} & /${constants.CONFIRM}`
       }
 

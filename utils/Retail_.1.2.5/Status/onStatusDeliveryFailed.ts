@@ -10,21 +10,14 @@ import {
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { isStateForbiddenForRouting } from '../common/routingValidator'
-import {
-  validatePaymentStatus,
-  validateProviderCredentials,
-  validateFulfillmentConsistency,
-  validateRoutingTagStructure,
-  validateOrderUpdatedAt
-} from '../common/statusValidationHelpers'
 
-export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, _fulfillmentsItemsSet: any, flow?: string) => {
+export const checkOnStatusDeliveryFailed = (data: any, _state: string, msgIdSet: any, _fulfillmentsItemsSet: any) => {
   const onStatusObj: any = {}
-  const EXPECTED_STATE = 'At-pickup'
+  const EXPECTED_STATE = 'Delivery-failed'
   
   try {
     if (!data || isObjectEmpty(data)) {
-      return { [ApiSequence.ON_STATUS_AT_PICKUP]: 'JSON cannot be empty' }
+      return { [ApiSequence.ON_STATUS_DELIVERY_FAILED]: 'JSON cannot be empty' }
     }
     
     const { message, context }: any = data
@@ -32,11 +25,11 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
       return { missingFields: '/context, /message, is missing or empty' }
     }
 
-    // Check if routing type is P2P
+    // Check if routing type is P2H2P
     const routingType = getValue('routingType')
-    if (routingType && routingType !== 'P2P') {
+    if (routingType && routingType !== 'P2H2P') {
       return { 
-        routingError: `/${constants.ON_STATUS}_${EXPECTED_STATE} is only valid for P2P routing, but current routing is ${routingType}` 
+        routingError: `/${constants.ON_STATUS}_${EXPECTED_STATE} is only valid for P2H2P routing, but current routing is ${routingType}` 
       }
     }
 
@@ -55,7 +48,7 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
     try {
       logger.info(`Adding Message Id /${constants.ON_STATUS}_${EXPECTED_STATE}`)
       if (msgIdSet.has(context.message_id)) {
-        onStatusObj[`${ApiSequence.ON_STATUS_AT_PICKUP}_msgId`] = `Message id should not be same with previous calls`
+        onStatusObj[`${ApiSequence.ON_STATUS_DELIVERY_FAILED}_msgId`] = `Message id should not be same with previous calls`
       }
       msgIdSet.add(context.message_id)
     } catch (error: any) {
@@ -66,7 +59,7 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
       onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
-    setValue(`${ApiSequence.ON_STATUS_AT_PICKUP}`, data)
+    setValue(`${ApiSequence.ON_STATUS_DELIVERY_FAILED}`, data)
 
     try {
       logger.info(`Checking context for /${constants.ON_STATUS}_${EXPECTED_STATE} API`)
@@ -142,53 +135,6 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
       logger.error(`!!Error occurred while checking order state for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
     }
 
-    // Validate order.updated_at timestamp
-    try {
-      const contextTime = context.timestamp
-      const previousUpdatedAt = getValue('PreviousUpdatedTimestamp')
-      const updatedAtErrors = validateOrderUpdatedAt(
-        on_status.updated_at,
-        contextTime,
-        previousUpdatedAt,
-        `/${constants.ON_STATUS}_${EXPECTED_STATE}`
-      )
-      Object.assign(onStatusObj, updatedAtErrors)
-      
-      if (on_status.updated_at) {
-        setValue('PreviousUpdatedTimestamp', on_status.updated_at)
-      }
-    } catch (error: any) {
-      logger.error(`!!Error while checking order.updated_at in /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
-    }
-
-    // Validate payment status for COD flows
-    if (flow) {
-      try {
-        const paymentErrors = validatePaymentStatus(
-          on_status.payment,
-          flow,
-          `/${constants.ON_STATUS}_${EXPECTED_STATE}`
-        )
-        Object.assign(onStatusObj, paymentErrors)
-      } catch (error: any) {
-        logger.error(`!!Error while validating payment in /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
-      }
-    }
-
-    // Validate provider credentials for digital lending flows
-    if (flow) {
-      try {
-        const providerErrors = validateProviderCredentials(
-          on_status.provider,
-          flow,
-          `/${constants.ON_STATUS}_${EXPECTED_STATE}`
-        )
-        Object.assign(onStatusObj, providerErrors)
-      } catch (error: any) {
-        logger.error(`!!Error while validating provider credentials in /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
-      }
-    }
-
     try {
       logger.info('Checking fulfillment.id, fulfillment.type and tracking')
       on_status.fulfillments.forEach((ff: any) => {
@@ -221,8 +167,8 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
             onStatusObj[`fulfillmentState[${ff.id}]`] = `Fulfillment state should be '${EXPECTED_STATE}' for /${constants.ON_STATUS}_${EXPECTED_STATE} but found '${ffDesc.code}'`
           }
 
-          // Validate state is allowed for routing type (should always be P2P here)
-          if (routingType && routingType === 'P2P') {
+          // Validate state is allowed for routing type (should always be P2H2P here)
+          if (routingType && routingType === 'P2H2P') {
             const validationError = isStateForbiddenForRouting(ffDesc.code, routingType)
             if (validationError) {
               onStatusObj[`fulfillmentStateRouting[${ff.id}]`] = `Fulfillment state '${ffDesc.code}' is not allowed for ${routingType} routing`
@@ -230,33 +176,6 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
           }
         } catch (error: any) {
           logger.error(`!!Error while checking fulfillment state for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
-        }
-
-        // Validate routing tag structure
-        try {
-          const routingTagErrors = validateRoutingTagStructure(
-            ff,
-            routingType || 'P2P',
-            `/${constants.ON_STATUS}_${EXPECTED_STATE}`
-          )
-          Object.assign(onStatusObj, routingTagErrors)
-        } catch (error: any) {
-          logger.error(`!!Error while validating routing tags for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
-        }
-
-        // Validate fulfillment consistency
-        if (ff.type === 'Delivery') {
-          try {
-            const storedFulfillment = getValue('DeliveryFulfillment')
-            const consistencyErrors = validateFulfillmentConsistency(
-              ff,
-              storedFulfillment,
-              `/${constants.ON_STATUS}_${EXPECTED_STATE}`
-            )
-            Object.assign(onStatusObj, consistencyErrors)
-          } catch (error: any) {
-            logger.error(`!!Error while validating fulfillment consistency for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
-          }
         }
       })
     } catch (error: any) {
@@ -289,7 +208,7 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
         const currentFulfillment = on_status.fulfillments.find((f: any) => f.id === DeliveryFulfillment.id)
         if (currentFulfillment) {
           setValue('DeliveryFulfillment', currentFulfillment)
-          setValue('DeliveryFulfillmentAction', ApiSequence.ON_STATUS_AT_PICKUP)
+          setValue('DeliveryFulfillmentAction', ApiSequence.ON_STATUS_DELIVERY_FAILED)
         }
       }
     } catch (error: any) {

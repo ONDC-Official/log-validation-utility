@@ -15,6 +15,7 @@ import {
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
+import { validateStateForRouting } from '../common/routingValidator'
 
 export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: any, fulfillmentsItemsSet: any) => {
   const onStatusObj: any = {}
@@ -633,6 +634,13 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
   
           if (ffState === constants.ORDER_OUT_FOR_DELIVERY) {
             orderOut_for_delivery = true
+            
+            // Validate state is allowed for routing type
+            const routingType = getValue('routingType')
+            if (routingType && !validateStateForRouting(ffState, routingType)) {
+              onStatusObj[`fulfillmentStateRouting[${fulfillment.id}]`] = `Fulfillment state '${ffState}' is not allowed for ${routingType} routing`
+            }
+            
             const out_for_delivery_time = fulfillment.start.time.timestamp
             outforDeliveryTimestamps[fulfillment.id] = out_for_delivery_time
             if (!out_for_delivery_time) {

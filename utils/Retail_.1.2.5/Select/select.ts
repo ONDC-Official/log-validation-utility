@@ -94,7 +94,9 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
 
   setValue(`${ApiSequence.SELECT}`, data)
   setValue('providerId', select.provider.id)
-  setValue('providerLoc', select.provider.locations[0].id)
+  if (select.provider.locations && Array.isArray(select.provider.locations) && select.provider.locations.length > 0) {
+    setValue('providerLoc', select.provider.locations[0].id)
+  }
   setValue('items', select.items)
 
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)

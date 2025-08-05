@@ -24,6 +24,7 @@ import {
 } from '../..'
 import { FLOW, OFFERSFLOW } from '../../enum'
 import { getValue, setValue } from '../../../shared/dao'
+import { extractRoutingType, isValidRoutingType } from '../common/routingValidator'
 export const checkOnConfirm = (data: any, flow: string) => {
   const onCnfrmObj: any = {}
   try {
@@ -118,21 +119,21 @@ export const checkOnConfirm = (data: any, flow: string) => {
     try {
       logger.info(`Checking Cancellation terms for /${constants.ON_CONFIRM}`)
       const OnInitCancellationTerms = getValue('OnInitCancellationTerms')
-      const Errors = compareObjects(OnInitCancellationTerms,message.order.cancellation_terms)
-         if (Errors) {
-        let i = 0
-        const len = Errors.length
-        while (i < len) {
-          const key = `cancellationTermsErr${i}`
-          console.log('Errors[i]', Errors[i])
-          onCnfrmObj[key] = `${Errors[i]} when compared with on_init Cancellation terms`
-          i++
+      
+      // Only compare if cancellation_terms were provided in on_init
+      if (OnInitCancellationTerms !== undefined) {
+        const Errors = compareObjects(OnInitCancellationTerms, message.order.cancellation_terms)
+        if (Errors) {
+          let i = 0
+          const len = Errors.length
+          while (i < len) {
+            const key = `cancellationTermsErr${i}`
+            console.log('Errors[i]', Errors[i])
+            onCnfrmObj[key] = `${Errors[i]} when compared with on_init Cancellation terms`
+            i++
+          }
         }
       }
-      // if (message.order.cancellation_terms && message.order.cancellation_terms.length > 0) {
-      //   onCnfrmObj[`message.order`] =
-      //     `'cancellation_terms' in /message/order should not be provided as those are not enabled yet`
-      // }
     } catch (error: any) {
       logger.error(`!!Error while checking Cancellation terms for /${constants.ON_CONFIRM}, ${error.stack}`)
     }
@@ -891,6 +892,29 @@ export const checkOnConfirm = (data: any, flow: string) => {
   }
 }
 
+    // Validate routing type for retail 1.2.5
+    try {
+      logger.info(`Checking routing type in /${constants.ON_CONFIRM}`)
+      const orderState = getValue('orderState')
+      const domain = getValue('domain')
+      
+      if (orderState === 'Accepted') {
+        // Extract routing type from delivery fulfillment
+        const routingType = extractRoutingType(on_confirm.fulfillments)
+        
+        if (!routingType) {
+          onCnfrmObj.routingType = `Routing type tag is mandatory in delivery fulfillment when order.state is 'Accepted' in /${constants.ON_CONFIRM}`
+        } else if (!isValidRoutingType(routingType)) {
+          onCnfrmObj.routingType = `Invalid routing type '${routingType}'. Must be one of: P2P, P2H2P`
+        } else {
+          // Store routing type for subsequent validations
+          setValue('routingType', routingType)
+          logger.info(`Stored routing type: ${routingType} for domain: ${domain}`)
+        }
+      }
+    } catch (error: any) {
+      logger.error(`Error while checking routing type in /${constants.ON_CONFIRM}: ${error.stack}`)
+    }
 
     return onCnfrmObj
   } catch (err: any) {

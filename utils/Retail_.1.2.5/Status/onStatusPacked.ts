@@ -14,6 +14,7 @@ import {
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
+import { validateStateForRouting } from '../common/routingValidator'
 
 export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, fulfillmentsItemsSet: any) => {
   const onStatusObj: any = {}
@@ -177,6 +178,12 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
           onStatusObj['rplcmnt-fulfillment'] =
             `Fulfillment with id :${replacementFulfillment.id} should have  fulfillment/state/descriptor/code to be Packed`
           return onStatusObj
+        }
+        
+        // Validate state is allowed for routing type
+        const routingType = getValue('routingType')
+        if (routingType && !validateStateForRouting('Packed', routingType)) {
+          onStatusObj[`fulfillmentStateRouting[${replacementFulfillment.id}]`] = `Fulfillment state 'Packed' is not allowed for ${routingType} routing`
         }
         const fulfillmentRangeerrors = compareTimeRanges(
           replacementFulfillment,
@@ -443,6 +450,30 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
             } catch (err: any) {
               logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)
             }
+      // Validate fulfillment state for Packed
+      try {
+        logger.info(`Checking fulfillment state for /${constants.ON_STATUS}_packed`)
+        const fulfillments = on_status.fulfillments
+        if (fulfillments && fulfillments.length > 0) {
+          fulfillments.forEach((ff: any) => {
+            if (ff.type === 'Delivery' && ff.state?.descriptor?.code) {
+              const ffDesc = ff.state.descriptor
+              if (ffDesc.code !== 'Packed') {
+                onStatusObj[`fulfillmentState[${ff.id}]`] = `Fulfillment state should be 'Packed' for /${constants.ON_STATUS}_packed but found '${ffDesc.code}'`
+              }
+              
+              // Validate state is allowed for routing type
+              const routingType = getValue('routingType')
+              if (routingType && !validateStateForRouting(ffDesc.code, routingType)) {
+                onStatusObj[`fulfillmentStateRouting[${ff.id}]`] = `Fulfillment state '${ffDesc.code}' is not allowed for ${routingType} routing`
+              }
+            }
+          })
+        }
+      } catch (error: any) {
+        logger.error(`!!Error while checking fulfillment state for /${constants.ON_STATUS}_packed, ${error.stack}`)
+      }
+
       if (flow === FLOW.FLOW01C) {
         const fulfillments = on_status.fulfillments
         const deliveryFulfillment = fulfillments.find((f: any) => f.type === 'Delivery')

@@ -1,8 +1,9 @@
 import _ from 'lodash'
-import { dropDB, setValue } from '../shared/dao'
+import { dropDB, setValue, getValue } from '../shared/dao'
 import { logger } from './logger'
 import { ApiSequence, retailDomains } from '../constants'
 import { validateSchema, isObjectEmpty } from '../utils'
+import { extractRoutingType } from '../utils/Retail_.1.2.5/common/routingValidator'
 import { checkOnsearchFullCatalogRefresh } from '../utils/Retail_.1.2.5/RET11_onSearch/onSearch'
 import { checkSelect } from '../utils/Retail_.1.2.5/Select/select'
 import { checkOnSelect } from '../utils/Retail_.1.2.5/Select/onSelect'
@@ -30,9 +31,16 @@ import { checkOnStatusPicked } from '../utils/Retail_.1.2.5/Status/onStatusPicke
 import { checkOnStatusOutForDelivery } from '../utils/Retail_.1.2.5/Status/onStatusOutForDelivery'
 import { checkOnStatusDelivered } from '../utils/Retail_.1.2.5/Status/onStatusDelivered'
 import { checkOnStatusRTODelivered } from '../utils/Retail_.1.2.5/Status/onStatusRTODelivered'
+import { checkOnStatusAgentAssigned } from '../utils/Retail_.1.2.5/Status/onStatusAgentAssigned'
+import { checkOnStatusOutForPickup } from '../utils/Retail_.1.2.5/Status/onStatusOutForPickup'
+import { checkOnStatusPickupFailed } from '../utils/Retail_.1.2.5/Status/onStatusPickupFailed'
+import { checkOnStatusInTransit } from '../utils/Retail_.1.2.5/Status/onStatusInTransit'
+import { checkOnStatusAtDestinationHub } from '../utils/Retail_.1.2.5/Status/onStatusAtDestinationHub'
+import { checkOnStatusDeliveryFailed } from '../utils/Retail_.1.2.5/Status/onStatusDeliveryFailed'
 import { checkCancel } from '../utils/Retail_.1.2.5/Cancel/cancel'
 import { checkOnCancel } from '../utils/Retail_.1.2.5/Cancel/onCancel'
 import { checkCatalogRejection } from '../utils/Retail_.1.2.5/Catalog_Rejection/catalogRejection'
+import { P2P_STATES, P2H2P_STATES } from '../constants/fulfillmentStates'
 
 // export const validateLogs = async (data: any, domain: string, flow: string) => {
 //   const msgIdSet = new Set()
@@ -415,10 +423,18 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_CONFIRM,
       ApiSequence.ON_STATUS_PENDING,
       ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_AGENT_ASSIGNED,
+      ApiSequence.ON_STATUS_AT_PICKUP,
+      ApiSequence.ON_STATUS_OUT_FOR_PICKUP,
+      ApiSequence.ON_STATUS_PICKUP_FAILED,
       ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.ON_STATUS_AT_DELIVERY,
+      ApiSequence.ON_STATUS_IN_TRANSIT,
+      ApiSequence.ON_STATUS_AT_DESTINATION_HUB,
       ApiSequence.TRACK,
       ApiSequence.ON_TRACK,
       ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
+      ApiSequence.ON_STATUS_DELIVERY_FAILED,
       ApiSequence.ON_STATUS_DELIVERED,
     ]
     const flowThreeSequence = [
@@ -434,8 +450,16 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_CONFIRM,
       ApiSequence.ON_STATUS_PENDING,
       ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_AGENT_ASSIGNED,
+      ApiSequence.ON_STATUS_AT_PICKUP,
+      ApiSequence.ON_STATUS_OUT_FOR_PICKUP,
+      ApiSequence.ON_STATUS_PICKUP_FAILED,
       ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.ON_STATUS_AT_DELIVERY,
+      ApiSequence.ON_STATUS_IN_TRANSIT,
+      ApiSequence.ON_STATUS_AT_DESTINATION_HUB,
       ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
+      ApiSequence.ON_STATUS_DELIVERY_FAILED,
       ApiSequence.ON_STATUS_DELIVERED,
       ApiSequence.TRACK,
       ApiSequence.ON_TRACK
@@ -465,8 +489,16 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.UPDATE_SETTLEMENT_PART_CANCEL,
       ApiSequence.ON_STATUS_PENDING,
       ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_AGENT_ASSIGNED,
+      ApiSequence.ON_STATUS_AT_PICKUP,
+      ApiSequence.ON_STATUS_OUT_FOR_PICKUP,
+      ApiSequence.ON_STATUS_PICKUP_FAILED,
       ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.ON_STATUS_AT_DELIVERY,
+      ApiSequence.ON_STATUS_IN_TRANSIT,
+      ApiSequence.ON_STATUS_AT_DESTINATION_HUB,
       ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
+      ApiSequence.ON_STATUS_DELIVERY_FAILED,
       ApiSequence.ON_CANCEL,
       ApiSequence.ON_STATUS_RTO_DELIVERED
     ]
@@ -482,8 +514,16 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
       ApiSequence.ON_CONFIRM,
       ApiSequence.ON_STATUS_PENDING,
       ApiSequence.ON_STATUS_PACKED,
+      ApiSequence.ON_STATUS_AGENT_ASSIGNED,
+      ApiSequence.ON_STATUS_AT_PICKUP,
+      ApiSequence.ON_STATUS_OUT_FOR_PICKUP,
+      ApiSequence.ON_STATUS_PICKUP_FAILED,
       ApiSequence.ON_STATUS_PICKED,
+      ApiSequence.ON_STATUS_AT_DELIVERY,
+      ApiSequence.ON_STATUS_IN_TRANSIT,
+      ApiSequence.ON_STATUS_AT_DESTINATION_HUB,
       ApiSequence.ON_STATUS_OUT_FOR_DELIVERY,
+      ApiSequence.ON_STATUS_DELIVERY_FAILED,
       ApiSequence.ON_STATUS_DELIVERED,
       ApiSequence.UPDATE_LIQUIDATED,
       ApiSequence.ON_UPDATE_INTERIM_LIQUIDATED,
@@ -954,14 +994,148 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
     // const flow
     const processApiSequence = (apiSequence: any, data: any, logReport: any, msgIdSet: any, flow: string) => {
       if (validFlows.includes(flow)) {
-        apiSequence.forEach((apiSeq: any) => {
+        // Try to extract routing type from on_confirm if it hasn't been set yet
+        let routingType = getValue('routingType')
+        
+        if (!routingType && data.on_confirm) {
+          try {
+            const onConfirmData = data.on_confirm
+            if (onConfirmData.message?.order?.fulfillments) {
+              const tempRoutingType = extractRoutingType(onConfirmData.message.order.fulfillments)
+              if (tempRoutingType) {
+                setValue('routingType', tempRoutingType)
+                routingType = tempRoutingType
+                logger.info(`Pre-extracted routing type: ${routingType} from on_confirm`)
+              }
+            }
+          } catch (error) {
+            logger.error(`Error pre-extracting routing type: ${error}`)
+          }
+        }
+        
+        // Map API sequence to state names (reused across the function)
+        const stateMapping: Record<string, string> = {
+          [ApiSequence.ON_STATUS_PENDING]: 'Pending',
+          [ApiSequence.ON_STATUS_PACKED]: 'Packed',
+          [ApiSequence.ON_STATUS_AGENT_ASSIGNED]: 'Agent-assigned',
+          [ApiSequence.ON_STATUS_AT_PICKUP]: 'At-pickup',
+          [ApiSequence.ON_STATUS_OUT_FOR_PICKUP]: 'Out-for-pickup',
+          [ApiSequence.ON_STATUS_PICKUP_FAILED]: 'Pickup-failed',
+          [ApiSequence.ON_STATUS_PICKED]: 'Order-picked-up',
+          [ApiSequence.ON_STATUS_AT_DELIVERY]: 'At-delivery',
+          [ApiSequence.ON_STATUS_IN_TRANSIT]: 'In-transit',
+          [ApiSequence.ON_STATUS_AT_DESTINATION_HUB]: 'At-destination-hub',
+          [ApiSequence.ON_STATUS_OUT_FOR_DELIVERY]: 'Out-for-delivery',
+          [ApiSequence.ON_STATUS_DELIVERY_FAILED]: 'Delivery-failed',
+          [ApiSequence.ON_STATUS_DELIVERED]: 'Order-delivered',
+          [ApiSequence.ON_STATUS_RTO_DELIVERED]: 'Cancelled'
+        }
+        
+        // Filter API sequence based on routing type
+        const filteredApiSequence = apiSequence.filter((apiSeq: any) => {
+          // Always include non-status APIs
+          if (!apiSeq.includes('on_status_')) {
+            return true
+          }
+          
+          const state = stateMapping[apiSeq]
+          if (!state || !routingType) {
+            return true // If we can't map the state or no routing type, include it
+          }
+          
+          // Check if state is allowed for the routing type with null safety
+          try {
+            if (routingType === 'P2P') {
+              if (P2P_STATES && P2P_STATES.FORBIDDEN && Array.isArray(P2P_STATES.FORBIDDEN)) {
+                return !P2P_STATES.FORBIDDEN.includes(state)
+              }
+            } else if (routingType === 'P2H2P') {
+              if (P2H2P_STATES && P2H2P_STATES.FORBIDDEN && Array.isArray(P2H2P_STATES.FORBIDDEN)) {
+                return !P2H2P_STATES.FORBIDDEN.includes(state)
+              }
+            }
+          } catch (error) {
+            logger.error(`Error checking forbidden states for routing ${routingType}: ${error}`)
+          }
+          
+          return true
+        })
+        
+        filteredApiSequence.forEach((apiSeq: any) => {
           if (data[apiSeq]) {
-            const resp = getResponse(apiSeq, data[apiSeq], msgIdSet, flow)
-            if (!_.isEmpty(resp)) {
-              logReport = { ...logReport, [apiSeq]: resp }
+            // Check if this state is forbidden for the current routing type
+            const state = stateMapping[apiSeq]
+            let isForbidden = false
+            
+            // Debug logging
+            if (apiSeq.includes('on_status_')) {
+              logger.info(`Processing ${apiSeq}, mapped state: ${state}, routing: ${routingType}`)
+            }
+            
+            if (state && routingType && apiSeq.includes('on_status_')) {
+              try {
+                if (routingType === 'P2P' && P2P_STATES && P2P_STATES.FORBIDDEN && Array.isArray(P2P_STATES.FORBIDDEN)) {
+                  isForbidden = P2P_STATES.FORBIDDEN.includes(state)
+                  if (isForbidden) {
+                    logger.info(`Skipping forbidden state ${state} (${apiSeq}) for P2P routing`)
+                  }
+                } else if (routingType === 'P2H2P' && P2H2P_STATES && P2H2P_STATES.FORBIDDEN && Array.isArray(P2H2P_STATES.FORBIDDEN)) {
+                  isForbidden = P2H2P_STATES.FORBIDDEN.includes(state)
+                  if (isForbidden) {
+                    logger.info(`Skipping forbidden state ${state} (${apiSeq}) for P2H2P routing`)
+                  }
+                }
+              } catch (error) {
+                logger.error(`Error checking forbidden states: ${error}`)
+              }
+            }
+            
+            // Skip validation for forbidden states even if they exist in the data
+            if (!isForbidden) {
+              const resp = getResponse(apiSeq, data[apiSeq], msgIdSet, flow)
+              if (!_.isEmpty(resp)) {
+                logReport = { ...logReport, [apiSeq]: resp }
+              }
             }
           } else {
-            logReport = { ...logReport, [apiSeq]: `Missing required data of : ${apiSeq}` }
+            // Check if this is a required state for the routing type
+            const state = stateMapping[apiSeq]
+            if (state && routingType) {
+              let isRequired = false
+              let isForbidden = false
+              
+              try {
+                if (routingType === 'P2P' && P2P_STATES) {
+                  if (P2P_STATES.REQUIRED && Array.isArray(P2P_STATES.REQUIRED)) {
+                    isRequired = P2P_STATES.REQUIRED.includes(state)
+                  }
+                  if (P2P_STATES.FORBIDDEN && Array.isArray(P2P_STATES.FORBIDDEN)) {
+                    isForbidden = P2P_STATES.FORBIDDEN.includes(state)
+                  }
+                } else if (routingType === 'P2H2P' && P2H2P_STATES) {
+                  if (P2H2P_STATES.REQUIRED && Array.isArray(P2H2P_STATES.REQUIRED)) {
+                    isRequired = P2H2P_STATES.REQUIRED.includes(state)
+                  }
+                  if (P2H2P_STATES.FORBIDDEN && Array.isArray(P2H2P_STATES.FORBIDDEN)) {
+                    isForbidden = P2H2P_STATES.FORBIDDEN.includes(state)
+                  }
+                }
+              } catch (error) {
+                logger.error(`Error checking states for routing ${routingType}: ${error}`)
+              }
+              
+              // Only report missing if it's required, not if it's forbidden or optional
+              if (isRequired) {
+                logReport = { ...logReport, [apiSeq]: `Missing required data of : ${apiSeq} (Required for ${routingType} routing)` }
+              } else if (!isForbidden && !apiSeq.includes('on_status_')) {
+                // Only report missing for non-status APIs that are not forbidden
+                logReport = { ...logReport, [apiSeq]: `Missing required data of : ${apiSeq}` }
+              }
+              // Don't report anything for forbidden states - they shouldn't be present
+            } else if (!apiSeq.includes('on_status_')) {
+              // Always report missing for non-status APIs when no routing type is available
+              logReport = { ...logReport, [apiSeq]: `Missing required data of : ${apiSeq}` }
+            }
           }
         })
         logger.info(logReport, 'Report Generated Successfully!!')
@@ -1023,7 +1197,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
         case ApiSequence.REPLACEMENT_ON_STATUS_PACKED:
           return checkOnStatusPacked(data, 'replacement_on_status_packed', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.ON_STATUS_AT_PICKUP:
-          return checkOnStatusAtPickup(data, 'At-pickup', msgIdSet, fulfillmentsItemsSet)
+          return checkOnStatusAtPickup(data, 'At-pickup', msgIdSet, fulfillmentsItemsSet, flow)
         case ApiSequence.ON_STATUS_PICKED:
           return checkOnStatusPicked(data, 'picked', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.REPLACEMENT_ON_STATUS_PICKED:
@@ -1031,13 +1205,25 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
         case ApiSequence.ON_STATUS_OUT_FOR_DELIVERY:
           return checkOnStatusOutForDelivery(data, 'out-for-delivery', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.ON_STATUS_AT_DELIVERY:
-          return checkOnStatusAtDelivery(data, 'At-delivery', msgIdSet, fulfillmentsItemsSet)
+          return checkOnStatusAtDelivery(data, 'At-delivery', msgIdSet, fulfillmentsItemsSet, flow)
         case ApiSequence.REPLACEMENT_ON_STATUS_OUT_FOR_DELIVERY:
           return checkOnStatusOutForDelivery(data, 'replacement_on_status_out_for_delivery', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.ON_STATUS_DELIVERED:
           return checkOnStatusDelivered(data, 'delivered', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.REPLACEMENT_ON_STATUS_DELIVERED:
           return checkOnStatusDelivered(data, 'replacement_on_status_delivered', msgIdSet, fulfillmentsItemsSet)
+        case ApiSequence.ON_STATUS_AGENT_ASSIGNED:
+          return checkOnStatusAgentAssigned(data, 'agent-assigned', msgIdSet, fulfillmentsItemsSet, flow)
+        case ApiSequence.ON_STATUS_OUT_FOR_PICKUP:
+          return checkOnStatusOutForPickup(data, 'out-for-pickup', msgIdSet, fulfillmentsItemsSet, flow)
+        case ApiSequence.ON_STATUS_PICKUP_FAILED:
+          return checkOnStatusPickupFailed(data, 'pickup-failed', msgIdSet, fulfillmentsItemsSet, flow)
+        case ApiSequence.ON_STATUS_IN_TRANSIT:
+          return checkOnStatusInTransit(data, 'in-transit', msgIdSet, fulfillmentsItemsSet, flow)
+        case ApiSequence.ON_STATUS_AT_DESTINATION_HUB:
+          return checkOnStatusAtDestinationHub(data, 'at-destination-hub', msgIdSet, fulfillmentsItemsSet, flow)
+        case ApiSequence.ON_STATUS_DELIVERY_FAILED:
+          return checkOnStatusDeliveryFailed(data, 'delivery-failed', msgIdSet, fulfillmentsItemsSet)
         case ApiSequence.UPDATE:
           return checkUpdate(data, msgIdSet, ApiSequence.UPDATE, settlementDetatilSet, flow)
         case ApiSequence.UPDATE_ADDRESS:

@@ -21,6 +21,7 @@ import {
   checkForStatutory,
   validateBppUri,
   validateBapUri,
+  isCustomizationItem,
 } from '../../../utils'
 import _, { isEmpty } from 'lodash'
 import { compareSTDwithArea } from '../../index'
@@ -323,11 +324,14 @@ export const checkOnsearch = (data: any) => {
     for (let i in onSearchCatalog['bpp/providers']) {
       const items = onSearchCatalog['bpp/providers'][i].items
       items.forEach((item: any, index: number) => {
-        if (!item.descriptor.code) {
+        // Skip descriptor code validation for customization items
+        const isCustomization = isCustomizationItem(item)
+        
+        if (!isCustomization && !item.descriptor.code) {
           logger.error(`code should be provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor`)
           const key = `bpp/providers[${i}]/items[${index}]/descriptor`
           errorObj[key] = `code should provided in /message/catalog/bpp/providers[${i}]/items[${index}]/descriptor`
-        } else {
+        } else if (!isCustomization) {
           const itemCodeArr = item.descriptor.code.split(':')
           const itemDescType = itemCodeArr[0]
           const itemDescCode = itemCodeArr[1]
@@ -643,7 +647,10 @@ export const checkOnsearch = (data: any) => {
     providers.forEach((provider: any, i: number) => {
       const items = provider.items
       items.forEach((item: any, j: number) => {
-        if (item.price && item.price.value) {
+        // Skip price validation for customization items
+        const isCustomization = isCustomizationItem(item)
+        
+        if (!isCustomization && item.price && item.price.value) {
           const priceValue = parseFloat(item.price.value)
           if (priceValue < 1) {
             const key = `prvdr${i}item${j}price`

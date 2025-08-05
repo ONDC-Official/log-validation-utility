@@ -15,6 +15,7 @@ import {
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
 import { delivery_delay_reasonCodes } from '../../../constants/reasonCode'
+import { validateStateForRouting } from '../common/routingValidator'
 
 export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, fulfillmentsItemsSet: any) => {
   const onStatusObj: any = {}
@@ -448,7 +449,7 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
           if(on_status.state != 'Completed')
            onStatusObj.ordrState = `order/state should be "Completed" for /${constants.ON_STATUS}_${state} when fulfilment.type = "Self-Pickup"`
         }
-        else{
+        else if (on_status.state != 'In-progress') {
           onStatusObj.ordrState = `order/state should be "In-progress" for /${constants.ON_STATUS}_${state}`
         }
       } catch (error: any) {
@@ -476,6 +477,13 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
 
           if (ffState === constants.ORDER_PICKED) {
             orderPicked = true
+            
+            // Validate state is allowed for routing type
+            const routingType = getValue('routingType')
+            if (routingType && !validateStateForRouting(ffState, routingType)) {
+              onStatusObj[`fulfillmentStateRouting[${fulfillment.id}]`] = `Fulfillment state '${ffState}' is not allowed for ${routingType} routing`
+            }
+            
             const pickUpTime = fulfillment.start?.time.timestamp
             pickupTimestamps[fulfillment.id] = pickUpTime
             if (!pickUpTime) {

@@ -295,8 +295,8 @@ The routing type is extracted from the delivery fulfillment's tags:
 
 **Flow 005 - Force Cancel**
 
-- Purpose: Seller-initiated cancellation
-- Sequence: Order flow + `cancel` → `force_cancel` → `on_cancel`
+- Purpose: Seller-initiated cancellation after order pickup
+- Sequence: Order flow → `on_status_pending` → `on_status_packed` → `on_status_agent_assigned` → `on_status_at_pickup` → `on_status_picked` → `cancel` → `force_cancel` → `on_cancel`
 
 **Flow 010 - Delivery with Authentication**
 
@@ -609,6 +609,7 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
         "on_confirm": {},
         "on_status_pending": {},
         "on_status_packed": {},
+        "on_status_agent_assigned": {},
         "on_status_picked": {},
         "on_status_out_for_delivery": {},
         "on_status_delivered": {}
@@ -651,6 +652,7 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
         "on_confirm": {},
         "on_status_pending": {},
         "on_status_packed": {},
+        "on_status_agent_assigned": {},
         "on_status_picked": {}
     },
     "flow": "002"
@@ -774,6 +776,7 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
         "on_confirm": {},
         "on_status_pending": {},
         "on_status_packed": {},
+        "on_status_agent_assigned": {},
         "on_status_picked": {},
         "on_status_out_for_delivery": {},
         "on_status_delivered": {},
@@ -820,6 +823,8 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
         "update_settlement_part_cancel": {},
         "on_status_pending": {},
         "on_status_packed": {},
+        "on_status_agent_assigned": {},
+        "on_status_at_pickup": {},
         "on_status_picked": {},
         "on_status_out_for_delivery": {},
         "on_cancel": {},
@@ -865,6 +870,7 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
         "update_settlement_part_cancel": {},
         "on_status_pending": {},
         "on_status_packed": {},
+        "on_status_agent_assigned": {},
         "on_status_picked": {},
         "on_status_out_for_delivery": {},
         "on_status_delivered": {},
@@ -984,9 +990,12 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 
 ### Flow 005 - Force Cancel [v1.2.5 only]
 
-**Purpose**: Seller-initiated order cancellation**When to use**: When seller cannot fulfill order due to inventory or operational issues**Key characteristics**:
+**Purpose**: Seller-initiated order cancellation
+**When to use**: When seller cannot fulfill order due to inventory or operational issues
+**Key characteristics**:
 
-- Seller (BPP) initiates cancellation
+- Seller (BPP) initiates cancellation after order is picked up
+- Includes agent assignment and pickup states before cancellation
 - Includes force_cancel API
 - May trigger penalties for seller
 
@@ -1009,6 +1018,9 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
         "on_confirm": {},
         "on_status_pending": {},
         "on_status_packed": {},
+        "on_status_agent_assigned": {},
+        "on_status_at_pickup": {},
+        "on_status_picked": {},
         "cancel": {},
         "force_cancel": {},
         "on_cancel": {}
@@ -1019,6 +1031,7 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 
 **Important Notes**:
 
+- Order goes through fulfillment states (pending → packed → agent_assigned → at_pickup → picked) before cancellation
 - `force_cancel` is seller-initiated unlike regular `cancel`
 - Must include valid reason for force cancellation
 - May affect seller ratings and incur penalties
@@ -1051,6 +1064,7 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
         "on_confirm": {},
         "on_status_pending": {},
         "on_status_packed": {},
+        "on_status_agent_assigned": {},
         "on_status_picked": {},
         "on_status_out_for_delivery": {},
         "on_update_delivery_auth": {},
@@ -1138,6 +1152,7 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
         "on_confirm": {},
         "on_status_pending": {},
         "on_status_packed": {},
+        "on_status_agent_assigned": {},
         "on_status_picked": {},
         "on_status_out_for_delivery": {},
         "on_status_delivered": {},
@@ -1183,6 +1198,7 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
         "on_confirm": {},
         "on_status_pending": {},
         "on_status_packed": {},
+        "on_status_agent_assigned": {},
         "on_status_picked": {},
         "on_status_out_for_delivery": {},
         "on_status_delivered": {},
@@ -1275,6 +1291,7 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
         "on_confirm": {},
         "on_status_pending": {},
         "on_status_packed": {},
+        "on_status_agent_assigned": {},
         "on_status_picked": {},
         "on_status_out_for_delivery": {},
         "on_status_delivered": {},
@@ -1318,6 +1335,7 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
         "on_confirm": {},
         "on_status_pending": {},
         "on_status_packed": {},
+        "on_status_agent_assigned": {},
         "on_status_picked": {},
         "on_status_out_for_delivery": {},
         "on_status_delivered": {},

@@ -11,3 +11,4 @@ dbfiles
 package-lock.json
 .vscode/extensions.json
 ui/*
+dummy_curl.txt

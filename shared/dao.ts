@@ -23,16 +23,15 @@ export const getValue = (key: string): any => {
   return value
 }
 
-export const dropDB = (): Promise<void> => {
+export const dropDB = async (): Promise<void> => {
   const myDB = getConnection()
-  return new Promise(() => {
-    myDB
-      .drop()
-      .then((res) => {
-        return res
-      })
-      .catch((err) => {
-        logger.error('!!Error while removing LMDB', err.message ? err.message : err)
-      })
-  })
+  try {
+    await myDB.drop()
+    myDB.close()
+  } catch (err) {
+    logger.error('!!Error while removing LMDB', err.message ? err.message : err)
+    myDB.close()
+    // Re-throw the error to ensure proper error handling
+    throw err
+  }
 }

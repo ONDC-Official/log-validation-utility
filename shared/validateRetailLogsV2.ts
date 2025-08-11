@@ -365,7 +365,7 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
   setValue('flow', flow)
   setValue('domain', domain.split(':')[1])
   try {
-    dropDB()
+    await dropDB()
   } catch (error) {
     logger.error('!!Error while removing LMDB', error)
   }

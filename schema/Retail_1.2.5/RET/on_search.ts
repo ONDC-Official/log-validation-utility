@@ -1160,7 +1160,6 @@ export const onSearchSchema = {
                         '@ondc/org/time_to_ship',
                         '@ondc/org/available_on_cod',
                         '@ondc/org/contact_details_consumer_care',
-                        'rating',
                         'tags',
                       ],
                     }

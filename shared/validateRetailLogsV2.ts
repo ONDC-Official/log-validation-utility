@@ -1531,10 +1531,11 @@ export const validateLogsRetailV2 = async (data: any, domain: string, flow: stri
         logReport = processApiSequence(flow002Sequence, data, logReport, msgIdSet, flow)
         break
       case FLOW.FLOW010:
-        break
         logReport = processApiSequence(flow010Sequence, data, logReport, msgIdSet, flow)
+        break
       case FLOW.FLOW00A:
         logReport = processApiSequence(flow00ASequence, data, logReport, msgIdSet, flow)
+        break
     }
   } catch (error: any) {
     logger.error(error.message)

@@ -36,7 +36,8 @@ The service is hosted at [https://log-validation.ondc.org](https://log-validatio
 - **Additional flows**:
   - Special order flows: 002, 005, 010, 011, 012, 015, 017, 019, 01D, 01E, 00C, 00D, 00F
   - Offer flows: 0091-0098
-  - Other flows: 001, 003, 004, 008, 00A, 00B, 00E, 016, 01C, 01F, 020, 022, 025
+  - Other flows:001, 002, 003, 004, 008, 00A, 00B, 00E, 016, 01C, 01F, 020, 022, 025
+  - Offer flows: 0091-0098
 
 ## Log Validation Service Usage
 
@@ -139,14 +140,14 @@ Version 1.2.5 supports all v1.2.0 flows plus the following:
 | 010       | Delivery with Authentication   | OTP/code verification at delivery         |
 | 011       | Update Delivery Instructions   | Modify delivery details post-confirmation |
 | 012       | Cash on Delivery (COD)         | Payment on delivery                       |
-| 015       | Simple Liquidation             | Basic liquidation without reverse QC      |
-| 017       | Post-Delivery Update           | Updates after delivery completion         |
-| 019       | P2P with Tracking              | Hyperlocal with live tracking             |
-| 01D       | Order Till Pending             | Pre-orders or awaiting inventory          |
+| 015       | Breakup of fulfillment level taxes in quote | Basic liquidation without reverse QC      |
+| 017       | Seller Creds                   | Updates after delivery completion         |
+| 019       | Streamline fulfillment attributes for hyperlocal | Hyperlocal with live tracking             |
+| 01D       | Option for multi-fulfillment order | Pre-orders or awaiting inventory          |
 | 01E       | Orders with Cancellation Terms | Mandatory cancellation terms              |
-| 00C       | Replacement                    | Replace defective items                   |
+| 00C       | Exchange flow                  | Replace defective items                   |
 | 00D       | Post-Delivery Cancellation     | Returns process                           |
-| 00F       | Scheduled Delivery             | Time slot based delivery                  |
+| 00F       | Update delivery address        | Time slot based delivery                  |
 | 0091-0098 | Offer Flows                    | Various promotional offers                |
 
 ## Retail 1.2.5 Routing Types and Fulfillment States
@@ -298,64 +299,15 @@ The routing type is extracted from the delivery fulfillment's tags:
 - Purpose: Seller-initiated cancellation after order pickup
 - Sequence: Order flow → `on_status_pending` → `on_status_packed` → `on_status_agent_assigned` → `on_status_at_pickup` → `on_status_picked` → `cancel` → `force_cancel` → `on_cancel`
 
-**Flow 010 - Delivery with Authentication**
-
-- Purpose: OTP/authentication required at delivery
-- Sequence: Order flow + `on_update_delivery_auth` before `on_status_delivered`
-
-**Flow 011 - Update Delivery Instructions**
-
-- Purpose: Modify delivery instructions after order confirmation
-- Sequence: Order flow + `update_instructions` → `on_update_instructions`
-
-**Flow 015 - Simple Liquidation**
-
-- Purpose: Basic liquidation flow
-- Sequence: Complete delivery + liquidation updates
-
-**Flow 017 - Post-Delivery Update**
-
-- Purpose: Update order after delivery
-- Sequence: Complete delivery + `on_update` → `on_cancel`
-
-**Flow 019 - P2P with Tracking**
-
-- Purpose: Hyperlocal delivery with live tracking
-- Sequence: Uses `on_status_at_pickup` and `on_status_at_delivery` with `track`/`on_track`
-
-**Flow 00C - Replacement (Partial)**
-
-- Purpose: Item replacement flow
-- Sequence: Complete delivery + `update_replacement` (commented sequences for full replacement)
-
-**Flow 00D - Post-Delivery Return Cancellation**
-
-- Purpose: Cancel return after delivery
-- Sequence: Complete delivery + `cancel` → `on_cancel`
-
-**Flow 00F - Scheduled Delivery**
-
-- Purpose: Delivery with specific time slots
-- Sequence: Standard order with scheduled fulfillment times
-
-**Flow 01D - Options for multi-fulfillment orders**
-
-- Purpose: Create order with options for multi-fulfillment orders
-- Sequence: Order creation ending at `on_status_pending`
-
-**Flow 01E - Orders with Cancellation Terms**
-
-- Purpose: Orders requiring cancellation terms
-- Special: `cancellation_terms` mandatory in `on_init`
 
 ### Offer Flows (0091-0098)
 
 - **0091**: Discount offers
-- **0092**: Freebie offers
-- **0093**: Buy X Get Y offers
-- **0094**: Delivery charge offers
-- **0095**: Slab-based offers
-- **0096**: Combo offers
+- **0092**: Buy X Get Y offers
+- **0093**: Freebie offers
+- **0094**: Slab-based offers
+- **0095**: Combo offers
+- **0096**: Delivery charge offers
 - **0097**: Exchange offers
 - **0098**: Financing offers
 
@@ -504,19 +456,21 @@ curl --location 'http://localhost:3008/api/validate' \
 }
 ```
 
-### Flow 2 - Complete Order with P2P Delivery (Hyperlocal) [v1.2.0, v1.2.5]
+### Flow 2 - Complete Order with Delivery [v1.2.0, v1.2.5]
 
-**Purpose**: Standard e-commerce order from search to delivery using hyperlocal (P2P) routing**When to use**: For orders delivered directly from store to customer without intermediate hubs**Key characteristics**:
+**Purpose**: Standard e-commerce order from search to delivery  
+**When to use**: Regular order fulfillment with delivery to customer  
+**Key characteristics**:
 
-- Uses P2P routing for hyperlocal delivery
-- Includes optional states like `at_pickup` and `at_delivery`
-- Complete order lifecycle with tracking
+- Complete order lifecycle with all possible status updates
+- Supports both P2P (hyperlocal) and P2H2P (hub-based) routing
+- Includes tracking capabilities
 
 ```shell
 curl --location 'https://log-validation.ondc.org/api/validate' \
 --header 'Content-Type: application/json' \
 --data '{
-    "domain": "ONDC:RET11",
+    "domain": "ONDC:RET10",
     "version": "1.2.5",
     "bap_id": "BUYER_APP_SUBSCRIBER_ID",
     "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
@@ -533,11 +487,15 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
         "on_status_packed": {},
         "on_status_agent_assigned": {},
         "on_status_at_pickup": {},
+        "on_status_out_for_pickup": {},
         "on_status_picked": {},
         "on_status_at_delivery": {},
-        "on_status_delivered": {},
+        "on_status_in_transit": {},
+        "on_status_at_destination_hub": {},
         "track": {},
-        "on_track": {}
+        "on_track": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {}
     },
     "flow": "2"
 }'
@@ -545,9 +503,11 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 
 **Important Notes**:
 
-- The `on_confirm` payload must include routing type as "P2P" in fulfillments tags
-- P2P allows `at_pickup` and `at_delivery` states but forbids intercity states
-- Track/on_track calls are optional but recommended for live tracking
+- The `on_confirm` payload must include routing type ("P2P" or "P2H2P") in fulfillments tags
+- **P2P routing**: Allows `at_pickup` and `at_delivery` states, forbids `out_for_pickup`, `pickup_failed`, `in_transit`, `at_destination_hub`
+- **P2H2P routing**: Allows `out_for_pickup`, `pickup_failed`, `in_transit`, `at_destination_hub`, forbids `at_pickup` and `at_delivery`
+- Include ALL status calls in payload; validation automatically filters based on routing type
+- Track/on_track calls can appear multiple times for live tracking
 
 ### Flow 1 - Search and Incremental Search [v1.2.0, v1.2.5]
 
@@ -610,8 +570,17 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
         "on_status_pending": {},
         "on_status_packed": {},
         "on_status_agent_assigned": {},
+        "on_status_at_pickup": {},
+        "on_status_out_for_pickup": {},
+        "on_status_pickup_failed": {},
         "on_status_picked": {},
+        "on_status_at_delivery": {},
+        "on_status_in_transit": {},
+        "on_status_at_destination_hub": {},
+        "track": {},
+        "on_track": {},
         "on_status_out_for_delivery": {},
+        "on_status_delivery_failed": {},
         "on_status_delivered": {}
     },
     "flow": "012"
@@ -624,6 +593,38 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 - `confirm` must include complete settlement details
 - `on_status_delivered` must update payment status to "PAID"
 - This is the only flow where settlement details are in `confirm` instead of `on_init`
+
+### Flow 001 - Item Availability [v1.2.5 only]
+
+**Purpose**: Check availability of items in seller's catalog  
+**When to use**: To verify if specific items are available before proceeding with order  
+**Key characteristics**:
+
+- Only catalog availability checking
+- No order placement
+- Ends at catalog response
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET10",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh": {}
+    },
+    "flow": "001"
+}'
+```
+
+**Important Notes**:
+
+- Flow ends at `on_search_full_catalog_refresh`
+- Only checks item availability, no ordering
+- Used for catalog validation only
 
 ### Flow 002 - Self-Pickup (Kerbside/Store Pickup) [v1.2.5 only]
 
@@ -665,6 +666,89 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 - Flow ends at `on_status_picked` with state "Order-picked-up"
 - No delivery states (out_for_delivery, delivered) in this flow
 - Order state becomes "Completed" when picked up
+
+### Flow 003 - Slotted Delivery [v1.2.5 only]
+
+**Purpose**: Orders with specific delivery time slots  
+**When to use**: When customers need delivery at specific times  
+**Key characteristics**:
+
+- Time-slot based delivery
+- Ends at pickup confirmation
+- No full delivery tracking
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET10",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {}
+    },
+    "flow": "003"
+}'
+```
+
+**Important Notes**:
+
+- Flow ends at `on_status_picked`
+- Used for time-slot based deliveries
+- Different from Flow 3 (Out of Stock Recovery)
+
+### Flow 004 - Standard Delivery Order [v1.2.5 only]
+
+**Purpose**: Complete standard order flow with delivery**When to use**: For standard e-commerce orders with delivery**Key characteristics**:
+
+- Full order lifecycle from search to delivery
+- Includes agent assignment and standard status progression
+- Ends with successful delivery
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET10",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_agent_assigned": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {}
+    },
+    "flow": "004"
+}'
+```
+
+**Important Notes**:
+
+- Standard delivery flow with agent assignment
+- Suitable for most retail order scenarios
+- Includes all major fulfillment states
 
 ### Flow 01E - Orders with Cancellation Terms [v1.2.5 only]
 
@@ -749,7 +833,9 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 
 ### Flow 3 - Out of Stock Recovery [v1.2.0, v1.2.5]
 
-**Purpose**: Handle scenarios where selected items are out of stock**When to use**: When items become unavailable between search and selection**Key characteristics**:
+**Purpose**: Handle scenarios where selected items are out of stock  
+**When to use**: When items become unavailable between search and selection  
+**Key characteristics**:
 
 - Uses special `select_out_of_stock` API to handle unavailable items
 - Allows re-selection with available items
@@ -777,8 +863,15 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
         "on_status_pending": {},
         "on_status_packed": {},
         "on_status_agent_assigned": {},
+        "on_status_at_pickup": {},
+        "on_status_out_for_pickup": {},
+        "on_status_pickup_failed": {},
         "on_status_picked": {},
+        "on_status_at_delivery": {},
+        "on_status_in_transit": {},
+        "on_status_at_destination_hub": {},
         "on_status_out_for_delivery": {},
+        "on_status_delivery_failed": {},
         "on_status_delivered": {},
         "track": {},
         "on_track": {}
@@ -792,11 +885,14 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 - `on_select_out_of_stock` returns items with quantity 0 for out-of-stock items
 - Requires a second `select` call with available items only
 - Rest of the flow proceeds normally after stock resolution
-- Useful for handling real-time inventory changes
+- Includes all possible status states; actual states depend on routing type (P2P/P2H2P)
+- Track/on_track calls can appear at any point after order confirmation
 
 ### Flow 5 - RTO with Partial Cancellation [v1.2.0, v1.2.5]
 
-**Purpose**: Return to origin after partial order cancellation**When to use**: When part of the order is cancelled and remaining items need to be returned**Key characteristics**:
+**Purpose**: Return to origin after partial order cancellation  
+**When to use**: When part of the order is cancelled and remaining items need to be returned  
+**Key characteristics**:
 
 - Includes partial cancellation before delivery
 - RTO (Return to Origin) process for undelivered items
@@ -825,8 +921,14 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
         "on_status_packed": {},
         "on_status_agent_assigned": {},
         "on_status_at_pickup": {},
+        "on_status_out_for_pickup": {},
+        "on_status_pickup_failed": {},
         "on_status_picked": {},
+        "on_status_at_delivery": {},
+        "on_status_in_transit": {},
+        "on_status_at_destination_hub": {},
         "on_status_out_for_delivery": {},
+        "on_status_delivery_failed": {},
         "on_cancel": {},
         "on_status_rto_delivered": {}
     },
@@ -840,6 +942,7 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 - `update_settlement_part_cancel` adjusts payment for cancelled items
 - Flow includes `on_cancel` for cancelled portion
 - Ends with `on_status_rto_delivered` when items return to seller
+- Includes all possible status states up to cancellation point
 
 ### Flow 6 - Reverse QC (Liquidation) [v1.2.0, v1.2.5]
 
@@ -1037,6 +1140,7 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 - May affect seller ratings and incur penalties
 - Order state becomes "Cancelled" with cancelled_by as seller
 
+
 ### Flow 010 - Delivery with Authentication [v1.2.5 only]
 
 **Purpose**: Orders requiring authentication (OTP/code) at delivery**When to use**: High-value items or secure delivery requirements**Key characteristics**:
@@ -1125,7 +1229,7 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 - Updates must be before order dispatch
 - Useful for adding gate codes, specific instructions
 
-### Flow 015 - Simple Liquidation [v1.2.5 only]
+### Flow 015 - Breakup of fulfillment level taxes in quote [v1.2.5 only]
 
 **Purpose**: Basic liquidation without complex reverse QC**When to use**: Direct liquidation of unsold/damaged inventory**Key characteristics**:
 
@@ -1171,13 +1275,15 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 - Used for bulk liquidation or clearance sales
 - Simpler settlement process
 
-### Flow 017 - Post-Delivery Update [v1.2.5 only]
+### Flow 017 - Seller Creds [v1.2.5 only]
 
-**Purpose**: Update order details after delivery completion**When to use**: Feedback, ratings, or post-delivery service requests**Key characteristics**:
+**Purpose**: Seller credential validation with post-delivery updates  
+**When to use**: When seller credentials need to be verified during order flow  
+**Key characteristics**:
 
-- Updates after order completion
-- Can trigger cancellation/returns
-- Supports feedback and ratings
+- Full order flow with seller credential validation
+- Includes post-delivery update capability
+- Can trigger cancellation after delivery
 
 ```shell
 curl --location 'https://log-validation.ondc.org/api/validate' \
@@ -1211,12 +1317,12 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 
 **Important Notes**:
 
-- `on_update` after delivery for feedback/issues
-- Can lead to `on_cancel` for returns
-- Supports post-delivery services
-- Useful for customer satisfaction tracking
+- Validates seller credentials during transaction
+- `on_update` after delivery for updates
+- Can lead to `on_cancel` if issues found
+- Used for seller verification scenarios
 
-### Flow 019 - P2P with Tracking [v1.2.5 only]
+### Flow 019 - Streamline fulfillment attributes for hyperlocal [v1.2.5 only]
 
 **Purpose**: Hyperlocal delivery with enhanced live tracking**When to use**: Food delivery, urgent deliveries requiring live tracking**Key characteristics**:
 
@@ -1264,13 +1370,15 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 - Common in food delivery (RET11)
 - Enhanced customer experience with real-time updates
 
-### Flow 00C - Replacement (Partial) [v1.2.5 only]
+### Flow 00C - Exchange flow [v1.2.5 only]
 
-**Purpose**: Replace defective or wrong items after delivery**When to use**: Customer received wrong/damaged items needing replacement**Key characteristics**:
+**Purpose**: Initiate replacement request for defective or wrong items after delivery  
+**When to use**: Customer received wrong/damaged items needing replacement  
+**Key characteristics**:
 
-- Post-delivery replacement process
-- Can be partial or full replacement
-- Includes reverse pickup and new delivery
+- Initiates replacement process after delivery
+- Only includes the update call to request replacement
+- Does NOT track the actual replacement fulfillment
 
 ```shell
 curl --location 'https://log-validation.ondc.org/api/validate' \
@@ -1292,10 +1400,17 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
         "on_status_pending": {},
         "on_status_packed": {},
         "on_status_agent_assigned": {},
+        "on_status_at_pickup": {},
+        "on_status_out_for_pickup": {},
+        "on_status_pickup_failed": {},
         "on_status_picked": {},
+        "on_status_at_delivery": {},
+        "on_status_in_transit": {},
+        "on_status_at_destination_hub": {},
         "on_status_out_for_delivery": {},
+        "on_status_delivery_failed": {},
         "on_status_delivered": {},
-        "update_replacement": {}
+        "update": {}
     },
     "flow": "00C"
 }'
@@ -1353,13 +1468,220 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 - Triggers reverse pickup process
 - Refund processed after item verification
 
-### Flow 00F - Scheduled Delivery [v1.2.5 only]
+### Flow 00F - Update delivery address [v1.2.5 only]
 
-**Purpose**: Orders with specific delivery time slots**When to use**: Customer needs delivery at specific time**Key characteristics**:
+**Purpose**: Update delivery address after order confirmation  
+**When to use**: Customer needs to change delivery address after placing order  
+**Key characteristics**:
 
-- Delivery scheduled for specific time window
-- Common for groceries, large appliances
-- Time slot selection during order
+- Allows address modification post-confirmation
+- Must be done before order is dispatched
+- Updates fulfillment end location
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET10",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "update_address": {},
+        "on_update_address": {}
+    },
+    "flow": "00F"
+}'
+```
+
+**Important Notes**:
+
+- `update_address` contains the new delivery address details
+- `on_update_address` confirms the address change
+- Address can only be updated before order is picked up
+- May affect delivery charges if location changes significantly
+
+### Flow 00B - Full Replacement Flow [v1.2.5 only]
+
+**Purpose**: Complete replacement flow with delivery of replacement item**When to use**: Customer needs item replacement with full tracking**Key characteristics**:
+
+- Full replacement cycle with pickup and delivery
+- Includes replacement item delivery tracking
+- Complete replacement fulfillment
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET10",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {},
+        "update_replacement": {},
+        "on_update_interim_reverse_qc": {},
+        "on_update_approval": {},
+        "on_update_replacement": {},
+        "replacement_on_status_pending": {},
+        "replacement_on_status_packed": {},
+        "replacement_on_status_picked": {},
+        "replacement_on_status_out_for_delivery": {},
+        "replacement_on_status_delivered": {}
+    },
+    "flow": "00B"
+}'
+```
+
+**Important Notes**:
+
+- Complete replacement cycle with original and replacement tracking
+- Includes reverse pickup and forward delivery
+- Full replacement fulfillment workflow
+
+### Flow 00E - Update sale invoice [v1.2.5 only]
+
+**Purpose**: Update sale invoice details during fulfillment
+**When to use**: When order modifications are needed during processing
+**Key characteristics**:
+
+- Update allowed during fulfillment
+- Flow ends with update call
+- Partial fulfillment with modification
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET10",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "update": {}
+    },
+    "flow": "00E"
+}'
+```
+
+**Important Notes**:
+
+- Update called during fulfillment process
+- Partial flow ending at update
+- Allows order modifications mid-process
+
+### Flow 016 - Customization of input type text [v1.2.5 only]
+
+**Purpose**: Basic order creation and confirmation**When to use**: Simple order placement scenarios**Key characteristics**:
+
+- Basic order flow
+- Ends at confirmation
+- No fulfillment tracking
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET10",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {}
+    },
+    "flow": "016"
+}'
+```
+
+**Important Notes**:
+
+- Simple order creation flow
+- No status tracking
+- Basic confirmation only
+- Complex order lifecycle with cancellation
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET10",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_agent_assigned": {},
+        "on_status_at_pickup": {},
+        "on_status_picked": {},
+        "track": {},
+        "on_track": {},
+        "on_status_at_delivery": {},
+        "on_status_delivered": {}
+    },
+    "flow": "019"
+}'
+```
+
+**Important Notes**:
+
+- Uses P2P specific states (at_pickup, at_delivery)
+- Includes track/on_track for live tracking
+- Enhanced location-based status updates
+
+### Flow 01C - Identification of on-network LSP [v1.2.5 only]
+
+**Purpose**: Standard P2P delivery flow**When to use**: Hyperlocal delivery without enhanced tracking**Key characteristics**:
+
+- P2P delivery model
+- Standard fulfillment states
+- Direct pickup to delivery
 
 ```shell
 curl --location 'https://log-validation.ondc.org/api/validate' \
@@ -1384,18 +1706,156 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
         "on_status_out_for_delivery": {},
         "on_status_delivered": {}
     },
-    "flow": "00F"
+    "flow": "01C"
 }'
 ```
 
 **Important Notes**:
 
-- Fulfillment includes scheduled delivery time range
-- `on_select` shows available time slots
-- Customer selects preferred slot in `init`
-- Delivery happens within selected time window
+- P2P routing without enhanced tracking
+- Standard status progression
+- Direct delivery model
 
-### Flow 01D - Order Till Pending [v1.2.5 only]
+### Flow 01F - Codified static terms [v1.2.5 only]
+
+**Purpose**: Basic order confirmation flow**When to use**: Simple order confirmation scenarios**Key characteristics**:
+
+- Basic order creation and confirmation
+- No fulfillment tracking
+- Order placement only
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET10",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {}
+    },
+    "flow": "01F"
+}'
+```
+
+**Important Notes**:
+
+- Minimal order confirmation flow
+- No status tracking
+- Basic order placement
+
+### Flow 020 - Fulfillment delay [v1.2.5 only]
+
+**Purpose**: Handle fulfillment delays**When to use**: When there are delays in order fulfillment**Key characteristics**:
+
+- Complete P2P order lifecycle
+- Standard P2P status progression
+- Full delivery tracking
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET10",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {}
+    },
+    "flow": "020"
+}'
+```
+
+**Important Notes**:
+
+- Standard P2P delivery flow
+- Similar to Flow 2 but P2P specific
+- Complete order lifecycle
+
+### Flow 022 - BNP promotions planned [v1.2.5 only]
+
+**Purpose**: Search-only flow without order creation**When to use**: Catalog browsing without ordering**Key characteristics**:
+
+- Only search functionality
+- No order creation
+- Catalog discovery only
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET10",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh": {}
+    },
+    "flow": "022"
+}'
+```
+
+**Important Notes**:
+
+- Search only functionality
+- No order creation or selection
+- Minimal catalog browsing
+
+### Flow 025 - BNP demand signals [v1.2.5 only]
+
+**Purpose**: BNP demand signals**When to use**: For capturing buyer network participant demand signals**Key characteristics**:
+
+- Ends at select phase
+- No order initialization
+- Product selection only
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET10",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh": {},
+        "select": {},
+        "on_select": {}
+    },
+    "flow": "025"
+}'
+```
+
+**Important Notes**:
+
+- Ends at selection phase
+- No order creation
+- Product selection validation only
+
+### Flow 01D - Option for multi-fulfillment order [v1.2.5 only]
 
 **Purpose**: Create order but hold at pending state**When to use**: Pre-orders or orders awaiting inventory**Key characteristics**:
 
@@ -1432,6 +1892,138 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 - Order remains in "Pending" state
 - Used for pre-orders or awaiting stock
 - Processing resumes when conditions are met
+
+### Flow 010 - Delivery with Authentication [v1.2.5 only]
+
+**Purpose**: Orders requiring authentication (OTP/code) at delivery  
+**When to use**: High-value items or secure delivery requirements  
+**Key characteristics**:
+
+- Includes delivery authentication update
+- OTP/code verification before handover
+- Enhanced security for delivery
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET10",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_agent_assigned": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_update_delivery_auth": {},
+        "on_status_delivered": {}
+    },
+    "flow": "010"
+}'
+```
+
+**Important Notes**:
+
+- `on_update_delivery_auth` provides OTP/authentication code
+- Delivery agent must verify code before handover
+- Common for high-value electronics, jewelry orders
+- Enhances delivery security and reduces fraud
+
+### Flow 00A - Commercial model for BNP/SNP [v1.2.5 only]
+
+**Purpose**: Standard order delivery without special requirements  
+**When to use**: Regular delivery orders  
+**Key characteristics**:
+
+- Complete standard fulfillment cycle
+- No special updates or modifications
+- Most common flow for regular orders
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET10",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_agent_assigned": {},
+        "on_status_picked": {},
+        "on_status_out_for_delivery": {},
+        "on_status_delivered": {}
+    },
+    "flow": "00A"
+}'
+```
+
+**Important Notes**:
+
+- Standard flow without any special features
+- Follows typical order lifecycle
+- All status updates are standard fulfillment states
+
+### Flow 00E - Update During Fulfillment [v1.2.5 only]
+
+**Purpose**: Make updates to order during fulfillment  
+**When to use**: Need to modify order details after packing but before delivery  
+**Key characteristics**:
+
+- Allows order updates during fulfillment
+- Update happens after order is packed
+- Can modify various order aspects
+
+```shell
+curl --location 'https://log-validation.ondc.org/api/validate' \
+--header 'Content-Type: application/json' \
+--data '{
+    "domain": "ONDC:RET10",
+    "version": "1.2.5",
+    "bap_id": "BUYER_APP_SUBSCRIBER_ID",
+    "bpp_id": "SELLER_APP_SUBSCRIBER_ID",
+    "payload": {
+        "search_full_catalog_refresh": {},
+        "on_search_full_catalog_refresh": {},
+        "select": {},
+        "on_select": {},
+        "init": {},
+        "on_init": {},
+        "confirm": {},
+        "on_confirm": {},
+        "on_status_pending": {},
+        "on_status_packed": {},
+        "on_status_picked": {},
+        "update": {}
+    },
+    "flow": "00E"
+}'
+```
+
+**Important Notes**:
+
+- `update` call made during fulfillment process
+- Flow ends after update without delivery completion
+- Used for scenarios where order needs modification mid-fulfillment
 
 ### Offer Flows (0091-0098)
 
@@ -1477,9 +2069,11 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 - Reflected in quote breakup
 - Can be percentage or fixed amount discount
 
-### Flow 0092 - Freebie Offers [v1.2.5 only]
+### Flow 0092 - Offer (buyXgetY) [v1.2.5 only]
 
-**Purpose**: Free items with purchase**When to use**: Buy X Get Y free promotions**Key characteristics**:
+**Purpose**: Buy X Get Y type promotions  
+**When to use**: Quantity-based purchase incentives  
+**Key characteristics**:
 
 - Free items added to order
 - Linked to specific purchase conditions
@@ -1519,9 +2113,11 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 - Cannot be selected independently
 - Linked to primary purchase items
 
-### Flow 0093 - Buy X Get Y Offers [v1.2.5 only]
+### Flow 0093 - Offer (freebie) [v1.2.5 only]
 
-**Purpose**: Conditional offers based on quantity**When to use**: Buy 2 Get 1 Free type promotions**Key characteristics**:
+**Purpose**: Free items with purchase  
+**When to use**: Complimentary items or samples  
+**Key characteristics**:
 
 - Quantity-based triggers
 - Additional items at reduced/zero price
@@ -1561,13 +2157,15 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 - Price adjustment in quote breakup
 - Common in FMCG and retail
 
-### Flow 0094 - Delivery Charge Offers [v1.2.5 only]
+### Flow 0094 - Offer (slab) [v1.2.5 only]
 
-**Purpose**: Free or reduced delivery charges**When to use**: Promotions on delivery fees**Key characteristics**:
+**Purpose**: Tiered discounts based on cart value  
+**When to use**: Progressive discounts for higher purchases  
+**Key characteristics**:
 
-- Waives or reduces delivery charges
-- Based on cart value or specific items
-- Encourages higher cart value
+- Multiple discount tiers defined
+- Higher discounts for larger cart values
+- Encourages increased spending
 
 ```shell
 curl --location 'https://log-validation.ondc.org/api/validate' \
@@ -1603,13 +2201,15 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 - Applied automatically when conditions met
 - Visible in fulfillment charges breakdown
 
-### Flow 0095 - Slab-based Offers [v1.2.5 only]
+### Flow 0095 - Offer (combo) [v1.2.5 only]
 
-**Purpose**: Tiered discounts based on cart value**When to use**: Progressive discounts for higher purchases**Key characteristics**:
+**Purpose**: Bundled products at special prices  
+**When to use**: Product bundles and meal deals  
+**Key characteristics**:
 
-- Multiple discount tiers
-- Higher discounts for larger carts
-- Encourages increased spending
+- Pre-defined product combinations
+- Special bundle pricing
+- Cannot modify bundle items
 
 ```shell
 curl --location 'https://log-validation.ondc.org/api/validate' \
@@ -1645,13 +2245,15 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 - Encourages cart value increase
 - Clear slab details in offer description
 
-### Flow 0096 - Combo Offers [v1.2.5 only]
+### Flow 0096 - Offer (delivery) [v1.2.5 only]
 
-**Purpose**: Bundled products at special prices**When to use**: Product bundles and meal deals**Key characteristics**:
+**Purpose**: Free or reduced delivery charges  
+**When to use**: Promotions on delivery fees  
+**Key characteristics**:
 
-- Pre-defined product combinations
-- Special bundle pricing
-- Cannot modify bundle items
+- Waives or reduces delivery charges
+- Based on cart value or specific items
+- Encourages higher cart value
 
 ```shell
 curl --location 'https://log-validation.ondc.org/api/validate' \
@@ -1787,7 +2389,7 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 
 #### Version 1.2.0
 
-- Supports flows 1-9 and 2A only
+- Supports flows 1-9 only
 - Basic status tracking without routing types
 - Standard fulfillment flow
 
@@ -1797,6 +2399,20 @@ curl --location 'https://log-validation.ondc.org/api/validate' \
 - **Status Validation**: Include ALL possible `on_status_*` calls in payload; validation is automatic based on routing type
 - **Routing Types**: Must specify P2P or P2H2P in `on_confirm` fulfillment tags
 - Routing type must remain consistent throughout order lifecycle
+
+##### P2P vs P2H2P Routing State Rules
+
+**P2P (Point-to-Point) Routing**:
+- **Allowed states**: Pending, Packed, Agent-assigned, At-pickup, Order-picked-up, At-delivery, Out-for-delivery, Delivery-failed, Order-delivered, Cancelled
+- **Forbidden states**: Out-for-pickup, Pickup-failed, In-transit, At-destination-hub
+- **Use case**: Hyperlocal delivery (food, groceries) where items go directly from store to customer
+
+**P2H2P (Point-to-Hub-to-Point) Routing**:
+- **Allowed states**: Pending, Packed, Agent-assigned, Out-for-pickup, Pickup-failed, Order-picked-up, In-transit, At-destination-hub, Out-for-delivery, Delivery-failed, Order-delivered, Cancelled
+- **Forbidden states**: At-pickup, At-delivery
+- **Use case**: Intercity/hub-based delivery where items go through distribution centers
+
+**Important**: The validation utility automatically filters status states based on the routing type specified in `on_confirm`. Always include ALL status calls in your payload; the validator will accept/reject based on routing rules.
 
 ### Flow-Specific Rules
 

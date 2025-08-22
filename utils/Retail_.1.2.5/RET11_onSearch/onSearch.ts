@@ -1349,8 +1349,8 @@ export const checkOnsearchFullCatalogRefresh = (data: any,flow:string) => {
           logger.info(`Comparing area_code and STD Code for /${constants.ON_SEARCH}`)
           const areaWithSTD = compareSTDwithArea(area_code, std)
           if (!areaWithSTD) {
-            logger.error(`STD code does not match with correct area_code on /${constants.ON_SEARCH}`)
-            errorObj.invldAreaCode = `STD code does not match with correct area_code on /${constants.ON_SEARCH}`
+            logger.error(`STD code does not match with correct area_code in /${constants.ON_SEARCH}`)
+            errorObj.invldAreaCode = `STD code does not match with correct area_code in /${constants.ON_SEARCH}`
           }
         }
       } catch (error: any) {

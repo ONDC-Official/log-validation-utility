@@ -11,9 +11,10 @@ import {
 } from '../..'
 import _ from 'lodash'
 
-export const checkSearchIncremental = (data: any, msgIdSet: any) => {
+export const checkSearchIncremental = (data: any, msgIdSet: any, schemaValidation?: boolean, stateless?: boolean) => {
   try {
     const errorObj: any = {}
+    const schemaErrors: any = {}
     if (!data || isObjectEmpty(data)) {
       errorObj[ApiSequence.INC_SEARCH] = 'JSON cannot be empty'
       return
@@ -23,28 +24,38 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
     if (!message || !context || !message.intent || isObjectEmpty(message) || isObjectEmpty(message.intent)) {
       return { missingFields: '/context, /message, /intent or /message/intent is missing or empty' }
     }
-    const schemaValidation = validateSchemaRetailV2(context.domain.split(':')[1] || 'RET11', constants.INC_SEARCH, data)
+
+    const schemaValidationResult =
+      schemaValidation !== false
+        ? validateSchemaRetailV2(context.domain.split(':')[1] || 'RET11', constants.INC_SEARCH, data)
+        : 'skip'
+
+    if (schemaValidationResult !== 'error' && schemaValidationResult !== 'skip') {
+      Object.assign(schemaErrors, schemaValidationResult)
+    }
+
     const contextRes: any = checkContext(context, constants.SEARCH)
     setValue(`${ApiSequence.INC_SEARCH}_context`, context)
 
-    try {
-      logger.info(`Adding Message Id /${constants.INC_SEARCH}`)
-      if (msgIdSet.has(context.message_id)) {
-        errorObj[`${ApiSequence.INC_SEARCH}_msgId`] = `Message id should not be same with previous calls`
+    if (!stateless) {
+      try {
+        logger.info(`Adding Message Id /${constants.INC_SEARCH}`)
+        if (msgIdSet.has(context.message_id)) {
+          errorObj[`${ApiSequence.INC_SEARCH}_msgId`] = `Message id should not be same with previous calls`
+        }
+        msgIdSet.add(context.message_id)
+      } catch (error: any) {
+        logger.error(`!!Error while checking message id for /${constants.INC_SEARCH}, ${error.stack}`)
       }
-      msgIdSet.add(context.message_id)
-    } catch (error: any) {
-      logger.error(`!!Error while checking message id for /${constants.INC_SEARCH}, ${error.stack}`)
     }
-
-    if (schemaValidation !== 'error') {
+    if (schemaValidationResult !== 'error' && schemaValidationResult !== 'skip') {
       Object.assign(errorObj, schemaValidation)
     }
 
     if (!contextRes?.valid) {
       Object.assign(errorObj, contextRes.ERRORS)
     }
-    if (_.isEqual(data.context, getValue(`domain`))) {
+    if (!stateless && _.isEqual(data.context, getValue(`domain`))) {
       errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
 
@@ -52,17 +63,20 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
       errorObj.contextCityError = 'context/city should be "*" while sending search_inc_catalog request'
     }
 
-    const onSearchContext: any = getValue(`${ApiSequence.ON_SEARCH}_context`)
-    try {
-      logger.info(`Comparing timestamp of /${constants.ON_SEARCH} and /${constants.INC_SEARCH}}`)
-      const tmpstmp = onSearchContext?.timestamp
-      if (_.gte(tmpstmp, context.timestamp)) {
-        errorObj.tmpstmp = `Timestamp for /${constants.ON_SEARCH} api cannot be greater than or equal to /${constants.INC_SEARCH} api`
+    if (!stateless) {
+
+      const onSearchContext: any = getValue(`${ApiSequence.ON_SEARCH}_context`)
+      try {
+        logger.info(`Comparing timestamp of /${constants.ON_SEARCH} and /${constants.INC_SEARCH}}`)
+        const tmpstmp = onSearchContext?.timestamp
+        if (_.gte(tmpstmp, context.timestamp)) {
+          errorObj.tmpstmp = `Timestamp for /${constants.ON_SEARCH} api cannot be greater than or equal to /${constants.INC_SEARCH} api`
+        }
+      } catch (error: any) {
+        logger.info(
+          `Error while comparing timestamp for /${constants.ON_SEARCH} and /${constants.INC_SEARCH}} api, ${error.stack}`,
+        )
       }
-    } catch (error: any) {
-      logger.info(
-        `Error while comparing timestamp for /${constants.ON_SEARCH} and /${constants.INC_SEARCH}} api, ${error.stack}`,
-      )
     }
 
     const buyerFF = parseFloat(message.intent?.payment?.['@ondc/org/buyer_app_finder_fee_amount'])
@@ -106,7 +120,27 @@ export const checkSearchIncremental = (data: any, msgIdSet: any) => {
       errorObj.intent = '/message/intent should have a required property tags'
     }
 
-    return Object.keys(errorObj).length > 0 && errorObj
+    const hasSchema = Object.keys(schemaErrors).length > 0
+    const hasBusiness = Object.keys(errorObj).length > 0
+
+    if (stateless) {
+      if (schemaValidation === true) {
+        return hasSchema ? { schemaErrors } : false
+      }
+      if (schemaValidation === false) {
+        return hasBusiness ? { errorObj } : false
+      }
+      if (!hasSchema && !hasBusiness) return false
+      return { schemaErrors, businessErrors: errorObj }
+    }
+
+    if (schemaValidation === true) {
+      return hasSchema ? { schemaErrors } : false
+    } else if (schemaValidation === false) {
+      return hasBusiness ? { errorObj } : false
+    } else {
+      return { schemaErrors, businessErrors: errorObj }
+    }
   } catch (error: any) {
     logger.error(error.message)
     return { error: error.message }

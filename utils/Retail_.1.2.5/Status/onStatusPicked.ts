@@ -17,8 +17,16 @@ import { FLOW } from '../../enum'
 import { delivery_delay_reasonCodes } from '../../../constants/reasonCode'
 import { validateStateForRouting } from '../common/routingValidator'
 
-export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, fulfillmentsItemsSet: any) => {
+export const checkOnStatusPicked = (
+  data: any,
+  state: string,
+  msgIdSet: any,
+  fulfillmentsItemsSet: any,
+  schemaValidation?: boolean,
+  stateless?: boolean,
+) => {
   const onStatusObj: any = {}
+  const schemaErrors: any = {}
   const states: string[] = ['Order-picked-up', 'Order-delivered']
   const replacementFulfillment = getValue("replacementFulfillment")
   try {
@@ -32,15 +40,25 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const schemaValidation = validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_STATUS, data)
+    const schemaValidationResult = schemaValidation !== false
+      ? validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_STATUS, data)
+      : 'skip'
     const contextRes: any = checkContext(context, constants.ON_STATUS)
 
-    if (schemaValidation !== 'error') {
-      Object.assign(onStatusObj, schemaValidation)
+    if (schemaValidationResult !== 'error' && schemaValidationResult !== 'skip') {
+      Object.assign(schemaErrors, schemaValidationResult)
     }
 
     if (!contextRes?.valid) {
       Object.assign(onStatusObj, contextRes.ERRORS)
+    }
+
+    // Stateless early return with segregated buckets
+    if (stateless) {
+      const hasSchema = Object.keys(schemaErrors).length > 0
+      const hasBusiness = Object.keys(onStatusObj).length > 0
+      if (!hasSchema && !hasBusiness) return false
+      return { schemaErrors, businessErrors: onStatusObj }
     }
 
     try {
@@ -53,8 +71,10 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
       logger.error(`!!Error while checking message id for /${constants.ON_STATUS_PICKED}, ${error.stack}`)
     }
 
-    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-      onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+    if (!stateless) {
+      if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+        onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+      }
     }
 
     setValue(`${ApiSequence.ON_STATUS_PICKED}`, data)
@@ -905,6 +925,18 @@ export const checkOnStatusPicked = (data: any, state: string, msgIdSet: any, ful
     }
     
 
+    // Bucketed return when flags are provided
+    if (stateless !== undefined || schemaValidation !== undefined) {
+      const hasSchema = Object.keys(schemaErrors).length > 0
+      const hasBusiness = Object.keys(onStatusObj).length > 0
+      if (!hasSchema && !hasBusiness) return false
+      return { schemaErrors, businessErrors: onStatusObj }
+    }
+
+    // Legacy: merge schema errors into main object for validate endpoint
+    if (Object.keys(schemaErrors).length > 0) {
+      Object.assign(onStatusObj, schemaErrors)
+    }
     return onStatusObj
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)

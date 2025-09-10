@@ -21,8 +21,9 @@ import {
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
 
-export const checkOnCancel = (data: any, msgIdSet: any) => {
+export const checkOnCancel = (data: any, msgIdSet: any, schemaValidation?: boolean, stateless?: boolean) => {
   const onCnclObj: any = {}
+  const schemaErrors: any = {}
   const onConfirmQuote = getValue(`${constants.ON_CONFIRM}/quote`)
   try {
     if (!data || isObjectEmpty(data)) {
@@ -35,12 +36,12 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
     }
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const flow = getValue('flow')
-    let schemaValidation: any
-    if (flow === '5') {
-      schemaValidation = validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_CANCEL_RTO, data)
-    } else {
-      schemaValidation = validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_CANCEL, data)
-    }
+    const schemaValidationResult =
+      schemaValidation !== false
+        ? (flow === '5'
+          ? validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_CANCEL_RTO, data)
+          : validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_CANCEL, data))
+        : 'skip'
     const select: any = getValue(`${ApiSequence.SELECT}`)
     const contextRes: any = checkContext(context, constants.ON_CANCEL)
     const checkBap = checkBppIdOrBapId(context.bap_id)
@@ -50,11 +51,24 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
 
     if (checkBap) Object.assign(onCnclObj, { bap_id: 'context/bap_id should not be a url' })
     if (checkBpp) Object.assign(onCnclObj, { bpp_id: 'context/bpp_id should not be a url' })
-    if (schemaValidation !== 'error') {
-      Object.assign(onCnclObj, schemaValidation)
+    if (schemaValidationResult !== 'error' && schemaValidationResult !== 'skip') {
+      Object.assign(schemaErrors, schemaValidationResult)
     }
     if (!contextRes?.valid) {
       Object.assign(onCnclObj, contextRes.ERRORS)
+    }
+    if (stateless) {
+      const hasSchema = Object.keys(schemaErrors).length > 0
+      const hasBusiness = Object.keys(onCnclObj).length > 0
+
+      if (!hasSchema && !hasBusiness) return false
+
+      if (schemaValidation !== undefined) {
+        return { schemaErrors, businessErrors: onCnclObj }
+      }
+
+      const combinedErrors = { ...schemaErrors, ...onCnclObj }
+      return Object.keys(combinedErrors).length > 0 ? combinedErrors : false
     }
 
     if (flow === '4') {
@@ -346,7 +360,7 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
 
     try {
       logger.info(`Checking for Item IDs in quote object in /${constants.ON_CANCEL}`)
-      let cancelFulfillment:any = []
+      let cancelFulfillment: any = []
       if (flow === '5') {
         cancelFulfillment = _.filter(on_cancel.fulfillments, { type: 'RTO' })?.[0]
       } else {
@@ -1071,7 +1085,17 @@ export const checkOnCancel = (data: any, msgIdSet: any) => {
     //   logger.error(`!!Some error occurred while checking /${constants.ON_CANCEL} API`, error)
     // }
 
-    return onCnclObj
+    const hasSchema = Object.keys(schemaErrors).length > 0
+    const hasBusiness = Object.keys(onCnclObj).length > 0
+
+    if (!hasSchema && !hasBusiness) return false
+
+    if (schemaValidation !== undefined) {
+      return { schemaErrors, businessErrors: onCnclObj }
+    }
+
+    const combinedErrors = { ...schemaErrors, ...onCnclObj }
+    return Object.keys(combinedErrors).length > 0 ? combinedErrors : false
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.ON_CANCEL} API`, err)
   }

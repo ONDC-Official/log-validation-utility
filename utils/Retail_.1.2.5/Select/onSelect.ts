@@ -21,7 +21,7 @@ const retailPymntTtl: { [key: string]: string } = {
   'convenience fee': 'misc',
   offer: 'offer',
 }
-export const checkOnSelect = (data: any, flow?: string) => {
+export const checkOnSelect = (data: any, flow?: string, schemaValidation?: boolean, stateless?: boolean) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.ON_SELECT]: 'JSON cannot be empty' }
   }
@@ -30,46 +30,62 @@ export const checkOnSelect = (data: any, flow?: string) => {
   if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
-  const schemaValidation = validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_SELECT, data)
+  const schemaValidationResult = schemaValidation !== false
+    ? validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_SELECT, data)
+    : 'skip'
   const contextRes: any = checkContext(context, constants.ON_SELECT)
 
   const errorObj: any = {}
+  const schemaErrors: any = {}
+
   const checkBap = checkBppIdOrBapId(context.bap_id)
   const checkBpp = checkBppIdOrBapId(context.bpp_id)
 
-  try {
-    logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
-    if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
-      errorObj[`${ApiSequence.ON_SELECT}_msgId`] =
-        `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+  if (!stateless) {
+    try {
+      logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
+      if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
+        errorObj[`${ApiSequence.ON_SELECT}_msgId`] =
+          `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking message id for /${constants.ON_SELECT}, ${error.stack}`)
     }
-  } catch (error: any) {
-    logger.error(`!!Error while checking message id for /${constants.ON_SELECT}, ${error.stack}`)
+
+    try {
+      logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
+      if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
+        errorObj[`${ApiSequence.ON_SELECT}_msgId`] =
+          `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+      }
+    } catch (error: any) {
+      logger.error(`!!Error while checking message id for /${constants.ON_SELECT}, ${error.stack}`)
+    }
   }
 
-  try {
-    logger.info(`Comparing Message Ids of /${constants.SELECT} and /${constants.ON_SELECT}`)
-    if (!_.isEqual(getValue(`${ApiSequence.SELECT}_msgId`), context.message_id)) {
-      errorObj[`${ApiSequence.ON_SELECT}_msgId`] =
-        `Message Ids for /${constants.SELECT} and /${constants.ON_SELECT} api should be same`
+  if (!stateless) {
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
     }
-  } catch (error: any) {
-    logger.error(`!!Error while checking message id for /${constants.ON_SELECT}, ${error.stack}`)
-  }
-
-  if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-    errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
   }
 
   if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
   if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
 
-  if (schemaValidation !== 'error') {
-    Object.assign(errorObj, schemaValidation)
+  if (schemaValidationResult !== 'error' && schemaValidationResult !== 'skip') {
+    Object.assign(schemaErrors, schemaValidationResult)
   }
 
   if (!contextRes?.valid) {
     Object.assign(errorObj, contextRes.ERRORS)
+  }
+
+  // In stateless mode, stop after schema/context/basic validations
+  if (stateless) {
+    const hasSchema = Object.keys(schemaErrors).length > 0
+    const hasBusiness = Object.keys(errorObj).length > 0
+    if (!hasSchema && !hasBusiness) return false
+    return { schemaErrors, businessErrors: errorObj }
   }
 
   const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
@@ -1715,5 +1731,8 @@ export const checkOnSelect = (data: any, flow?: string) => {
     }
   }
 
-  return Object.keys(errorObj).length > 0 && errorObj
+  const hasSchema = Object.keys(schemaErrors).length > 0
+  const hasBusiness = Object.keys(errorObj).length > 0
+  if (!hasSchema && !hasBusiness) return false
+  return { schemaErrors, businessErrors: errorObj }
 }

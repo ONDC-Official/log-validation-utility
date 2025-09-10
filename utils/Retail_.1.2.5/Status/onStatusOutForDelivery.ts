@@ -17,8 +17,10 @@ import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
 import { validateStateForRouting } from '../common/routingValidator'
 
-export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: any, fulfillmentsItemsSet: any) => {
+export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: any, fulfillmentsItemsSet: any,  schemaValidation?: boolean,
+  stateless?: boolean) => {
   const onStatusObj: any = {}
+  const schemaErrors: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
       return { [ApiSequence.ON_STATUS_OUT_FOR_DELIVERY]: 'JSON cannot be empty' }
@@ -31,12 +33,20 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const schemaValidation = validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_STATUS, data)
+   const schemaValidationResult =
+         schemaValidation !== false
+           ? validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_STATUS, data)
+           : 'skip'
+   
     const contextRes: any = checkContext(context, constants.ON_STATUS)
 
-    if (schemaValidation !== 'error') {
-      Object.assign(onStatusObj, schemaValidation)
-    }
+    
+    
+        if (schemaValidationResult !== 'error' && schemaValidationResult !== 'skip') {
+          Object.assign(schemaErrors, schemaValidationResult)
+        }
+
+        
     try {
       logger.info(`Adding Message Id /${constants.ON_STATUS_OUT_FOR_DELIVERY}`)
       if (msgIdSet.has(context.message_id)) {
@@ -50,10 +60,15 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
     if (!contextRes?.valid) {
       Object.assign(onStatusObj, contextRes.ERRORS)
     }
+    
 
-    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-      onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
-    }
+    if (!stateless) {
+          if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+            onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+          }
+        }
+
+        
 
     setValue(`${ApiSequence.ON_STATUS_OUT_FOR_DELIVERY}`, data)
 
@@ -62,6 +77,12 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
 
     setValue(`out_for_delivery_message_id`, out_for_delivery_message_id)
 
+    if (stateless) {
+      const hasSchema = Object.keys(schemaErrors).length > 0
+      const hasBusiness = Object.keys(onStatusObj).length > 0
+      if (!hasSchema && !hasBusiness) return false
+      return { schemaErrors, businessErrors: onStatusObj }
+    }
     try {
       logger.info(
         `Comparing message_id for unsolicited calls for ${constants.ON_STATUS}.packed and ${constants.ON_STATUS}.out_for_delivery`,
@@ -851,8 +872,12 @@ export const checkOnStatusOutForDelivery = (data: any, state: string, msgIdSet: 
   
     }
 
-    return onStatusObj
+    const hasSchema = Object.keys(schemaErrors).length > 0
+    const hasBusiness = Object.keys(onStatusObj).length > 0
+    if (!hasSchema && !hasBusiness) return false
+    return { schemaErrors, businessErrors: onStatusObj }
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.ON_STATUS} API`, err)
+    logger.error(`Error in onStatusOutForDelivery - ${err.stack}`)
+    return { schemaErrors: { error: 'Internal Server Error' }, businessErrors: {} }
   }
 }

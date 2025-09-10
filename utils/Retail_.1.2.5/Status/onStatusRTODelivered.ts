@@ -17,8 +17,9 @@ import {
 } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkOnStatusRTODelivered = (data: any) => {
+export const checkOnStatusRTODelivered = (data: any, schemaValidation?: boolean, stateless?: boolean) => {
     const onStatusRtoObj: any = {}
+    const schemaErrors: any = {}
     try {
         if (!data || isObjectEmpty(data)) {
             return { [ApiSequence.ON_CANCEL]: 'JSON cannot be empty' }
@@ -30,8 +31,9 @@ export const checkOnStatusRTODelivered = (data: any) => {
         }
         const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
         const flow = getValue('flow')
-        let schemaValidation: any
-        schemaValidation = validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_CANCEL_RTO, data)
+        const schemaValidationResult = schemaValidation !== false
+            ? validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_CANCEL_RTO, data)
+            : 'skip'
 
         const select: any = getValue(`${ApiSequence.SELECT}`)
         const contextRes: any = checkContext(context, constants.ON_STATUS)
@@ -42,15 +44,25 @@ export const checkOnStatusRTODelivered = (data: any) => {
 
         if (checkBap) Object.assign(onStatusRtoObj, { bap_id: 'context/bap_id should not be a url' })
         if (checkBpp) Object.assign(onStatusRtoObj, { bpp_id: 'context/bpp_id should not be a url' })
-        if (schemaValidation !== 'error') {
-            Object.assign(onStatusRtoObj, schemaValidation)
+        if (schemaValidationResult !== 'error' && schemaValidationResult !== 'skip') {
+            Object.assign(schemaErrors, schemaValidationResult)
         }
         if (!contextRes?.valid) {
             Object.assign(onStatusRtoObj, contextRes.ERRORS)
         }
 
-        if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-            onStatusRtoObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+        if (!stateless) {
+            if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+                onStatusRtoObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+            }
+        }
+
+        // Stateless early return
+        if (stateless) {
+            const hasSchema = Object.keys(schemaErrors).length > 0
+            const hasBusiness = Object.keys(onStatusRtoObj).length > 0
+            if (!hasSchema && !hasBusiness) return false
+            return { schemaErrors, businessErrors: onStatusRtoObj }
         }
 
         try {
@@ -761,6 +773,18 @@ export const checkOnStatusRTODelivered = (data: any) => {
             logger.error(`!!Error while checking Reason ID ,RTO Id and Initiated_by for ${constants.ON_STATUS_RTO_DELIVERED}`)
         }
 
+        // Bucketed return when flags are provided
+        if (stateless !== undefined || schemaValidation !== undefined) {
+            const hasSchema = Object.keys(schemaErrors).length > 0
+            const hasBusiness = Object.keys(onStatusRtoObj).length > 0
+            if (!hasSchema && !hasBusiness) return false
+            return { schemaErrors, businessErrors: onStatusRtoObj }
+        }
+
+        // Legacy: merge schema errors into main object for validate endpoint
+        if (Object.keys(schemaErrors).length > 0) {
+            Object.assign(onStatusRtoObj, schemaErrors)
+        }
         return onStatusRtoObj
     } catch (err: any) {
         logger.error(`!!Some error occurred while checking /${constants.ON_STATUS_RTO_DELIVERED} API`, err)

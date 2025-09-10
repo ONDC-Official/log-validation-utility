@@ -20,8 +20,17 @@ import {
 } from '../common/statusValidationHelpers'
 import { STATE_TRANSITIONS } from '../../../constants/fulfillmentStates'
 
-export const checkOnStatusOutForPickup = (data: any, _state: string, msgIdSet: any, _fulfillmentsItemsSet: any, flow?: string) => {
+export const checkOnStatusOutForPickup = (
+  data: any,
+  _state: string,
+  msgIdSet: any,
+  _fulfillmentsItemsSet: any,
+  flow?: string,
+  schemaValidation?: boolean,
+  stateless?: boolean,
+) => {
   const onStatusObj: any = {}
+  const schemaErrors: any = {}
   const EXPECTED_STATE = 'Out-for-pickup'
   
   try {
@@ -43,15 +52,25 @@ export const checkOnStatusOutForPickup = (data: any, _state: string, msgIdSet: a
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const schemaValidation = validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_STATUS, data)
+    const schemaValidationResult = schemaValidation !== false
+      ? validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_STATUS, data)
+      : 'skip'
     const contextRes: any = checkContext(context, constants.ON_STATUS)
 
-    if (schemaValidation !== 'error') {
-      Object.assign(onStatusObj, schemaValidation)
+    if (schemaValidationResult !== 'error' && schemaValidationResult !== 'skip') {
+      Object.assign(schemaErrors, schemaValidationResult)
     }
 
     if (!contextRes?.valid) {
       Object.assign(onStatusObj, contextRes.ERRORS)
+    }
+
+    // Stateless early return with segregated buckets
+    if (stateless) {
+      const hasSchema = Object.keys(schemaErrors).length > 0
+      const hasBusiness = Object.keys(onStatusObj).length > 0
+      if (!hasSchema && !hasBusiness) return false
+      return { schemaErrors, businessErrors: onStatusObj }
     }
 
     try {
@@ -64,8 +83,10 @@ export const checkOnStatusOutForPickup = (data: any, _state: string, msgIdSet: a
       logger.error(`!!Error while checking message id for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
     }
 
-    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-      onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+    if (!stateless) {
+      if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+        onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+      }
     }
 
     setValue(`${ApiSequence.ON_STATUS_OUT_FOR_PICKUP}`, data)
@@ -318,6 +339,18 @@ export const checkOnStatusOutForPickup = (data: any, _state: string, msgIdSet: a
       logger.error(`!!Error while storing fulfillment for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
     }
 
+    // Bucketed return when flags are provided
+    if (stateless !== undefined || schemaValidation !== undefined) {
+      const hasSchema = Object.keys(schemaErrors).length > 0
+      const hasBusiness = Object.keys(onStatusObj).length > 0
+      if (!hasSchema && !hasBusiness) return false
+      return { schemaErrors, businessErrors: onStatusObj }
+    }
+
+    // Legacy: merge schema errors into main object for validate endpoint
+    if (Object.keys(schemaErrors).length > 0) {
+      Object.assign(onStatusObj, schemaErrors)
+    }
     return onStatusObj
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.ON_STATUS}_${EXPECTED_STATE} API`, JSON.stringify(err.stack))

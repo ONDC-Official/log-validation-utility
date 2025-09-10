@@ -1,3 +1,4 @@
+
 import _ from 'lodash'
 import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
@@ -5,8 +6,9 @@ import { validateSchemaRetailV2, isObjectEmpty, checkContext, checkItemTag, chec
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW, OFFERSFLOW } from '../../../utils/enum'
 
-export const checkInit = (data: any, msgIdSet: any, flow: string) => {
+export const checkInit = (data: any, msgIdSet: any, flow: string, schemaValidation?: boolean, stateless?: boolean) => {
   const initObj: any = {}
+  const schemaErrors: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
       return { [ApiSequence.INIT]: 'JSON cannot be empty' }
@@ -20,7 +22,9 @@ export const checkInit = (data: any, msgIdSet: any, flow: string) => {
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const parentItemIdSet: any = getValue(`parentItemIdSet`)
     const select_customIdArray: any = getValue(`select_customIdArray`)
-    const schemaValidation = validateSchemaRetailV2(context.domain.split(':')[1], constants.INIT, data)
+    const schemaValidationResult = schemaValidation !== false
+      ? validateSchemaRetailV2(context.domain.split(':')[1], constants.INIT, data)
+      : 'skip'
 
     const contextRes: any = checkContext(context, constants.INIT)
 
@@ -30,15 +34,29 @@ export const checkInit = (data: any, msgIdSet: any, flow: string) => {
     if (checkBap) Object.assign(initObj, { bap_id: 'context/bap_id should not be a url' })
     if (checkBpp) Object.assign(initObj, { bpp_id: 'context/bpp_id should not be a url' })
 
-    if (schemaValidation !== 'error') {
-      Object.assign(initObj, schemaValidation)
+    if (schemaValidationResult !== 'error' && schemaValidationResult !== 'skip') {
+      Object.assign(schemaErrors, schemaValidationResult)
     }
-    if (_.isEqual(data.context, getValue(`domain`))) {
-      initObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+    if (!stateless) {
+      if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+        initObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+      }
     }
 
     if (!contextRes?.valid) {
       Object.assign(initObj, contextRes.ERRORS)
+    }
+
+    if (stateless) {
+      const hasSchema = Object.keys(schemaErrors).length > 0
+      const hasBusiness = Object.keys(initObj).length > 0
+      if (!hasSchema && !hasBusiness) return false
+      if (schemaValidation !== undefined) {
+        return { schemaErrors, businessErrors: initObj }
+      }
+      // Merge schema and business errors into one object
+      const combinedErrors = { ...schemaErrors, ...initObj }
+      return Object.keys(combinedErrors).length > 0 ? combinedErrors : false
     }
 
     setValue(`${ApiSequence.INIT}`, data)
@@ -385,12 +403,12 @@ export const checkInit = (data: any, msgIdSet: any, flow: string) => {
         //Comparing fulfillment Ids
         const id = init.fulfillments[i].id
         if (id) {
-          if(flow === FLOW.FLOW002){
+          if (flow === FLOW.FLOW002) {
             const onSelectSelfPickupFulfillment = getValue('selfPickupFulfillment')
-            if(id !== onSelectSelfPickupFulfillment.id){
+            if (id !== onSelectSelfPickupFulfillment.id) {
               initObj['invldFlmntId'] = `Mismatch in on_init fulfillment.id: ${id} with on_select Self-Pickup fulfillment id: ${onSelectSelfPickupFulfillment.id}  for Flow: ${FLOW.FLOW002}`
             }
-            if(init.fulfillments[i].type !== onSelectSelfPickupFulfillment.type){
+            if (init.fulfillments[i].type !== onSelectSelfPickupFulfillment.type) {
               initObj['invldFlmntId'] = `Mismatch in on_init fulfillment.type: ${init.fulfillments[i].type} with on_select fulfillment.type: ${onSelectSelfPickupFulfillment.type}  for Flow: ${FLOW.FLOW002}`
             }
           }
@@ -467,10 +485,20 @@ export const checkInit = (data: any, msgIdSet: any, flow: string) => {
           initObj['bap_terms_value'] = "'finance_cost_value' must be a valid number"
         }
       }
-    } catch (error) {}
+    } catch (error) { }
 
-    return initObj
-  } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.INIT} API`, err)
+    const hasSchema = Object.keys(schemaErrors).length > 0
+    const hasBusiness = Object.keys(initObj).length > 0
+    if (!hasSchema && !hasBusiness) return false
+    if (schemaValidation !== undefined) {
+      return { schemaErrors, businessErrors: initObj }
+    }
+    const combinedErrors = { ...schemaErrors, ...initObj }
+    return Object.keys(combinedErrors).length > 0 ? combinedErrors : false
+  } catch (error: any) {
+    logger.error(`Error while checking for JSON structure and required fields for ${ApiSequence.INIT}: ${error.stack}`)
+    return {
+      error: `Error while checking for JSON structure and required fields for ${ApiSequence.INIT}: ${error.stack}`,
+    }
   }
 }

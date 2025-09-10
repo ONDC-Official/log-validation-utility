@@ -19,8 +19,9 @@ import {
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum' 
 
-export const checkConfirm = (data: any, msgIdSet: any, flow :string) => {
+export const checkConfirm = (data: any, msgIdSet: any, flow: string, schemaValidation?: boolean, stateless?: boolean) => {
   const cnfrmObj: any = {}
+  const schemaErrors: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
       return { [ApiSequence.CONFIRM]: 'JSON cannot be empty' }
@@ -31,10 +32,13 @@ export const checkConfirm = (data: any, msgIdSet: any, flow :string) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const parentItemIdSet: any = getValue(`parentItemIdSet`)
-    const select_customIdArray: any = getValue(`select_customIdArray`)
-    const schemaValidation = validateSchemaRetailV2(context.domain.split(':')[1], constants.CONFIRM, data)
+    const searchContext: any = stateless ? undefined : getValue(`${ApiSequence.SEARCH}_context`)
+    const parentItemIdSet: any = stateless ? undefined : getValue(`parentItemIdSet`)
+    const select_customIdArray: any = stateless ? undefined : getValue(`select_customIdArray`)
+    
+    const schemaValidationResult = schemaValidation !== false
+      ? validateSchemaRetailV2(context.domain.split(':')[1], constants.CONFIRM, data)
+      : 'skip'
 
     const contextRes: any = checkContext(context, constants.CONFIRM)
 
@@ -43,11 +47,15 @@ export const checkConfirm = (data: any, msgIdSet: any, flow :string) => {
 
     if (checkBap) Object.assign(cnfrmObj, { bap_id: 'context/bap_id should not be a url' })
     if (checkBpp) Object.assign(cnfrmObj, { bpp_id: 'context/bpp_id should not be a url' })
-    if (schemaValidation !== 'error') {
-      Object.assign(cnfrmObj, schemaValidation)
+    
+    if (schemaValidationResult !== 'error' && schemaValidationResult !== 'skip') {
+      Object.assign(schemaErrors, schemaValidationResult)
     }
-    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-      cnfrmObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+    
+    if (!stateless) {
+      if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+        cnfrmObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+      }
     }
 
     try {
@@ -56,13 +64,26 @@ export const checkConfirm = (data: any, msgIdSet: any, flow :string) => {
         cnfrmObj[`${ApiSequence.CONFIRM}_msgId`] = `Message id should not be same with previous calls`
       }
       msgIdSet.add(context.message_id)
-      setValue(`${ApiSequence.CONFIRM}_msgId`, data.context.message_id)
+      if (!stateless) setValue(`${ApiSequence.CONFIRM}_msgId`, data.context.message_id)
     } catch (error: any) {
       logger.error(`!!Error while checking message id for /${constants.CONFIRM}, ${error.stack}`)
     }
 
     if (!contextRes?.valid) {
       Object.assign(cnfrmObj, contextRes.ERRORS)
+    }
+
+    // In stateless mode, stop after schema/context/basic validations
+    if (stateless) {
+      const hasSchema = Object.keys(schemaErrors).length > 0
+      const hasBusiness = Object.keys(cnfrmObj).length > 0
+      if (!hasSchema && !hasBusiness) return false
+      if (schemaValidation !== undefined) {
+        return { schemaErrors, businessErrors: cnfrmObj }
+      }
+      // Merge schema and business errors into one object
+      const combinedErrors = { ...schemaErrors, ...cnfrmObj }
+      return Object.keys(combinedErrors).length > 0 ? combinedErrors : false
     }
 
     setValue(`${ApiSequence.CONFIRM}`, data)
@@ -184,37 +205,37 @@ export const checkConfirm = (data: any, msgIdSet: any, flow :string) => {
     }
     logger.info(`Checking vehicle registration for fulfillments in /${constants.CONFIRM}`);
 
-const fulfillments = confirm.fulfillments;
+    const fulfillments = confirm.fulfillments;
 
-//Vehicle registeration for (Self-Pickup) Kerbside
-if (Array.isArray(fulfillments)) {
-    fulfillments.forEach((fulfillment, index) => {
+    //Vehicle registeration for (Self-Pickup) Kerbside
+    if (Array.isArray(fulfillments)) {
+      fulfillments.forEach((fulfillment, index) => {
         const type = fulfillment.type;
         const category = fulfillment['@ondc/org/category'];
         const vehicle = fulfillment.vehicle;
         const SELF_PICKUP = 'Self-Pickup'
         const KERBSIDE = 'Kerbside'
-      if (flow === FLOW.FLOW002) {
-        if (fulfillment.type !== "Self-Pickup") {
-          logger.info(`Fulfillment Type must be present `)
-          cnfrmObj['ff'] = `Fulfillment Type Self-Pickup must be present for flow : ${flow}`
+        if (flow === FLOW.FLOW002) {
+          if (fulfillment.type !== "Self-Pickup") {
+            logger.info(`Fulfillment Type must be present `)
+            cnfrmObj['ff'] = `Fulfillment Type Self-Pickup must be present for flow : ${flow}`
+          }
         }
-      }
 
         if (type === SELF_PICKUP && category === KERBSIDE) {
-            if (!vehicle) {
-                cnfrmObj[`fulfillment${index}_vehicle`] =
-                    `Vehicle is required for fulfillment ${index} with type ${SELF_PICKUP} and category ${KERBSIDE} in /${constants.CONFIRM}`;
-            } else if (!vehicle.registration) {
-                cnfrmObj[`fulfillment${index}_vehicle_registration`] =
-                    `Vehicle registration is required for fulfillment ${index} with type ${SELF_PICKUP} and category ${KERBSIDE} in /${constants.CONFIRM}`;
-            }
-        } else if (vehicle) {
+          if (!vehicle) {
             cnfrmObj[`fulfillment${index}_vehicle`] =
-                `Vehicle should not be present in fulfillment ${index} with type ${type} and category ${category} in /${constants.CONFIRM}`;
+              `Vehicle is required for fulfillment ${index} with type ${SELF_PICKUP} and category ${KERBSIDE} in /${constants.CONFIRM}`;
+          } else if (!vehicle.registration) {
+            cnfrmObj[`fulfillment${index}_vehicle_registration`] =
+              `Vehicle registration is required for fulfillment ${index} with type ${SELF_PICKUP} and category ${KERBSIDE} in /${constants.CONFIRM}`;
+          }
+        } else if (vehicle) {
+          cnfrmObj[`fulfillment${index}_vehicle`] =
+            `Vehicle should not be present in fulfillment ${index} with type ${type} and category ${category} in /${constants.CONFIRM}`;
         }
-    });
-}
+      });
+    }
     try {
       logger.info(`Checking for number of digits in tax number in message.order.tags[0].list`)
       if (message.order.tags && isArray(message.order.tags)) {
@@ -337,7 +358,7 @@ if (Array.isArray(fulfillments)) {
       logger.info(`Comparing Quote object for /${constants.ON_SELECT} and /${constants.CONFIRM}`)
       const on_select_quote: any = getValue('quoteObj')
       const quoteErrors = compareQuoteObjects(on_select_quote, confirm.quote, constants.ON_SELECT, constants.CONFIRM)
-      const hasItemWithQuantity = _.some(confirm.quote.breakup, (item:any) => _.has(item, 'item.quantity'))
+      const hasItemWithQuantity = _.some(confirm.quote.breakup, (item: any) => _.has(item, 'item.quantity'))
       if (hasItemWithQuantity) {
         const key = `quantErr`
         cnfrmObj[key] =
@@ -391,14 +412,13 @@ if (Array.isArray(fulfillments)) {
       logger.error(`!!Error while storing order created and updated timestamps in /${constants.CONFIRM}`)
     }
 
-
     try {
       logger.info(`Comparing order price value in /${constants.ON_INIT} and /${constants.CONFIRM}`)
       const oninitQuotePrice: any = getValue('initQuotePrice')
       const confirmQuotePrice = parseFloat(confirm.quote.price.value)
 
       logger.info(`Comparing quote prices of /${constants.ON_INIT} and /${constants.CONFIRM}`)
-      if (oninitQuotePrice != confirmQuotePrice ) {
+      if (oninitQuotePrice != confirmQuotePrice) {
         logger.info(
           `order quote price in /${constants.CONFIRM} is not equal to the quoted price in /${constants.ON_INIT}`,
         )
@@ -459,11 +479,11 @@ if (Array.isArray(fulfillments)) {
       if (cnfrmObj['message/order/transaction_id']) {
         cnfrmObj['message/order/transaction_id'] = 'Unexpected txn_id found in message/order/confirm'
       } else {
-        if (flow === FLOW.FLOW012 ) {
+        if (flow === FLOW.FLOW012) {
           logger.info('Skipping transaction_id check for 012 flow')
           // Skip the transaction_id check for 012 flow
         } else {
-          const status = payment_status(payment,flow)
+          const status = payment_status(payment, flow)
           if (!status) {
             cnfrmObj['message/order/transaction_id'] = 'Transaction_id missing in message/order/payment'
           }
@@ -473,27 +493,27 @@ if (Array.isArray(fulfillments)) {
       logger.error('Error while checking transaction in message/order/payment: ' + err.message)
     }
     try {
-      if (flow === FLOW.FLOW012){
-      logger.info('Payment status check in confirm call')
-      const payment = confirm.payment
-      if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
-        logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`);
-        cnfrmObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`
-      } 
-    }
+      if (flow === FLOW.FLOW012) {
+        logger.info('Payment status check in confirm call')
+        const payment = confirm.payment
+        if (payment.status !== PAYMENT_STATUS.NOT_PAID) {
+          logger.error(`Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`);
+          cnfrmObj.pymntstatus = `Payment status should be ${PAYMENT_STATUS.NOT_PAID} for ${FLOW.FLOW012} flow (Cash on Delivery)`
+        }
+      }
     } catch (err: any) {
       logger.error('Error while checking payment in message/order/payment: ' + err.message);
     }
-  
+
     //Payment details for 012 Flow
     try {
       if (flow === FLOW.FLOW012) {
         logger.info(`checking payment object in /${constants.CONFIRM}`)
-        setValue('confirmPaymentStatus',confirm.payment.status)
+        setValue('confirmPaymentStatus', confirm.payment.status)
         if (confirm.payment['@ondc/org/settlement_details'][0]['settlement_counterparty'] != 'buyer-app') {
           cnfrmObj.sttlmntcntrparty = `settlement_counterparty is expected to be 'buyer-app' in @ondc/org/settlement_details`
         }
-        
+
         logger.info(`checking payment details in /${constants.CONFIRM}`)
         const data = confirm.payment['@ondc/org/settlement_details'][0]
         if (
@@ -561,8 +581,17 @@ if (Array.isArray(fulfillments)) {
       logger.error(`!!Error while storing payment settlement details in /${constants.CONFIRM}`)
     }
 
-    return cnfrmObj
-  } catch (err: any) {
+    // Return in new format for validateSingleAction compatibility
+    const hasSchema = Object.keys(schemaErrors).length > 0
+    const hasBusiness = Object.keys(cnfrmObj).length > 0
+    if (!hasSchema && !hasBusiness) return false
+    if (schemaValidation !== undefined) {
+      return { schemaErrors, businessErrors: cnfrmObj }
+    }
+    const combinedErrors = { ...schemaErrors, ...cnfrmObj }
+    return Object.keys(combinedErrors).length > 0 ? combinedErrors : false
+  }  catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.CONFIRM} API`, err)
+    return cnfrmObj // Return original format for backward compatibility
   }
 }

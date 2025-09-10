@@ -19,9 +19,10 @@ import { getValue, setValue } from '../../../shared/dao'
 import { FLOW, OFFERSFLOW } from '../../enum'
 import { PAYMENT_COLLECTED_BY } from '../../../constants'
 
-export const checkOnInit = (data: any, flow: string) => {
+export const checkOnInit = (data: any, flow: string, schemaValidation?: boolean, stateless?: boolean) => {
   try {
     const onInitObj: any = {}
+    const schemaErrors: any = {}
     if (!data || isObjectEmpty(data)) {
       return { [ApiSequence.ON_INIT]: 'JSON cannot be empty' }
     }
@@ -31,7 +32,9 @@ export const checkOnInit = (data: any, flow: string) => {
       return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
     }
 
-    const schemaValidation = validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_INIT, data)
+    const schemaValidationResult = schemaValidation !== false
+      ? validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_INIT, data)
+      : 'skip'
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
     const contextRes: any = checkContext(context, constants.ON_INIT)
     const parentItemIdSet: any = getValue(`parentItemIdSet`)
@@ -42,15 +45,33 @@ export const checkOnInit = (data: any, flow: string) => {
 
     if (checkBap) Object.assign(onInitObj, { bap_id: 'context/bap_id should not be a url' })
     if (checkBpp) Object.assign(onInitObj, { bpp_id: 'context/bpp_id should not be a url' })
-    if (schemaValidation !== 'error') {
-      Object.assign(onInitObj, schemaValidation)
+    if (schemaValidationResult !== 'error' && schemaValidationResult !== 'skip') {
+      Object.assign(schemaErrors, schemaValidationResult)
     }
+
 
     if (!contextRes?.valid) {
       Object.assign(onInitObj, contextRes.ERRORS)
     }
-    if (_.isEqual(data.context, getValue(`domain`))) {
-      onInitObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+    if (!stateless) {
+      if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+        onInitObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+      }
+    }
+
+    if (stateless) {
+      const hasSchema = Object.keys(schemaErrors).length > 0
+      const hasBusiness = Object.keys(onInitObj).length > 0
+      if (!hasSchema && !hasBusiness) return false
+
+      // If schemaValidation parameter is provided, return separated errors
+      if (schemaValidation !== undefined) {
+        return { schemaErrors, businessErrors: onInitObj }
+      }
+
+      // Otherwise return flat object
+      const combinedErrors = { ...schemaErrors, ...onInitObj }
+      return Object.keys(combinedErrors).length > 0 ? combinedErrors : false
     }
 
     setValue(`${ApiSequence.ON_INIT}`, data)
@@ -119,12 +140,12 @@ export const checkOnInit = (data: any, flow: string) => {
 
     try {
       logger.info(`Checking Cancellation terms for /${constants.ON_INIT}`)
-      
+
       // Flow 01E requires cancellation_terms
       if (flow === FLOW.FLOW01E && !message.order.cancellation_terms) {
         onInitObj.cancellationTerms = `cancellation_terms are mandatory for flow ${FLOW.FLOW01E} in /${constants.ON_INIT}`
       }
-      
+
       // Store cancellation_terms only if provided
       if (message.order.cancellation_terms) {
         setValue('OnInitCancellationTerms', message.order.cancellation_terms)
@@ -287,9 +308,9 @@ export const checkOnInit = (data: any, flow: string) => {
       logger.info(`Validating fulfillments`)
       on_init?.fulfillments.forEach((fulfillment: any) => {
         const { type } = fulfillment
-        if(flow === FLOW.FLOW002){
-          if(type !== "Self-Pickup"){
-             onInitObj[`fulfillments[${fulfillment.id}]`] = `Fulfillment type should be 'Self-Pickup' for flow: ${flow}`
+        if (flow === FLOW.FLOW002) {
+          if (type !== "Self-Pickup") {
+            onInitObj[`fulfillments[${fulfillment.id}]`] = `Fulfillment type should be 'Self-Pickup' for flow: ${flow}`
           }
         }
         if (type == 'Delivery' || type == "Self-Pickup") {
@@ -439,60 +460,60 @@ export const checkOnInit = (data: any, flow: string) => {
       if (on_init.payment.collected_by === PAYMENT_COLLECTED_BY.BAP) {
         onInitObj[`payment_collected_by`] = `payments.collected_by not allowed in ${constants.ON_INIT} when ${PAYMENT_COLLECTED_BY.BAP}`
       }
-        const collectedBy = on_init.payment.collected_by.includes(PAYMENT_COLLECTED_BY)
-        const collect_payment = getValue('collect_payment')
-        if (flow === FLOW.FLOW007 || collect_payment === 'Y' || flow === FLOW.FLOW012) {
-          if (collectedBy !== PAYMENT_COLLECTED_BY.BPP) {
-            onInitObj['invaliedPaymentCollectedBy'] =
-              `Payment collected_by should be ${PAYMENT_COLLECTED_BY.BPP} for flow: ${flow}`
-          }
-          const payment_uri = on_init.payment?.uri
-          if (!payment_uri || payment_uri.trim().length === 0) {
-            onInitObj['PaymentUri'] =
-              `Payment uri should be present when payment collect_by: ${PAYMENT_COLLECTED_BY.BPP} for flow: ${flow}`
-          }
-          const tags = on_init.payment.tags
-          const bpp_collect_tag = tags.find((tag: any) => tag.code === 'bpp_collect')
-          if (!bpp_collect_tag || !Array.isArray(bpp_collect_tag.list)) {
-            onInitObj['bpp_collect'] = "Tag 'bpp_collect' must have a valid 'list' array."
-          }
+      const collectedBy = on_init.payment.collected_by.includes(PAYMENT_COLLECTED_BY)
+      const collect_payment = getValue('collect_payment')
+      if (flow === FLOW.FLOW007 || collect_payment === 'Y' || flow === FLOW.FLOW012) {
+        if (collectedBy !== PAYMENT_COLLECTED_BY.BPP) {
+          onInitObj['invaliedPaymentCollectedBy'] =
+            `Payment collected_by should be ${PAYMENT_COLLECTED_BY.BPP} for flow: ${flow}`
+        }
+        const payment_uri = on_init.payment?.uri
+        if (!payment_uri || payment_uri.trim().length === 0) {
+          onInitObj['PaymentUri'] =
+            `Payment uri should be present when payment collect_by: ${PAYMENT_COLLECTED_BY.BPP} for flow: ${flow}`
+        }
+        const tags = on_init.payment.tags
+        const bpp_collect_tag = tags.find((tag: any) => tag.code === 'bpp_collect')
+        if (!bpp_collect_tag || !Array.isArray(bpp_collect_tag.list)) {
+          onInitObj['bpp_collect'] = "Tag 'bpp_collect' must have a valid 'list' array."
+        }
 
-          const successEntry = bpp_collect_tag.list.find((item: any) => item.code === 'success')
-          const errorEntry = bpp_collect_tag.list.find((item: any) => item.code === 'error')
+        const successEntry = bpp_collect_tag.list.find((item: any) => item.code === 'success')
+        const errorEntry = bpp_collect_tag.list.find((item: any) => item.code === 'error')
 
-          if (!successEntry || !['Y', 'N'].includes(successEntry.value)) {
-            onInitObj['bpp_collect_success'] =
-              "'success' code in 'bpp_collect' must be present and have value 'Y' or 'N'"
+        if (!successEntry || !['Y', 'N'].includes(successEntry.value)) {
+          onInitObj['bpp_collect_success'] =
+            "'success' code in 'bpp_collect' must be present and have value 'Y' or 'N'"
+        }
+
+        if (successEntry?.value === 'N') {
+          if (!errorEntry || typeof errorEntry.value !== 'string' || errorEntry.value.trim().length === 0) {
+            onInitObj['bpp_collect_error'] = "'error' must be present with a non-empty value when 'success' is 'N'"
           }
+        } else if (successEntry?.value === 'Y' && errorEntry) {
+          onInitObj['bpp_collect_error_unexpected'] = "'error' should not be present when 'success' is 'Y'"
+        }
+      } else if (flow === FLOW.FLOW0099 || collect_payment === 'N' || flow === OFFERSFLOW.FLOW0098) {
+        let offers = on_init.quote.breakup.filter((item: any) => item["@ondc/org/title_type"] === "offer")
+        if (offers.length === 0) {
+          onInitObj['offer-not-found'] = `Offer is required for the flow: ${flow}`
+        } else if (offers.length > 0) {
+          const providerOffers: any = getValue(`${ApiSequence.ON_SEARCH}_offers`)
+          offers.forEach((offer: any, index: number) => {
+            const providerOffer = providerOffers?.find(
+              (providedOffer: any) => providedOffer?.id.toLowerCase() === offer["@ondc/org/item_id"].toLowerCase(),
+            )
+            console.log('providerOffer in select call', JSON.stringify(providerOffer))
 
-          if (successEntry?.value === 'N') {
-            if (!errorEntry || typeof errorEntry.value !== 'string' || errorEntry.value.trim().length === 0) {
-              onInitObj['bpp_collect_error'] = "'error' must be present with a non-empty value when 'success' is 'N'"
+            if (!providerOffer) {
+              onInitObj[`offer[${index}]`] = `Offer with id ${offer.id} is not available for the provider.`
+              return
             }
-          } else if (successEntry?.value === 'Y' && errorEntry) {
-            onInitObj['bpp_collect_error_unexpected'] = "'error' should not be present when 'success' is 'Y'"
-          }
-        } else if (flow === FLOW.FLOW0099 || collect_payment === 'N' || flow === OFFERSFLOW.FLOW0098) {
-          let offers = on_init.quote.breakup.filter((item:any)=>item["@ondc/org/title_type"] === "offer")
-          if (offers.length === 0) {
-            onInitObj['offer-not-found'] = `Offer is required for the flow: ${flow}`
-          } else if (offers.length > 0) {
-            const providerOffers: any = getValue(`${ApiSequence.ON_SEARCH}_offers`)
-            offers.forEach((offer: any, index: number) => {
-              const providerOffer = providerOffers?.find(
-                (providedOffer: any) => providedOffer?.id.toLowerCase() === offer["@ondc/org/item_id"].toLowerCase(),
-              )
-              console.log('providerOffer in select call', JSON.stringify(providerOffer))
-
-              if (!providerOffer) {
-                onInitObj[`offer[${index}]`] = `Offer with id ${offer.id} is not available for the provider.`
-                return
-              }
-              const offerType = providerOffer.descriptor.code
-              if(offerType === "financing"){
-               const finance_tags = offer.item.tags.find((tag:any)=>tag.code === "finance_terms")
-               if(finance_tags){
-                setValue(`finance_terms${constants.ON_INIT}`,finance_tags)
+            const offerType = providerOffer.descriptor.code
+            if (offerType === "financing") {
+              const finance_tags = offer.item.tags.find((tag: any) => tag.code === "finance_terms")
+              if (finance_tags) {
+                setValue(`finance_terms${constants.ON_INIT}`, finance_tags)
                 const financeTagsError = validateFinanceTermsTag(finance_tags)
                 if (financeTagsError) {
                   let i = 0
@@ -503,13 +524,13 @@ export const checkOnInit = (data: any, flow: string) => {
                     i++
                   }
                 }
-               } 
               }
-            })
+            }
+          })
 
-          }
         }
-      
+      }
+
     } catch (error: any) {
       logger.error(`!!Error while checking /${constants.ON_INIT} Quoted Price and Net Price Breakup, ${error.stack}`)
     }
@@ -554,18 +575,18 @@ export const checkOnInit = (data: any, flow: string) => {
 
     try {
       logger.info(`Checking Settlement basis in /${constants.ON_INIT}`)
-      if(on_init.payment.collected_by === "BPP"){
+      if (on_init.payment.collected_by === "BPP") {
         const validSettlementBasis = ['delivery', 'shipment'] // Enums (as per API Contract)
 
-      const settlementBasis = on_init.payment['@ondc/org/settlement_basis']
-      if(settlementBasis){
-        if (!validSettlementBasis.includes(settlementBasis)) {
-        onInitObj.settlementBasis = `Invalid settlement basis in /${constants.ON_INIT}. Expected one of: ${validSettlementBasis.join(', ')}`
-      }
-      }
-      else{
-        onInitObj.settlementBasis = `settlement basis is required in /${constants.ON_INIT} when payment.collected_by is : ${on_init.payment.collected_by}`
-      }
+        const settlementBasis = on_init.payment['@ondc/org/settlement_basis']
+        if (settlementBasis) {
+          if (!validSettlementBasis.includes(settlementBasis)) {
+            onInitObj.settlementBasis = `Invalid settlement basis in /${constants.ON_INIT}. Expected one of: ${validSettlementBasis.join(', ')}`
+          }
+        }
+        else {
+          onInitObj.settlementBasis = `settlement basis is required in /${constants.ON_INIT} when payment.collected_by is : ${on_init.payment.collected_by}`
+        }
       }
     } catch (error: any) {
       logger.error(`!!Error while checking settlement basis in /${constants.ON_INIT}, ${error.stack}`)
@@ -785,8 +806,20 @@ export const checkOnInit = (data: any, flow: string) => {
         onInitObj[key] = `all Items in /${constants.ON_INIT} must be available for cod `
       }
     }
-    return onInitObj
+    const hasSchema = Object.keys(schemaErrors).length > 0
+    const hasBusiness = Object.keys(onInitObj).length > 0
+    if (!hasSchema && !hasBusiness) return false
+
+    // If schemaValidation parameter is provided, return separated errors
+    if (schemaValidation !== undefined) {
+      return { schemaErrors, businessErrors: onInitObj }
+    }
+
+    // Otherwise return flat object
+    const combinedErrors = { ...schemaErrors, ...onInitObj }
+    return Object.keys(combinedErrors).length > 0 ? combinedErrors : false
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.ON_INIT} API`, err)
+    return { error: `Internal server error in /${constants.ON_INIT} validation` }
   }
 }

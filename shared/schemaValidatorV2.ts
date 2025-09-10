@@ -79,13 +79,13 @@ import { cancelSchemaTRV_12 } from '../schema/TRV-12/cancel'
 import { onConfirmSchemaTRV_12 } from '../schema/TRV-12/on_confirm'
 import { onCancelSchemaTRV_12 } from '../schema/TRV-12/on_cancel'
 import { searchFIS14Schema } from '../schema/FIS/Mutual_Funds/search'
-import {onSearchFIS14Schema} from '../schema/FIS/Mutual_Funds/on_search'
-import {selectFIS14Schema} from '../schema/FIS/Mutual_Funds/select'
-import {onSelectFIS14Schema} from '../schema/FIS/Mutual_Funds/on_select'
-import {initFIS14Schema} from '../schema/FIS/Mutual_Funds/init'
-import {onInitFIS14Schema} from '../schema/FIS/Mutual_Funds/on_init'
-import {confirmFIS14Schema} from '../schema/FIS/Mutual_Funds/confirm'
-import {onConfirmFIS14Schema} from '../schema/FIS/Mutual_Funds/on_confirm'
+import { onSearchFIS14Schema } from '../schema/FIS/Mutual_Funds/on_search'
+import { selectFIS14Schema } from '../schema/FIS/Mutual_Funds/select'
+import { onSelectFIS14Schema } from '../schema/FIS/Mutual_Funds/on_select'
+import { initFIS14Schema } from '../schema/FIS/Mutual_Funds/init'
+import { onInitFIS14Schema } from '../schema/FIS/Mutual_Funds/on_init'
+import { confirmFIS14Schema } from '../schema/FIS/Mutual_Funds/confirm'
+import { onConfirmFIS14Schema } from '../schema/FIS/Mutual_Funds/on_confirm'
 // import { onStatusFIS14Schema } from '../schema/FIS/Mutual_Funds/on_status'
 import { onUpdateFIS14Schema } from '../schema/FIS/Mutual_Funds/on_update'
 
@@ -122,9 +122,8 @@ const formatted_error = (errors: any) => {
   errors.forEach((error: any) => {
     if (!['not', 'oneOf', 'anyOf', 'allOf', 'if', 'then', 'else'].includes(error.keyword)) {
       const error_dict = {
-        message: `${error.message}${error.params.allowedValues ? ` (${error.params.allowedValues})` : ''}${
-          error.params.allowedValue ? ` (${error.params.allowedValue})` : ''
-        }${error.params.additionalProperty ? ` (${error.params.additionalProperty})` : ''}`,
+        message: `${error.message}${error.params.allowedValues ? ` (${error.params.allowedValues})` : ''}${error.params.allowedValue ? ` (${error.params.allowedValue})` : ''
+          }${error.params.additionalProperty ? ` (${error.params.additionalProperty})` : ''}`,
         details: error.instancePath,
       }
       error_list.push(error_dict)
@@ -807,10 +806,40 @@ const validate_schema_cancel_RET11_for_json = (data: any) => {
   const error_list = validate_schema(data, cancelSchema)
   return formatted_error(error_list)
 }
+const validate_schema_cancel_RET12_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancelSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_cancel_RET13_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancelSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_cancel_RET14_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancelSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_cancel_RET15_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancelSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_cancel_RET16_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancelSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_cancel_RET17_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancelSchema)
+  return formatted_error(error_list)
+}
+const validate_schema_cancel_RET18_for_json = (data: any) => {
+  const error_list = validate_schema(data, cancelSchema)
+  return formatted_error(error_list)
+}
 const validate_schema_cancel_RET19_for_json = (data: any) => {
   const error_list = validate_schema(data, cancelSchema)
   return formatted_error(error_list)
 }
+
+
 
 // ON_CANCEL
 const validate_schema_on_cancel_1_trv14_for_json = (data: any) => {
@@ -1302,7 +1331,7 @@ const validate_schema_report_rsf_for_json = (data: any) => {
   console.log('error_list of reporrt', formatted_error(error_list))
   return formatted_error(error_list)
 }
- 
+
 const validate_schema_on_report_rsf_for_json = (data: any) => {
   const error_list = validate_schema(data, onReportSchema)
   return formatted_error(error_list)
@@ -1367,6 +1396,13 @@ export default {
   validate_schema_on_confirm_RET19_for_json,
   validate_schema_cancel_RET11_for_json,
   validate_schema_cancel_RET19_for_json,
+  validate_schema_cancel_RET15_for_json,
+  validate_schema_cancel_RET16_for_json,
+  validate_schema_cancel_RET17_for_json,
+  validate_schema_cancel_RET18_for_json,
+  validate_schema_cancel_RET13_for_json,
+  validate_schema_cancel_RET14_for_json,
+  validate_schema_cancel_RET12_for_json,
   validate_schema_on_cancel_RET11_for_json,
   // validate_schema_on_cancel_RET19_for_json,
   validate_schema_track_RET11_for_json,

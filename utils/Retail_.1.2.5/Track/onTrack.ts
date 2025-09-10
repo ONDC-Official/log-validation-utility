@@ -5,8 +5,9 @@ import { logger } from '../../../shared/logger'
 import { validateSchemaRetailV2, isObjectEmpty, checkContext, checkBppIdOrBapId } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 
-export const checkOnTrack = (data: any) => {
+export const checkOnTrack = (data: any, schemaValidation?: boolean, stateless?: boolean) => {
   const onTrckObj: any = {}
+  const schemaErrors: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
       return { [ApiSequence.ON_TRACK]: 'JSON cannot be empty' }
@@ -17,23 +18,37 @@ export const checkOnTrack = (data: any) => {
       return { missingFields: '/context, /message, is missing or empty' }
     }
 
-    const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const schemaValidation = validateSchemaRetailV2('RET11', constants.ON_TRACK, data)
-    const select: any = getValue(`${ApiSequence.SELECT}`)
+    const schemaValidationResult =
+      schemaValidation !== false ? validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_TRACK, data) : 'skip'
+
+    if (schemaValidationResult !== 'error' && schemaValidationResult !== 'skip') {
+      Object.assign(schemaErrors, schemaValidationResult)
+    }
+
     const contextRes: any = checkContext(context, constants.ON_TRACK)
+    if (!contextRes?.valid) {
+      Object.assign(onTrckObj, contextRes.ERRORS)
+    }
 
     const checkBap = checkBppIdOrBapId(context.bap_id)
     const checkBpp = checkBppIdOrBapId(context.bpp_id)
 
     if (checkBap) Object.assign(onTrckObj, { bap_id: 'context/bap_id should not be a url' })
     if (checkBpp) Object.assign(onTrckObj, { bpp_id: 'context/bpp_id should not be a url' })
-    if (schemaValidation !== 'error') {
-      Object.assign(onTrckObj, schemaValidation)
+
+    if (stateless) {
+      const hasSchema = Object.keys(schemaErrors).length > 0
+      const hasBusiness = Object.keys(onTrckObj).length > 0
+      if (!hasSchema && !hasBusiness) return false
+      if (schemaValidation !== undefined) {
+        return { schemaErrors, businessErrors: onTrckObj }
+      }
+      const combinedErrors = { ...schemaErrors, ...onTrckObj }
+      return Object.keys(combinedErrors).length > 0 ? combinedErrors : false
     }
 
-    if (!contextRes?.valid) {
-      Object.assign(onTrckObj, contextRes.ERRORS)
-    }
+    const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
+    const select: any = getValue(`${ApiSequence.SELECT}`)
 
     setValue(`${ApiSequence.ON_TRACK}`, data)
 
@@ -67,8 +82,16 @@ export const checkOnTrack = (data: any) => {
       )
     }
 
-    return onTrckObj
+    const hasSchema = Object.keys(schemaErrors).length > 0
+    const hasBusiness = Object.keys(onTrckObj).length > 0
+    if (!hasSchema && !hasBusiness) return false
+    if (schemaValidation !== undefined) {
+      return { schemaErrors, businessErrors: onTrckObj }
+    }
+    const combinedErrors = { ...schemaErrors, ...onTrckObj }
+    return Object.keys(combinedErrors).length > 0 ? combinedErrors : false
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.ON_TRACK} API`, err)
+    return { error: `Error while checking /${constants.ON_TRACK} API: ${err.message}` }
   }
 }

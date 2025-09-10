@@ -5,10 +5,11 @@ import { logger } from '../../../shared/logger'
 import { validateSchemaRetailV2, isObjectEmpty, checkContext, checkBppIdOrBapId } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
-import {isValidISO8601Duration} from '../../index'
+import { isValidISO8601Duration } from '../../index'
 
-export const checkCancel = (data: any, msgIdSet: any,action:string,flow?:string) => {
+export const checkCancel = (data: any, msgIdSet: any, action: string, flow?: string, schemaValidation?: boolean, stateless?: boolean) => {
   const cnclObj: any = {}
+  const schemaErrors: any = {}
   // const forceCnclObj:any = {}
   try {
     if (!data || isObjectEmpty(data)) {
@@ -21,7 +22,11 @@ export const checkCancel = (data: any, msgIdSet: any,action:string,flow?:string)
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const schemaValidation = validateSchemaRetailV2('RET11', constants.CANCEL, data)
+    const schemaValidationResult =
+      schemaValidation !== false
+        ? validateSchemaRetailV2('RET11', constants.CANCEL, data)
+        : 'skip'
+
     const select: any = getValue(`${ApiSequence.SELECT}`)
     const contextRes: any = checkContext(context, constants.CANCEL)
 
@@ -30,13 +35,28 @@ export const checkCancel = (data: any, msgIdSet: any,action:string,flow?:string)
 
     if (checkBap) Object.assign(cnclObj, { bap_id: 'context/bap_id should not be a url' })
     if (checkBpp) Object.assign(cnclObj, { bpp_id: 'context/bpp_id should not be a url' })
-    if (schemaValidation !== 'error') {
-      Object.assign(cnclObj, schemaValidation)
+    if (schemaValidationResult !== 'error' && schemaValidationResult !== 'skip') {
+      Object.assign(schemaErrors, schemaValidationResult)
     }
 
     if (!contextRes?.valid) {
       Object.assign(cnclObj, contextRes.ERRORS)
     }
+
+    if (stateless) {
+      const hasSchema = Object.keys(schemaErrors).length > 0
+      const hasBusiness = Object.keys(cnclObj).length > 0
+
+      if (!hasSchema && !hasBusiness) return false
+
+      if (schemaValidation !== undefined) {
+        return { schemaErrors, businessErrors: cnclObj }
+      }
+
+      const combinedErrors = { ...schemaErrors, ...cnclObj }
+      return Object.keys(combinedErrors).length > 0 ? combinedErrors : false
+    }
+
 
     try {
       logger.info(`Adding Message Id /${constants.CANCEL}`)
@@ -132,8 +152,8 @@ export const checkCancel = (data: any, msgIdSet: any,action:string,flow?:string)
     }
     try {
       if (flow === FLOW.FLOW005) {
-        console.log("cancel.tags",JSON.stringify(cancel.tags));
-        
+        console.log("cancel.tags", JSON.stringify(cancel.tags));
+
         if (cancel.cancellation_reason_id !== '052') {
           cnclObj['invalidCancellationReasonId'] =
             `In /${constants.FORCE_CANCEL}, cancellation_reason_id must be '052'`
@@ -180,7 +200,18 @@ export const checkCancel = (data: any, msgIdSet: any,action:string,flow?:string)
       logger.error(`!!Some error occurred while checking /${constants.FORCE_CANCEL} API`, error)
     }
 
-    return cnclObj
+    const hasSchema = Object.keys(schemaErrors).length > 0
+    const hasBusiness = Object.keys(cnclObj).length > 0
+
+    if (!hasSchema && !hasBusiness) return false
+
+    if (schemaValidation !== undefined) {
+      return { schemaErrors, businessErrors: cnclObj }
+    }
+
+    const combinedErrors = { ...schemaErrors, ...cnclObj }
+    return Object.keys(combinedErrors).length > 0 ? combinedErrors : false
+
   } catch (err: any) {
     logger.error(`!!Some error occurred while checking /${constants.CANCEL} API`, err)
   }

@@ -2,12 +2,7 @@
 import _ from 'lodash'
 import constants, { ApiSequence } from '../../../constants'
 import { logger } from '../../../shared/logger'
-import {
-  validateSchemaRetailV2,
-  isObjectEmpty,
-  checkContext,
-  areTimestampsLessThanOrEqualTo,
-} from '../..'
+import { validateSchemaRetailV2, isObjectEmpty, checkContext, areTimestampsLessThanOrEqualTo } from '../..'
 import { getValue, setValue } from '../../../shared/dao'
 import { isStateForbiddenForRouting } from '../common/routingValidator'
 import {
@@ -15,18 +10,27 @@ import {
   validateProviderCredentials,
   validateFulfillmentConsistency,
   validateRoutingTagStructure,
-  validateOrderUpdatedAt
+  validateOrderUpdatedAt,
 } from '../common/statusValidationHelpers'
 
-export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, _fulfillmentsItemsSet: any, flow?: string) => {
+export const checkOnStatusAtPickup = (
+  data: any,
+  _state: string,
+  msgIdSet: any,
+  _fulfillmentsItemsSet: any,
+  flow?: string,
+  schemaValidation?: boolean,
+  stateless?: boolean,
+) => {
   const onStatusObj: any = {}
   const EXPECTED_STATE = 'At-pickup'
-  
+  const schemaErrors: any = {}
+
   try {
     if (!data || isObjectEmpty(data)) {
       return { [ApiSequence.ON_STATUS_AT_PICKUP]: 'JSON cannot be empty' }
     }
-    
+
     const { message, context }: any = data
     if (!message || !context || isObjectEmpty(message)) {
       return { missingFields: '/context, /message, is missing or empty' }
@@ -35,22 +39,39 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
     // Check if routing type is P2P
     const routingType = getValue('routingType')
     if (routingType && routingType !== 'P2P') {
-      return { 
-        routingError: `/${constants.ON_STATUS}_${EXPECTED_STATE} is only valid for P2P routing, but current routing is ${routingType}` 
+      return {
+        routingError: `/${constants.ON_STATUS}_${EXPECTED_STATE} is only valid for P2P routing, but current routing is ${routingType}`,
       }
     }
 
-    const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const schemaValidation = validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_STATUS, data)
-    const contextRes: any = checkContext(context, constants.ON_STATUS)
-
-    if (schemaValidation !== 'error') {
-      Object.assign(onStatusObj, schemaValidation)
+    // Run schema validation conditionally
+    let schemaValidationResult = 'skip'
+    if (schemaValidation !== false) {
+      schemaValidationResult = validateSchemaRetailV2(context.domain.split(':')[1], constants.ON_STATUS, data)
     }
+
+    if (schemaValidationResult !== 'error' && schemaValidationResult !== 'skip') {
+      Object.assign(schemaErrors, schemaValidationResult)
+    }
+
+    const contextRes: any = checkContext(context, constants.ON_STATUS)
 
     if (!contextRes?.valid) {
       Object.assign(onStatusObj, contextRes.ERRORS)
     }
+
+    if (stateless) {
+      const hasSchema = Object.keys(schemaErrors).length > 0
+      const hasBusiness = Object.keys(onStatusObj).length > 0
+      if (!hasSchema && !hasBusiness) return false
+      return { schemaErrors, businessErrors: onStatusObj }
+    }
+
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+    }
+
+    const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
 
     try {
       logger.info(`Adding Message Id /${constants.ON_STATUS}_${EXPECTED_STATE}`)
@@ -62,10 +83,6 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
       logger.error(`!!Error while checking message id for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
     }
 
-    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-      onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
-    }
-
     setValue(`${ApiSequence.ON_STATUS_AT_PICKUP}`, data)
 
     try {
@@ -75,7 +92,9 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
         Object.assign(onStatusObj, res.ERRORS)
       }
     } catch (error: any) {
-      logger.error(`!!Some error occurred while checking /${constants.ON_STATUS}_${EXPECTED_STATE} context, ${error.stack}`)
+      logger.error(
+        `!!Some error occurred while checking /${constants.ON_STATUS}_${EXPECTED_STATE} context, ${error.stack}`,
+      )
     }
 
     try {
@@ -84,7 +103,9 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
         onStatusObj.city = `City code mismatch in /${constants.SEARCH} and /${constants.ON_STATUS}_${EXPECTED_STATE}`
       }
     } catch (error: any) {
-      logger.error(`!!Error while comparing city in /${constants.SEARCH} and /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
+      logger.error(
+        `!!Error while comparing city in /${constants.SEARCH} and /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`,
+      )
     }
 
     try {
@@ -114,14 +135,18 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
     }
 
     try {
-      logger.info(`Comparing timestamp of previous /${constants.ON_STATUS} and /${constants.ON_STATUS}_${EXPECTED_STATE} API`)
+      logger.info(
+        `Comparing timestamp of previous /${constants.ON_STATUS} and /${constants.ON_STATUS}_${EXPECTED_STATE} API`,
+      )
       if (_.gte(getValue('tmpstmp'), context.timestamp)) {
         onStatusObj.inVldTmstmp = `Timestamp in previous /${constants.ON_STATUS} api cannot be greater than or equal to /${constants.ON_STATUS}_${EXPECTED_STATE} api`
       }
 
       setValue('tmpstmp', context.timestamp)
     } catch (error: any) {
-      logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
+      logger.error(
+        `!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`,
+      )
     }
 
     try {
@@ -130,7 +155,9 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
         onStatusObj.tmpstmp1 = `Timestamp for /${constants.ON_CONFIRM} api cannot be greater than or equal to /${constants.ON_STATUS}_${EXPECTED_STATE} api`
       }
     } catch (error: any) {
-      logger.error(`!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
+      logger.error(
+        `!!Error occurred while comparing timestamp for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`,
+      )
     }
 
     try {
@@ -139,7 +166,9 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
         onStatusObj.orderState = `Order state should be 'In-progress' for /${constants.ON_STATUS}_${EXPECTED_STATE}`
       }
     } catch (error: any) {
-      logger.error(`!!Error occurred while checking order state for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
+      logger.error(
+        `!!Error occurred while checking order state for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`,
+      )
     }
 
     // Validate order.updated_at timestamp
@@ -150,15 +179,17 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
         on_status.updated_at,
         contextTime,
         previousUpdatedAt,
-        `/${constants.ON_STATUS}_${EXPECTED_STATE}`
+        `/${constants.ON_STATUS}_${EXPECTED_STATE}`,
       )
       Object.assign(onStatusObj, updatedAtErrors)
-      
+
       if (on_status.updated_at) {
         setValue('PreviousUpdatedTimestamp', on_status.updated_at)
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking order.updated_at in /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
+      logger.error(
+        `!!Error while checking order.updated_at in /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`,
+      )
     }
 
     // Validate payment status for COD flows
@@ -167,7 +198,7 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
         const paymentErrors = validatePaymentStatus(
           on_status.payment,
           flow,
-          `/${constants.ON_STATUS}_${EXPECTED_STATE}`
+          `/${constants.ON_STATUS}_${EXPECTED_STATE}`,
         )
         Object.assign(onStatusObj, paymentErrors)
       } catch (error: any) {
@@ -181,11 +212,13 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
         const providerErrors = validateProviderCredentials(
           on_status.provider,
           flow,
-          `/${constants.ON_STATUS}_${EXPECTED_STATE}`
+          `/${constants.ON_STATUS}_${EXPECTED_STATE}`,
         )
         Object.assign(onStatusObj, providerErrors)
       } catch (error: any) {
-        logger.error(`!!Error while validating provider credentials in /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
+        logger.error(
+          `!!Error while validating provider credentials in /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`,
+        )
       }
     }
 
@@ -216,20 +249,25 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
           logger.info(`Checking fulfillment state for /${constants.ON_STATUS}_${EXPECTED_STATE}`)
           const ffDesc = ff.state?.descriptor
           if (!ffDesc || !ffDesc.code) {
-            onStatusObj[`fulfillmentState[${ff.id}]`] = `Fulfillment state descriptor is missing for /${constants.ON_STATUS}_${EXPECTED_STATE}`
+            onStatusObj[`fulfillmentState[${ff.id}]`] =
+              `Fulfillment state descriptor is missing for /${constants.ON_STATUS}_${EXPECTED_STATE}`
           } else if (ffDesc.code !== EXPECTED_STATE) {
-            onStatusObj[`fulfillmentState[${ff.id}]`] = `Fulfillment state should be '${EXPECTED_STATE}' for /${constants.ON_STATUS}_${EXPECTED_STATE} but found '${ffDesc.code}'`
+            onStatusObj[`fulfillmentState[${ff.id}]`] =
+              `Fulfillment state should be '${EXPECTED_STATE}' for /${constants.ON_STATUS}_${EXPECTED_STATE} but found '${ffDesc.code}'`
           }
 
           // Validate state is allowed for routing type (should always be P2P here)
           if (routingType && routingType === 'P2P') {
             const validationError = isStateForbiddenForRouting(ffDesc.code, routingType)
             if (validationError) {
-              onStatusObj[`fulfillmentStateRouting[${ff.id}]`] = `Fulfillment state '${ffDesc.code}' is not allowed for ${routingType} routing`
+              onStatusObj[`fulfillmentStateRouting[${ff.id}]`] =
+                `Fulfillment state '${ffDesc.code}' is not allowed for ${routingType} routing`
             }
           }
         } catch (error: any) {
-          logger.error(`!!Error while checking fulfillment state for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
+          logger.error(
+            `!!Error while checking fulfillment state for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`,
+          )
         }
 
         // Validate routing tag structure
@@ -237,11 +275,13 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
           const routingTagErrors = validateRoutingTagStructure(
             ff,
             routingType || 'P2P',
-            `/${constants.ON_STATUS}_${EXPECTED_STATE}`
+            `/${constants.ON_STATUS}_${EXPECTED_STATE}`,
           )
           Object.assign(onStatusObj, routingTagErrors)
         } catch (error: any) {
-          logger.error(`!!Error while validating routing tags for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
+          logger.error(
+            `!!Error while validating routing tags for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`,
+          )
         }
 
         // Validate fulfillment consistency
@@ -251,16 +291,20 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
             const consistencyErrors = validateFulfillmentConsistency(
               ff,
               storedFulfillment,
-              `/${constants.ON_STATUS}_${EXPECTED_STATE}`
+              `/${constants.ON_STATUS}_${EXPECTED_STATE}`,
             )
             Object.assign(onStatusObj, consistencyErrors)
           } catch (error: any) {
-            logger.error(`!!Error while validating fulfillment consistency for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
+            logger.error(
+              `!!Error while validating fulfillment consistency for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`,
+            )
           }
         }
       })
     } catch (error: any) {
-      logger.info(`Error while checking fulfillments id, type and tracking in /${constants.ON_STATUS}_${EXPECTED_STATE}`)
+      logger.info(
+        `Error while checking fulfillments id, type and tracking in /${constants.ON_STATUS}_${EXPECTED_STATE}`,
+      )
     }
 
     try {
@@ -271,15 +315,19 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
       if (currentFulfillment) {
         const prevTimestamp = DeliveryFulfillment?.['@ondc/org/state_updated_at']
         const currentTimestamp = currentFulfillment['@ondc/org/state_updated_at']
-        
+
         if (!currentTimestamp) {
-          onStatusObj[`fulfillmentTimestamp[${currentFulfillment.id}]`] = `'@ondc/org/state_updated_at' is required for fulfillment state updates`
+          onStatusObj[`fulfillmentTimestamp[${currentFulfillment.id}]`] =
+            `'@ondc/org/state_updated_at' is required for fulfillment state updates`
         } else if (prevTimestamp && !areTimestampsLessThanOrEqualTo(prevTimestamp, currentTimestamp)) {
-          onStatusObj[`fulfillmentTimestampOrder[${currentFulfillment.id}]`] = `'@ondc/org/state_updated_at' should be greater than or equal to the previous state timestamp`
+          onStatusObj[`fulfillmentTimestampOrder[${currentFulfillment.id}]`] =
+            `'@ondc/org/state_updated_at' should be greater than or equal to the previous state timestamp`
         }
       }
     } catch (error: any) {
-      logger.error(`!!Error while checking fulfillment timestamps for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
+      logger.error(
+        `!!Error while checking fulfillment timestamps for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`,
+      )
     }
 
     try {
@@ -296,9 +344,25 @@ export const checkOnStatusAtPickup = (data: any, _state: string, msgIdSet: any, 
       logger.error(`!!Error while storing fulfillment for /${constants.ON_STATUS}_${EXPECTED_STATE}, ${error.stack}`)
     }
 
-    return onStatusObj
+    if (schemaValidation === true) {
+      // Return only schema errors (or empty if none)
+      if (Object.keys(schemaErrors).length === 0) return false
+      return schemaErrors
+    } else if (schemaValidation === false) {
+      // Return only business errors (or empty if none)
+      if (Object.keys(onStatusObj).length === 0) return false
+      return onStatusObj
+    } else {
+      // Return both combined by default
+      const combinedErrors = { ...schemaErrors, ...onStatusObj }
+      if (Object.keys(combinedErrors).length === 0) return false
+      return combinedErrors
+    }
   } catch (err: any) {
-    logger.error(`!!Some error occurred while checking /${constants.ON_STATUS}_${EXPECTED_STATE} API`, JSON.stringify(err.stack))
+    logger.error(
+      `!!Some error occurred while checking /${constants.ON_STATUS}_${EXPECTED_STATE} API`,
+      JSON.stringify(err.stack),
+    )
     return { error: err.message }
   }
 }

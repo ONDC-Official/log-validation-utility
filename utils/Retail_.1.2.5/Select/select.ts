@@ -25,7 +25,7 @@ const tagFinder = (item: { tags: any[] }, value: string): any => {
   return res
 }
 
-export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
+export const checkSelect = (data: any, msgIdSet: any, apiSeq: any, schemaValidation?: boolean, stateless?: boolean) => {
   if (!data || isObjectEmpty(data)) {
     return { [ApiSequence.SELECT]: 'JSON cannot be empty' }
   }
@@ -34,14 +34,15 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
   if (!message || !context || !message.order || isObjectEmpty(message) || isObjectEmpty(message.order)) {
     return { missingFields: '/context, /message, /order or /message/order is missing or empty' }
   }
-
-  const schemaValidation = validateSchemaRetailV2(context.domain.split(':')[1], constants.SELECT, data)
+  const schemaValidationResult = schemaValidation !== false
+    ? validateSchemaRetailV2(context.domain.split(':')[1], constants.SELECT, data)
+    : 'skip'
 
   const contextRes: any = checkContext(context, constants.SELECT)
-  const onSearch: any = getValue(`${ApiSequence.ON_SEARCH}`)
-  const flow = getValue('flow')
-
+  const onSearch: any = stateless ? undefined : getValue(`${ApiSequence.ON_SEARCH}`)
+  const flow = stateless ? undefined : getValue('flow')
   const errorObj: any = {}
+  const schemaErrors: any = {}
 
   try {
     if (flow === '3' && apiSeq == ApiSequence.SELECT_OUT_OF_STOCK) {
@@ -50,14 +51,14 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
         errorObj[`${ApiSequence.SELECT_OUT_OF_STOCK}_msgId`] = `Message id should not be same with previous calls`
       }
       msgIdSet.add(context.message_id)
-      setValue(`${ApiSequence.SELECT_OUT_OF_STOCK}_msgId`, data.context.message_id)
+      if (!stateless) setValue(`${ApiSequence.SELECT_OUT_OF_STOCK}_msgId`, data.context.message_id)
     } else {
       logger.info(`Adding Message Id /${constants.SELECT}`)
       if (msgIdSet.has(context.message_id)) {
         errorObj[`${ApiSequence.SELECT}_msgId`] = `Message id should not be same with previous calls`
       }
       msgIdSet.add(context.message_id)
-      setValue(`${ApiSequence.SELECT}_msgId`, data.context.message_id)
+      if (!stateless) setValue(`${ApiSequence.SELECT}_msgId`, data.context.message_id)
     }
   } catch (error: any) {
     if (flow === '3' && apiSeq == ApiSequence.SELECT_OUT_OF_STOCK) {
@@ -72,8 +73,10 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
   const itemsCtgrs: any = {}
   const itemsTat: any[] = []
 
-  if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-    errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+  if (!stateless) {
+    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+      errorObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+    }
   }
 
   const checkBap = checkBppIdOrBapId(context.bap_id)
@@ -82,12 +85,20 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
   if (checkBap) Object.assign(errorObj, { bap_id: 'context/bap_id should not be a url' })
   if (checkBpp) Object.assign(errorObj, { bpp_id: 'context/bpp_id should not be a url' })
 
-  if (schemaValidation !== 'error') {
-    Object.assign(errorObj, schemaValidation)
+  if (schemaValidationResult !== 'error' && schemaValidationResult !== 'skip') {
+    Object.assign(schemaErrors, schemaValidationResult)
   }
 
   if (!contextRes?.valid) {
     Object.assign(errorObj, contextRes.ERRORS)
+  }
+
+  // In stateless mode, stop after schema/context/basic validations
+  if (stateless) {
+    const hasSchema = Object.keys(schemaErrors).length > 0
+    const hasBusiness = Object.keys(errorObj).length > 0
+    if (!hasSchema && !hasBusiness) return false
+    return { schemaErrors, businessErrors: errorObj }
   }
 
   const select = message.order
@@ -217,12 +228,17 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
       providerOnSelect = provider[0]
 
       setValue('providerGps', providerOnSelect?.locations[0]?.gps)
-      setValue('providerName', providerOnSelect?.descriptor?.name)
+      setValue('bap_terms', onSearch?.message?.catalog?.bpp?.descriptor?.tags?.find((t: any) => t.code === 'bap_terms'))
+
+      // Getting Select Items
+      const searchItemMapping = getValue('itemMap')
+      const searchCustomMapping = getValue('itemMapper')
+
+      if (searchItemMapping) Object.assign(itemMap, searchItemMapping)
+      if (searchCustomMapping) Object.assign(itemMapper, searchCustomMapping)
     }
   } catch (error: any) {
-    logger.error(
-      `Error while checking for valid provider in /${constants.ON_SEARCH} and /${constants.SELECT}, ${error.stack}`,
-    )
+    logger.error(`!!Error while checking Select Item Ids in /${constants.SELECT}, ${error.stack}`)
   }
 
   try {
@@ -689,5 +705,9 @@ export const checkSelect = (data: any, msgIdSet: any, apiSeq: any) => {
     
   }
 
-  return Object.keys(errorObj).length > 0 && errorObj
+  // return at the end of function
+  const hasSchema = Object.keys(schemaErrors).length > 0
+  const hasBusiness = Object.keys(errorObj).length > 0
+  if (!hasSchema && !hasBusiness) return false
+  return { schemaErrors, businessErrors: errorObj }
 }

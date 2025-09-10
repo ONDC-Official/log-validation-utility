@@ -7,25 +7,28 @@ import { condition_id } from '../../../constants/reasonCode'
 import { FLOW, OFFERSFLOW } from '../../enum'
 import { electronicsData } from '../../../constants/electronics'
 
-export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDetatilSet: any, flow: any) => {
+export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDetatilSet: any, flow: any, schemaValidation?: boolean, stateless?: boolean) => {
   const updtObj: any = {}
+  const schemaErrors: any = {}
+
   try {
     if (!data || isObjectEmpty(data)) {
       return { [ApiSequence.UPDATE]: 'JSON cannot be empty' }
     }
 
     const { message, context }: any = data
-    const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const select: any = getValue(`${ApiSequence.SELECT}`)
-    const allOnSearchItems: any = getValue('onSearchItems')
-    let onSearchItems = allOnSearchItems.flat()
-    let exchangeItem:any = {}
+    const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`) || {}
+    const select: any = getValue(`${ApiSequence.SELECT}`) || { context: {} }
+    const allOnSearchItems: any = getValue('onSearchItems') || []
+    let onSearchItems = Array.isArray(allOnSearchItems) ? allOnSearchItems.flat() : []
+    let exchangeItem: any = {}
+
     if (!message || !context || isObjectEmpty(message)) {
       return { missingFields: '/context, /message, is missing or empty' }
     }
 
     const update = message.order
-    const selectItemList: any = getValue('SelectItemList')
+    const selectItemList: any = getValue('SelectItemList') || []
 
     try {
       logger.info(`Adding Message Id /${apiSeq}`)
@@ -36,7 +39,7 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
       // for update and on_update_interim
       if (flow === '6-b' && apiSeq == ApiSequence.UPDATE_REVERSE_QC) { setValue(`${ApiSequence.UPDATE_REVERSE_QC}_msgId`, data.context.message_id) }
       if (flow === '6-c' && apiSeq == ApiSequence.UPDATE_LIQUIDATED) { setValue(`${ApiSequence.UPDATE_LIQUIDATED}_msgId`, data.context.message_id) }
-      if(flow === '00B' && apiSeq == ApiSequence.UPDATE_REPLACEMENT){ setValue(`${ApiSequence.UPDATE_REPLACEMENT}_msgId`,data.context.message_id)}
+      if (flow === '00B' && apiSeq == ApiSequence.UPDATE_REPLACEMENT) { setValue(`${ApiSequence.UPDATE_REPLACEMENT}_msgId`, data.context.message_id) }
     } catch (error: any) {
       logger.error(`!!Error while checking message id for /${apiSeq}, ${error.stack}`)
     }
@@ -131,17 +134,17 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
                 } else {
                   updtObj[`returnFulfillment`] = `Return fulfillment/tags/list is missing in ${apiSeq}`
                 }
-                if(flow === "00B" && replaceArr.length===0){
+                if (flow === "00B" && replaceArr.length === 0) {
                   updtObj.replaceValue = `replace' obj is required in ${apiSeq} when flow is '00b`;
                 }
-                if(flow === "00B" && replaceArr.length===0){
+                if (flow === "00B" && replaceArr.length === 0) {
                   updtObj.replaceValue = `replace' obj is required in ${apiSeq} when flow is '00b`;
                 }
                 if (replaceArr.length > 0 && replaceArr[0]?.value) {
                   replaceValue = replaceArr[0]?.value
 
                   if (replaceValue === 'yes' || replaceValue === 'no') {
-                    setValue('update_replace_value',replaceValue)
+                    setValue('update_replace_value', replaceValue)
                     logger.info(`Valid replace value: ${replaceValue} for /${apiSeq}`)
                   } else {
                     updtObj['returnFulfillment/code/replace'] = `Invalid replace value: ${replaceValue} in ${apiSeq}`
@@ -201,17 +204,36 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
     }
 
     // Validating Schema
-    const schemaValidation = validateSchemaRetailV2(context.domain.split(':')[1], constants.UPDATE, data)
+    // Validating Schema - conditional based on schemaValidation flag
+    const schemaValidationResult =
+      schemaValidation !== false
+        ? validateSchemaRetailV2(context.domain.split(':')[1], constants.UPDATE, data)
+        : 'skip'
 
-    if (schemaValidation !== 'error') {
-      Object.assign(updtObj, schemaValidation)
+    if (schemaValidationResult !== 'error' && schemaValidationResult !== 'skip') {
+      Object.assign(schemaErrors, schemaValidationResult)
     }
+
 
     // Checking bap_id and bpp_id format
     const checkBap = checkBppIdOrBapId(context.bap_id)
     const checkBpp = checkBppIdOrBapId(context.bpp_id)
     if (checkBap) Object.assign(updtObj, { bap_id: 'context/bap_id should not be a url' })
     if (checkBpp) Object.assign(updtObj, { bpp_id: 'context/bpp_id should not be a url' })
+
+    if (stateless) {
+      const hasSchema = Object.keys(schemaErrors).length > 0
+      const hasBusiness = Object.keys(updtObj).length > 0
+
+      if (schemaValidation === true) {
+        return hasSchema ? schemaErrors : false
+      }
+      if (schemaValidation === false) {
+        return hasBusiness ? updtObj : false
+      }
+      if (!hasSchema && !hasBusiness) return false
+      return { schemaErrors, businessErrors: updtObj }
+    }
 
     if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
       updtObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
@@ -292,7 +314,7 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
       }
     }
     // Checking for return_request object in /Update
-    if (update.fulfillments[0].tags) {
+    if (update.fulfillments && update.fulfillments.length > 0 && update.fulfillments[0].tags) {
       try {
         logger.info(`Checking for return_request object in /${apiSeq}`)
         const updateItemSet: any = {}
@@ -310,7 +332,7 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
                 return
               }
               let key: any = null
-              exchangeItem = tag.list.find((item:any)=>item.code === "exchange")
+              exchangeItem = tag.list.find((item: any) => item.code === "exchange")
               tag.list.forEach((item: any) => {
                 if (item.code === 'item_id') {
                   key = item.value
@@ -327,8 +349,8 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
                 }
 
                 if (item.code === 'id') {
-                  console.log("itemFlfllmnts",itemFlfllmnts);
-                  
+                  console.log("itemFlfllmnts", itemFlfllmnts);
+
                   const valuesArray = Object.values((itemFlfllmnts))
                   if (valuesArray.includes(item.value)) {
                     updtObj.nonUniqueReturnFulfillment = `${item.value} is not a unique fulfillment`
@@ -344,7 +366,7 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
                     logger.error(`Invalid replace value: ${replaceValue} for /${apiSeq}`)
                     updtObj.replaceValue = `Invalid replace value: ${replaceValue} in ${apiSeq} (valid: 'yes' or 'no')`
                   }
-                  setValue('update_replace_value',replaceValue)
+                  setValue('update_replace_value', replaceValue)
 
                 }
 
@@ -365,9 +387,9 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
 
                 if (item.code === 'images') {
                   // const images = item.value
-                  const images:any = []
+                  const images: any = []
                   images.push(item.value)
-                  
+
                   const allurls = images?.every((img: string) => isValidUrl(img))
                   if (!allurls) {
                     logger.error(
@@ -446,17 +468,17 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
     }
 
     try {
-      if(flow === FLOW.FLOW00C || flow === OFFERSFLOW.FLOW0097){
+      if (flow === FLOW.FLOW00C || flow === OFFERSFLOW.FLOW0097) {
 
-        console.log("onSearchItems",onSearchItems);
-        if(context.domain !== "ONDC:RET14" || context.domain !== "ONDC:RET15"){
+        console.log("onSearchItems", onSearchItems);
+        if (context.domain !== "ONDC:RET14" || context.domain !== "ONDC:RET15") {
           updtObj['unsupportedType'] = `exchange is not possible for ${context.domain} as supported domains are 'ONDC:RET14','ONDC:RET15' is required for flow: ${flow}`
         }
 
-        let returnFulfillment = update.fulfillments.filter((fulfillment:any)=>fulfillment.type === "Return")
-        console.log("returnFulfillment",returnFulfillment);
-        
-        returnFulfillment.forEach((fulfillment:any)=>{
+        let returnFulfillment = update.fulfillments.filter((fulfillment: any) => fulfillment.type === "Return")
+        console.log("returnFulfillment", returnFulfillment);
+
+        returnFulfillment.forEach((fulfillment: any) => {
           fulfillment.tags?.forEach((tag: any) => {
             if (tag.code === 'return_request') {
 
@@ -465,49 +487,56 @@ export const checkUpdate = (data: any, msgIdSet: any, apiSeq: any, settlementDet
                 return
               }
               // let key: any = null
-              exchangeItem = tag.list.find((item:any)=>item.code === "exchange")
-              if(!exchangeItem){
+              exchangeItem = tag.list.find((item: any) => item.code === "exchange")
+              if (!exchangeItem) {
                 updtObj.error = `exchange tag is required for flow: ${flow}`
-                return 
-              }else{
+                return
+              } else {
                 const exchangeValue = exchangeItem.value
                 !['yes', 'no'].includes(exchangeValue)
                 updtObj["exchangeNA"] = '"exchange" value must be "yes" or "no"';
-                if(exchangeValue === "no"){
+                if (exchangeValue === "no") {
                   updtObj["exchangeNA"] = `"exchange" value must be "yes" for flow: ${flow}`;
-                  return 
+                  return
                 }
-                else{
-                  const returnItem = tag.list.find((item:any)=>item.code === "item_id").value;
-                  console.log("returnItem",returnItem);
-                  
-                  let itemEligible = onSearchItems.find((item:any)=>item.id === returnItem)
-                  console.log("itemEligible",itemEligible);
-                  if(!itemEligible){
+                else {
+                  const returnItem = tag.list.find((item: any) => item.code === "item_id").value;
+                  console.log("returnItem", returnItem);
+
+                  let itemEligible = onSearchItems.find((item: any) => item.id === returnItem)
+                  console.log("itemEligible", itemEligible);
+                  if (!itemEligible) {
                     updtObj["itemNA"] = `Item with id: ${returnItem} not eligible for exchange as not found in on_search catalogue`
                     return
                   }
-                  const {category_id} = itemEligible
+                  const { category_id } = itemEligible
                   const { result, missingMandatoryFields } = extractValidFieldsForCategory(
                     category_id,
                     tag.list,
                     electronicsData
                   );
-                  console.log("result, missingMandatoryFields ",result, missingMandatoryFields );
-                  
+                  console.log("result, missingMandatoryFields ", result, missingMandatoryFields);
+
                 }
               }
             }
           })
         })
-        
+
 
       }
     } catch (error) {
-      
+
     }
 
-    return updtObj
+    if (schemaValidation === true) {
+      return { schemaErrors, businessErrors: {} }
+    } else if (schemaValidation === false) {
+      return { schemaErrors: {}, businessErrors: updtObj }
+    } else {
+      return { schemaErrors, businessErrors: updtObj }
+    }
+
   } catch (error: any) {
     logger.error(`!!Some error occurred while checking /${apiSeq} API`, error.stack)
   }

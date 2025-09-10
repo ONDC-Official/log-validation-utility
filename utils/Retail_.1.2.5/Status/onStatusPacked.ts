@@ -16,8 +16,16 @@ import { getValue, setValue } from '../../../shared/dao'
 import { FLOW } from '../../enum'
 import { validateStateForRouting } from '../common/routingValidator'
 
-export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, fulfillmentsItemsSet: any) => {
+export const checkOnStatusPacked = (
+  data: any,
+  state: string,
+  msgIdSet: any,
+  fulfillmentsItemsSet: any,
+  schemaValidation?: boolean,
+  stateless?: boolean,
+) => {
   const onStatusObj: any = {}
+  const schemaErrors: any = {}
   try {
     if (!data || isObjectEmpty(data)) {
       return { [ApiSequence.ON_STATUS_PACKED]: 'JSON cannot be empty' }
@@ -31,20 +39,32 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
       return { missingFields: '/context, /message, is missing or empty' }
     }
 
-    if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
-      onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+    if (!stateless) {
+      if (!_.isEqual(data.context.domain.split(':')[1], getValue(`domain`))) {
+        onStatusObj[`Domain[${data.context.action}]`] = `Domain should be same in each action`
+      }
     }
 
     const searchContext: any = getValue(`${ApiSequence.SEARCH}_context`)
-    const schemaValidation = validateSchemaRetailV2('RET11', constants.ON_STATUS, data)
+    const schemaValidationResult = schemaValidation !== false ? validateSchemaRetailV2('RET11', constants.ON_STATUS, data) : 'skip'
     const contextRes: any = checkContext(context, constants.ON_STATUS)
 
-    if (schemaValidation !== 'error') {
-      Object.assign(onStatusObj, schemaValidation)
+    if (schemaValidationResult !== 'error' && schemaValidationResult !== 'skip') {
+      Object.assign(schemaErrors, schemaValidationResult)
     }
 
     if (!contextRes?.valid) {
       Object.assign(onStatusObj, contextRes.ERRORS)
+    }
+
+    // If stateless is requested, return early with segregated errors
+    if (stateless || schemaValidation !== undefined) {
+      if (stateless) {
+        const hasSchema = Object.keys(schemaErrors).length > 0
+        const hasBusiness = Object.keys(onStatusObj).length > 0
+        if (!hasSchema && !hasBusiness) return false
+        return { schemaErrors, businessErrors: onStatusObj }
+      }
     }
 
     try {
@@ -491,6 +511,17 @@ export const checkOnStatusPacked = (data: any, state: string, msgIdSet: any, ful
             `provider_id in fulfillment in ${ApiSequence.ON_CONFIRM} does not match expected provider_id: expected '${fulfillmentProviderId}' in ${ApiSequence.ON_STATUS_PACKED} but got ${id}`
         }
       }
+    }
+    // Return format: preserve original behavior unless optional flags are provided
+    if (stateless !== undefined || schemaValidation !== undefined) {
+      const hasSchema = Object.keys(schemaErrors).length > 0
+      const hasBusiness = Object.keys(onStatusObj).length > 0
+      if (!hasSchema && !hasBusiness) return false
+      return { schemaErrors, businessErrors: onStatusObj }
+    }
+    // Legacy behavior for validate endpoint: include schema errors into main object
+    if (Object.keys(schemaErrors).length > 0) {
+      Object.assign(onStatusObj, schemaErrors)
     }
     return onStatusObj
   } catch (err: any) {

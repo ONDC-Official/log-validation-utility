@@ -12,10 +12,6 @@ The utility supports validation for the following ONDC domains:
 - **IGM**: Issue & Grievance Management (versions 1.0.0 and 2.0.0)
 - **RSF**: Reconciliation & Settlement Framework (versions 1.0.0 and 2.0.0)
 
-## Log Validation Service
-
-The service is hosted at [https://log-validation.ondc.org](https://log-validation.ondc.org) and provides API endpoints for validating transaction logs across all supported domains.
-
 ## Retail Domain
 
 ### Supported Versions
@@ -41,7 +37,7 @@ The service is hosted at [https://log-validation.ondc.org](https://log-validatio
 
 ## Log Validation Service Usage
 
-The service is hosted at [https://log-validation.ondc.org](https://log-validation.ondc.org). You can validate API logs using curl or Postman requests.
+The service can be setup locally
 
 ### Example for Version 1.2.0
 
